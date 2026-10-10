@@ -404,6 +404,16 @@ by hand under *Actions*, the workflow builds all of it without a release and
 keeps it as a workflow artifact. The tag names the version, for example
 `v1.2.0`.
 
+The same tag builds the apps for the stores on [Codemagic](https://codemagic.io)
+(`codemagic.yaml`): it runs the tests, builds and signs the apps and uploads
+them, iOS to TestFlight and Android to the internal test track of Google Play.
+From there a build is released to everyone by hand, in App Store Connect and
+the Play Console. The tag's version becomes the app's version; the build
+number is one more than the newest one in the store. Only tags start these
+builds, never a push or a pull request, and the signing keys and store logins
+are kept in Codemagic, not in the repo. Keep `codemagic.yaml` plain ASCII,
+Codemagic does not read anything else.
+
 To build the package locally:
 
 ```bash
@@ -437,6 +447,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `install.sh` | Downloads a release on the Pi and runs its `setup.sh` (attached to every release) |
 | `tools/package.mjs`, `tools/bundle.mjs` | `npm run package`: the release package; `bundle.mjs` lists the files that go to the Pi, for the package and for `npm run deploy` |
 | `.github/workflows/release.yml` | Builds the package and attaches it and `install.sh` to each release |
+| `codemagic.yaml` | Builds the apps for the stores on a release tag and uploads them for testing |
 | `.github/workflows/android-test.yml` | Started by hand: a test APK of the app, to install on an Android phone (a debug build, kept for a week) |
 | `.github/workflows/test.yml` | Tests and type check on every pull request and every push to `main` |
 | `tools/` | Preview of the scene, and the pixel art as text → sprite sheets (the one Python tool, it needs `pip install -r requirements.txt`); build and test scripts |

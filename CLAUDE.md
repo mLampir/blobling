@@ -53,9 +53,10 @@ Where to look first:
   The other adult forms, every form of a later line, and all rules for getting
   a form appear only in [docs/pets.md](docs/pets.md), folded shut.
 - **No personal data in the repo:** no names, addresses, hostnames, IPs,
-  tokens or keys. The one exception is the public contact in the privacy
-  policy and support page (`docs/privacy*.md`, `docs/support*.md`), which the stores
-  require.
+  tokens or keys. The one exception is the app's public contact: in the
+  privacy policy and support page (`docs/privacy*.md`, `docs/support*.md`),
+  which the stores require, and its address as the recipient of failed builds
+  in `codemagic.yaml`.
   `config.ini` holds local settings and is not in Git;
   `config.example.ini` is the template.
 - **The app explains itself.** If something in the app needs a sentence to
@@ -77,7 +78,7 @@ Docs are part of the change, not a follow-up:
 | A setting is added or changed | `config.example.ini` and the *Configuration* table in the README |
 | Hardware or wiring | [docs/hardware.md](docs/hardware.md) |
 | What the app stores, sends over the network, or asks permission for (a new server, permission, data kind or backup behavior) | [docs/privacy.md](docs/privacy.md) and `privacy.de.md` (date at the top); remind the owner that the data declarations in Google Play (*Data safety*) and App Store Connect (*App Privacy*) need the same change |
-| The contact address | `docs/privacy*.md` and `docs/support*.md` |
+| The contact address | `docs/privacy*.md`, `docs/support*.md` and `codemagic.yaml` |
 | How the scene looks | Regenerate `docs/pet_preview.png` with `--spoiler-free` (below) |
 | How a form of the pet looks | Regenerate `docs/images/pets/` (below) |
 
