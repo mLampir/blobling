@@ -20,3 +20,10 @@ dist/
 
 # Pictures for the app icons, drawn by npm run app:icons
 app/native/
+
+# Signing keys and store logins live in Codemagic only (codemagic.yaml), never in the repo
+*.jks
+*.keystore
+*.p8
+*.p12
+*.mobileprovision

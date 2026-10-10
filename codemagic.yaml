@@ -1,0 +1,200 @@
+# Builds the apps for the stores on Codemagic (https://codemagic.io) and uploads them, iOS to
+# TestFlight and Android to the internal test track of Google Play (README, Releases).
+#
+# Only a tag like v1.2.0 starts a build: no pushes, no pull requests, so a change from a fork never
+# runs with the signing keys. The keys and the store logins live in Codemagic only (the app's
+# environment groups, its code signing identities and the App Store Connect integration); this
+# file names them but holds none of them. A build only reaches testers; releasing it to everyone
+# is done by hand in App Store Connect and the Play Console.
+#
+# Both run on the Mac (mac_mini_m2), the machine the free build minutes are for.
+#
+# This file must stay pure ASCII: Codemagic reads it as Latin-1, so an arrow or a dash outside
+# ASCII breaks it ("Invalid character").
+#
+# Build numbers come from the stores, never from a guess: if a store cannot be asked (before the
+# very first upload, or with wrong credentials), the build stops. BUILD_NUMBER_OVERRIDE, set when
+# starting a build by hand, gives the number instead.
+
+definitions:
+  triggering: &triggering
+    events:
+      - tag
+    tag_patterns:
+      - pattern: "v*"
+        include: true
+    # a second tag must not cancel a release that is still uploading
+    cancel_previous_builds: false
+
+  environment: &environment
+    node: "22"
+    java: "21"
+    # pinned: a floating toolchain could change the build without a commit
+    xcode: 26.4.1
+
+  scripts:
+    - &install
+      name: Install
+      script: npm ci --no-audit --no-fund
+    - &test
+      name: Tests and type check
+      script: npm test && npm run check
+    - &version
+      name: Version from the tag
+      script: |
+        set -e
+        # v1.2.0 -> 1.2.0 for the stores; a build started by hand needs a tag as well
+        VERSION="${CM_TAG#v}"
+        case "$VERSION" in
+          [0-9]*.[0-9]*.[0-9]*) ;;
+          *) echo "ERROR: '$CM_TAG' is not a release tag like v1.2.0"; exit 1 ;;
+        esac
+        echo "VERSION=$VERSION" >> "$CM_ENV"
+
+  publishing: &failure_email
+    email:
+      recipients:
+        - blobling@lampir.at
+      notify:
+        success: false
+        failure: true
+
+workflows:
+  ios-release:
+    name: iOS to TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    triggering: *triggering
+    integrations:
+      app_store_connect: Blobling
+    environment:
+      <<: *environment
+      groups:
+        # APP_STORE_APPLE_ID: the app's numeric Apple ID (App Store Connect, App Information)
+        - blobling_ios
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: at.lampir.blobling
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        # Capacitor 8 takes its iOS dependencies from SwiftPM (CapApp-SPM)
+        - $HOME/Library/Caches/org.swift.swiftpm
+    scripts:
+      - *install
+      - *test
+      - *version
+      - name: Build the app and copy it into the iOS project
+        script: npm run build && npx cap sync ios
+      - name: Build number
+        script: |
+          set -e
+          if [ -n "$BUILD_NUMBER_OVERRIDE" ]; then
+            NEXT="$BUILD_NUMBER_OVERRIDE"
+          else
+            # takes the numeric Apple ID; given the bundle ID it fails
+            LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID")
+            case "$LATEST" in
+              ''|*[!0-9]*) echo "ERROR: no build number from TestFlight: '$LATEST'"; exit 1 ;;
+            esac
+            NEXT=$((LATEST + 1))
+          fi
+          echo "BUILD=$NEXT" >> "$CM_ENV"
+          echo "Build number: $NEXT"
+      - name: Build the ipa
+        script: |
+          set -e
+          xcode-project use-profiles
+          xcode-project build-ipa \
+            --project app/ios/App/App.xcodeproj \
+            --scheme App \
+            --archive-xcargs "MARKETING_VERSION=$VERSION CURRENT_PROJECT_VERSION=$BUILD"
+      - name: Check the ipa
+        script: |
+          set -e
+          # the version that is in the binary, not the one meant for it
+          IPA=$(find build/ios/ipa -name "*.ipa" | head -1)
+          [ -n "$IPA" ] || { echo "ERROR: no ipa in build/ios/ipa"; exit 1; }
+          unzip -p "$IPA" "Payload/*.app/Info.plist" > /tmp/built-info.plist
+          SHORT=$(plutil -extract CFBundleShortVersionString raw /tmp/built-info.plist)
+          NUMBER=$(plutil -extract CFBundleVersion raw /tmp/built-info.plist)
+          echo "ipa: $SHORT ($NUMBER)"
+          if [ "$SHORT" != "$VERSION" ] || [ "$NUMBER" != "$BUILD" ]; then
+            echo "ERROR: expected $VERSION ($BUILD)"; exit 1
+          fi
+          # a library built for a newer iOS than the app supports crashes it at launch there
+          LOG=$(ls -t /tmp/xcodebuild_logs/*.log 2>/dev/null | head -1)
+          if [ -n "$LOG" ] && grep -E "was built for newer '?iOS.*'? version" "$LOG"; then
+            echo "ERROR: a dependency is built for a newer iOS than the deployment target"; exit 1
+          fi
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      <<: *failure_email
+      app_store_connect:
+        auth: integration
+
+  android-release:
+    name: Android to Google Play (internal)
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    triggering: *triggering
+    environment:
+      <<: *environment
+      groups:
+        # GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: the service account's JSON key
+        - blobling_android
+      android_signing:
+        - blobling_upload
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.gradle/caches
+        - $HOME/.gradle/wrapper
+    scripts:
+      - *install
+      - *test
+      - *version
+      - name: Build the app and copy it into the Android project
+        script: npm run build && npx cap sync android
+      - name: Build number
+        script: |
+          set -e
+          if [ -n "$BUILD_NUMBER_OVERRIDE" ]; then
+            NEXT="$BUILD_NUMBER_OVERRIDE"
+          else
+            # only sees builds that sit in one of these tracks; one outside them fails at upload
+            LATEST=$(google-play get-latest-build-number --package-name at.lampir.blobling \
+              --tracks internal alpha beta production)
+            case "$LATEST" in
+              ''|*[!0-9]*) echo "ERROR: no build number from Google Play: '$LATEST'"; exit 1 ;;
+            esac
+            NEXT=$((LATEST + 1))
+          fi
+          echo "BUILD=$NEXT" >> "$CM_ENV"
+          echo "Build number: $NEXT"
+      - name: Build the app bundle
+        script: |
+          set -e
+          cd app/android
+          ./gradlew bundleRelease -PversionCode="$BUILD" -PversionName="$VERSION"
+      - name: Check the app bundle
+        script: |
+          set -e
+          AAB=$(find app/android/app/build/outputs/bundle/release -name "*.aab" | head -1)
+          [ -n "$AAB" ] || { echo "ERROR: no aab in app/android/app/build/outputs/bundle/release"; exit 1; }
+          # an unsigned bundle uploads, but cannot be released; MANIFEST.MF is in every bundle
+          if ! unzip -l "$AAB" | grep -qE 'META-INF/.*\.(RSA|DSA|EC)$'; then
+            echo "ERROR: the bundle is not signed, check the code signing identity blobling_upload"; exit 1
+          fi
+          echo "OK: signed"
+    artifacts:
+      - app/android/app/build/outputs/bundle/release/*.aab
+    publishing:
+      <<: *failure_email
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        # while the app is not out yet, Google Play only takes drafts; also the last check by hand
+        submit_as_draft: true

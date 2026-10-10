@@ -7,8 +7,9 @@ android {
         applicationId "at.lampir.blobling"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        // set from the tag when Codemagic builds a release (codemagic.yaml)
+        versionCode = (project.findProperty('versionCode') ?: '1').toInteger()
+        versionName = project.findProperty('versionName') ?: '1.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -27,6 +28,19 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    // On Codemagic the upload key comes in through these variables (codemagic.yaml); without them,
+    // as in Android Studio, the release build is signed there as usual.
+    if (System.getenv('CM_KEYSTORE_PATH')) {
+        signingConfigs {
+            release {
+                storeFile file(System.getenv('CM_KEYSTORE_PATH'))
+                storePassword System.getenv('CM_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('CM_KEY_ALIAS')
+                keyPassword System.getenv('CM_KEY_PASSWORD')
+            }
+        }
+        buildTypes.release.signingConfig = signingConfigs.release
     }
 }
 
