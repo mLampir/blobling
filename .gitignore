@@ -1,0 +1,22 @@
+# Local configuration – never commit
+config.ini
+# Personal notes for Claude (own Pi, own rules) – see CLAUDE.md
+CLAUDE.local.md
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Runtime data does not belong in the repo
+state.json
+pet.json
+devdata/
+
+# Node: dependencies and what the build produces
+node_modules/
+dist/
+
+# Pictures for the app icons, drawn by npm run app:icons
+app/native/

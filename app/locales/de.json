@@ -1,0 +1,583 @@
+{
+  "language": {
+    "name": "Deutsch"
+  },
+  "app": {
+    "name": "Blobling"
+  },
+  "error": {
+    "unknown_action": "Unbekannte Aktion.",
+    "unknown_food": "Unbekanntes Essen.",
+    "unknown_move": "Unbekannter Spielzug.",
+    "unknown_trick": "Unbekanntes Kunststück.",
+    "unknown_area": "Unbekanntes Ziel.",
+    "unknown_seed": "Unbekannter Samen.",
+    "unknown_hat": "Unbekannter Hut.",
+    "unknown_deco": "Unbekannte Deko.",
+    "no_egg": "Dieses Ei hast du nicht.",
+    "invalid_throw": "Ungültiger Wurf.",
+    "invalid_id": "Ungültige Anfrage-ID.",
+    "confirm": "Bitte bestätigen.",
+    "name_length": "Name: 1 bis {max} Zeichen.",
+    "unknown_mode": "Unbekannter Modus.",
+    "invalid_value": "Ungültiger Wert.",
+    "invalid_settings": "Ungültige Einstellungen.",
+    "invalid_time": "Uhrzeit bitte als HH:MM.",
+    "invalid_night_action": "Ungültige Einstellung für den Nachtmodus.",
+    "invalid_brightness": "Helligkeit: 1 bis 100.",
+    "http": "Fehler {status}",
+    "unknown_exercise": "Unbekannte Übung.",
+    "unknown_language": "Unbekannte Sprache.",
+    "invalid_location": "Bitte einen Breitengrad von -90 bis 90 und einen Längengrad von -180 bis 180 eingeben.",
+    "no_update": "Gerade gibt es kein Update zu installieren.",
+    "not_a_save": "Das ist kein Spielstand eines Pets."
+  },
+  "stages": {
+    "egg": "Ei",
+    "baby": "Baby",
+    "child": "Kind",
+    "adult": "Erwachsen"
+  },
+  "species": {
+    "blob": "Blob",
+    "sneezle": "Sneezle",
+    "flicker": "Flicker",
+    "cyclopuff": "Cyclopuff",
+    "grumpcap": "Grumpcap",
+    "lumoth": "Lumoth",
+    "ember": "Glut",
+    "lanternling": "Lanternling",
+    "flarelet": "Flarelet",
+    "stone": "Stein",
+    "glimmerock": "Glimmerock",
+    "bouldergrin": "Bouldergrin"
+  },
+  "snacks": {
+    "cookie": "Keks",
+    "icecream": "Eis",
+    "fruit": "Obst"
+  },
+  "tricks": {
+    "bow": "Verbeugen",
+    "spin": "Pirouette",
+    "dance": "Tanzen",
+    "flip": "Salto"
+  },
+  "skills": {
+    "strength": "Kraft",
+    "speed": "Tempo",
+    "smarts": "Köpfchen"
+  },
+  "areas": {
+    "meadow": {
+      "name": "Wiese",
+      "away": "unterwegs auf der Wiese",
+      "trip": "Ausflug auf die Wiese 🎒"
+    },
+    "forest": {
+      "name": "Pilzwald",
+      "away": "unterwegs im Pilzwald",
+      "trip": "Ausflug in den Pilzwald 🎒"
+    },
+    "stream": {
+      "name": "Bach",
+      "away": "unterwegs am Bach",
+      "trip": "Ausflug an den Bach 🎒"
+    },
+    "cave": {
+      "name": "Höhle",
+      "away": "unterwegs in der Höhle",
+      "trip": "Ausflug in die Höhle 🎒"
+    },
+    "mountain": {
+      "name": "Berg",
+      "away": "unterwegs auf dem Berg",
+      "trip": "Ausflug auf den Berg 🎒"
+    }
+  },
+  "foes": {
+    "bumblebop": "Bumblebop",
+    "diggle": "Diggle",
+    "prickleroll": "Prickleroll",
+    "drizzleshell": "Drizzleshell",
+    "ribbop": "Ribbop",
+    "sidleclaw": "Sidleclaw",
+    "echoflit": "Echoflit",
+    "glintbug": "Glintbug",
+    "tumblesnow": "Tumblesnow",
+    "craghorn": "Craghorn",
+    "puddlin": "Puddlin",
+    "carrotnose": "Carrotnose",
+    "duskwisp": "Duskwisp",
+    "crowcomb": "Crowcomb",
+    "mosswart": "Mosswart",
+    "ripplesprite": "Ripplesprite",
+    "gloompeep": "Gloompeep",
+    "frostfluff": "Frostfluff"
+  },
+  "items": {
+    "seed_berry": "Beerensamen",
+    "seed_sunflower": "Sonnenblumenkern",
+    "seed_cherry": "Kicherkirschkern",
+    "seed_herb": "Heilkrautsamen",
+    "flag": "Wimpel",
+    "windmill": "Windrad",
+    "lantern": "Laterne",
+    "glowshroom": "Glühpilz",
+    "snailshell": "Schneckenhaus",
+    "cattail": "Rohrkolben",
+    "boat": "Papierschiffchen",
+    "crystal": "Kristall",
+    "cairn": "Steinmännchen",
+    "emberstone": "Glutstein",
+    "snowman": "Schneemann",
+    "daisy": "Blumenkranz",
+    "leaf": "Blatt",
+    "cap": "Pilzhut",
+    "bobble": "Bommelmütze",
+    "lily": "Seerose",
+    "batears": "Fledermausohren",
+    "edelweiss": "Edelweiß",
+    "egg_blob": "Schleim-Ei",
+    "egg_ember": "Glut-Ei",
+    "egg_stone": "Stein-Ei"
+  },
+  "pack": {
+    "snack": "Snack",
+    "ball": "Ball"
+  },
+  "plants": {
+    "berry": "Beerenstrauch",
+    "sunflower": "Sonnenblume",
+    "cherry": "Kicherkirsche",
+    "herb": "Heilkraut"
+  },
+  "fruits": {
+    "berry": "Beere",
+    "sunflower": "Sonnenblumenkern",
+    "cherry": "Kicherkirsche",
+    "herb": "Heilblüte"
+  },
+  "pet": {
+    "default_name": "Blobby",
+    "rejected": {
+      "asleep": "{name} schläft gerade.",
+      "full": "{name} ist satt.",
+      "too_many_snacks": "Genug Süßes für jetzt.",
+      "tired": "{name} ist zu müde zum Spielen.",
+      "tired_trick": "{name} ist zu müde zum Üben.",
+      "rest_trick": "{name} braucht eine kurze Pause vor dem nächsten Trick.",
+      "already_asleep": "{name} schläft schon.",
+      "not_tired": "{name} ist noch gar nicht müde.",
+      "awake": "{name} ist schon wach.",
+      "already_clean": "Alles sauber.",
+      "not_sick": "{name} ist gar nicht krank – bäh!",
+      "egg": "Das Ei muss erst schlüpfen.",
+      "not_ready": "{name} ist noch nicht so weit.",
+      "no_game": "Gerade läuft kein Spiel.",
+      "away": "{name} ist unterwegs.",
+      "not_away": "{name} ist doch daheim.",
+      "too_young": "{name} ist noch zu klein für Ausflüge.",
+      "sick_trip": "{name} ist krank und bleibt lieber daheim.",
+      "hungry_trip": "{name} ist zu hungrig für einen Ausflug.",
+      "tired_trip": "{name} ist zu müde für einen Ausflug.",
+      "too_late": "Dafür ist es heute zu spät.",
+      "thunder": "Bei Gewitter geht {name} nicht raus.",
+      "locked": "Den Weg dorthin kennt {name} noch nicht.",
+      "plant_busy": "Da wächst schon etwas.",
+      "no_item": "Das hast du nicht.",
+      "unpack_first": "Erst den Rucksack auspacken.",
+      "nothing_packed": "Der Rucksack ist leer.",
+      "tired_train": "{name} ist zu müde zum Trainieren.",
+      "rest_train": "{name} braucht eine kurze Pause vor der nächsten Übung.",
+      "no_training": "Zu spät – die Übung ist vorbei.",
+      "no_nest": "Da liegt kein Ei in einem Nest.",
+      "no_gift": "Da liegt kein Geschenk."
+    }
+  },
+  "page": {
+    "diary": "Tagebuch",
+    "close": "Schließen",
+    "close_game": "Spiel schließen",
+    "hatch": "✨ Ausbrüten",
+    "evolve": "✨ Entwickeln",
+    "evolve_hold": "Gedrückt halten, bis der Knopf gefüllt ist",
+    "evolved": "{name} {what}",
+    "recall": "🏠 Heimrufen",
+    "unpack": "🎒 Auspacken",
+    "collect": "🥚 Ei einsammeln",
+    "collected": "{egg} eingesammelt – es liegt jetzt bei deinen Funden",
+    "unwrap": "🎁 Geschenk auspacken",
+    "unwrapped_fruit": "Drin war: {fruit} – {name} hat es gleich gegessen",
+    "unwrapped_seed": "Drin war: {seed} – es liegt jetzt bei deinen Funden",
+    "rename": "✎ Umbenennen",
+    "rename_prompt": "Neuer Name",
+    "name_prompt": "Es ist geschlüpft! Wie soll es heißen?",
+    "new_egg": "🥚 Mit einem normalen Ei neu anfangen",
+    "new_egg_ok": "Neu anfangen",
+    "new_egg_confirm": "Wirklich neu anfangen? {name} zieht in die Ahnengalerie um, und ein normales Ei fängt bei null an. Deine Funde bleiben.",
+    "brood_ok": "Ausbrüten",
+    "brood_confirm": "{egg} wirklich ausbrüten? {name} zieht in die Ahnengalerie um. Deine Funde bleiben.",
+    "new_egg_done": "Ein neues Ei liegt bereit 🥚",
+    "things": {
+      "meal": "Mahlzeit",
+      "ball": "Ball",
+      "medicine": "Medizin",
+      "trip": "Ausflug",
+      "seeds": "Samen",
+      "seed_count": "Samen ×{n}",
+      "sponge": "Schwamm",
+      "baton": "Taktstock"
+    },
+    "tools": {
+      "game": "Raten",
+      "tricks": "Tricks",
+      "train": "Training"
+    },
+    "petting": {
+      "warmed": "{name} ist wieder warm"
+    },
+    "trick": {
+      "note": "Ob es klappt, zeigt die Anzeige. Üben wirkt am besten über mehrere Tage verteilt.",
+      "learned": "{name} kann jetzt {trick}! 🎉",
+      "known": "{trick}! ⭐",
+      "fail": "{trick}: klappt noch nicht ganz",
+      "ok": "{trick}: das war schon gut!",
+      "unknown": "Diese Bewegung kennt {name} nicht.",
+      "hint": "Nimm den Taktstock aus der Leiste und zeichne die Bewegung über das Pet."
+    },
+    "game": {
+      "left": "links",
+      "right": "rechts",
+      "ask": "Wohin springt es?",
+      "jumped": "Gesprungen: {side} – {result}",
+      "hit": "richtig! ✓",
+      "miss": "daneben ✗",
+      "round": "Runde {round} von {rounds} · {wins} richtig",
+      "result": "{result} von {rounds} richtig –\n{verdict}",
+      "won": "gewonnen! 🎉",
+      "lost": "nächstes Mal!"
+    },
+    "dialog": {
+      "cancel": "Abbrechen",
+      "save": "Speichern"
+    },
+    "welcome": {
+      "text": "{name} war {time} allein. In der Zeit:",
+      "ok": "Schön"
+    },
+    "tabs": {
+      "history": "Verlauf",
+      "statistics": "Statistik",
+      "finds": "Fundstücke",
+      "gallery": "Ahnen",
+      "more": "Mehr"
+    },
+    "headings": {
+      "weather": "Wetter"
+    },
+    "offline": {
+      "title": "Anzeige nicht erreichbar",
+      "hint": "Bist du im WLAN zu Hause?"
+    },
+    "stats": {
+      "satiety": "Sättigung",
+      "mood": "Laune",
+      "energy": "Energie",
+      "hygiene": "Sauberkeit",
+      "health": "Gesundheit"
+    },
+    "moods": {
+      "normal": "zufrieden",
+      "happy": "glücklich",
+      "sad": "traurig",
+      "hungry": "hungrig",
+      "tired": "müde",
+      "dirty": "fühlt sich schmutzig",
+      "sick": "krank"
+    },
+    "status": {
+      "egg": "Ein Ei – Wärme lässt es früher schlüpfen",
+      "line": "{form} · {age} · {doing}",
+      "asleep": "schläft",
+      "cold": "friert"
+    },
+    "age": {
+      "one": "1 Tag alt",
+      "other": "{n} Tage alt"
+    },
+    "days": {
+      "one": "1 Tag",
+      "other": "{n} Tage"
+    },
+    "duration": {
+      "minutes": "{n} min",
+      "hours": "{n} Std.",
+      "days": {
+        "one": "1 Tag",
+        "other": "{n} Tagen"
+      }
+    },
+    "weight": {
+      "line": "{weight} g (ideal {ideal} g){note} · Bindung",
+      "heavy": " – zu schwer, braucht Bewegung",
+      "light": " – zu leicht"
+    },
+    "next": {
+      "baby": "Schlüpft in ca. {time}",
+      "ready_asleep": "Bereit zum Entwickeln – erst, wenn es wach ist.",
+      "ready": "Bereit! Halte den Knopf gedrückt, wenn du vor der Anzeige stehst – sonst passiert es in {time} von selbst."
+    },
+    "trip": {
+      "out": "Zurück in ca. {time}",
+      "returning": "Am Heimweg – zurück in ca. {time}",
+      "backpack": "im Rucksack: {items}",
+      "full_asleep": "Der Rucksack ist noch voll – auspacken, wenn es wach ist.",
+      "back": "{name} ist zurück und hat etwas mitgebracht. Auspacken, wenn du vor der Anzeige stehst.",
+      "heading_home": "{name} macht sich auf den Heimweg",
+      "brought": "Mitgebracht: {items}"
+    },
+    "tap": {
+      "choice": "{choice} – in die Szene ziehen"
+    },
+    "finds": {
+      "ripe": "eine Frucht ist reif",
+      "ripening": "die nächste Frucht reift",
+      "growing": "wächst noch",
+      "left": {
+        "one": "noch 1 Frucht",
+        "other": "noch {n} Früchte"
+      },
+      "in_bag": "×{n} · liegt in der Tasche",
+      "hat_on": "aufsetzen",
+      "hat_off": "abnehmen",
+      "deco_on": "aufstellen",
+      "deco_off": "wegräumen",
+      "egg": "bleibt, bis du es ausbrütest",
+      "egg_from": "gelegt von {name}",
+      "friend": "💛 {pet}",
+      "friend_visits": "Freundschaft · Besuche: {n} von {needed}",
+      "friend_here": "Freundschaft · gerade zu Besuch",
+      "egg_brood": "ausbrüten",
+      "effects": {
+        "growth": "Ei, Baby und Kind wachsen schneller"
+      }
+    },
+    "kinds": {
+      "hat": "Hut",
+      "deco": "Deko",
+      "seed": "Samen"
+    },
+    "events": {
+      "meal": "Mahlzeit",
+      "snack": "Snack",
+      "cookie": "Keks 🍪",
+      "icecream": "Eis 🍦",
+      "fruit": "Obst 🍎",
+      "play": "gespielt",
+      "sleep": "ins Bett gebracht",
+      "wake": "geweckt",
+      "clean": "geputzt",
+      "pet": "gestreichelt",
+      "medicine": "Medizin",
+      "heart": "Herz aufgefangen ❤",
+      "away": "war bei Oma (Pi war lange aus)",
+      "new_egg": "ein neues Ei ist da",
+      "start": "Links oder rechts? gespielt",
+      "unpack": "Rucksack ausgepackt",
+      "wild_friend": "hat {pet} seine Kunststücke gezeigt und sich angefreundet 💛",
+      "wild_shrug": "hat {pet} seine Kunststücke gezeigt – nicht beeindruckt",
+      "visit": "{pet} kam zu Besuch",
+      "nest": "hat mit seinem Freund ein Nest gebaut – darin liegt ein Ei 🥚",
+      "collect": "Ei eingesammelt",
+      "gift": "{pet} hat ein Geschenk mitgebracht 🎁",
+      "unwrap": "Geschenk ausgepackt: {what}",
+      "evolve": "Entwickeln",
+      "hatched": "ist geschlüpft 🐣",
+      "child": "ist jetzt ein Kind",
+      "adult": "ist jetzt ein {species} ✨",
+      "learned": "kann jetzt {trick} ⭐",
+      "practiced": "{trick} geübt",
+      "solo_ball": "hat allein mit dem Ball gespielt",
+      "solo_trick": "hat allein {trick} geübt",
+      "find": "hat etwas gefunden: {item}",
+      "picked": "hat sich eine Frucht geholt: {fruit}",
+      "planted": "{seed} gepflanzt",
+      "hat": "Hut: {item}",
+      "hat_off": "Hut abgenommen",
+      "deco": "Deko umgestellt: {item}",
+      "trip": "Ausflug",
+      "trip_recall": "heimgerufen",
+      "trip_home": "ist wieder daheim 🏠",
+      "trip_tired": "ist müde umgekehrt",
+      "refused": "{text} (wollte nicht)",
+      "failed": "{text} (ging nicht)",
+      "trained": "{skill} trainiert",
+      "battle_win": "Rauferei ({foe}): verjagt 💪",
+      "battle_lose": "Rauferei ({foe}): verloren",
+      "battle_draw": "Rauferei ({foe}): keiner gab nach",
+      "battle_ball": "{foe} ist dem Ball nachgelaufen",
+      "trip_snack": "hat den Snack gegessen, schon besser",
+      "trip_beaten": "hatte genug und ist umgekehrt",
+      "guardian": "ist am Wächter vorbeigekommen: {foe} 🏆",
+      "unlock": "kennt jetzt einen neuen Weg: {area} 🗺"
+    },
+    "statistics": {
+      "meals": "Mahlzeiten",
+      "snacks": "Snacks",
+      "plays": "Gespielt",
+      "game": "Links oder rechts?",
+      "game_value": "{games} Spiele, {won} gewonnen",
+      "tricks": "Kunststücke",
+      "tricks_value": "{tricks} ({n}× geübt)",
+      "tricks_none": "noch keines",
+      "cleanups": "Geputzt",
+      "pets": "Gestreichelt",
+      "trips": "Ausflüge",
+      "fruits": "Früchte gefressen",
+      "hearts": "Herzen",
+      "favorite": "Lieblingssnack",
+      "favorite_unknown": "noch nicht entdeckt",
+      "trainings": "Trainiert",
+      "battles": "Raufereien",
+      "battles_value": "{battles}, {won} gewonnen",
+      "guardians": "Wächter",
+      "guardians_value": "an {passed} von {all} vorbei"
+    },
+    "gallery": {
+      "entry": "{form} · {age} · seit {date}"
+    },
+    "app": {
+      "location_none": "Noch kein Ort: Dein Pet hat kein Wetter, und die Sonne richtet sich nach deiner Zeitzone.",
+      "location_set": "Wetter für {latitude}, {longitude}.",
+      "locate_failed": "Dein Ort ließ sich nicht herausfinden.",
+      "connect_note": "Blobling gibt es auch als LED-Display zum Selberbauen.",
+      "connect": "Mit dem Display verbinden",
+      "connect_prompt": "Adresse des Displays, z. B. raspberrypi.local oder blobling.local",
+      "connect_ok": "Verbinden",
+      "connect_failed": "Unter {address} antwortet kein Display.",
+      "connected": "Verbunden mit dem Display unter {address}.",
+      "disconnect": "Zurück zum Pet auf dem Handy",
+      "build_link": "So baust du eines",
+      "place_off": "Aus",
+      "place_fixed": "Fester Ort",
+      "place_live": "Wandert mit",
+      "display_heading": "Eigenes LED-Display",
+      "location_live": "Wetter von dort, wo du gerade bist."
+    },
+    "train": {
+      "hint": "Such eine Übung aus",
+      "note": "Schau beim Training auf die Anzeige. Training wirkt am besten über mehrere Tage verteilt.",
+      "how": {
+        "strength": "den Ball werfen",
+        "speed": "aufs Signal reagieren",
+        "smarts": "die Hüpfer merken"
+      },
+      "strength": "Wisch den Ball so fest du kannst nach oben",
+      "speed": "Schau auf die Anzeige – tippe, sobald das Signal aufleuchtet!",
+      "tap": "Tippen!",
+      "smarts_watch": "Schau auf die Anzeige und merk dir, wohin es hüpft",
+      "smarts_go": "Jetzt die gleichen Richtungen wischen",
+      "gained": "{skill} +{points}",
+      "nothing": "{skill}: genug davon für jetzt – später nochmal",
+      "early": "Zu früh – warte aufs Signal",
+      "smarts_result": "{right} von {steps} richtig",
+      "back": "Zurück"
+    },
+    "pack": {
+      "where": "Wohin?",
+      "what": "Was kommt in den Rucksack?",
+      "note": "Ein Snack heilt unterwegs ein Herz, ein Ball lenkt einen Gegner ab (aber keinen Wächter).",
+      "locked": "Der Weg dorthin führt am Wächter vorbei: {area}.",
+      "guardian": "Am Ende dieses Wegs wartet ein Wächter.",
+      "go": "Losschicken"
+    },
+    "wake": "Aufwecken",
+    "sleep": "Schlafen",
+    "history_empty": "Noch ist nichts passiert.",
+    "hint": {
+      "sponge": "Reib mit dem Schwamm über {name}",
+      "drag": "Zieh es auf {name} oder in die Szene",
+      "baton": "Zeichne einen Trick über {name}."
+    },
+    "needs": {
+      "satiety": "Zieh Futter auf {name}.",
+      "mood": "Spiel mit {name}, streichle es oder wirf ihm den Ball.",
+      "energy": "Schick {name} mit dem Knopf oben schlafen.",
+      "hygiene": "Reib mit dem Schwamm über {name}.",
+      "health": "Medizin hilft, wenn {name} krank ist; satt, sauber und ausgeschlafen hält gesund."
+    },
+    "adventure": {
+      "egg": "Abenteuer gibt es, sobald das Ei geschlüpft ist.",
+      "lead": "Was macht {name} heute?",
+      "away": "Unterwegs",
+      "tired": "Zu müde",
+      "too_young": "Noch zu jung",
+      "go": "Los",
+      "trip": "Rucksack packen und auf Erkundung schicken.",
+      "tricks": "{n} von {all} gelernt",
+      "train": "Kraft, Tempo und Köpfchen für die Ausflüge.",
+      "game": "Rate die Hand – ein kleines Spiel zu zweit."
+    },
+    "values": {
+      "weight": "Gewicht",
+      "ideal": "Ideal: {ideal} g",
+      "bond": "Bindung"
+    },
+    "nav": {
+      "adventure": "Abenteuer"
+    },
+    "more": {
+      "pet": "Pet",
+      "new_egg_note": "Deine Funde bleiben."
+    },
+    "gestures": {
+      "bow": "nach unten",
+      "spin": "ein runder Kreis",
+      "dance": "flach hin und her",
+      "flip": "nach oben"
+    }
+  },
+  "settings": {
+    "title": "LED-Matrix",
+    "preview": "Aktuelle Anzeige",
+    "mode": "Modus",
+    "mode_pet": "Pet",
+    "mode_off": "Aus",
+    "pet_hint": "Pet füttern und spielen:",
+    "pet_link": "Pet-Seite",
+    "no_location": "Wetter: noch kein Ort eingetragen (siehe Ort weiter unten).",
+    "brightness": "Helligkeit",
+    "night": "Nachtmodus",
+    "night_auto": "Nachts automatisch",
+    "night_hours": "Zeitraum",
+    "night_action": "Anzeige",
+    "night_dim": "gedimmt",
+    "night_off": "aus",
+    "night_brightness": "Helligkeit nachts",
+    "night_active_off": "Nachtmodus aktiv bis {end} – Anzeige aus",
+    "night_active_dim": "Nachtmodus aktiv bis {end} – gedimmt auf {brightness}",
+    "location": "Ort",
+    "latitude": "Breitengrad",
+    "longitude": "Längengrad",
+    "location_hint": "Für das Wetter sowie Sonnenauf- und -untergang, in Dezimalgrad, etwa 52.52 und 13.40. Eine Karten-App oder OpenStreetMap zeigt sie für einen Ort an. Süden und Westen sind negativ.",
+    "location_save": "Speichern",
+    "location_clear": "Entfernen",
+    "location_saved": "Ort gespeichert.",
+    "location_cleared": "Ort entfernt.",
+    "language": "Sprache",
+    "update": "Update",
+    "update_version": "Installiert: {version}.",
+    "update_current": "Auf dem neuesten Stand.",
+    "update_available": "Version {latest} ist verfügbar.",
+    "update_button": "Jetzt aktualisieren",
+    "update_running": "Wird aktualisiert … Das Panel ist kurz dunkel, und diese Seite lädt sich danach von selbst neu.",
+    "update_failed": "Das letzte Update ist fehlgeschlagen. Das Log zeigt warum: journalctl -u led-matrix-update",
+    "pet_save": "Spielstand",
+    "pet_save_hint": "Das Pet und seine Ahnen als Datei, zum Aufheben oder um sie auf ein anderes Display mitzunehmen.",
+    "pet_save_download": "Herunterladen",
+    "pet_save_load": "Laden",
+    "pet_save_confirm": "Das Pet aus {file} laden? {name} wird ersetzt (und einmal auf dem Pi als pet.before-load.json aufgehoben).",
+    "pet_save_loaded": "{name} ist wieder da."
+  }
+}

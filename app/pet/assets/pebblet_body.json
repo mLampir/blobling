@@ -1,0 +1,116 @@
+{
+ "frames": [
+  {
+   "filename": "pebblet_body idle 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 700
+  },
+  {
+   "filename": "pebblet_body idle 1",
+   "frame": {
+    "x": 32,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 700
+  },
+  {
+   "filename": "pebblet_body squash 2",
+   "frame": {
+    "x": 64,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 100
+  },
+  {
+   "filename": "pebblet_body stretch 3",
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 100
+  },
+  {
+   "filename": "pebblet_body flat 4",
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 100
+  },
+  {
+   "filename": "pebblet_body sleep 5",
+   "frame": {
+    "x": 160,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 1600
+  },
+  {
+   "filename": "pebblet_body sleep 6",
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 1600
+  }
+ ],
+ "meta": {
+  "app": "tools/build_blob_sprites.py",
+  "image": "pebblet_body.png",
+  "size": {
+   "w": 224,
+   "h": 32
+  },
+  "frameTags": [
+   {
+    "name": "idle",
+    "from": 0,
+    "to": 1,
+    "direction": "forward"
+   },
+   {
+    "name": "squash",
+    "from": 2,
+    "to": 2,
+    "direction": "forward"
+   },
+   {
+    "name": "stretch",
+    "from": 3,
+    "to": 3,
+    "direction": "forward"
+   },
+   {
+    "name": "flat",
+    "from": 4,
+    "to": 4,
+    "direction": "forward"
+   },
+   {
+    "name": "sleep",
+    "from": 5,
+    "to": 6,
+    "direction": "forward"
+   }
+  ],
+  "faceTop": 2,
+  "faceCenter": "bottom"
+ }
+}

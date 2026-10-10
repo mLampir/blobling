@@ -1,0 +1,24 @@
+[Unit]
+Description=LED matrix display (web interface + display loop)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Root is required: the matrix library accesses the GPIO registers directly,
+# and the web interface listens on port 80.
+User=root
+# The server finds the pages, the language files, the sprite sheets and the
+# panel driver from this folder.
+WorkingDirectory=/opt/led-matrix
+ExecStart=/usr/bin/node --enable-source-maps /opt/led-matrix/dist/pi/server.mjs
+Restart=always
+RestartSec=5
+
+# A little hardening: system and home directories are read-only.
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

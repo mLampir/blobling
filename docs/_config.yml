@@ -1,0 +1,5 @@
+# GitHub Pages serves this folder, for the privacy policy
+# the app stores link to. These pages show template code that Jekyll would
+# try to run, so they are left out of the site.
+exclude:
+  - translating.md

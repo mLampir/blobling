@@ -1,0 +1,54 @@
+# Builds the package for the Pi and attaches it to the release, together with install.sh, which
+# downloads it (README, Quickstart).
+#
+# Runs when a release is published on GitHub. The tests and the type check run first, so a release
+# never carries a package whose tests fail. Run by hand (Actions → Release → Run workflow), it
+# builds the package as a workflow artifact only, without a release, to try it out.
+
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Tests and type check
+        run: npm test && npm run check
+
+      - name: Build the package
+        env:
+          VERSION: ${{ github.event_name == 'release' && github.event.release.tag_name || format('dev-{0}', github.sha) }}
+        run: npm run package -- --version "$VERSION" --repo "$GITHUB_REPOSITORY"
+
+      - name: Attach to the release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG" dist/blobling-*.tar.gz dist/blobling-*.tar.gz.sha256 dist/install.sh --clobber
+
+      - name: Keep as a workflow artifact
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: blobling
+          path: |
+            dist/blobling-*.tar.gz
+            dist/blobling-*.tar.gz.sha256
+            dist/install.sh

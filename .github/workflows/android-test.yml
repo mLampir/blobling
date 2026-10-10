@@ -1,0 +1,47 @@
+# Builds a test APK of the app, to install on an Android phone by hand. Runs only when started
+# by hand (Actions -> Android test build -> Run workflow, with the branch to build); the APK is
+# kept as a workflow artifact for a week. It is a debug build, signed with a debug key only, not for the store
+# (the store builds run on Codemagic). It installs as "Blobling Test", next to the store app.
+
+name: Android test build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22  # the Capacitor CLI needs 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # The same debug key for every run, so a new test APK installs over the last one and the
+      # pet in it stays. Gradle makes the key when there is none; GitHub drops the cache after a
+      # week without a run, and the next APK then has to replace the test app once.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: android-debug-keystore
+
+      - run: npm ci --no-audit --no-fund
+
+      - run: npm run app:sync
+
+      - name: Build the APK
+        working-directory: app/android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: blobling-test-${{ github.run_number }}  # a branch name may hold a slash, which is not allowed here
+          path: app/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7

@@ -1,0 +1,1885 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0d1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Blobling" data-t-content="app.name">
+<link rel="icon" href="/pet-icon.png">
+<link rel="apple-touch-icon" href="/pet-icon.png">
+<title data-t="app.name"></title>
+<style>
+  /* The pet is the app: its scene fills the top of the screen and is touched directly (stroke it,
+     rub it with the sponge, hand it food from the tray). Below it, what it needs and the tray;
+     at the bottom the tabs: the pet, adventures, the diary and the rest. One dark night-sky look,
+     the scene's own. */
+  :root {
+    --night: #0d1220; --surface: #161d30; --raised: #1f2840; --line: #2a3452;
+    --text: #eef1f8; --muted: #8f9ab3; --accent: #ffb347; --accent-ink: #2a1600; --danger: #ff6b6b;
+    --satiety: #ff9f5a; --mood: #ff7aa8; --energy: #ffd34d; --hygiene: #5fd4f0; --health: #6fdc8c;
+    --round: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;
+    --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+    --safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--night); color: var(--text);
+    font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent; overflow: hidden; overscroll-behavior: none;
+    user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  }
+  [hidden] { display: none !important; }
+  button { font: inherit; color: var(--text); background: none; border: 0; padding: 0; cursor: pointer; }
+  button:disabled, .thing.locked { opacity: .4; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  img { -webkit-user-drag: none; }
+
+  main { height: 100dvh; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; position: relative; }
+  .view { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+
+  /* ---------- Home: the scene ---------- */
+  .home { display: flex; flex-direction: column; overflow: hidden; }
+  .hero {
+    position: relative; flex: 1 0 auto; min-height: min(100vw, 480px, calc(100dvh - 330px)); overflow: hidden;
+    border-radius: 0 0 30px 30px; touch-action: none; background: var(--sky, #1b2a4a); transition: background 1s;
+    container-type: size;
+  }
+  /* The scene (or the panel's picture) stands on the bottom; the sky goes on above it */
+  .scene {
+    position: absolute; left: 50%; bottom: 0; width: 100%; aspect-ratio: 1; image-rendering: pixelated; display: block;
+    transform: translateX(-50%);
+    /* on a tall screen it grows into the empty sky, losing a little at the sides */
+    width: clamp(100%, calc(100cqh - 100px), 125%);
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0 0 auto; height: calc(100px + var(--safe-top)); pointer-events: none;
+    background: linear-gradient(rgba(8, 11, 20, .6), transparent);
+  }
+  .hero.drop .fx { box-shadow: inset 0 0 0 3px var(--accent); border-radius: inherit; }
+  .hero-top {
+    position: absolute; z-index: 2; inset: 0 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    padding: calc(14px + var(--safe-top)) 16px 0; pointer-events: none;
+  }
+  .hero-top > * { min-width: 0; }
+  h1 { font: 700 26px/1.15 var(--round); margin: 0; text-shadow: 0 2px 8px rgba(0, 0, 0, .5); overflow-wrap: anywhere; }
+  .sub { margin: 2px 0 0; font-size: 13px; font-weight: 600; color: #d6dcec; text-shadow: 0 1px 6px rgba(0, 0, 0, .6); }
+  .pill {
+    pointer-events: auto; flex: none; height: 40px; padding: 0 14px 0 11px; border-radius: 20px; display: flex; align-items: center; gap: 7px;
+    background: rgba(13, 18, 32, .62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font-weight: 700; font-size: 14px;
+  }
+  .pill svg { width: 20px; height: 20px; color: var(--energy); }
+  .pill.wanted:not(:disabled) { box-shadow: 0 0 0 2px var(--energy); }
+  .fx { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+  .fx span { position: absolute; font-size: 22px; color: var(--mood); animation: float 1s ease-out forwards; }
+  .fx span.spark { width: 8px; height: 8px; border-radius: 50%; background: var(--energy); box-shadow: 0 0 8px var(--energy); }
+  .fx span.bubble { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--hygiene); background: rgba(95, 212, 240, .15); }
+  @keyframes float { from { transform: translate(-50%, -50%) scale(.6); opacity: 1; } to { transform: translate(-50%, -170%) scale(1.15); opacity: 0; } }
+
+  /* What the pet (or the app) has to say: at the top, over everything, gone again by itself */
+  .toast {
+    position: absolute; z-index: 35; left: 16px; right: 16px; top: calc(10px + var(--safe-top)); margin: 0;
+    padding: 12px 16px; border-radius: 16px; background: var(--raised); border: 1px solid var(--line);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .45); font-weight: 600; pointer-events: none;
+    opacity: 0; transform: translateY(-12px); transition: opacity .2s, transform .2s;
+  }
+  .toast.show { opacity: 1; transform: none; }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* What it needs: five small meters; a tap says what helps */
+  .needs { flex: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 12px 14px 2px; }
+  .need { display: grid; justify-items: center; gap: 6px; padding: 6px 0; border-radius: 12px; }
+  .need svg { width: 22px; height: 22px; color: var(--c); }
+  .meter { width: 100%; max-width: 56px; height: 6px; border-radius: 3px; background: var(--raised); overflow: hidden; }
+  .meter b { display: block; height: 100%; width: 0; background: var(--c, var(--accent)); border-radius: 3px; transition: width .5s; }
+  .need.low .meter { box-shadow: 0 0 0 1px var(--c); }
+  .need.low svg { animation: nudge 1.4s infinite; }
+  @keyframes nudge { 0%, 70%, 100% { transform: none; } 80% { transform: rotate(-12deg); } 90% { transform: rotate(12deg); } }
+
+  /* Status: when it hatches or evolves, the trip, things waiting at home */
+  .status { flex: none; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 6px 16px 0; text-align: center; }
+  .status:empty { display: none; }
+  .next { margin: 0; color: var(--muted); font-size: 14px; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .actions:not(:has(button:not([hidden]))) { display: none; }
+  .soft { padding: 10px 18px; border-radius: 14px; font-weight: 700; background: var(--surface); border: 1px solid var(--line); }
+  .evolve {
+    position: relative; overflow: hidden; padding: 12px 24px; border-radius: 14px; font-weight: 700; font-size: 17px;
+    background: var(--surface); border: 2px solid var(--accent); touch-action: none;
+  }
+  .evolve::before { content: ""; position: absolute; inset: 0; width: 0; background: var(--accent); opacity: .45; }
+  .evolve.holding::before { width: 100%; transition: width 1.2s linear; }
+  .evolve span { position: relative; }
+
+  /* The tray: things to hand the pet. Drag one onto it; with a Pi, flick it up as well. */
+  .tray { flex: none; display: flex; gap: 6px; justify-content: center; padding: 10px 12px 12px; }
+  .thing {
+    flex: 0 1 60px; min-width: 0; height: 66px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; touch-action: none; position: relative;
+  }
+  .thing img { width: 30px; height: 30px; image-rendering: pixelated; pointer-events: none; }
+  .thing small {
+    font-size: 10px; font-weight: 700; color: var(--muted); max-width: 100%; padding: 0 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none;
+  }
+  .thing.lift { opacity: .35; }
+  .thing.wanted:not(:disabled) { border-color: var(--accent); }
+  .thing.on { border-color: var(--energy); background: var(--raised); box-shadow: 0 0 0 2px var(--energy); }
+  .ghost {
+    position: fixed; z-index: 50; left: 0; top: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; pointer-events: none;
+    display: grid; place-items: center; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .5));
+  }
+  .ghost img { width: 46px; height: 46px; image-rendering: pixelated; }
+
+  /* ---------- Tabs ---------- */
+  .tabbar {
+    flex: none; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); background: var(--night);
+    /* room at the bottom: the system's swipe gesture lives there */
+    padding: 6px 4px calc(10px + var(--safe-bottom));
+  }
+  .tabbar button { display: grid; justify-items: center; gap: 2px; padding: 6px 0; font-size: 11px; font-weight: 700; color: var(--muted); min-width: 0; }
+  .tabbar button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
+  .tabbar svg { width: 24px; height: 24px; }
+  .tabbar button[aria-current="page"] { color: var(--accent); }
+
+  /* ---------- The other tabs ---------- */
+  .page { padding: calc(18px + var(--safe-top)) 16px 24px; display: grid; gap: 14px; align-content: start; }
+  .page h2 { font: 700 24px/1.15 var(--round); margin: 0; }
+  .lead { margin: -8px 0 0; color: var(--muted); font-size: 14px; }
+  .label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 6px 4px -6px; }
+  .card {
+    display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center; text-align: left; width: 100%;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 14px;
+  }
+  .card .icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--raised); color: var(--c, var(--accent)); }
+  .card .icon svg { width: 26px; height: 26px; }
+  .card h3 { margin: 0; font: 700 17px/1.2 var(--round); }
+  .card p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+  .tag { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: var(--raised); color: var(--muted); white-space: nowrap; }
+  .tag.go { background: rgba(111, 220, 140, .14); color: var(--health); }
+  .segments { display: flex; gap: 4px; background: var(--surface); padding: 4px; border-radius: 14px; border: 1px solid var(--line); }
+  .segments button { flex: 1 1 0; min-width: 0; padding: 8px 2px; border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .segments button[aria-pressed="true"], .segments button[aria-selected="true"] { background: var(--raised); color: var(--text); }
+  .list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+  .list > li { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--line); min-width: 0; font-size: 15px; }
+  .list > li:first-child { border-top: 0; }
+  .list > li > :not(time, .times, button, img, .meter) { flex: 1; min-width: 0; }
+  .list small { display: block; color: var(--muted); font-size: 12px; }
+  .list .meter { max-width: 90px; flex: none; }
+  .list .row { width: 100%; text-align: left; display: flex; align-items: center; gap: 12px; }
+  .list .row > span:first-child { flex: 1; min-width: 0; }
+  .chev { color: var(--muted); }
+  time, .times { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; flex: none; }
+  .times { margin-left: auto; }
+  li.day { padding: 14px 16px 4px; color: var(--muted); font-size: 13px; font-weight: 700; background: var(--night); }
+  li.rejected { color: var(--muted); }
+  .list button.small { min-height: 38px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; flex: none; }
+  .list button.small.on { border-color: var(--accent); color: var(--accent); }
+  .gallery img { width: 40px; height: 40px; border-radius: 8px; image-rendering: pixelated; }
+  .figure { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; flex: none; max-width: 55%; }
+  .empty { padding: 16px; color: var(--muted); font-size: 14px; }
+  .note { margin: 0 4px; color: var(--muted); font-size: 13px; }
+  .note a, a.note { color: var(--accent); font-weight: 700; }
+  .wide { width: 100%; padding: 14px; border-radius: 16px; font-weight: 700; border: 1px solid var(--line); background: var(--surface); }
+  .wide.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .wide.danger { border-color: var(--danger); color: var(--danger); }
+  .wide.quiet { color: var(--muted); }
+
+  /* ---------- Panels: packing for a trip, tricks, training, the guessing game ----------
+     They take the place of the needs and the tray, below the scene: the pet stays where it is,
+     big and bright, and answers there. */
+  .home.busy > .needs, .home.busy > .status, .home.busy > .tray { display: none; }
+  .home.busy > .hero { min-height: 220px; }  /* the ground and the pet; above is only sky */
+  /* The panel's own picture has the clock and the temperature at the top: it is shown whole,
+     below the name and the sleep button */
+  .home > .hero.whole { flex: 0 1 auto; min-height: 220px; height: calc(min(100vw, 480px) + 80px + var(--safe-top)); }
+  .home.busy > .hero.whole { min-height: 60%; }  /* shares a short screen with the panel */
+  /* on a short screen it gets smaller rather than pushing the tray away */
+  .hero.whole .scene { width: min(100%, calc(100cqh - 80px - var(--safe-top))); border-radius: 0 0 30px 30px; }
+  /* It cannot grow into the sky like the pet's own scene, so on a tall screen the room left over
+     goes around the meters and the tray instead of above the picture */
+  .home:has(> .hero.whole):not(.busy) > .needs { margin-top: auto; }
+  .home:has(> .hero.whole):not(.busy) > .tray { margin-block: auto; }
+  /* A tall screen has room for bigger things to hand over */
+  @media (min-height: 780px) {
+    .thing { flex-basis: 64px; height: 80px; border-radius: 20px; gap: 5px; }
+    .thing img { width: 38px; height: 38px; }
+    .thing small { font-size: 11px; }
+  }
+  .sheet {
+    position: relative; flex: 0 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; margin-top: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+    background: var(--surface); border-radius: 24px 24px 0 0; border-top: 1px solid var(--line);
+    padding: 14px 16px 14px; touch-action: none;
+  }
+  .sheet h3 { margin: 0; font: 700 18px/1.2 var(--round); }
+  .sheet p { margin: 0; }
+  .sheet small { color: var(--muted); font-size: 13px; }
+  .close { position: absolute; right: 6px; top: 4px; width: 44px; height: 44px; font-size: 20px; color: var(--muted); }
+  .say { min-height: 1.4em; font-weight: 700; }
+  .tricks { list-style: none; margin: 0; padding: 0; width: 100%; max-width: 360px; text-align: left; }
+  .tricks li { display: flex; gap: 12px; align-items: center; padding: 7px 4px; border-bottom: 1px solid var(--line); }
+  .tricks li > span:first-child { font-size: 24px; width: 32px; text-align: center; }
+  .tricks li > div { flex: 1; min-width: 0; }
+  .tricks small { display: block; }
+  .tricks .meter { display: block; max-width: none; margin-top: 6px; height: 7px; background: var(--line); }
+  .tricks li > b { color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+  .tricks li.hit { animation: hit .6s ease-out; }
+  /* the four tricks as tiles, so they fit below the scene on a small phone too */
+  #tricks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: none; }
+  #tricks li { gap: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 14px; }
+  #tricks .move { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--raised); color: var(--energy); }
+  #tricks .move svg { width: 24px; height: 24px; }
+  #tricks .learned svg { width: 18px; height: 18px; color: var(--accent); fill: var(--accent); }
+  @keyframes hit { 0% { background: rgba(111, 220, 140, .3); } }
+  .ball { font-size: 72px; line-height: 1; will-change: transform; }
+  .tap { width: min(46vw, 200px); aspect-ratio: 1; border-radius: 50%; border: 3px solid var(--accent); background: var(--raised); font-size: 24px; font-weight: 700; }
+  .tap:active { background: var(--accent); color: var(--accent-ink); }
+  .steps { display: flex; gap: 8px; min-height: 44px; }
+  .steps i { width: 40px; height: 40px; border-radius: 10px; border: 2px solid var(--line); font-style: normal; font-size: 22px; line-height: 36px; }
+  .steps i.on { border-color: var(--accent); color: var(--accent); }
+  .choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .choices button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
+  .choices button.on { border-color: var(--accent); color: var(--accent); }
+  .steps button { width: 52px; height: 52px; border-radius: 12px; border: 2px dashed var(--line); font-size: 26px; }
+  .steps button.on { border-style: solid; border-color: var(--accent); }
+  .link { color: var(--muted); text-decoration: underline; padding: 10px; font-size: 14px; }
+  .halves { flex: 1; align-self: stretch; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 160px; }
+  .halves button { font-size: 52px; color: var(--accent); display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--raised); border-radius: 20px; }
+  .halves button:active { background: var(--line); }
+  .halves small { font-size: 15px; color: var(--muted); }
+  #game-info { white-space: pre-line; min-height: 3em; }
+
+  /* Questions (a name, "really?") in the app's own look */
+  dialog {
+    width: min(340px, calc(100vw - 32px)); margin-top: 18dvh; padding: 20px; border: 1px solid var(--line);
+    border-radius: 22px; background: var(--surface); color: var(--text);
+  }
+  dialog::backdrop { background: rgba(0, 0, 0, .55); }
+  dialog p { margin: 0 0 14px; font-size: 17px; font-weight: 700; }
+  dialog input {
+    width: 100%; margin-bottom: 14px; padding: 12px; font: inherit; color: var(--text); background: var(--night);
+    border: 1px solid var(--line); border-radius: 12px; user-select: text; -webkit-user-select: text;
+  }
+  dialog input:focus { outline: none; border-color: var(--accent); }
+  dialog .buttons { display: flex; gap: 8px; }
+  dialog .buttons .wide { flex: 1 1 0; min-width: 0; }
+  dialog ul { margin: 0 0 16px; padding: 0; list-style: none; }
+  dialog li { display: flex; padding: 6px 0; border-top: 1px solid var(--line); }
+
+  /* The Pi can't be reached */
+  .offline {
+    position: fixed; inset: 0; z-index: 40; background: rgba(13, 18, 32, .94); color: var(--muted);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; padding: 24px;
+  }
+  .offline strong { color: var(--text); font-size: 20px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<main id="main">
+  <section class="view home" id="view-home">
+    <div class="hero" id="hero">
+      <canvas class="scene" id="scene" width="64" height="64" hidden></canvas>
+      <img class="scene" id="preview" alt="" hidden>
+      <div class="hero-top">
+        <div><h1 id="name">…</h1><p class="sub" id="sub"></p></div>
+        <button class="pill" id="sleep" hidden></button>
+      </div>
+      <div class="fx" id="fx"></div>
+    </div>
+    <div class="needs" id="stats"></div>
+    <div class="status">
+      <p class="next" id="next" hidden></p>
+      <button class="evolve" id="evolve" hidden><span id="evolve-label" data-t="page.evolve"></span></button>
+      <p class="next" id="trip-info" hidden></p>
+      <div class="actions">
+        <button class="soft" id="recall" hidden data-t="page.recall"></button>
+        <button class="soft" id="unpack" hidden data-t="page.unpack"></button>
+        <button class="soft" id="collect" hidden data-t="page.collect"></button>
+        <button class="soft" id="unwrap" hidden data-t="page.unwrap"></button>
+      </div>
+    </div>
+    <div class="tray" id="tray">
+      <button class="thing" data-thing="meal" data-action="feed" data-item="meal" data-helps="satiety"><img alt=""><small data-t="page.things.meal"></small></button>
+      <button class="thing" data-thing="cookie" data-action="feed" data-item="cookie"><img alt=""><small data-t="snacks.cookie"></small></button>
+      <button class="thing" data-thing="icecream" data-action="feed" data-item="icecream"><img alt=""><small data-t="snacks.icecream"></small></button>
+      <button class="thing" data-thing="fruit" data-action="feed" data-item="fruit"><img alt=""><small data-t="snacks.fruit"></small></button>
+      <button class="thing" data-thing="ball" data-action="play" data-helps="mood"><img alt=""><small data-t="page.things.ball"></small></button>
+      <button class="thing" data-thing="sponge" data-action="clean" data-helps="hygiene" data-rub="1"><img alt=""><small data-t="page.things.sponge"></small></button>
+      <button class="thing" data-thing="baton" data-action="trick" data-wand="1"><img alt=""><small data-t="page.things.baton"></small></button>
+      <button class="thing" data-thing="medicine" data-action="medicine" data-helps="health" hidden><img alt=""><small data-t="page.things.medicine"></small></button>
+      <button class="thing" data-thing="seed" data-action="plant" data-item="berry" id="thing-seed" hidden><img alt=""><small data-t="page.things.seeds"></small></button>
+    </div>
+    <!-- What goes on instead of the tray: tricks, training, the guessing game, packing -->
+    <div class="sheet" id="trick-mode" hidden>
+      <button class="close" id="trick-close" data-t-aria="page.close">✕</button>
+      <h3 data-t="page.tools.tricks"></h3>
+      <p data-t="page.trick.hint"></p>
+      <ul class="tricks" id="tricks"></ul>
+      <small data-t="page.trick.note"></small>
+    </div>
+
+    <div class="sheet" id="train-mode" hidden>
+      <button class="close" id="train-close" data-t-aria="page.close">✕</button>
+      <h3 data-t="page.tools.train"></h3>
+      <p id="train-hint"></p>
+      <ul class="tricks" id="skills"></ul>
+      <div class="ball" id="train-ball" hidden>⚽</div>
+      <button class="tap" id="train-tap" hidden data-t="page.train.tap"></button>
+      <div class="steps" id="train-steps" hidden></div>
+      <p class="say" id="train-say" aria-live="polite"></p>
+      <small id="train-note" data-t="page.train.note"></small>
+      <button class="link" id="train-back" hidden data-t="page.train.back"></button>
+    </div>
+
+    <div class="sheet" id="pack-mode" hidden>
+      <button class="close" id="pack-close" data-t-aria="page.close">✕</button>
+      <h3 data-t="page.things.trip"></h3>
+      <p data-t="page.pack.where"></p>
+      <div class="choices" id="pack-areas"></div>
+      <p data-t="page.pack.what"></p>
+      <div class="steps" id="pack-slots"></div>
+      <div class="choices" id="pack-things"></div>
+      <small data-t="page.pack.note"></small>
+      <p class="say" id="pack-say" aria-live="polite"></p>
+      <button class="wide primary" id="pack-go" data-t="page.pack.go"></button>
+    </div>
+
+    <div class="sheet" id="game" hidden>
+      <button class="close" id="game-close" data-t-aria="page.close_game">✕</button>
+      <h3 data-t="page.tools.game"></h3>
+      <p id="game-info"></p>
+      <div class="halves">
+        <button data-move="left">◀<small data-t="page.game.left"></small></button>
+        <button data-move="right">▶<small data-t="page.game.right"></small></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-adventure" hidden>
+    <div class="page">
+      <h2 data-t="page.nav.adventure"></h2>
+      <p class="lead" id="adventure-lead"></p>
+      <div id="adventures" style="display: grid; gap: 10px"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-diary" hidden>
+    <div class="page">
+      <h2 data-t="page.diary"></h2>
+      <nav class="segments" role="tablist">
+        <button role="tab" data-tab="history" data-t="page.tabs.history"></button>
+        <button role="tab" data-tab="statistics" data-t="page.tabs.statistics" hidden></button>
+        <button role="tab" data-tab="finds" data-t="page.tabs.finds" hidden></button>
+        <button role="tab" data-tab="gallery" data-t="page.tabs.gallery" hidden></button>
+      </nav>
+      <ul class="list" data-panel="history" id="events"></ul>
+      <div data-panel="statistics" hidden style="display: grid; gap: 14px">
+        <ul class="list" id="values"></ul>
+        <ul class="list" id="statistics"></ul>
+      </div>
+      <ul class="list" data-panel="finds" id="finds" hidden></ul>
+      <ul class="list gallery" data-panel="gallery" id="gallery" hidden></ul>
+    </div>
+  </section>
+
+  <section class="view" id="view-more" hidden>
+    <div class="page">
+      <h2 data-t="page.tabs.more"></h2>
+      <div class="label" data-t="page.more.pet"></div>
+      <ul class="list">
+        <li><button class="row" id="rename"><span><span data-t="page.rename"></span><small class="pet-name"></small></span><span class="chev">›</span></button></li>
+        <li id="new-egg-row"><button class="row" id="new-egg"><span><span data-t="page.new_egg"></span><small data-t="page.more.new_egg_note"></small></span><span class="chev">›</span></button></li>
+      </ul>
+      <div id="on-phone" hidden style="display: grid; gap: 8px">
+        <div class="label" data-t="page.headings.weather"></div>
+        <div class="segments" role="group" data-t-aria="page.headings.weather">
+          <button data-place="off" data-t="page.app.place_off"></button>
+          <button data-place="fixed" data-t="page.app.place_fixed"></button>
+          <button data-place="live" data-t="page.app.place_live"></button>
+        </div>
+        <p class="note" id="location-text"></p>
+      </div>
+      <div id="display" hidden style="display: grid; gap: 8px">
+        <div class="label" data-t="page.app.display_heading"></div>
+        <p class="note"><span id="display-text"></span> <a id="build-link" href="https://github.com/mLampir/blobling" target="_blank" rel="noopener" data-t="page.app.build_link"></a></p>
+        <button class="wide" id="connect" data-t="page.app.connect"></button>
+        <button class="wide quiet" id="disconnect" data-t="page.app.disconnect"></button>
+      </div>
+    </div>
+  </section>
+
+  <nav class="tabbar" id="tabbar">
+    <button data-view="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-4.4 0-8 3.6-8 8.5 0 3.6 3 6.5 8 6.5s8-2.9 8-6.5C20 7.6 16.4 4 12 4z"/><circle cx="9.5" cy="11.5" r="1" fill="currentColor"/><circle cx="14.5" cy="11.5" r="1" fill="currentColor"/></svg><span id="nav-name"></span></button>
+    <button data-view="adventure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5z"/></svg><span data-t="page.nav.adventure"></span></button>
+    <button data-view="diary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7h6"/></svg><span data-t="page.diary"></span></button>
+    <button data-view="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg><span data-t="page.tabs.more"></span></button>
+  </nav>
+  <p class="toast" id="say" aria-live="polite"></p>
+</main>
+
+<dialog id="welcome">
+  <form method="dialog">
+    <p id="welcome-text"></p>
+    <ul id="welcome-list"></ul>
+    <div class="buttons">
+      <button class="wide primary" value="ok" data-t="page.welcome.ok"></button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="ask">
+  <form method="dialog">
+    <p id="ask-text"></p>
+    <input id="ask-input" autocomplete="off" enterkeyhint="done">
+    <div class="buttons">
+      <button type="button" class="wide quiet" id="ask-cancel" data-t="page.dialog.cancel"></button>
+      <button class="wide primary" id="ask-ok" value="ok"></button>
+    </div>
+  </form>
+</dialog>
+
+<div class="offline" id="offline" hidden>
+  <strong data-t="page.offline.title"></strong>
+  <span data-t="page.offline.hint"></span>
+  <button class="link" id="offline-leave" data-t="page.app.disconnect" hidden></button>
+</div>
+
+<script src="app.js"></script>
+<script>
+// Where the pet lives (on the phone or on the Pi), the texts and the requests: app/src/main.ts
+const app = window.blobling;
+const $ = (id) => document.getElementById(id);
+const T = app.strings;
+$("ask-input").maxLength = app.maxName;
+
+// Text for a key from the language file, with {placeholders} filled in
+function t(key, values = {}) {
+  return (T[key] ?? key).replace(/\{(\w+)\}/g, (all, name) => values[name] ?? all);
+}
+
+// Counted text: "<key>.one" for exactly 1, "<key>.other" for everything else
+function tn(key, n, values = {}) {
+  return t(`${key}.${n === 1 ? "one" : "other"}`, { n, ...values });
+}
+
+// Line icons on 24×24 (stroke in the current color)
+const ICONS = {
+  satiety: '<path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M9 7c0-1 1-1.5 1-2.5M13 7c0-1 1-1.5 1-2.5"/>',
+  mood: '<circle cx="12" cy="12" r="9"/><path d="M8.5 14a4 4 0 0 0 7 0"/><circle cx="9" cy="10" r=".8" fill="currentColor"/><circle cx="15" cy="10" r=".8" fill="currentColor"/>',
+  energy: '<path d="M13 3 5 13.5h6L10 21l9-11h-6z"/>',
+  hygiene: '<path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/>',
+  health: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  trip: '<path d="M7 8V6a5 5 0 0 1 10 0v2"/><rect x="5" y="8" width="14" height="13" rx="3"/><path d="M9 14h6"/>',
+  train: '<path d="M6 9v6M18 9v6M3 11v2M21 11v2M6 12h12"/>',
+  trick: '<path d="m12 3 2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',
+  game: '<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><circle cx="12" cy="18" r=".8" fill="currentColor"/><circle cx="12" cy="12" r="9.5"/>',
+  moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+  // the moves for the tricks: a dot where the finger starts
+  bow: '<circle cx="12" cy="4" r="1.6" fill="currentColor"/><path d="M12 8v12M6.5 14.5 12 20l5.5-5.5"/>',
+  flip: '<circle cx="12" cy="20" r="1.6" fill="currentColor"/><path d="M12 16V4M6.5 9.5 12 4l5.5 5.5"/>',
+  dance: '<path d="M4 8.5h15M15.5 5l3.5 3.5-3.5 3.5M20 15.5H5M8.5 12 5 15.5 8.5 19"/>',
+  spin: '<path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19 3.5v4h-4"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+};
+const svg = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+const STATS = ["satiety", "mood", "energy", "hygiene", "health"];
+// What seeds and their fruits look like
+const PLANT_ICONS = { berry: "🫐", sunflower: "🌻", cherry: "🍒", herb: "🌿" };
+// Seeds: a tap switches the kind. The trip: where to and what comes along
+const choice = { trip: null, plant: null };
+const packed = [];
+const PACK_ICONS = { snack: "🍪", ball: "⚽" };
+// Battle stats: symbol and color of the bar
+const SKILL_ICONS = { strength: ["💪", "#ff8a5a"], speed: ["⚡", "#ffdc3c"], smarts: ["🧠", "#b48cff"] };
+const ARROWS = { left: "←", right: "→", up: "↑", down: "↓" };
+const LAND_MS = 900;  // how long a thrown item falls in the scene (THROW_FALL in core/src/scene.ts)
+let pollTimer, sayTimer, current, view = "home", tab = "history";
+let gameDismissed = false, gameHold = 0;
+
+function stored(key) {
+  try { return localStorage.getItem(key); } catch { return null; }
+}
+function store(key, value) {
+  try { localStorage.setItem(key, value); } catch {}
+}
+
+function inTime(seconds) {
+  const m = Math.max(1, Math.round(seconds / 60));
+  if (m < 90) return t("page.duration.minutes", { n: m });
+  const h = Math.round(m / 60);
+  if (h < 36) return t("page.duration.hours", { n: h });
+  return tn("page.duration.days", Math.round(h / 24));
+}
+
+function evolveText(item) {
+  const [stage, species] = (item || "").split(":");
+  if (stage === "baby") return t("page.events.hatched");
+  if (stage === "child") return t("page.events.child");
+  return t("page.events.adult", { species: t(`species.${species}`) });
+}
+
+// What the pet (or the app) has to say – shown at the top, and gone again by itself
+function say(msg, isError = false) {
+  clearTimeout(sayTimer);
+  const toast = $("say");
+  toast.classList.toggle("show", !!msg);
+  if (!msg) return;  // the old text stays while it fades out
+  toast.textContent = msg;
+  toast.classList.toggle("error", isError);
+  sayTimer = setTimeout(() => toast.classList.remove("show"), 5000);
+}
+
+// A question in the app's own dialog. With `value` it asks for a text and resolves to that,
+// without it resolves to true; null if the dialog was dismissed.
+function ask(text, { value, ok, danger = false, address = false }) {
+  const dialog = $("ask"), input = $("ask-input"), wantsText = value !== undefined;
+  // an address: as long as it needs to be, small letters, no corrections
+  input.maxLength = address ? 253 : app.maxName;
+  input.inputMode = address ? "url" : "text";
+  input.autocapitalize = address ? "none" : "sentences";
+  input.spellcheck = !address;
+  input.setAttribute("autocorrect", address ? "off" : "on");
+  $("ask-text").textContent = text;
+  input.hidden = !wantsText;
+  input.value = value || "";
+  $("ask-ok").textContent = ok;
+  $("ask-ok").className = "wide " + (danger ? "danger" : "primary");
+  dialog.returnValue = "";
+  dialog.showModal();
+  if (wantsText) input.select();
+  return new Promise((resolve) => dialog.addEventListener("close", () => {
+    resolve(dialog.returnValue !== "ok" ? null : wantsText ? input.value.trim() : true);
+  }, { once: true }));
+}
+$("ask-cancel").addEventListener("click", () => $("ask").close());
+
+function buzz(pattern) {
+  if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
+function setOffline(off) {
+  $("offline").hidden = !off;
+}
+
+// A request to the pet, wherever it lives (app/src/main.ts); an error carries the text to show,
+// and `offline` if the Pi could not be reached
+async function api(method, url, body) {
+  try {
+    const data = await app.request(method, url, body);
+    setOffline(false);
+    return data;
+  } catch (err) {
+    if (!err.offline) setOffline(false);
+    throw err;
+  }
+}
+
+function fail(err) {
+  if (err.offline) setOffline(true);
+  else say(err.message, true);
+}
+
+function action(name, item, extra) {
+  return api("POST", "/api/pet/action", { id: requestId(), action: name, item, by: "app", ...extra });
+}
+
+function requestId() {
+  // crypto.randomUUID only exists over HTTPS
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+}
+
+// Action without a throw: show the answer, vibrate briefly
+async function act(name, item, extra) {
+  try {
+    const r = await action(name, item, extra);
+    render(r.state);
+    say(r.accepted ? "" : r.message);
+    buzz(r.accepted ? 20 : [30, 70, 30]);
+    return r;
+  } catch (err) {
+    fail(err);
+    if (current) render(current);
+  }
+}
+
+// ---------- The scene ----------
+
+// On the phone the scene is drawn here; with a Pi, the picture of the panel is fetched again and again
+const scene = app.mode === "local" ? $("scene") : $("preview");
+$("hero").classList.toggle("whole", app.mode !== "local");
+scene.hidden = false;
+if (app.mode === "local") app.showScene(scene);
+
+// The sky goes on above the scene in the color of its top row
+const sample = document.createElement("canvas");
+sample.width = sample.height = 1;
+function matchSky() {
+  try {
+    const c = sample.getContext("2d", { willReadFrequently: true });
+    // just below the status line (the clock and the temperature on the panel's picture)
+    c.drawImage(scene, 1, 8, 1, 1, 0, 0, 1, 1);
+    const [r, g, b] = c.getImageData(0, 0, 1, 1).data;
+    $("hero").style.setProperty("--sky", `rgb(${r}, ${g}, ${b})`);
+  } catch {
+    // a picture from another address can't be read: the sky keeps its color
+  }
+}
+setInterval(() => { if (!document.hidden && view === "home") matchSky(); }, 2000);
+
+// With a Pi: the panel's picture, a few times a second while the pet is in sight
+const PREVIEW_MS = 300;
+let previewBusy = false;
+function nextPreview() {
+  if (app.mode === "local" || previewBusy || document.hidden || view !== "home") return;
+  previewBusy = true;
+  const img = new Image();
+  img.onload = () => { scene.src = img.src; previewBusy = false; };
+  img.onerror = () => { previewBusy = false; };
+  img.src = app.previewUrl();
+}
+if (app.mode !== "local") {
+  setInterval(nextPreview, PREVIEW_MS);
+  scene.addEventListener("load", () => { if (!matchSky.done) { matchSky.done = true; matchSky(); } });
+}
+
+// Where the pet is in the picture (on the phone); with a Pi the whole picture counts
+let area = null;
+async function updateArea() { area = await app.petArea(); }
+setInterval(() => { if (!document.hidden && view === "home") updateArea(); }, 250);
+
+// A point on the screen as parts (0–1) of the scene, and whether the pet is there
+function inScene(x, y) {
+  const r = scene.getBoundingClientRect();
+  return [(x - r.left) / r.width, (y - r.top) / r.height];
+}
+function onPet(x, y) {
+  const [u, v] = inScene(x, y);
+  if (!area) return u >= 0 && u <= 1 && v >= 0 && v <= 1;
+  const [ax, ay, aw, ah] = area, m = 0.03;  // a little room around it
+  return u >= ax - m && u <= ax + aw + m && v >= ay - m && v <= ay + ah + m;
+}
+function overHero(x, y) {
+  const r = $("hero").getBoundingClientRect();
+  return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+}
+
+function burst(x, y, kind = "heart") {
+  const r = $("hero").getBoundingClientRect();
+  const s = document.createElement("span");
+  if (kind === "heart") s.textContent = "♥"; else s.className = kind;
+  s.style.left = x - r.left + "px";
+  s.style.top = y - r.top + "px";
+  s.addEventListener("animationend", () => s.remove());
+  $("fx").append(s);
+}
+
+// ---------- Display ----------
+
+$("stats").innerHTML = STATS.map((key) =>
+  `<button class="need" data-key="${key}" style="--c:var(--${key})">${svg(key)}<span class="meter"><b></b></span></button>`).join("");
+document.querySelectorAll(".thing").forEach((b) => { b.firstElementChild.src = app.thing(b.dataset.thing); });
+
+function render(s) {
+  current = s;
+  $("name").textContent = s.name;
+  $("nav-name").textContent = s.name;
+  document.querySelectorAll(".pet-name").forEach((e) => { e.textContent = s.name; });
+  document.title = s.name;
+  const egg = s.stage === "egg";
+  const evo = s.evolution;
+  const doing = s.trip ? s.trip.where : s.asleep ? t("page.status.asleep")
+    : s.cold ? t("page.status.cold") : t(`page.moods.${s.mood}`);
+  const form = s.stage === "adult" ? s.species_label : s.stage_label;
+  $("sub").textContent = egg ? t("page.status.egg")
+    : t("page.status.line", { form, age: tn("page.age", s.age_days), doing });
+
+  // What it needs
+  $("stats").hidden = egg;
+  document.querySelectorAll(".need").forEach((b) => {
+    const key = b.dataset.key, value = s.stats[key];
+    b.classList.toggle("low", s.needs.includes(key));
+    b.querySelector("b").style.width = value + "%";
+    b.setAttribute("aria-label", `${t(`page.stats.${key}`)} ${value}`);
+  });
+
+  welcome(s);
+
+  // Next evolution: only the egg tells when; a baby or child just says when it is ready
+  const due = !!(evo && evo.due);
+  $("next").hidden = !evo || (!due && !egg);
+  if (evo && !$("next").hidden) {
+    $("next").textContent = !due ? t(`page.next.${evo.next}`, { time: inTime(evo.due_at - s.now) })
+      : s.asleep ? t("page.next.ready_asleep")
+        : t("page.next.ready", { time: inTime(evo.auto_at - s.now) });
+  }
+  $("evolve").hidden = !due;
+  $("evolve").disabled = !s.actions.evolve;
+  $("evolve-label").textContent = t(egg ? "page.hatch" : "page.evolve");
+
+  // Trip: when it will be back and what it has found so far
+  $("trip-info").hidden = $("recall").hidden = !s.trip;
+  if (s.trip) {
+    const found = s.trip.found.map((id) => s.item_labels[id] || id).join(", ");
+    // hearts: a lost scuffle costs one; next to them, what is still in the backpack from home
+    $("trip-info").textContent = t(s.trip.returning ? "page.trip.returning" : "page.trip.out", { time: inTime(s.trip.end - s.now) })
+      + ` · ${"♥".repeat(s.trip.hearts)}${s.trip.pack.map((id) => PACK_ICONS[id]).join("")}`
+      + (found ? ` · ${t("page.trip.backpack", { items: found })}` : "");
+    $("recall").disabled = s.trip.end - s.now <= 300;
+  } else if (s.backpack) {
+    // back home: it only shows its finds when someone is watching
+    $("trip-info").hidden = false;
+    $("trip-info").textContent = s.asleep ? t("page.trip.full_asleep") : t("page.trip.back", { name: s.name });
+  }
+  $("unpack").hidden = !s.backpack;
+  $("unpack").disabled = !s.actions.unpack;
+  // an egg is lying in the nest
+  $("collect").hidden = !s.nest;
+  $("collect").disabled = !s.actions.collect;
+  // a friend has left a gift
+  $("unwrap").hidden = !s.gift;
+  $("unwrap").disabled = !s.actions.unwrap;
+
+  // The tray: an egg can only be kept warm (by stroking it)
+  $("tray").hidden = egg;
+  document.querySelectorAll(".thing").forEach((b) => {
+    const a = b.dataset.action;
+    b.hidden = egg || (a === "medicine" && !s.sick) || (a === "plant" && !picked(s, "plant"));
+    // the baton shows tricks: practicing needs energy, showing one it knows doesn't
+    b.disabled = b.dataset.wand ? s.asleep || !!s.trip : !s.actions[a];
+    if (b.dataset.wand && b.disabled && baton) holdBaton(false);
+    b.classList.toggle("wanted", s.needs.includes(b.dataset.helps));
+    // Mark the favorite snack once it has been discovered
+    const snack = a === "feed" && s.snacks.find((x) => x.id === b.dataset.item);
+    if (snack) b.lastElementChild.textContent = snack.label.replace(/\s*\p{Extended_Pictographic}/gu, "")
+      + (s.favorite_snack === snack.id ? " ❤" : "");
+  });
+  // Seeds: the kind that is picked
+  const seeds = options(s, "plant"), seed = picked(s, "plant");
+  if (seed) {
+    $("thing-seed").dataset.item = seed[0];
+    $("thing-seed").lastElementChild.textContent = t("page.things.seed_count", { n: seed[2] }) + (seeds.length > 1 ? " ⇄" : "");
+  }
+
+  // Sleeping: what the button does is what it says
+  const sleep = $("sleep");
+  sleep.hidden = egg || !!s.trip;
+  sleep.innerHTML = s.asleep ? svg("sun") + `<span>${t("page.wake")}</span>` : svg("moon") + `<span>${t("page.sleep")}</span>`;
+  sleep.disabled = !(s.asleep ? s.actions.wake : s.actions.sleep);
+  sleep.classList.toggle("wanted", !s.asleep && s.needs.includes("energy"));
+
+  renderGame(s);
+  renderTricks(s);
+  renderSkills(s);
+  renderValues(s);
+  renderStatistics(s);
+  renderFinds(s);
+  renderAdventures(s);
+  $("new-egg-row").hidden = egg;
+}
+
+// The meters: a tap says how it is and what would help
+$("stats").addEventListener("click", (e) => {
+  const b = e.target.closest(".need");
+  if (!b || !current) return;
+  const key = b.dataset.key;
+  say(`${t(`page.stats.${key}`)} ${current.stats[key]} · ${t(`page.needs.${key}`, { name: current.name })}`);
+});
+
+// What can go into the backpack or be planted as a seed: [key, name, count]
+function options(s, action) {
+  if (action === "trip") return s.areas.filter((a) => a.unlocked).map((a) => [a.id, a.label]);
+  return s.items.filter((x) => x.kind === "seed").map((x) => [x.id.slice(5), x.label, x.count]);
+}
+
+function picked(s, action) {
+  const all = options(s, action);
+  return all.find((x) => x[0] === choice[action]) || all[0];
+}
+
+// ---------- Adventures ----------
+
+function renderAdventures(s) {
+  const egg = s.stage === "egg";
+  $("adventure-lead").textContent = t(egg ? "page.adventure.egg" : "page.adventure.lead", { name: s.name });
+  // Why something can't be done right now, as a short word on its card
+  const why = (a, energy) => s.trip ? t("page.adventure.away") : s.asleep ? t("page.status.asleep")
+    : energy && !s.actions[a] ? t("page.adventure.tired") : "";
+  const cards = egg ? [] : [
+    { id: "trip", color: "var(--hygiene)", title: t("page.things.trip"), text: t("page.adventure.trip"),
+      ok: s.actions.trip, tag: s.trip ? t("page.adventure.away") : s.stage === "baby" ? t("page.adventure.too_young")
+        : s.backpack ? t("page.unpack") : why("trip") || t("page.adventure.go") },
+    { id: "trick", color: "var(--energy)", title: t("page.tools.tricks"),
+      text: t("page.adventure.tricks", { n: s.tricks.filter((x) => x.learned).length, all: s.tricks.length }),
+      ok: s.actions.trick, tag: why("trick", true) || t("page.adventure.go") },
+    { id: "train", color: "var(--satiety)", title: t("page.tools.train"), text: t("page.adventure.train"),
+      ok: s.actions.train, tag: why("train", true) || t("page.adventure.go") },
+    { id: "game", color: "var(--mood)", title: t("page.tools.game"), text: t("page.adventure.game"),
+      ok: s.actions.game, tag: why("game", true) || t("page.adventure.go") },
+  ];
+  $("adventures").replaceChildren(...cards.map((c) => {
+    const b = document.createElement("button");
+    b.className = "card";
+    b.dataset.adventure = c.id;
+    b.style.setProperty("--c", c.color);
+    b.innerHTML = `<span class="icon">${svg(c.id)}</span><span><h3></h3><p></p></span><span class="tag${c.ok ? " go" : ""}"></span>`;
+    b.querySelector("h3").textContent = c.title;
+    b.querySelector("p").textContent = c.text;
+    b.querySelector(".tag").textContent = c.tag;
+    return b;
+  }));
+}
+
+$("adventures").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-adventure]");
+  if (!b || !current) return;
+  const id = b.dataset.adventure;
+  if (id === "trip") {
+    if (current.stage === "baby") return say(t("pet.rejected.too_young", { name: current.name }));
+    if (current.trip) return say($("trip-info").textContent);
+    return openPack();
+  }
+  if (id === "game") return act("game", "start").then((r) => { if (r && r.accepted) showView("home"); });
+  if (id === "trick") return openTricks();
+  if (id === "train") return openTraining();
+});
+
+// Sheets: one at a time, over the lower part, with the scene in sight
+function openSheet(id) {
+  document.querySelectorAll(".sheet").forEach((sheet) => { sheet.hidden = sheet.id !== id; });
+  $("view-home").classList.toggle("busy", !!id);
+  if (id) showView("home");
+}
+
+// Packing: the destination, and up to max_pack things that help on the way
+function openPack() {
+  renderPack();
+  openSheet("pack-mode");
+}
+
+function renderPack() {
+  const s = current, area = picked(s, "trip");
+  // An area opens up once the pet has got past the guardian of the one before
+  const going = area && s.areas.find((a) => a.id === area[0]);
+  $("pack-say").textContent = going && going.guardian ? t("page.pack.guardian") : "";
+  $("pack-areas").replaceChildren(...s.areas.map((a) => {
+    const b = document.createElement("button");
+    b.textContent = a.unlocked ? a.label : `🔒 ${a.label}`;
+    b.classList.toggle("on", !!area && a.id === area[0]);
+    b.addEventListener("click", () => {
+      if (!a.unlocked) return void ($("pack-say").textContent = t("page.pack.locked", { area: a.blocked_by }));
+      choice.trip = a.id;
+      renderPack();
+    });
+    return b;
+  }));
+  // Slots: a tap takes the thing out again
+  $("pack-slots").replaceChildren(...Array.from({ length: s.max_pack }, (_, i) => {
+    const b = document.createElement("button");
+    b.textContent = PACK_ICONS[packed[i]] || "";
+    b.classList.toggle("on", i < packed.length);
+    b.disabled = i >= packed.length;
+    b.addEventListener("click", () => {
+      packed.splice(i, 1);
+      renderPack();
+    });
+    return b;
+  }));
+  $("pack-things").replaceChildren(...s.packable.map((thing) => {
+    const b = document.createElement("button");
+    b.textContent = `${PACK_ICONS[thing.id] || ""} ${thing.label}`;
+    b.disabled = packed.length >= s.max_pack;
+    b.addEventListener("click", () => {
+      packed.push(thing.id);
+      renderPack();
+    });
+    return b;
+  }));
+  $("pack-go").disabled = !s.actions.trip;
+}
+$("pack-close").addEventListener("click", () => openSheet(null));
+$("pack-go").addEventListener("click", async () => {
+  const area = current && picked(current, "trip");
+  if (!area) return;
+  // the backpack drops into the scene, the pet puts it on and sets off
+  const r = await act("trip", area[0], { throw: 0.5, value: [...packed] });
+  if (r && r.accepted) {
+    packed.length = 0;
+    openSheet(null);
+  } else if (r) {
+    $("pack-say").textContent = r.message;
+  }
+});
+
+// A new egg: one of those that are kept (an entry of "eggs" in the state), or a usual one to start over with
+async function newEgg(egg) {
+  if (!current) return;
+  const sure = egg ? t("page.brood_confirm", { name: current.name, egg: egg.label })
+    : t("page.new_egg_confirm", { name: current.name });
+  if (!await ask(sure, { ok: t(egg ? "page.brood_ok" : "page.new_egg_ok"), danger: true })) return;
+  try {
+    render(await api("POST", "/api/pet/new_egg", egg ? { confirm: true, egg: egg.id } : { confirm: true }));
+    showView("home");
+    say(t("page.new_egg_done"));
+  } catch (err) {
+    fail(err);
+  }
+}
+
+// ---------- Diary ----------
+
+// One line of a list: a label with an optional note below it, and whatever goes on the right
+function row(label, note, ...right) {
+  const li = document.createElement("li");
+  const text = document.createElement("span");
+  text.append(label);
+  if (note) {
+    const small = document.createElement("small");
+    small.textContent = note;
+    text.append(small);
+  }
+  li.append(text, ...right);
+  return li;
+}
+
+function figure(value) {
+  const span = document.createElement("span");
+  span.className = "figure";
+  span.textContent = value;
+  return span;
+}
+
+// A meter, `percent` of it filled
+function meter(percent, color) {
+  const bar = document.createElement("span");
+  bar.className = "meter";
+  if (color) bar.style.setProperty("--c", color);
+  bar.append(document.createElement("b"));
+  bar.firstChild.style.width = percent + "%";
+  return bar;
+}
+
+// Finds: the friend, eggs to brood, hats to put on, decorations to set out, the seeds and the plant
+function renderFinds(s) {
+  const rows = [];
+  if (s.friend) {
+    rows.push([t("page.finds.friend", { pet: s.friend.label }), s.friend.visiting ? t("page.finds.friend_here")
+      : t("page.finds.friend_visits", { n: s.friend.visits, needed: s.friend.needed })]);
+  }
+  for (const egg of s.eggs) {
+    // what a pet has passed on to its egg
+    const note = [t("page.finds.egg"), egg.from && t("page.finds.egg_from", { name: egg.from }),
+      ...egg.skills.map((k) => `${k.label} ${k.value}`)];
+    rows.push([egg.label, note.filter(Boolean).join(" · "), { kind: "egg", egg }]);
+  }
+  if (s.plant) {
+    const state = t(s.plant.ripe ? "page.finds.ripe" : s.plant.stage === "grown" ? "page.finds.ripening" : "page.finds.growing");
+    rows.push([`${PLANT_ICONS[s.plant.kind]} ${s.plant.label}`, `${state} · ${tn("page.finds.left", s.plant.left)}`]);
+  }
+  for (const item of s.items) {
+    rows.push(item.kind === "seed" ? [item.label, t("page.finds.in_bag", { n: item.count })]
+      : [item.label, [t(`page.kinds.${item.kind}`), ...item.effects.map((k) => t(`page.finds.effects.${k}`))].join(" · "), item]);
+  }
+  offerTab("finds", rows.length);
+  $("finds").replaceChildren(...rows.map(([label, note, item]) => {
+    if (!item) return row(label, note);
+    const b = document.createElement("button");
+    b.className = "small";
+    if (item.kind === "egg") {
+      b.textContent = t("page.finds.egg_brood");
+      b.addEventListener("click", () => newEgg(item.egg));
+    } else {
+      b.textContent = t(`page.finds.${item.kind}_${item.active ? "off" : "on"}`);
+      b.classList.toggle("on", item.active);
+      b.addEventListener("click", () => act(item.kind === "hat" ? "wear" : "deco", item.id));
+    }
+    return row(label, note, b);
+  }));
+}
+
+function renderGame(s) {
+  const game = s.game;
+  const active = !!(game && game.active);
+  if (!active) gameDismissed = false;
+  if (active && !gameDismissed) {
+    const last = game.last ? game.last.split(":") : null;
+    $("game-info").textContent = (last
+      ? t("page.game.jumped", { side: t(`page.game.${last[0]}`), result: t(`page.game.${last[1]}`) }) : t("page.game.ask"))
+      + "\n" + t("page.game.round", { round: game.round + 1, rounds: game.rounds, wins: game.wins });
+    document.querySelectorAll("[data-move]").forEach((b) => { b.disabled = false; });
+    if ($("game").hidden) openSheet("game");
+  } else if (!$("game").hidden && Date.now() >= gameHold) {
+    openSheet(null);
+  }
+}
+
+function trickLabel(id) {
+  const trick = current && current.tricks.find((x) => x.id === id);
+  return trick ? trick.label : id;
+}
+
+function renderTricks(s) {
+  $("tricks").replaceChildren(...s.tricks.map((trick) => {
+    const li = document.createElement("li");
+    li.dataset.trick = trick.id;
+    // the move as a picture (its words for screen readers)
+    const icon = document.createElement("span");
+    icon.className = "move";
+    icon.innerHTML = svg(trick.id);
+    icon.setAttribute("role", "img");
+    icon.setAttribute("aria-label", t(`page.gestures.${trick.id}`));
+    const text = document.createElement("div");
+    text.append(trick.label);
+    if (!trick.learned) text.append(meter(trick.progress, "var(--energy)"));
+    li.append(icon, text);
+    if (trick.learned) {
+      const star = document.createElement("span");
+      star.className = "learned";
+      star.innerHTML = svg("trick");
+      li.append(star);
+    }
+    return li;
+  }));
+}
+
+// Battle stats in the training sheet: a tap on one starts its exercise
+function renderSkills(s) {
+  $("skills").replaceChildren(...s.skills.map((skill) => {
+    const [symbol, color] = SKILL_ICONS[skill.id] || ["?", "var(--accent)"];
+    const li = document.createElement("li");
+    li.dataset.skill = skill.id;
+    const icon = document.createElement("span");
+    icon.textContent = symbol;
+    const text = document.createElement("div");
+    const hint = document.createElement("small");
+    hint.textContent = t(`page.train.how.${skill.id}`);
+    text.append(skill.label, hint, meter(skill.value, color));
+    const value = document.createElement("b");
+    value.textContent = Math.floor(skill.value);
+    li.append(icon, text, value);
+    return li;
+  }));
+}
+
+async function refresh() {
+  try {
+    render(await api("GET", "/api/pet"));
+    if (view === "diary") renderEvents((await api("GET", "/api/pet/events?limit=30")).events);
+  } catch (err) {
+    fail(err);
+  }
+}
+
+// How it is: the five needs, its weight and the bond
+function renderValues(s) {
+  const note = { heavy: t("page.weight.heavy"), light: t("page.weight.light") }[s.weight_status] || "";
+  $("values").replaceChildren(
+    ...STATS.map((key) => row(t(`page.stats.${key}`), "", meter(s.stats[key], `var(--${key})`))),
+    row(t("page.values.weight"), t("page.values.ideal", { ideal: s.ideal_weight }) + note, figure(`${Math.round(s.weight)} g`)),
+    row(t("page.values.bond"), "", figure("♥".repeat(s.bond_level) + "♡".repeat(5 - s.bond_level))),
+  );
+}
+
+function renderStatistics(s) {
+  const c = s.counters || {};
+  const favorite = s.snacks.find((x) => x.id === s.favorite_snack);
+  const rows = [
+    [t("page.statistics.meals"), c.meals || 0],
+    [t("page.statistics.snacks"), `${c.snacks || 0} (🍪 ${c.snack_cookie || 0} · 🍦 ${c.snack_icecream || 0} · 🍎 ${c.snack_fruit || 0})`],
+    [t("page.statistics.plays"), c.plays || 0],
+    [t("page.statistics.game"), t("page.statistics.game_value", { games: c.games || 0, won: c.games_won || 0 })],
+    [t("page.statistics.tricks"), t("page.statistics.tricks_value", {
+      tricks: s.tricks.filter((x) => x.learned).map((x) => x.label).join(", ") || t("page.statistics.tricks_none"),
+      n: c.tricks || 0,
+    })],
+    [t("page.statistics.trainings"), c.trainings || 0],
+    [t("page.statistics.battles"), t("page.statistics.battles_value", { battles: c.battles || 0, won: c.battles_won || 0 })],
+    [t("page.statistics.guardians"), t("page.statistics.guardians_value", s.guardians)],
+    [t("page.statistics.cleanups"), c.cleanups || 0],
+    [t("page.statistics.pets"), c.pets || 0],
+    [t("page.statistics.trips"), c.trips || 0],
+    [t("page.statistics.fruits"), c.fruits || 0],
+    [t("page.statistics.hearts"), c.hearts || 0],
+    [t("page.statistics.favorite"), favorite ? favorite.label : t("page.statistics.favorite_unknown")],
+  ];
+  offerTab("statistics", s.stage !== "egg");
+  $("statistics").replaceChildren(...rows.map(([label, value]) => row(label, "", figure(value))));
+}
+
+// Heading for a day in the history: "Today", "Yesterday", then the date, in the language of the page
+const LANG = document.documentElement.lang;
+function dayLabel(d) {
+  const midnight = (x) => new Date(x).setHours(0, 0, 0, 0);
+  const days = Math.round((midnight(d) - midnight(Date.now())) / 864e5);
+  if (days < -1) return d.toLocaleDateString(LANG, { weekday: "long", day: "numeric", month: "long" });
+  const label = new Intl.RelativeTimeFormat(LANG, { numeric: "auto" }).format(days, "day");
+  return label[0].toUpperCase() + label.slice(1);
+}
+
+// What a line of the history says (without "didn't want to")
+function eventText(e) {
+  const labels = (current && current.item_labels) || {};
+  return e.action === "evolve" && e.accepted ? evolveText(e.item)
+    : e.action === "learned" ? t("page.events.learned", { trick: trickLabel(e.item) })
+    : e.action === "trick" ? t("page.events.practiced", { trick: trickLabel(e.item) })
+    : e.action === "solo" ? (e.item === "ball" ? t("page.events.solo_ball")
+      : t("page.events.solo_trick", { trick: trickLabel(e.item) }))
+    : e.action === "trip" ? T[`areas.${e.item}.trip`] || T[`page.events.trip_${e.item}`] || t("page.events.trip")
+    : e.action === "battle" ? battleText(e.item)
+    : e.action === "wild" ? wildText(e.item)
+    : e.action === "visit" ? t("page.events.visit", { pet: T[`species.${e.item}`] || e.item })
+    : e.action === "gift" ? t("page.events.gift", { pet: T[`species.${e.item}`] || e.item })
+    : e.action === "nest" || e.action === "collect" ? t(`page.events.${e.action}`)
+    : e.action === "unwrap" ? t("page.events.unwrap", { what: giftLabel(e.item) })
+    : e.action === "guardian" ? t("page.events.guardian", { foe: T[`foes.${e.item}`] || e.item })
+    : e.action === "unlock" ? t("page.events.unlock", { area: T[`areas.${e.item}.name`] || e.item })
+    : e.action === "train" ? t("page.events.trained", { skill: T[`skills.${e.item}`] || e.item })
+    : e.action === "find" ? t("page.events.find", { item: labels[e.item] || e.item })
+    : e.action === "fruit" ? t("page.events.picked", { fruit: T[`fruits.${e.item}`] || e.item })
+    : e.action === "plant" ? t("page.events.planted", { seed: labels["seed_" + e.item] || t("page.kinds.seed") })
+    : e.action === "wear" ? (e.item === "none" ? t("page.events.hat_off") : t("page.events.hat", { item: labels[e.item] || e.item }))
+    : e.action === "deco" ? t("page.events.deco", { item: labels[e.item] || e.item })
+    : T[`page.events.${e.item}`] || T[`page.events.${e.action}`] || e.action;
+}
+
+// What was in a friend's gift: "fruit_<plant>" or "seed_<plant>"
+function giftLabel(gift) {
+  const labels = (current && current.item_labels) || {};
+  return gift && gift.startsWith("fruit_") ? T[`fruits.${gift.slice(6)}`] || gift : labels[gift] || gift || "";
+}
+
+// Back after a while: what happened while nobody was there, told once (the pet decides when)
+let welcomed = stored("welcomed");
+function welcome(s) {
+  const w = s.welcome;
+  if (!w || String(w.since) === welcomed || document.querySelector("dialog[open]")) return;
+  welcomed = String(w.since);
+  store("welcomed", welcomed);
+  $("welcome-text").textContent = t("page.welcome.text", { name: s.name, time: inTime(s.now - w.since) });
+  $("welcome-list").replaceChildren(...w.told.map((line) => {
+    const li = document.createElement("li");
+    li.textContent = eventText({ ...line, accepted: true });
+    if (line.count > 1) {
+      const times = document.createElement("span");
+      times.className = "times";
+      times.textContent = `×${line.count}`;
+      li.append(times);
+    }
+    return li;
+  }));
+  $("welcome").showModal();
+}
+
+function renderEvents(events) {
+  let day, last;
+  // Single guesses in the mini-game stay out of the history (only the start counts),
+  // and so do the tap and the answer that belong to an exercise
+  events = events.filter((e) => !(e.action === "game" && e.item !== "start")
+    && !(e.action === "train" && !(e.item in SKILL_ICONS)));
+  const items = events.flatMap((e) => {
+    const li = document.createElement("li");
+    if (!e.accepted) li.className = "rejected";
+    const d = new Date(e.at * 1000);
+    // One heading per day; below it, the times the way the phone is set up to show them
+    const heading = d.toDateString() !== day && document.createElement("li");
+    if (heading) {
+      day = d.toDateString();
+      last = null;
+      heading.className = "day";
+      heading.textContent = dayLabel(d);
+    }
+    const time = document.createElement("time");
+    time.textContent = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const text = document.createElement("span");
+    const what = eventText(e);
+    // Refused: the pet didn't want to, or (trips, planting) it wasn't possible
+    text.textContent = e.accepted ? what
+      : t(["trip", "plant"].includes(e.action) ? "page.events.failed" : "page.events.refused", { text: what });
+    // The same thing several times in a row is one line with a count (and the time of the latest)
+    if (last && last.text === text.textContent) {
+      last.times.textContent = `×${++last.n}`;
+      return [];
+    }
+    last = { text: text.textContent, n: 1, times: document.createElement("span") };
+    last.times.className = "times";
+    li.append(time, text, last.times);
+    return heading ? [heading, li] : [li];
+  });
+  if (!items.length) {
+    const li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = t("page.history_empty");
+    items.push(li);
+  }
+  $("events").replaceChildren(...items);
+}
+
+// A scuffle on a trip: "opponent:outcome" (win, lose, draw, or ball = distracted)
+function battleText(item) {
+  const [foe, outcome] = (item || "").split(":");
+  return t(`page.events.battle_${outcome}`, { foe: T[`foes.${foe}`] || foe });
+}
+
+// A wild pet it has shown its tricks to: "species:friend" or "species:shrug"
+function wildText(item) {
+  const [species, outcome] = (item || "").split(":");
+  return t(`page.events.wild_${outcome}`, { pet: T[`species.${species}`] || species });
+}
+
+async function loadGallery() {
+  try {
+    const { ancestors } = await api("GET", "/api/pet/ancestors");
+    offerTab("gallery", ancestors.length);
+    $("gallery").replaceChildren(...ancestors.map((a) => {
+      const img = document.createElement("img");
+      img.src = app.icon(a.stage, a.species);
+      img.alt = "";
+      const from = new Date(a.born_at * 1000).toLocaleDateString();
+      const li = row(a.name, t("page.gallery.entry", {
+        form: a.stage === "adult" ? a.species_label : a.stage_label, age: tn("page.days", a.age_days), date: from,
+      }) + (a.tricks && a.tricks.length ? ` · ${a.tricks.length} ⭐` : ""));
+      li.prepend(img);
+      return li;
+    }));
+  } catch (err) {
+    // The gallery isn't important enough for an error message
+  }
+}
+
+// A tab without content stays hidden; if it was the open one, the history takes over
+function offerTab(name, has) {
+  document.querySelector(`[data-tab="${name}"]`).hidden = !has;
+  showTab(tab);
+}
+
+function showTab(name) {
+  tab = document.querySelector(`[data-tab="${name}"]`).hidden ? "history" : name;
+  document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", b.dataset.tab === tab));
+  document.querySelectorAll("[data-panel]").forEach((panel) => { panel.hidden = panel.dataset.panel !== tab; });
+}
+document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
+
+// ---------- The tabs at the bottom ----------
+
+function showView(name) {
+  view = name;
+  for (const v of ["home", "adventure", "diary", "more"]) $(`view-${v}`).hidden = v !== name;
+  document.querySelectorAll("[data-view]").forEach((b) => {
+    if (b.dataset.view === name) b.setAttribute("aria-current", "page");
+    else b.removeAttribute("aria-current");
+  });
+  if (name === "diary") {
+    refresh();
+    loadGallery();
+  }
+  if (name === "more" && app.mode === "local") showLocation();  // the live location may have moved meanwhile
+  if (name === "home") nextPreview();
+}
+document.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.view !== "home") openSheet(null);
+  showView(b.dataset.view);
+}));
+
+// ---------- Touching the pet: stroke it ----------
+
+const STROKE_PX = 260;       // this much stroking (px) is one petting …
+const PET_EVERY_MS = 2500;   // … sent no more often than this
+{
+  const hero = $("hero");
+  let stroke = null, lastPet = 0;
+  hero.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("button") || !current || current.trip || baton) return;
+    hero.setPointerCapture(e.pointerId);
+    stroke = { id: e.pointerId, x: e.clientX, y: e.clientY, way: 0, puffed: 0 };
+    updateArea();
+  });
+  hero.addEventListener("pointermove", (e) => {
+    if (!stroke || e.pointerId !== stroke.id) return;
+    const step = Math.hypot(e.clientX - stroke.x, e.clientY - stroke.y);
+    stroke.x = e.clientX;
+    stroke.y = e.clientY;
+    if (!onPet(e.clientX, e.clientY)) return;  // only the pet itself can be stroked
+    stroke.way += step;
+    if (stroke.way - stroke.puffed > 50) {
+      stroke.puffed = stroke.way;
+      burst(e.clientX, e.clientY);
+      buzz(8);
+    }
+    if (stroke.way > STROKE_PX && Date.now() - lastPet > PET_EVERY_MS) {
+      stroke.way = stroke.puffed = 0;
+      lastPet = Date.now();
+      const cold = current.cold;
+      action("pet").then((r) => {
+        render(r.state);
+        if (!r.accepted) say(r.message);
+        else if (cold && !r.state.cold) say(t("page.petting.warmed", { name: r.state.name }));
+      }).catch(fail);
+    }
+  });
+  const end = (e) => {
+    if (!stroke || e.pointerId !== stroke.id) return;
+    // a tap: one heart
+    if (stroke.way < 8 && onPet(e.clientX, e.clientY)) {
+      burst(e.clientX, e.clientY);
+      buzz(10);
+    }
+    stroke = null;
+  };
+  hero.addEventListener("pointerup", end);
+  hero.addEventListener("pointercancel", () => { stroke = null; });
+}
+
+// ---------- The tray: drag a thing onto the pet ----------
+// Dropped right on the pet, food is eaten at once (on the phone, where the page knows where the
+// pet is). Anywhere else in the scene, or flicked up, it lands there and the pet goes to get it.
+// The sponge is rubbed over the pet.
+
+const RUB_PX = 320;       // this much rubbing (px) is one cleaning
+const FLICK_SPEED = 0.5;  // a swipe up this fast (px/ms) throws it into the scene
+const sleepMs = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+document.querySelectorAll(".thing").forEach((b) => {
+  let drag = null;
+
+  b.addEventListener("pointerdown", (e) => {
+    if (b.disabled || drag) return;
+    b.setPointerCapture(e.pointerId);
+    const ghost = document.createElement("div");
+    ghost.className = "ghost";
+    ghost.append(b.firstElementChild.cloneNode());
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, trail: [[e.timeStamp, e.clientX, e.clientY]], ghost, rub: 0, rubbed: false, moved: false };
+    updateArea();
+  });
+  b.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const last = drag.trail[drag.trail.length - 1];
+    drag.trail.push([e.timeStamp, e.clientX, e.clientY]);
+    if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 8) return;
+    if (!drag.moved) {
+      drag.moved = true;
+      document.body.append(drag.ghost);
+      b.classList.add("lift");
+    }
+    drag.ghost.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    const inside = overHero(e.clientX, e.clientY);
+    $("hero").classList.toggle("drop", inside && !b.dataset.rub && !b.dataset.wand);
+    if (b.dataset.rub && onPet(e.clientX, e.clientY)) {
+      drag.rub += Math.hypot(e.clientX - last[1], e.clientY - last[2]);
+      if (Math.random() < 0.3) burst(e.clientX, e.clientY, "bubble");
+      if (!drag.rubbed && drag.rub > RUB_PX) {
+        drag.rubbed = true;
+        act("clean");
+      }
+    }
+  });
+  const done = () => {
+    $("hero").classList.remove("drop");
+    b.classList.remove("lift");
+  };
+  b.addEventListener("pointercancel", () => {
+    if (!drag) return;
+    drag.ghost.remove();
+    drag = null;
+    done();
+  });
+  b.addEventListener("pointerup", async (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const { ghost, trail, moved, rubbed } = drag;
+    drag = null;
+    done();
+    if (b.dataset.wand) {
+      // the baton: a tap takes it or puts it back, dragged out it is taken
+      ghost.remove();
+      return holdBaton(moved || !baton);
+    }
+    if (!moved) {
+      ghost.remove();
+      return tapThing(b);
+    }
+    if (b.dataset.rub) {
+      ghost.remove();
+      if (!rubbed) say(t("page.hint.sponge", { name: current.name }));
+      return;
+    }
+    // Speed from the last 100 ms of the movement
+    const from = trail.find(([at]) => e.timeStamp - at <= 100) || trail[trail.length - 1];
+    const vy = (e.clientY - from[2]) / Math.max(1, e.timeStamp - from[0]);
+    const inside = overHero(e.clientX, e.clientY);
+    if (!inside && vy > -FLICK_SPEED) {
+      ghost.remove();
+      return say(t("page.hint.drag", { name: current.name }));
+    }
+    const direct = inside && area && onPet(e.clientX, e.clientY) && ["feed", "medicine"].includes(b.dataset.action);
+    const where = Math.round(Math.max(0, Math.min(1, inScene(e.clientX, e.clientY)[0])) * 100) / 100;
+    // it drops into the scene (or into the pet's mouth)
+    ghost.style.transition = "transform .3s ease-out, opacity .3s";
+    ghost.style.transform += inside ? " scale(.5)" : " translateY(-40vh) scale(.4)";
+    ghost.style.opacity = "0";
+    setTimeout(() => ghost.remove(), 350);
+    try {
+      const r = await action(b.dataset.action, b.dataset.item, direct ? {} : { throw: where });
+      render(r.state);
+      say(r.accepted ? "" : r.message);
+      if (r.accepted) setTimeout(() => buzz(25), direct ? 0 : LAND_MS);
+      else buzz([30, 70, 30]);
+    } catch (err) {
+      fail(err);
+    }
+  });
+});
+
+// A tap instead of a drag: switch the kind of seed, otherwise say how it goes
+function tapThing(b) {
+  if (!current) return;
+  if (b.dataset.action === "plant") {
+    const all = options(current, "plant");
+    if (all.length > 1) {
+      choice.plant = all[(all.indexOf(picked(current, "plant")) + 1) % all.length][0];
+      render(current);
+      return say(t("page.tap.choice", { choice: picked(current, "plant")[1] }));
+    }
+  }
+  say(t(b.dataset.rub ? "page.hint.sponge" : "page.hint.drag", { name: current.name }));
+}
+
+// ---------- The baton: tricks ----------
+// Taken from the tray, it stays in the hand: a move drawn over the scene is a trick (practiced, or
+// shown if the pet knows it), and stroking waits until it is put back.
+
+let baton = false;
+function holdBaton(on) {
+  baton = on && !!current;
+  document.querySelector(".thing[data-wand]").classList.toggle("on", baton);
+  $("hero").classList.toggle("wand", baton);
+  if (baton) say(t("page.hint.baton", { name: current.name }));
+}
+{
+  const hero = $("hero");
+  let path = null, held = null;
+  hero.addEventListener("pointerdown", (e) => {
+    if (!baton || e.target.closest("button")) return;
+    hero.setPointerCapture(e.pointerId);
+    path = { id: e.pointerId, points: [[e.clientX, e.clientY]], spark: null };
+    held = document.createElement("div");
+    held.className = "ghost";
+    held.append(document.querySelector(".thing[data-wand] img").cloneNode());
+    held.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    document.body.append(held);
+  });
+  hero.addEventListener("pointermove", (e) => {
+    if (!path || e.pointerId !== path.id) return;
+    path.points.push([e.clientX, e.clientY]);
+    held.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    const last = path.spark;
+    if (!last || Math.hypot(e.clientX - last[0], e.clientY - last[1]) > 14) {
+      burst(e.clientX, e.clientY, "spark");
+      path.spark = [e.clientX, e.clientY];
+    }
+  });
+  const end = (e) => {
+    if (!path || e.pointerId !== path.id) return;
+    const points = path.points;
+    path = null;
+    held.remove();
+    if (e.type === "pointerup") showTrick(points);
+  };
+  hero.addEventListener("pointerup", end);
+  hero.addEventListener("pointercancel", end);
+}
+
+// The move drawn with the baton: the trick it stands for, practiced or shown
+async function showTrick(path) {
+  const id = gesture(path);
+  // (a little touch is nothing; a real move it doesn't know gets an answer)
+  const far = Math.max(...path.map(([x, y]) => Math.hypot(x - path[0][0], y - path[0][1])));
+  if (!id) return say(far > 40 ? t("page.trick.unknown", { name: current.name }) : "");
+  const known = current.tricks.some((x) => x.id === id && x.learned);
+  try {
+    const r = await action("trick", id);
+    render(r.state);
+    const trick = trickLabel(id), result = (r.state.activity_item || "").split(":")[1];
+    say(!r.accepted ? r.message
+      : result === "learned" ? t("page.trick.learned", { name: r.state.name, trick })
+      : known ? t("page.trick.known", { trick })
+      : t(result === "fail" ? "page.trick.fail" : "page.trick.ok", { trick }));
+    buzz(!r.accepted ? [30, 70, 30] : result === "learned" ? [40, 60, 40, 60, 120] : 20);
+  } catch (err) {
+    fail(err);
+  }
+}
+
+// ---------- Sleeping, things at home ----------
+
+$("sleep").addEventListener("click", () => {
+  if (current) act(current.asleep ? "wake" : "sleep");
+});
+
+$("unpack").addEventListener("click", async () => {
+  const before = current ? current.items.map((x) => x.id + x.count) : [];
+  const eggs = current ? current.eggs.length : 0;
+  const r = await act("unpack");
+  if (!r || !r.accepted) return;
+  const got = [...r.state.items.filter((x) => !before.includes(x.id + x.count)), ...r.state.eggs.slice(eggs)]
+    .map((x) => x.label);
+  say(got.length ? t("page.trip.brought", { items: got.join(", ") }) : "");
+});
+$("collect").addEventListener("click", async () => {
+  const egg = current && current.nest;
+  const r = await act("collect");
+  if (r && r.accepted && egg) say(t("page.collected", { egg: egg.label }));
+});
+$("unwrap").addEventListener("click", async () => {
+  const r = await act("unwrap");
+  const gift = r && r.accepted ? r.state.activity_item : "";
+  if (gift.startsWith("fruit_")) say(t("page.unwrapped_fruit", { fruit: giftLabel(gift), name: r.state.name }));
+  else if (gift) say(t("page.unwrapped_seed", { seed: giftLabel(gift) }));
+});
+$("recall").addEventListener("click", async () => {
+  const r = await act("trip", "recall");
+  if (r && r.accepted) say(t("page.trip.heading_home", { name: r.state.name }));
+});
+
+// ---------- Tricks: show the move with your finger, the pet practices in the scene ----------
+
+// Which trick was shown? `trail` = the path of the finger as [x, y]
+function gesture(trail) {
+  const xs = trail.map((p) => p[0]), ys = trail.map((p) => p[1]);
+  const left = Math.min(...xs), top = Math.min(...ys);
+  const w = Math.max(...xs) - left, h = Math.max(...ys) - top;
+  if (trail.length < 3 || Math.max(w, h) < 60) return null;
+  // Circle: add up the angles around the center
+  let turn = 0, last = null;
+  for (const [x, y] of trail) {
+    const angle = Math.atan2(y - top - h / 2, x - left - w / 2);
+    if (last !== null) turn += ((angle - last + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
+    last = angle;
+  }
+  // Back and forth: flat, changing direction at least twice
+  let flips = 0, dir = 0, anchor = xs[0];
+  for (const x of xs) {
+    if (Math.abs(x - anchor) < 25) continue;
+    const d = Math.sign(x - anchor);
+    if (dir && d !== dir) flips++;
+    dir = d;
+    anchor = x;
+  }
+  if (flips >= 2 && h < w * 0.5) return "dance";
+  // A circle: round (about as tall as wide), going most of the way around
+  if (Math.abs(turn) > 5 && Math.min(w, h) > Math.max(w, h) * 0.5) return "spin";
+  const dx = xs[xs.length - 1] - xs[0], dy = ys[ys.length - 1] - ys[0];
+  if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(dx)) return dy < 0 ? "flip" : "bow";
+  return null;
+}
+
+// What it knows and how far it has got; tricks are shown with the baton from the tray
+function openTricks() {
+  openSheet("trick-mode");
+}
+$("trick-close").addEventListener("click", () => openSheet(null));
+
+// ---------- Training: the battle stats ----------
+
+const THROW_MIN = 60;  // swiping this far up (px) counts as a throw
+const THROW_FULL = 4;  // a swipe this fast (screen heights per second) is a throw at full strength
+let openTraining;
+{
+  const mode = $("train-mode"), tell = $("train-say"), ball = $("train-ball"), steps = $("train-steps");
+  let stage = "menu", swipe = null, answer = [], length = 0, busy = false, goTimer;
+
+  // What the sheet shows: the list of exercises, or the one that is going on
+  const show = (next, hint) => {
+    stage = next;
+    clearTimeout(goTimer);
+    $("train-hint").textContent = hint || t("page.train.hint");
+    $("skills").hidden = $("train-note").hidden = next !== "menu";
+    $("train-back").hidden = next === "menu";
+    ball.hidden = next !== "strength";
+    $("train-tap").hidden = next !== "speed";
+    steps.hidden = next !== "smarts";
+    ball.style.transition = "none";
+    ball.style.transform = "";
+    ball.style.opacity = 1;
+  };
+  const slots = () => {
+    steps.replaceChildren(...Array.from({ length }, (_, i) => {
+      const slot = document.createElement("i");
+      slot.textContent = ARROWS[answer[i]] || "";
+      slot.classList.toggle("on", i < answer.length);
+      return slot;
+    }));
+  };
+  // Send a part of an exercise; afterwards say what it brought
+  const send = async (item, value, skill) => {
+    const before = current && current.skills.find((x) => x.id === skill);
+    busy = true;
+    try {
+      const r = await action("train", item, { value });
+      render(r.state);
+      if (!r.accepted) {
+        tell.textContent = r.message;
+        buzz([30, 70, 30]);
+        show("menu");
+      }
+      busy = false;
+      return r.accepted ? { r, before } : null;
+    } catch (err) {
+      busy = false;
+      openSheet(null);
+      fail(err);
+      return null;
+    }
+  };
+  // `how`: how the exercise went, if there is more to say than the points; `failed`: it brought nothing
+  const result = ({ r, before }, skill, how = "", failed = false) => {
+    const after = r.state.skills.find((x) => x.id === skill);
+    const points = Math.round((after.value - before.value) * 10) / 10;
+    const gain = t(points > 0 ? "page.train.gained" : "page.train.nothing", { skill: after.label, points });
+    tell.textContent = failed ? how : how ? `${how} · ${gain}` : gain;
+    buzz(points >= 2 ? [40, 60, 40, 60, 120] : 20);
+    show("menu");
+    const row = $("skills").querySelector(`[data-skill="${skill}"]`);
+    if (row && points > 0) row.classList.add("hit");
+  };
+
+  openTraining = () => {
+    tell.textContent = "";
+    show("menu");
+    openSheet("train-mode");
+  };
+  $("train-close").addEventListener("click", () => openSheet(null));
+  $("train-back").addEventListener("click", () => show("menu"));
+
+  $("skills").addEventListener("click", async (e) => {
+    const row = e.target.closest("[data-skill]");
+    if (!row || busy) return;
+    const skill = row.dataset.skill;
+    tell.textContent = "";
+    if (skill === "strength") return show("strength", t("page.train.strength"));
+    const started = await send(skill);
+    if (!started) return;
+    if (skill === "speed") return show("speed", t("page.train.speed"));
+    // The pet hops the sequence in the scene first; then it is your turn
+    const training = started.r.state.training;
+    answer = [];
+    length = training.length;
+    show("smarts", t("page.train.smarts_watch"));
+    slots();
+    goTimer = setTimeout(() => { $("train-hint").textContent = t("page.train.smarts_go"); }, training.shown_in * 1000);
+  });
+
+  $("train-tap").addEventListener("pointerdown", async () => {
+    if (busy) return;
+    const done = await send("tap", undefined, "speed");
+    if (!done) return;
+    const early = done.r.state.activity_item === "early";
+    result(done, "speed", early ? t("page.train.early") : "", early);
+  });
+
+  // Swipes: throw the ball (strength), or swipe the directions back (smarts)
+  mode.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("button, li") || busy || (stage !== "strength" && stage !== "smarts")) return;
+    mode.setPointerCapture(e.pointerId);
+    swipe = { id: e.pointerId, x: e.clientX, y: e.clientY, trail: [[e.timeStamp, e.clientY]] };
+  });
+  mode.addEventListener("pointermove", (e) => {
+    if (!swipe || e.pointerId !== swipe.id) return;
+    swipe.trail.push([e.timeStamp, e.clientY]);
+    if (stage === "strength") ball.style.transform = `translate(${e.clientX - swipe.x}px, ${e.clientY - swipe.y}px)`;
+  });
+  mode.addEventListener("pointercancel", () => { swipe = null; });
+  mode.addEventListener("pointerup", async (e) => {
+    if (!swipe || e.pointerId !== swipe.id) return;
+    const { x, y, trail } = swipe;
+    swipe = null;
+    const dx = e.clientX - x, dy = e.clientY - y;
+    if (stage === "strength") {
+      if (dy > -THROW_MIN) {
+        ball.style.transition = "transform .2s";
+        ball.style.transform = "";
+        return;
+      }
+      // Strength of the throw: the speed over the last 100 ms of the swipe
+      const from = trail.find(([at]) => e.timeStamp - at <= 100) || trail[trail.length - 1];
+      const speed = (from[1] - e.clientY) / Math.max(1, e.timeStamp - from[0]) * 1000 / innerHeight;
+      const power = Math.round(Math.max(0.05, Math.min(1, speed / THROW_FULL)) * 100) / 100;
+      ball.style.transition = "transform .3s ease-out, opacity .3s ease-in";
+      ball.style.transform = `translate(${dx}px, ${-innerHeight}px)`;
+      ball.style.opacity = 0;
+      const done = await send("strength", power, "strength");
+      if (done) result(done, "strength", `${Math.round(power * 100)} %`);
+    } else if (Math.max(Math.abs(dx), Math.abs(dy)) >= 40) {
+      answer.push(Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? "left" : "right") : (dy < 0 ? "up" : "down"));
+      slots();
+      buzz(15);
+      if (answer.length < length) return;
+      const done = await send("answer", answer, "smarts");
+      if (done) {
+        const [right, all] = (done.r.state.activity_item || "").split("/");
+        result(done, "smarts", t("page.train.smarts_result", { right, steps: all }), right === "0");
+      }
+    }
+  });
+}
+
+// ---------- Evolving: press and hold ----------
+
+{
+  const b = $("evolve");
+  let timer;
+  const release = () => {
+    if (!timer) return;
+    clearTimeout(timer);
+    timer = null;
+    b.classList.remove("holding");
+    say(t("page.evolve_hold"));
+  };
+  b.addEventListener("pointerdown", (e) => {
+    if (b.disabled || timer) return;
+    b.setPointerCapture(e.pointerId);
+    b.classList.add("holding");
+    timer = setTimeout(async () => {
+      timer = null;
+      b.classList.remove("holding");
+      buzz([40, 60, 120]);
+      try {
+        const before = current;
+        const r = await action("evolve");
+        render(r.state);
+        if (!r.accepted) return say(r.message);
+        if (before && before.stage === "egg") {
+          // Wait a moment until the hatching has been seen
+          setTimeout(async () => {
+            const name = await ask(t("page.name_prompt"), { value: r.state.name, ok: t("page.dialog.save") });
+            if (name) render(await api("POST", "/api/pet/settings", { name }).catch(() => r.state));
+          }, 5000);
+        } else {
+          say(t("page.evolved", { name: r.state.name, what: evolveText(`${r.state.stage}:${r.state.species}`) }));
+        }
+      } catch (err) {
+        fail(err);
+      }
+    }, 1200);
+  });
+  b.addEventListener("pointerup", release);
+  b.addEventListener("pointercancel", release);
+}
+
+// ---------- Mini-game ----------
+
+document.querySelectorAll("[data-move]").forEach((b) => b.addEventListener("click", async () => {
+  document.querySelectorAll("[data-move]").forEach((x) => { x.disabled = true; });
+  try {
+    const r = await action("game", b.dataset.move);
+    const g = r.state.game;
+    if (g && !g.active && "result" in g) {
+      // Leave the result up for a moment, then go back
+      gameHold = Date.now() + 3500;
+      $("game-info").textContent = t("page.game.result", { result: g.result, rounds: g.rounds, verdict: t(g.won ? "page.game.won" : "page.game.lost") });
+      buzz(g.won ? [40, 60, 40, 60, 120] : 60);
+      setTimeout(() => current && renderGame(current), 3600);
+    }
+    render(r.state);
+    if (!r.accepted) say(r.message);
+  } catch (err) {
+    fail(err);
+    document.querySelectorAll("[data-move]").forEach((x) => { x.disabled = false; });
+  }
+}));
+
+$("game-close").addEventListener("click", () => {
+  gameDismissed = true;  // the game runs out by itself
+  gameHold = 0;
+  openSheet(null);
+});
+
+// ---------- More ----------
+
+$("new-egg").addEventListener("click", () => newEgg());
+
+$("rename").addEventListener("click", async () => {
+  const name = await ask(t("page.rename_prompt"), { value: current ? current.name : "", ok: t("page.dialog.save") });
+  if (!name) return;
+  try {
+    render(await api("POST", "/api/pet/settings", { name }));
+  } catch (err) {
+    fail(err);
+  }
+});
+
+if (app.mode === "local") {
+  // The pet lives on the phone: "More" has where it lives (for the weather and the sun)
+  $("on-phone").hidden = false;
+  showLocation();
+}
+// The app from the stores can be the pet of a self-built display instead
+if (app.native) {
+  $("display").hidden = false;
+  $("display-text").textContent = app.connectedTo ? t("page.app.connected", { address: app.connectedTo })
+    : t("page.app.connect_note");
+  $("build-link").hidden = $("connect").hidden = !!app.connectedTo;
+  $("disconnect").hidden = $("offline-leave").hidden = !app.connectedTo;
+}
+
+// Where it lives: nowhere (no weather), one place, or wherever the phone is
+async function showLocation() {
+  const place = await app.location();
+  const kind = app.liveLocation() ? "live" : place ? "fixed" : "off";
+  document.querySelectorAll("[data-place]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.place === kind));
+  $("location-text").textContent = kind === "off" ? t("page.app.location_none")
+    : t(kind === "live" ? "page.app.location_live" : "page.app.location_set", { latitude: place[0], longitude: place[1] })
+      .replace("{latitude}", "–").replace("{longitude}", "–");
+}
+
+document.querySelectorAll("[data-place]").forEach((b) => b.addEventListener("click", async () => {
+  const kind = b.dataset.place;
+  if (kind === "off") {
+    await app.forgetLocation();
+    return showLocation();
+  }
+  app.setLiveLocation(kind === "live");
+  try {
+    // a fixed place is taken once, here and now; a live one is taken again whenever the app opens
+    if (kind === "live" || !(await app.location())) await app.locate();
+  } catch (err) {
+    app.setLiveLocation(false);
+    say(err.message, true);
+  }
+  showLocation();
+}));
+
+$("connect").addEventListener("click", async () => {
+  const address = await ask(t("page.app.connect_prompt"), { value: "", ok: t("page.app.connect_ok"), address: true });
+  if (!address) return;
+  try {
+    await app.connect(address);
+  } catch (err) {
+    say(err.message, true);
+  }
+});
+$("disconnect").addEventListener("click", () => app.disconnect());
+$("offline-leave").addEventListener("click", () => app.disconnect());
+
+// Only poll while the page is visible
+function start() {
+  stop();
+  refresh();
+  pollTimer = setInterval(refresh, 5000);
+}
+
+function stop() {
+  clearInterval(pollTimer);
+}
+
+document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+start();
+</script>
+</body>
+</html>

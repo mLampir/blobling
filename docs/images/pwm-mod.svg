@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 305" role="img" aria-labelledby="title desc" font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title id="title">The PWM mod on the Adafruit RGB Matrix HAT</title>
+  <desc id="desc">An insulated wire is soldered from the pad labelled 4 to the pad labelled 18. It runs in a curve around the pad labelled 17, which lies between them, without touching it.</desc>
+
+  <rect x="0.5" y="0.5" width="719" height="304" rx="14" fill="#f6f7f9" stroke="#d0d7de"/>
+  <text x="30" y="34" fill="#1f2328" font-size="16" font-weight="700">PWM mod: a wire from pad 4 to pad 18</text>
+
+  <!-- a piece of the board: the labelled pad row below the header -->
+  <rect x="20" y="50" width="680" height="172" rx="10" fill="#111316" stroke="#4a515c" stroke-width="1.5"/>
+  <g transform="translate(0 30)">
+    <!-- prototyping holes above the labelled row -->
+    <g fill="none" stroke-linecap="round">
+      <path d="M70,40 H647 M70,64 H647" stroke="#c9a15a" stroke-width="12" stroke-dasharray="0 48" opacity="0.45"/>
+      <path d="M70,40 H647 M70,64 H647" stroke="#111316" stroke-width="5" stroke-dasharray="0 48"/>
+    </g>
+
+    <!-- the labelled pad row -->
+    <g fill="none" stroke-linecap="round">
+      <path d="M70,130 H599" stroke="#c9a15a" stroke-width="20" stroke-dasharray="0 48"/>
+      <path d="M70,130 H599" stroke="#111316" stroke-width="9" stroke-dasharray="0 48"/>
+    </g>
+    <circle cx="646" cy="130" r="10" fill="#c9a15a" opacity="0.45"/>
+    <circle cx="646" cy="130" r="4.5" fill="#111316"/>
+
+    <!-- labels as printed on the board, alternating above and below -->
+    <g fill="#e8eaed" font-size="15" text-anchor="middle">
+      <text x="70" y="164">SDA</text>
+      <text x="118" y="106">SCL</text>
+      <text x="166" y="164">TXD</text>
+      <text x="214" y="106">RXD</text>
+      <text x="242" y="166" font-weight="700">4</text>
+      <text x="310" y="106" font-weight="700">17</text>
+      <text x="380" y="166" font-weight="700">18</text>
+      <text x="406" y="106">27</text>
+      <text x="454" y="164">22</text>
+      <text x="502" y="106">23</text>
+      <text x="550" y="164">24</text>
+      <text x="598" y="106">25</text>
+    </g>
+
+    <!-- the wire: bare ends, insulation in between -->
+    <path d="M262,130 C272,185 348,185 358,130" fill="none" stroke="#cfd3d8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M262,130 C272,185 348,185 358,130" fill="none" stroke="#f2a33a" stroke-width="8" pathLength="100" stroke-dasharray="0 10 80 10"/>
+
+    <!-- solder joints -->
+    <circle cx="262" cy="130" r="9" fill="#c4c9cf"/>
+    <circle cx="358" cy="130" r="9" fill="#c4c9cf"/>
+
+    <!-- pad 17 stays free -->
+    <circle cx="310" cy="130" r="16" fill="none" stroke="#ff6b6b" stroke-width="2.5" stroke-dasharray="5 4"/>
+  </g>
+
+  <!-- legend -->
+  <g fill="#1f2328" font-size="15">
+    <line x1="30" y1="251" x2="66" y2="251" stroke="#f2a33a" stroke-width="8"/>
+    <text x="80" y="256">Insulated wire from 4 to 18, only the ends stripped</text>
+    <circle cx="48" cy="281" r="9" fill="none" stroke="#e5484d" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <text x="80" y="286">17 is the panel's clock line: the wire must not touch it</text>
+  </g>
+</svg>

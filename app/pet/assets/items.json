@@ -1,0 +1,536 @@
+{
+ "frames": [
+  {
+   "filename": "items bowl 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 11,
+    "h": 4
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items food_full 1",
+   "frame": {
+    "x": 11,
+    "y": 0,
+    "w": 11,
+    "h": 3
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items food_half 2",
+   "frame": {
+    "x": 22,
+    "y": 0,
+    "w": 11,
+    "h": 3
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items food_low 3",
+   "frame": {
+    "x": 33,
+    "y": 0,
+    "w": 11,
+    "h": 3
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items poop 4",
+   "frame": {
+    "x": 44,
+    "y": 0,
+    "w": 8,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items ball 5",
+   "frame": {
+    "x": 52,
+    "y": 0,
+    "w": 5,
+    "h": 5
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items umbrella 6",
+   "frame": {
+    "x": 57,
+    "y": 0,
+    "w": 15,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items cloud 7",
+   "frame": {
+    "x": 72,
+    "y": 0,
+    "w": 13,
+    "h": 5
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items cloud_small 8",
+   "frame": {
+    "x": 85,
+    "y": 0,
+    "w": 8,
+    "h": 4
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items cookie 9",
+   "frame": {
+    "x": 93,
+    "y": 0,
+    "w": 7,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items icecream 10",
+   "frame": {
+    "x": 100,
+    "y": 0,
+    "w": 5,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items fruit 11",
+   "frame": {
+    "x": 105,
+    "y": 0,
+    "w": 6,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items medicine 12",
+   "frame": {
+    "x": 111,
+    "y": 0,
+    "w": 5,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items sponge 13",
+   "frame": {
+    "x": 116,
+    "y": 0,
+    "w": 8,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items baton 14",
+   "frame": {
+    "x": 124,
+    "y": 0,
+    "w": 8,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items egg 15",
+   "frame": {
+    "x": 132,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items egg_wobble 16",
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_wobble 17",
+   "frame": {
+    "x": 156,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_wobble 18",
+   "frame": {
+    "x": 168,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_wobble 19",
+   "frame": {
+    "x": 180,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_crack 20",
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items egg_open 21",
+   "frame": {
+    "x": 204,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items ember_egg 22",
+   "frame": {
+    "x": 216,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items ember_egg_wobble 23",
+   "frame": {
+    "x": 228,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_wobble 24",
+   "frame": {
+    "x": 240,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_wobble 25",
+   "frame": {
+    "x": 252,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_wobble 26",
+   "frame": {
+    "x": 264,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_crack 27",
+   "frame": {
+    "x": 276,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items ember_egg_open 28",
+   "frame": {
+    "x": 288,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items stone_egg 29",
+   "frame": {
+    "x": 300,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items stone_egg_wobble 30",
+   "frame": {
+    "x": 312,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_wobble 31",
+   "frame": {
+    "x": 324,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_wobble 32",
+   "frame": {
+    "x": 336,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_wobble 33",
+   "frame": {
+    "x": 348,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_crack 34",
+   "frame": {
+    "x": 360,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items stone_egg_open 35",
+   "frame": {
+    "x": 372,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  }
+ ],
+ "meta": {
+  "app": "tools/build_blob_sprites.py",
+  "image": "items.png",
+  "size": {
+   "w": 384,
+   "h": 15
+  },
+  "frameTags": [
+   {
+    "name": "bowl",
+    "from": 0,
+    "to": 0,
+    "direction": "forward"
+   },
+   {
+    "name": "food_full",
+    "from": 1,
+    "to": 1,
+    "direction": "forward"
+   },
+   {
+    "name": "food_half",
+    "from": 2,
+    "to": 2,
+    "direction": "forward"
+   },
+   {
+    "name": "food_low",
+    "from": 3,
+    "to": 3,
+    "direction": "forward"
+   },
+   {
+    "name": "poop",
+    "from": 4,
+    "to": 4,
+    "direction": "forward"
+   },
+   {
+    "name": "ball",
+    "from": 5,
+    "to": 5,
+    "direction": "forward"
+   },
+   {
+    "name": "umbrella",
+    "from": 6,
+    "to": 6,
+    "direction": "forward"
+   },
+   {
+    "name": "cloud",
+    "from": 7,
+    "to": 7,
+    "direction": "forward"
+   },
+   {
+    "name": "cloud_small",
+    "from": 8,
+    "to": 8,
+    "direction": "forward"
+   },
+   {
+    "name": "cookie",
+    "from": 9,
+    "to": 9,
+    "direction": "forward"
+   },
+   {
+    "name": "icecream",
+    "from": 10,
+    "to": 10,
+    "direction": "forward"
+   },
+   {
+    "name": "fruit",
+    "from": 11,
+    "to": 11,
+    "direction": "forward"
+   },
+   {
+    "name": "medicine",
+    "from": 12,
+    "to": 12,
+    "direction": "forward"
+   },
+   {
+    "name": "sponge",
+    "from": 13,
+    "to": 13,
+    "direction": "forward"
+   },
+   {
+    "name": "baton",
+    "from": 14,
+    "to": 14,
+    "direction": "forward"
+   },
+   {
+    "name": "egg",
+    "from": 15,
+    "to": 15,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_wobble",
+    "from": 16,
+    "to": 19,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_crack",
+    "from": 20,
+    "to": 20,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_open",
+    "from": 21,
+    "to": 21,
+    "direction": "forward"
+   },
+   {
+    "name": "ember_egg",
+    "from": 22,
+    "to": 22,
+    "direction": "forward"
+   },
+   {
+    "name": "ember_egg_wobble",
+    "from": 23,
+    "to": 26,
+    "direction": "forward"
+   },
+   {
+    "name": "ember_egg_crack",
+    "from": 27,
+    "to": 27,
+    "direction": "forward"
+   },
+   {
+    "name": "ember_egg_open",
+    "from": 28,
+    "to": 28,
+    "direction": "forward"
+   },
+   {
+    "name": "stone_egg",
+    "from": 29,
+    "to": 29,
+    "direction": "forward"
+   },
+   {
+    "name": "stone_egg_wobble",
+    "from": 30,
+    "to": 33,
+    "direction": "forward"
+   },
+   {
+    "name": "stone_egg_crack",
+    "from": 34,
+    "to": 34,
+    "direction": "forward"
+   },
+   {
+    "name": "stone_egg_open",
+    "from": 35,
+    "to": 35,
+    "direction": "forward"
+   }
+  ]
+ }
+}

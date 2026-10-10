@@ -1,0 +1,36 @@
+{
+  "name": "blobling",
+  "private": true,
+  "author": "Lampir (https://lampir.at)",
+  "type": "module",
+  "license": "GPL-2.0-or-later",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "check": "tsc --noEmit && tsc --noEmit -p app",
+    "build": "node tools/build.mjs",
+    "start": "node tools/build.mjs && node --enable-source-maps dist/pi/server.mjs",
+    "test": "node tools/test.mjs",
+    "preview": "node tools/run.mjs pet_preview",
+    "deploy": "node tools/deploy.mjs",
+    "package": "node tools/package.mjs",
+    "app": "node tools/serve.mjs",
+    "app:icons": "node tools/run.mjs app_icons",
+    "app:sync": "node tools/build.mjs && cap sync",
+    "app:android": "npm run app:sync && cap open android",
+    "app:ios": "npm run app:sync && cap open ios"
+  },
+  "devDependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/cli": "8.5.3",
+    "@capacitor/ios": "8.5.3",
+    "@types/node": "20.19.43",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "@capacitor/core": "8.5.3",
+    "@capacitor/filesystem": "8.1.4"
+  }
+}

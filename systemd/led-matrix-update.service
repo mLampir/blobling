@@ -1,0 +1,13 @@
+[Unit]
+Description=Update the LED matrix app to the newest release
+# Started by the button on the settings page (pi/src/update.ts), never at boot.
+# A unit of its own, so the update keeps running while setup.sh restarts
+# led-matrix. install.sh only installs the newest official release and keeps
+# the previous one in /opt/led-matrix/releases/.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /opt/led-matrix/install.sh --app
+TimeoutStartSec=30min

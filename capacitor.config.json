@@ -1,0 +1,18 @@
+{
+  "appId": "at.lampir.blobling",
+  "appName": "Blobling",
+  "webDir": "dist/app",
+  "backgroundColor": "#111318",
+  "android": {
+    "path": "app/android",
+    "allowMixedContent": true
+  },
+  "ios": {
+    "path": "app/ios"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

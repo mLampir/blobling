@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111318">
+<title>{{ t('settings.title') }}</title>
+<style>
+  :root {
+    --bg: #111318; --card: #1b1e25; --line: #2a2e37; --text: #e8eaf0; --muted: #8b90a0;
+    --accent: #ffb347; --accent-text: #1a1204; --danger: #ff5a5a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  main { max-width: 560px; margin: 0 auto; padding: 16px 16px 48px; }
+  h1 { font-size: 20px; margin: 4px 0 16px; display: flex; align-items: center; gap: 12px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+  .preview {
+    width: 72px; height: 72px; border-radius: 8px; background: #000;
+    image-rendering: pixelated; border: 1px solid var(--line); flex: none;
+  }
+  .modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .field { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+  .field label { color: var(--muted); font-size: 14px; }
+  input[type=time], input[type=number], select {
+    font: inherit; color: var(--text); background: #252933; border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px; min-height: 44px;
+  }
+  .times { display: flex; align-items: center; gap: 8px; }
+  input[type=number] { width: 9em; }
+  .buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+  .switch { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .switch input { width: 22px; height: 22px; accent-color: var(--accent); }
+  .night-body[hidden], p[hidden], section[hidden], button[hidden] { display: none; }
+  a { color: var(--accent); }
+  button {
+    font: inherit; color: var(--text); background: #252933; border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 6px; cursor: pointer; min-height: 48px;
+  }
+  button.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+  button:disabled { opacity: .5; }
+  .row { display: flex; align-items: center; gap: 12px; }
+  input[type=range] { flex: 1; accent-color: var(--accent); height: 32px; }
+  .value { width: 3ch; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .hint { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
+  #toast {
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); max-width: calc(100% - 32px);
+    background: #333845; color: var(--text); padding: 10px 16px; border-radius: 10px; opacity: 0;
+    transition: opacity .2s; pointer-events: none;
+  }
+  #toast.show { opacity: 1; }
+  #toast.error { background: var(--danger); color: #fff; }
+</style>
+</head>
+<body>
+<main>
+  <h1><img class="preview" id="preview" src="/preview.png" alt="{{ t('settings.preview') }}"> {{ t('settings.title') }}</h1>
+
+  <section>
+    <h2>{{ t('settings.mode') }}</h2>
+    <div class="modes">
+      <button data-mode="pet">{{ t('settings.mode_pet') }}</button>
+      <button data-mode="off">{{ t('settings.mode_off') }}</button>
+    </div>
+    <p class="hint">{{ t('settings.pet_hint') }} <a href="/pet">{{ t('settings.pet_link') }}</a></p>
+    <p class="hint" id="weather-hint" hidden>{{ t('settings.no_location') }}</p>
+    <p class="hint" id="night-hint" hidden></p>
+  </section>
+
+  <section>
+    <h2>{{ t('settings.brightness') }}</h2>
+    <div class="row">
+      <input type="range" id="brightness" min="1" max="100" step="1">
+      <span class="value" id="brightness-value"></span>
+    </div>
+  </section>
+
+  <section id="night">
+    <h2>{{ t('settings.night') }}</h2>
+    <label class="switch"><input type="checkbox" id="night-enabled"> {{ t('settings.night_auto') }}</label>
+    <div class="night-body" id="night-body">
+      <div class="field">
+        <label>{{ t('settings.night_hours') }}</label>
+        <div class="times">
+          <input type="time" id="night-start" required> – <input type="time" id="night-end" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="night-action">{{ t('settings.night_action') }}</label>
+        <select id="night-action">
+          <option value="dim">{{ t('settings.night_dim') }}</option>
+          <option value="off">{{ t('settings.night_off') }}</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="night-brightness">{{ t('settings.night_brightness') }}</label>
+        <div class="row" style="flex: 1">
+          <input type="range" id="night-brightness" min="1" max="100" step="1">
+          <span class="value" id="night-brightness-value"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="location">
+    <h2>{{ t('settings.location') }}</h2>
+    <div class="field">
+      <label for="latitude">{{ t('settings.latitude') }}</label>
+      <input type="number" id="latitude" min="-90" max="90" step="any" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label for="longitude">{{ t('settings.longitude') }}</label>
+      <input type="number" id="longitude" min="-180" max="180" step="any" inputmode="decimal">
+    </div>
+    <div class="buttons">
+      <button id="location-save">{{ t('settings.location_save') }}</button>
+      <button id="location-clear">{{ t('settings.location_clear') }}</button>
+    </div>
+    <p class="hint">{{ t('settings.location_hint') }}</p>
+  </section>
+
+  <section>
+    <h2>{{ t('settings.pet_save') }}</h2>
+    <div class="buttons">
+      <button id="pet-save-download">{{ t('settings.pet_save_download') }}</button>
+      <button id="pet-save-load">{{ t('settings.pet_save_load') }}</button>
+    </div>
+    <input type="file" id="pet-save-file" accept="application/json,.json" hidden>
+    <p class="hint">{{ t('settings.pet_save_hint') }}</p>
+  </section>
+
+  <section id="update" hidden>
+    <h2>{{ t('settings.update') }}</h2>
+    <p class="hint" id="update-text"></p>
+    <div class="buttons"><button id="update-start" hidden>{{ t('settings.update_button') }}</button></div>
+  </section>
+
+  <section>
+    <h2>{{ t('settings.language') }}</h2>
+    <select id="language" aria-label="{{ t('settings.language') }}"></select>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const T = {{ strings|tojson }};
+const LANGUAGES = {{ languages|tojson }};
+
+// Text for a key from the language file, with {placeholders} filled in
+function t(key, values = {}) {
+  return (T[key] ?? key).replace(/\{(\w+)\}/g, (all, name) => values[name] ?? all);
+}
+let state = null;
+let toastTimer;
+
+function toast(msg, isError = false) {
+  const box = $("toast");
+  box.textContent = msg;
+  box.className = "show" + (isError ? " error" : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => (box.className = ""), 2500);
+}
+
+async function api(method, url, body) {
+  const opts = { method, headers: { "X-Requested-With": "led-matrix" } };
+  if (body !== undefined) {
+    opts.headers["Content-Type"] = "application/json";
+    opts.body = JSON.stringify(body);
+  }
+  try {
+    const res = await fetch(url, opts);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || t("error.http", { status: res.status }));
+    render(data);
+    refreshPreview();
+    return data;
+  } catch (e) {
+    toast(e.message, true);
+    throw e;
+  }
+}
+
+function render(s) {
+  state = s;
+  document.querySelectorAll("[data-mode]").forEach((b) => b.classList.toggle("active", b.dataset.mode === s.mode));
+  $("weather-hint").hidden = s.weather_configured;
+  $("night-hint").hidden = !s.night_active;
+  $("night-hint").textContent = t(s.night.action === "off" ? "settings.night_active_off" : "settings.night_active_dim", s.night);
+  if (document.activeElement !== $("brightness")) {
+    $("brightness").value = s.brightness;
+    $("brightness-value").textContent = s.brightness;
+  }
+  renderSettings(s);
+  renderLocation(s);
+  renderUpdate(s.update);
+}
+
+// Update: only on a Pi installed from a release. When the version changes, the update is done
+// (the service was restarted), so the page loads again in the new version.
+function renderUpdate(u) {
+  if (renderUpdate.version && u.current !== renderUpdate.version) return location.reload();
+  renderUpdate.version = u.current;
+  $("update").hidden = !u.current;
+  const lines = [t("settings.update_version", { version: u.current })];
+  if (u.running) lines.push(t("settings.update_running"));
+  else if (u.failed) lines.push(t("settings.update_failed"));
+  if (!u.running && u.available) lines.push(t("settings.update_available", { latest: u.latest }));
+  else if (!u.running && !u.failed && u.latest) lines.push(t("settings.update_current"));
+  $("update-text").textContent = lines.join(" ");
+  $("update-start").hidden = !u.available;
+}
+
+$("update-start").addEventListener("click", () => {
+  $("update-start").disabled = true;
+  api("POST", "/api/update").catch(() => {}).finally(() => ($("update-start").disabled = false));
+});
+
+// Location: like the night mode, only refilled when it changed and nobody is typing.
+function renderLocation(s) {
+  const key = JSON.stringify(s.location);
+  if (key === renderLocation.key || $("location").contains(document.activeElement)) return;
+  renderLocation.key = key;
+  $("latitude").value = s.location ? s.location[0] : "";
+  $("longitude").value = s.location ? s.location[1] : "";
+  $("location-clear").disabled = !s.location;
+}
+
+$("location-save").addEventListener("click", () => {
+  // an empty field goes as "", which the Pi turns down (null would mean "remove")
+  const read = (id) => ($(id).value.trim() === "" ? "" : Number($(id).value));
+  renderLocation.key = null;
+  document.activeElement.blur();
+  api("POST", "/api/location", { latitude: read("latitude"), longitude: read("longitude") })
+    .then(() => toast(t("settings.location_saved")), () => render(state));
+});
+$("location-clear").addEventListener("click", () => {
+  renderLocation.key = null;
+  api("POST", "/api/location", { latitude: null, longitude: null })
+    .then(() => toast(t("settings.location_cleared")), () => {});
+});
+
+// The pet's save file: downloaded as it is, and loaded in place of the pet after asking.
+$("pet-save-download").addEventListener("click", () => (location.href = "/api/pet/save"));
+$("pet-save-load").addEventListener("click", () => $("pet-save-file").click());
+$("pet-save-file").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+  let save;
+  try {
+    save = JSON.parse(await file.text());
+  } catch (_) { /* told below */ }
+  if (!save?.pet) return toast(t("error.not_a_save"), true);
+  const pet = await fetch("/api/pet").then((res) => res.json()).catch(() => ({}));
+  if (!confirm(t("settings.pet_save_confirm", { file: file.name, name: pet.name ?? "" }))) return;
+  api("POST", "/api/pet/save", save).then(() => toast(t("settings.pet_save_loaded", { name: save.pet.name })), () => {});
+});
+
+// Language: the pages come in it from the Pi, so the page is loaded again.
+for (const { code, name } of LANGUAGES) $("language").add(new Option(name, code));
+$("language").value = document.documentElement.lang;
+$("language").addEventListener("change", (e) =>
+  api("POST", "/api/language", { language: e.target.value }).then(() => location.reload(),
+    () => (e.target.value = document.documentElement.lang)));
+
+// Night mode: only refill the form when something has changed on the Pi and
+// nobody is typing in it right now.
+function renderSettings(s) {
+  const key = JSON.stringify(s.night);
+  if (key === renderSettings.key || $("night").contains(document.activeElement)) return;
+  renderSettings.key = key;
+  $("night-enabled").checked = s.night.enabled;
+  $("night-body").hidden = !s.night.enabled;
+  $("night-start").value = s.night.start;
+  $("night-end").value = s.night.end;
+  $("night-action").value = s.night.action;
+  $("night-brightness").value = s.night.brightness;
+  $("night-brightness-value").textContent = s.night.brightness;
+}
+
+function saveNight() {
+  const night = {
+    enabled: $("night-enabled").checked,
+    start: $("night-start").value,
+    end: $("night-end").value,
+    action: $("night-action").value,
+    brightness: Number($("night-brightness").value),
+  };
+  $("night-body").hidden = !night.enabled;
+  if (!night.start || !night.end) return;  // a time field is empty right now
+  renderSettings.key = null;
+  document.activeElement.blur();
+  api("POST", "/api/night", night).catch(() => render(state));
+}
+
+["night-enabled", "night-start", "night-end", "night-action"].forEach((id) =>
+  $(id).addEventListener("change", saveNight));
+let nightTimer;
+$("night-brightness").addEventListener("input", (e) => {
+  $("night-brightness-value").textContent = e.target.value;
+  clearTimeout(nightTimer);
+  nightTimer = setTimeout(saveNight, 300);
+});
+
+function refreshPreview() {
+  // Wait a moment so the display loop has already redrawn.
+  setTimeout(() => ($("preview").src = "/preview.png?t=" + Date.now()), 300);
+}
+
+document.querySelectorAll("[data-mode]").forEach((b) =>
+  b.addEventListener("click", () => api("POST", "/api/mode", { mode: b.dataset.mode })));
+
+let brightnessTimer;
+$("brightness").addEventListener("input", (e) => {
+  $("brightness-value").textContent = e.target.value;
+  clearTimeout(brightnessTimer);
+  brightnessTimer = setTimeout(() => api("POST", "/api/brightness", { value: Number(e.target.value) }), 150);
+});
+
+async function poll() {
+  if (document.hidden) return;
+  try {
+    const res = await fetch("/api/state");
+    if (res.ok) render(await res.json());
+  } catch (_) { /* the Pi is briefly unreachable */ }
+  $("preview").src = "/preview.png?t=" + Date.now();
+}
+
+poll();
+setInterval(poll, 5000);
+document.addEventListener("visibilitychange", poll);
+</script>
+</body>
+</html>
