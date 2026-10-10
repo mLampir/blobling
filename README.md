@@ -413,6 +413,8 @@ number is one more than the newest one in the store. Only tags start these
 builds, never a push or a pull request, and the signing keys and store logins
 are kept in Codemagic, not in the repo. Keep `codemagic.yaml` plain ASCII,
 Codemagic does not read anything else.
+Until the app exists in Google Play, only iOS builds on a tag; the Android
+workflow is started by hand in Codemagic.
 
 To build the package locally:
 
