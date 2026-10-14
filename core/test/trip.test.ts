@@ -77,12 +77,19 @@ test("trip is the same after catching up", () => {
   assert.deepEqual(toDict(pet), toDict(other));
 });
 
+test("woken early in the morning, it may still go", () => {
+  // bedtime runs until 07:00 (BEDTIME); at 06:40 the night is nearly over, not too late
+  assert.deepEqual(act(pet, "trip", at("2026-10-13 06:40"), { item: "meadow" }), [true, null]);
+  assert.ok(pet.trip);
+});
+
 test("trip refused", () => {
   refused(() => act(pet, "trip", start, { item: "moon" }), "unknown_area");
   assert.deepEqual(act(pet, "trip", start, { item: "recall" }), [false, "not_away"]);
   assert.deepEqual(act(pet, "trip", start, { item: "forest" }), [false, "locked"]);
   assert.deepEqual(act(pet, "trip", start, { item: "meadow", weather: 95 }), [false, "thunder"]);
   assert.deepEqual(act(pet, "trip", at("2026-10-12 21:30"), { item: "meadow" }), [false, "too_late"]);
+  assert.deepEqual(act(pet, "trip", at("2026-10-12 23:30"), { item: "meadow" }), [false, "too_late"]);
   const changes: [Record<string, number>, string][] = [[{ satiety: 40 }, "hungry_trip"], [{ energy: 40 }, "tired_trip"]];
   for (const [change, reason] of changes) {
     const other = grown(start);

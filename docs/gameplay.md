@@ -218,7 +218,8 @@ nothing and costs nothing, not even a break.
 
 From the child stage on, the pet can go on a trip: in *Adventure*, pack the
 backpack and send it off. It needs to be awake, healthy, reasonably fed and rested, back well
-before bedtime, and it won't leave in a thunderstorm.
+before bedtime, and it won't leave in a thunderstorm. Woken early in the morning, before
+bedtime is over, it may already set off.
 
 Packing, you pick the destination and up to two things to take along. A snack heals a heart on the way, and a ball distracts
 one opponent (but not a guardian).
