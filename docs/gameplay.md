@@ -398,6 +398,17 @@ tells once, when it is opened, what happened in the meantime: what the pet
 did by itself, fruits it ate, visits, trips and what came of them. The night
 counts too, so it also has something to tell in the morning.
 
+**It calls you.** In the app from the stores, with the pet on the phone, it
+calls with a notification when it needs you: once it is really hungry, dirty
+or sad (the stat is critical), or when it is sick. Only for something new: a
+need it already had when you left the app doesn't count, and neither does
+tiredness (it goes to sleep by itself) or a single poop. Only one call is ever
+waiting, and never at night: a need that comes up while it sleeps or at
+bedtime waits until it is up in the morning. Opening the app takes the call
+back. The app asks whether the pet may call the first time you feed it.
+Connected to a Pi, the app doesn't call: it can't know what happens there in
+the meantime, and somebody else may already have seen to it.
+
 ## The app
 
 Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
@@ -445,6 +456,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
 | What it does by itself, and what it tells when you come back | `core/src/idle.ts` |
+| When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Catching up, the state for the app, what is saved | `core/src/pet.ts`, `core/src/state.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
