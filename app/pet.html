@@ -216,6 +216,15 @@
     background: var(--surface); border-radius: 24px 24px 0 0; border-top: 1px solid var(--line);
     padding: 14px 16px 14px; touch-action: none;
   }
+  /* Packing needs no pet in sight: it takes the scene's place too and fits the screen whole,
+     the button to set off at the bottom, under the thumb */
+  .home.cover > .hero { display: none; }
+  .sheet.cover {
+    flex: 1 1 auto; margin-top: 0; border-radius: 0 0 30px 30px; border-top: 0; touch-action: pan-y;
+    padding: calc(18px + var(--safe-top)) 16px 16px; gap: clamp(8px, 2.2dvh, 18px);
+  }
+  .sheet.cover .close { top: calc(8px + var(--safe-top)); }
+  .sheet.cover > p:first-of-type, .sheet.cover > :last-child { margin-top: auto; flex: none; }
   .sheet h3 { margin: 0; font: 700 18px/1.2 var(--round); }
   .sheet p { margin: 0; }
   .sheet small { color: var(--muted); font-size: 13px; }
@@ -341,7 +350,7 @@
       <button class="link" id="train-back" hidden data-t="page.train.back"></button>
     </div>
 
-    <div class="sheet" id="pack-mode" hidden>
+    <div class="sheet cover" id="pack-mode" hidden>
       <button class="close" id="pack-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.things.trip"></h3>
       <p data-t="page.pack.where"></p>
@@ -853,10 +862,11 @@ $("adventures").addEventListener("click", (e) => {
   if (id === "train") return openTraining();
 });
 
-// Sheets: one at a time, over the lower part, with the scene in sight
+// Sheets: one at a time, over the lower part, with the scene in sight (packing: the whole screen)
 function openSheet(id) {
   document.querySelectorAll(".sheet").forEach((sheet) => { sheet.hidden = sheet.id !== id; });
   $("view-home").classList.toggle("busy", !!id);
+  $("view-home").classList.toggle("cover", !!id && $(id).classList.contains("cover"));
   if (id) showView("home");
 }
 

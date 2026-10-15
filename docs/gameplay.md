@@ -417,9 +417,11 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   over the pet to clean it. Connected to a Pi, things can also be flicked up,
   as before. A tap on the seeds switches the kind.
 - **Adventure** has the trip, the tricks, the training and the guessing game.
-  Each takes the place of the needs and the tray, below the scene, so the pet
-  stays where it is and answers there. On a tall phone the scene grows into
-  the sky above it.
+  The tricks, the training and the game take the place of the needs and the
+  tray, below the scene, so the pet stays where it is and answers there. On a
+  tall phone the scene grows into the sky above it. Packing for a trip needs
+  no pet in sight: it covers the scene too and fits any phone without
+  scrolling, with the button to set off at the bottom.
 - **Diary** has one tab each for the history, the stats (with weight and
   bond), the finds and the ancestors. Finds and ancestors show up once there
   are any.
