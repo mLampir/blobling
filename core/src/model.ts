@@ -159,6 +159,15 @@ export function minutesUntilBed(t: number, bedtime: Bedtime): number {
   return (((minutes(bedtime[0]) - minuteOfDay(t)) % 1440) + 1440) % 1440;
 }
 
+/**
+ * Is the time t in the evening half of bedtime? The second half is already the morning: a pet
+ * that is awake then (woken by its owner) has the whole day ahead of it.
+ */
+export function isLateEvening(t: number, bedtime: Bedtime): boolean {
+  const length = (((minutes(bedtime[1]) - minutes(bedtime[0])) % 1440) + 1440) % 1440;
+  return isBedtime(t, bedtime) && (1440 - minutesUntilBed(t, bedtime)) % 1440 < length / 2;
+}
+
 // ---------- Simulation ----------
 
 export function clamp(state: PetState): void {
@@ -811,7 +820,7 @@ function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string,
     return "thunder";
   }
   const planned = trip.plan(state, area, now, pack);
-  if (isBedtime(now, bedtime)
+  if (isLateEvening(now, bedtime)
       || minutesUntilBed(now, bedtime) * 60 < planned.end - now + trip.HOME_BEFORE_BED) {
     return "too_late";
   }
