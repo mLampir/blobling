@@ -423,8 +423,15 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
 - **Diary** has one tab each for the history, the stats (with weight and
   bond), the finds and the ancestors. Finds and ancestors show up once there
   are any.
-- **More**: renaming and starting over with a usual egg, the weather (off, a
-  fixed place, or following the phone) and connecting to an LED display.
+- **More**: renaming and starting over with a usual egg, sound on or off, the
+  weather (off, a fixed place, or following the phone) and connecting to an
+  LED display.
+
+The phone answers what you do with a short sound and a little vibration: a
+boop for a tap on the pet, a plop when a thing lands, a fanfare for a trick
+learned or a game won, a lullaby when it goes to bed. The sounds are made in
+the app itself (`app/src/sound.ts`), not played from files. With a Pi they
+come from the phone too; the Pi stays silent.
 
 Connected to a Pi, the screen is the same; the scene is then the panel's own
 picture. The pet lives on the Pi either way: it goes on with its day and can

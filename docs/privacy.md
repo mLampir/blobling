@@ -2,7 +2,7 @@
 
 *[Deutsche Fassung](privacy.de.md)*
 
-Last updated: 9 October 2026
+Last updated: 15 October 2026
 
 This policy covers the Blobling app for Android and iOS and the pet page of
 a Blobling LED display at home.
@@ -24,9 +24,9 @@ Email: <blobling@lampir.at>
 ## 2. What the app stores on your phone
 
 - **Your pet**: its name, needs, form, finds and diary.
-- **Settings**: the language, whether the weather is on, the location
-  (rounded, see section 3) and the address of your LED display, if you
-  connected one.
+- **Settings**: the language, whether sounds are on, whether the weather is
+  on, the location (rounded, see section 3) and the address of your LED
+  display, if you connected one.
 
 All of this stays in the app's storage on your phone. None of it is sent to
 us or to anyone else. Deleting the app deletes it.

@@ -528,6 +528,9 @@
       "adventure": "Adventure"
     },
     "more": {
+      "sound": "Sound",
+      "sound_on": "On",
+      "sound_off": "Off",
       "pet": "Pet",
       "new_egg_note": "Your finds stay."
     },

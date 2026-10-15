@@ -187,7 +187,8 @@ its own it keeps a pet on the phone; connected to a Pi, it looks after the
 pet on the panel instead. To connect it, enter the Pi's address
 (`raspberrypi.local`, or its IP address) in the app under *More*. The app
 talks to the Pi over plain HTTP on the home network, so nothing has to be
-installed on the Pi or the phone for it.
+installed on the Pi or the phone for it. Sound comes from the phone (it can be
+turned off under *More*); the Pi stays silent.
 
 Without the app, <http://raspberrypi.local/pet> does the same in any browser
 on the network.
