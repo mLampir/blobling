@@ -76,6 +76,14 @@ export interface Plant {
   left: number;
 }
 
+/** Something it left behind while nobody was there (idle.ts); `spot`: 0–1 along the free ground. */
+export interface Trace {
+  kind: string;
+  spot: number;
+  /** Which of its drawings (idle.DRAWINGS). */
+  look: number;
+}
+
 export interface PetEvent {
   at: number;
   action: string;
@@ -146,6 +154,8 @@ export interface PetState {
   idle_next: number;
   /** Trick -> points practiced alone since it was last practiced together (idle.SOLO_LIMIT). */
   solo: Record<string, number>;
+  /** What it left behind while nobody was there, until somebody does something with it (idle.ts). */
+  trace: Trace | null;
 }
 
 /** A state with every field at its starting value. */
@@ -194,6 +204,7 @@ export function newState(): PetState {
     seen_at: 0.0,
     idle_next: 0.0,
     solo: {},
+    trace: null,
   };
 }
 
