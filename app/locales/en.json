@@ -269,6 +269,7 @@
     "tabs": {
       "history": "History",
       "statistics": "Stats",
+      "travels": "Trips",
       "finds": "Finds",
       "gallery": "Ancestors",
       "more": "More"
@@ -446,6 +447,10 @@
     },
     "gallery": {
       "entry": "{form} · {age} · born {date}"
+    },
+    "travels": {
+      "heading": "{area} · {day} · {time}",
+      "quiet": "a quiet walk, nothing happened"
     },
     "app": {
       "location_none": "No location yet: your pet has no weather, and the sun keeps the hours of your time zone.",

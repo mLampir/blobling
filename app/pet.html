@@ -379,6 +379,7 @@
       <nav class="segments" role="tablist">
         <button role="tab" data-tab="history" data-t="page.tabs.history"></button>
         <button role="tab" data-tab="statistics" data-t="page.tabs.statistics" hidden></button>
+        <button role="tab" data-tab="travels" data-t="page.tabs.travels" hidden></button>
         <button role="tab" data-tab="finds" data-t="page.tabs.finds" hidden></button>
         <button role="tab" data-tab="gallery" data-t="page.tabs.gallery" hidden></button>
       </nav>
@@ -387,6 +388,7 @@
         <ul class="list" id="values"></ul>
         <ul class="list" id="statistics"></ul>
       </div>
+      <ul class="list" data-panel="travels" id="travels" hidden></ul>
       <ul class="list" data-panel="finds" id="finds" hidden></ul>
       <ul class="list gallery" data-panel="gallery" id="gallery" hidden></ul>
     </div>
@@ -1235,6 +1237,50 @@ function wildText(item) {
   return t(`page.events.wild_${outcome}`, { pet: T[`species.${species}`] || species });
 }
 
+// The travel diary: one heading per trip (where, which day, how long), below it what happened
+async function loadTravels() {
+  try {
+    const { travels } = await api("GET", "/api/pet/travels");
+    offerTab("travels", travels.length);
+    $("travels").replaceChildren(...travels.flatMap((travel) => {
+      const heading = document.createElement("li");
+      heading.className = "day";
+      heading.textContent = t("page.travels.heading", {
+        area: T[`areas.${travel.area}.name`] || travel.area,
+        day: dayLabel(new Date(travel.start * 1000)), time: inTime(travel.end - travel.start),
+      });
+      const lines = travel.stops.flatMap(stopEvents);
+      if (!lines.some((e) => e.action !== "trip")) lines.push({ at: travel.end, quiet: true });
+      lines.push({ at: travel.end, action: "trip", item: "home" });
+      return [heading, ...lines.map((e) => {
+        const li = document.createElement("li");
+        const time = document.createElement("time");
+        time.textContent = new Date(e.at * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const text = document.createElement("span");
+        text.textContent = e.quiet ? t("page.travels.quiet") : eventText({ ...e, accepted: true });
+        li.append(time, text);
+        return li;
+      })];
+    }));
+  } catch (err) {
+    // An older Pi has no travel diary yet; the tab then stays away
+    offerTab("travels", false);
+  }
+}
+
+// A station of a trip as lines of the history: the scuffle, and what it left behind
+function stopEvents(stop) {
+  const at = stop.at;
+  if (stop.kind === "find") return [{ at, action: "find", item: stop.item }];
+  if (stop.kind === "ball") return [{ at, action: "battle", item: `${stop.foe}:ball` }];
+  if (stop.kind === "wild") return [{ at, action: "wild", item: `${stop.wild}:${stop.outcome}` }];
+  if (stop.kind === "battle") {
+    const scuffle = { at, action: "battle", item: `${stop.foe}:${stop.outcome}` };
+    return stop.item ? [scuffle, { at, action: "find", item: stop.item }] : [scuffle];
+  }
+  return [{ at, action: "trip", item: stop.kind }]; // tired, snack, beaten
+}
+
 async function loadGallery() {
   try {
     const { ancestors } = await api("GET", "/api/pet/ancestors");
@@ -1279,6 +1325,7 @@ function showView(name) {
   });
   if (name === "diary") {
     refresh();
+    loadTravels();
     loadGallery();
   }
   if (name === "more" && app.mode === "local") showLocation();  // the live location may have moved meanwhile

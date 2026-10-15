@@ -229,6 +229,12 @@ through the landscape, stopping now and then to rest or to hold up something
 it found. If it gets too tired or hungry, it turns back; you can also call it
 home. A second trip on the same day finds less.
 
+Every trip goes into the **travel diary** (*Diary* → *Trips*): where the pet
+went, on which day and for how long, what it found, whom it scuffled with and
+how that went, a wild pet it met, and whether it ate its snack or turned back.
+It keeps the last 30 trips of this pet; a trip it was called straight back
+from doesn't count.
+
 Back home, it keeps the backpack on until you tap **Unpack** – so you are
 there to see what it brought:
 
@@ -421,8 +427,8 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   stays where it is and answers there. On a tall phone the scene grows into
   the sky above it.
 - **Diary** has one tab each for the history, the stats (with weight and
-  bond), the finds and the ancestors. Finds and ancestors show up once there
-  are any.
+  bond), the trips, the finds and the ancestors. Trips, finds and ancestors
+  show up once there are any.
 - **More**: renaming and starting over with a usual egg, the weather (off, a
   fixed place, or following the phone) and connecting to an LED display.
 
