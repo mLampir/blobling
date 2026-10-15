@@ -28,7 +28,9 @@ test("the pet is described, acted on, renamed and started over", async () => {
   assert.equal((await ask(pet, "GET", "/api/pet/events?limit=many")).api, 1);
 
   assert.equal((await ask(pet, "POST", "/api/pet/settings", { name: " Mimi   Mau " })).name, "Mimi Mau");
-  assert.deepEqual(await ask(pet, "GET", "/api/pet/ancestors"), { api: 1, ancestors: [] });
+  const { ancestors, album } = await ask(pet, "GET", "/api/pet/ancestors");
+  assert.deepEqual(ancestors, []);
+  assert.equal(album.filter(Boolean).length, 1); // the egg it starts with
   assert.equal((await ask(pet, "POST", "/api/pet/new_egg", { confirm: true })).stage, "egg");
 });
 

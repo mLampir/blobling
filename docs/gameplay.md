@@ -132,6 +132,15 @@ finding it out by yourself.
 An adult stays forever, until a new egg takes its place. The previous pet then
 moves to the ancestors' gallery.
 
+The **album** is the long-term goal: to have had every form once. It has one
+slot for each form there is (every egg, baby, child and adult of every line),
+and a form fills its slot as soon as one of your pets has been it. A form not
+met yet stays an empty slot, with no picture and no name, so the album shows
+how many are still missing but not what they are or how to get them. The album
+belongs to you, not to one pet: it stays when a new egg starts, and it travels
+with the pet's file. A file from before the album fills it in from the
+ancestors.
+
 Not every egg is the same. A pet can bring a **rare egg** home from a trip
 (see [Guardians](#guardians)). What hatches from it is not a slime: it is a
 line of its own, with its own baby, child and adult forms and its own rule for
@@ -421,8 +430,8 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   stays where it is and answers there. On a tall phone the scene grows into
   the sky above it.
 - **Diary** has one tab each for the history, the stats (with weight and
-  bond), the finds and the ancestors. Finds and ancestors show up once there
-  are any.
+  bond), the finds and the album, with the ancestors below it. Finds show up
+  once there are any, the album once the first egg has hatched.
 - **More**: renaming and starting over with a usual egg, the weather (off, a
   fixed place, or following the phone) and connecting to an LED display.
 
@@ -438,14 +447,14 @@ keep its own pet or connect to a Pi; the README explains how.
 | Part | Where |
 |---|---|
 | Stats, decay, actions, sleep | `core/src/model.ts` |
-| Life cycle, lines and adult forms | `core/src/life.ts` |
+| Life cycle, lines and adult forms, the album's forms (`FORMS`) | `core/src/life.ts` |
 | Weight, bond, snacks, guessing game, tricks | `core/src/care.ts` |
 | Trips, areas, what is found where | `core/src/trip.ts` |
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
 | What it does by itself, and what it tells when you come back | `core/src/idle.ts` |
-| Catching up, the state for the app, what is saved | `core/src/pet.ts`, `core/src/state.ts` |
+| Catching up, the state for the app, what is saved, ancestors and album | `core/src/pet.ts`, `core/src/state.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
 | Preview of the scene on a PC, pictures for [pets.md](pets.md) | `tools/pet_preview.ts` (`npm run preview`) |
