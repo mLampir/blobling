@@ -9,6 +9,7 @@
  * the app. This class is handed what was saved and a function that saves.
  */
 
+import * as balance from "./balance";
 import * as battle from "./battle";
 import * as care from "./care";
 import * as home from "./home";
@@ -93,6 +94,8 @@ export interface PetOptions {
   clock?: () => number;
   /** Where problems are reported. */
   log?: (message: string, error?: unknown) => void;
+  /** Where the pet lives, for the values that differ there (balance.ts); "panel" without it. */
+  profile?: balance.ProfileName;
 }
 
 export interface ActionRequest extends Omit<model.ActionOptions, "weather" | "temp"> {
@@ -111,6 +114,7 @@ export class Pet {
   private bedtimeSource: () => model.Bedtime;
   private weatherSource: () => WeatherData | null;
   private location: Location;
+  private readonly profile: Readonly<balance.Profile>;
   private savedAt = 0.0;
   private readonly requestIds = new Map<string, model.ActionResult>();
 
@@ -122,6 +126,7 @@ export class Pet {
     this.bedtimeSource = options.bedtime ?? (() => DEFAULT_BEDTIME);
     this.weatherSource = options.weather ?? (() => null);
     this.location = options.location ?? null;
+    this.profile = balance.profile(options.profile);
     if (options.saved) {
       this.state = options.saved.state;
       this.ancestors = options.saved.ancestors;
@@ -227,7 +232,7 @@ export class Pet {
       this.advance(now);
       result = model.applyAction(this.state, action, now, this.bedtime(),
         { item: request.item, by, throw: request.throw, weather: this.weather(), temp: this.temperature(),
-          value: request.value });
+          value: request.value, profile: this.profile });
       if (id !== null) {
         this.requestIds.set(id, result);
         while (this.requestIds.size > MAX_REQUEST_IDS) {
@@ -316,7 +321,7 @@ export class Pet {
         s.stage_since = now;
       }
     }
-    model.advance(s, now, this.bedtime(), this.weather(), this.temperature(), this.location);
+    model.advance(s, now, this.bedtime(), this.weather(), this.temperature(), this.location, this.profile);
   }
 
   private describe(now: number) {
