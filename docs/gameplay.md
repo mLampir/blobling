@@ -428,6 +428,15 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
 - **More**: renaming and starting over with a usual egg, the weather (off, a
   fixed place, or following the phone) and connecting to an LED display.
 
+The phone buzzes softly with the pet's answers (in the app from the stores,
+and in a browser that can vibrate; the phone's own vibration setting
+applies): a light tick for a hand on the pet and for a step of an exercise,
+a short one when it does what it was asked, a double one when it won't, a
+longer one for something new (a trick learned, a big step in training, a
+game won) and a firm one when it evolves. Plain buttons and menus stay
+still, and quick strokes are spaced out, so it stays a touch and not a
+rattle.
+
 Connected to a Pi, the screen is the same; the scene is then the panel's own
 picture. The pet lives on the Pi either way: it goes on with its day and can
 be looked after there while the phone is off.
