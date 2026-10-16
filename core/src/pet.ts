@@ -11,6 +11,7 @@
 
 import * as battle from "./battle";
 import * as care from "./care";
+import * as habits from "./habits";
 import * as home from "./home";
 import * as idle from "./idle";
 import * as life from "./life";
@@ -203,6 +204,7 @@ export class Pet {
       nest: s.nest ? s.nest.line : null,
       gift: !!s.gift,
       plant: s.plant ? { kind: s.plant.kind, stage: home.plantStage(s), ripe: home.ripe(s) } : null,
+      waiting: habits.waiting(s, now),
     };
   }
 
