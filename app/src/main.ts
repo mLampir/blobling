@@ -22,6 +22,7 @@ import { iconUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
 import { RemotePet, piAddress } from "./remote";
+import { pageSounds, type SoundName } from "./sound";
 
 const PI_KEY = "pi"; // the address of the Pi the app is connected to
 const LIVE_KEY = "location.live"; // "1": the pet lives wherever the phone is
@@ -64,6 +65,7 @@ translate();
 
 const remote = mode === "pi" ? new RemotePet(connectedTo ?? "", i18n) : null;
 const local = remote ? null : LocalPet.open(i18n);
+const sounds = pageSounds();
 
 const app = {
   /** Where the pet lives: "local" (on the phone) or "pi". */
@@ -86,6 +88,20 @@ const app = {
 
   /** A thing the player hands the pet ("meal", "ball", "sponge", …) as a URL for an <img>; "" if there is no picture. */
   thing: thingUrl,
+
+  /** Plays one of the app's sounds (app/src/sound.ts), unless they are off. */
+  sound(name: SoundName): void {
+    sounds.play(name);
+  },
+
+  /** Whether the sounds are on. */
+  soundOn(): boolean {
+    return sounds.on;
+  },
+
+  setSound(on: boolean): void {
+    sounds.on = on;
+  },
 
   /** On the phone: the scene goes on this canvas. */
   async showScene(canvas: HTMLCanvasElement): Promise<void> {
