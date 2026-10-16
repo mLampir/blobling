@@ -110,9 +110,11 @@ setup:
 2. installs [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix)
    in a pinned version, with its Python bindings, for the small script that
    drives the panel.
-3. installs Node and the app (built in advance for the release) with the
-   configuration and the systemd service `led-matrix`, which starts at
-   boot.
+3. installs Node.js in its current LTS line from
+   [NodeSource](https://github.com/nodesource/distributions) (the one of
+   Raspberry Pi OS no longer gets security fixes) and the app (built in
+   advance for the release) with the configuration and the systemd service
+   `led-matrix`, which starts at boot.
 
 It can be run as often as you like; steps that are already done are skipped.
 
@@ -250,6 +252,7 @@ Where things are on the Pi:
 | `/opt/led-matrix/` | The app, the Python environment of the panel driver and the matrix library; `VERSION` is the installed release |
 | `/opt/led-matrix/releases/` | The installed release and the one before |
 | `/etc/led-matrix/config.ini` | Configuration |
+| `/etc/apt/sources.list.d/nodesource.list` | Where Node.js comes from (with `/etc/apt/keyrings/nodesource.asc` and `/etc/apt/preferences.d/nodesource`) |
 | `/var/lib/led-matrix/pet.json` | The pet's save file |
 | `/var/lib/led-matrix/pet.before-load.json` | The pet a loaded save file replaced (settings page) |
 | `/var/lib/led-matrix/state.json` | Panel on or off, brightness, night mode |
@@ -274,7 +277,7 @@ the [hardware guide](docs/hardware.md#if-something-looks-wrong).
 
 The app is written in TypeScript. To work on it you need, on your PC:
 
-- [Node.js](https://nodejs.org/) 20 or newer; it brings `npm` along.
+- [Node.js](https://nodejs.org/) 22 or newer; it brings `npm` along.
 - The repo, and in its folder, once and again whenever `package-lock.json`
   has changed, the build tools:
 

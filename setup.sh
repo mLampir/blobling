@@ -27,6 +27,10 @@ SERVICE_NAME="led-matrix"
 LIB_REPO="https://github.com/hzeller/rpi-rgb-led-matrix.git"
 LIB_COMMIT="51d3231e370593b60952b2c3b18d2e3802329f18"
 
+# Node.js comes from NodeSource in this major version (an LTS line): Raspberry Pi OS has an older
+# one that no longer gets security fixes. Within the major version, the system update keeps it current.
+NODE_MAJOR=24
+
 BOOT_CONFIG="/boot/firmware/config.txt"
 BOOT_CMDLINE="/boot/firmware/cmdline.txt"
 
@@ -75,11 +79,7 @@ else
     export DEBIAN_FRONTEND=noninteractive
     apt-get update
     apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold full-upgrade
-    apt-get -y install git rsync python3-venv python3-dev build-essential cmake nodejs
-    # npm only builds the server, and only where the repo itself is on the Pi (see "Server" below)
-    if [[ -d "$REPO_DIR/core" ]]; then
-        apt-get -y install npm
-    fi
+    apt-get -y install git rsync curl ca-certificates python3-venv python3-dev build-essential cmake
     apt-get -y autoremove
 
     step "Time via NTP"
@@ -181,13 +181,43 @@ fi
 
 # ================================================================ 3. App + service
 
+step "Node.js $NODE_MAJOR"
+# Also with --app, so that a Pi that only ever updates with the button moves on to a new major version.
+NODE_KEY="/etc/apt/keyrings/nodesource.asc"
+NODE_LIST="/etc/apt/sources.list.d/nodesource.list"
+NODE_PIN="/etc/apt/preferences.d/nodesource"
+NODE_SOURCE="deb [arch=$(dpkg --print-architecture) signed-by=$NODE_KEY] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main"
+NODE_PIN_TEXT="$(printf 'Package: nodejs\nPin: origin deb.nodesource.com\nPin-Priority: 600')"
+node_major() { node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo none; }
+if [[ "$(node_major)" == "$NODE_MAJOR" && -s "$NODE_KEY" && "$(cat "$NODE_LIST" 2>/dev/null)" == "$NODE_SOURCE" \
+      && "$(cat "$NODE_PIN" 2>/dev/null)" == "$NODE_PIN_TEXT" ]]; then
+    info "already installed: $(node --version)"
+else
+    export DEBIAN_FRONTEND=noninteractive
+    install -d -m 755 /etc/apt/keyrings
+    curl -fsSL -o "$NODE_KEY.new" https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+    mv "$NODE_KEY.new" "$NODE_KEY"
+    chmod 644 "$NODE_KEY"
+    echo "$NODE_SOURCE" > "$NODE_LIST"
+    # Its nodejs wins over the one of Raspberry Pi OS, even if that one ever has a higher version
+    echo "$NODE_PIN_TEXT" > "$NODE_PIN"
+    # Debian's npm needs Debian's nodejs; NodeSource's nodejs brings its own npm.
+    if dpkg-query -W -f='${Status}' npm 2>/dev/null | grep -q 'ok installed'; then
+        apt-get -y purge npm
+    fi
+    apt-get update
+    apt-get -y install nodejs
+    apt-get -y autoremove
+    info "installed: $(node --version), npm $(npm --version)"
+fi
+
 step "Server (TypeScript, built into one file)"
 BUNDLE_DIR="$REPO_DIR/dist/pi"
 if [[ -d "$REPO_DIR/core" ]]; then
     # The repo itself is here (git clone): build the server. npm run deploy builds it on the PC and
     # sends the finished file without the sources, so that nothing is compiled here.
     if ! command -v npm >/dev/null; then
-        echo "npm is missing – please run the script once without --app." >&2
+        echo "npm is missing (it comes with Node.js from NodeSource, see above)." >&2
         exit 1
     fi
     # As the owner of the folder, so that nothing in it ends up belonging to root.
