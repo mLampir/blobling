@@ -270,7 +270,7 @@
       "history": "History",
       "statistics": "Stats",
       "finds": "Finds",
-      "gallery": "Ancestors",
+      "gallery": "Album",
       "more": "More"
     },
     "headings": {
@@ -445,7 +445,10 @@
       "guardians_value": "got past {passed} of {all}"
     },
     "gallery": {
-      "entry": "{form} · {age} · born {date}"
+      "entry": "{form} · {age} · born {date}",
+      "album": "{met} of {all} forms",
+      "missing": "Not met yet",
+      "ancestors": "Ancestors"
     },
     "app": {
       "location_none": "No location yet: your pet has no weather, and the sun keeps the hours of your time zone.",

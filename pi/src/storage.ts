@@ -10,8 +10,7 @@ import {
 import { dirname, join } from "node:path";
 
 import { DEFAULT_LANGUAGE } from "../../core/src/i18n";
-import { readSave, type Ancestor, type SaveFile } from "../../core/src/pet";
-import type { PetState } from "../../core/src/state";
+import { readSave, type SaveFile, type Saved } from "../../core/src/pet";
 import { getLog, reason } from "./log";
 
 const log = getLog("storage");
@@ -36,7 +35,7 @@ export function writeAtomic(file: string, text: string): void {
 }
 
 /** The saved pet, or null if there is none yet. A file that cannot be read is moved aside. */
-export function loadPet(file: string): { state: PetState; ancestors: Ancestor[] } | null {
+export function loadPet(file: string): Saved | null {
   if (!existsSync(file)) {
     log.info("No saved pet yet – a new egg is waiting");
     return null;

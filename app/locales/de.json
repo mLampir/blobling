@@ -270,7 +270,7 @@
       "history": "Verlauf",
       "statistics": "Statistik",
       "finds": "Fundstücke",
-      "gallery": "Ahnen",
+      "gallery": "Album",
       "more": "Mehr"
     },
     "headings": {
@@ -445,7 +445,10 @@
       "guardians_value": "an {passed} von {all} vorbei"
     },
     "gallery": {
-      "entry": "{form} · {age} · seit {date}"
+      "entry": "{form} · {age} · seit {date}",
+      "album": "{met} von {all} Formen",
+      "missing": "Noch nicht getroffen",
+      "ancestors": "Ahnen"
     },
     "app": {
       "location_none": "Noch kein Ort: Dein Pet hat kein Wetter, und die Sonne richtet sich nach deiner Zeitzone.",

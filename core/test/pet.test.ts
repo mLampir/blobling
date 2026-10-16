@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { I18n } from "../src/i18n";
+import * as life from "../src/life";
 import { Pet, VERSION, readSave } from "../src/pet";
 import { toDict } from "../src/state";
 import * as wild from "../src/wild";
@@ -180,4 +181,36 @@ test("the cold in snapshot and view", () => {
   assert.deepEqual(pet.snapshot(now).items.map((item) => item.effects), [["growth"], []]);
   const state = pet.action("pet", { now }).state; // rubbed warm
   assert.deepEqual([state.cold, pet.view(now).cold, state.counters.warmed], [false, false, 1]);
+});
+
+test("the album keeps every form met, across new eggs and restarts", () => {
+  const now = at("2026-10-12 12:00");
+  const disk = new Disk();
+  const pet = disk.pet();
+  const met = (p: Pet) => p.albumList().filter((form) => form !== null).map((form) => `${form.stage}:${form.species}`);
+  const slots = pet.albumList();
+  assert.equal(slots.length, life.FORMS.length);
+  assert.deepEqual(slots[0], { stage: "egg", species: "blob", label: "Egg" });
+  assert.ok(slots.slice(1).every((form) => form === null)); // a form not met yet gives nothing away
+  pet.state = grown(now);
+  Object.assign(pet.state, { stage: "adult", species: "grumpcap" });
+  pet.state.eggs = [{ line: "ember" }];
+  pet.newEgg(0, now + 60);
+  const forms = ["egg:blob", "baby:blob", "child:blob", "adult:grumpcap", "egg:ember"];
+  assert.deepEqual(met(disk.pet()), forms);
+  const again = disk.pet();
+  again.newEgg(null, now + 120); // the ember egg goes back to the eggs, the album stays
+  assert.equal(again.albumList().find((form) => form?.species === "grumpcap")!.label, "Grumpcap");
+  assert.deepEqual(met(disk.pet()), forms);
+});
+
+test("a save from before the album fills it in from the ancestors", () => {
+  const now = at("2026-10-12 12:00");
+  const ancestor = { name: "Old", species: "lumoth", stage: "adult", born_at: now, until: now, age_days: 0,
+    counters: {}, tricks: [], hat: "" };
+  const file = { version: VERSION, pet: toDict(grown(now)), ancestors: [ancestor] };
+  const pet = new Pet({ t: new I18n(readLocales()).t, saved: readSave(file) });
+  const forms = ["adult:lumoth", "egg:blob", "baby:blob", "child:blob"];
+  assert.deepEqual([...pet.toSave().album!].sort(), [...forms].sort());
+  assert.deepEqual(readSave({ ...file, album: ["adult:lumoth", "adult:nobody"] }).album, ["adult:lumoth"]);
 });
