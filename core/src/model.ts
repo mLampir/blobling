@@ -7,6 +7,7 @@
  * the same result as running non-stop.
  */
 
+import * as balance from "./balance";
 import * as battle from "./battle";
 import * as care from "./care";
 import * as home from "./home";
@@ -197,7 +198,8 @@ export function wakeUp(state: PetState, t: number, temp: number | null = null): 
  * `temp`: the temperature in °C, or null; `location`: where the sun rises and sets.
  */
 export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.WeatherCode = null,
-    temp: number | null = null, location: Location = null): void {
+    temp: number | null = null, location: Location = null,
+    profile: Readonly<balance.Profile> = balance.PROFILES.panel): void {
   const rng = new Random(Math.trunc(t));
   const s = state.stats;
   const h = TICK / 3600;
@@ -217,7 +219,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   for (const key of Object.keys(RATES) as (keyof typeof RATES)[]) {
     let rate: number = RATES[key][asleep ? 1 : 0];
     if (rate < 0) {
-      rate *= life.decayFactor(state, key);
+      rate *= life.decayFactor(state, key) * profile.decay;
       if (key === "energy") {
         rate *= care.energyFactor(state);
       }
@@ -316,7 +318,8 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
 
 /** Catch the simulation up to `now`. Returns true if anything changed. */
 export function advance(state: PetState, now: number, bedtime: Bedtime, weather: sky.WeatherCode = null,
-    temp: number | null = null, location: Location = null): boolean {
+    temp: number | null = null, location: Location = null,
+    profile: Readonly<balance.Profile> = balance.PROFILES.panel): boolean {
   if (now < state.updated_at) {
     // The clock jumped back: don't calculate backwards
     state.updated_at = now;
@@ -338,7 +341,7 @@ export function advance(state: PetState, now: number, bedtime: Bedtime, weather:
   let changed = false;
   while (state.updated_at + TICK <= now) {
     state.updated_at += TICK;
-    tick(state, state.updated_at, bedtime, weather, temp, location);
+    tick(state, state.updated_at, bedtime, weather, temp, location, profile);
     changed = true;
   }
   return changed;
@@ -543,6 +546,8 @@ export interface ActionOptions {
   temp?: number | null;
   /** What else belongs to the action (see checkValue). */
   value?: unknown;
+  /** Where the pet lives (balance.ts); the panel's without it. */
+  profile?: Readonly<balance.Profile>;
 }
 
 export interface ActionResult {
@@ -604,7 +609,8 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
 
   const reason = state.stage === "egg"
     ? applyToEgg(state, action, now)
-    : apply(state, action, now, bedtime, item, thrown, by, weather, value, options.temp ?? null);
+    : apply(state, action, now, bedtime, item, thrown, by, weather, value, options.temp ?? null,
+      options.profile ?? balance.PROFILES.panel);
   if (reason && state.activity_until <= now && state.stage !== "egg" && !state.trip) {
     setActivity(state, "no", now);
   }
@@ -783,7 +789,7 @@ function trained(state: PetState, now: number, skill: battle.Skill, score: numbe
 
 /** Set off on a trip, or call the pet home (area = "recall"). */
 function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string, weather: sky.WeatherCode,
-    pack: readonly string[]): string | null {
+    pack: readonly string[], length: number): string | null {
   const s = state.stats;
   if (area === "recall") {
     if (!state.trip) {
@@ -819,7 +825,7 @@ function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string,
   if (sky.isThunder(weather)) {
     return "thunder";
   }
-  const planned = trip.plan(state, area, now, pack);
+  const planned = trip.plan(state, area, now, pack, length);
   if (isLateEvening(now, bedtime)
       || minutesUntilBed(now, bedtime) * 60 < planned.end - now + trip.HOME_BEFORE_BED) {
     return "too_late";
@@ -832,11 +838,11 @@ function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string,
 
 function apply(state: PetState, action: string, now: number, bedtime: Bedtime, item: string | null,
     thrown: number | null, by: string, weather: sky.WeatherCode, value: unknown,
-    temp: number | null): string | null {
+    temp: number | null, profile: Readonly<balance.Profile>): string | null {
   const s = state.stats;
 
   if (action === "trip") {
-    return startTrip(state, now, bedtime, item!, weather, (value as string[] | null) ?? []);
+    return startTrip(state, now, bedtime, item!, weather, (value as string[] | null) ?? [], profile.trip);
   }
   if (action === "plant") {
     const reason = home.plantSeed(state, item!);

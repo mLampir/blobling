@@ -51,7 +51,7 @@ export class LocalPet {
     }
     this.weather = new Weather(location?.[0] ?? null, location?.[1] ?? null, WEATHER_MINUTES);
     this.pet = new Pet({
-      t: i18n.t, saved: restored, location, weather: () => this.weather.current(),
+      t: i18n.t, saved: restored, location, weather: () => this.weather.current(), profile: "app",
       save: (file) => store.put(PET_KEY, file).catch((error) => console.error("Could not save the pet", error)),
     });
     this.scene = new PetScene(SIZE, SIZE, sceneAssets(), { location });

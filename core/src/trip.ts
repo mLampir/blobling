@@ -90,17 +90,21 @@ export function startHearts(state: PetState): number {
   return 1 + HEARTS.filter((limit) => condition >= limit).length;
 }
 
-/** Plan a trip (without setting off yet). `pack`: what goes into the backpack (PACKABLE). */
-export function plan(state: PetState, area: string, now: number, pack: readonly string[] = []): Trip {
+/**
+ * Plan a trip (without setting off yet). `pack`: what goes into the backpack (PACKABLE).
+ * `length`: factor on the way between the stations and the way home (balance.Profile.trip).
+ */
+export function plan(state: PetState, area: string, now: number, pack: readonly string[] = [],
+    length = 1.0): Trip {
   const rng = new Random(`trip:${Math.trunc(now)}`);
   const stations: number[] = [];
   let t = now;
   for (let i = rng.randint(...STATIONS); i > 0; i--) {
-    t += Math.round(rng.uniform(...STEP));
+    t += Math.round(rng.uniform(...STEP) * length);
     stations.push(t);
   }
   return {
-    area, start: now, end: t + WAY_HOME, stations, next: 0, found: [], factor: dayFactor(state, now), last: null,
+    area, start: now, end: t + Math.round(WAY_HOME * length), stations, next: 0, found: [], factor: dayFactor(state, now), last: null,
     hearts: startHearts(state), pack: [...pack], guardian: guardianWaiting(state, area),
   };
 }

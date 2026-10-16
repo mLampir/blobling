@@ -41,6 +41,13 @@ Three meals, two play sessions and one cleanup a day keep the pet happy. With
 no care at all it is hungry after about half a day, grumpy after a day and
 sick after roughly two and a half.
 
+These values are the panel's, where the pet is in sight all day. A pet that
+lives on the phone is only seen when the app is opened, so its needs drop a
+quarter slower (satiety lasts about 27 waking hours); everything else is the
+same. A pet on a Pi keeps the panel's values, also when it is looked after
+from the app. The values that differ live in one profile per place (panel or
+app), and they are starting values to try out.
+
 The simulation runs in fixed one-minute steps with seeded randomness. After a
 restart the Pi simply catches up, with the same result as if it had never
 been off. If it was off for more than a day, the pet "stayed at Grandma's"
@@ -224,7 +231,7 @@ bedtime is over, it may already set off.
 Packing, you pick the destination and up to two things to take along. A snack heals a heart on the way, and a ball distracts
 one opponent (but not a guardian).
 
-A trip takes one to one and a half hours. The panel shows the pet hopping
+A trip takes one to one and a half hours (the same on the panel and on the phone). The panel shows the pet hopping
 through the landscape, stopping now and then to rest or to hold up something
 it found. If it gets too tired or hungry, it turns back; you can also call it
 home. A second trip on the same day finds less.
@@ -440,6 +447,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Part | Where |
 |---|---|
 | Stats, decay, actions, sleep | `core/src/model.ts` |
+| Values that differ between the panel and the app (balance profiles) | `core/src/balance.ts` |
 | Life cycle, lines and adult forms | `core/src/life.ts` |
 | Weight, bond, snacks, guessing game, tricks | `core/src/care.ts` |
 | Trips, areas, what is found where | `core/src/trip.ts` |

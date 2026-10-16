@@ -5,6 +5,7 @@
  * nothing about files, networks or the panel.
  */
 
+export * as balance from "./balance";
 export * as battle from "./battle";
 export * as care from "./care";
 export * as home from "./home";
