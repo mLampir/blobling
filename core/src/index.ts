@@ -11,6 +11,7 @@ export * as home from "./home";
 export * as idle from "./idle";
 export * as life from "./life";
 export * as model from "./model";
+export * as notify from "./notify";
 export * as scene from "./scene";
 export * as sky from "./sky";
 export * as sprites from "./sprites";

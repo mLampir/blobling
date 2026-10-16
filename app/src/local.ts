@@ -4,6 +4,9 @@
  *
  * The page talks to it with the same requests it sends to the Pi (core/src/api.ts), so it does
  * not need to know which of the two keeps its pet.
+ *
+ * While the app is in the background, the pet calls with a notification when it needs somebody
+ * (notify.ts).
  */
 
 import { NOT_A_PET_ROUTE, petRequest } from "../../core/src/api";
@@ -15,6 +18,7 @@ import { checkLocation, type Location } from "../../core/src/sun";
 import { Weather } from "../../core/src/weather";
 import { sceneAssets } from "./assets";
 import { imageData } from "./canvas";
+import { reminders, type Reminders } from "./notify";
 import { BROKEN_KEY, PET_KEY, openStore, type Store } from "./store";
 
 const SIZE = 64; // the panel's resolution: the scene looks exactly as it does there
@@ -36,6 +40,7 @@ export class LocalPet {
   private readonly weather: Weather;
   private timer: ReturnType<typeof setTimeout> | undefined;
   private canvas: HTMLCanvasElement | null = null;
+  private readonly reminders: Reminders | null;
 
   private constructor(store: Store, private readonly i18n: I18n, saved: unknown) {
     const location = savedLocation();
@@ -58,6 +63,15 @@ export class LocalPet {
     if (!restored) {
       this.pet.save(); // the new egg is there from now on
     }
+    this.reminders = reminders(i18n);
+    this.reminders?.clear(); // the pet is right here now
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        this.reminders?.leave(this.pet);
+      } else {
+        this.reminders?.clear();
+      }
+    });
   }
 
   static async open(i18n: I18n): Promise<LocalPet> {
@@ -85,6 +99,10 @@ export class LocalPet {
     }
     if (method === "POST") {
       this.draw(); // the scene shows the answer at once
+      const sent = body as { action?: unknown } | undefined;
+      if (path === "/api/pet/action" && sent?.action === "feed" && (answer as { accepted?: boolean }).accepted) {
+        this.reminders?.ask(); // now it is clear why it would call
+      }
     }
     return answer;
   }

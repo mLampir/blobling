@@ -193,6 +193,13 @@
       "no_training": "Zu spät – die Übung ist vorbei.",
       "no_nest": "Da liegt kein Ei in einem Nest.",
       "no_gift": "Da liegt kein Geschenk."
+    },
+    "notify": {
+      "channel": "Wenn dein Pet dich braucht",
+      "health": "Mir geht's gar nicht gut …",
+      "satiety": "Mein Bauch knurrt. Gibt's was zu essen?",
+      "hygiene": "Hier wird's ganz schön schmutzig …",
+      "mood": "Ich vermisse dich. Kommst du mal vorbei?"
     }
   },
   "page": {

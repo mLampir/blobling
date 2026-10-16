@@ -193,6 +193,13 @@
       "no_training": "Too late – that exercise is over.",
       "no_nest": "There is no egg in a nest.",
       "no_gift": "There is no gift lying there."
+    },
+    "notify": {
+      "channel": "When your pet needs you",
+      "health": "I don't feel well at all…",
+      "satiety": "My tummy is rumbling. Is there anything to eat?",
+      "hygiene": "It's getting really messy in here…",
+      "mood": "I miss you. Will you come and see me?"
     }
   },
   "page": {
