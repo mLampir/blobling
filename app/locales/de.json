@@ -205,6 +205,15 @@
     "evolved": "{name} {what}",
     "recall": "🏠 Heimrufen",
     "unpack": "🎒 Auspacken",
+    "replay": {
+      "watch": {
+        "one": "▶ Rauferei ansehen",
+        "other": "▶ Die {n} Raufereien ansehen"
+      },
+      "again": "Nochmal",
+      "play": "Nochmal ansehen",
+      "against": "Rauferei mit {foe} …"
+    },
     "collect": "🥚 Ei einsammeln",
     "collected": "{egg} eingesammelt – es liegt jetzt bei deinen Funden",
     "unwrap": "🎁 Geschenk auspacken",

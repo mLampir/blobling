@@ -39,6 +39,25 @@ export interface TripEvent {
   outcome?: string;
 }
 
+/** A scuffle on a trip, kept to be watched again (trip.REPLAYS). */
+export interface Replay {
+  at: number;
+  /** When the trip it happened on set off (Trip.start). */
+  trip: number;
+  area: string;
+  foe: string;
+  /** [move, trick, result] per round (battle.Round). */
+  rounds: unknown[][];
+  outcome: string;
+  /** What the opponent left behind. */
+  item: string | null;
+  /** How the pet looked then, and the weather. */
+  species: string;
+  stage: string;
+  hat: string;
+  weather: number | null;
+}
+
 /** A trip in progress (trip.plan). */
 export interface Trip {
   area: string;
@@ -140,6 +159,8 @@ export interface PetState {
   deco: string[];
   plant: Plant | null;
   events: PetEvent[];
+  /** The latest scuffles, oldest first. */
+  replays: Replay[];
   /** When somebody last did something with it (idle.welcome); 0 = not known yet. */
   seen_at: number;
   /** When it next gets busy by itself (idle.step); 0 = not planned yet. */
@@ -191,6 +212,7 @@ export function newState(): PetState {
     deco: [],
     plant: null,
     events: [],
+    replays: [],
     seen_at: 0.0,
     idle_next: 0.0,
     solo: {},

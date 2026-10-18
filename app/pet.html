@@ -280,6 +280,9 @@
   dialog .buttons .wide { flex: 1 1 0; min-width: 0; }
   dialog ul { margin: 0 0 16px; padding: 0; list-style: none; }
   dialog li { display: flex; padding: 6px 0; border-top: 1px solid var(--line); }
+  /* A scuffle watched again */
+  dialog canvas { display: block; width: 100%; aspect-ratio: 1; margin-bottom: 14px; border-radius: 14px; image-rendering: pixelated; }
+  .list .play { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--raised); color: var(--accent); font-size: 13px; }
 
   /* The Pi can't be reached */
   .offline {
@@ -313,6 +316,7 @@
       <div class="actions">
         <button class="soft" id="recall" hidden data-t="page.recall"></button>
         <button class="soft" id="unpack" hidden data-t="page.unpack"></button>
+        <button class="soft" id="watch" hidden></button>
         <button class="soft" id="collect" hidden data-t="page.collect"></button>
         <button class="soft" id="unwrap" hidden data-t="page.unwrap"></button>
       </div>
@@ -442,6 +446,17 @@
     <ul id="welcome-list"></ul>
     <div class="buttons">
       <button class="wide primary" value="ok" data-t="page.welcome.ok"></button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="replay">
+  <form method="dialog">
+    <canvas id="replay-scene" width="64" height="64"></canvas>
+    <p id="replay-text"></p>
+    <div class="buttons">
+      <button type="button" class="wide quiet" id="replay-again" data-t="page.replay.again"></button>
+      <button class="wide primary" value="ok" data-t="page.close"></button>
     </div>
   </form>
 </dialog>
@@ -751,6 +766,10 @@ function render(s) {
   }
   $("unpack").hidden = !s.backpack;
   $("unpack").disabled = !s.actions.unpack;
+  // the scuffles of the last trip, until they have been watched or the next trip sets off
+  const fights = s.trip ? [] : lastFights(s);
+  $("watch").hidden = !fights.length || stored("watched") === String(s.last_trip);
+  $("watch").textContent = tn("page.replay.watch", fights.length);
   // an egg is lying in the nest
   $("collect").hidden = !s.nest;
   $("collect").disabled = !s.actions.collect;
@@ -1222,6 +1241,17 @@ function renderEvents(events) {
     last = { text: text.textContent, n: 1, times: document.createElement("span") };
     last.times.className = "times";
     li.append(time, text, last.times);
+    // a scuffle that was kept can be watched again
+    const replay = e.action === "battle" && current && (current.replays || [])
+      .find((r) => r.at === e.at && e.item === `${r.foe}:${r.outcome}`);
+    if (replay) {
+      const play = document.createElement("button");
+      play.className = "play";
+      play.textContent = "▶";
+      play.setAttribute("aria-label", t("page.replay.play"));
+      play.addEventListener("click", () => watch([replay]));
+      li.append(play);
+    }
     return heading ? [heading, li] : [li];
   });
   if (!items.length) {
@@ -1238,6 +1268,40 @@ function battleText(item) {
   const [foe, outcome] = (item || "").split(":");
   return t(`page.events.battle_${outcome}`, { foe: T[`foes.${foe}`] || foe });
 }
+
+// ---------- Scuffles watched again ----------
+
+// The scuffles on the latest trip
+function lastFights(s) {
+  return (s.replays || []).filter((r) => r.trip === s.last_trip); // none from a Pi that keeps none yet
+}
+
+let watching = [], stopReplay = null;
+async function watch(replays) {
+  if (stopReplay) stopReplay();
+  watching = replays;
+  $("replay-again").disabled = true;
+  stopReplay = await app.replay($("replay-scene"), replays,
+    // who it is up against, and once the rounds are over, how it ended
+    (i, over) => {
+      const r = replays[i];
+      $("replay-text").textContent = over ? battleText(`${r.foe}:${r.outcome}`)
+        : t("page.replay.against", { foe: T[`foes.${r.foe}`] || r.foe });
+    },
+    () => { $("replay-again").disabled = false; });
+  if (!$("replay").open) $("replay").showModal();
+}
+$("replay-again").addEventListener("click", () => watch(watching));
+$("replay").addEventListener("close", () => {
+  if (stopReplay) stopReplay();
+  stopReplay = null;
+});
+$("watch").addEventListener("click", () => {
+  if (!current) return;
+  store("watched", String(current.last_trip));
+  $("watch").hidden = true;
+  watch(lastFights(current));
+});
 
 // A wild pet it has shown its tricks to: "species:friend" or "species:shrug"
 function wildText(item) {

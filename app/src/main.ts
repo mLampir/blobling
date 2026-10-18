@@ -22,6 +22,7 @@ import { iconUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
 import { RemotePet, piAddress } from "./remote";
+import { playReplays, type Replay } from "./replay";
 
 const PI_KEY = "pi"; // the address of the Pi the app is connected to
 const LIVE_KEY = "location.live"; // "1": the pet lives wherever the phone is
@@ -103,6 +104,17 @@ const app = {
   /** With a Pi: a fresh picture of what the panel shows, as a URL for an <img>. */
   previewUrl(): string {
     return `${remote?.base ?? ""}/preview.png?t=${Date.now()}`;
+  },
+
+  /**
+   * Plays scuffles from the pet's state (`replays`) on `canvas`, one after the other, wherever the
+   * pet lives. `onChange(i, over)` when the i-th begins and when its rounds are over, `onEnd` after
+   * the last. Returns a function that stops it.
+   */
+  async replay(canvas: HTMLCanvasElement, replays: readonly Replay[],
+      onChange: (index: number, over: boolean) => void, onEnd: () => void): Promise<() => void> {
+    const location = local ? (await local).location : null;
+    return playReplays(canvas, replays, location, onChange, onEnd);
   },
 
   /** On the phone: where it lives (for the weather and the sun times). */

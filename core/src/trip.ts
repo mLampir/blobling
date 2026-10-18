@@ -18,7 +18,7 @@ import * as care from "./care";
 import * as home from "./home";
 import { Random } from "./random";
 import * as sky from "./sky";
-import type { PetState, Trip } from "./state";
+import type { PetState, Replay, Trip } from "./state";
 import * as sun from "./sun";
 import * as wild from "./wild";
 
@@ -59,6 +59,7 @@ export const GUARDIAN_EGGS: Record<string, string> = { cave: "egg_ember" };
 // What can go into the backpack: a snack heals a heart on the way, a ball distracts an opponent
 export const PACKABLE = ["snack", "ball"];
 export const MAX_PACK = 2;
+export const REPLAYS = 10; // the latest scuffles are kept, to be watched again in the app
 
 /** What the tests turn: how often an opponent is waiting, and how a scuffle goes. */
 export const rules = { encounterChance: ENCOUNTER_CHANCE, fight: battle.fight };
@@ -161,6 +162,11 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
   const fight = rules.fight(state, foe, rng);
   const outcome = fight.outcome;
   trip.last = { kind: "battle", foe, rounds: fight.rounds, outcome, at: t };
+  const replay: Replay = {
+    at: Math.round(t), trip: trip.start, area: trip.area, foe, rounds: fight.rounds, outcome, item: null,
+    species: state.species, stage: state.stage, hat: state.hat, weather,
+  };
+  state.replays = [...state.replays, replay].slice(-REPLAYS);
   events.push(["battle", `${foe}:${outcome}`]);
   count.battles = (count.battles ?? 0) + 1;
   if (outcome === "win") {
@@ -182,6 +188,7 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
     if (item) {
       trip.found.push(item);
       trip.last.item = item;
+      replay.item = item;
       events.push(["find", item]);
     }
   } else if (outcome === "lose") {
