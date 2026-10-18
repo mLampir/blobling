@@ -157,6 +157,8 @@ test("the pictures: what the panel shows, and the app icon", async () => {
   assert.equal(preview.headers.get("cache-control"), "no-store");
   const frame = decodePng(new Uint8Array(await preview.arrayBuffer()));
   assert.deepEqual([frame.width, frame.height], [64, 64]);
+  const next = decodePng(new Uint8Array(await (await get("/preview.png?next")).arrayBuffer()));
+  assert.deepEqual([next.width, next.height], [64, 64]); // the loop does not run here: the last one, after a wait
 
   for (const [query, size] of [["", 192], ["?size=512&maskable=1", 512], ["?stage=adult&species=cyclopuff", 192],
     ["?stage=adult&species=dragon", 192]] as const) {
