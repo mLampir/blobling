@@ -342,7 +342,8 @@ function bitmap(image: Image, x: number, y: number, sprite: Bitmap, scale = 1.0)
   });
 }
 
-function drawHeart(image: Image, x: number, y: number): void {
+/** The big heart (7 × 6) with its shine, as the pet catches it and the app icon shows it. */
+export function drawHeart(image: Image, x: number, y: number): void {
   BIG_HEART.forEach((row, dy) => {
     for (let dx = 0; dx < row.length; dx++) {
       if (row[dx] !== ".") {
