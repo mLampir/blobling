@@ -19,7 +19,7 @@ import { Weather } from "../../core/src/weather";
 import { sceneAssets } from "./assets";
 import { imageData } from "./canvas";
 import { reminders, type Reminders } from "./notify";
-import { BROKEN_KEY, PET_KEY, openStore, type Store } from "./store";
+import { BROKEN_KEY, PET_KEY, openStore, takeInSave, type Store } from "./store";
 
 const SIZE = 64; // the panel's resolution: the scene looks exactly as it does there
 const WEATHER_MINUTES = 15;
@@ -77,6 +77,28 @@ export class LocalPet {
   static async open(i18n: I18n): Promise<LocalPet> {
     const store = await openStore();
     return new LocalPet(store, i18n, await store.get(PET_KEY));
+  }
+
+  /**
+   * The pet the phone keeps while the app shows a display's, as GET /api/pet describes it: for
+   * choosing between the two. Nothing is saved; a save that cannot be read counts as an egg.
+   */
+  static async describeKept(i18n: I18n): Promise<unknown> {
+    let saved: ReturnType<typeof readSave> | null = null;
+    try {
+      const file = await (await openStore()).get(PET_KEY);
+      saved = file === undefined ? null : readSave(file);
+    } catch {
+      // then a new egg, as LocalPet.open would start with
+    }
+    const pet = new Pet({ t: i18n.t, saved, location: savedLocation() });
+    return petRequest({ pet, action: pet.action.bind(pet), newEgg: pet.newEgg.bind(pet) },
+      "GET", new URL("/api/pet", "http://app"), async () => null);
+  }
+
+  /** While the app shows a display's pet: the save `file` becomes the pet the phone keeps (store.ts, takeInSave). */
+  static async takeIn(file: unknown): Promise<void> {
+    await takeInSave(await openStore(), file);
   }
 
   // ---------- The requests of the page ----------

@@ -151,9 +151,19 @@
    "duration": 1000
   },
   {
-   "filename": "items egg 15",
+   "filename": "items bag 15",
    "frame": {
     "x": 132,
+    "y": 0,
+    "w": 8,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items egg 16",
+   "frame": {
+    "x": 140,
     "y": 0,
     "w": 12,
     "h": 14
@@ -161,19 +171,9 @@
    "duration": 1000
   },
   {
-   "filename": "items egg_wobble 16",
-   "frame": {
-    "x": 144,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
    "filename": "items egg_wobble 17",
    "frame": {
-    "x": 156,
+    "x": 152,
     "y": 0,
     "w": 12,
     "h": 14
@@ -183,7 +183,7 @@
   {
    "filename": "items egg_wobble 18",
    "frame": {
-    "x": 168,
+    "x": 164,
     "y": 0,
     "w": 12,
     "h": 14
@@ -193,7 +193,7 @@
   {
    "filename": "items egg_wobble 19",
    "frame": {
-    "x": 180,
+    "x": 176,
     "y": 0,
     "w": 12,
     "h": 14
@@ -201,9 +201,19 @@
    "duration": 150
   },
   {
-   "filename": "items egg_crack 20",
+   "filename": "items egg_wobble 20",
    "frame": {
-    "x": 192,
+    "x": 188,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_crack 21",
+   "frame": {
+    "x": 200,
     "y": 0,
     "w": 12,
     "h": 14
@@ -211,9 +221,9 @@
    "duration": 1000
   },
   {
-   "filename": "items egg_open 21",
+   "filename": "items egg_open 22",
    "frame": {
-    "x": 204,
+    "x": 212,
     "y": 0,
     "w": 12,
     "h": 15
@@ -221,9 +231,9 @@
    "duration": 1000
   },
   {
-   "filename": "items ember_egg 22",
+   "filename": "items ember_egg 23",
    "frame": {
-    "x": 216,
+    "x": 224,
     "y": 0,
     "w": 12,
     "h": 14
@@ -231,19 +241,9 @@
    "duration": 1000
   },
   {
-   "filename": "items ember_egg_wobble 23",
-   "frame": {
-    "x": 228,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
    "filename": "items ember_egg_wobble 24",
    "frame": {
-    "x": 240,
+    "x": 236,
     "y": 0,
     "w": 12,
     "h": 14
@@ -253,7 +253,7 @@
   {
    "filename": "items ember_egg_wobble 25",
    "frame": {
-    "x": 252,
+    "x": 248,
     "y": 0,
     "w": 12,
     "h": 14
@@ -263,7 +263,7 @@
   {
    "filename": "items ember_egg_wobble 26",
    "frame": {
-    "x": 264,
+    "x": 260,
     "y": 0,
     "w": 12,
     "h": 14
@@ -271,9 +271,19 @@
    "duration": 150
   },
   {
-   "filename": "items ember_egg_crack 27",
+   "filename": "items ember_egg_wobble 27",
    "frame": {
-    "x": 276,
+    "x": 272,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_crack 28",
+   "frame": {
+    "x": 284,
     "y": 0,
     "w": 12,
     "h": 14
@@ -281,9 +291,9 @@
    "duration": 1000
   },
   {
-   "filename": "items ember_egg_open 28",
+   "filename": "items ember_egg_open 29",
    "frame": {
-    "x": 288,
+    "x": 296,
     "y": 0,
     "w": 12,
     "h": 15
@@ -291,9 +301,9 @@
    "duration": 1000
   },
   {
-   "filename": "items stone_egg 29",
+   "filename": "items stone_egg 30",
    "frame": {
-    "x": 300,
+    "x": 308,
     "y": 0,
     "w": 12,
     "h": 14
@@ -301,19 +311,9 @@
    "duration": 1000
   },
   {
-   "filename": "items stone_egg_wobble 30",
-   "frame": {
-    "x": 312,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
    "filename": "items stone_egg_wobble 31",
    "frame": {
-    "x": 324,
+    "x": 320,
     "y": 0,
     "w": 12,
     "h": 14
@@ -323,7 +323,7 @@
   {
    "filename": "items stone_egg_wobble 32",
    "frame": {
-    "x": 336,
+    "x": 332,
     "y": 0,
     "w": 12,
     "h": 14
@@ -333,7 +333,7 @@
   {
    "filename": "items stone_egg_wobble 33",
    "frame": {
-    "x": 348,
+    "x": 344,
     "y": 0,
     "w": 12,
     "h": 14
@@ -341,9 +341,19 @@
    "duration": 150
   },
   {
-   "filename": "items stone_egg_crack 34",
+   "filename": "items stone_egg_wobble 34",
    "frame": {
-    "x": 360,
+    "x": 356,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_crack 35",
+   "frame": {
+    "x": 368,
     "y": 0,
     "w": 12,
     "h": 14
@@ -351,9 +361,9 @@
    "duration": 1000
   },
   {
-   "filename": "items stone_egg_open 35",
+   "filename": "items stone_egg_open 36",
    "frame": {
-    "x": 372,
+    "x": 380,
     "y": 0,
     "w": 12,
     "h": 15
@@ -361,9 +371,9 @@
    "duration": 1000
   },
   {
-   "filename": "items fox_egg 36",
+   "filename": "items fox_egg 37",
    "frame": {
-    "x": 384,
+    "x": 392,
     "y": 0,
     "w": 12,
     "h": 14
@@ -371,19 +381,9 @@
    "duration": 1000
   },
   {
-   "filename": "items fox_egg_wobble 37",
-   "frame": {
-    "x": 396,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
    "filename": "items fox_egg_wobble 38",
    "frame": {
-    "x": 408,
+    "x": 404,
     "y": 0,
     "w": 12,
     "h": 14
@@ -393,7 +393,7 @@
   {
    "filename": "items fox_egg_wobble 39",
    "frame": {
-    "x": 420,
+    "x": 416,
     "y": 0,
     "w": 12,
     "h": 14
@@ -403,7 +403,7 @@
   {
    "filename": "items fox_egg_wobble 40",
    "frame": {
-    "x": 432,
+    "x": 428,
     "y": 0,
     "w": 12,
     "h": 14
@@ -411,9 +411,19 @@
    "duration": 150
   },
   {
-   "filename": "items fox_egg_crack 41",
+   "filename": "items fox_egg_wobble 41",
    "frame": {
-    "x": 444,
+    "x": 440,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_crack 42",
+   "frame": {
+    "x": 452,
     "y": 0,
     "w": 12,
     "h": 14
@@ -421,9 +431,9 @@
    "duration": 1000
   },
   {
-   "filename": "items fox_egg_open 42",
+   "filename": "items fox_egg_open 43",
    "frame": {
-    "x": 456,
+    "x": 464,
     "y": 0,
     "w": 12,
     "h": 15
@@ -431,9 +441,9 @@
    "duration": 1000
   },
   {
-   "filename": "items cloud_egg 43",
+   "filename": "items cloud_egg 44",
    "frame": {
-    "x": 468,
+    "x": 476,
     "y": 0,
     "w": 12,
     "h": 14
@@ -441,19 +451,9 @@
    "duration": 1000
   },
   {
-   "filename": "items cloud_egg_wobble 44",
-   "frame": {
-    "x": 480,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
    "filename": "items cloud_egg_wobble 45",
    "frame": {
-    "x": 492,
+    "x": 488,
     "y": 0,
     "w": 12,
     "h": 14
@@ -463,7 +463,7 @@
   {
    "filename": "items cloud_egg_wobble 46",
    "frame": {
-    "x": 504,
+    "x": 500,
     "y": 0,
     "w": 12,
     "h": 14
@@ -473,7 +473,7 @@
   {
    "filename": "items cloud_egg_wobble 47",
    "frame": {
-    "x": 516,
+    "x": 512,
     "y": 0,
     "w": 12,
     "h": 14
@@ -481,9 +481,19 @@
    "duration": 150
   },
   {
-   "filename": "items cloud_egg_crack 48",
+   "filename": "items cloud_egg_wobble 48",
    "frame": {
-    "x": 528,
+    "x": 524,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_crack 49",
+   "frame": {
+    "x": 536,
     "y": 0,
     "w": 12,
     "h": 14
@@ -491,9 +501,9 @@
    "duration": 1000
   },
   {
-   "filename": "items cloud_egg_open 49",
+   "filename": "items cloud_egg_open 50",
    "frame": {
-    "x": 540,
+    "x": 548,
     "y": 0,
     "w": 12,
     "h": 15
@@ -505,7 +515,7 @@
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 552,
+   "w": 560,
    "h": 15
   },
   "frameTags": [
@@ -600,123 +610,129 @@
     "direction": "forward"
    },
    {
-    "name": "egg",
+    "name": "bag",
     "from": 15,
     "to": 15,
     "direction": "forward"
    },
    {
-    "name": "egg_wobble",
+    "name": "egg",
     "from": 16,
-    "to": 19,
+    "to": 16,
     "direction": "forward"
    },
    {
-    "name": "egg_crack",
-    "from": 20,
+    "name": "egg_wobble",
+    "from": 17,
     "to": 20,
     "direction": "forward"
    },
    {
-    "name": "egg_open",
+    "name": "egg_crack",
     "from": 21,
     "to": 21,
     "direction": "forward"
    },
    {
-    "name": "ember_egg",
+    "name": "egg_open",
     "from": 22,
     "to": 22,
     "direction": "forward"
    },
    {
-    "name": "ember_egg_wobble",
+    "name": "ember_egg",
     "from": 23,
-    "to": 26,
+    "to": 23,
     "direction": "forward"
    },
    {
-    "name": "ember_egg_crack",
-    "from": 27,
+    "name": "ember_egg_wobble",
+    "from": 24,
     "to": 27,
     "direction": "forward"
    },
    {
-    "name": "ember_egg_open",
+    "name": "ember_egg_crack",
     "from": 28,
     "to": 28,
     "direction": "forward"
    },
    {
-    "name": "stone_egg",
+    "name": "ember_egg_open",
     "from": 29,
     "to": 29,
     "direction": "forward"
    },
    {
-    "name": "stone_egg_wobble",
+    "name": "stone_egg",
     "from": 30,
-    "to": 33,
+    "to": 30,
     "direction": "forward"
    },
    {
-    "name": "stone_egg_crack",
-    "from": 34,
+    "name": "stone_egg_wobble",
+    "from": 31,
     "to": 34,
     "direction": "forward"
    },
    {
-    "name": "stone_egg_open",
+    "name": "stone_egg_crack",
     "from": 35,
     "to": 35,
     "direction": "forward"
    },
    {
-    "name": "fox_egg",
+    "name": "stone_egg_open",
     "from": 36,
     "to": 36,
     "direction": "forward"
    },
    {
-    "name": "fox_egg_wobble",
+    "name": "fox_egg",
     "from": 37,
-    "to": 40,
+    "to": 37,
     "direction": "forward"
    },
    {
-    "name": "fox_egg_crack",
-    "from": 41,
+    "name": "fox_egg_wobble",
+    "from": 38,
     "to": 41,
     "direction": "forward"
    },
    {
-    "name": "fox_egg_open",
+    "name": "fox_egg_crack",
     "from": 42,
     "to": 42,
     "direction": "forward"
    },
    {
-    "name": "cloud_egg",
+    "name": "fox_egg_open",
     "from": 43,
     "to": 43,
     "direction": "forward"
    },
    {
-    "name": "cloud_egg_wobble",
+    "name": "cloud_egg",
     "from": 44,
-    "to": 47,
+    "to": 44,
     "direction": "forward"
    },
    {
-    "name": "cloud_egg_crack",
-    "from": 48,
+    "name": "cloud_egg_wobble",
+    "from": 45,
     "to": 48,
     "direction": "forward"
    },
    {
-    "name": "cloud_egg_open",
+    "name": "cloud_egg_crack",
     "from": 49,
     "to": 49,
+    "direction": "forward"
+   },
+   {
+    "name": "cloud_egg_open",
+    "from": 50,
+    "to": 50,
     "direction": "forward"
    }
   ]

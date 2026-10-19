@@ -15,7 +15,7 @@
  */
 
 import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
-import { MAX_NAME } from "../../core/src/pet";
+import { MAX_NAME, readSave } from "../../core/src/pet";
 import type { Location } from "../../core/src/sun";
 import { locales, soundFiles } from "./assets";
 import { haptic } from "./haptics";
@@ -226,8 +226,34 @@ const app = {
     location.reload();
   },
 
-  /** Back to the pet on the phone. */
-  disconnect(): void {
+  /**
+   * Before going back to the pet on the phone: the one on the display and the one the phone kept,
+   * to choose which of them lives on the phone. null when there is nothing to choose, because the
+   * display only has an egg. Throws with the text for the page if the display is gone.
+   */
+  async petsToTakeHome(): Promise<{ phone: any; display: any } | null> {
+    const display = await remote!.request("GET", "/api/pet") as { stage: string };
+    if (display.stage === "egg") {
+      return null;
+    }
+    return { phone: await LocalPet.describeKept(i18n), display };
+  },
+
+  /**
+   * Back to the pet on the phone. With `takePet`, the display's pet comes along and lives on the
+   * phone from now on (the phone keeps its old one aside); the display keeps its copy, as the
+   * phone does when its pet moves to the display. Throws with the text for the page.
+   */
+  async disconnect(takePet = false): Promise<void> {
+    if (takePet) {
+      const file = await remote!.request("GET", "/api/pet/save");
+      try {
+        readSave(file);
+      } catch {
+        throw new Error(i18n.t("error.not_a_save"));
+      }
+      await LocalPet.takeIn(file);
+    }
     localStorage.removeItem(PI_KEY);
     location.reload();
   },

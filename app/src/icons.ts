@@ -23,15 +23,24 @@ export function iconUrl(stage: string, species: string): string {
 // stacked from the top down (a meal is the food on top of the bowl)
 const THINGS: Record<string, string[]> = {
   meal: ["items:food_full", "items:bowl"],
-  cookie: ["items:cookie"],
-  icecream: ["items:icecream"],
-  fruit: ["items:fruit"],
+  bag: ["items:bag"],
   ball: ["items:ball"],
   medicine: ["items:medicine"],
   sponge: ["items:sponge"],
   baton: ["items:baton"],
   backpack: ["trip:backpack"],
   seed: ["trip:seed"],
+  // fruits of the plant's kinds, kept in the bag
+  fruit_berry: ["trip:fruit_berry"],
+  fruit_sunflower: ["trip:fruit_sunflower"],
+  fruit_cherry: ["trip:fruit_cherry"],
+  fruit_herb: ["trip:fruit_herb"],
+  // food from trips
+  honeycomb: ["trip:honeycomb"],
+  hazelnut: ["trip:hazelnut"],
+  watercress: ["trip:watercress"],
+  glowberry: ["trip:glowberry"],
+  pinenut: ["trip:pinenut"],
 };
 
 /** A thing the player hands the pet (food, the ball, the sponge, the baton, …) as a picture, or "" if there is none. */

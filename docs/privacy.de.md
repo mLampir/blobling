@@ -87,7 +87,8 @@ verbindest, spricht die App direkt über dein Heimnetz mit ihm, und das Pet
 lebt auf dem Display. Um es zu finden, fragt die App unter den üblichen Namen
 eines Displays in deinem Heimnetz nach (`blobling.local` und
 `raspberrypi.local`). Wenn du das Pet von deinem Handy mitnehmen willst,
-schickt die App es an das Display. Das Display ist dein eigenes Gerät; nichts läuft über
+schickt die App es an das Display, und wenn du das Pet des Displays aufs Handy
+zurückholst, lädt die App es von dort. Das Display ist dein eigenes Gerät; nichts läuft über
 uns. Das Display selbst fragt Open-Meteo nach dem Wetter an dem Ort, den du
 dort einstellst, und GitHub nach neuen Versionen seiner Software. Wenn es
 seine Software installiert oder aktualisiert, lädt es außerdem Node.js von

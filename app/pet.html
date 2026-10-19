@@ -261,6 +261,12 @@
   .steps { display: flex; gap: 8px; min-height: 44px; }
   .steps i { width: 40px; height: 40px; border-radius: 10px; border: 2px solid var(--line); font-style: normal; font-size: 22px; line-height: 36px; }
   .steps i.on { border-color: var(--accent); color: var(--accent); }
+  .bag { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .bag .thing { flex: 0 0 76px; }
+  /* how many there are, and once found out: ❤ its favorite, ✕ what it won't eat */
+  .bag .thing::before, .bag .thing::after { position: absolute; top: 4px; font-size: 11px; font-weight: 700; pointer-events: none; }
+  .bag .thing::before { content: "×" attr(data-count); left: 7px; color: var(--muted); }
+  .bag .thing::after { content: attr(data-mark); right: 7px; color: var(--accent); }
   .choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
   .choices button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
   .choices button.on { border-color: var(--accent); color: var(--accent); }
@@ -337,20 +343,39 @@
         <button class="soft" id="watch" hidden></button>
         <button class="soft" id="collect" hidden data-t="page.collect"></button>
         <button class="soft" id="unwrap" hidden data-t="page.unwrap"></button>
+        <button class="soft" id="pickup" hidden></button>
       </div>
     </div>
     <div class="tray" id="tray">
       <button class="thing" data-thing="meal" data-action="feed" data-item="meal" data-helps="satiety"><img alt=""><small data-t="page.things.meal"></small></button>
-      <button class="thing" data-thing="cookie" data-action="feed" data-item="cookie"><img alt=""><small data-t="snacks.cookie"></small></button>
-      <button class="thing" data-thing="icecream" data-action="feed" data-item="icecream"><img alt=""><small data-t="snacks.icecream"></small></button>
-      <button class="thing" data-thing="fruit" data-action="feed" data-item="fruit"><img alt=""><small data-t="snacks.fruit"></small></button>
+      <button class="thing" data-thing="bag" data-bag="1" id="thing-bag"><img alt=""><small data-t="page.things.bag"></small></button>
       <button class="thing" data-thing="ball" data-action="play" data-helps="mood"><img alt=""><small data-t="page.things.ball"></small></button>
       <button class="thing" data-thing="sponge" data-action="clean" data-helps="hygiene" data-rub="1"><img alt=""><small data-t="page.things.sponge"></small></button>
       <button class="thing" data-thing="baton" data-action="trick" data-wand="1"><img alt=""><small data-t="page.things.baton"></small></button>
       <button class="thing" data-thing="medicine" data-action="medicine" data-helps="health" hidden><img alt=""><small data-t="page.things.medicine"></small></button>
-      <button class="thing" data-thing="seed" data-action="plant" data-item="berry" id="thing-seed" hidden><img alt=""><small data-t="page.things.seeds"></small></button>
     </div>
-    <!-- What goes on instead of the tray: tricks, training, the guessing game, packing -->
+    <!-- What goes on instead of the tray: the bag, tricks, training, the guessing game, packing -->
+    <div class="sheet" id="bag-mode" hidden>
+      <button class="close" id="bag-close" data-t-aria="page.close">✕</button>
+      <h3 data-t="page.things.bag"></h3>
+      <div class="bag" id="bag">
+      <button class="thing" data-thing="fruit_berry" data-action="feed" data-item="fruit_berry" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="fruit_sunflower" data-action="feed" data-item="fruit_sunflower" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="fruit_cherry" data-action="feed" data-item="fruit_cherry" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="fruit_herb" data-action="feed" data-item="fruit_herb" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="honeycomb" data-action="feed" data-item="honeycomb" data-boost="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="hazelnut" data-action="feed" data-item="hazelnut" data-boost="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="watercress" data-action="feed" data-item="watercress" data-boost="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="glowberry" data-action="feed" data-item="glowberry" data-boost="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="pinenut" data-action="feed" data-item="pinenut" data-boost="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="seed" data-action="plant" data-item="berry" data-seed="seed_berry" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="seed" data-action="plant" data-item="sunflower" data-seed="seed_sunflower" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="seed" data-action="plant" data-item="cherry" data-seed="seed_cherry" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="seed" data-action="plant" data-item="herb" data-seed="seed_herb" hidden><img alt=""><small></small></button>
+      </div>
+      <p id="bag-empty" data-t="page.bag.empty" hidden></p>
+    </div>
+
     <div class="sheet" id="trick-mode" hidden>
       <button class="close" id="trick-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.tools.tricks"></h3>
@@ -497,7 +522,7 @@
 
 <dialog id="choose">
   <form method="dialog">
-    <p data-t="page.app.choose_pet"></p>
+    <p id="choose-text"></p>
     <ul>
       <li><button class="choice" value="phone"><img id="choose-phone-icon" alt=""><span><strong id="choose-phone-name"></strong><small id="choose-phone-note"></small></span></button></li>
       <li><button class="choice" value="display"><img id="choose-display-icon" alt=""><span><strong id="choose-display-name"></strong><small id="choose-display-note"></small></span></button></li>
@@ -575,7 +600,7 @@ const STATS = ["satiety", "mood", "energy", "hygiene", "health"];
 // What seeds and their fruits look like
 const PLANT_ICONS = { berry: "🫐", sunflower: "🌻", cherry: "🍒", herb: "🌿" };
 // Seeds: a tap switches the kind. The trip: where to and what comes along
-const choice = { trip: null, plant: null };
+const choice = { trip: null };
 const packed = [];
 const PACK_ICONS = { snack: "🍪", ball: "⚽" };
 // Battle stats: symbol and color of the bar
@@ -853,27 +878,30 @@ function render(s) {
   // a friend has left a gift
   $("unwrap").hidden = !s.gift;
   $("unwrap").disabled = !s.actions.unwrap;
+  // it found something at home by itself
+  $("pickup").hidden = !s.found;
+  $("pickup").disabled = !s.actions.pickup;
+  if (s.found) $("pickup").textContent = t("page.pickup", { thing: giftLabel(s.found) });
 
   // The tray: an egg can only be kept warm (by stroking it)
   $("tray").hidden = egg;
   document.querySelectorAll(".thing").forEach((b) => {
     const a = b.dataset.action;
-    b.hidden = egg || (a === "medicine" && !s.sick) || (a === "plant" && !picked(s, "plant"));
+    // in the bag: how much of it there is, and once found out, what it loves and what it won't eat
+    const id = b.dataset.seed || (b.closest(".bag") && b.dataset.item);
+    const kept = id && s.items.find((x) => x.id === id);
+    if (kept) {
+      b.lastElementChild.textContent = kept.label;
+      b.dataset.count = kept.count;
+      b.dataset.mark = s.favorite_food === id ? "❤" : s.disliked_food === id ? "✕" : "";
+    }
+    b.hidden = egg || (a === "medicine" && !s.sick) || (id && !kept);
     // the baton shows tricks: practicing needs energy, showing one it knows doesn't
-    b.disabled = b.dataset.wand ? s.asleep || !!s.trip : !s.actions[a];
+    b.disabled = b.dataset.bag ? false : b.dataset.wand ? s.asleep || !!s.trip : !s.actions[a];
     if (b.dataset.wand && b.disabled && baton) holdBaton(false);
     b.classList.toggle("wanted", s.needs.includes(b.dataset.helps));
-    // Mark the favorite snack once it has been discovered
-    const snack = a === "feed" && s.snacks.find((x) => x.id === b.dataset.item);
-    if (snack) b.lastElementChild.textContent = snack.label.replace(/\s*\p{Extended_Pictographic}/gu, "")
-      + (s.favorite_snack === snack.id ? " ❤" : "");
   });
-  // Seeds: the kind that is picked
-  const seeds = options(s, "plant"), seed = picked(s, "plant");
-  if (seed) {
-    $("thing-seed").dataset.item = seed[0];
-    $("thing-seed").lastElementChild.textContent = t("page.things.seed_count", { n: seed[2] }) + (seeds.length > 1 ? " ⇄" : "");
-  }
+  $("bag-empty").hidden = [...$("bag").children].some((b) => !b.hidden);
 
   // Sleeping: what the button does is what it says
   const sleep = $("sleep");
@@ -900,10 +928,9 @@ $("stats").addEventListener("click", (e) => {
   say(`${t(`page.stats.${key}`)} ${current.stats[key]} · ${t(`page.needs.${key}`, { name: current.name })}`);
 });
 
-// What can go into the backpack or be planted as a seed: [key, name, count]
+// Where a trip can go: [key, name]
 function options(s, action) {
-  if (action === "trip") return s.areas.filter((a) => a.unlocked).map((a) => [a.id, a.label]);
-  return s.items.filter((x) => x.kind === "seed").map((x) => [x.id.slice(5), x.label, x.count]);
+  return s.areas.filter((a) => a.unlocked).map((a) => [a.id, a.label]);
 }
 
 function picked(s, action) {
@@ -1093,7 +1120,9 @@ function renderFinds(s) {
   }
   if (s.house) rows.push([t("page.finds.house", { house: t(`page.houses.${s.house.step}`) }), tn("page.finds.house_spots", s.house.spots)]);
   for (const item of s.items) {
-    rows.push(item.kind === "seed" ? [item.label, t("page.finds.in_bag", { n: item.count })]
+    rows.push(item.kind === "seed" || item.kind === "fruit" ? [item.label, t("page.finds.in_bag", { n: item.count })]
+      : item.kind === "food" ? [item.label, [t("page.finds.in_bag", { n: item.count }),
+        ...item.effects.map((k) => t(`page.finds.effects.${k}`))].join(" · ")]
       : [item.label, [t(`page.kinds.${item.kind}`), item.place === "inside" && t("page.finds.inside"),
         ...item.effects.map((k) => t(`page.finds.effects.${k}`))].filter(Boolean).join(" · "), item]);
   }
@@ -1202,10 +1231,10 @@ function renderValues(s) {
 
 function renderStatistics(s) {
   const c = s.counters || {};
-  const favorite = s.snacks.find((x) => x.id === s.favorite_snack);
+  const labels = s.item_labels || {};
   const rows = [
     [t("page.statistics.meals"), c.meals || 0],
-    [t("page.statistics.snacks"), `${c.snacks || 0} (🍪 ${c.snack_cookie || 0} · 🍦 ${c.snack_icecream || 0} · 🍎 ${c.snack_fruit || 0})`],
+    [t("page.statistics.snacks"), c.snacks || 0],
     [t("page.statistics.plays"), c.plays || 0],
     [t("page.statistics.game"), t("page.statistics.game_value", { games: c.games || 0, won: c.games_won || 0 })],
     [t("page.statistics.tricks"), t("page.statistics.tricks_value", {
@@ -1220,7 +1249,8 @@ function renderStatistics(s) {
     [t("page.statistics.trips"), c.trips || 0],
     [t("page.statistics.fruits"), c.fruits || 0],
     [t("page.statistics.hearts"), c.hearts || 0],
-    [t("page.statistics.favorite"), favorite ? favorite.label : t("page.statistics.favorite_unknown")],
+    [t("page.statistics.favorite"), labels[s.favorite_food] || t("page.statistics.favorite_unknown")],
+    [t("page.statistics.disliked"), labels[s.disliked_food] || t("page.statistics.favorite_unknown")],
   ];
   offerTab("statistics", s.stage !== "egg");
   $("statistics").replaceChildren(...rows.map(([label, value]) => row(label, "", figure(value))));
@@ -1251,6 +1281,7 @@ function eventText(e) {
     : e.action === "gift" ? t("page.events.gift", { pet: T[`species.${e.item}`] || e.item })
     : e.action === "nest" || e.action === "collect" ? t(`page.events.${e.action}`)
     : e.action === "unwrap" ? t("page.events.unwrap", { what: giftLabel(e.item) })
+    : e.action === "found" || e.action === "pickup" ? t(`page.events.${e.action}`, { thing: giftLabel(e.item) })
     : e.action === "guardian" ? t("page.events.guardian", { foe: T[`foes.${e.item}`] || e.item })
     : e.action === "unlock" ? t("page.events.unlock", { area: T[`areas.${e.item}.name`] || e.item })
     : e.action === "house" ? t(`page.events.house_${e.item}`)
@@ -1260,13 +1291,13 @@ function eventText(e) {
     : e.action === "plant" ? t("page.events.planted", { seed: labels["seed_" + e.item] || t("page.kinds.seed") })
     : e.action === "wear" ? (e.item === "none" ? t("page.events.hat_off") : t("page.events.hat", { item: labels[e.item] || e.item }))
     : e.action === "deco" ? t("page.events.deco", { item: labels[e.item] || e.item })
-    : T[`page.events.${e.item}`] || T[`page.events.${e.action}`] || e.action;
+    : T[`page.events.${e.item}`] || (e.action === "feed" && labels[e.item]) || T[`page.events.${e.action}`] || e.action;
 }
 
-// What was in a friend's gift: "fruit_<plant>" or "seed_<plant>"
+// What was in a friend's gift, or what the pet found at home: "fruit_<plant>" or "seed_<plant>"
 function giftLabel(gift) {
   const labels = (current && current.item_labels) || {};
-  return gift && gift.startsWith("fruit_") ? T[`fruits.${gift.slice(6)}`] || gift : labels[gift] || gift || "";
+  return labels[gift] || gift || "";
 }
 
 // Back after a while: what happened while nobody was there, told once (the pet decides when)
@@ -1578,7 +1609,7 @@ document.querySelectorAll(".thing").forEach((b) => {
   let drag = null;
 
   b.addEventListener("pointerdown", (e) => {
-    if (b.disabled || drag) return;
+    if (b.disabled || drag || b.dataset.bag) return;
     b.setPointerCapture(e.pointerId);
     const ghost = document.createElement("div");
     ghost.className = "ghost";
@@ -1658,7 +1689,10 @@ document.querySelectorAll(".thing").forEach((b) => {
     try {
       const r = await action(b.dataset.action, b.dataset.item, direct ? {} : { throw: where });
       render(r.state);
-      say(r.accepted ? "" : r.message);
+      // from the bag: whether that was the favorite, and what food from a trip leaves in the pet
+      const name = { name: r.state.name };
+      say(!r.accepted ? r.message : b.dataset.item === r.state.favorite_food ? t("page.bag.favorite", name)
+        : b.dataset.boost ? t(`page.boost.${r.state.boosts.at(-1)}`, name) : "");
       if (r.accepted) setTimeout(() => feel(direct ? "munch" : "land"), direct ? 0 : LAND_MS);
       else feel("no");
     } catch (err) {
@@ -1667,17 +1701,13 @@ document.querySelectorAll(".thing").forEach((b) => {
   });
 });
 
-// A tap instead of a drag: switch the kind of seed, otherwise say how it goes
+// The bag: a tap opens it, and what is in it is dragged onto the pet like everything else
+$("thing-bag").addEventListener("click", () => { if (current) openSheet("bag-mode"); });
+$("bag-close").addEventListener("click", () => openSheet(null));
+
+// A tap instead of a drag: say how it goes
 function tapThing(b) {
   if (!current) return;
-  if (b.dataset.action === "plant") {
-    const all = options(current, "plant");
-    if (all.length > 1) {
-      choice.plant = all[(all.indexOf(picked(current, "plant")) + 1) % all.length][0];
-      render(current);
-      return say(t("page.tap.choice", { choice: picked(current, "plant")[1] }));
-    }
-  }
   say(t(b.dataset.rub ? "page.hint.sponge" : "page.hint.drag", { name: current.name }));
 }
 
@@ -1767,11 +1797,22 @@ $("collect").addEventListener("click", async () => {
   const r = await act("collect");
   if (r && r.accepted && egg) say(t("page.collected", { egg: egg.label }));
 });
+// A gift or something found at home goes into the bag; a fruit that doesn't fit any more is eaten
+function intoBag(r, bagged, eaten) {
+  const thing = r && r.accepted ? r.state.activity_item : "";
+  if (!thing) return;
+  const count = (s) => (s.items.find((x) => x.id === thing) || { count: 0 }).count;
+  if (count(r.state) > count(before)) say(t(bagged, { thing: giftLabel(thing) }));
+  else say(t(eaten, { fruit: giftLabel(thing), name: r.state.name }));
+}
+let before = null;
 $("unwrap").addEventListener("click", async () => {
-  const r = await act("unwrap");
-  const gift = r && r.accepted ? r.state.activity_item : "";
-  if (gift.startsWith("fruit_")) say(t("page.unwrapped_fruit", { fruit: giftLabel(gift), name: r.state.name }));
-  else if (gift) say(t("page.unwrapped_seed", { seed: giftLabel(gift) }));
+  before = current;
+  intoBag(await act("unwrap"), "page.unwrapped_bag", "page.unwrapped_fruit");
+});
+$("pickup").addEventListener("click", async () => {
+  before = current;
+  intoBag(await act("pickup"), "page.picked_bag", "page.picked_fruit");
 });
 $("recall").addEventListener("click", async () => {
   const r = await act("trip", "recall");
@@ -2191,12 +2232,15 @@ $("connect").addEventListener("click", async () => {
   }
 });
 
-// Which pet lives on the display: "phone", "display", or null if the player changed their mind
-function choosePet({ phone, display }) {
+// Which pet lives on the display (or, with `home`, on the phone): "phone", "display", or null if
+// the player changed their mind
+function choosePet({ phone, display }, home = false) {
+  $("choose-text").textContent = t(home ? "page.app.choose_home" : "page.app.choose_pet");
   for (const [key, pet] of [["phone", phone], ["display", display]]) {
     $(`choose-${key}-icon`).src = app.icon(pet.stage, pet.species);
     $(`choose-${key}-name`).textContent = pet.name;
-    $(`choose-${key}-note`).textContent = t(`page.app.choose_${key}`, { form: pet.stage === "egg" ? pet.stage_label : pet.species_label });
+    const note = key === "display" && home ? "choose_display_home" : `choose_${key}`;
+    $(`choose-${key}-note`).textContent = t(`page.app.${note}`, { form: pet.stage === "egg" ? pet.stage_label : pet.species_label });
   }
   const dialog = $("choose");
   dialog.returnValue = "";
@@ -2204,7 +2248,18 @@ function choosePet({ phone, display }) {
   return new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue || null), { once: true }));
 }
 $("choose-cancel").addEventListener("click", () => $("choose").close());
-$("disconnect").addEventListener("click", () => app.disconnect());
+// Going back to the phone: when the display has more than an egg, the player picks the pet that
+// lives on the phone from now on. A display that is gone (or does not fit) keeps its pet.
+$("disconnect").addEventListener("click", async () => {
+  try {
+    const pets = await app.petsToTakeHome().catch(() => null);
+    const keep = pets ? await choosePet(pets, true) : "phone";
+    if (!keep) return;
+    await app.disconnect(keep === "display");
+  } catch (err) {
+    say(err.message, true);
+  }
+});
 $("offline-leave").addEventListener("click", () => app.disconnect());
 
 // Only poll while the page is visible

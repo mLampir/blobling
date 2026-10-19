@@ -78,7 +78,9 @@ const SCENES: Record<string, Scene> = {
   happy: [{ mood: "happy", activity: "happy" }, DAY, null],
   eat: [{ activity: "eat" }, DAY, null],
   throw_meal: [{ activity: "throw_meal", activity_item: "meal@0.90" }, DAY, null],
-  throw_snack: [{ activity: "throw_snack", activity_item: "icecream@0.05" }, DAY, null],
+  throw_snack: [{ activity: "throw_snack", activity_item: "fruit_cherry@0.05" }, DAY, null],
+  // food from a trip, given by hand like a snack
+  snack_found: [{ activity: "snack", activity_item: "honeycomb" }, DAY, null],
   throw_play: [{ activity: "throw_play", activity_item: "ball@0.80" }, DAY, null],
   throw_medicine: [{ activity: "throw_medicine", activity_item: "medicine@0.50", sick: true, mood: "sick" }, DAY,
     null],
@@ -187,6 +189,7 @@ const SCENES: Record<string, Scene> = {
   home_boat: [{ hat: "lily", deco: ["boat", "crystal"] }, DAY, null],
   trip_stream: [{ trip: trip("stream") }, DAY, null],
   trip_cave: [{ trip: trip("cave", { event: "find", item: "crystal" }) }, DAY, RAIN],
+  trip_food: [{ trip: trip("meadow", { event: "find", item: "honeycomb", event_age: 2 }) }, DAY, null],
   trip_mountain: [{ hat: "bobble", trip: trip("mountain") }, DAY, { temp: -4, code: 71 }],
   // the opponents of the later areas, each in the middle of its favorite move
   ...Object.fromEntries(([
@@ -263,6 +266,11 @@ const SCENES: Record<string, Scene> = {
   }, DAY, null],
   gift_nest: [{ stage: "adult", species: "angloop", gift: true, nest: "blob", deco: ["lantern"] }, NIGHT, null],
   unwrap: [{ stage: "adult", species: "angloop", activity: "unwrap", activity_item: "fruit_cherry" }, DAY, null],
+  // something it found at home by itself: it shows it, then it lies there until it is picked up
+  discover: [{ activity: "discover", activity_item: "fruit_berry", found: "fruit_berry" }, DAY, null],
+  found: [{ found: "fruit_cherry", deco: ["flag", "windmill"], plant: { kind: "berry", stage: "grown", ripe: false } },
+    DAY, null],
+  found_gift: [{ stage: "adult", species: "angloop", found: "seed_berry", gift: true, nest: "blob" }, NIGHT, null],
   // what it left behind while nobody was there, until somebody does something with it
   trace_ball: [{ trace: { kind: "ball", spot: 0.9, look: 0 }, deco: ["flag"] }, DAY, null],
   trace_tower: [{ trace: { kind: "tower", spot: 0.2, look: 0 }, plant: { kind: "berry", stage: "young", ripe: false } },
@@ -271,7 +279,8 @@ const SCENES: Record<string, Scene> = {
   trace_snowman: [{ trace: { kind: "snowman", spot: 0.1, look: 0 } }, DAY, { temp: -2, code: 73 }],
   trace_night: [{ trace: { kind: "drawing", spot: 0.3, look: 0 } }, NIGHT, null],
   // the house in its three steps, the way into it and out of it, and a look inside
-  house_hut: [{ house: 1, deco: ["windmill", "flag"], plant: { kind: "berry", stage: "grown", ripe: true } }, DAY, null],
+  house_hut: [{ house: 1, deco: ["windmill", "flag"], plant: { kind: "berry", stage: "grown", ripe: true },
+    found: "fruit_cherry" }, DAY, null],
   house_cabin: [{ house: 2, deco: ["flag"], hat: "daisy", trace: { kind: "tower", spot: 0.5, look: 0 } }, DAY, null],
   house_house: [{ house: 3, deco: ["windmill", "flag"], plant: { kind: "cherry", stage: "grown", ripe: true } }, DAY,
     null],

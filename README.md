@@ -13,18 +13,20 @@ a day and also tells you the time and the weather.
 - **It lives with you.** The sky follows the real time of day, with sunrise
   and sunset for your location; clouds, rain and snow come from the real
   weather. On a cold morning the pet wakes up shivering, until you rub it warm.
-  Left to itself, it plays and practices on its own, it waits at the edge of
+  Left to itself, it plays and practices on its own, now and then it finds a
+  little something and keeps it for you, it waits at the edge of
   the panel around the times it is usually fed, and when you come back it
   tells you what it has been up to, as a little story in its own words. With
   the pet on the phone, it calls you when it really needs you, but never at
   night. The panel also shows the time and the temperature.
-- **The phone is your hand.** Drag food, snacks, a ball or medicine onto the
-  pet, stroke it with your finger, rub it clean with the sponge, and put it to
-  bed at night.
+- **The phone is your hand.** Drag a meal, a ball, medicine or something from
+  the bag onto the pet, stroke it with your finger, rub it clean with the
+  sponge, and put it to bed at night. What a pet likes you find out by trying.
 - **It grows up.** It hatches from an egg and grows over ten days into one of
   three adult forms, depending on how you cared for it. It learns tricks, trains,
   goes on trips, scuffles with whoever gets in its way there and brings things
-  home, and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
+  home, among them food that gives it an edge on the next trip or in training,
+  and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
   one of the guardians keeps a rare egg that something else hatches from.
   Every pet that gets past the last guardian adds a step to its house, from a
   hut of thatch to a whole house, where it sleeps and keeps more decorations.
@@ -199,7 +201,9 @@ it needs you (see *While nobody is there* in
 and only asks for its address (or IP address) if neither answers. When both
 the phone and the display have a pet, it asks which of them lives on the
 display; the other one is kept (on the phone, or set aside on the Pi like a
-loaded save). The app
+loaded save). The way back works the same: *Back to the pet on this phone*
+asks which pet lives on the phone from now on, and can bring the display's
+pet along (the phone keeps its old one aside, the display keeps its copy). The app
 talks to the Pi over plain HTTP on the home network, so nothing has to be
 installed on the Pi or the phone for it. Sound comes from the phone (it can be
 turned off under *More*); the Pi stays silent.

@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 
-import * as care from "../src/care";
+import * as food from "../src/food";
 import * as life from "../src/life";
 import * as model from "../src/model";
 import { fromDict, toDict, type PetState } from "../src/state";
@@ -113,7 +113,7 @@ test("a rare egg grows up in its own line", () => {
   assert.deepEqual([ember.stage, ember.species], ["adult", "flarelet"]);
   assert.equal(life.decayFactor(ember, "satiety"), 1.25);
   for (const species of life.SPECIES) {
-    assert.ok(species in care.FAVORITE, species);
+    assert.ok(species in food.TASTES, species);
   }
 });
 

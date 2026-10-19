@@ -15,11 +15,26 @@ import { native } from "./native";
 export const PET_KEY = "pet";
 // A save that could not be read is kept here instead of being overwritten
 export const BROKEN_KEY = "pet.broken";
+// The pet that was on the phone before one came over from a display (see takeInSave)
+export const ASIDE_KEY = "pet.before-load";
 
 export interface Store {
   /** The value under `key`, or undefined if there is none. */
   get(key: string): Promise<unknown>;
   put(key: string, value: unknown): Promise<void>;
+}
+
+/**
+ * Puts the save `file` of a pet from a display in place of the one the phone keeps, which is kept
+ * aside once (as the Pi does when a save is loaded). Only while no LocalPet is open: it would
+ * write its own pet over it.
+ */
+export async function takeInSave(store: Store, file: unknown): Promise<void> {
+  const kept = await store.get(PET_KEY);
+  if (kept !== undefined) {
+    await store.put(ASIDE_KEY, kept);
+  }
+  await store.put(PET_KEY, file);
 }
 
 /** The app's store: a file in the app from the stores, IndexedDB in a browser. */

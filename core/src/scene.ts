@@ -130,6 +130,7 @@ export function houseArea(step: number): [number, number, number, number] {
   const part = (n: number) => Number((n / 64).toFixed(3));
   return [0, part(GROUND + 1 - h), part(w), part(h)];
 }
+const FOUND_X = [15, 28, 32, 38]; // per step: what the pet found at home by itself lies here, next to the plant, until it is picked up
 const VISIT_WALK = 3.0; // seconds it takes to hop in and out
 // While the friend is there, the two play now and then: a game, a rest standing together, the next
 // game. Only while the pet is in a decent mood, awake and has nothing else to do; otherwise the
@@ -371,6 +372,8 @@ export interface SceneView {
   visitor?: { species: string; left: number; age: number } | null;
   nest?: string | null;
   gift?: boolean;
+  /** What it found at home by itself (state.found), until it is picked up. */
+  found?: string | null;
   plant?: { kind: string; stage: string; ripe: boolean } | null;
   /** What it left behind while nobody was there (state.Trace). */
   trace?: { kind: string; spot: number; look: number } | null;
@@ -754,6 +757,10 @@ export class PetScene {
         img.paste(this.dimmedSprite(`blanket_${view.house}`, t, false, "house"), bx, by);
       }
     }
+    if (view.found && !trip && !indoors && pose.activity !== "discover") {
+      // what it found at home lies in front of it, so that it can't be covered; while it shows it, it holds it up
+      this.stand(img, this.findImage(view.found), PetScene.foundX(view));
+    }
     this.petTop = y + top;
     if (!pose.hidden && (pose.pack || (view.backpack && !pose.egg && pose.body !== "sleep" && pose.scale === 1))) {
       // Backpack: hangs at the pet's lower back – at home until it has been unpacked
@@ -983,8 +990,8 @@ export class PetScene {
       } else {
         pose.face = "smile";
       }
-    } else if (activity === "collect" || activity === "unwrap") {
-      // holds up the egg it has taken out of the nest, or what was in the gift
+    } else if (isOneOf(activity, "collect", "unwrap", "discover", "pickup")) {
+      // holds up the egg it has taken out of the nest, what was in the gift, or what it found
       this.cheer(pose, t);
       this.burst(view, SPARK, 10, 22);
       pose.found = view.activity_item;
@@ -1132,7 +1139,7 @@ export class PetScene {
       pose.item = name;
     }
     const overlap = PROP_OVERLAP[pose.prop ?? ""] ?? 2; // small things should lie next to the pet, not behind it
-    const width = this.sheet("items").image(base === "eat" ? "bowl" : name).width;
+    const width = base === "eat" ? this.sheet("items").image("bowl").width : this.foodImage(name).width;
     const lying = view.asleep; // medicine works in its sleep too: then it stays lying down
     if (this.throwFor !== view.activity_until) {
       // Landing spot, once per throw: the pet can stand to its left or right. At the edge only one
@@ -1819,11 +1826,12 @@ export class PetScene {
       }
       this.nextDecision = t + this.rng.uniform(4, 12);
     }
+    // it doesn't settle down right in front of what it left behind or found, so that it can be seen
     const trace = view.trace;
-    if (trace && trace.kind !== "drawing") {
-      // it doesn't settle down right in front of what it left behind, so that it can be seen
-      const cx = PetScene.traceX(view, trace.spot);
-      if (Math.abs(this.targetX + SPRITE / 2 - cx) < TRACE_GAP) {
+    const kept = [trace && trace.kind !== "drawing" ? PetScene.traceX(view, trace.spot) : null,
+      view.found ? PetScene.foundX(view) : null];
+    for (const cx of kept) {
+      if (cx !== null && Math.abs(this.targetX + SPRITE / 2 - cx) < TRACE_GAP) {
         this.targetX = clamp(cx + TRACE_GAP - SPRITE / 2, lo, hi);
       }
     }
@@ -1952,13 +1960,19 @@ export class PetScene {
     }
   }
 
+  /** Image of something to eat or throw: from the app's things, or food it found on a trip. */
+  private foodImage(name: string): Image {
+    const items = this.sheet("items");
+    return items.has(name) ? items.image(name) : this.findImage(name);
+  }
+
   /** Image of a find (all seeds look the same). */
   private findImage(item: string): Image {
     const sprites = this.sheet("trip");
     return sprites.image([item, `hat_${item}`, "seed"].find((tag) => sprites.has(tag))!);
   }
 
-  /** What the pet has at home: the house, plant, decorations, the nest and a gift (they stand behind it). */
+  /** What the pet has at home: the house, plant, decorations, the nest and a gift (they stand behind it; what it found doesn't). */
   private drawHome(img: Image, view: SceneView, t: number, now: number): void {
     const activity = view.activity;
     const plantX = PetScene.plantX(view);
@@ -2008,6 +2022,10 @@ export class PetScene {
   /** Where the plant stands (its center). */
   private static plantX(view: SceneView): number {
     return PLANT_X[view.house ?? 0];
+  }
+
+  private static foundX(view: SceneView): number {
+    return FOUND_X[view.house ?? 0];
   }
 
   // ---------- The house ----------
@@ -2292,8 +2310,8 @@ export class PetScene {
     } else if (pose.prop === "snack") {
       // The snack lies in front of the pet and is gone after half the time
       const left = (view.activity_until - now) / ACTIVITY_SECONDS["snack"];
-      if (items.has(pose.item) && left > 0.4) {
-        const food = items.image(pose.item);
+      if (pose.item && left > 0.4) {
+        const food = this.foodImage(pose.item);
         const fx = at ?? this.beside(x, food.width, PROP_OVERLAP["snack"]);
         img.paste(food, fx, GROUND + 1 - food.height - lift);
       }

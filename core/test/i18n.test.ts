@@ -45,7 +45,6 @@ test("everything the game names has a text", () => {
   const keys = [
     ...life.STAGES.map((stage) => `stages.${stage}`),
     ...life.SPECIES.map((species) => `species.${species}`),
-    ...Object.keys(care.SNACKS).map((snack) => `snacks.${snack}`),
     ...Object.keys(care.TRICKS).map((trick) => `tricks.${trick}`),
     ...Object.keys(home.ITEMS).map((item) => `items.${item}`),
     ...Object.keys(home.PLANTS).flatMap((plant) => [`plants.${plant}`, `fruits.${plant}`]),
