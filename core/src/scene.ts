@@ -1400,7 +1400,18 @@ export class PetScene {
           this.trickFx(t, "sp_flarelet_ball", once, FIREBALL, 1, 6, 20, [28, 28], [6, 6], 0.7);
         }
         break;
-      case "roamtail": // dashes over and back in a cloud of dust
+      case "roamtail": // a running leap right over the opponent, and a hop back with dust flying
+        if (q < 0.2) {
+          Object.assign(pose, { body: "squash", face: "normal" });
+        } else if (q < 0.5) {
+          const f = (q - 0.2) / 0.3;
+          Object.assign(pose, { body: "stretch", dx: towards(f * 30), jump: Math.sin(f * Math.PI) * 18, rotate: -20 * this.facing });
+        } else if (q < 0.85) {
+          const f = (q - 0.5) / 0.35;
+          Object.assign(pose, { body: "idle", dx: towards((1 - f) * 30), jump: Math.abs(Math.sin(f * 3 * Math.PI)) * 4 });
+          this.trickFx(t, "sp_roamtail", 0.12, DUST, 3, 30 * (1 - f), 2, [-6, 6], [-10, -2], 0.6);
+        }
+        break;
       case "rumblefluff": // head down, a scrape, and it charges in
         if (q < 0.3) {
           Object.assign(pose, { body: "squash", face: "normal", dx: -Math.trunc(t * 8) % 2 * this.facing });
@@ -1408,7 +1419,7 @@ export class PetScene {
         } else {
           Object.assign(pose, { body: out > 0.2 ? "stretch" : "idle", dx: towards(out * 18) });
           if (out > 0.3) {
-            this.trickFx(t, "sp_dash", 0.08, pose.form[1] === "roamtail" ? DUST : BOLT, 2, -SPRITE / 2, 4, [-20, -6], [-10, 0], 0.5);
+            this.trickFx(t, "sp_dash", 0.08, BOLT, 2, -SPRITE / 2, 4, [-20, -6], [-10, 0], 0.5);
           }
         }
         break;
