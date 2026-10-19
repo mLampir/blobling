@@ -1159,7 +1159,7 @@ function eventText(e) {
   return e.action === "evolve" && e.accepted ? evolveText(e.item)
     : e.action === "learned" ? t("page.events.learned", { trick: trickLabel(e.item) })
     : e.action === "trick" ? t("page.events.practiced", { trick: trickLabel(e.item) })
-    : e.action === "solo" ? (e.item === "ball" ? t("page.events.solo_ball")
+    : e.action === "solo" ? (T[`page.events.solo_${e.item}`] ? t(`page.events.solo_${e.item}`)
       : t("page.events.solo_trick", { trick: trickLabel(e.item) }))
     : e.action === "trip" ? T[`areas.${e.item}.trip`] || T[`page.events.trip_${e.item}`] || t("page.events.trip")
     : e.action === "battle" ? battleText(e.item)
