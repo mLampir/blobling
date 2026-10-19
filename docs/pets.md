@@ -181,7 +181,10 @@ rain.
 At the stream live the two adults of the stone line (below): Bouldergrin, and
 more rarely Glimmerock. A friend of theirs is the only way to a stone egg.
 
-The forest, the cave and the mountain have no wild pets so far. The ember line
+In the forest live the two adults of the fox line (below): Filchfox, and more
+rarely Roamtail. A friend of theirs is the only way to a fox egg.
+
+The cave and the mountain have no wild pets so far. The ember line
 has none: its egg comes from a guardian. An ember pet with a slime for a
 friend can still lay an ember egg, though.
 
@@ -294,6 +297,63 @@ From its second day on, the quartz band of Pebblet shows where it is heading:
 | white | nothing yet (the first day) |
 | lilac, like crystal | Glimmerock |
 | sunny yellow | Bouldergrin |
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+### The fox line
+
+<details>
+<summary>Show the fox line</summary>
+
+| | Stage |
+|---|---|
+| ![Fox egg](images/pets/fox_egg.png) | **Fox egg** – a russet shell with cream speckles, like a fox's chest |
+| ![Fox baby](images/pets/fox_baby.png) | **Baby** – a small round cub with two pointed ears, one of them bent a little |
+| ![Kitlet](images/pets/kitlet.png) | **Child: Kitlet** – a fox cub as round as a slime, with a cream belly, little paws and a bushy tail that curls up to a white tip |
+
+The stages last as long as the slime's. What the adults keep is the tail with
+its white tip. Both adults walk rather than hop.
+
+![Roamtail](images/pets/roamtail.png)
+
+**Roamtail**, the fox that has seen the world. A turquoise scarf is wrapped
+round its neck, one end blowing out behind it in the wind, and it leans on a
+knotty walking stick with a ribbon of the scarf tied round it. It needs no
+backpack of its own: on a trip it wears the one everybody gets. Used to long
+roads, it hardly tires. It looks calm and friendly, under lids lowered in
+peace, with a gentle smile.
+
+![Filchfox](images/pets/filchfox.png)
+
+**Filchfox**, the fox that has got up to mischief. It wears a bandit mask tied
+at the back, one ear is bent, its fur is ruffled and the tip of its tail is
+ragged. It is always after something to eat and up for any game. Its look is
+cheeky: one eye narrowed, the other with a glint in it, and a sly grin with a
+fang.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+Only trips count for this line: a fox is made for roaming. A trip it was
+called straight back from doesn't count.
+
+| Form | Rule |
+|---|---|
+| Roamtail | the child went on at least 1 trip a day |
+| Filchfox | everything else |
+
+From its second day on, the white tip of Kitlet's tail shows where it is
+heading:
+
+| Tip | Heading for |
+|---|---|
+| white | nothing yet (the first day) |
+| turquoise, like the scarf | Roamtail |
+| dusky violet, like the mask | Filchfox |
 
 The values are in `core/src/life.ts`.
 

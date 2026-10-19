@@ -35,6 +35,8 @@ const PETS: Record<string, [string, string]> = {
   lanternling: ["adult", "lanternling"], flarelet: ["adult", "flarelet"],
   stone_egg: ["egg", "stone"], stone_baby: ["baby", "stone"], pebblet: ["child", "stone"],
   glimmerock: ["adult", "glimmerock"], bouldergrin: ["adult", "bouldergrin"],
+  fox_egg: ["egg", "fox"], fox_baby: ["baby", "fox"], kitlet: ["child", "fox"],
+  roamtail: ["adult", "roamtail"], filchfox: ["adult", "filchfox"],
 };
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
 // leaves out the scenes that are only there to show another form, another line or what the lure
@@ -47,6 +49,9 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "lanternling_sleep", "lanternling_trick", "flarelet", "flarelet_hat", "egg_found", "wild_shrug", "visit_night",
   "nest_ember", "stone_egg", "stone_baby", "pebblet", "pebblet_hint", "pebblet_hat", "pebblet_skip", "glimmerock",
   "glimmerock_night", "glimmerock_shine", "bouldergrin", "bouldergrin_sad", "bouldergrin_sleep", "bouldergrin_toss", "wild_stream", "visit_stone",
+  "wild_forest", "visit_fox", "fox_egg", "fox_hatch", "fox_baby", "kitlet", "kitlet_hint", "kitlet_hat", "kitlet_sick",
+  "fox_evolve", "roamtail", "roamtail_trip", "roamtail_sleep", "roamtail_rain", "filchfox", "filchfox_hat",
+  "filchfox_sad", "filchfox_sleep", "filchfox_night",
   "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
   "angloop", "angloop_night", "angloop_hungry", "angloop_hint",
   "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint"];
@@ -303,6 +308,32 @@ const SCENES: Record<string, Scene> = {
   bouldergrin_sad: [{ stage: "adult", species: "bouldergrin", mood: "sad", hat: "bobble" }, DAY, RAIN],
   bouldergrin_sleep: [{ stage: "adult", species: "bouldergrin", asleep: true }, NIGHT, null],
   bouldergrin_toss: [{ stage: "adult", species: "bouldergrin", activity: "trick", activity_item: "flip:ok" }, DAY, null],
+  // the fox line, from a friend met in the forest on
+  wild_forest: [{
+    stage: "adult", species: "angloop",
+    trip: trip("forest", {
+      event: "wild", event_age: 4.0, wild: "filchfox", outcome: "friend", rounds: [["bow", true], ["spin", true]],
+    }),
+  }, DAY, null],
+  visit_fox: [{ stage: "adult", species: "glimmerock", visitor: { species: "roamtail", age: 60, left: 500 } }, DAY,
+    null],
+  fox_egg: [{ stage: "egg", species: "fox", ready: true }, DAY, null],
+  fox_hatch: [{ stage: "baby", species: "fox", activity: "hatch", activity_item: "egg:fox" }, DAY, null],
+  fox_baby: [{ stage: "baby", species: "fox", mood: "happy" }, DAY, null],
+  kitlet: [{ species: "fox" }, DAY, null],
+  kitlet_hint: [{ species: "fox", hint: "roamtail", mood: "happy" }, DAY, null],
+  kitlet_hat: [{ species: "fox", hint: "filchfox", hat: "leaf", mood: "sad" }, DUSK, null],
+  kitlet_sick: [{ species: "fox", mood: "sick", sick: true, needs: ["health"] }, DAY, null],
+  fox_evolve: [{ stage: "adult", species: "roamtail", activity: "evolve", activity_item: "child:fox" }, DAY, null],
+  roamtail: [{ stage: "adult", species: "roamtail", mood: "happy" }, DAY, null],
+  roamtail_trip: [{ stage: "adult", species: "roamtail", hat: "cap", trip: trip("forest") }, DAY, null],
+  roamtail_sleep: [{ stage: "adult", species: "roamtail", asleep: true }, NIGHT, null],
+  roamtail_rain: [{ stage: "adult", species: "roamtail", mood: "hungry", needs: ["satiety"] }, DUSK, RAIN],
+  filchfox: [{ stage: "adult", species: "filchfox" }, DAY, null],
+  filchfox_hat: [{ stage: "adult", species: "filchfox", hat: "bobble", mood: "happy" }, DAY, null],
+  filchfox_sad: [{ stage: "adult", species: "filchfox", mood: "sad", trip: trip("meadow") }, DAY, null],
+  filchfox_sleep: [{ stage: "adult", species: "filchfox", asleep: true }, NIGHT, null],
+  filchfox_night: [{ stage: "adult", species: "filchfox", activity: "trick", activity_item: "bow:ok" }, NIGHT, null],
 };
 
 const assets = readAssets(BDF_FONT_DIR);

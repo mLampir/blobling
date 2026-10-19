@@ -1059,13 +1059,23 @@
     "h": 14
    },
    "duration": 1000
+  },
+  {
+   "filename": "trip egg_fox 106",
+   "frame": {
+    "x": 1164,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "trip.png",
   "size": {
-   "w": 1164,
+   "w": 1176,
    "h": 24
   },
   "frameTags": [
@@ -1583,6 +1593,12 @@
     "name": "egg_stone",
     "from": 105,
     "to": 105,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_fox",
+    "from": 106,
+    "to": 106,
     "direction": "forward"
    }
   ]

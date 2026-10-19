@@ -21,6 +21,8 @@ frameTags):
 - lanternling_body / lanternling_faces, flarelet_body / flarelet_faces – its adults (faces of their own)
 - stone_baby_body / stone_baby_faces, pebblet_body / stone_faces – baby and child of the stone line
 - glimmerock_body / glimmerock_faces, bouldergrin_body / bouldergrin_faces – its adults (faces of their own)
+- fox_baby_body / fox_baby_faces, kitlet_body / fox_faces – baby and child of the fox line
+- roamtail_body / roamtail_faces, filchfox_body / filchfox_faces – its adults (faces of their own)
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine
 - trip                             – backpack, plants, decorations, hats, things along the path,
                                      opponents and guardians
@@ -990,6 +992,227 @@ BOULDERGRIN_TAGS["walk"] = walk_tags(BOULDERGRIN, 18, range(5, 16), range(16, 27
 BOULDERGRIN_TAGS["toss_low"] = [(cairn(lift=4), 1000)]
 BOULDERGRIN_TAGS["toss_high"] = [(cairn(lift=8, flipped=True), 1000)]
 
+# ---------------------------------------------------------------- The fox line
+
+# The pet that hatches from the fox egg: a fox cub, round as a slime. What its forms keep is the
+# bushy tail that curls up to a white tip. The two colors of the tip are its own: the code
+# recolors them on the child as a hint at the adult form (LURES in core/src/scene.ts).
+FOX_PALETTE = {
+    "o": (105, 38, 18),    # outline: dark russet instead of black
+    "d": (205, 88, 36),    # shadow
+    "b": (240, 128, 50),   # fur
+    "l": (255, 170, 92),   # lit
+    "h": (255, 218, 172),  # highlight
+    "c": (255, 242, 220),  # cream: belly, the insides of the ears, cheek fluff
+    "C": (225, 195, 160),
+    "n": (70, 32, 22),     # the dark tips of the ears, the paws
+    "t": (255, 255, 250),  # the white tip of the tail
+    "T": (225, 225, 215),
+    "G": (20, 95, 95),     # Roamtail's scarf, turquoise
+    "g": (40, 150, 140),
+    "j": (120, 215, 195),
+    "K": (110, 65, 35),    # its walking stick of knotty wood
+    "m": (195, 140, 85),
+    "M": (230, 200, 120),
+    "x": (38, 28, 44),     # Filchfox's bandit mask
+    "X": (78, 62, 92),
+}
+
+# Baby: the baby slime with two pointed ears instead of the sprout, dark ear tips, a cream chest,
+# and the right ear bent a little
+FOX_BABY = [
+    "..nn.......nn...",
+    "..onn.....nno...",
+    "..olbo....obdo..",
+    "..olhboooobbdo..",
+    ".ollhhlbbbbbbdo.",
+    ".ollhbbbbbbbbdo.",
+    ".olbbbbbbbbbbdo.",
+    "olbbbbbbbbbbbddo",
+    "olbbbbbccbbbbddo",
+    "obbbbbccccbbbddo",
+    "odbbbbccccbbdddo",
+    "oddddddddddddddo",
+    ".oooooooooooooo.",
+]
+FOX_BABY_TAGS = body_tags(FOX_BABY, 7, 8, flat_rows=3)
+
+# Kitlet, the child: a fox cub as round as a slime, with ears, a cream belly that is its muzzle as
+# well, paws, and a bushy tail behind it that curls up to a white tip. The face sits on the body,
+# not between it and the tail (faceCenter "left": the tail stands apart from it). Column 9 is the
+# one the poses get wider at; row 15 the one they get shorter at, below the face.
+KITLET = [
+    "..nn........nn..............",
+    "..onn......nno.......otto...",
+    "..olbo....obdo......otttTo..",
+    "..olhbooooobddo....ottttTTo.",
+    ".ollhhlbbbbbbbdo...obtttTbo.",
+    ".ollhbbbbbbbbbbdo..obbbbbbdo",
+    "ollhbbbbbbbbbbbbdo.obbbbbbdo",
+    "olhbbbbbbbbbbbbbdo.obbbbbddo",
+    "olbbbbbbbbbbbbbbddoobbbbbddo",
+    "olbbbbbbbbbbbbbbbdo.obbbbddo",
+    "obbbbbbbbbbbbbbbbddoobbbbddo",
+    "obbbbbbccccccbbbbddoobbbddo.",
+    "obbbbbccccccccbbbddobbbbddo.",
+    "obbbbcccccccccCbbddbbbbddo..",
+    "odbbbccccccccCCbbddbbbddo...",
+    "odbbbbccccccCCbbbdddddoo....",
+    "oddbbbbcccCCCbbbbddddo......",
+    ".odddddddddddddddddoo.......",
+    "..oooonnnooooonnnooo........",
+    "....onnno....onnno..........",
+    "....ooooo....ooooo..........",
+]
+KITLET_FACE_TOP = 5
+KITLET_TAGS = body_tags(KITLET, 15, 9)
+
+# The grown fox: the child's body, larger, with cheek fluff, and the tail behind it on the right.
+FOX_ADULT = [
+    ".nn..............nn..",
+    ".nnn............nnn..",
+    ".onnn..........nnno..",
+    ".olcbo........obcdo..",
+    ".olccbo......obccdo..",
+    ".olhccboooooobccbddo.",
+    "ollhhlbbbbbbbbbbbbddo",
+    "olhhlbbbbbbbbbbbbbbdo",
+    "olhbbbbbbbbbbbbbbbbdo",
+    "olbbbbbbbbbbbbbbbbbdo",
+    "olbbbbbbbbbbbbbbbbbdo",
+] + ["obbbbbbbbbbbbbbbbbddo"] * 5 + [
+    "obbbbbccccccbbbbbbddo",
+    "obbbbccccccccbbbbbddo",
+    "odbbbcccccccCbbbbbddo",
+    "odbbbbcccccCCbbbbdddo",
+    "oddbbbbcccCCbbbbdddo.",
+    ".oddddddddddddddddoo.",
+    "..oooonnnooonnnooo...",
+    "....onnno...onnno....",
+    "....ooooo...ooooo....",
+]
+FOX_TAIL = [
+    "..otto..",
+    ".otttTo.",
+    "ottttTTo",
+    "otttttTo",
+    "obttttTo",
+] + ["obbbbbdo"] * 3 + ["obbbbddo"] * 4 + ["obbbddo."] * 2 + ["bbbddo..", "bbddo...", "ddoo...."]
+FOX_ADULT_H = 26  # the adults are drawn on a grid this tall and CANVAS wide, in columns 1–30
+
+
+def fox_adult(parts):
+    """An adult of the fox line: `parts` as (drawing, (x, y)), each one laid over the ones before."""
+    grid = ["." * CANVAS] * FOX_ADULT_H
+    for part, at in parts:
+        grid = overlay(grid, part, at)
+    return grid
+
+
+def face_top(grid, row):
+    """faceTop for a face that is to start at row `row`: counted, as the scene does
+    (faceAnchor in core/src/sprites.ts), from the first row that is at least 8 pixels wide."""
+    return row - next(y for y, r in enumerate(grid) if len(r) - r.count(".") >= 8)
+
+
+# Roamtail: the fox that has seen the world. A turquoise scarf wraps round its neck, sags in the
+# middle, and one end blows out behind it in the wind; in the paw on the front side a knotty
+# walking stick with a ribbon of the scarf tied round it. No backpack: on a trip the game's own
+# hangs at its lower back. Calm and friendly (ROAMTAIL_EYES). Russet, cream and turquoise.
+ROAMTAIL_X = 4  # left edge of the body
+ROAMTAIL_STICK = ["..oo..", ".ommo.", "omMmKo", "omMmKo", ".ommo.", ".GjgG.", ".GggG.", "..oMKo", "..Gg..",
+                  "..omKo"] + ["..omKo"] * 12 + ["..ooo."]
+ROAMTAIL_PAW = [".oooo..", "obbbbo.", "obhbbdo", "obbbddo", ".ooooo."]
+SCARF_END = ["..GGGG.", ".GgjjgG", "GgggggG", "GgGgGG.", "G.G.G.."]
+SCARF_END_B = ["..GGGG.", ".GgjjgG", "GgggggG", ".GgGgGG", ".G.G.G."]  # the fringe flutters
+
+
+def roamtail(scarf_end=SCARF_END):
+    x = ROAMTAIL_X
+    grid = fox_adult([(FOX_TAIL, (x + 19, 3)), (FOX_ADULT, (x, 1)),
+                      (["o.", "co", "oc", ".o"], (x - 1, 10)), ([".o", "oc", "co", "o."], (x + 20, 10))])
+    # the scarf wraps round the neck, a little wider than the body, and sags in the middle
+    rows = [list(r) for r in grid]
+    for i in range(-1, 22):
+        top = 14 + (2 if 6 <= i <= 14 else 1 if 3 <= i <= 17 else 0)
+        rows[top][x + i] = "G"
+        rows[top + 1][x + i] = "j" if 0 <= i < 4 or 7 <= i < 10 else "g"
+        rows[top + 2][x + i] = "g"
+        rows[top + 3][x + i] = "G"
+    # the end that blows out behind it, and the stick, which leaves the white tip of the tail free
+    return fox_adult([(["".join(r) for r in rows], (0, 0)), (scarf_end, (x - 3, 12)),
+                      (ROAMTAIL_STICK, (x + 16, 1)), (ROAMTAIL_PAW, (x + 15, 13))])
+
+
+ROAMTAIL, ROAMTAIL_B = roamtail(), roamtail(SCARF_END_B)
+ROAMTAIL_FACE_TOP = face_top(ROAMTAIL, 9)  # the scarf right under its chin
+ROAMTAIL_TAGS = species_tags([ROAMTAIL, ROAMTAIL_B], 21, 14, idle_ms=600)
+# It walks: a fox on the road
+ROAMTAIL_TAGS["walk"] = walk_tags(ROAMTAIL, 21, range(8, 13), range(16, 21), 24)
+
+# Filchfox: the fox that has got up to mischief. A dark bandit mask with holes for the eyes, tied
+# at the back with ends that flutter, an ear bent over and a ruffled tuft, scruffy cheeks, a ruffle
+# on its flank and a ragged tip on its tail. Cheeky (FILCHFOX_EYES). Russet, cream and the mask.
+FILCHFOX_X = 3  # left edge of the body
+FILCHFOX_HEAD = [
+    ".nn..................",
+    ".nnn.......o.o.......",
+    ".onnn.....obobo......",
+    ".olcbo....obbbo.oo...",
+    ".olccbo...obbo.obdoo.",
+    ".olhccboooobbooobbdnno",
+]
+FILCHFOX_TAIL = [
+    "o.o.o...",
+    "otototo.",
+    "ottttTo.",
+    ".otttTTo",
+    "otttttTo",
+    "obttttTo",
+    "obbbbbdo",
+    ".obbbbdo",
+    "obbbbbdo",
+    "obbbbddo",
+    ".obbbddo",
+    "obbbbddo",
+    "obbbbddo",
+    "obbbddo.",
+    "obbbddo.",
+    "bbbddo..",
+    "bbddo...",
+    "ddoo....",
+]
+# The mask: two lobes round the eyes, joined over the nose; the holes show the fur, and the eyes
+# of FILCHFOX_EYES sit in them (rows 11 and 12 of the grid)
+BANDIT_MASK = [
+    "XXXXXXXXXXXXXXXXXXXXX",
+    "xxxxxxxxxxxxxxxxxxxxx",
+    "xxxbbbbxxxxxxxbbbbxxx",
+    "xxxbbbbxxxxxxxbbbbxxx",
+    ".xxxxxxxx.xxxxxxxxxx.",
+    "..xxxxxx...xxxxxxx...",
+]
+MASK_TIES = [(["xx..", "xXxx", ".xxX", "..xx"], (0, 8)), (["xx..", "Xxxo", "oxXx", "..ox"], (0, 12))]
+MASK_TIES_B = [(["....", "xXxx", "xxxX", "..xx"], (0, 8)), (["xx..", "XxxX", "oxxx", "..o."], (0, 12))]
+
+
+def filchfox(ties=MASK_TIES):
+    x = FILCHFOX_X
+    body = [r.ljust(22, ".") for r in FILCHFOX_HEAD + FOX_ADULT[6:]]
+    return fox_adult([(FILCHFOX_TAIL, (x + 20, 2)), (body, (x, 1)),
+                      ([".o", "oc", ".o", "oc", ".o"], (x - 1, 14)), (["o.", "co", "o.", "co", "o."], (x + 20, 14)),
+                      (BANDIT_MASK, (x, 9))]
+                     # the ties, a little shorter than drawn, so that it fits the frame
+                     + [(part, (left + x - 2, top)) for part, (left, top) in ties]
+                     + [(["xo", "xx"], (x - 1, 10)), (["l.l", ".l."], (x + 3, 17))])
+
+
+FILCHFOX, FILCHFOX_B = filchfox(), filchfox(MASK_TIES_B)
+FILCHFOX_FACE_TOP = face_top(FILCHFOX, 11)  # the eyes in the holes of the mask
+FILCHFOX_TAGS = species_tags([FILCHFOX, FILCHFOX_B], 21, 13, idle_ms=500)
+# It walks, a little sideways, as a fox does that is up to something
+FILCHFOX_TAGS["walk"] = walk_tags(FILCHFOX, 21, range(7, 12), range(15, 20), 24, ms=(160, 100))
+
 # ---------------------------------------------------------------- Faces
 
 FACE_PALETTE = {
@@ -1514,6 +1737,86 @@ BOULDERGRIN_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
 assert BOULDERGRIN_FACES.keys() == FACES.keys()
 BOULDERGRIN_FACE_PALETTE = {"p": (50, 40, 35), "g": (255, 255, 255), "m": (50, 40, 35), "w": (255, 250, 235),
                             "r": (190, 45, 60), "k": (255, 130, 160)}
+# Baby and child of the fox line: eyelids in the shade of the fur, mouth in its outline, and the
+# child gets a dark button nose (fox_face_grid)
+FOX_FACE_PALETTE = FACE_PALETTE | {"d": (205, 88, 36), "m": (105, 38, 18), "n": (70, 32, 22)}
+FOX_BABY_FACE_PALETTE = FOX_FACE_PALETTE | {"w": (240, 128, 50)}  # no whites: the beady eyes of a cub
+# The adults: dark eyes with a white glint, a dark nose, the mouth in the outline of the fur
+FOX_ADULT_FACE_PALETTE = {"p": (55, 28, 22), "g": (255, 255, 255), "n": (55, 28, 22), "m": (105, 38, 18),
+                          "d": (205, 88, 36), "r": (190, 45, 60), "w": (255, 250, 235), "k": (255, 130, 160)}
+# Roamtail: calm and friendly – round dark eyes (4×4), its normal look under lids lowered in peace,
+# a button nose and a gentle smile (5×2). Face 15×7, on the scarf.
+ROAMTAIL_EYES = {  # (left, right)
+    "open": ([".pp.", "pgpp", "pppp", ".pp."],) * 2,
+    "calm": (["....", "mmmm", "pgpp", ".pp."],) * 2,
+    "half": (["....", "....", "dddd", ".pp."],) * 2,
+    "closed": (["....", "....", "....", "pppp"],) * 2,
+    "happy": ([".pp.", "p..p", "....", "...."],) * 2,
+    "sad": (["p...", ".pp.", "pgpp", ".pp."], ["...p", ".pp.", "pgpp", ".pp."]),
+    "cross": (["...p", "..pp", "pgpp", ".pp."], ["p...", "pp..", "pgpp", ".pp."]),
+}
+ROAMTAIL_MOUTHS = {
+    "none": [".....", "....."],
+    "smile": ["m...m", ".mmm."],
+    "flat": [".....", ".mmm."],
+    "sad": [".mmm.", "m...m"],
+    "open": [".mmm.", ".mrm."],
+    "laugh": ["mmmmm", ".mrm."],
+    "chew": [".....", "mmmmm"],
+}
+ROAMTAIL_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
+    "normal": ("calm", "smile", False),
+    "smile": ("open", "smile", True),
+    "blink": ("closed", "smile", False),
+    "happy": ("happy", "smile", True),
+    "laugh": ("happy", "laugh", True),
+    "sad": ("sad", "sad", False),
+    "tired": ("half", "flat", False),
+    "yawn": ("closed", "open", False),
+    "sick": ("half", "sad", False),
+    "no": ("cross", "flat", False),
+    "eat_open": ("open", "open", False),
+    "eat_closed": ("happy", "chew", False),
+    "sleep": ("closed", "none", False),
+}
+assert ROAMTAIL_FACES.keys() == FACES.keys()
+# Filchfox: its eyes look out of the holes of the mask (4×2 each; "." shows the fur in the hole),
+# under it a dark nose and a sly grin with a fang (6×2). Its normal look is cheeky: one eye
+# narrowed, the other with a glint. Face 15×6.
+FILCHFOX_EYES = {  # (left, right)
+    "open": ([".pg.", ".pp."],) * 2,
+    "sly": (["....", "ppp."], [".pg.", ".pp."]),
+    "half": (["pppp", ".pp."],) * 2,
+    "closed": (["....", "pppp"],) * 2,
+    "happy": ([".pp.", "p..p"],) * 2,
+    "sad": (["p.p.", ".pp."], [".p.p", ".pp."]),
+    "cross": (["..pp", "pp.."], ["pp..", "..pp"]),
+}
+FILCHFOX_MOUTHS = {
+    "none": ["......", "......"],
+    "grin": ["m....m", ".mmwm."],
+    "flat": ["......", ".mmmm."],
+    "sad": [".mmmm.", "m....m"],
+    "open": ["..mm..", ".mrrm."],
+    "laugh": ["mmmmmm", ".mrrm."],
+    "chew": ["......", "mmmmmm"],
+}
+FILCHFOX_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
+    "normal": ("sly", "grin", False),
+    "smile": ("open", "grin", False),
+    "blink": ("closed", "grin", False),
+    "happy": ("happy", "grin", True),
+    "laugh": ("happy", "laugh", True),
+    "sad": ("sad", "sad", False),
+    "tired": ("half", "flat", False),
+    "yawn": ("closed", "open", False),
+    "sick": ("half", "sad", False),
+    "no": ("cross", "flat", False),
+    "eat_open": ("open", "open", False),
+    "eat_closed": ("happy", "chew", False),
+    "sleep": ("closed", "none", False),
+}
+assert FILCHFOX_FACES.keys() == FACES.keys()
 
 
 def face_grid(eyes, mouth, blush):
@@ -1737,6 +2040,49 @@ def bouldergrin_face_grid(eyes, mouth, blush):
     return ["".join(r) for r in rows]
 
 
+def fox_face_grid(eyes, mouth, blush):
+    """The child's face, with a button nose above the mouth."""
+    rows = [list(r) for r in face_grid(eyes, mouth, blush)]
+    rows[5][7] = rows[5][8] = "n"
+    return ["".join(r) for r in rows]
+
+
+def roamtail_face_grid(eyes, mouth, blush):
+    rows = [list("." * 15) for _ in range(7)]
+
+    def put(part, left, top):
+        for y, line in enumerate(part):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[top + y][left + x] = ch
+
+    put(ROAMTAIL_EYES[eyes][0], 0, 0)
+    put(ROAMTAIL_EYES[eyes][1], 11, 0)
+    put(["n"], 7, 4)
+    put(ROAMTAIL_MOUTHS[mouth], 5, 5)
+    if blush:
+        put(["kk...........kk"], 0, 4)
+    return ["".join(r) for r in rows]
+
+
+def filchfox_face_grid(eyes, mouth, blush):
+    rows = [list("." * 15) for _ in range(6)]
+
+    def put(part, left, top):
+        for y, line in enumerate(part):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[top + y][left + x] = ch
+
+    put(FILCHFOX_EYES[eyes][0], 0, 0)  # in the holes of the mask
+    put(FILCHFOX_EYES[eyes][1], 11, 0)
+    put(["n"], 6, 3)  # under the bridge of the mask
+    put(FILCHFOX_MOUTHS[mouth], 4, 4)
+    if blush:
+        put(["kk...........kk"], 0, 4)
+    return ["".join(r) for r in rows]
+
+
 def baby_face_grid(eyes, mouth, blush):
     left, right = BABY_EYES[eyes]
     rows = [list("." * BABY_W) for _ in range(BABY_H)]
@@ -1817,6 +2163,9 @@ RARE_EGG_PALETTES = {
     # The stone egg is a river pebble with specks of quartz.
     "stone": {"o": (70, 82, 108), "e": (170, 182, 202), "E": (125, 138, 162), "h": (225, 232, 245),
               "t": (250, 244, 222), "x": (90, 100, 125)},
+    # The fox egg: a russet shell with cream speckles, like a fox's chest.
+    "fox": {"o": (105, 38, 18), "e": (235, 120, 48), "E": (190, 82, 32), "h": (255, 180, 110), "t": (255, 240, 215),
+            "x": (70, 32, 22)},
 }
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
@@ -2474,6 +2823,12 @@ def main():
                                           ("glimmerock", GLIMMEROCK_TAGS, STONE_PALETTE, GLIMMEROCK_FACE_TOP),
                                           ("bouldergrin", BOULDERGRIN_TAGS, STONE_PALETTE, BOULDERGRIN_FACE_TOP)):
         write_sheet(f"{name}_body", body_sheet(tags, palette), faceTop=face_top)
+    # the stick and the tail stick out to the side: the face is centered on the feet
+    for name, tags, face_top in (("roamtail", ROAMTAIL_TAGS, ROAMTAIL_FACE_TOP),
+                                 ("filchfox", FILCHFOX_TAGS, FILCHFOX_FACE_TOP)):
+        write_sheet(f"{name}_body", body_sheet(tags, FOX_PALETTE), faceTop=face_top, faceCenter="bottom")
+    write_sheet("roamtail_faces", face_sheet(roamtail_face_grid, FOX_ADULT_FACE_PALETTE, ROAMTAIL_FACES))
+    write_sheet("filchfox_faces", face_sheet(filchfox_face_grid, FOX_ADULT_FACE_PALETTE, FILCHFOX_FACES))
     write_sheet("bouldergrin_faces", face_sheet(bouldergrin_face_grid, BOULDERGRIN_FACE_PALETTE, BOULDERGRIN_FACES))
     write_sheet("glimmerock_faces", face_sheet(glimmerock_face_grid, GLIMMEROCK_FACE_PALETTE, GLIMMEROCK_FACES))
     write_sheet("lanternling_faces", face_sheet(lanternling_face_grid, DARK_FACE_PALETTE, LANTERNLING_FACES))
@@ -2502,6 +2857,11 @@ def main():
                 faceCenter="bottom")
     write_sheet("stone_faces", face_sheet(face_grid, STONE_FACE_PALETTE))
     write_sheet("stone_baby_faces", face_sheet(baby_face_grid, STONE_FACE_PALETTE))
+    write_sheet("fox_baby_body", body_sheet(FOX_BABY_TAGS, FOX_PALETTE))
+    write_sheet("kitlet_body", body_sheet(KITLET_TAGS, FOX_PALETTE), faceTop=KITLET_FACE_TOP,
+                faceCenter="left")  # on the body, not between it and the tail
+    write_sheet("fox_faces", face_sheet(fox_face_grid, FOX_FACE_PALETTE))
+    write_sheet("fox_baby_faces", face_sheet(baby_face_grid, FOX_BABY_FACE_PALETTE))
     items = {name: [(to_image(rows, ITEM_PALETTE), 1000)] for name, rows in ITEMS.items()}
     items |= {tag: [(to_image(g, ITEM_PALETTE), ms) for g, ms in frames] for tag, frames in EGG_TAGS.items()}
     for line, palette in RARE_EGG_PALETTES.items():

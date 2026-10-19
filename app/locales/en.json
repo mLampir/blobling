@@ -53,7 +53,10 @@
     "flarelet": "Flarelet",
     "stone": "Stone",
     "glimmerock": "Glimmerock",
-    "bouldergrin": "Bouldergrin"
+    "bouldergrin": "Bouldergrin",
+    "fox": "Fox",
+    "roamtail": "Roamtail",
+    "filchfox": "Filchfox"
   },
   "snacks": {
     "cookie": "Cookie",
@@ -143,7 +146,8 @@
     "edelweiss": "Edelweiss",
     "egg_blob": "Slime egg",
     "egg_ember": "Ember egg",
-    "egg_stone": "Stone egg"
+    "egg_stone": "Stone egg",
+    "egg_fox": "Fox egg"
   },
   "pack": {
     "snack": "Snack",

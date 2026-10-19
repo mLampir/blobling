@@ -93,8 +93,9 @@ export function wideRow(image: Image): [number, number[][]] {
  * count). The face sits just under a third of the body height below that – so it moves along by
  * itself when the body is squashed or stretched. If the sheet sets `faceTop` (e.g. Sneezle: face
  * in the head rather than the belly), it sits that many rows below that row. It is centered on
- * its own row, or with `center = "bottom"` on the bottom row (Sneezle: handle and spout stick out
- * to the sides further up).
+ * its own row, or with `center = "bottom"` on the feet, the bottom two rows (Sneezle: handle and
+ * spout stick out to the sides further up), or with `center = "left"` on the first stretch of its own row from the
+ * left (Kitlet: its tail stands apart from its body on the right).
  */
 export function faceAnchor(body: Image, faceTop: number | null = null, center: string | null = null): [number, number] {
   const [top, rows] = wideRow(body);
@@ -102,7 +103,10 @@ export function faceAnchor(body: Image, faceTop: number | null = null, center: s
   const bottom = filled.length ? Math.max(...filled) : body.height - 1;
   const y = top + (faceTop ?? Math.round((bottom - top + 1) * 0.32));
   const own = rows[Math.min(y, body.height - 1)];
-  const xs = center === "bottom" || !own.length ? rows[bottom] : own;
+  // on the feet: the bottom two rows, so that a foot lifted for a step still counts
+  const feet = [...rows[bottom], ...(rows[bottom - 1] ?? [])].sort((a, b) => a - b);
+  const xs = center === "bottom" || !own.length ? feet
+    : center === "left" ? own.filter((x, i) => x - own[0] === i) : own;
   return [(xs[0] + xs.at(-1)! + 1) / 2, y];
 }
 

@@ -122,7 +122,8 @@ child grow 30 % faster: the baby in about two days, the child in about five.
 A grown-up has no use for it.
 
 The care diary of the child stage decides the adult form: how well the pet was
-looked after, and how often it was played with and petted. Each form has a
+looked after, how often it was played with and petted, and how often it went
+on a trip. Each form has a
 character of its own, with small effects on the game. From its second day on,
 the bulb on the child's lure shows by its color which form it is heading for.
 

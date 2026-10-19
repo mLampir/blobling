@@ -53,6 +53,15 @@ test("where the face sits", () => {
   assert.deepEqual(anchors("blob_body"), [[16.0, 16], [15.5, 18], [15.5, 15]]);
   assert.deepEqual(anchors("sneezle_body"), [[16.0, 13], [15.5, 15], [15.5, 11]]); // in the head, centered on the feet
   assert.deepEqual(anchors("blob_baby_body"), [[16.0, 25], [15.5, 27], [15.5, 24]]);
+  assert.deepEqual(anchors("kitlet_body"), [[11.0, 17], [10.5, 19], [10.5, 15]]); // on its body, not the tail
+  // a form that walks keeps its face over its feet while it lifts one of them
+  for (const name of ["sneezle_body", "roamtail_body", "filchfox_body"]) {
+    const sheet = sheets[name];
+    const steps = [0, 0.25, 0.35, 0.6].map((t) => faceAnchor(sheet.frame("walk", t)[0], sheet.faceTop, sheet.faceCenter)[0]);
+    assert.ok(Math.max(...steps) - Math.min(...steps) <= 1, `${name}: ${steps}`);
+  }
+  // the eyes of Filchfox sit in the holes of its mask (rows 11 and 12 of the grid, 6 rows below the canvas top)
+  assert.deepEqual(anchors("filchfox_body")[0], [13.5, 17]);
 });
 
 test("recoloring", () => {

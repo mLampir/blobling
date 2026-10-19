@@ -45,6 +45,7 @@ test("only an adult without a friend is looking", () => {
   assert.ok(met(pet, "meadow", 63).has("grumpcap"));
   assert.deepEqual(met(pet, "cave"), new Set([null]));
   assert.deepEqual(met(pet, "stream"), new Set([null, "bouldergrin", "glimmerock"])); // the stone line
+  assert.deepEqual(met(pet, "forest"), new Set([null, "filchfox", "roamtail"])); // the fox line
   const changes = [{ stage: "child" }, { friend: { species: "sneezle" } }, { nest: { line: "blob" } },
     { eggs: Array(home.MAX_EGGS).fill({ line: "blob" }) }];
   for (const change of changes) {
@@ -169,6 +170,18 @@ test("a friend of the stone line can bring its egg into the home", () => {
     }
   }
   assert.deepEqual(lines, new Set(["blob", "stone"]));
+});
+
+test("a friend of the fox line can bring its egg into the home", () => {
+  const lines = new Set<string>();
+  for (let i = 0; i < 40; i++) {
+    const other = copy();
+    other.friend = { species: "filchfox", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 };
+    wild.step(other, start + i * 60, true);
+    lines.add(other.nest!.line);
+  }
+  assert.deepEqual(lines, new Set(["blob", "fox"]));
+  assert.equal(home.eggOf("fox"), "egg_fox");
 });
 
 test("some visits bring a gift, and only one lies there at a time", () => {
