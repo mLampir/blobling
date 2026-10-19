@@ -1,5 +1,5 @@
 {
-  "api": 2,
+  "api": 3,
   "oldest": 1,
   "routes": [
     "GET /api/pet",
@@ -77,6 +77,7 @@
     "GET /api/pet ideal_weight": "number",
     "GET /api/pet item_labels": "object",
     "GET /api/pet items": "array",
+    "GET /api/pet last_trip": "null",
     "GET /api/pet max_pack": "number",
     "GET /api/pet mood": "string",
     "GET /api/pet name": "string",
@@ -86,6 +87,7 @@
     "GET /api/pet packable": "array",
     "GET /api/pet plant": "null",
     "GET /api/pet poops": "number",
+    "GET /api/pet replays": "array",
     "GET /api/pet sick": "boolean",
     "GET /api/pet skills": "array",
     "GET /api/pet snacks": "array",

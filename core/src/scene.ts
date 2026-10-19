@@ -1126,8 +1126,14 @@ export class PetScene {
     }
   }
 
-  private static battleSeconds(trip: TripView): number {
-    return BATTLE_INTRO + trip.rounds!.length * BATTLE_ROUND + BATTLE_OUTRO;
+  /** How long the panel shows a scuffle or a wild pet, from the moment it comes hopping in. */
+  static battleSeconds(trip: TripView): number {
+    return PetScene.roundsOver(trip) + BATTLE_OUTRO;
+  }
+
+  /** When the last round of a scuffle is over and it shows how it ended. */
+  static roundsOver(trip: TripView): number {
+    return BATTLE_INTRO + trip.rounds!.length * BATTLE_ROUND;
   }
 
   /** Somebody is in the way: a scuffle, an opponent that runs after the ball, or a wild pet. */

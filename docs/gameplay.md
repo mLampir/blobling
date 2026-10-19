@@ -326,6 +326,11 @@ the cave and on the mountain after four, Duskwisp after five) and leaves
 something behind, if there is anything left to find. The pet gives in when it has been knocked over three
 times. If neither happens within five rounds, they go their own ways.
 
+You can watch a scuffle again in the app, the way the panel showed it: the
+scuffles of the last trip from the home screen, until the next trip sets off
+or you have seen them, and the latest ten from the diary, where each one has
+a ▶.
+
 ### Friends
 
 Not everybody on a trip is in the way. An adult that has no friend yet
@@ -469,10 +474,10 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   tall phone the scene grows into the sky above it. Packing for a trip needs
   no pet in sight: it covers the scene too and fits any phone without
   scrolling, with the button to set off at the bottom.
-- **Diary** has one tab each for the history, the stats (with weight and
-  bond), the trips, the finds and the album, with the ancestors below it.
-  Trips and finds show up once there are any, the album once the first egg
-  has hatched.
+- **Diary** has one tab each for the history (where a scuffle can be watched
+  again), the stats (with weight and bond), the trips, the finds and the
+  album, with the ancestors below it. Trips and finds show up once there are
+  any, the album once the first egg has hatched.
 - **More**: renaming and starting over with a usual egg, the weather (off, a
   fixed place, or following the phone) and connecting to an LED display.
 
@@ -502,6 +507,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Trips, areas, what is found where | `core/src/trip.ts` |
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
+| A scuffle watched again in the app | `app/src/replay.ts` |
 | Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
 | What it does by itself, what it leaves behind, and what it tells when you come back | `core/src/idle.ts` |
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |

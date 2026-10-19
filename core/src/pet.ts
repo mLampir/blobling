@@ -413,6 +413,9 @@ export class Pet {
         returning: trip.returning(s.trip), found: [...s.trip.found],
         hearts: s.trip.hearts, pack: [...s.trip.pack],
       } : null,
+      // The latest scuffles, to be watched again; last_trip: when the latest trip set off
+      replays: s.replays.map((r) => ({ ...r, rounds: r.rounds.map((round) => [...round]) })),
+      last_trip: s.recent.trip?.at(-1) ?? null,
       // What can go into the backpack before a trip
       packable: trip.PACKABLE.map((k) => ({ id: k, label: t(`pack.${k}`) })),
       max_pack: trip.MAX_PACK,

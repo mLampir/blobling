@@ -205,6 +205,15 @@
     "evolved": "{name} {what}",
     "recall": "🏠 Call home",
     "unpack": "🎒 Unpack",
+    "replay": {
+      "watch": {
+        "one": "▶ Watch the scuffle",
+        "other": "▶ Watch the {n} scuffles"
+      },
+      "again": "Again",
+      "play": "Watch again",
+      "against": "Scuffle with {foe} …"
+    },
     "collect": "🥚 Collect the egg",
     "collected": "{egg} collected – it is among your finds now",
     "unwrap": "🎁 Unwrap the gift",
