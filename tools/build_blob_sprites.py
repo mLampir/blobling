@@ -12,6 +12,7 @@ frameTags):
 - sneezle_body / sneezle_faces     – Sneezle (faces of its own)
 - flicker_body / flicker_faces     – Flicker (faces of its own)
 - lumoth_body / lumoth_faces       – Lumoth (faces of its own)
+- angloop_body / angloop_faces     – Angloop (faces of its own)
 - gemperor_body / gemperor_faces   – Gemperor (faces of its own)
 - grumpcap_body / grumpcap_faces   – Grumpcap (faces of its own)
 - cyclopuff_body / cyclopuff_faces – Cyclopuff (one big eye, faces of its own)
@@ -492,6 +493,49 @@ LUMOTH_FACE_TOP = 4
 LUMOTH_TAGS = species_tags([LUMOTH, LUMOTH_FLAP], 16, 15, up=LUMOTH_FLAP, idle_ms=450)
 # Its spin is circling, as a moth circles a lamp (OWN_TRICKS in core/src/scene.ts)
 LUMOTH_TAGS["flutter"] = [(LUMOTH_FLAP, 80), (LUMOTH, 80)]
+
+# Angloop: what the slime becomes when its care was nothing special – the child, grown up, with
+# its lure turned into a real anglerfish's: it arcs over its head and the bulb hangs in front of
+# its brow, a light that glows at night. Its sides have grown into fins it uses as arms (the
+# left one raised), a little fin sits on the back of its head, and bubbles float in the jelly.
+# The face is the child's eyes with a wide anglerfish grin (ANGLOOP_MOUTHS). Teal, the orange of
+# the fins and the gold of the bulb.
+ANGLOOP_PALETTE = BODY_PALETTE | {"q": (150, 70, 30), "F": (255, 165, 80), "f": (225, 115, 55)}
+ANGLOOP = [
+    "...................ooooo......",
+    "..................obbbbbo.....",
+    ".................obooooobo....",
+    ".................obo...obo....",
+    ".................obo....o.....",
+    ".................obo..ggg.....",
+    ".................obo.ggwgg....",
+    "......q..........bbo.ggggG....",
+    "......qq..ooooooobbo..GGG.....",
+    "......qFoolllllllbbboo........",
+    "......oolhhllllllbbbbboo......",
+    ".....olhhhlllbbbbbbbbbbdo.....",
+    "q...olhhllbbbbbbbbbbbbbbdo....",
+    "qq..ollhlbbbbbbbbbbbbbbddo....",
+    "qFqollbbbbbbbbbbbbbbbbbbddo...",
+    "qFFqlbbbbbbbbbbbbbbbbbbbddo...",
+    "qFfFqbbbbbbbbbbbbbbbbbbbddo...",
+    ".qffqbbbbbbbbbbbbbbbbbbbddo...",
+    "..qqlbbbbbbbbbbbbbbbbbbbddo..q",
+    "...olbbbbbbbbbbbbbbbbbbbddo.qq",
+    "..olbbbbbbbbbbbbbbbbbbbbbddqFq",
+    "..olbbbbbbbbbbbbbbbbbhbbbdqFFq",
+    "..olbbbbbbbbbbbbbbbbhbhbbqFfFq",
+    "..olbbbbbbbbbbbbbbbbbhbbbqffq.",
+    "..obbbbbbbbbbbbbbbbbbbbbbdqq..",
+    "..odbbbbbbbbbbbbbbbbbbbhbddo..",
+    ".oddbbbbbbbbbbbbbbbbbbbbbdddo.",
+    ".oddddddddddddddddddddddddddo.",
+    "..oooooooooooooooooooooooooo..",
+]
+# The bulb swings on its line
+ANGLOOP_B = ANGLOOP[:4] + [r[:20] + r[21:27] + "." + r[27:] for r in ANGLOOP[4:9]] + ANGLOOP[9:]
+ANGLOOP_FACE_TOP = 9  # counted from the bulb
+ANGLOOP_TAGS = species_tags([ANGLOOP, ANGLOOP_B], 20, 14)
 
 # Gemperor: the slime grown into a king. The jelly on its back has hardened into a crown of
 # crystals, one of them broken off, and the bulb of the child's lure has sunk into its belly,
@@ -1114,6 +1158,36 @@ LUMOTH_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
 }
 assert LUMOTH_FACES.keys() == FACES.keys()
 
+# Angloop: the child's round eyes, and the wide mouth of an anglerfish with two little fangs
+# (8×3). Face 16×8.
+ANGLOOP_MOUTHS = {
+    "none": ["........", "........", "........"],
+    "grin": ["m......m", ".mmmmmm.", "..f..f.."],
+    "small": ["........", "m......m", ".mmmmmm."],
+    "flat": ["........", ".mmmmmm.", "..f..f.."],
+    "sad": ["........", ".mmmmmm.", "m......m"],
+    "open": [".mmmmmm.", "mfrrrrfm", ".mmmmmm."],
+    "laugh": ["mmmmmmmm", "mfrrrrfm", ".mrrrrm."],
+    "chew": ["........", "mmmmmmmm", "..f..f.."],
+}
+ANGLOOP_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
+    "normal": ("open", "grin", False),
+    "smile": ("open", "grin", True),
+    "blink": ("closed", "grin", False),
+    "happy": ("happy", "small", True),
+    "laugh": ("happy", "laugh", True),
+    "sad": ("sad", "sad", False),
+    "tired": ("half", "flat", False),
+    "yawn": ("half", "open", False),
+    "sick": ("half", "sad", False),
+    "no": ("cross", "flat", False),
+    "eat_open": ("open", "open", False),
+    "eat_closed": ("happy", "chew", False),
+    "sleep": ("closed", "none", False),
+}
+assert ANGLOOP_FACES.keys() == FACES.keys()
+ANGLOOP_FACE_PALETTE = FACE_PALETTE | {"f": (255, 255, 255)}
+
 # Gemperor: a hero's face – bright eyes (4×6) under brows set low at the inner ends, and a broad
 # grin with one fang (8×3). Face 16×9. Its brows only lift when something good is coming.
 GEMPEROR_EYES = {  # (left, right), brow in the top two rows
@@ -1445,6 +1519,23 @@ def lumoth_face_grid(eyes, mouth, blush):
     put(LUMOTH_MOUTHS[mouth], 5, 5)
     if blush:
         put(["kk............kk"], 0, 5)
+    return ["".join(r) for r in rows]
+
+
+def angloop_face_grid(eyes, mouth, blush):
+    rows = [list("." * 16) for _ in range(8)]
+
+    def put(part, left, top):
+        for y, line in enumerate(part):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[top + y][left + x] = ch
+
+    put(EYES[eyes][0], 2, 0)
+    put(EYES[eyes][1], 10, 0)
+    put(ANGLOOP_MOUTHS[mouth], 4, 5)
+    if blush:
+        put(["kk............kk"], 0, 4)
     return ["".join(r) for r in rows]
 
 
@@ -2267,6 +2358,9 @@ def main():
     write_sheet("flarelet_faces", face_sheet(flarelet_face_grid, DARK_FACE_PALETTE, FLARELET_FACES))
     write_sheet("flicker_faces", face_sheet(flicker_face_grid, FLICKER_FACE_PALETTE, FLICKER_FACES))
     write_sheet("lumoth_faces", face_sheet(lumoth_face_grid, DARK_FACE_PALETTE, LUMOTH_FACES))
+    write_sheet("angloop_body", body_sheet(ANGLOOP_TAGS, ANGLOOP_PALETTE),
+                faceTop=ANGLOOP_FACE_TOP, faceCenter="bottom")  # its raised fin sticks out to the side
+    write_sheet("angloop_faces", face_sheet(angloop_face_grid, ANGLOOP_FACE_PALETTE, ANGLOOP_FACES))
     write_sheet("gemperor_body", body_sheet(GEMPEROR_TAGS, GEMPEROR_PALETTE),
                 faceTop=GEMPEROR_FACE_TOP, faceCenter="bottom")  # its raised fist sticks out to the side
     write_sheet("gemperor_faces", face_sheet(gemperor_face_grid, GEMPEROR_FACE_PALETTE, GEMPEROR_FACES))

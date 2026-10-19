@@ -172,6 +172,7 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
   grumpcap: ["grumpcap_body", "grumpcap_faces", 0],
   lumoth: ["lumoth_body", "lumoth_faces", 0],
   gemperor: ["gemperor_body", "gemperor_faces", 0],
+  angloop: ["angloop_body", "angloop_faces", 0],
   lanternling: ["lanternling_body", "lanternling_faces", 0],
   flarelet: ["flarelet_body", "flarelet_faces", 0],
   glimmerock: ["glimmerock_body", "glimmerock_faces", 0],
@@ -193,6 +194,7 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   grumpcap: [[215, 60, 50], [160, 35, 35], [255, 255, 255]],
   lumoth: [[255, 170, 220], [190, 130, 235], [255, 255, 255]],
   gemperor: [[190, 150, 255], [140, 95, 215], [255, 255, 255]], // crystal
+  angloop: [[255, 210, 80], [235, 150, 40], [255, 250, 225]], // a warmer gold than the first day's
   lanternling: [[70, 120, 235], [130, 190, 255], [235, 250, 255]], // calm and blue, like its glass
   flarelet: [[250, 130, 30], [255, 200, 60], [255, 255, 255]], // white-hot
   glimmerock: [[200, 175, 255], [140, 110, 220], [245, 235, 255]], // crystal
@@ -203,11 +205,12 @@ const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
 const NO_UMBRELLA = ["lanternling", "grumpcap"]; // the rain can't get at its flame anyway; a toad likes the rain
 // Species that glow at night ([day color, night color], the day colors as in the palettes of
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals,
-// Gemperor's crystals and core
+// Gemperor's crystals and core, the bulb of Angloop's lure
 const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   lumoth: [
     [[250, 160, 215], [150, 255, 235]], [[255, 215, 110], [255, 255, 200]], [[240, 200, 120], [190, 255, 240]],
   ],
+  angloop: [[[255, 235, 150], [255, 250, 200]], [[240, 190, 90], [255, 225, 120]]],
   gemperor: [
     [[190, 150, 255], [215, 185, 255]], [[140, 95, 215], [170, 120, 255]], [[235, 220, 255], [255, 250, 255]],
     [[255, 225, 110], [255, 245, 170]], [[240, 165, 50], [255, 210, 90]],
@@ -1301,7 +1304,7 @@ export class PetScene {
     if (special) {
       const sprite = ({
         sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: EMBER, flarelet: EMBER,
-        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: GLINT,
+        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: GLINT, angloop: BUBBLE,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;
       for (let i = 0; i < 10; i++) {
         this.particles.push({

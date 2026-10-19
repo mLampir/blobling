@@ -29,7 +29,7 @@ const BASE: SceneView = {
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
-  ...Object.fromEntries(["sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth", "gemperor"].map((species) =>
+  ...Object.fromEntries(["sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth", "gemperor", "angloop"].map((species) =>
     [species, ["adult", species]])),
   ember_egg: ["egg", "ember"], ember_baby: ["baby", "ember"], cindlet: ["child", "ember"],
   lanternling: ["adult", "lanternling"], flarelet: ["adult", "flarelet"],
@@ -47,7 +47,8 @@ const SPOILERS = ["hint", "evolve", "sneezle", "flicker", "flicker_sad", "grumpc
   "lanternling_sleep", "lanternling_trick", "flarelet", "flarelet_hat", "egg_found", "wild_shrug", "visit_night",
   "nest_ember", "stone_egg", "stone_baby", "pebblet", "pebblet_hint", "pebblet_hat", "pebblet_skip", "glimmerock",
   "glimmerock_night", "glimmerock_shine", "bouldergrin", "bouldergrin_sad", "bouldergrin_sleep", "bouldergrin_toss", "wild_stream", "visit_stone",
-  "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint"];
+  "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
+  "angloop", "angloop_night", "angloop_hungry", "angloop_hint"];
 const PETS_DIR = "docs/images/pets";
 const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
@@ -277,6 +278,10 @@ const SCENES: Record<string, Scene> = {
   gemperor_night: [{ stage: "adult", species: "gemperor", hat: "cap" }, NIGHT, null],
   gemperor_sad: [{ stage: "adult", species: "gemperor", mood: "sad" }, DAY, null],
   gemperor_hint: [{ hint: "gemperor", mood: "happy" }, DAY, null],
+  angloop: [{ stage: "adult", species: "angloop", mood: "happy" }, DAY, null],
+  angloop_night: [{ stage: "adult", species: "angloop" }, NIGHT, null],
+  angloop_hungry: [{ stage: "adult", species: "angloop", mood: "hungry", needs: ["satiety"] }, DAY, null],
+  angloop_hint: [{ hint: "angloop" }, DAY, null],
   glimmerock_night: [{ stage: "adult", species: "glimmerock", hat: "edelweiss" }, NIGHT, null],
   glimmerock_shine: [{ stage: "adult", species: "glimmerock", activity: "trick", activity_item: "spin:ok" }, DAY, null],
   bouldergrin: [{ stage: "adult", species: "bouldergrin", mood: "happy" }, DAY, null],

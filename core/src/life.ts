@@ -25,7 +25,7 @@ export const AUTO_EVOLVE_AFTER = 24 * 3600; // due and nobody taps → it evolve
 
 // Line: its adult forms
 export const LINES: Record<string, readonly string[]> = {
-  blob: ["sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth", "gemperor"],
+  blob: ["sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth", "gemperor", "angloop"],
   ember: ["lanternling", "flarelet"],
   stone: ["glimmerock", "bouldergrin"],
 };
@@ -47,6 +47,7 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   cyclopuff: { satiety: 1.15, energy: 0.9 }, // easy-going, loves food
   grumpcap: { satiety: 0.7, mood: 1.3 }, // needs little food, but lots of attention
   lumoth: { hygiene: 0.8 },
+  angloop: { satiety: 1.15 }, // a big mouth, always hungry
   lanternling: { mood: 0.8 }, // snug behind its glass
   flarelet: { satiety: 1.25, energy: 0.85 }, // burns through its food and hardly tires
   glimmerock: { hygiene: 0.7 }, // polished: dirt doesn't stick
