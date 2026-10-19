@@ -11,3 +11,9 @@ declare module "blobling:sheets" {
   const sheets: Record<string, { data: import("../../core/src/sprites").SheetData; png: string }>;
   export default sheets;
 }
+
+declare module "blobling:sounds" {
+  /** Every sound of app/pet/sounds/ by its name: the WAV file as base64. */
+  const sounds: Record<string, string>;
+  export default sounds;
+}

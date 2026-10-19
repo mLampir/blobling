@@ -17,13 +17,15 @@
 import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
 import { MAX_NAME } from "../../core/src/pet";
 import type { Location } from "../../core/src/sun";
-import { locales } from "./assets";
+import { locales, soundFiles } from "./assets";
 import { haptic } from "./haptics";
 import { iconUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
 import { reminders } from "./notify";
-import { RemotePet, piAddress } from "./remote";
+import { RemotePet, findDisplay, piAddress } from "./remote";
+import { playReplays, type Replay } from "./replay";
+import { pageSounds, type SoundName } from "./sound";
 
 const PI_KEY = "pi"; // the address of the Pi the app is connected to
 const LIVE_KEY = "location.live"; // "1": the pet lives wherever the phone is
@@ -66,6 +68,7 @@ translate();
 
 const remote = mode === "pi" ? new RemotePet(connectedTo ?? "", i18n) : null;
 const local = remote ? null : LocalPet.open(i18n);
+const sounds = pageSounds(soundFiles);
 // The pet on the phone calls when it needs somebody (notify.ts); one on a Pi doesn't, the app
 // can't know what happens there. A call the phone's pet left before the app was connected goes.
 if (remote) {
@@ -94,6 +97,20 @@ const app = {
   /** A thing the player hands the pet ("meal", "ball", "sponge", …) as a URL for an <img>; "" if there is no picture. */
   thing: thingUrl,
 
+  /** Plays one of the app's sounds (app/src/sound.ts), unless they are off. */
+  sound(name: SoundName): void {
+    sounds.play(name);
+  },
+
+  /** Whether the sounds are on. */
+  soundOn(): boolean {
+    return sounds.on;
+  },
+
+  setSound(on: boolean): void {
+    sounds.on = on;
+  },
+
   /** A short buzz for what the pet just did: "touch", "done", "no", "joy" or "evolve" (haptics.ts). */
   buzz: haptic,
 
@@ -110,9 +127,25 @@ const app = {
     return local ? (await local).petArea() : null;
   },
 
+  /** With a Pi: whether it and this app understand each other ("ok", "display_old", "app_old"). */
+  fit(): string {
+    return remote?.fit ?? "ok";
+  },
+
   /** With a Pi: the next frame the panel shows, as a URL for an <img> (the Pi answers once it is drawn). */
   previewUrl(): string {
     return `${remote?.base ?? ""}/preview.png?next&t=${Date.now()}`;
+  },
+
+  /**
+   * Plays scuffles from the pet's state (`replays`) on `canvas`, one after the other, wherever the
+   * pet lives. `onChange(i, over)` when the i-th begins and when its rounds are over, `onEnd` after
+   * the last. Returns a function that stops it.
+   */
+  async replay(canvas: HTMLCanvasElement, replays: readonly Replay[],
+      onChange: (index: number, over: boolean) => void, onEnd: () => void): Promise<() => void> {
+    const location = local ? (await local).location : null;
+    return playReplays(canvas, replays, location, onChange, onEnd);
   },
 
   /** On the phone: where it lives (for the weather and the sun times). */
@@ -156,13 +189,40 @@ const app = {
     }
   },
 
-  /** In the app from the stores: the pet of a Pi from now on. Throws with the text for the page if none answers. */
-  async connect(address: string): Promise<void> {
+  /** In the app from the stores: a display that answers under one of its usual names, as its address, or null. */
+  findDisplay(): Promise<string | null> {
+    return findDisplay((base) => new RemotePet(base, i18n).reachable());
+  },
+
+  /**
+   * Before connecting to a display: the pet on the phone and the one on the display (as /api/pet
+   * describes them), to choose which of them lives on. null when there is nothing to choose,
+   * because the phone only has an egg. Throws with the text for the page if the display is gone.
+   */
+  async petsToChoose(address: string): Promise<{ phone: any; display: any } | null> {
+    const phone = await (await local!).request("GET", "/api/pet") as { stage: string };
+    if (phone.stage === "egg") {
+      return null;
+    }
+    return { phone, display: await new RemotePet(piAddress(address) ?? "", i18n).request("GET", "/api/pet") };
+  },
+
+  /**
+   * In the app from the stores: the pet of a Pi from now on. With `bringPet`, the pet on the phone
+   * moves there first (the display keeps its own one aside, like loading a save on its settings
+   * page); the phone keeps its copy for when it is disconnected again. Throws with the text for the
+   * page if none answers.
+   */
+  async connect(address: string, bringPet = false): Promise<void> {
     const base = piAddress(address);
-    if (!base || !await new RemotePet(base, i18n).reachable()) {
+    const pi = base ? new RemotePet(base, i18n) : null;
+    if (!pi || !await pi.reachable()) {
       throw new Error(i18n.t("page.app.connect_failed", { address: base ?? address }));
     }
-    localStorage.setItem(PI_KEY, base);
+    if (bringPet) {
+      await pi.request("POST", "/api/pet/save", (await local!).pet.toSave());
+    }
+    localStorage.setItem(PI_KEY, base!);
     location.reload();
   },
 

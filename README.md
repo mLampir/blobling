@@ -22,7 +22,7 @@ a day and also tells you the time and the weather.
   pet, stroke it with your finger, rub it clean with the sponge, and put it to
   bed at night.
 - **It grows up.** It hatches from an egg and grows over ten days into one of
-  five adult forms, depending on how you cared for it. It learns tricks, trains,
+  three adult forms, depending on how you cared for it. It learns tricks, trains,
   goes on trips, scuffles with whoever gets in its way there and brings things
   home, and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
   one of the guardians keeps a rare egg that something else hatches from.
@@ -74,7 +74,8 @@ choose:
 
 When asked about customisation, edit the settings:
 
-- **Hostname:** for example `raspberrypi`
+- **Hostname:** for example `raspberrypi` or `blobling`. The app finds the
+  display under either name by itself; with any other name, you type it in.
 - **Username and password:** for example `pi` and a password (needed for
   `sudo` later)
 - **Wi-Fi:** your network, its password and your country (not needed with a
@@ -85,7 +86,7 @@ When asked about customisation, edit the settings:
 Write the card, put it into the Pi, switch it on and wait about two minutes.
 
 The examples below use the user `pi` and the hostname `raspberrypi`. If you
-chose other names, replace them everywhere.
+chose other names (`blobling`, for example), replace them everywhere.
 
 ### 2. Install
 
@@ -190,10 +191,15 @@ Google Play and the App Store (the links follow once the apps are out). On
 its own it keeps a pet on the phone; connected to a Pi, it looks after the
 pet on the panel instead. A pet on the phone calls with a notification when
 it needs you (see *While nobody is there* in
-[docs/gameplay.md](docs/gameplay.md)). To connect it, enter the Pi's address
-(`raspberrypi.local`, or its IP address) in the app under *More*. The app
+[docs/gameplay.md](docs/gameplay.md)). To connect it, tap *Connect to the display* under
+*More*: the app looks for the Pi as `blobling.local` and `raspberrypi.local`
+and only asks for its address (or IP address) if neither answers. When both
+the phone and the display have a pet, it asks which of them lives on the
+display; the other one is kept (on the phone, or set aside on the Pi like a
+loaded save). The app
 talks to the Pi over plain HTTP on the home network, so nothing has to be
-installed on the Pi or the phone for it.
+installed on the Pi or the phone for it. Sound comes from the phone (it can be
+turned off under *More*); the Pi stays silent.
 
 Without the app, <http://raspberrypi.local/pet> does the same in any browser
 on the network.
@@ -226,7 +232,13 @@ sudo systemctl restart led-matrix    # after changing config.ini
 an *Update now* button. The Pi looks for one a minute after it starts and
 then every six hours; it only asks GitHub, nothing is opened towards the
 internet. The button takes about a minute, the panel goes dark briefly, and
-the page reloads in the new version. The same from the command line:
+the page reloads in the new version. The app connected to the display offers
+the same under *More*, with a dot on the tab while an update is waiting. The
+button looks for the newest release once more before it starts, so it never
+waits for the next look. When the app and the display no longer understand each
+other (a newer app needs a newer display, or the other way round), the app says
+which one to update, with the button for the display. The same from the command
+line:
 
 ```bash
 curl -fsSL https://github.com/mLampir/blobling/releases/latest/download/install.sh | sudo bash -s -- --app
@@ -328,6 +340,7 @@ npm run build    # the server for the Pi (dist/pi/server.mjs), the app (dist/app
 export LED_MATRIX_BDF_DIR=<path-to>/rpi-rgb-led-matrix/fonts
 npm run preview -- --spoiler-free   # → pet_preview.png
 npm run preview -- play --gif       # → pet_play.gif
+npm run sounds                      # the sound files, from the recipes in tools/sfx.ts → app/pet/sounds/
 ```
 
 ### The app
@@ -452,6 +465,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `app/locales/` | All texts of the interface, one file per language |
 | `docs/privacy.md`, `docs/support.md` (each with a `.de.md`), `docs/_config.yml` | The app's privacy policy and support page for the stores, and the settings of the GitHub Pages site that serves them |
 | `app/pet/assets/` | The sprite sheets |
+| `app/pet/sounds/` | The app's sounds (WAV), written by `npm run sounds` from the recipes in `tools/sfx.ts`; don't edit them by hand |
 | `systemd/` | The service, and the update unit the button starts |
 | `pi/src/update.ts` | Looks for a newer release and starts the update unit (only on a Pi installed from a release) |
 | `tools/deploy.mjs` | `npm run deploy`: builds the app on the PC, copies it to the Pi and runs the setup there |
@@ -462,7 +476,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `codemagic.yaml` | Builds the apps for the stores on a release tag and uploads them for testing |
 | `.github/workflows/android-test.yml` | Started by hand: a test APK of the app, to install on an Android phone (a debug build, kept for a week) |
 | `.github/workflows/test.yml` | Tests and type check on every pull request and every push to `main` |
-| `tools/` | Preview of the scene, and the pixel art as text → sprite sheets (the one Python tool, it needs `pip install -r requirements.txt`); build and test scripts |
+| `tools/` | Preview of the scene, the pixel art as text → sprite sheets (the one Python tool, it needs `pip install -r requirements.txt`), the sound recipes and their synthesizer → sound files (`sfx.ts`, `sounds.ts`); build and test scripts |
 
 
 ## License and credits

@@ -39,6 +39,25 @@ export interface TripEvent {
   outcome?: string;
 }
 
+/** A scuffle on a trip, kept to be watched again (trip.REPLAYS). */
+export interface Replay {
+  at: number;
+  /** When the trip it happened on set off (Trip.start). */
+  trip: number;
+  area: string;
+  foe: string;
+  /** [move, trick, result] per round (battle.Round). */
+  rounds: unknown[][];
+  outcome: string;
+  /** What the opponent left behind. */
+  item: string | null;
+  /** How the pet looked then, and the weather. */
+  species: string;
+  stage: string;
+  hat: string;
+  weather: number | null;
+}
+
 /**
  * One line of the travel diary: what happened at a station, without the rounds of a scuffle.
  * Besides the kinds of TripEvent: "snack" (it ate its snack after a lost scuffle) and "beaten"
@@ -180,12 +199,16 @@ export interface PetState {
   deco: string[];
   plant: Plant | null;
   events: PetEvent[];
+  /** The latest scuffles, oldest first. */
+  replays: Replay[];
   /** When somebody last did something with it (idle.welcome); 0 = not known yet. */
   seen_at: number;
   /** When it next gets busy by itself (idle.step); 0 = not planned yet. */
   idle_next: number;
   /** Trick -> points practiced alone since it was last practiced together (idle.SOLO_LIMIT). */
   solo: Record<string, number>;
+  /** Which rules for the adult forms it was saved under (life.FORM_RULES); older ones are reformed once. */
+  form_rules: number;
   /** Rain and snow since somebody was last there, at most one of each per part of the day (idle.noteWeather). */
   weather_seen: WeatherSeen[];
   /** What it left behind while nobody was there, until somebody does something with it (idle.ts). */
@@ -238,9 +261,11 @@ export function newState(): PetState {
     deco: [],
     plant: null,
     events: [],
+    replays: [],
     seen_at: 0.0,
     idle_next: 0.0,
     solo: {},
+    form_rules: life.FORM_RULES,
     weather_seen: [],
     trace: null,
     habits: [],
@@ -260,6 +285,9 @@ export function fromDict(data: Record<string, unknown>): PetState {
     if (key in data) {
       fields[key] = data[key];
     }
+  }
+  if (!("form_rules" in data)) {
+    state.form_rules = 1; // saved before the slime line was redrawn
   }
   const stats = (state.stats ?? {}) as Record<string, unknown>;
   state.stats = Object.fromEntries(STATS.map((k) => [k, Number(stats[k] ?? 50.0)])) as Record<Stat, number>;
