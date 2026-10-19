@@ -1717,6 +1717,16 @@ TRIP_TAGS = {
               1000)],
     "snowrock": [(["..fff..", ".fffis.", "fisssSS", "sssSSSS"], 1000)],
     "drift": [(["...fff...", ".fffffii.", "fffffiiii"], 1000)],
+    # What the pet leaves behind while nobody is there (scene.drawTrace): built from the bottom
+    # up, a drawing from left to right. A little tower of stacked stones,
+    "trace_tower": [(["...Ws..", "...sS..", "..WssS.", "..sSSS.", ".Wnnnn.", ".nnnNNN", "WsssssS", "sssSSSS"],
+                     1000)],
+    # a tiny snowman with twig arms and a carrot nose (only in real snow),
+    "trace_snowman": [(["..fff..", ".fSfSf.", ".fffoo.", "..fWW..", "t.fff.t", ".tfSft.", "ffffffW", "fffSffW",
+                        "fffffWW", ".WWWWW."], 1000)],
+    # and drawings scratched into the ground: a sun and the pet itself.
+    "trace_drawing_0": [(["D..d..D", ".ddddd.", "Dd...dD", ".ddddd.", "D..d..D"], 1000)],
+    "trace_drawing_1": [(["..ddddd..", ".d.D.D.d.", "d.......d", "d..DDD..d", ".ddddddd."], 1000)],
 }
 
 # Opponents on a trip. They look to the left, towards the pet. Mostly light, few dark pixels:

@@ -19,6 +19,8 @@ export const DAYS = 3; // only the last few days are told
 export const GRANDMA = ["bake", "knit", "garden", "tea"];
 // Sentences told differently when the same thing happened more than once in a day ("<key>_more")
 const MORE = ["solo_ball"];
+// What it can leave behind when it plays by itself (idle.play), each told in its own sentence
+const BUILT: readonly string[] = [...idle.BUILDS, "snowman"];
 
 type Translate = (key: string, values?: Record<string, unknown>) => string;
 
@@ -123,7 +125,11 @@ function piece(event: PetEvent, t: Translate): Piece | null {
     ({ at, key, values, weight, count: 1 });
   switch (event.action) {
     case "solo":
-      return item === "ball" ? make("solo_ball", 1) : make("solo_trick", 2, { trick: t(`tricks.${item}`) });
+      if (item === "ball") {
+        return make("solo_ball", 1);
+      }
+      // what it built or drew while it played (idle.BUILDS, and the snowman in the snow)
+      return BUILT.includes(item) ? make(`solo_${item}`, 3) : make("solo_trick", 2, { trick: t(`tricks.${item}`) });
     case "fruit":
       return make(`fruit.${item}`, 2);
     case "visit":

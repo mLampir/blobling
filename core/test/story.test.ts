@@ -41,6 +41,17 @@ test("a day is told in a few sentences, in the order it happened", () => {
   assert.deepEqual(warnings, []);
 });
 
+test("what it built or drew by itself is told as such, not as a trick", () => {
+  model.logEvent(pet, start + HOUR, "solo", "system", { item: "tower" });
+  model.logEvent(pet, start + 2 * HOUR, "solo", "system", { item: "drawing" });
+  model.logEvent(pet, start + 3 * HOUR, "solo", "system", { item: "snowman" });
+  assert.deepEqual(pages().map((p) => p.text), [
+    "I built a little tower out of stones. I drew a picture in the ground. "
+      + "It was snowing, so I built a tiny snowman.",
+  ]);
+  assert.deepEqual(warnings, []);
+});
+
 test("too much for one day: what matters most is told", () => {
   for (let i = 1; i <= 4; i++) {
     model.logEvent(pet, start + i * 600, "fruit", "system", { item: Object.keys(home.PLANTS)[i - 1] });

@@ -8,6 +8,7 @@
 
 import * as care from "./care";
 import { Random } from "./random";
+import * as sky from "./sky";
 import type { PetEvent, PetState, WeatherSeen } from "./state";
 
 export const EVERY = [60 * 60, 120 * 60] as const; // seconds between two things it does by itself
@@ -26,12 +27,20 @@ export const SOLO_LIMIT = 0.5;
 export const PRACTICE_MOOD = 2;
 export const PRACTICE_ENERGY = 2;
 
+// What it leaves behind (state.trace) until somebody does something with it. Only one at a time;
+// playing with the ball again only moves the ball. A snowman is built only in real snow.
+export const BUILDS = ["tower", "drawing"] as const;
+export const BUILD_CHANCE = 0.5; // instead of playing with the ball, when nothing lies around yet
+export const SNOWMAN_CHANCE = 0.7; // when it snows, it would rather build a snowman
+export const MELT_ABOVE = 3; // °C: above this a snowman melts away
+export const DRAWINGS = 2; // how many different drawings it can scratch into the ground
+
 export const WELCOME_AFTER = 6 * 3600; // nobody did anything with it for this long: it has something to tell
 export const WELCOME_LINES = 8;
 // Things it did by itself that are not worth telling: they followed something a person did
 const UNTOLD = ["heart"];
 
-/** What it can do by itself right now: an activity for the scene, and how it is done. */
+/** What it can do by itself right now: play (with the ball, or building something), or practice. */
 type Pastime = "ball" | "practice";
 
 /** Tricks it could practice alone: started together, not known yet, and not practiced alone too much. */
@@ -51,10 +60,12 @@ function free(state: PetState, t: number): boolean {
 
 /**
  * One minute of its own life, ending at time t. `busy`: it can't start anything right now
- * (asleep, away, in the middle of something, a friend is visiting). Returns what it does, as
- * [activity for the scene, item for the scene, action and item for the history], or null.
+ * (asleep, away, in the middle of something, a friend is visiting); `weather`: the WMO code.
+ * Returns what it does, as [activity for the scene, item for the scene, action and item for the
+ * history], or null.
  */
-export function step(state: PetState, t: number, busy: boolean): [string, string, string, string] | null {
+export function step(state: PetState, t: number, busy: boolean,
+    weather: sky.WeatherCode = null): [string, string, string, string] | null {
   if (state.idle_next === 0.0) {
     state.idle_next = t + new Random(`${t}:idle`).uniform(...EVERY);
     return null;
@@ -82,7 +93,32 @@ export function step(state: PetState, t: number, busy: boolean): [string, string
   }
   s.mood += BALL_MOOD;
   s.energy -= BALL_ENERGY;
+  const spot = rng.random();
+  if (state.trace === null) {
+    const snow = sky.precipitation(weather) === "snow";
+    const kind = snow && rng.random() < SNOWMAN_CHANCE ? "snowman"
+      : rng.random() < BUILD_CHANCE ? rng.choice(BUILDS) : null;
+    if (kind) {
+      state.trace = { kind, spot, look: rng.randint(0, DRAWINGS - 1) };
+      return ["build", kind, "solo", kind];
+    }
+  }
+  if (state.trace === null || state.trace.kind === "ball") {
+    state.trace = { kind: "ball", spot, look: 0 }; // it leaves the ball lying where it rolled
+  }
   return ["play", "", "solo", "ball"];
+}
+
+/** Somebody does something with it: what it left behind has been seen, and is cleared away. */
+export function noticed(state: PetState): void {
+  state.trace = null;
+}
+
+/** One minute of weather: a snowman melts once it is warm. */
+export function melt(state: PetState, temp: number | null): void {
+  if (state.trace?.kind === "snowman" && temp !== null && temp > MELT_ABOVE) {
+    state.trace = null;
+  }
 }
 
 /** It has practiced a trick together with somebody: it may practice that one alone again. */

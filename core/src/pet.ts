@@ -217,6 +217,7 @@ export class Pet {
       nest: s.nest ? s.nest.line : null,
       gift: !!s.gift,
       plant: s.plant ? { kind: s.plant.kind, stage: home.plantStage(s), ripe: home.ripe(s) } : null,
+      trace: s.trace ? { ...s.trace } : null,
       waiting: habits.waiting(s, now),
     };
   }
