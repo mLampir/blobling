@@ -139,9 +139,7 @@ workflows:
     name: Android to Google Play (internal)
     instance_type: mac_mini_m2
     max_build_duration: 30
-    # No tag trigger yet: the app does not exist in Google Play so far. Until it does, this
-    # workflow only runs when started by hand, as the very first upload has to be anyway.
-    # triggering: *triggering
+    triggering: *triggering
     environment:
       <<: *environment
       groups:

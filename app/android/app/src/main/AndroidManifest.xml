@@ -39,4 +39,6 @@
     <!-- "Use my location" for the weather; the app keeps it to two decimals (about a kilometre) -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- The short buzz with the pet's answers (app/src/haptics.ts); granted at install, no dialog -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>
