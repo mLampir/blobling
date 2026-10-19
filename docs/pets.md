@@ -34,6 +34,7 @@ over its head, and the bulb hangs in front of its brow as a light that swings
 when it breathes and glows at night. Its sides have grown into fins it uses as
 arms, and bubbles float in its jelly. It has the child's round eyes and a wide
 grin with two little fangs, and that big mouth makes it a little hungrier.
+For its bow it casts out its lure, lets the bulb dangle and flash, and snaps; in a scuffle its special move is a swarm of little lights like its bulb.
 
 <details>
 <summary>Show how to get it</summary>
@@ -57,6 +58,7 @@ into a crown of crystals, one of them broken off, and the bulb of the lure has
 sunk into its belly, where it glows as its core. One crystal fist is planted
 on the ground, the other raised, and it looks out from under brave brows. It
 rarely gets sick. At night its crystals and its core glow.
+A king doesn't somersault: for its flip it leaps up and lands so hard that crystals shoot up out of the ground, and crystal shards are its special move.
 
 </details>
 
@@ -80,6 +82,7 @@ The child was well cared for at least 85 % of the time.
 heart where the bulb was, whiskers and two little paws that knead. Its amber
 cat eyes mostly give you the slow, content blink of a cat that loves you.
 Hearts mean more to it, and it stays clean longer.
+Its bow is a cat's stretch, front down with a yawn, and its special move leaves paw prints.
 
 </details>
 
@@ -233,6 +236,7 @@ With a fire of its own, nothing of this line ever shivers on a cold morning.
 its mood drops more slowly, it gets sick less often, and in the rain it needs
 no umbrella. Its face is calm, with soft round eyes and rosy cheeks. Asleep,
 it burns low.
+For its spin it swings to and fro like a lantern on its handle, and its special move is a flight of moths drawn to its light.
 
 ![Flarelet](images/pets/flarelet.png)
 
@@ -240,6 +244,7 @@ it burns low.
 what is left of the crust is the bowl it sits in. It burns through its food
 and hardly gets tired, and it throws sparks. It looks eager: wide eyes under
 brows that flick up, and a big grin with a fang.
+For its flip its flame shoots up out of the bowl and rains embers, and tongues of flame are its special move.
 
 </details>
 
@@ -349,6 +354,7 @@ knotty walking stick with a ribbon of the scarf tied round it. It needs no
 backpack of its own: on a trip it wears the one everybody gets. Used to long
 roads, it hardly tires. It looks calm and friendly, under lids lowered in
 peace, with a gentle smile.
+For its spin it chases its own tail.
 
 ![Filchfox](images/pets/filchfox.png)
 
@@ -357,6 +363,7 @@ at the back, one ear is bent, its fur is ruffled and the tip of its tail is
 ragged. It is always after something to eat and up for any game. Its look is
 cheeky: one eye narrowed, the other with a glint in it, and a sly grin with a
 fang.
+For its spin it vanishes in a puff of smoke and pops up a little further on.
 
 </details>
 
@@ -405,6 +412,7 @@ high, and its horns are two golden curls of lightning that end in a bolt; the
 right one is bigger and forks. In a real thunderstorm they flash now and then.
 It looks stern, under heavy brows, and even a bad day hardly makes it grumpier
 than it is.
+For its bow it lowers its head, scrapes the ground and charges, sparks flying off its horns.
 
 ![Prismist](images/pets/prismist.png)
 
@@ -414,6 +422,7 @@ rainbow fades; when the sun comes out after it, its colors run along the arch
 for half an hour. It still wears
 Nimbit's bell. It looks kind, with lashes and a small smile, loves being
 petted, and dirt hardly weighs it down.
+When it spins, the colors of its rainbow run round as they do after the rain.
 
 </details>
 
@@ -463,6 +472,7 @@ leaves like clouds sit on a gnarled trunk, one reaching far to the right, and
 the pot stands on its roots. It has a calm old face with half-shut eyes and a
 beard of moss, and it is patient: it gets tired more slowly. In a scuffle,
 leaves fly off its crown.
+When it spins, leaves whirl off its crown.
 
 ![Needlenub](images/pets/needlenub.png)
 
@@ -470,6 +480,7 @@ leaves fly off its crown.
 be petted. Its little arms are always up for a hug, petting means more to it
 than to anyone, and the one flower on its head only opens when it is happy;
 otherwise it is a bud. It stays in its pot rather than walking.
+For its bow it closes into a bud and blooms with a pop, petals flying.
 
 </details>
 
@@ -515,12 +526,14 @@ duck likes the rain, so nothing of this line needs an umbrella.
 horn where the curl was, its wide orange bill puffs little flames, it has
 small bat wings and a spiky tail, and its belly is still duckling yellow. A
 fire needs feeding: it gets hungry faster. In a scuffle, it breathes embers.
+For its flip it flaps up and glides down in a long arc with a puff of fire, and its special move is a burst of fire.
 
 ![Captain Quill](images/pets/quill.png)
 
 **Captain Quill**, an old sea duck in a captain's cap with the curl sticking
 out under it, a sailor collar and a red scarf. It loves a good game, and in a
 scuffle it blows bubbles.
+Its dance is a sailor's hornpipe, and in a scuffle it fires cannonballs.
 
 </details>
 
@@ -567,6 +580,7 @@ The stages last as long as the slime's. What the adults keep is the towel.
 is tucked into the towel on its head. It is calm and half asleep anyway: it
 gets tired more slowly, and it is wet enough not to need an umbrella. In a
 scuffle, it blows bubbles.
+For its bow it sinks low, as into its pond, and blows bubbles.
 
 ![Steamo](images/pets/steamo.png)
 
@@ -574,6 +588,7 @@ scuffle, it blows bubbles.
 towel wound round its head like a turban and steam rising off it. It is
 always fresh from the sauna: it stays clean longer and gets sick less often.
 In a scuffle, it lets off steam.
+Its dance is a sauna dance in clouds of steam, and clouds of steam are its special move.
 
 </details>
 
@@ -620,6 +635,7 @@ crest; only the beak tells them apart.
 long needle beak like a rapier, the crest swept back like a musketeer's plume.
 It never lands: it hovers, one wing a blur. A hummingbird burns through
 everything: it gets tired and hungry faster.
+Its spin is a fencer's lunge, twice, with a flash at the tip of its beak, and in a scuffle its blade flashes.
 
 ![Parcelbeak](images/pets/parcelbeak.png)
 
@@ -627,6 +643,7 @@ everything: it gets tired and hungry faster.
 sticking through it, a huge orange bill and a mail bag across its chest. With
 a letter for everyone, it is always in a good mood: its mood drops more
 slowly. In a scuffle, letters fly out of its bag.
+For its bow a letter flies out of its pouch.
 
 </details>
 

@@ -58,6 +58,14 @@ const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
   [a, b].flatMap((adult) => ["", "_sad", "_sleep", "_trick", "_rain"].map((what) => `${adult}${what}`))),
 ["wild_forest_leaf", "wild_stream_hippo", "visit_beak", "visit_duck"]);
+// The adult forms with a trick of their own (OWN_TRICKS in core/src/scene.ts) and that trick; each
+// gets a scene with the trick ("<form>_own") and one with its special move in a scuffle ("<form>_special")
+const OWN_TRICK_FORMS: Record<string, string> = {
+  angloop: "bow", gemperor: "flip", purrloop: "bow", lanternling: "spin", flarelet: "flip", roamtail: "spin",
+  filchfox: "spin", rumblefluff: "bow", prismist: "spin", twiggle: "spin", needlenub: "bow", quill: "dance",
+  drakwing: "flip", lillypot: "bow", steamo: "dance", parcelbeak: "bow", rapierre: "spin",
+};
+const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
 // leaves out the scenes that are only there to show another form, another line or what the lure
 // gives away, and plays the remaining scenes of an adult with that form. Of the trips it shows
@@ -77,7 +85,7 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip", "prismist_rain",
   "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
   "angloop", "angloop_night", "angloop_hungry", "angloop_hint",
-  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", ...NEW_SCENES];
+  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", ...NEW_SCENES, ...OWN_SCENES];
 const PETS_DIR = "docs/images/pets";
 const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
@@ -460,6 +468,13 @@ const SCENES: Record<string, Scene> = {
   visit_beak: [{ stage: "adult", species: "needlenub", visitor: { species: "rapierre", age: 60, left: 500 } }, DAY, null],
   visit_duck: [{ stage: "adult", species: "parcelbeak", visitor: { species: "drakwing", age: 60, left: 500 } }, DAY,
     null],
+  ...Object.fromEntries(Object.entries(OWN_TRICK_FORMS).flatMap(([adult, trick]) => [
+    [`${adult}_own`, [{ stage: "adult", species: adult, activity: "trick", activity_item: `${trick}:ok` }, DAY, null]],
+    [`${adult}_special`, [{
+      stage: "adult", species: adult,
+      trip: trip("stream", { event: "battle", foe: "puddlin", outcome: "win", rounds: [["charge", "flip", "special"]] }),
+    }, DAY, null]],
+  ])),
 };
 
 const assets = readAssets(BDF_FONT_DIR);
