@@ -49,17 +49,18 @@ const TRAIN_KEYS = battle.SKILLS.map((skill) => `train_${skill}`);
 export const EVENT_LIMIT = 100;
 
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
-  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap"];
+  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "look_in"];
 export const FOODS = ["meal", ...Object.keys(care.SNACKS)];
 export const GAME_MOVES = ["start", "left", "right"];
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
 export const TRAIN_MOVES = [...battle.SKILLS, "tap", "answer"]; // an exercise, or the answer to one that is waiting
 export const THROW_ACTIONS = ["feed", "play", "medicine", "trip", "plant"];
 export const THROW_SECONDS = 2.4; // a thrown item drops in and the pet hops over – only then does it start
+export const LOOK_IN_SECONDS = 8; // a tap on the house shows the inside this long
 
 // How long an action shows in the scene (seconds)
 export const ACTIVITY_SECONDS: Record<string, number> = {
-  eat: 6, snack: 4, play: 8, fall_asleep: 3, wake_up: 3, clean: 4,
+  eat: 6, snack: 4, play: 8, fall_asleep: 3, wake_up: 3, clean: 4, go_in: 9, come_out: 8,
   happy: 3, no: 2.5, medicine: 4, turn_over: 2, catch_heart: 7,
   egg_wobble: 2, hatch: 6, evolve: 8, game_wait: care.GAME_TIMEOUT, game_turn: 2.5,
   trick: 4, build: 10, throw_meal: THROW_SECONDS + 6, throw_snack: THROW_SECONDS + 4,
@@ -123,6 +124,7 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
   state.items = kept.items;
   state.eggs = kept.eggs;
   state.deco = [...old.deco];
+  state.house = old.house;
   state.plant = old.plant;
   state.gift = old.gift; // a friend's gift still lies there
   return state;
@@ -185,12 +187,18 @@ export function fallAsleep(state: PetState, t: number): void {
   state.asleep = true;
   state.sleep_since = t;
   state.game = state.training = null; // falling asleep ends the game and the training
+  if (state.house) {
+    setActivity(state, "go_in", t); // it goes into its house to sleep
+  }
 }
 
 /** `temp`: the temperature in °C, or null: in the cold it wakes up shivering. */
 export function wakeUp(state: PetState, t: number, temp: number | null = null): void {
   state.asleep = false;
   home.wakeInCold(state, temp, t);
+  if (state.house) {
+    setActivity(state, "come_out", t);
+  }
 }
 
 /**
@@ -407,7 +415,7 @@ export function availableActions(state: PetState, now: number): Record<string, b
     return { ...nothing, pet: true, evolve: ready };
   }
   if (away) { // on a trip it can only be called home – and things at home can be arranged
-    return { ...nothing, recall: true, plant: true, wear: true, deco: true };
+    return { ...nothing, recall: true, plant: true, wear: true, deco: true, look_in: state.house > 0 };
   }
   const packed = state.backpack.length > 0;
   return {
@@ -430,6 +438,7 @@ export function availableActions(state: PetState, now: number): Record<string, b
     plant: true,
     wear: true,
     deco: true,
+    look_in: state.house > 0 && !asleep,
   };
 }
 
@@ -605,6 +614,14 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
   }
   const value = checkValue(action, item, options.value);
   state.seen_at = now; // somebody is there (for idle.welcome)
+  if (action === "look_in") {
+    // only a look: it doesn't do anything with the pet, so it isn't in the history either
+    const reason = !state.house ? "no_house" : state.asleep ? "inside" : null;
+    if (reason === null) {
+      state.look_in_until = now + LOOK_IN_SECONDS;
+    }
+    return { accepted: reason === null, reason };
+  }
   idle.noticed(state);
   let thrown: number | null = null;
   if (THROW_ACTIONS.includes(action) && options.throw != null) {
@@ -961,7 +978,9 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     }
     fallAsleep(state, now);
     state.stay_awake_until = 0.0;
-    setActivity(state, "fall_asleep", now);
+    if (!state.house) {
+      setActivity(state, "fall_asleep", now);
+    }
     return null;
   }
 
@@ -974,7 +993,9 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
       s.mood -= 15; // woken in the middle of the night: grumpy
       state.stay_awake_until = now + STAY_AWAKE_AFTER_WAKE;
     }
-    setActivity(state, "wake_up", now);
+    if (!state.house) {
+      setActivity(state, "wake_up", now);
+    }
     return null;
   }
 

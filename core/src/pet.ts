@@ -17,7 +17,7 @@ import * as home from "./home";
 import * as life from "./life";
 import * as model from "./model";
 import * as notify from "./notify";
-import type { SceneView, TripView } from "./scene";
+import { houseArea, type SceneView, type TripView } from "./scene";
 import * as sky from "./sky";
 import { fromDict, toDict, type PetState } from "./state";
 import * as story from "./story";
@@ -211,7 +211,8 @@ export class Pet {
       activity_item: s.activity_item, ready: life.isDue(s, now),
       weight_status: care.weightStatus(s), game: care.gameActive(s, now),
       tricks: care.learned(s),
-      trip: tripView(s, now), hat: s.hat, deco: [...s.deco],
+      trip: tripView(s, now), hat: s.hat, ...decoView(s),
+      look_in: s.house > 0 && now < s.look_in_until && !s.asleep,
       backpack: s.backpack.length > 0,
       // a friend that is visiting right now, and the egg in the nest (its line)
       visitor: s.friend && wild.visiting(s, now) && !s.trip
@@ -389,6 +390,7 @@ export class Pet {
     const t = this.t;
     const bedtime = this.bedtime();
     const due = life.dueAt(s);
+    const placed = home.placeDeco(s);
     return {
       api: API_VERSION, api_oldest: API_OLDEST,
       now: Math.round(now),
@@ -441,11 +443,18 @@ export class Pet {
         guardian: trip.guardianWaiting(s, k) !== null,
       })),
       guardians: { passed: s.guardians.length, all: trip.AREAS.length },
-      // Finds: what there is, and which of them are being worn or are set out
+      // Finds: what there is, which of them are being worn or are set out, and where they stand
       items: Object.entries(s.items).filter(([k]) => k in home.ITEMS).map(([k, n]) => ({
         id: k, label: t(`items.${k}`), kind: home.ITEMS[k], count: n, active: k === s.hat || s.deco.includes(k),
+        place: placed.outside.includes(k) ? "outside" : placed.inside.includes(k) ? "inside" : null,
         effects: home.effects(k),
       })),
+      // The house (0 = none yet): how far it has grown, its spots for decorations, and where it
+      // stands in the scene (parts of the picture: x, y, width, height), for a tap that looks in
+      house: s.house ? {
+        step: s.house, steps: home.HOUSE_STEPS, spots: home.HOUSE_SPOTS[s.house], area: houseArea(s.house),
+        looking_in: now < s.look_in_until,
+      } : null,
       // The eggs that are kept; "id" is what newEgg takes. `skills`: what the egg was given
       eggs: s.eggs.map((egg, i) => ({
         id: i, line: egg.line, label: t(`items.${home.eggOf(egg.line)}`), from: egg.from ?? null,
@@ -489,6 +498,12 @@ function startAlbum(saved: Saved): string[] {
 }
 
 /** For the scene: where it is travelling and what happened there last. */
+/** The decorations as the scene places them: outside, and in the house. */
+function decoView(s: PetState): Pick<SceneView, "deco" | "house" | "house_deco"> {
+  const placed = home.placeDeco(s);
+  return { deco: placed.outside, house: s.house, house_deco: placed.inside };
+}
+
 function tripView(s: PetState, now: number): TripView | null {
   if (!s.trip) {
     return null;

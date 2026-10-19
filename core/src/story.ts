@@ -146,6 +146,8 @@ function piece(event: PetEvent, t: Translate): Piece | null {
       return make("guardian", 8, { foe: t(`foes.${item}`) });
     case "unlock":
       return make("unlock", 8, { area: t(`areas.${item}.name`) });
+    case "house":
+      return make(`house.${item}`, 8);
     case "find":
       return make("find", 4, { item: t(`items.${item}`) });
     case "trip":

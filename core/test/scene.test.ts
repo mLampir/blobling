@@ -9,7 +9,8 @@ import * as life from "../src/life";
 import { ACTIVITY_SECONDS } from "../src/model";
 import { Random } from "../src/random";
 import {
-  APP_BACKGROUND, FPS, GROUND, PetScene, SLEEP_FPS, STATUS_HEIGHT, trickAnimation, type SceneView, type Weather,
+  APP_BACKGROUND, FPS, GROUND, PetScene, SLEEP_FPS, STATUS_HEIGHT, houseArea, trickAnimation, type SceneView,
+  type Weather,
 } from "../src/scene";
 import { readSheets } from "../../pi/src/assets";
 import { Disk } from "./helpers";
@@ -303,4 +304,33 @@ test("where the pet stands, for the app to know where a finger touches it", () =
     assert.ok(y >= 0 && y < GROUND && y + h === GROUND + 1, `${stage}: ${y} ${h}`);
     assert.ok(w >= 8 && h >= 4, `${stage}: ${w}×${h}`);
   }
+});
+
+test("the house: outside on the left, inside while the pet sleeps, and the way in and out", () => {
+  const garden = frames({}, 1)[0];
+  for (const step of [1, 2, 3]) {
+    // the app finds the house where the scene draws it
+    const [x, y, w, h] = houseArea(step).map((part) => Math.round(part * 64));
+    const sprite = sheets.house.image(`house_${step}`);
+    assert.deepEqual([x, y, w, h], [0, GROUND + 1 - sprite.height, sprite.width, sprite.height], `step ${step}`);
+    const outside = frames({ house: step }, 1)[0];
+    assert.ok(differing(garden, outside, y, GROUND + 1) > w * h / 3, `step ${step}`);
+
+    // asleep, the scene shows the room; its window (or the hut's doorway) shows the sky, as outside
+    const sky = frames({ asleep: true }, 1, NIGHT)[0];
+    const room = frames({ house: step, asleep: true, house_deco: ["crystal", "lantern", "flag"] }, 1, NIGHT)[0];
+    assert.ok(differing(sky, room, STATUS_HEIGHT, GROUND) > 64 * 20, `step ${step}`);
+    const [wx, wy] = step === 1 ? [6, 40] : [44, 15];
+    assert.deepEqual(color(room, wx, wy), color(sky, wx, wy), `step ${step}`);
+
+    // going in: the pet gets smaller at the door and is then gone; coming out the other way round
+    const going = frames({ house: step, asleep: true, activity: "go_in" }, 90, NIGHT);
+    assert.ok(differing(going[25], going[55]) > 0);
+    const coming = frames({ house: step, activity: "come_out" }, 80);
+    assert.ok(differing(coming[10], coming[50]) > 64 * 20); // first the room, then the garden
+  }
+  // a look in: the room, without the pet
+  const look = frames({ house: 2, look_in: true }, 1)[0];
+  const room = frames({ house: 2, asleep: true }, 1)[0];
+  assert.ok(differing(look, room) > 0);
 });

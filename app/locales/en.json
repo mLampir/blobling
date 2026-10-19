@@ -199,7 +199,9 @@
       "rest_train": "{name} needs a short break before the next exercise.",
       "no_training": "Too late – that exercise is over.",
       "no_nest": "There is no egg in a nest.",
-      "no_gift": "There is no gift lying there."
+      "no_gift": "There is no gift lying there.",
+      "no_house": "There is no house yet.",
+      "inside": "{name} is asleep in the house."
     },
     "notify": {
       "channel": "When your pet needs you",
@@ -326,6 +328,11 @@
       "battle_ball": "{foe} ran after my ball instead of scuffling with me.",
       "guardian": "I got past {foe}, the guardian of the path!",
       "unlock": "Now I know a new way: {area}!",
+      "house": {
+        "1": "Now I have a hut of my own to sleep in!",
+        "2": "My hut has grown into a cabin, with a window!",
+        "3": "My cabin is a real house now!"
+      },
       "find": "On the way I found something: {item}.",
       "trip_home": "I came back home with my backpack.",
       "trip_tired": "I got tired and turned back.",
@@ -443,7 +450,13 @@
       "egg_brood": "brood",
       "effects": {
         "growth": "eggs, babies and children grow faster"
-      }
+      },
+      "house": "🏠 {house}",
+      "house_spots": {
+        "one": "1 spot inside",
+        "other": "{n} spots inside"
+      },
+      "inside": "in the house"
     },
     "kinds": {
       "hat": "Hat",
@@ -505,7 +518,10 @@
       "trip_snack": "ate its snack and felt better",
       "trip_beaten": "had enough and turned back",
       "guardian": "got past the guardian: {foe} 🏆",
-      "unlock": "knows a new way now: {area} 🗺"
+      "unlock": "knows a new way now: {area} 🗺",
+      "house_1": "built itself a hut 🏠",
+      "house_2": "made the hut into a cabin 🏠",
+      "house_3": "made the cabin into a real house 🏠"
     },
     "statistics": {
       "meals": "Meals",
@@ -645,6 +661,11 @@
       "spin": "a round circle",
       "dance": "flat, back and forth",
       "flip": "up"
+    },
+    "houses": {
+      "1": "Hut",
+      "2": "Cabin",
+      "3": "House"
     }
   },
   "settings": {

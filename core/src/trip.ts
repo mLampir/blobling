@@ -214,6 +214,10 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
         events.push(["unlock", area]);
       }
       egg = GUARDIAN_EGGS[trip.area];
+      const step = trip.area === AREAS.at(-1) ? home.buildHouse(state) : null;
+      if (step !== null) {
+        events.push(["house", String(step)]); // past the last guardian: the house grows
+      }
     }
     let item = find(state, trip, rng, weather, true);
     if (egg && home.canAdd(state, egg)) {

@@ -24,7 +24,7 @@ import type { Pet } from "./pet";
  * core/test/api.test.ts compares the API with core/test/api-contract.json and says which number
  * a change needs (CLAUDE.md, "The API between app and Pi").
  */
-export const API_VERSION = 3;
+export const API_VERSION = 4;
 export const API_OLDEST = 1;
 
 /** Where the requests go. `action` and `newEgg` are the pet's own, or the Pi's, which also show it on the panel. */
