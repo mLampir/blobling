@@ -19,6 +19,7 @@ await build({
   outfile: file,
   bundle: true,
   platform: "node",
+  packages: "external", // what comes from npm (Playwright) is loaded from node_modules, not bundled
   format: "esm",
   target: "node22",
   sourcemap: true,
