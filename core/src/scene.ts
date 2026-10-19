@@ -173,6 +173,7 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
   lumoth: ["lumoth_body", "lumoth_faces", 0],
   gemperor: ["gemperor_body", "gemperor_faces", 0],
   angloop: ["angloop_body", "angloop_faces", 0],
+  purrloop: ["purrloop_body", "purrloop_faces", 0],
   lanternling: ["lanternling_body", "lanternling_faces", 0],
   flarelet: ["flarelet_body", "flarelet_faces", 0],
   glimmerock: ["glimmerock_body", "glimmerock_faces", 0],
@@ -195,6 +196,7 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   lumoth: [[255, 170, 220], [190, 130, 235], [255, 255, 255]],
   gemperor: [[190, 150, 255], [140, 95, 215], [255, 255, 255]], // crystal
   angloop: [[255, 210, 80], [235, 150, 40], [255, 250, 225]], // a warmer gold than the first day's
+  purrloop: [[255, 130, 170], [190, 60, 110], [255, 205, 222]], // the heart
   lanternling: [[70, 120, 235], [130, 190, 255], [235, 250, 255]], // calm and blue, like its glass
   flarelet: [[250, 130, 30], [255, 200, 60], [255, 255, 255]], // white-hot
   glimmerock: [[200, 175, 255], [140, 110, 220], [245, 235, 255]], // crystal
@@ -230,6 +232,7 @@ const DIRT: Bitmap = [[60, 60, 60], ["X"]];
 const SICK_TINT: readonly [Color, number] = [[185, 195, 90], 0.28]; // sickly pale, for everything that isn't the teal slime
 const STEAM: Bitmap = [[215, 235, 245], [".X.", "XXX"]];
 const BREATH: Bitmap = [[190, 215, 240], ["XX"]]; // it shows in the cold
+const LOVE: Bitmap = [[255, 130, 170], ["X.X", "XXX", ".X."]];
 const SHELL: Bitmap = [[240, 232, 205], ["X"]];
 
 export const APP_BACKGROUND: Color = [17, 19, 24]; // background of the app (pet.html), also for the app icon
@@ -1304,7 +1307,7 @@ export class PetScene {
     if (special) {
       const sprite = ({
         sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: EMBER, flarelet: EMBER,
-        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: GLINT, angloop: BUBBLE,
+        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: GLINT, angloop: BUBBLE, purrloop: LOVE,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;
       for (let i = 0; i < 10; i++) {
         this.particles.push({

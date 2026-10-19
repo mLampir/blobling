@@ -14,6 +14,7 @@ frameTags):
 - lumoth_body / lumoth_faces       – Lumoth (faces of its own)
 - angloop_body / angloop_faces     – Angloop (faces of its own)
 - gemperor_body / gemperor_faces   – Gemperor (faces of its own)
+- purrloop_body / purrloop_faces   – Purrloop (faces of its own)
 - grumpcap_body / grumpcap_faces   – Grumpcap (faces of its own)
 - cyclopuff_body / cyclopuff_faces – Cyclopuff (one big eye, faces of its own)
 - ember_baby_body / ember_baby_faces, cindlet_body / ember_faces – baby and child of the ember line
@@ -536,6 +537,47 @@ ANGLOOP = [
 ANGLOOP_B = ANGLOOP[:4] + [r[:20] + r[21:27] + "." + r[27:] for r in ANGLOOP[4:9]] + ANGLOOP[9:]
 ANGLOOP_FACE_TOP = 9  # counted from the bulb
 ANGLOOP_TAGS = species_tags([ANGLOOP, ANGLOOP_B], 20, 14)
+
+# Purrloop: what the slime becomes when it is petted a lot – a cat of jelly. Ears of jelly (the
+# right one folded over at the tip), the bulb of the lure turned into a heart, whiskers, and two
+# little paws in front that knead. Cat eyes with a slit, its normal look a slow, content blink
+# (PURRLOOP_EYES). Teal, the pink of the heart, ears and nose, and the amber of the eyes.
+PURRLOOP_PALETTE = BODY_PALETTE | {"P": (255, 130, 170), "k": (255, 205, 222), "Q": (190, 60, 110)}
+PURRLOOP = [
+    "............QQQ.QQQ...........",
+    "...........QPkPQPPPQ..........",
+    "...........QPPPPPPPQ..........",
+    ".......o....QPPPPPQ...........",
+    ".......oo....QPPPQ............",
+    ".......olo....QPQ...oooo......",
+    ".......olPo....Q....oPdo......",
+    ".......olPPo..obo..oPPdo......",
+    ".......olPPbooooooobPPdo......",
+    "........oolllllllbbboo........",
+    "......oolhhllllllbbbbboo......",
+    ".....olhhhlllbbbbbbbbbbdo.....",
+    "....olhhllbbbbbbbbbbbbbbdo....",
+    "....ollhlbbbbbbbbbbbbbbddo....",
+    "...ollbbbbbbbbbbbbbbbbbbddo...",
+    "...olbbbbbbbbbbbbbbbbbbbddo...",
+    "...olbbbbbbbbbbbbbbbbbbbddo...",
+    "...olbbbbbbbbbbbbbbbbbbbddo...",
+    "ll.olbbbbbbbbbbbbbbbbbbbddo.ll",
+    "..lolbbbbbbbbbbbbbbbbbbbddol..",
+    "llolbbbbbbbbbbbbbbbbbbbbbddoll",
+    "..olbbbbbbbbbbbbbbbbbbbbbddo..",
+    "..olbbbbbbbbbbbbbbbbbbbbbddo..",
+    "..olbbbbbbbbbbbbbbbbbbbbbddo..",
+    "..obbbbbboobbbbbbbboobbbbddo..",
+    "..odbbbbolbobbbbbbobbobbbddo..",
+    ".oddbbbbobbobbbbbbobdobbbdddo.",
+    ".oddddddooooddddddooooddddddo.",
+    "..oooooooooooooooooooooooooo..",
+]
+# The heart sways on its stalk
+PURRLOOP_B = [r[:11] + "." + r[11:20] + r[21:] for r in PURRLOOP[:5]] + PURRLOOP[5:]
+PURRLOOP_FACE_TOP = 14  # counted from the heart
+PURRLOOP_TAGS = species_tags([PURRLOOP, PURRLOOP_B], 20, 14)
 
 # Gemperor: the slime grown into a king. The jelly on its back has hardened into a crown of
 # crystals, one of them broken off, and the bulb of the child's lure has sunk into its belly,
@@ -1188,6 +1230,44 @@ ANGLOOP_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
 assert ANGLOOP_FACES.keys() == FACES.keys()
 ANGLOOP_FACE_PALETTE = FACE_PALETTE | {"f": (255, 255, 255)}
 
+# Purrloop: cat eyes (5×5), amber with a slit; its normal look is the slow blink a cat gives the
+# ones it loves. A pink nose over a little ω mouth (6×3). Face 16×8, rosy cheeks most of the time.
+PURRLOOP_EYES = {  # (left, right)
+    "content": ([".....", ".....", "ddddd", "aapaa", ".aaa."],) * 2,
+    "open": ([".aaa.", "aapga", "aapaa", "aapaa", ".aaa."],) * 2,
+    "half": ([".....", ".....", ".....", "ddddd", ".aaa."],) * 2,
+    "closed": ([".....", ".....", "p...p", ".ppp.", "....."],) * 2,
+    "happy": ([".....", "..p..", ".p.p.", "p...p", "....."],) * 2,
+    "sad": (["p....", ".aaa.", "aapga", "aapaa", ".aaa."], ["....p", ".aaa.", "agpaa", "aapaa", ".aaa."]),
+    "cross": (["p...p", ".p.p.", "..p..", ".p.p.", "p...p"],) * 2,
+}
+PURRLOOP_MOUTHS = {
+    "none": ["..nn..", "......", "......"],
+    "small": ["..nn..", "m.mm.m", ".m..m."],
+    "flat": ["..nn..", "..mm..", "......"],
+    "sad": ["..nn..", "..mm..", ".m..m."],
+    "open": ["..nn..", ".mrrm.", "..mm.."],
+    "laugh": ["..nn..", "mmrrmm", ".mrrm."],
+    "chew": ["..nn..", ".mmmm.", "......"],
+}
+PURRLOOP_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
+    "normal": ("content", "small", True),
+    "smile": ("open", "small", True),
+    "blink": ("closed", "small", True),
+    "happy": ("happy", "small", True),
+    "laugh": ("happy", "laugh", True),
+    "sad": ("sad", "sad", False),
+    "tired": ("half", "flat", False),
+    "yawn": ("closed", "open", False),
+    "sick": ("half", "sad", False),
+    "no": ("cross", "flat", False),
+    "eat_open": ("open", "open", False),
+    "eat_closed": ("happy", "chew", True),
+    "sleep": ("closed", "none", False),
+}
+assert PURRLOOP_FACES.keys() == FACES.keys()
+PURRLOOP_FACE_PALETTE = FACE_PALETTE | {"a": (245, 185, 60), "n": (255, 130, 170), "k": (255, 160, 190)}
+
 # Gemperor: a hero's face – bright eyes (4×6) under brows set low at the inner ends, and a broad
 # grin with one fang (8×3). Face 16×9. Its brows only lift when something good is coming.
 GEMPEROR_EYES = {  # (left, right), brow in the top two rows
@@ -1536,6 +1616,23 @@ def angloop_face_grid(eyes, mouth, blush):
     put(ANGLOOP_MOUTHS[mouth], 4, 5)
     if blush:
         put(["kk............kk"], 0, 4)
+    return ["".join(r) for r in rows]
+
+
+def purrloop_face_grid(eyes, mouth, blush):
+    rows = [list("." * 16) for _ in range(8)]
+
+    def put(part, left, top):
+        for y, line in enumerate(part):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[top + y][left + x] = ch
+
+    put(PURRLOOP_EYES[eyes][0], 1, 0)
+    put(PURRLOOP_EYES[eyes][1], 10, 0)
+    put(PURRLOOP_MOUTHS[mouth], 5, 5)
+    if blush:
+        put(["kk............kk"], 0, 5)
     return ["".join(r) for r in rows]
 
 
@@ -2361,6 +2458,8 @@ def main():
     write_sheet("angloop_body", body_sheet(ANGLOOP_TAGS, ANGLOOP_PALETTE),
                 faceTop=ANGLOOP_FACE_TOP, faceCenter="bottom")  # its raised fin sticks out to the side
     write_sheet("angloop_faces", face_sheet(angloop_face_grid, ANGLOOP_FACE_PALETTE, ANGLOOP_FACES))
+    write_sheet("purrloop_body", body_sheet(PURRLOOP_TAGS, PURRLOOP_PALETTE), faceTop=PURRLOOP_FACE_TOP)
+    write_sheet("purrloop_faces", face_sheet(purrloop_face_grid, PURRLOOP_FACE_PALETTE, PURRLOOP_FACES))
     write_sheet("gemperor_body", body_sheet(GEMPEROR_TAGS, GEMPEROR_PALETTE),
                 faceTop=GEMPEROR_FACE_TOP, faceCenter="bottom")  # its raised fist sticks out to the side
     write_sheet("gemperor_faces", face_sheet(gemperor_face_grid, GEMPEROR_FACE_PALETTE, GEMPEROR_FACES))
