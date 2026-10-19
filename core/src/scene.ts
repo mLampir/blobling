@@ -375,6 +375,7 @@ const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwi
 const CANNONBALL: Bitmap = [[70, 70, 85], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
 const PETAL: Bitmap = [[255, 170, 200], ["X"]];
+const CLOD: Bitmap = [[150, 110, 70], ["XX", "X."]]; // what Rumblefluff's hoof kicks up
 const SMOKE: Bitmap = [[175, 175, 185], [".X.", "XXX", ".X."]]; // Filchfox's puff of smoke
 const RAINBOW_SHIMMER: Bitmap[] = RAINBOW.map((color) => [color, [".X.", "XXX", ".X."]]); // Prismist's own spin
 const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
@@ -1212,13 +1213,15 @@ export class PetScene {
         Object.assign(pose, { body: p > 0.1 ? "squash" : "idle", dx: p > 0.1 ? -Math.trunc(p * 16) % 2 * this.facing : 0,
           face: "normal" });
         if (p > 0.15) {
-          this.trickFx(t, "scrape", 0.4, DIRT, 3, -SPRITE / 2 + 4, 1, [-16, -6], [-12, -4], 0.5);
+          this.trickFx(t, "scrape", 0.4, CLOD, 4, -SPRITE / 2 + 6, 2, [-22, -8], [-18, -6], 0.6);
         }
       } else if (p < 0.75) {
-        Object.assign(pose, { body: "stretch", dx: Math.round((p - 0.5) / 0.25 * 8) * this.facing, face: "laugh" });
-        this.trickFx(t, "charge", TRICK_SHOW, BOLT, 5, SPRITE / 2, 16, [10, 26], [-12, 8]);
+        Object.assign(pose, { body: "stretch", dx: Math.round((p - 0.5) / 0.25 * 10) * this.facing, face: "laugh" });
+        if (p > 0.65) {
+          this.trickFx(t, "charge", TRICK_SHOW, BOLT, 8, SPRITE / 2 + 4, 18, [6, 30], [-20, 12]);
+        }
       } else {
-        Object.assign(pose, { body: "squash", dx: Math.round((1 - p) / 0.25 * 8) * this.facing, face: "happy" });
+        Object.assign(pose, { body: "squash", dx: Math.round((1 - p) / 0.25 * 10) * this.facing, face: "happy" });
       }
     } else if (animation === "rainbow") {
       // the spin, and shimmer in the colors of the rainbow rises in an arc over it
