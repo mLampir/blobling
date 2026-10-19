@@ -75,7 +75,7 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "wild_mountain", "visit_cloud", "cloud_egg", "cloud_hatch", "cloud_baby", "nimbit", "nimbit_hint", "nimbit_rain",
   "nimbit_hat", "cloud_evolve", "rumblefluff", "rumblefluff_rain", "rumblefluff_sleep", "rumblefluff_trick", "rumblefluff_storm", "prismist",
   "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip", "prismist_rain",
-  "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
+  "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint", "gemperor_slam", "gemperor_special",
   "angloop", "angloop_night", "angloop_hungry", "angloop_hint", "angloop_lure", "angloop_special",
   "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", ...NEW_SCENES];
 const PETS_DIR = "docs/images/pets";
@@ -366,6 +366,11 @@ const SCENES: Record<string, Scene> = {
   angloop_night: [{ stage: "adult", species: "angloop" }, NIGHT, null],
   angloop_hungry: [{ stage: "adult", species: "angloop", mood: "hungry", needs: ["satiety"] }, DAY, null],
   angloop_hint: [{ hint: "angloop" }, DAY, null],
+  gemperor_slam: [{ stage: "adult", species: "gemperor", activity: "trick", activity_item: "flip:ok" }, DAY, null],
+  gemperor_special: [{
+    stage: "adult", species: "gemperor",
+    trip: trip("stream", { event: "battle", foe: "puddlin", outcome: "win", rounds: [["charge", "flip", "special"]] }),
+  }, DAY, null],
   angloop_lure: [{ stage: "adult", species: "angloop", activity: "trick", activity_item: "bow:ok" }, DAY, null],
   angloop_special: [{
     stage: "adult", species: "angloop",

@@ -64,6 +64,7 @@ const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:lumoth": { spin: "circle" }, // a moth: it flutters round in circles, as round a lamp
   "adult:glimmerock": { spin: "shine" }, // a show: its crystals flash as it turns
   "adult:bouldergrin": { flip: "toss" }, // its top stone does the flip for it and lands back on top
+  "adult:gemperor": { flip: "slam" }, // a king doesn't somersault: it leaps up and lands so hard that crystals shoot up
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
@@ -351,6 +352,7 @@ const LOOT: Bitmap = [[255, 210, 80], ["XX", "XX"]]; // what Filchfox has filche
 const BOLT: Bitmap = [[255, 225, 60], ["X.", ".X", "X."]]; // Rumblefluff's lightning
 const SHIMMER: Bitmap = [[255, 170, 210], [".X.", "X.X", ".X."]]; // the shimmer of Prismist's rainbow
 const LEAFLET: Bitmap = [[150, 225, 110], ["XX", ".X"]]; // a leaf off Twiggle's crown
+const CRYSTAL: Bitmap = [[190, 150, 255], [".X", "XX", "XX"]]; // a shard of Gemperor's crystals
 const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
 const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Parcelbeak's pouch
 const DIRT: Bitmap = [[60, 60, 60], ["X"]];
@@ -668,6 +670,7 @@ export class PetScene {
   private readonly eggCache = new Map<string, Image>();
   private petTop = GROUND - 20; // top row of the pet on the panel (for particles)
   private burstFor: number | null = null; // one-off effects only once per animation
+  private slamAt = -Infinity; // when the crystals last shot up from a landing (Gemperor's flip)
   private throwFor: number | null = null;
   private throwX: number;
   private throwFacing = 1;
@@ -1123,6 +1126,29 @@ export class PetScene {
       Object.assign(pose, { body: "flutter", dx: Math.round(Math.sin(turn) * 7 * up),
         jump: up * (8 + Math.cos(turn) * 3), face: "happy" });
       this.facing = Math.cos(turn) > 0 ? 1 : -1;
+    } else if (animation === "slam") {
+      // up high without turning over, down hard, and crystals shoot up out of the ground on both sides
+      const q = (p - 0.15) / 0.55;
+      if (q > 0 && q < 1) {
+        pose.body = "stretch";
+        pose.jump = q < 0.6 ? Math.sin(q / 0.6 * Math.PI / 2) * 14 : 14 * (1 - ((q - 0.6) / 0.4) ** 2); // slow up, fast down
+      } else if (q >= 1 && p < 0.85) {
+        pose.body = "flat";
+        if (t - this.slamAt > TRICK_SHOW) {
+          this.slamAt = t;
+          for (const side of [-1, 1]) {
+            for (let i = 0; i < 4; i++) {
+              this.particles.push({
+                sprite: CRYSTAL, x: this.x + SPRITE / 2 + side * (SPRITE / 2 - 2), y: GROUND - 3,
+                vx: side * this.rng.uniform(8, 22), vy: -this.rng.uniform(14, 30), life: 0.8,
+              });
+            }
+          }
+        }
+      } else {
+        pose.body = q <= 0 ? "squash" : "idle";
+      }
+      pose.face = q > 0 && q < 0.6 ? "happy" : "laugh";
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
       if (p < 0.1 || p > 0.9) {
@@ -1691,7 +1717,7 @@ export class PetScene {
     if (special) {
       const sprite = ({
         sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: EMBER, flarelet: EMBER,
-        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: GLINT, angloop: LURE_GLOW, purrloop: LOVE,
+        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: CRYSTAL, angloop: LURE_GLOW, purrloop: LOVE,
         roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER, twiggle: LEAFLET, needlenub: LOVE,
         drakwing: EMBER, quill: BUBBLE, steamo: STEAM, lillypot: BUBBLE, rapierre: GLINT, parcelbeak: LETTER,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;
