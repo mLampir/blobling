@@ -93,6 +93,51 @@ test("it leaves something behind, one thing at a time, until somebody does somet
   assert.ok(!kinds.has("snowman")); // no snow, no snowman
 });
 
+test("now and then it finds something small, one at a time, and keeps it until somebody picks it up", () => {
+  const found = new Set<string>();
+  for (let day = 0; day < 20; day++) {
+    const morning = start + day * 86400;
+    let first: string | null = null;
+    for (let t = morning; t < morning + 12 * HOUR; t += HOUR) {
+      model.advance(pet, t, BEDTIME);
+      Object.assign(pet.stats, { satiety: 100, hygiene: 100, energy: 100 });
+      if (pet.found) {
+        first ??= pet.found;
+        assert.equal(pet.found, first); // nothing new turns up while it lies there
+      }
+    }
+    if (first) {
+      found.add(first);
+      const event = pet.events.filter((e) => e.action === "found").at(-1)!;
+      assert.deepEqual([event.item, event.by], [first, "system"]);
+      act(pet, "pet", morning + 12 * HOUR); // somebody was there: unlike a trace, it stays
+      assert.equal(pet.found, first);
+      assert.deepEqual(act(pet, "pickup", morning + 12 * HOUR + 60), [true, null]);
+      assert.deepEqual([pet.found, pet.activity, pet.activity_item], [null, "pickup", first]);
+    }
+  }
+  assert.ok(found.size >= 3, [...found].join()); // mostly a fruit, rarely a seed
+  assert.ok([...found].every((thing) => thing.startsWith("fruit_") || thing.startsWith("seed_")));
+  assert.deepEqual(act(pet, "pickup", start + 30 * 86400), [false, "nothing_found"]);
+});
+
+test("picking it up: a fruit is eaten straight away, a seed is kept, and it stays for the next pet", () => {
+  pet.found = "fruit_berry";
+  pet.stats.satiety = 30;
+  assert.equal(model.availableActions(pet, start).pickup, true);
+  assert.deepEqual(act(pet, "pickup", start), [true, null]);
+  assert.equal(pet.stats.satiety, 60);
+  assert.deepEqual([pet.events.at(-1)!.action, pet.events.at(-1)!.item], ["pickup", "fruit_berry"]);
+  pet.found = "seed_cherry";
+  act(pet, "pickup", start + 60);
+  assert.equal(pet.items.seed_cherry, 1);
+  pet.found = "fruit_cherry";
+  assert.equal(model.nextPet(pet, start + 120).found, "fruit_cherry");
+  pet.asleep = true;
+  assert.equal(model.availableActions(pet, start + 180).pickup, false);
+  assert.deepEqual(act(pet, "pickup", start + 180), [false, "asleep"]);
+});
+
 test("a snowman only in real snow, and it melts once it is warm", () => {
   let built = 0;
   for (let day = 0; day < 4; day++) {

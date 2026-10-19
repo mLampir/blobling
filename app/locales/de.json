@@ -126,6 +126,11 @@
     "seed_sunflower": "Sonnenblumenkern",
     "seed_cherry": "Kicherkirschkern",
     "seed_herb": "Heilkrautsamen",
+    "honeycomb": "Honigwabe",
+    "hazelnut": "Haselnuss",
+    "watercress": "Brunnenkresse",
+    "glowberry": "Leuchtbeere",
+    "pinenut": "Zirbenzapfen",
     "flag": "Wimpel",
     "windmill": "Windrad",
     "lantern": "Laterne",
@@ -199,7 +204,9 @@
       "rest_train": "{name} braucht eine kurze Pause vor der nächsten Übung.",
       "no_training": "Zu spät – die Übung ist vorbei.",
       "no_nest": "Da liegt kein Ei in einem Nest.",
-      "no_gift": "Da liegt kein Geschenk."
+      "no_gift": "Da liegt kein Geschenk.",
+      "boost_waiting": "{name} hat das letzte noch im Bauch.",
+      "nothing_found": "Da liegt nichts."
     },
     "notify": {
       "channel": "Wenn dein Pet dich braucht",
@@ -233,6 +240,16 @@
     "unwrap": "🎁 Geschenk auspacken",
     "unwrapped_fruit": "Drin war: {fruit} – {name} hat es gleich gegessen",
     "unwrapped_seed": "Drin war: {seed} – es liegt jetzt bei deinen Funden",
+    "pickup": "👐 Aufheben: {thing}",
+    "picked_fruit": "Aufgehoben: {fruit} – {name} hat es gleich gegessen",
+    "picked_seed": "Aufgehoben: {seed} – es liegt jetzt bei deinen Funden",
+    "boost": {
+      "heart": "Süß! {name} startet mit einem Herz mehr in die nächste Reise.",
+      "trick": "{name} fühlt sich schlau: Die nächste Trick-Übung zählt doppelt.",
+      "train": "{name} fühlt sich stark: Die nächste Übung zählt doppelt.",
+      "finder": "Die Augen leuchten: {name} entdeckt auf der nächsten Reise bei jeder Rast etwas.",
+      "fresh": "{name} ist voller Tatendrang: Die nächste Reise macht nicht müde."
+    },
     "rename": "✎ Umbenennen",
     "rename_prompt": "Neuer Name",
     "name_prompt": "Es ist geschlüpft! Wie soll es heißen?",
@@ -317,6 +334,7 @@
       },
       "visit": "{pet} hat mich besucht.",
       "gift": "{pet} hat mir ein Geschenk mitgebracht!",
+      "found": "Ich habe im Gras etwas gefunden und für dich aufgehoben: {thing}.",
       "nest": "Wir haben zu zweit ein Nest gebaut – und jetzt liegt ein Ei darin!",
       "wild_friend": "Ich habe {pet} meine Tricks gezeigt, und jetzt sind wir Freunde.",
       "wild_shrug": "Ich habe {pet} meine Tricks gezeigt, aber {pet} fand sie nicht so toll.",
@@ -442,13 +460,19 @@
       "friend_here": "Freundschaft · gerade zu Besuch",
       "egg_brood": "ausbrüten",
       "effects": {
-        "growth": "Ei, Baby und Kind wachsen schneller"
+        "growth": "Ei, Baby und Kind wachsen schneller",
+        "heart": "ein Herz mehr auf der nächsten Reise",
+        "trick": "die nächste Trick-Übung zählt doppelt",
+        "train": "die nächste Übung zählt doppelt",
+        "finder": "findet auf der nächsten Reise bei jeder Rast etwas",
+        "fresh": "die nächste Reise macht nicht müde und bringt so viel wie die erste des Tages"
       }
     },
     "kinds": {
       "hat": "Hut",
       "deco": "Deko",
-      "seed": "Samen"
+      "seed": "Samen",
+      "food": "Futter"
     },
     "events": {
       "meal": "Mahlzeit",
@@ -474,6 +498,13 @@
       "collect": "Ei eingesammelt",
       "gift": "{pet} hat ein Geschenk mitgebracht 🎁",
       "unwrap": "Geschenk ausgepackt: {what}",
+      "found": "hat zu Hause etwas gefunden: {thing}",
+      "pickup": "aufgehoben: {thing}",
+      "honeycomb": "Honigwabe 🍯",
+      "hazelnut": "Haselnuss 🌰",
+      "watercress": "Brunnenkresse 🌱",
+      "glowberry": "Leuchtbeere ✨",
+      "pinenut": "Zirbenzapfen 🌲",
       "evolve": "Entwickeln",
       "hatched": "ist geschlüpft 🐣",
       "child": "ist jetzt ein Kind",

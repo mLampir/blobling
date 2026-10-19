@@ -38,7 +38,6 @@ export const VISIT_CHEER = 5;
 export const VISITS_FOR_NEST = 3;
 export const HEIRLOOM = 0.25; // this part of each battle stat goes into the egg
 export const GIFT_CHANCE = 0.4; // how often a visit that counts brings something
-export const SEED_CHANCE = 0.15; // how often that is a seed rather than a fruit
 
 /** What the tests turn: how often a wild pet is waiting. */
 export const rules = { meetChance: MEET_CHANCE };
@@ -137,10 +136,9 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
   return [["nest", line]];
 }
 
-/** What a friend brings: "fruit_<plant>", or now and then "seed_<plant>" if there is room for it. */
+/** What a friend brings: a small thing (home.smallThing), mostly a fruit and rarely a seed. */
 export function giftFrom(state: PetState, rng: Random): string {
-  const kind = rng.choice(Object.keys(home.PLANTS));
-  return rng.random() < SEED_CHANCE && home.canAdd(state, `seed_${kind}`) ? `seed_${kind}` : `fruit_${kind}`;
+  return home.smallThing(state, rng);
 }
 
 /**
@@ -150,11 +148,7 @@ export function giftFrom(state: PetState, rng: Random): string {
 export function unwrap(state: PetState): string {
   const gift = state.gift!;
   state.gift = null;
-  if (gift.startsWith("seed_")) {
-    home.addItem(state, gift);
-  } else {
-    home.eat(state, gift.slice("fruit_".length));
-  }
+  home.receive(state, gift);
   return gift;
 }
 

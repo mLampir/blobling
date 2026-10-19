@@ -337,6 +337,7 @@
         <button class="soft" id="watch" hidden></button>
         <button class="soft" id="collect" hidden data-t="page.collect"></button>
         <button class="soft" id="unwrap" hidden data-t="page.unwrap"></button>
+        <button class="soft" id="pickup" hidden></button>
       </div>
     </div>
     <div class="tray" id="tray">
@@ -349,6 +350,12 @@
       <button class="thing" data-thing="baton" data-action="trick" data-wand="1"><img alt=""><small data-t="page.things.baton"></small></button>
       <button class="thing" data-thing="medicine" data-action="medicine" data-helps="health" hidden><img alt=""><small data-t="page.things.medicine"></small></button>
       <button class="thing" data-thing="seed" data-action="plant" data-item="berry" id="thing-seed" hidden><img alt=""><small data-t="page.things.seeds"></small></button>
+      <!-- food from trips, while there is some -->
+      <button class="thing" data-thing="honeycomb" data-action="feed" data-item="honeycomb" data-found="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="hazelnut" data-action="feed" data-item="hazelnut" data-found="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="watercress" data-action="feed" data-item="watercress" data-found="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="glowberry" data-action="feed" data-item="glowberry" data-found="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="pinenut" data-action="feed" data-item="pinenut" data-found="1" hidden><img alt=""><small></small></button>
     </div>
     <!-- What goes on instead of the tray: tricks, training, the guessing game, packing -->
     <div class="sheet" id="trick-mode" hidden>
@@ -847,12 +854,19 @@ function render(s) {
   // a friend has left a gift
   $("unwrap").hidden = !s.gift;
   $("unwrap").disabled = !s.actions.unwrap;
+  // it found something at home by itself
+  $("pickup").hidden = !s.found;
+  $("pickup").disabled = !s.actions.pickup;
+  if (s.found) $("pickup").textContent = t("page.pickup", { thing: giftLabel(s.found) });
 
   // The tray: an egg can only be kept warm (by stroking it)
   $("tray").hidden = egg;
   document.querySelectorAll(".thing").forEach((b) => {
     const a = b.dataset.action;
-    b.hidden = egg || (a === "medicine" && !s.sick) || (a === "plant" && !picked(s, "plant"));
+    // food from trips: how much of it there is
+    const found = b.dataset.found && s.items.find((x) => x.id === b.dataset.item);
+    if (found) b.lastElementChild.textContent = `${found.label} ×${found.count}`;
+    b.hidden = egg || (a === "medicine" && !s.sick) || (a === "plant" && !picked(s, "plant")) || (b.dataset.found && !found);
     // the baton shows tricks: practicing needs energy, showing one it knows doesn't
     b.disabled = b.dataset.wand ? s.asleep || !!s.trip : !s.actions[a];
     if (b.dataset.wand && b.disabled && baton) holdBaton(false);
@@ -1087,6 +1101,8 @@ function renderFinds(s) {
   }
   for (const item of s.items) {
     rows.push(item.kind === "seed" ? [item.label, t("page.finds.in_bag", { n: item.count })]
+      : item.kind === "food" ? [item.label, [t("page.finds.in_bag", { n: item.count }),
+        ...item.effects.map((k) => t(`page.finds.effects.${k}`))].join(" · ")]
       : [item.label, [t(`page.kinds.${item.kind}`), ...item.effects.map((k) => t(`page.finds.effects.${k}`))].join(" · "), item]);
   }
   offerTab("finds", rows.length);
@@ -1243,6 +1259,7 @@ function eventText(e) {
     : e.action === "gift" ? t("page.events.gift", { pet: T[`species.${e.item}`] || e.item })
     : e.action === "nest" || e.action === "collect" ? t(`page.events.${e.action}`)
     : e.action === "unwrap" ? t("page.events.unwrap", { what: giftLabel(e.item) })
+    : e.action === "found" || e.action === "pickup" ? t(`page.events.${e.action}`, { thing: giftLabel(e.item) })
     : e.action === "guardian" ? t("page.events.guardian", { foe: T[`foes.${e.item}`] || e.item })
     : e.action === "unlock" ? t("page.events.unlock", { area: T[`areas.${e.item}.name`] || e.item })
     : e.action === "train" ? t("page.events.trained", { skill: T[`skills.${e.item}`] || e.item })
@@ -1254,7 +1271,7 @@ function eventText(e) {
     : T[`page.events.${e.item}`] || T[`page.events.${e.action}`] || e.action;
 }
 
-// What was in a friend's gift: "fruit_<plant>" or "seed_<plant>"
+// What was in a friend's gift, or what the pet found at home: "fruit_<plant>" or "seed_<plant>"
 function giftLabel(gift) {
   const labels = (current && current.item_labels) || {};
   return gift && gift.startsWith("fruit_") ? T[`fruits.${gift.slice(6)}`] || gift : labels[gift] || gift || "";
@@ -1643,7 +1660,8 @@ document.querySelectorAll(".thing").forEach((b) => {
     try {
       const r = await action(b.dataset.action, b.dataset.item, direct ? {} : { throw: where });
       render(r.state);
-      say(r.accepted ? "" : r.message);
+      // food from a trip: what it leaves in the pet
+      say(!r.accepted ? r.message : b.dataset.found ? t(`page.boost.${r.state.boosts.at(-1)}`, { name: r.state.name }) : "");
       if (r.accepted) setTimeout(() => feel(direct ? "munch" : "land"), direct ? 0 : LAND_MS);
       else feel("no");
     } catch (err) {
@@ -1757,6 +1775,12 @@ $("unwrap").addEventListener("click", async () => {
   const gift = r && r.accepted ? r.state.activity_item : "";
   if (gift.startsWith("fruit_")) say(t("page.unwrapped_fruit", { fruit: giftLabel(gift), name: r.state.name }));
   else if (gift) say(t("page.unwrapped_seed", { seed: giftLabel(gift) }));
+});
+$("pickup").addEventListener("click", async () => {
+  const r = await act("pickup");
+  const found = r && r.accepted ? r.state.activity_item : "";
+  if (found.startsWith("fruit_")) say(t("page.picked_fruit", { fruit: giftLabel(found), name: r.state.name }));
+  else if (found) say(t("page.picked_seed", { seed: giftLabel(found) }));
 });
 $("recall").addEventListener("click", async () => {
   const r = await act("trip", "recall");

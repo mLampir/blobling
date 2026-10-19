@@ -9,6 +9,7 @@
 
 import * as battle from "./battle";
 import * as care from "./care";
+import * as food from "./food";
 import * as habits from "./habits";
 import * as home from "./home";
 import * as idle from "./idle";
@@ -49,8 +50,8 @@ const TRAIN_KEYS = battle.SKILLS.map((skill) => `train_${skill}`);
 export const EVENT_LIMIT = 100;
 
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
-  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap"];
-export const FOODS = ["meal", ...Object.keys(care.SNACKS)];
+  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup"];
+export const FOODS = ["meal", ...Object.keys(care.SNACKS), ...Object.keys(food.FOODS)];
 export const GAME_MOVES = ["start", "left", "right"];
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
 export const TRAIN_MOVES = [...battle.SKILLS, "tap", "answer"]; // an exercise, or the answer to one that is waiting
@@ -64,6 +65,7 @@ export const ACTIVITY_SECONDS: Record<string, number> = {
   egg_wobble: 2, hatch: 6, evolve: 8, game_wait: care.GAME_TIMEOUT, game_turn: 2.5,
   trick: 4, build: 10, throw_meal: THROW_SECONDS + 6, throw_snack: THROW_SECONDS + 4,
   trip_start: 4, trip_home: 4, unpack: 6, plant: 3, pick: 4, collect: 4, unwrap: 4,
+  discover: 4, pickup: 4,
   train_strength: 5, train_speed: 3, train_smarts: 3,
   // waiting for the signal, and showing the sequence: as long as the longest one can take
   train_ready: battle.SIGNAL_DELAY[1] + battle.SIGNAL_WINDOW,
@@ -125,6 +127,7 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
   state.deco = [...old.deco];
   state.plant = old.plant;
   state.gift = old.gift; // a friend's gift still lies there
+  state.found = old.found; // and so does what the pet found at home
   return state;
 }
 
@@ -427,6 +430,7 @@ export function availableActions(state: PetState, now: number): Record<string, b
     unpack: packed && !asleep,
     collect: !!state.nest && !asleep,
     unwrap: !!state.gift && !asleep,
+    pickup: !!state.found && !asleep,
     plant: true,
     wear: true,
     deco: true,
@@ -637,7 +641,7 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
     setActivity(state, "no", now);
   }
   clamp(state);
-  const told = action === "unwrap" && reason === null ? state.activity_item : item;
+  const told = (action === "unwrap" || action === "pickup") && reason === null ? state.activity_item : item;
   logEvent(state, now, action, by, { item: told, accepted: reason === null, reason });
   if (reason === null && by !== "system") {
     habits.record(state, action, now);
@@ -645,13 +649,13 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
   return { accepted: reason === null, reason };
 }
 
-/** A meal, or a snack (care.SNACKS): at most MAX_SNACKS within SNACK_WINDOW. */
-function feed(state: PetState, now: number, food: string, thrown: number | null): string | null {
+/** A meal, a snack (care.SNACKS, at most MAX_SNACKS within SNACK_WINDOW) or food from a trip (food.FOODS). */
+function feed(state: PetState, now: number, name: string, thrown: number | null): string | null {
   const s = state.stats;
   if (state.asleep) {
     return "asleep";
   }
-  if (food === "meal") {
+  if (name === "meal") {
     if (s.satiety > 90) {
       return "full";
     }
@@ -668,14 +672,17 @@ function feed(state: PetState, now: number, food: string, thrown: number | null)
     life.record(state, "meals");
     return null;
   }
+  if (food.isFood(name)) {
+    return feedFound(state, now, name, thrown);
+  }
   const snacks = (state.recent.snack ?? []).filter((t) => now - t < SNACK_WINDOW);
   if (snacks.length >= MAX_SNACKS) {
     return "too_many_snacks";
   }
   const factor = repeatFactor(state, "snack", now);
-  const [satiety, liked, weight, health] = care.SNACKS[food];
+  const [satiety, liked, weight, health] = care.SNACKS[name];
   let mood = liked;
-  if (food === care.favorite(state)) {
+  if (name === care.favorite(state)) {
     mood *= care.FAVORITE_BONUS;
     state.counters.favorite_found = 1; // from now on the app shows the favorite snack
   }
@@ -684,10 +691,24 @@ function feed(state: PetState, now: number, food: string, thrown: number | null)
   s.health += health;
   care.addWeight(state, weight);
   care.addBond(state, "snack");
-  setThrown(state, "snack", now, thrown, food, ["snack", food]);
+  setThrown(state, "snack", now, thrown, name, ["snack", name]);
   count(state, "snacks");
-  count(state, `snack_${food}`);
+  count(state, `snack_${name}`);
   life.record(state, "snacks");
+  return null;
+}
+
+/** Food from a trip (food.ts): it doesn't count as a snack; what matters is what it leaves in the pet. */
+function feedFound(state: PetState, now: number, item: string, thrown: number | null): string | null {
+  const reason = food.give(state, item);
+  if (reason !== null) {
+    return reason;
+  }
+  care.addBond(state, "snack");
+  setThrown(state, "snack", now, thrown, item, ["snack", item]);
+  count(state, "found_food");
+  count(state, `food_${item}`);
+  life.record(state, `food_${item}`); // which food a child gets most could decide a form one day
   return null;
 }
 
@@ -801,7 +822,7 @@ function trained(state: PetState, now: number, skill: battle.Skill, score: numbe
   }
   const s = state.stats;
   const factor = repeatFactor(state, `train_${skill}`, now);
-  battle.train(state, skill, score * factor);
+  battle.train(state, skill, score * factor * (food.use(state, "train") ? 2 : 1));
   s.mood += 10 * factor * life.bonusFactor(state, "play");
   s.energy -= battle.TRAIN_COST.energy;
   s.satiety -= battle.TRAIN_COST.satiety;
@@ -926,6 +947,17 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     return null;
   }
 
+  if (action === "pickup") {
+    if (!state.found) {
+      return "nothing_found";
+    }
+    if (state.asleep) {
+      return "asleep";
+    }
+    setActivity(state, "pickup", now, idle.pickUp(state));
+    return null;
+  }
+
   if (action === "feed") {
     return feed(state, now, item!, thrown);
   }
@@ -1047,7 +1079,7 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
       return "rest_trick";
     }
     const factor = repeatFactor(state, "trick", now);
-    const result = care.practice(state, trick, factor, now);
+    const result = care.practice(state, trick, factor * (food.use(state, "trick") ? 2 : 1), now);
     idle.practicedTogether(state, trick);
     s.mood += (result === "fail" ? 3 : 6) * factor;
     if (result === "learned") {

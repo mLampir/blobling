@@ -32,6 +32,12 @@ const THINGS: Record<string, string[]> = {
   baton: ["items:baton"],
   backpack: ["trip:backpack"],
   seed: ["trip:seed"],
+  // food from trips
+  honeycomb: ["trip:honeycomb"],
+  hazelnut: ["trip:hazelnut"],
+  watercress: ["trip:watercress"],
+  glowberry: ["trip:glowberry"],
+  pinenut: ["trip:pinenut"],
 };
 
 /** A thing the player hands the pet (food, the ball, the sponge, the baton, …) as a picture, or "" if there is none. */

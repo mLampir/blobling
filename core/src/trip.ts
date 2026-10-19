@@ -15,6 +15,7 @@
 
 import * as battle from "./battle";
 import * as care from "./care";
+import * as food from "./food";
 import * as home from "./home";
 import * as life from "./life";
 import { Random } from "./random";
@@ -29,15 +30,15 @@ export const AREAS = ["meadow", "forest", "stream", "cave", "mountain"];
 // What can be found where: [find, weight, only in this weather]
 export const FINDS: Record<string, readonly (readonly [string, number, sky.Precipitation])[]> = {
   meadow: [["seed_berry", 4, null], ["seed_sunflower", 4, null], ["flag", 2, null], ["windmill", 1, null],
-    ["daisy", 2, null], ["leaf", 2, null], ["bobble", 4, "snow"]],
+    ["daisy", 2, null], ["leaf", 2, null], ["honeycomb", 3, null], ["bobble", 4, "snow"]],
   forest: [["seed_cherry", 4, null], ["seed_berry", 2, null], ["glowshroom", 2, null], ["lantern", 1, null],
-    ["cap", 2, null], ["snailshell", 4, "rain"]],
+    ["cap", 2, null], ["hazelnut", 3, null], ["snailshell", 4, "rain"]],
   stream: [["seed_berry", 3, null], ["seed_sunflower", 3, null], ["seed_cherry", 2, null], ["cattail", 2, null],
-    ["lily", 2, null], ["boat", 4, "rain"]],
+    ["lily", 2, null], ["watercress", 3, null], ["boat", 4, "rain"]],
   cave: [["seed_cherry", 4, null], ["seed_berry", 3, null], ["seed_herb", 1, null], ["crystal", 2, null],
-    ["batears", 2, null], ["emberstone", 2, null]],
+    ["batears", 2, null], ["emberstone", 2, null], ["glowberry", 3, null]],
   mountain: [["seed_sunflower", 4, null], ["seed_berry", 3, null], ["seed_herb", 1, null], ["cairn", 2, null],
-    ["edelweiss", 2, null], ["snowman", 4, "snow"]],
+    ["edelweiss", 2, null], ["pinenut", 3, null], ["snowman", 4, "snow"]],
 };
 export const STATIONS = [4, 6] as const;
 export const STEP = [10 * 60, 16 * 60] as const; // seconds from one station to the next
@@ -108,8 +109,19 @@ export function plan(state: PetState, area: string, now: number, pack: readonly 
   };
 }
 
+/** Set off. What it has eaten for the way (food.ts) goes along and is used up. */
 export function begin(state: PetState, trip: Trip, now: number): void {
   state.recent.trip = [...(state.recent.trip ?? []).filter((t) => now - t < DAY_WINDOW), now];
+  const boosts = ["heart", "finder", "fresh"].filter((boost) => food.use(state, boost));
+  if (boosts.includes("heart")) {
+    trip.hearts += 1;
+  }
+  if (boosts.includes("fresh")) {
+    trip.factor = DAY_FACTORS[0];
+  }
+  if (boosts.length) {
+    trip.boosts = boosts;
+  }
   state.trip = trip;
 }
 
@@ -254,8 +266,10 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
   while (!returning(trip) && t >= trip.stations[trip.next]) {
     const at = trip.stations[trip.next];
     trip.next += 1;
-    s.energy -= STATION_COST.energy;
-    s.satiety -= STATION_COST.satiety;
+    if (!trip.boosts?.includes("fresh")) {
+      s.energy -= STATION_COST.energy;
+      s.satiety -= STATION_COST.satiety;
+    }
     care.addWeight(state, care.HIKE_WEIGHT);
     if (s.energy < TURN_BACK || s.satiety < TURN_BACK) {
       turnBack(trip, t);
@@ -279,12 +293,10 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
       encounter(state, trip, foe, rng, weather, t, events);
       continue;
     }
-    const item = find(state, trip, rng, weather);
+    const item = find(state, trip, rng, weather, trip.boosts?.includes("finder"));
     if (item) {
       trip.found.push(item);
       events.push(["find", item]);
-    }
-    if (item) {
       happened(trip, { kind: "find", item, at: t });
     } else {
       trip.last = { kind: "rest", item, at: t }; // a rest is not worth a line in the diary

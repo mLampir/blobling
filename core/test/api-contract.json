@@ -1,5 +1,5 @@
 {
-  "api": 3,
+  "api": 4,
   "oldest": 1,
   "routes": [
     "GET /api/pet",
@@ -19,6 +19,7 @@
     "game",
     "medicine",
     "pet",
+    "pickup",
     "plant",
     "play",
     "sleep",
@@ -39,6 +40,7 @@
     "GET /api/pet actions.game": "boolean",
     "GET /api/pet actions.medicine": "boolean",
     "GET /api/pet actions.pet": "boolean",
+    "GET /api/pet actions.pickup": "boolean",
     "GET /api/pet actions.plant": "boolean",
     "GET /api/pet actions.play": "boolean",
     "GET /api/pet actions.recall": "boolean",
@@ -62,6 +64,7 @@
     "GET /api/pet bedtime.start": "string",
     "GET /api/pet bond": "number",
     "GET /api/pet bond_level": "number",
+    "GET /api/pet boosts": "array",
     "GET /api/pet cold": "boolean",
     "GET /api/pet eggs": "array",
     "GET /api/pet evolution.auto_at": "number",
@@ -69,6 +72,7 @@
     "GET /api/pet evolution.due_at": "number",
     "GET /api/pet evolution.next": "string",
     "GET /api/pet favorite_snack": "null",
+    "GET /api/pet found": "null",
     "GET /api/pet friend": "null",
     "GET /api/pet game": "null",
     "GET /api/pet gift": "boolean",

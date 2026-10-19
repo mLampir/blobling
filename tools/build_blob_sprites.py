@@ -2291,6 +2291,12 @@ TRIP_TAGS = {
     "fruit_cherry": [(["..G..", ".G.G.", "rr.rr", "rR.rR"], 1000)],
     "fruit_sunflower": [([".yy.", "yOOy", "yOOy", ".yy."], 1000)],
     "fruit_herb": [([".w.", "wyw", ".w.", ".g."], 1000)],
+    # Food from trips, one per area (core/src/food.ts): given by hand, held up when it is found
+    "honeycomb": [([".YYYY.", "YyYyYY", "YYyYyY", "YyYyYY", ".YYYY.", "..y..."], 1000)],
+    "hazelnut": [(["..l..", "dDdDd", ".ttt.", "ttttT", "ttttT", ".tTT."], 1000)],
+    "watercress": [(["l.l.l", "glglg", ".ggg.", "..g..", "..G.."], 1000)],
+    "glowberry": [(["..g..", ".cgc.", "cfccf", "cCcCC", ".cC.."], 1000)],
+    "pinenut": [(["..g..", ".tTt.", "tTtTt", ".tTt.", "tTtTt", ".tTt.", "..T.."], 1000)],
     # Plant: sprout, young plant, then per kind without and with a ripe fruit
     "sprout": [(["l...l", "gl.lg", ".ggg.", "..g..", "..G.."], 1000)],
     "young": [(["..lgl..", ".lgggl.", "lggGggl", ".ggGgg.", "..gGg..", "...G...", "..gGg..", "...G..."], 1000)],

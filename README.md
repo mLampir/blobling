@@ -13,7 +13,8 @@ a day and also tells you the time and the weather.
 - **It lives with you.** The sky follows the real time of day, with sunrise
   and sunset for your location; clouds, rain and snow come from the real
   weather. On a cold morning the pet wakes up shivering, until you rub it warm.
-  Left to itself, it plays and practices on its own, it waits at the edge of
+  Left to itself, it plays and practices on its own, now and then it finds a
+  little something and keeps it for you, it waits at the edge of
   the panel around the times it is usually fed, and when you come back it
   tells you what it has been up to, as a little story in its own words. With
   the pet on the phone, it calls you when it really needs you, but never at
@@ -24,7 +25,8 @@ a day and also tells you the time and the weather.
 - **It grows up.** It hatches from an egg and grows over ten days into one of
   three adult forms, depending on how you cared for it. It learns tricks, trains,
   goes on trips, scuffles with whoever gets in its way there and brings things
-  home, and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
+  home, among them food that gives it an edge on the next trip or in training,
+  and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
   one of the guardians keeps a rare egg that something else hatches from.
 - **It makes friends.** A grown-up pet can impress a wild pet with its tricks.
   The friend comes to visit, brings a gift now and then, and in time the two

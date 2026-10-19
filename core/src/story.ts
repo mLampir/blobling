@@ -136,6 +136,9 @@ function piece(event: PetEvent, t: Translate): Piece | null {
       return make("visit", 5, { pet: t(`species.${item}`) });
     case "gift":
       return make("gift", 6, { pet: t(`species.${item}`) });
+    case "found":
+      // something small it found at home: a fruit or a seed
+      return make("found", 3, { thing: item.startsWith("fruit_") ? t(`fruits.${item.slice(6)}`) : t(`items.${item}`) });
     case "nest":
       return make("nest", 8);
     case "wild":

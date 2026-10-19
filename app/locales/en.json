@@ -126,6 +126,11 @@
     "seed_sunflower": "Sunflower seed",
     "seed_cherry": "Giggle cherry pit",
     "seed_herb": "Healing herb seed",
+    "honeycomb": "Honeycomb",
+    "hazelnut": "Hazelnut",
+    "watercress": "Watercress",
+    "glowberry": "Glow berry",
+    "pinenut": "Pine cone",
     "flag": "Pennant",
     "windmill": "Pinwheel",
     "lantern": "Lantern",
@@ -199,7 +204,9 @@
       "rest_train": "{name} needs a short break before the next exercise.",
       "no_training": "Too late – that exercise is over.",
       "no_nest": "There is no egg in a nest.",
-      "no_gift": "There is no gift lying there."
+      "no_gift": "There is no gift lying there.",
+      "boost_waiting": "{name} still has the last one in its tummy.",
+      "nothing_found": "There is nothing lying there."
     },
     "notify": {
       "channel": "When your pet needs you",
@@ -233,6 +240,16 @@
     "unwrap": "🎁 Unwrap the gift",
     "unwrapped_fruit": "There was a {fruit} in it – {name} ate it straight away",
     "unwrapped_seed": "There was a {seed} in it – it is among your finds now",
+    "pickup": "👐 Pick up: {thing}",
+    "picked_fruit": "Picked up: {fruit} – {name} ate it straight away",
+    "picked_seed": "Picked up: {seed} – it is among your finds now",
+    "boost": {
+      "heart": "Sweet! {name} sets off on its next trip with one more heart.",
+      "trick": "{name} feels clever: the next trick practice counts double.",
+      "train": "{name} feels strong: the next exercise counts double.",
+      "finder": "{name}'s eyes are shining: on its next trip it spots something at every rest.",
+      "fresh": "{name} is full of beans: the next trip won't tire it."
+    },
     "rename": "✎ Rename",
     "rename_prompt": "New name",
     "name_prompt": "It hatched! What would you like to call it?",
@@ -317,6 +334,7 @@
       },
       "visit": "{pet} came to visit me.",
       "gift": "{pet} brought me a present!",
+      "found": "I found something in the grass and kept it for you: {thing}.",
       "nest": "The two of us built a nest – and now there's an egg in it!",
       "wild_friend": "I showed {pet} my tricks, and now we're friends.",
       "wild_shrug": "I showed {pet} my tricks, but {pet} wasn't impressed.",
@@ -442,13 +460,19 @@
       "friend_here": "a friend · visiting right now",
       "egg_brood": "brood",
       "effects": {
-        "growth": "eggs, babies and children grow faster"
+        "growth": "eggs, babies and children grow faster",
+        "heart": "one more heart on the next trip",
+        "trick": "the next trick practice counts double",
+        "train": "the next exercise counts double",
+        "finder": "finds something at every rest of the next trip",
+        "fresh": "the next trip doesn't tire it and brings as much as the first of the day"
       }
     },
     "kinds": {
       "hat": "Hat",
       "deco": "Decoration",
-      "seed": "Seed"
+      "seed": "Seed",
+      "food": "Food"
     },
     "events": {
       "meal": "Meal",
@@ -474,6 +498,13 @@
       "collect": "collected the egg",
       "gift": "{pet} brought a gift 🎁",
       "unwrap": "unwrapped a gift: {what}",
+      "found": "found something at home: {thing}",
+      "pickup": "picked up: {thing}",
+      "honeycomb": "Honeycomb 🍯",
+      "hazelnut": "Hazelnut 🌰",
+      "watercress": "Watercress 🌱",
+      "glowberry": "Glow berry ✨",
+      "pinenut": "Pine cone 🌲",
       "evolve": "Evolve",
       "hatched": "hatched 🐣",
       "child": "is a child now",
