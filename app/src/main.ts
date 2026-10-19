@@ -17,7 +17,7 @@
 import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
 import { MAX_NAME } from "../../core/src/pet";
 import type { Location } from "../../core/src/sun";
-import { locales } from "./assets";
+import { locales, soundFiles } from "./assets";
 import { haptic } from "./haptics";
 import { iconUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
@@ -66,7 +66,7 @@ translate();
 
 const remote = mode === "pi" ? new RemotePet(connectedTo ?? "", i18n) : null;
 const local = remote ? null : LocalPet.open(i18n);
-const sounds = pageSounds();
+const sounds = pageSounds(soundFiles);
 
 const app = {
   /** Where the pet lives: "local" (on the phone) or "pi". */

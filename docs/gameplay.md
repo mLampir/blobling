@@ -486,12 +486,14 @@ game won) and a firm one when it evolves. Plain buttons and menus stay
 still, and quick strokes are spaced out, so it stays a touch and not a
 rattle.
 
-With each buzz comes a short sound: a boop for a tap on the pet, a plop
-when a thing lands, a fanfare for a trick learned or a game won, a lullaby
-when it goes to bed. Both come from one call in the page (`feel` in
-`app/pet.html`). The sounds are made in the app itself (`app/src/sound.ts`),
-not played from files, and can be turned off under *More*. With a Pi they
-come from the phone too; the Pi stays silent.
+With each buzz comes a short sound, a soft chiptune effect that fits the
+pixels: a boop for a tap on the pet, a plop when a thing lands, a little
+fanfare for a trick learned or a game won, a lullaby when it goes to bed.
+Both come from one call in the page (`feel` in `app/pet.html`). The sounds
+are small WAV files in `app/pet/sounds/`, built into the app's script and
+played by `app/src/sound.ts`; like the sprites they are generated, by
+`npm run sounds` from the recipes in `tools/sfx.ts`. They can be turned off
+under *More*. With a Pi they come from the phone too; the Pi stays silent.
 
 Connected to a Pi, the screen is the same; the scene is then the panel's own
 picture. The pet lives on the Pi either way: it goes on with its day and can

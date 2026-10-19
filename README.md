@@ -326,6 +326,7 @@ npm run build    # the server for the Pi (dist/pi/server.mjs), the app (dist/app
 export LED_MATRIX_BDF_DIR=<path-to>/rpi-rgb-led-matrix/fonts
 npm run preview -- --spoiler-free   # → pet_preview.png
 npm run preview -- play --gif       # → pet_play.gif
+npm run sounds                      # the sound files, from the recipes in tools/sfx.ts → app/pet/sounds/
 ```
 
 ### The app
@@ -447,6 +448,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `app/locales/` | All texts of the interface, one file per language |
 | `docs/privacy.md`, `docs/support.md` (each with a `.de.md`), `docs/_config.yml` | The app's privacy policy and support page for the stores, and the settings of the GitHub Pages site that serves them |
 | `app/pet/assets/` | The sprite sheets |
+| `app/pet/sounds/` | The app's sounds (WAV), written by `npm run sounds` from the recipes in `tools/sfx.ts`; don't edit them by hand |
 | `systemd/` | The service, and the update unit the button starts |
 | `pi/src/update.ts` | Looks for a newer release and starts the update unit (only on a Pi installed from a release) |
 | `tools/deploy.mjs` | `npm run deploy`: builds the app on the PC, copies it to the Pi and runs the setup there |
@@ -457,7 +459,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `codemagic.yaml` | Builds the apps for the stores on a release tag and uploads them for testing |
 | `.github/workflows/android-test.yml` | Started by hand: a test APK of the app, to install on an Android phone (a debug build, kept for a week) |
 | `.github/workflows/test.yml` | Tests and type check on every pull request and every push to `main` |
-| `tools/` | Preview of the scene, and the pixel art as text → sprite sheets (the one Python tool, it needs `pip install -r requirements.txt`); build and test scripts |
+| `tools/` | Preview of the scene, the pixel art as text → sprite sheets (the one Python tool, it needs `pip install -r requirements.txt`), the sound recipes and their synthesizer → sound files (`sfx.ts`, `sounds.ts`); build and test scripts |
 
 
 ## License and credits
