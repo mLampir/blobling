@@ -166,7 +166,7 @@ test("a cloud lamb that grows up in the rain becomes a thundercloud", () => {
 test("the leaf, duck, hippo and beak lines grow up by what the child did most", () => {
   const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
   const cases: [string, string, string, string][] = [
-    ["leaf", "love", "needlenub", "twiggle"], ["duck", "wins", "drakwing", "quill"],
+    ["leaf", "love", "needlenub", "twiggle"], ["duck", "battles", "drakwing", "quill"],
     ["hippo", "baths", "steamo", "lillypot"], ["beak", "tricks", "rapierre", "parcelbeak"],
   ];
   for (const [line, kind, often, otherwise] of cases) {

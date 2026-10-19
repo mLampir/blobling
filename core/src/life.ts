@@ -61,7 +61,7 @@ export const GLIMMEROCK_LOVE_PER_DAY = 5; // the stone line: petting polishes it
 export const ROAMTAIL_TRIPS_PER_DAY = 1; // the fox line: a trip a day makes a wanderer → roamtail, otherwise filchfox
 // The cloud line is decided by the weather when it grows up: in the rain → rumblefluff, otherwise prismist
 export const NEEDLENUB_LOVE_PER_DAY = 5; // the leaf line: a cactus that gets cuddled → needlenub, otherwise twiggle
-export const DRAKWING_WINS_PER_DAY = 1; // the duck line: a scuffle won a day → drakwing, otherwise quill
+export const DRAKWING_BATTLES_PER_DAY = 2; // the duck line: scuffles a day, won or not → drakwing, otherwise quill
 export const STEAMO_BATHS_PER_DAY = 2; // the hippo line: bathed this often → steamo, otherwise lillypot
 export const RAPIERRE_TRICKS_PER_DAY = 2; // the beak line: tricks practiced → rapierre, otherwise parcelbeak
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
@@ -107,7 +107,7 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
 };
 
 export function newDiary(): Record<string, number> {
-  return { minutes: 0, good_minutes: 0, meals: 0, snacks: 0, plays: 0, love: 0, trips: 0, wins: 0, baths: 0, tricks: 0 };
+  return { minutes: 0, good_minutes: 0, meals: 0, snacks: 0, plays: 0, love: 0, trips: 0, battles: 0, baths: 0, tricks: 0 };
 }
 
 /** The line a species belongs to. */
@@ -190,7 +190,7 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", rain
     return (diary.love ?? 0) / days >= NEEDLENUB_LOVE_PER_DAY ? "needlenub" : "twiggle";
   }
   if (line === "duck") {
-    return (diary.wins ?? 0) / days >= DRAKWING_WINS_PER_DAY ? "drakwing" : "quill";
+    return (diary.battles ?? 0) / days >= DRAKWING_BATTLES_PER_DAY ? "drakwing" : "quill";
   }
   if (line === "hippo") {
     return (diary.baths ?? 0) / days >= STEAMO_BATHS_PER_DAY ? "steamo" : "lillypot";

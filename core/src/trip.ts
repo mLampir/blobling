@@ -223,10 +223,10 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
   state.replays = [...state.replays, replay].slice(-REPLAYS);
   events.push(["battle", `${foe}:${outcome}`]);
   count.battles = (count.battles ?? 0) + 1;
+  life.record(state, "battles"); // in a child's care diary too, however it ends (the duck line)
   if (outcome === "win") {
     let egg: string | null = null;
     count.battles_won = (count.battles_won ?? 0) + 1;
-    life.record(state, "wins"); // in a child's care diary too (the duck line)
     state.stats.mood += guardian ? GUARDIAN_MOOD : WIN_MOOD;
     if (guardian && !state.guardians.includes(trip.area)) {
       state.guardians.push(trip.area);

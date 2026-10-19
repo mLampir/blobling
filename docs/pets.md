@@ -520,11 +520,13 @@ scuffle it blows bubbles.
 <details>
 <summary>Show how to get them</summary>
 
-Only scuffles won count for this line, on trips (guardians included).
+Only scuffles count for this line, on trips (guardians included), whether
+it wins them or not. A child that is ready to grow up can still go on a few
+more trips first.
 
 | Form | Rule |
 |---|---|
-| Drakwing | the child won at least one scuffle a day on average |
+| Drakwing | the child had at least 2 scuffles a day on average |
 | Captain Quill | everything else |
 
 From its second day on, Paddlet's curl shows where it is heading:
