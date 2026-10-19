@@ -7,7 +7,7 @@ import * as model from "../src/model";
 import * as notify from "../src/notify";
 import { Pet } from "../src/pet";
 import type { PetState } from "../src/state";
-import { BEDTIME, HOUR, at, grown } from "./helpers";
+import { BEDTIME, HOUR, act, at, grown } from "./helpers";
 
 let start: number;
 let pet: PetState;
@@ -35,6 +35,17 @@ test("looking ahead changes nothing", () => {
   const before = structuredClone(pet);
   notify.nextReminder(pet, start, BEDTIME);
   assert.deepEqual(pet, before);
+});
+
+test("looking ahead past the end of a trip leaves the travel diary alone", () => {
+  pet.stats.satiety = 90;
+  act(pet, "trip", start, { item: "meadow" });
+  const back = pet.trip!.end;
+  const before = structuredClone(pet);
+  const reminder = notify.nextReminder(pet, start, BEDTIME)!;
+  assert.deepEqual(pet, before);
+  assert.deepEqual(pet.travels, []);
+  assert.ok(reminder.at >= back, "no call while it is away");
 });
 
 test("a need it already has has been seen", () => {
