@@ -40,7 +40,24 @@ const PETS: Record<string, [string, string]> = {
   roamtail: ["adult", "roamtail"], filchfox: ["adult", "filchfox"],
   cloud_egg: ["egg", "cloud"], cloud_baby: ["baby", "cloud"], nimbit: ["child", "cloud"],
   rumblefluff: ["adult", "rumblefluff"], prismist: ["adult", "prismist"],
+  leaf_egg: ["egg", "leaf"], leaf_baby: ["baby", "leaf"], sproutlet: ["child", "leaf"],
+  twiggle: ["adult", "twiggle"], needlenub: ["adult", "needlenub"],
+  duck_egg: ["egg", "duck"], duck_baby: ["baby", "duck"], paddlet: ["child", "duck"],
+  quill: ["adult", "quill"], drakwing: ["adult", "drakwing"],
+  hippo_egg: ["egg", "hippo"], hippo_baby: ["baby", "hippo"], soakling: ["child", "hippo"],
+  lillypot: ["adult", "lillypot"], steamo: ["adult", "steamo"],
+  beak_egg: ["egg", "beak"], beak_baby: ["baby", "beak"], crestling: ["child", "beak"],
+  parcelbeak: ["adult", "parcelbeak"], rapierre: ["adult", "rapierre"],
 };
+// The leaf, duck, hippo and beak lines: per line its line, child and adults, for the scenes below
+const NEW_LINES: [string, string, string, string][] = [
+  ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
+  ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
+];
+const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
+  NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
+  [a, b].flatMap((adult) => ["", "_sad", "_sleep", "_trick", "_rain"].map((what) => `${adult}${what}`))),
+["wild_forest_leaf", "wild_stream_hippo", "visit_beak", "visit_duck"]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
 // leaves out the scenes that are only there to show another form, another line or what the lure
 // gives away, and plays the remaining scenes of an adult with that form. Of the trips it shows
@@ -60,7 +77,7 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip", "prismist_rain",
   "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
   "angloop", "angloop_night", "angloop_hungry", "angloop_hint",
-  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint"];
+  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", ...NEW_SCENES];
 const PETS_DIR = "docs/images/pets";
 const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
@@ -415,6 +432,34 @@ const SCENES: Record<string, Scene> = {
   prismist_sad: [{ stage: "adult", species: "prismist", mood: "sad", needs: ["satiety"] }, DUSK, null],
   prismist_sleep: [{ stage: "adult", species: "prismist", asleep: true }, NIGHT, null],
   prismist_trip: [{ stage: "adult", species: "prismist", hat: "cap", trip: trip("mountain") }, DAY, null],
+  // the leaf, duck, hippo and beak lines
+  ...Object.fromEntries(NEW_LINES.flatMap(([line, , often, special]) => [
+    [`${line}_egg`, [{ stage: "egg", species: line, ready: true }, DAY, null]],
+    [`${line}_hatch`, [{ stage: "baby", species: line, activity: "hatch", activity_item: `egg:${line}` }, DAY, null]],
+    [`${line}_baby`, [{ stage: "baby", species: line, mood: "happy" }, DAY, null]],
+    [`${line}_child`, [{ species: line }, DAY, null]],
+    [`${line}_hint`, [{ species: line, hint: special, mood: "happy" }, DAY, null]],
+    [`${line}_evolve`, [{ stage: "adult", species: often, activity: "evolve", activity_item: `child:${line}` }, DAY,
+      null]],
+  ])),
+  ...Object.fromEntries(NEW_LINES.flatMap(([, , a, b]) => [a, b].flatMap((adult) => [
+    [adult, [{ stage: "adult", species: adult, mood: "happy" }, DAY, null]],
+    [`${adult}_sad`, [{ stage: "adult", species: adult, mood: "sad", needs: ["satiety"] }, DUSK, null]],
+    [`${adult}_sleep`, [{ stage: "adult", species: adult, asleep: true }, NIGHT, null]],
+    [`${adult}_trick`, [{ stage: "adult", species: adult, activity: "trick", activity_item: "flip:ok" }, DAY, null]],
+    [`${adult}_rain`, [{ stage: "adult", species: adult }, DAY, RAIN]],
+  ]))),
+  wild_forest_leaf: [{
+    stage: "adult", species: "roamtail",
+    trip: trip("forest", { event: "wild", event_age: 4.0, wild: "twiggle", outcome: "friend", rounds: [["bow", true]] }),
+  }, DAY, null],
+  wild_stream_hippo: [{
+    stage: "adult", species: "twiggle",
+    trip: trip("stream", { event: "wild", event_age: 4.0, wild: "steamo", outcome: "friend", rounds: [["bow", true]] }),
+  }, DAY, null],
+  visit_beak: [{ stage: "adult", species: "needlenub", visitor: { species: "rapierre", age: 60, left: 500 } }, DAY, null],
+  visit_duck: [{ stage: "adult", species: "parcelbeak", visitor: { species: "drakwing", age: 60, left: 500 } }, DAY,
+    null],
 };
 
 const assets = readAssets(BDF_FONT_DIR);

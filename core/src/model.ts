@@ -1039,6 +1039,7 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     care.addBond(state, "clean");
     setActivity(state, "clean", now);
     count(state, "cleanups");
+    life.record(state, "baths"); // in a child's care diary (the hippo line)
     return null;
   }
 
@@ -1107,6 +1108,7 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     }
     s.energy -= 5;
     care.addBond(state, "trick", factor);
+    life.record(state, "tricks"); // practiced, in a child's care diary (the beak line)
     state.game = null; // this ends a mini-game in progress
     setActivity(state, "trick", now, `${trick}:${result}`);
     count(state, "tricks");

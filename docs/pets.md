@@ -158,8 +158,18 @@ other adults, and another rule for which adult it becomes.
 <details>
 <summary>Show where a rare egg comes from</summary>
 
-The guardian of the cave has been sitting on the **ember egg**. It leaves the
-egg behind the first time a pet gets past it, so every pet can earn it once.
+Three guardians have been sitting on a rare egg:
+
+| Area | Guardian | Egg |
+|---|---|---|
+| Meadow | Crowcomb | **beak egg** |
+| Stream | Ripplesprite | **duck egg** |
+| Cave | Gloompeep | **ember egg** |
+
+A guardian leaves its egg behind the first time a pet gets past it, so every
+pet can earn each of them once. A pet that got past a guardian before that
+guardian had an egg for it (or while there was no room for one among the
+finds) finds the egg at the end of the path on a later trip to that area.
 After unpacking, the egg is among the finds and stays there, from one pet to
 the next, until you tap **brood** next to it.
 
@@ -179,18 +189,22 @@ a pet meets most often, Lumoth the rarest, and Grumpcap only comes out in the
 rain.
 
 At the stream live the two adults of the stone line (below): Bouldergrin, and
-more rarely Glimmerock. A friend of theirs is the only way to a stone egg.
+more rarely Glimmerock. A friend of theirs is the only way to a stone egg. The
+two adults of the hippo line bathe there too: Lillypot, and more rarely
+Steamo; they are the only way to a hippo egg.
 
 In the forest live the two adults of the fox line (below): Filchfox, and more
-rarely Roamtail. A friend of theirs is the only way to a fox egg.
+rarely Roamtail. A friend of theirs is the only way to a fox egg. The two
+adults of the leaf line live there too: Twiggle, and more rarely Needlenub;
+they are the only way to a leaf egg.
 
 On the mountain live the two adults of the cloud line (below): Rumblefluff,
 which only comes out in the rain, and more rarely Prismist. A friend of theirs
 is the only way to a cloud egg.
 
-The cave has no wild pets so far. The ember line
-has none: its egg comes from a guardian. An ember pet with a slime for a
-friend can still lay an ember egg, though.
+The cave has no wild pets so far. The ember, duck and beak lines have none:
+their eggs come from guardians. A pet of one of them with a slime for a friend
+can still lay an egg of its own line, though.
 
 The values are in `core/src/wild.ts`.
 
@@ -415,6 +429,218 @@ From its second day on, Nimbit's bell shows what it would become right now:
 | yellow | nothing yet (the first day) |
 | storm blue, while it rains | Rumblefluff |
 | rainbow pink | Prismist |
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+### The leaf line
+
+<details>
+<summary>Show the leaf line</summary>
+
+| | Stage |
+|---|---|
+| ![Leaf egg](images/pets/leaf_egg.png) | **Leaf egg** – a seed with an acorn cap of woven husk and small leaves for speckles |
+| ![Leaf baby](images/pets/leaf_baby.png) | **Baby** – a green slime wearing the top of its seed as a tilted cap, with a sprout on top |
+| ![Sproutlet](images/pets/sproutlet.png) | **Child: Sproutlet** – a seedling with its seed cap pulled down to the eyes like a helmet, two leaves on top (a small one and a big one that flops to the right) and two little roots for feet |
+
+The stages last as long as the slime's. What the adults keep is the seed cap,
+grown and woven into a pot. A plant likes the rain, so nothing of this line
+needs an umbrella.
+
+![Twiggle](images/pets/twiggle.png)
+
+**Twiggle**, an old bonsai master that walks around in its pot. Pads of
+leaves like clouds sit on a gnarled trunk, one reaching far to the right, and
+the pot stands on its roots. It has a calm old face with half-shut eyes and a
+beard of moss, and it is patient: it gets tired more slowly. In a scuffle,
+leaves fly off its crown.
+
+![Needlenub](images/pets/needlenub.png)
+
+**Needlenub**, a round cactus in the same pot that wants nothing more than to
+be petted. Its little arms are always up for a hug, petting means more to it
+than to anyone, and the one flower on its head only opens when it is happy;
+otherwise it is a bud. It stays in its pot rather than walking.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+Only petting counts for this line: a cactus that gets cuddled.
+
+| Form | Rule |
+|---|---|
+| Needlenub | the child was petted at least 5 times a day on average |
+| Twiggle | everything else |
+
+From its second day on, Sproutlet's leaves show where it is heading:
+
+| Leaves | Heading for |
+|---|---|
+| fresh green | nothing yet (the first day) |
+| the deep green of an old tree | Twiggle |
+| pink, like a cactus flower | Needlenub |
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+### The duck line
+
+<details>
+<summary>Show the duck line</summary>
+
+| | Stage |
+|---|---|
+| ![Duck egg](images/pets/duck_egg.png) | **Duck egg** – a cream egg whose lower half floats in pond water |
+| ![Duck baby](images/pets/duck_baby.png) | **Baby** – a yellow slime with a curl of down on top, a little bill and orange webbed feet |
+| ![Paddlet](images/pets/paddlet.png) | **Child: Paddlet** – a duckling that still sits in the bottom half of its eggshell and paddles it like a little boat |
+
+The stages last as long as the slime's. What the adults keep is the curl. A
+duck likes the rain, so nothing of this line needs an umbrella.
+
+![Drakwing](images/pets/drakwing.png)
+
+**Drakwing**, a duck that is a little dragon. Its mallard-green head has a
+horn where the curl was, its wide orange bill puffs little flames, it has
+small bat wings and a spiky tail, and its belly is still duckling yellow. A
+fire needs feeding: it gets hungry faster. In a scuffle, it breathes embers.
+
+![Captain Quill](images/pets/quill.png)
+
+**Captain Quill**, an old sea duck in a captain's cap with the curl sticking
+out under it, a sailor collar and a red scarf. It loves a good game, and in a
+scuffle it blows bubbles.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+Only scuffles count for this line, on trips (guardians included), whether
+it wins them or not. A child that is ready to grow up can still go on a few
+more trips first.
+
+| Form | Rule |
+|---|---|
+| Drakwing | the child had at least 2 scuffles a day on average |
+| Captain Quill | everything else |
+
+From its second day on, Paddlet's curl shows where it is heading:
+
+| Curl | Heading for |
+|---|---|
+| yellow | nothing yet (the first day) |
+| a mallard's green | Drakwing |
+| the navy of a captain's cap | Captain Quill |
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+### The hippo line
+
+<details>
+<summary>Show the hippo line</summary>
+
+| | Stage |
+|---|---|
+| ![Hippo egg](images/pets/hippo_egg.png) | **Hippo egg** – a lavender egg that has been in the mud, caked at the bottom with drips going up |
+| ![Hippo baby](images/pets/hippo_baby.png) | **Baby** – a round lavender baby with two little ears, a big pale muzzle and pink cheeks; wider and lower than the slime |
+| ![Soakling](images/pets/soakling.png) | **Child: Soakling** – a young hippo on its way to the bath, a striped towel folded on its head with its little ears poking out |
+
+The stages last as long as the slime's. What the adults keep is the towel.
+
+![Lillypot](images/pets/lillypot.png)
+
+**Lillypot**, a pond hippo. Lily pads grow on its back like a coat and a lotus
+is tucked into the towel on its head. It is calm and half asleep anyway: it
+gets tired more slowly, and it is wet enough not to need an umbrella. In a
+scuffle, it blows bubbles.
+
+![Steamo](images/pets/steamo.png)
+
+**Steamo**, the sauna master. Pink from the heat, eyes closed in bliss, a
+towel wound round its head like a turban and steam rising off it. It is
+always fresh from the sauna: it stays clean longer and gets sick less often.
+In a scuffle, it lets off steam.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+Only baths count for this line.
+
+| Form | Rule |
+|---|---|
+| Steamo | the child was bathed at least twice a day on average |
+| Lillypot | everything else |
+
+From its second day on, the stripe on Soakling's towel shows where it is
+heading:
+
+| Stripe | Heading for |
+|---|---|
+| pink | nothing yet (the first day) |
+| red hot | Steamo |
+| the green of a lily pad | Lillypot |
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+### The beak line
+
+<details>
+<summary>Show the beak line</summary>
+
+| | Stage |
+|---|---|
+| ![Beak egg](images/pets/beak_egg.png) | **Beak egg** – a wild bird's egg, robin blue with brown freckles of every size |
+| ![Beak baby](images/pets/beak_baby.png) | **Baby** – a fluffy chick, grey-brown down with a lighter belly and a red crest |
+| ![Crestling](images/pets/crestling.png) | **Child: Crestling** – a round young bird whose crest has grown into three feathers, with flying goggles pushed up on it: it wants to fly long before it can |
+
+The stages last as long as the slime's. What the adults keep is the red
+crest; only the beak tells them apart.
+
+![Rapierre](images/pets/rapierre.png)
+
+**Rapierre**, a hummingbird fencer. Slim and shimmering green, it holds its
+long needle beak like a rapier, the crest swept back like a musketeer's plume.
+It never lands: it hovers, one wing a blur. A hummingbird burns through
+everything: it gets tired and hungry faster.
+
+![Parcelbeak](images/pets/parcelbeak.png)
+
+**Parcelbeak**, a pelican mail carrier with a postman's cap, the crest
+sticking through it, a huge orange bill and a mail bag across its chest. With
+a letter for everyone, it is always in a good mood: its mood drops more
+slowly. In a scuffle, letters fly out of its bag.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+Only practicing tricks together counts for this line (showing a trick it
+already knows doesn't).
+
+| Form | Rule |
+|---|---|
+| Rapierre | the child practiced tricks at least twice a day on average |
+| Parcelbeak | everything else |
+
+From its second day on, Crestling's goggles show where it is heading:
+
+| Goggles | Heading for |
+|---|---|
+| light blue lenses in a brown frame | nothing yet (the first day) |
+| shimmering green | Rapierre |
+| orange, with a post-blue frame | Parcelbeak |
 
 The values are in `core/src/life.ts`.
 

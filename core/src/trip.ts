@@ -56,8 +56,10 @@ export const HEARTS = [45, 75]; // the day's condition (satiety, energy, health)
 export const WIN_MOOD = 5;
 export const LOSE_MOOD = -3;
 export const GUARDIAN_MOOD = 15; // getting past a guardian makes it proud
-// Area: the rare egg its guardian leaves behind the first time the pet gets past it (home.EGGS)
-export const GUARDIAN_EGGS: Record<string, string> = { cave: "egg_ember" };
+// Area: the rare egg its guardian leaves behind the first time the pet gets past it (home.EGGS). If
+// there was no room for it, or the pet got past before the guardian had an egg, it leaves it at
+// the end of the path on a later trip.
+export const GUARDIAN_EGGS: Record<string, string> = { meadow: "egg_beak", stream: "egg_duck", cave: "egg_ember" };
 // What can go into the backpack: a snack heals a heart on the way, a ball distracts an opponent
 export const PACKABLE = ["snack", "ball"];
 export const MAX_PACK = 2;
@@ -76,6 +78,12 @@ export function blockedBy(area: string): string | null {
 export function unlocked(state: PetState, area: string): boolean {
   const blocker = blockedBy(area);
   return blocker === null || state.guardians.includes(blocker);
+}
+
+/** The egg the guardian of this area still has for the pet, if there is room for it at home. */
+function guardianEgg(state: PetState, area: string): string | null {
+  const egg = GUARDIAN_EGGS[area];
+  return egg && !state.guardian_eggs.includes(area) && home.canAdd(state, egg) ? egg : null;
 }
 
 /** The guardian of this area, as long as the pet hasn't got past it yet. */
@@ -215,8 +223,9 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
   state.replays = [...state.replays, replay].slice(-REPLAYS);
   events.push(["battle", `${foe}:${outcome}`]);
   count.battles = (count.battles ?? 0) + 1;
+  life.record(state, "battles"); // in a child's care diary too, however it ends (the duck line)
   if (outcome === "win") {
-    let egg: string | undefined;
+    let egg: string | null = null;
     count.battles_won = (count.battles_won ?? 0) + 1;
     state.stats.mood += guardian ? GUARDIAN_MOOD : WIN_MOOD;
     if (guardian && !state.guardians.includes(trip.area)) {
@@ -225,15 +234,16 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
       for (const area of AREAS.filter((area) => blockedBy(area) === trip.area)) {
         events.push(["unlock", area]);
       }
-      egg = GUARDIAN_EGGS[trip.area];
+      egg = guardianEgg(state, trip.area);
       const step = trip.area === AREAS.at(-1) ? home.buildHouse(state) : null;
       if (step !== null) {
         events.push(["house", String(step)]); // past the last guardian: the house grows
       }
     }
     let item = find(state, trip, rng, weather, true);
-    if (egg && home.canAdd(state, egg)) {
+    if (egg) {
       item = egg; // what it was sitting on, instead of something from along the path
+      state.guardian_eggs.push(trip.area);
     }
     if (item) {
       trip.found.push(item);
@@ -284,6 +294,14 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
     const rng = new Random(`station:${Math.trunc(at)}`);
     // the end of the path: this is where the guardian waits
     const guardian = returning(trip) ? trip.guardian : null;
+    const late = returning(trip) && !guardian ? guardianEgg(state, trip.area) : null;
+    if (late) { // a guardian it got past long ago has its egg waiting for it
+      state.guardian_eggs.push(trip.area);
+      trip.found.push(late);
+      events.push(["find", late]);
+      happened(trip, { kind: "find", item: late, at: t });
+      continue;
+    }
     const met = guardian ? null : wild.meet(state, trip.area, at, weather);
     if (met) {
       const shown = wild.show(state, met, rng, t);

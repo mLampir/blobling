@@ -45,7 +45,11 @@
     "ember": "Cindlet",
     "stone": "Pebblet",
     "fox": "Kitlet",
-    "cloud": "Nimbit"
+    "cloud": "Nimbit",
+    "leaf": "Sproutlet",
+    "duck": "Paddlet",
+    "hippo": "Soakling",
+    "beak": "Crestling"
   },
   "species": {
     "blob": "Blob",
@@ -68,7 +72,19 @@
     "filchfox": "Filchfox",
     "cloud": "Cloud",
     "rumblefluff": "Rumblefluff",
-    "prismist": "Prismist"
+    "prismist": "Prismist",
+    "leaf": "Leaf",
+    "duck": "Duck",
+    "hippo": "Hippo",
+    "beak": "Beak",
+    "twiggle": "Twiggle",
+    "needlenub": "Needlenub",
+    "drakwing": "Drakwing",
+    "quill": "Captain Quill",
+    "steamo": "Steamo",
+    "lillypot": "Lillypot",
+    "rapierre": "Rapierre",
+    "parcelbeak": "Parcelbeak"
   },
   "tricks": {
     "bow": "Bow",
@@ -164,7 +180,11 @@
     "egg_ember": "Ember egg",
     "egg_stone": "Stone egg",
     "egg_fox": "Fox egg",
-    "egg_cloud": "Cloud egg"
+    "egg_cloud": "Cloud egg",
+    "egg_leaf": "Leaf egg",
+    "egg_duck": "Duck egg",
+    "egg_hippo": "Hippo egg",
+    "egg_beak": "Beak egg"
   },
   "pack": {
     "snack": "Snack",

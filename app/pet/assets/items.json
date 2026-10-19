@@ -509,13 +509,293 @@
     "h": 15
    },
    "duration": 1000
+  },
+  {
+   "filename": "items leaf_egg 51",
+   "frame": {
+    "x": 560,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items leaf_egg_wobble 52",
+   "frame": {
+    "x": 572,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_wobble 53",
+   "frame": {
+    "x": 584,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_wobble 54",
+   "frame": {
+    "x": 596,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_wobble 55",
+   "frame": {
+    "x": 608,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_crack 56",
+   "frame": {
+    "x": 620,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items leaf_egg_open 57",
+   "frame": {
+    "x": 632,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items duck_egg 58",
+   "frame": {
+    "x": 644,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items duck_egg_wobble 59",
+   "frame": {
+    "x": 656,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_wobble 60",
+   "frame": {
+    "x": 668,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_wobble 61",
+   "frame": {
+    "x": 680,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_wobble 62",
+   "frame": {
+    "x": 692,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_crack 63",
+   "frame": {
+    "x": 704,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items duck_egg_open 64",
+   "frame": {
+    "x": 716,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items hippo_egg 65",
+   "frame": {
+    "x": 728,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items hippo_egg_wobble 66",
+   "frame": {
+    "x": 740,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_wobble 67",
+   "frame": {
+    "x": 752,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_wobble 68",
+   "frame": {
+    "x": 764,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_wobble 69",
+   "frame": {
+    "x": 776,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_crack 70",
+   "frame": {
+    "x": 788,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items hippo_egg_open 71",
+   "frame": {
+    "x": 800,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items beak_egg 72",
+   "frame": {
+    "x": 812,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items beak_egg_wobble 73",
+   "frame": {
+    "x": 824,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_wobble 74",
+   "frame": {
+    "x": 836,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_wobble 75",
+   "frame": {
+    "x": 848,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_wobble 76",
+   "frame": {
+    "x": 860,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_crack 77",
+   "frame": {
+    "x": 872,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items beak_egg_open 78",
+   "frame": {
+    "x": 884,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 560,
+   "w": 896,
    "h": 15
   },
   "frameTags": [
@@ -733,6 +1013,102 @@
     "name": "cloud_egg_open",
     "from": 50,
     "to": 50,
+    "direction": "forward"
+   },
+   {
+    "name": "leaf_egg",
+    "from": 51,
+    "to": 51,
+    "direction": "forward"
+   },
+   {
+    "name": "leaf_egg_wobble",
+    "from": 52,
+    "to": 55,
+    "direction": "forward"
+   },
+   {
+    "name": "leaf_egg_crack",
+    "from": 56,
+    "to": 56,
+    "direction": "forward"
+   },
+   {
+    "name": "leaf_egg_open",
+    "from": 57,
+    "to": 57,
+    "direction": "forward"
+   },
+   {
+    "name": "duck_egg",
+    "from": 58,
+    "to": 58,
+    "direction": "forward"
+   },
+   {
+    "name": "duck_egg_wobble",
+    "from": 59,
+    "to": 62,
+    "direction": "forward"
+   },
+   {
+    "name": "duck_egg_crack",
+    "from": 63,
+    "to": 63,
+    "direction": "forward"
+   },
+   {
+    "name": "duck_egg_open",
+    "from": 64,
+    "to": 64,
+    "direction": "forward"
+   },
+   {
+    "name": "hippo_egg",
+    "from": 65,
+    "to": 65,
+    "direction": "forward"
+   },
+   {
+    "name": "hippo_egg_wobble",
+    "from": 66,
+    "to": 69,
+    "direction": "forward"
+   },
+   {
+    "name": "hippo_egg_crack",
+    "from": 70,
+    "to": 70,
+    "direction": "forward"
+   },
+   {
+    "name": "hippo_egg_open",
+    "from": 71,
+    "to": 71,
+    "direction": "forward"
+   },
+   {
+    "name": "beak_egg",
+    "from": 72,
+    "to": 72,
+    "direction": "forward"
+   },
+   {
+    "name": "beak_egg_wobble",
+    "from": 73,
+    "to": 76,
+    "direction": "forward"
+   },
+   {
+    "name": "beak_egg_crack",
+    "from": 77,
+    "to": 77,
+    "direction": "forward"
+   },
+   {
+    "name": "beak_egg_open",
+    "from": 78,
+    "to": 78,
     "direction": "forward"
    }
   ]

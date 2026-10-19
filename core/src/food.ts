@@ -58,6 +58,18 @@ export const TASTES: Record<string, readonly [string, string]> = {
   cloud: ["fruit_cherry", "fruit_sunflower"],
   rumblefluff: ["hazelnut", "glowberry"],
   prismist: ["glowberry", "pinenut"],
+  leaf: ["fruit_herb", "fruit_cherry"],
+  twiggle: ["watercress", "honeycomb"],
+  needlenub: ["honeycomb", "watercress"], // a cactus: water is the last thing it wants
+  duck: ["fruit_berry", "fruit_herb"],
+  drakwing: ["pinenut", "watercress"],
+  quill: ["hazelnut", "glowberry"],
+  hippo: ["fruit_cherry", "fruit_herb"],
+  steamo: ["honeycomb", "pinenut"],
+  lillypot: ["watercress", "hazelnut"],
+  beak: ["fruit_sunflower", "fruit_berry"],
+  rapierre: ["honeycomb", "hazelnut"], // nectar
+  parcelbeak: ["hazelnut", "glowberry"],
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],
