@@ -532,7 +532,17 @@
       "place_fixed": "Fixed place",
       "place_live": "Follows me",
       "display_heading": "Own LED display",
-      "location_live": "Weather for where you are right now."
+      "location_live": "Weather for where you are right now.",
+      "update": "Update the display",
+      "update_version": "Version {version}.",
+      "update_available": "Version {latest} is out.",
+      "update_running": "Updating … The display goes dark for a moment.",
+      "update_failed": "The last update did not work out.",
+      "update_done": "The display is now on version {version}.",
+      "display_old_title": "The display needs an update",
+      "display_old_hint": "This app is newer than the software on your display.",
+      "app_old_title": "The app needs an update",
+      "app_old_hint": "Your display is newer than this app. Update it in the App Store or on Google Play."
     },
     "train": {
       "hint": "Pick an exercise",

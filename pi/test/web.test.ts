@@ -5,6 +5,7 @@ import type { AddressInfo } from "node:net";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
 
+import { API_VERSION } from "../../core/src/api";
 import { decodePng } from "../../core/src/png";
 import { APP_DIR, TEMPLATE_DIR } from "../src/config";
 import { createApp, renderPage } from "../src/web";
@@ -132,12 +133,12 @@ test("a change needs the header that other websites cannot send", async () => {
 
 test("the pet is described, acted on and renamed", async () => {
   const state = await json(get("/api/pet"));
-  assert.equal(state.api, 1);
+  assert.equal(state.api, API_VERSION);
   assert.equal(state.stage, "egg");
   assert.equal(state.stage_label, "Ei");
 
   const first = await json(post("/api/pet/action", { action: "pet", id: "tap-1", by: "test" }));
-  assert.equal(first.api, 1);
+  assert.equal(first.api, API_VERSION);
   assert.equal(typeof first.accepted, "boolean");
   assert.equal(first.state.name, state.name);
   // sent twice, carried out once
@@ -145,7 +146,7 @@ test("the pet is described, acted on and renamed", async () => {
   const { events } = await json(get("/api/pet/events?limit=100"));
   assert.equal(events.filter((event: { by: string }) => event.by === "test").length, 1);
   assert.equal((await json(get("/api/pet/events?limit=1"))).events.length, 1);
-  assert.equal((await json(get("/api/pet/events?limit=many"))).api, 1);
+  assert.equal((await json(get("/api/pet/events?limit=many"))).api, API_VERSION);
 
   assert.equal((await json(post("/api/pet/settings", { name: " Mimi   Mau " }))).name, "Mimi Mau");
   assert.equal((await json(post("/api/pet/new_egg", { confirm: true }))).stage, "egg");

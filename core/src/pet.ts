@@ -9,6 +9,7 @@
  * the app. This class is handed what was saved and a function that saves.
  */
 
+import { API_OLDEST, API_VERSION } from "./api";
 import * as battle from "./battle";
 import * as care from "./care";
 import * as habits from "./habits";
@@ -375,7 +376,7 @@ export class Pet {
     const bedtime = this.bedtime();
     const due = life.dueAt(s);
     return {
-      api: 1,
+      api: API_VERSION, api_oldest: API_OLDEST,
       now: Math.round(now),
       name: s.name, species: s.species, stage: s.stage,
       species_label: t(`species.${s.species}`), stage_label: t(`stages.${s.stage}`),

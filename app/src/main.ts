@@ -104,6 +104,11 @@ const app = {
     return local ? (await local).petArea() : null;
   },
 
+  /** With a Pi: whether it and this app understand each other ("ok", "display_old", "app_old"). */
+  fit(): string {
+    return remote?.fit ?? "ok";
+  },
+
   /** With a Pi: the next frame the panel shows, as a URL for an <img> (the Pi answers once it is drawn). */
   previewUrl(): string {
     return `${remote?.base ?? ""}/preview.png?next&t=${Date.now()}`;
