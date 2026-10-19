@@ -7,6 +7,7 @@
     "GET /api/pet/events",
     "GET /api/pet/travels",
     "POST /api/pet/action",
+    "POST /api/pet/bring_back",
     "POST /api/pet/new_egg",
     "POST /api/pet/settings",
     "POST /api/pet/swap"

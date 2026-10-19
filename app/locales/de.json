@@ -31,7 +31,8 @@
     "invalid_location": "Bitte einen Breitengrad von -90 bis 90 und einen Längengrad von -180 bis 180 eingeben.",
     "no_update": "Gerade gibt es kein Update zu installieren.",
     "not_a_save": "Das ist kein Spielstand eines Pets.",
-    "no_second": "Es gibt kein zweites Pet."
+    "no_second": "Es gibt kein zweites Pet.",
+    "no_ancestor": "Dieses Pet kann nicht mehr zurückkommen."
   },
   "stages": {
     "egg": "Ei",
@@ -273,6 +274,7 @@
     "brood_confirm": "{egg} ausbrüten? {name} bleibt zu Hause und geht nach hinten. Deine Funde bleiben.",
     "keep_brood": "{egg} ausbrüten? Nur zwei Pets passen in dein Zuhause – wer bleibt dabei? Das andere zieht in die Ahnengalerie.",
     "keep_new_egg": "Mit einem normalen Ei neu anfangen? Nur zwei Pets passen in dein Zuhause – wer bleibt dabei? Das andere zieht in die Ahnengalerie.",
+    "keep_bring_back": "{name} heimholen? Nur zwei Pets passen in dein Zuhause – wer bleibt dabei? Das andere ruht sich in der Ahnengalerie aus.",
     "swap": "{name} nach vorne holen",
     "new_egg_done": "Ein neues Ei liegt bereit 🥚",
     "things": {
@@ -561,6 +563,8 @@
       "guardian": "ist am Wächter vorbeigekommen: {foe} 🏆",
       "unlock": "kennt jetzt einen neuen Weg: {area} 🗺",
       "swap": "ist nach vorne gekommen – {pet} ist jetzt hinten",
+      "bring_back": "ist wieder nach Hause gekommen – {pet} ist jetzt hinten",
+      "bring_back_alone": "ist wieder nach Hause gekommen",
       "copied": "hat sich {trick} bei {pet} abgeschaut",
       "house_1": "hat sich eine Hütte gebaut 🏠",
       "house_2": "hat aus der Hütte ein Häuschen gemacht 🏠",
@@ -591,6 +595,7 @@
     },
     "gallery": {
       "entry": "{form} · {age} · seit {date}",
+      "bring_back": "Heimholen",
       "album": "{met} von {all} Formen",
       "missing": "Noch nicht getroffen",
       "ancestors": "Ahnen"

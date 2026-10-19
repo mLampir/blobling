@@ -1334,6 +1334,7 @@ function eventText(e) {
     : e.action === "wild" ? wildText(e.item)
     : e.action === "visit" ? t("page.events.visit", { pet: T[`species.${e.item}`] || e.item })
     : e.action === "swap" ? t("page.events.swap", { pet: e.item || "" })
+    : e.action === "bring_back" ? (e.item ? t("page.events.bring_back", { pet: e.item }) : t("page.events.bring_back_alone"))
     : e.action === "copied" ? t("page.events.copied", {
       trick: trickLabel((e.item || "").split(":")[0]), pet: (e.item || "").split(":").slice(1).join(":") })
     : e.action === "gift" ? t("page.events.gift", { pet: T[`species.${e.item}`] || e.item })
@@ -1558,10 +1559,39 @@ async function loadGallery() {
         form: a.stage === "adult" ? a.species_label : a.stage_label, age: tn("page.days", a.age_days), date: from,
       }) + (a.tricks && a.tricks.length ? ` · ${a.tricks.length} ⭐` : ""));
       li.prepend(img);
+      // A pet that rests here can come home again; ancestors from before are only pictures
+      if (a.home) {
+        const b = document.createElement("button");
+        b.className = "small";
+        b.textContent = t("page.gallery.bring_back");
+        b.addEventListener("click", () => bringBack(a));
+        li.append(b);
+      }
       return li;
     }));
   } catch (err) {
     // The gallery isn't important enough for an error message
+  }
+}
+
+// An ancestor comes home to the front; the pet at the front goes to the back, and with two at home one of them is picked to stay
+async function bringBack(a) {
+  if (!current) return;
+  let keep = null;
+  if (current.second) {
+    keep = await chooseKeep(t("page.keep_bring_back", { name: a.name }));
+    if (!keep) return;
+  }
+  try {
+    const request = { born_at: a.born_at };
+    if (keep) request.keep = keep;
+    const r = await api("POST", "/api/pet/bring_back", request);
+    render(r.state);
+    feel(r.accepted ? "ok" : "no");
+    if (r.accepted) showView("home");
+    say(r.accepted ? "" : r.message);
+  } catch (err) {
+    fail(err);
   }
 }
 
