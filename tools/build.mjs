@@ -2,7 +2,7 @@
 //
 // The server for the Pi becomes one file, dist/pi/server.mjs; that file is all of the TypeScript
 // code the Pi needs. The app becomes dist/app/: its page (index.html, from app/pet.html) and one
-// script with the core, the language files and the sprite sheets in it, so it runs from any
+// script with the core, the language files, the sprite sheets and the sounds in it, so it runs from any
 // folder; the Pi serves the same script with its own copy of the page, and Capacitor packs the
 // folder into the apps for the stores. The core alone becomes one file for Node and one for the
 // browser, both in dist/. The browser build doubles as a check that the core uses nothing that
@@ -14,6 +14,7 @@ import { build } from "esbuild";
 
 const LOCALE_DIR = "app/locales";
 const SHEET_DIR = "app/pet/assets";
+const SOUND_DIR = "app/pet/sounds";
 
 const shared = {
   bundle: true,
@@ -25,8 +26,9 @@ const shared = {
 const core = { ...shared, entryPoints: ["core/src/index.ts"] };
 
 /**
- * What the app takes from the repo's files: "blobling:locales" (every language file) and
- * "blobling:sheets" (every sprite sheet, its picture as base64). Declared in app/src/virtual.d.ts.
+ * What the app takes from the repo's files: "blobling:locales" (every language file),
+ * "blobling:sheets" (every sprite sheet, its picture as base64) and "blobling:sounds" (every
+ * sound, its WAV file as base64). Declared in app/src/virtual.d.ts.
  */
 const appFiles = {
   name: "app-files",
@@ -46,6 +48,11 @@ const appFiles = {
           const data = JSON.parse(readFileSync(join(SHEET_DIR, file), "utf-8"));
           files.push(join(SHEET_DIR, file), join(SHEET_DIR, data.meta.image));
           content[file.slice(0, -".json".length)] = { data, png: readFileSync(join(SHEET_DIR, data.meta.image)).toString("base64") };
+        }
+      } else if (args.path === "sounds") {
+        for (const file of readdirSync(SOUND_DIR).filter((name) => name.endsWith(".wav")).sort()) {
+          files.push(join(SOUND_DIR, file));
+          content[file.slice(0, -".wav".length)] = readFileSync(join(SOUND_DIR, file)).toString("base64");
         }
       } else {
         return { errors: [{ text: `Unknown file set blobling:${args.path}` }] };

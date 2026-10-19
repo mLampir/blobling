@@ -25,9 +25,9 @@ E-Mail: <blobling@lampir.at>
 ## 2. Was die App auf deinem Handy speichert
 
 - **Dein Pet**: Name, Bedürfnisse, Form, Fundstücke und Tagebuch.
-- **Einstellungen**: die Sprache, ob das Wetter an ist, der Ort (gerundet,
-  siehe Punkt 3) und die Adresse deines LED-Displays, falls du eines
-  verbunden hast.
+- **Einstellungen**: die Sprache, ob Töne an sind, ob das Wetter an ist, der
+  Ort (gerundet, siehe Punkt 3) und die Adresse deines LED-Displays, falls du
+  eines verbunden hast.
 
 Das alles bleibt im Speicher der App auf deinem Handy. Nichts davon wird an
 uns oder an jemand anderen geschickt. Wenn du die App löschst, ist es weg.

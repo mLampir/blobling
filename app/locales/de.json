@@ -623,6 +623,9 @@
       "adventure": "Abenteuer"
     },
     "more": {
+      "sound": "Töne",
+      "sound_on": "An",
+      "sound_off": "Aus",
       "pet": "Pet",
       "new_egg_note": "Deine Funde bleiben."
     },
