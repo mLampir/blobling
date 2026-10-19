@@ -55,12 +55,12 @@ const appFiles = {
   },
 };
 
-await build({ ...shared, entryPoints: ["pi/src/main.ts"], platform: "node", target: "node20",
+await build({ ...shared, entryPoints: ["pi/src/main.ts"], platform: "node", target: "node22",
   outfile: "dist/pi/server.mjs" });
 await build({ ...shared, entryPoints: ["app/src/main.ts"], platform: "browser", format: "iife", minify: true, sourcemap: false,
   // what the phones of the last few years run (Android WebView, iOS Safari 15)
   target: ["es2020", "chrome90", "safari15"], plugins: [appFiles], outfile: "dist/app/app.js" });
 mkdirSync("dist/app", { recursive: true });
 copyFileSync("app/pet.html", "dist/app/index.html");
-await build({ ...core, platform: "node", target: "node20", outfile: "dist/core.node.mjs" });
+await build({ ...core, platform: "node", target: "node22", outfile: "dist/core.node.mjs" });
 await build({ ...core, platform: "browser", target: "es2022", outfile: "dist/core.browser.js" });

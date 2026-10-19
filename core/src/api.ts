@@ -60,6 +60,9 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
       return target.newEgg(request.egg ?? null);
     }
 
+    case "GET /api/pet/travels":
+      return { api: 1, travels: pet.travels() };
+
     case "GET /api/pet/ancestors":
       return { api: 1, ancestors: pet.ancestorList(), album: pet.albumList() };
 

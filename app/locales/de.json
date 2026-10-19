@@ -269,6 +269,7 @@
     "tabs": {
       "history": "Verlauf",
       "statistics": "Statistik",
+      "travels": "Ausflüge",
       "finds": "Fundstücke",
       "gallery": "Album",
       "more": "Mehr"
@@ -449,6 +450,10 @@
       "album": "{met} von {all} Formen",
       "missing": "Noch nicht getroffen",
       "ancestors": "Ahnen"
+    },
+    "travels": {
+      "heading": "{area} · {day} · {time}",
+      "quiet": "ein ruhiger Spaziergang, nichts passiert"
     },
     "app": {
       "location_none": "Noch kein Ort: Dein Pet hat kein Wetter, und die Sonne richtet sich nach deiner Zeitzone.",

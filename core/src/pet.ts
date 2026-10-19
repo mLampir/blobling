@@ -230,6 +230,11 @@ export class Pet {
     return this.state.events.slice(-limit).reverse();
   }
 
+  /** The travel diary: the trips it has been on, the latest first. */
+  travels(): PetState["travels"] {
+    return [...this.state.travels].reverse();
+  }
+
   /** Carries out an action; throws a RequestError (a key from the "error" texts) for invalid requests. */
   action(action: string, request: ActionRequest = {}) {
     const now = request.now ?? this.clock();
