@@ -18,6 +18,7 @@ import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
 import { MAX_NAME } from "../../core/src/pet";
 import type { Location } from "../../core/src/sun";
 import { locales } from "./assets";
+import { haptic } from "./haptics";
 import { iconUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
@@ -87,6 +88,9 @@ const app = {
   /** A thing the player hands the pet ("meal", "ball", "sponge", …) as a URL for an <img>; "" if there is no picture. */
   thing: thingUrl,
 
+  /** A short buzz for what the pet just did: "touch", "done", "no", "joy" or "evolve" (haptics.ts). */
+  buzz: haptic,
+
   /** On the phone: the scene goes on this canvas. */
   async showScene(canvas: HTMLCanvasElement): Promise<void> {
     (await local!).show(canvas);
@@ -105,9 +109,9 @@ const app = {
     return remote?.fit ?? "ok";
   },
 
-  /** With a Pi: a fresh picture of what the panel shows, as a URL for an <img>. */
+  /** With a Pi: the next frame the panel shows, as a URL for an <img> (the Pi answers once it is drawn). */
   previewUrl(): string {
-    return `${remote?.base ?? ""}/preview.png?t=${Date.now()}`;
+    return `${remote?.base ?? ""}/preview.png?next&t=${Date.now()}`;
   },
 
   /** On the phone: where it lives (for the weather and the sun times). */

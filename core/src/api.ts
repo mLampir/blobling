@@ -24,7 +24,7 @@ import type { Pet } from "./pet";
  * core/test/api.test.ts compares the API with core/test/api-contract.json and says which number
  * a change needs (CLAUDE.md, "The API between app and Pi").
  */
-export const API_VERSION = 1;
+export const API_VERSION = 2;
 export const API_OLDEST = 1;
 
 /** Where the requests go. `action` and `newEgg` are the pet's own, or the Pi's, which also show it on the panel. */
@@ -77,8 +77,11 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
       return target.newEgg(request.egg ?? null);
     }
 
+    case "GET /api/pet/travels":
+      return { api: API_VERSION, travels: pet.travels() };
+
     case "GET /api/pet/ancestors":
-      return { api: API_VERSION, ancestors: pet.ancestorList() };
+      return { api: API_VERSION, ancestors: pet.ancestorList(), album: pet.albumList() };
 
     case "POST /api/pet/settings":
       pet.rename(fields(await body()).name);

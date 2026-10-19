@@ -39,6 +39,28 @@ export interface TripEvent {
   outcome?: string;
 }
 
+/**
+ * One line of the travel diary: what happened at a station, without the rounds of a scuffle.
+ * Besides the kinds of TripEvent: "snack" (it ate its snack after a lost scuffle) and "beaten"
+ * (it had enough and turned back). A rest is not worth a line.
+ */
+export interface TravelStop {
+  kind: TripEvent["kind"] | "snack" | "beaten";
+  at: number;
+  item?: string;
+  foe?: string;
+  wild?: string;
+  outcome?: string;
+}
+
+/** A trip that is over, for the travel diary (trip.remember). */
+export interface Travel {
+  area: string;
+  start: number;
+  end: number;
+  stops: TravelStop[];
+}
+
 /** A trip in progress (trip.plan). */
 export interface Trip {
   area: string;
@@ -52,6 +74,8 @@ export interface Trip {
   hearts: number;
   pack: string[];
   guardian: string | null;
+  /** What has happened so far, for the travel diary (missing in trips saved before it). */
+  log?: TravelStop[];
 }
 
 /** An egg that is kept: its line, and what a pet has passed on to it (wild.ts). */
@@ -74,6 +98,14 @@ export interface Plant {
   grown: number;
   ripening: number;
   left: number;
+}
+
+/** Something it left behind while nobody was there (idle.ts); `spot`: 0–1 along the free ground. */
+export interface Trace {
+  kind: string;
+  spot: number;
+  /** Which of its drawings (idle.DRAWINGS). */
+  look: number;
 }
 
 export interface PetEvent {
@@ -125,6 +157,8 @@ export interface PetState {
   trip: Trip | null;
   /** Areas whose guardian it has got past (trip.AREAS). */
   guardians: string[];
+  /** The trips it has been on, the latest last, at most trip.MAX_TRAVELS. */
+  travels: Travel[];
   /** Brought home but not unpacked yet. */
   backpack: string[];
   /** Find -> count (home.ITEMS), except for eggs. */
@@ -146,6 +180,10 @@ export interface PetState {
   idle_next: number;
   /** Trick -> points practiced alone since it was last practiced together (idle.SOLO_LIMIT). */
   solo: Record<string, number>;
+  /** What it left behind while nobody was there, until somebody does something with it (idle.ts). */
+  trace: Trace | null;
+  /** When somebody fed it or played with it, over the last few days (habits.ts). */
+  habits: number[];
 }
 
 /** A state with every field at its starting value. */
@@ -181,6 +219,7 @@ export function newState(): PetState {
     training: null,
     trip: null,
     guardians: [],
+    travels: [],
     backpack: [],
     items: {},
     eggs: [],
@@ -194,6 +233,8 @@ export function newState(): PetState {
     seen_at: 0.0,
     idle_next: 0.0,
     solo: {},
+    trace: null,
+    habits: [],
   };
 }
 

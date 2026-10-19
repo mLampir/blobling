@@ -17,19 +17,23 @@ function ask(pet: Pet, method: string, path: string, body?: unknown): Promise<an
 test("the pet is described, acted on, renamed and started over", async () => {
   const pet = new Disk().pet();
   assert.equal((await ask(pet, "GET", "/api/pet")).stage, "egg");
-  assert.equal((await ask(pet, "HEAD", "/api/pet")).api, 1);
+  assert.equal((await ask(pet, "HEAD", "/api/pet")).api, API_VERSION);
 
   const first = await ask(pet, "POST", "/api/pet/action", { action: "pet", id: "tap-1", by: "test" });
-  assert.equal(first.api, 1);
+  assert.equal(first.api, API_VERSION);
   assert.equal(first.accepted, true);
   // the same request twice runs once
   await ask(pet, "POST", "/api/pet/action", { action: "pet", id: "tap-1", by: "test" });
   const { events } = await ask(pet, "GET", "/api/pet/events?limit=100");
   assert.equal(events.filter((e: { by: string }) => e.by === "test").length, 1);
-  assert.equal((await ask(pet, "GET", "/api/pet/events?limit=many")).api, 1);
+  assert.equal((await ask(pet, "GET", "/api/pet/events?limit=many")).api, API_VERSION);
 
   assert.equal((await ask(pet, "POST", "/api/pet/settings", { name: " Mimi   Mau " })).name, "Mimi Mau");
-  assert.deepEqual(await ask(pet, "GET", "/api/pet/ancestors"), { api: 1, ancestors: [] });
+  const { api, ancestors, album } = await ask(pet, "GET", "/api/pet/ancestors");
+  assert.equal(api, API_VERSION);
+  assert.deepEqual(ancestors, []);
+  assert.equal(album.filter(Boolean).length, 1); // the egg it starts with
+  assert.deepEqual(await ask(pet, "GET", "/api/pet/travels"), { api: API_VERSION, travels: [] });
   assert.equal((await ask(pet, "POST", "/api/pet/new_egg", { confirm: true })).stage, "egg");
 });
 
@@ -68,12 +72,20 @@ function fields(value: unknown, path = "", into: Record<string, string> = {}): R
   return into;
 }
 
-/** What an app may rely on: the actions and the fields of the pet's description. */
+/** What an app may rely on: the routes, the actions and the fields of what the routes answer. */
 async function contract() {
   const pet = new Disk().pet();
+  const routes = [...readFileSync("core/src/api.ts", "utf-8").matchAll(/case "((?:GET|POST) \/api\/pet[^"]*)"/g)]
+    .map((match) => match[1]).sort();
+  const answers: Record<string, string> = {};
+  for (const route of routes.filter((r) => r.startsWith("GET "))) {
+    for (const [path, type] of Object.entries(fields(await ask(pet, "GET", route.slice(4))))) {
+      answers[`${route} ${path}`] = type;
+    }
+  }
   return {
-    api: API_VERSION, oldest: API_OLDEST, actions: [...ACTIONS].sort(),
-    pet: Object.fromEntries(Object.entries(fields(await ask(pet, "GET", "/api/pet"))).sort()),
+    api: API_VERSION, oldest: API_OLDEST, routes, actions: [...ACTIONS].sort(),
+    fields: Object.fromEntries(Object.entries(answers).sort()),
   };
 }
 
@@ -82,14 +94,16 @@ test("a change to the API raises its version (API_VERSION, API_OLDEST in core/sr
   const now = await contract();
   assert.ok(API_OLDEST <= API_VERSION && API_VERSION >= saved.api, "API_VERSION never goes down");
 
+  const lost = (before: string[], after: string[], what: string) =>
+    before.filter((x) => !after.includes(x)).map((x) => `${what} ${x}`);
   const gone = [
-    ...saved.actions.filter((a: string) => !now.actions.includes(a)).map((a: string) => `action ${a}`),
-    ...Object.entries(saved.pet as Record<string, string>).filter(([path, type]) => now.pet[path] !== type)
+    ...lost(saved.routes, now.routes, "route"), ...lost(saved.actions, now.actions, "action"),
+    ...Object.entries(saved.fields as Record<string, string>).filter(([path, type]) => now.fields[path] !== type)
       .map(([path]) => path),
   ];
   const added = [
-    ...now.actions.filter((a) => !saved.actions.includes(a)).map((a) => `action ${a}`),
-    ...Object.keys(now.pet).filter((path) => !(path in saved.pet)),
+    ...lost(now.routes, saved.routes, "route"), ...lost(now.actions, saved.actions, "action"),
+    ...Object.keys(now.fields).filter((path) => !(path in saved.fields)),
   ];
   assert.ok(!gone.length || API_OLDEST > saved.api, `Removed or changed: ${gone.join(", ")}. Apps rely on it: `
     + `raise API_VERSION and set API_OLDEST to it, so an older app asks to be updated.`);
