@@ -18,6 +18,7 @@ import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
 import { MAX_NAME } from "../../core/src/pet";
 import type { Location } from "../../core/src/sun";
 import { locales } from "./assets";
+import { haptic } from "./haptics";
 import { iconUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
@@ -102,6 +103,9 @@ const app = {
   setSound(on: boolean): void {
     sounds.on = on;
   },
+
+  /** A short buzz for what the pet just did: "touch", "done", "no", "joy" or "evolve" (haptics.ts). */
+  buzz: haptic,
 
   /** On the phone: the scene goes on this canvas. */
   async showScene(canvas: HTMLCanvasElement): Promise<void> {

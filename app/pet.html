@@ -216,6 +216,15 @@
     background: var(--surface); border-radius: 24px 24px 0 0; border-top: 1px solid var(--line);
     padding: 14px 16px 14px; touch-action: none;
   }
+  /* Packing needs no pet in sight: it takes the scene's place too and fits the screen whole,
+     the button to set off at the bottom, under the thumb */
+  .home.cover > .hero { display: none; }
+  .sheet.cover {
+    flex: 1 1 auto; margin-top: 0; border-radius: 0 0 30px 30px; border-top: 0; touch-action: pan-y;
+    padding: calc(18px + var(--safe-top)) 16px 16px; gap: clamp(8px, 2.2dvh, 18px);
+  }
+  .sheet.cover .close { top: calc(8px + var(--safe-top)); }
+  .sheet.cover > p:first-of-type, .sheet.cover > :last-child { margin-top: auto; flex: none; }
   .sheet h3 { margin: 0; font: 700 18px/1.2 var(--round); }
   .sheet p { margin: 0; }
   .sheet small { color: var(--muted); font-size: 13px; }
@@ -341,7 +350,7 @@
       <button class="link" id="train-back" hidden data-t="page.train.back"></button>
     </div>
 
-    <div class="sheet" id="pack-mode" hidden>
+    <div class="sheet cover" id="pack-mode" hidden>
       <button class="close" id="pack-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.things.trip"></h3>
       <p data-t="page.pack.where"></p>
@@ -570,16 +579,17 @@ function ask(text, { value, ok, danger = false, address = false }) {
 }
 $("ask-cancel").addEventListener("click", () => $("ask").close());
 
-// What the phone does for a moment: a short vibration and a sound (app/src/sound.ts)
+// What the phone does for a moment: a short buzz (app/src/haptics.ts) and a sound (app/src/sound.ts).
+// Each kind names its buzz ("touch", "done", "no", "joy" or "evolve"; "" for none) and its sound.
 const FEEL = {
-  tap: [10, "boop"], stroke: [8, "purr"], bubble: [0, "bubble"], step: [15, "step"],
-  ok: [20, "ok"], no: [[30, 70, 30], "no"], land: [25, "plop"], munch: [25, "munch"],
-  sleep: [20, "sleep"], wake: [20, "wake"], great: [[40, 60, 40, 60, 120], "tada"], lost: [60, "lose"],
-  evolve: [[40, 60, 120], "evolve"],
+  tap: ["touch", "boop"], stroke: ["touch", "purr"], bubble: ["", "bubble"], step: ["touch", "step"],
+  ok: ["done", "ok"], no: ["no", "no"], land: ["done", "plop"], munch: ["done", "munch"],
+  sleep: ["done", "sleep"], wake: ["done", "wake"], great: ["joy", "tada"], lost: ["done", "lose"],
+  evolve: ["evolve", "evolve"],
 };
 function feel(kind) {
-  const [pattern, sound] = FEEL[kind];
-  if (pattern && navigator.vibrate) navigator.vibrate(pattern);
+  const [buzz, sound] = FEEL[kind];
+  if (buzz) app.buzz(buzz);
   app.sound(sound);
 }
 
@@ -869,10 +879,11 @@ $("adventures").addEventListener("click", (e) => {
   if (id === "train") return openTraining();
 });
 
-// Sheets: one at a time, over the lower part, with the scene in sight
+// Sheets: one at a time, over the lower part, with the scene in sight (packing: the whole screen)
 function openSheet(id) {
   document.querySelectorAll(".sheet").forEach((sheet) => { sheet.hidden = sheet.id !== id; });
   $("view-home").classList.toggle("busy", !!id);
+  $("view-home").classList.toggle("cover", !!id && $(id).classList.contains("cover"));
   if (id) showView("home");
 }
 
@@ -1336,7 +1347,7 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
       const cold = current.cold;
       action("pet").then((r) => {
         render(r.state);
-        if (!r.accepted) say(r.message);
+        if (!r.accepted) { say(r.message); feel("no"); }
         else if (cold && !r.state.cold) say(t("page.petting.warmed", { name: r.state.name }));
       }).catch(fail);
     }
@@ -1806,7 +1817,7 @@ document.querySelectorAll("[data-move]").forEach((b) => b.addEventListener("clic
       setTimeout(() => current && renderGame(current), 3600);
     }
     render(r.state);
-    if (!r.accepted) say(r.message);
+    if (!r.accepted) { say(r.message); feel("no"); }
   } catch (err) {
     fail(err);
     document.querySelectorAll("[data-move]").forEach((x) => { x.disabled = false; });
