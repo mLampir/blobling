@@ -9,6 +9,7 @@
  */
 
 import * as idle from "./idle";
+import * as life from "./life";
 import { Random } from "./random";
 import { NO_UMBRELLA } from "./scene";
 import type { PetEvent, PetState } from "./state";
@@ -155,7 +156,7 @@ function piece(event: PetEvent, t: Translate): Piece | null {
     case "evolve": {
       const stage = name === "baby" ? "hatched" : name;
       return ["hatched", "child", "adult"].includes(stage)
-        ? make(`evolve.${stage}`, 9, { species: t(`species.${outcome}`) }) : null;
+        ? make(`evolve.${stage}`, 9, { species: t(life.formKey(name, outcome)) }) : null;
     }
     default:
       return null;

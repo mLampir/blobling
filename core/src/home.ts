@@ -33,12 +33,14 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_ember: "egg",
   egg_stone: "egg",
   egg_fox: "egg",
+  egg_cloud: "egg",
 };
 export const MAX_SEEDS = 9; // per kind; decorations and hats exist only once
 export const MAX_EGGS = 9; // this many are kept
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus
 // what a pet has passed on to it (wild.ts), until it is brooded (model.nextPet).
-export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "ember", egg_stone: "stone", egg_fox: "fox" };
+export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "ember", egg_stone: "stone", egg_fox: "fox",
+  egg_cloud: "cloud" };
 export const MAX_DECO = 2; // this many spots the scene has outside
 
 // Plant: [stat, effect of one fruit]

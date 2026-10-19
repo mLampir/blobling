@@ -44,7 +44,8 @@ No code changes are needed. A few things to know while translating:
 - Many texts are sentence fragments that the app puts next to the pet's name
   or a time in the history, for example `12:30 petted`. Have a look at the
   pet page to see where a text ends up before settling on the wording.
-- `species` and `foes` hold the names of the pet's forms and of the opponents
+- `species`, `children` and `foes` hold the names of the pet's forms (in
+  `children` the child of each line) and of the opponents
   on trips. They are the same in English and German, but a translation is free
   to change them.
 

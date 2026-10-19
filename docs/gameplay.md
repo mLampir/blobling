@@ -138,7 +138,7 @@ can be seen in the daytime too.
 |---|---|---|
 | Egg | up to 1 hour | only warming helps; every time brings hatching forward by 15 minutes |
 | Baby | 3 days | gets hungry and tired faster, can't get sick |
-| Child | 7 days | keeps a care diary; grows a lure with a glowing bulb |
+| Child (Bloblet) | 7 days | keeps a care diary; grows a lure with a glowing bulb |
 | Adult | forever | one of three forms |
 
 When a stage is over, the pet sparkles and the app offers **Hatch** or
@@ -152,9 +152,10 @@ A grown-up has no use for it.
 
 The care diary of the child stage decides the adult form: how well the pet was
 looked after, how often it was played with and petted, and how often it went
-on a trip. Each form has a
-character of its own, with small effects on the game. From its second day on,
-the bulb on the child's lure shows by its color which form it is heading for.
+on a trip. For one line, the weather at the moment it grows up decides. Each
+form has a character of its own, with small effects on the game. From its
+second day on, the bulb on the child's lure shows by its color which form it
+is heading for.
 
 The forms, their characters and the rules for getting them are in
 [pets.md](pets.md). That page keeps everything folded shut that would spoil
@@ -692,6 +693,7 @@ For an adult form with pixel art of its own:
 | Eyes, mouths, `*_FACES` with every name of `FACES`, a `*_face_grid` function | `tools/build_blob_sprites.py` |
 | `write_sheet` for the body and the faces, and the list at the top of the script | `tools/build_blob_sprites.py` |
 | Body and face sheet | `SPECIES_SHEETS` in `core/src/scene.ts` |
+| A face that is not to sit in the middle of its row (`faceTop`, `faceCenter`, `faceShift` in `write_sheet`) | `tools/build_blob_sprites.py`, `faceAnchor` in `core/src/sprites.ts` |
 | Colors of the child's lure, walking and hopping, umbrella, special move | `LURE_HINT`, `WALK_HOPS`, `NO_UMBRELLA`, `hit` in `core/src/scene.ts` |
 | A trick in its own way: the same gesture and effect, another animation | `OWN_TRICKS` and `trick` in `core/src/scene.ts`, frames of its own if it needs them |
 | Tests: every form in every state, how it moves, where the face sits | `core/test/scene.test.ts`, `core/test/sprites.test.ts` |

@@ -38,6 +38,13 @@
     "child": "Kind",
     "adult": "Erwachsen"
   },
+  "children": {
+    "blob": "Bloblet",
+    "ember": "Cindlet",
+    "stone": "Pebblet",
+    "fox": "Kitlet",
+    "cloud": "Nimbit"
+  },
   "species": {
     "blob": "Blob",
     "sneezle": "Sneezle",
@@ -56,7 +63,10 @@
     "bouldergrin": "Bouldergrin",
     "fox": "Fuchs",
     "roamtail": "Roamtail",
-    "filchfox": "Filchfox"
+    "filchfox": "Filchfox",
+    "cloud": "Wolke",
+    "rumblefluff": "Rumblefluff",
+    "prismist": "Prismist"
   },
   "snacks": {
     "cookie": "Keks",
@@ -147,7 +157,8 @@
     "egg_blob": "Schleim-Ei",
     "egg_ember": "Glut-Ei",
     "egg_stone": "Stein-Ei",
-    "egg_fox": "Fuchs-Ei"
+    "egg_fox": "Fuchs-Ei",
+    "egg_cloud": "Wolken-Ei"
   },
   "pack": {
     "snack": "Snack",
@@ -340,7 +351,7 @@
       "trip_snack": "Unterwegs habe ich meinen Proviant gegessen, und dann ging es mir besser.",
       "evolve": {
         "hatched": "Ich bin geschlüpft! Hallo, Welt!",
-        "child": "Ich bin gewachsen – jetzt bin ich ein Kind!",
+        "child": "Ich bin gewachsen – jetzt bin ich ein {species}!",
         "adult": "Ich bin groß geworden – jetzt bin ich ein {species}!"
       },
       "postcard": {
@@ -489,7 +500,7 @@
       "unwrap": "Geschenk ausgepackt: {what}",
       "evolve": "Entwickeln",
       "hatched": "ist geschlüpft 🐣",
-      "child": "ist jetzt ein Kind",
+      "child": "ist jetzt ein {species}",
       "adult": "ist jetzt ein {species} ✨",
       "learned": "kann jetzt {trick} ⭐",
       "practiced": "{trick} geübt",
