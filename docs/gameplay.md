@@ -539,6 +539,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
 | Preview of the scene on a PC, pictures for [pets.md](pets.md) | `tools/pet_preview.ts` (`npm run preview`) |
+| Checking the values: pets played for weeks with owners of different kinds | `tools/balance.ts` (`npm run balance`) |
 | The phone app: the page, and where its pet lives (on the phone or on the Pi) | `app/pet.html`, `app/src/` |
 | The Pi's side: web server, display loop, save file | `pi/src/` |
 
