@@ -29,8 +29,9 @@ a day and also tells you the time and the weather.
   and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
   one of the guardians keeps a rare egg that something else hatches from.
 - **It makes friends.** A grown-up pet can impress a wild pet with its tricks.
-  The friend comes to visit, brings a gift now and then, and in time the two
-  lay an egg that passes a part of your pet's training on to the next one.
+  The friend comes to visit and plays with it, brings a gift now and then, and
+  in time the two lay an egg that passes a part of your pet's training on to
+  the next one.
 - **It is forgiving.** The pet never dies. Neglect makes it hungry, sad or
   sick, and that can always be fixed.
 - **Quiet at night.** The panel dims or switches off in the hours you choose,
