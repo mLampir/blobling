@@ -374,7 +374,7 @@ const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongu
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
 const CANNONBALL: Bitmap = [[70, 70, 85], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
-const PETAL: Bitmap = [[255, 170, 200], ["X"]];
+const PETAL: Bitmap = [[255, 170, 200], ["XX"]]; // off Needlenub's flower
 const CLOD: Bitmap = [[150, 110, 70], ["XX", "X."]]; // what Rumblefluff's hoof kicks up
 const SMOKE: Bitmap = [[175, 175, 185], [".X.", "XXX", ".X."]]; // Filchfox's puff of smoke
 const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
@@ -1245,7 +1245,7 @@ export class PetScene {
         Object.assign(pose, { body: "squash", face: "blink", bud: true });
       } else {
         Object.assign(pose, { body: p < 0.6 ? "stretch" : "idle", jump: p < 0.6 ? 2 : 0, face: "laugh", bud: false });
-        this.trickFx(t, "bloom", TRICK_SHOW, PETAL, 8, 0, 26, [-18, 18], [-22, -6], 1.0);
+        this.trickFx(t, "bloom", TRICK_SHOW, PETAL, 12, 0, 26, [-18, 18], [-22, -6], 1.0);
       }
     } else if (animation === "hornpipe") {
       // quick steps from one foot to the other, arms (wings) out, faster and faster
