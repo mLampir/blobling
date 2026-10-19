@@ -201,9 +201,14 @@ const STAGE_SHEETS: Record<string, Record<string, readonly [string, string]>> = 
   stone: { baby: ["stone_baby_body", "stone_baby_faces"], child: ["pebblet_body", "stone_faces"] },
   fox: { baby: ["fox_baby_body", "fox_baby_faces"], child: ["kitlet_body", "fox_faces"] },
   cloud: { baby: ["cloud_baby_body", "cloud_baby_faces"], child: ["nimbit_body", "cloud_faces"] },
+  leaf: { baby: ["leaf_baby_body", "leaf_baby_faces"], child: ["sproutlet_body", "leaf_faces"] },
+  duck: { baby: ["duck_baby_body", "duck_baby_faces"], child: ["paddlet_body", "duck_faces"] },
+  hippo: { baby: ["hippo_baby_body", "hippo_baby_faces"], child: ["soakling_body", "hippo_faces"] },
+  beak: { baby: ["beak_baby_body", "beak_baby_faces"], child: ["crestling_body", "beak_faces"] },
 };
 // The egg of a line: the tags in the items sheet start with this
-const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg", cloud: "cloud_egg" };
+const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg", cloud: "cloud_egg",
+  leaf: "leaf_egg", duck: "duck_egg", hippo: "hippo_egg", beak: "beak_egg" };
 // Color per adult species: hue shift (0–255) starting from teal.
 // Fallback for a species without pixel art of its own.
 const SPECIES_HUE: Record<string, number> = {
@@ -228,18 +233,32 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
   filchfox: ["filchfox_body", "filchfox_faces", 0],
   rumblefluff: ["rumblefluff_body", "rumblefluff_faces", 0],
   prismist: ["prismist_body", "prismist_faces", 0],
+  twiggle: ["twiggle_body", "twiggle_faces", 0],
+  needlenub: ["needlenub_body", "needlenub_faces", 0],
+  drakwing: ["drakwing_body", "drakwing_faces", 0],
+  quill: ["quill_body", "quill_faces", 0],
+  steamo: ["steamo_body", "steamo_faces", 0],
+  lillypot: ["lillypot_body", "lillypot_faces", 0],
+  rapierre: ["rapierre_body", "rapierre_faces", 0],
+  parcelbeak: ["parcelbeak_body", "parcelbeak_faces", 0],
 };
 // What grows on a child's head hints at the adult form it is heading for. Per line, the three
 // colors the code replaces: the bulb of the slime's lure (glow, shadow, highlight), the flame
 // of the ember slime (edge, middle, heart), the pebble's quartz band (band, shadow, sparkle), the
-// white tip of the fox cub's tail (tip, shadow) and the bell of the cloud lamb (bell, shadow) –
-// as in the palettes of tools/build_blob_sprites.py.
+// white tip of the fox cub's tail (tip, shadow), the bell of the cloud lamb (bell, shadow), the
+// seedling's leaves (light, dark), the duckling's curl (curl, shadow), the stripe of the young
+// hippo's towel and the young bird's goggles (lenses, frame) – as in the palettes of
+// tools/build_blob_sprites.py.
 const LURES: Record<string, readonly Color[]> = {
   blob: [[255, 235, 150], [240, 190, 90], [255, 255, 255]],
   ember: [[225, 60, 30], [250, 130, 30], [255, 200, 60]],
   stone: [[245, 238, 215], [205, 192, 165], [255, 252, 232]],
   fox: [[255, 255, 250], [225, 225, 215]],
   cloud: [[255, 215, 70], [215, 160, 40]],
+  leaf: [[130, 220, 90], [60, 150, 50]],
+  duck: [[245, 185, 40], [210, 140, 30]],
+  hippo: [[240, 130, 160]],
+  beak: [[150, 220, 240], [95, 70, 50]],
 };
 const LURE_HINT: Record<string, readonly Color[]> = {
   sneezle: [[125, 220, 105], [60, 170, 70], [235, 255, 205]],
@@ -258,11 +277,26 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   filchfox: [[150, 125, 175], [100, 80, 125]], // dusky, like its mask
   rumblefluff: [[125, 140, 205], [75, 85, 145]], // storm blue: it rains right now
   prismist: [[255, 150, 200], [215, 95, 160]], // the pink of a rainbow
+  twiggle: [[80, 150, 60], [40, 100, 40]], // the deep green of an old tree
+  needlenub: [[255, 150, 190], [220, 90, 140]], // its flower
+  drakwing: [[60, 190, 110], [25, 120, 70]], // a mallard's green
+  quill: [[70, 100, 170], [40, 60, 120]], // the navy of its cap
+  steamo: [[245, 95, 90]], // hot
+  lillypot: [[110, 200, 140]], // a lily pad
+  rapierre: [[80, 220, 150], [30, 120, 90]], // its shimmering green
+  parcelbeak: [[245, 160, 60], [45, 70, 120]], // its bill, and the post's blue
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
-// the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain
-export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist"];
+// the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
+// duck like it too, and a pond hippo is wet anyway
+export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist", "leaf", "twiggle",
+  "needlenub", "duck", "drakwing", "quill", "lillypot"];
+// Needlenub's flower opens only when it is happy; otherwise it is a bud (the colors as in the
+// palette of tools/build_blob_sprites.py)
+const BUD: readonly (readonly [Color, Color])[] = [
+  [[255, 150, 190], [120, 200, 90]], [[220, 90, 140], [70, 150, 60]], [[255, 225, 90], [240, 140, 180]],
+];
 // Species that glow at night ([day color, night color], the day colors as in the palettes of
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals,
 // Gemperor's crystals and core, the bulb of Angloop's lure
@@ -315,6 +349,8 @@ const PEBBLE: Bitmap = [[192, 203, 220], ["XX", "XX"]];
 const LOOT: Bitmap = [[255, 210, 80], ["XX", "XX"]]; // what Filchfox has filched
 const BOLT: Bitmap = [[255, 225, 60], ["X.", ".X", "X."]]; // Rumblefluff's lightning
 const SHIMMER: Bitmap = [[255, 170, 210], [".X.", "X.X", ".X."]]; // the shimmer of Prismist's rainbow
+const LEAFLET: Bitmap = [[150, 225, 110], ["XX", ".X"]]; // a leaf off Twiggle's crown
+const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Parcelbeak's pouch
 const DIRT: Bitmap = [[60, 60, 60], ["X"]];
 const SICK_TINT: readonly [Color, number] = [[185, 195, 90], 0.28]; // sickly pale, for everything that isn't the teal slime
 const STEAM: Bitmap = [[215, 235, 245], [".X.", "XXX"]];
@@ -738,7 +774,8 @@ export class PetScene {
       const [stage, species] = pose.form;
       let pet: Image;
       [pet, top] = this.pet(stage, species, pose.body, t, pose.face, {
-        sick: view.sick, whiteOut: pose.white, flame: species === "flicker" ? flickerFlame(view.mood) : null,
+        sick: view.sick, whiteOut: pose.white,
+        flame: species === "flicker" ? flickerFlame(view.mood) : species === "needlenub" && view.mood !== "happy" ? "bud" : null,
         heavy: view.weight_status === "heavy", hat: view.hat, hint: view.hint || view.species,
         glow: this.night > 0.5, lookLeft: this.facing < 0, sky: this.skyLook,
       });
@@ -1242,7 +1279,7 @@ export class PetScene {
     return phase < 0.75 ? ["stretch", Math.sin((phase - 0.15) / 0.6 * Math.PI) * 3] : null;
   }
 
-  /** Whether the body sheet of this form has a walk of its own (Cyclopuff, Grumpcap, Sneezle, the stone, fox and cloud adults). */
+  /** Whether the body sheet of this form has a walk of its own (Cyclopuff, Grumpcap, Sneezle and most adults of the other lines). */
   private walks(stage: string, species: string): boolean {
     return stage === "adult" && species in SPECIES_SHEETS && this.sheet(SPECIES_SHEETS[species][0]).has("walk");
   }
@@ -1642,7 +1679,8 @@ export class PetScene {
       const sprite = ({
         sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: EMBER, flarelet: EMBER,
         glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: GLINT, angloop: BUBBLE, purrloop: LOVE,
-        roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER,
+        roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER, twiggle: LEAFLET, needlenub: LOVE,
+        drakwing: EMBER, quill: BUBBLE, steamo: STEAM, lillypot: BUBBLE, rapierre: GLINT, parcelbeak: LETTER,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;
       for (let i = 0; i < 10; i++) {
         this.particles.push({
@@ -2525,7 +2563,9 @@ export class PetScene {
       if (weathered) {
         img = swapColors(img, weathered[1]);
       }
-      if (ownArt && flame) {
+      if (ownArt && flame === "bud") {
+        img = swapColors(img, BUD);
+      } else if (ownArt && flame) {
         img = recolor(img, 0, 40, FLICKER_FLAME[flame]);
       }
       let face = this.sheet(faceSheet).image(faceName);

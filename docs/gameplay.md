@@ -158,8 +158,8 @@ child grow 30 % faster: the baby in about two days, the child in about five.
 A grown-up has no use for it.
 
 The care diary of the child stage decides the adult form: how well the pet was
-looked after, how often it was played with and petted, and how often it went
-on a trip. For one line, the weather at the moment it grows up decides. Each
+looked after, how often it was played with, petted, bathed and taught tricks,
+how often it went on a trip and how many scuffles it won. For one line, the weather at the moment it grows up decides. Each
 form has a character of its own, with small effects on the game. From its
 second day on, the bulb on the child's lure shows by its color which form it
 is heading for.
@@ -485,8 +485,10 @@ can get past Crowcomb with some luck; for the later ones the pet needs its
 tricks and a good deal of training. Progress counts per pet: a new egg starts
 in the meadow again.
 
-One of the guardians has been sitting on a rare egg. It leaves the egg behind
-the first time a pet gets past it, so every pet can earn it once. Getting
+Some of the guardians have been sitting on a rare egg. A guardian leaves its
+egg behind the first time a pet gets past it, so every pet can earn it once.
+If the pet got past it before (or there was no room among the finds), the egg
+waits at the end of the path on a later trip to that area. Getting
 past the last one, on the mountain, adds a step to the house (see
 [The house](#the-house)).
 

@@ -1129,13 +1129,53 @@
     "h": 14
    },
    "duration": 1000
+  },
+  {
+   "filename": "trip egg_leaf 113",
+   "frame": {
+    "x": 1214,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_duck 114",
+   "frame": {
+    "x": 1226,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_hippo 115",
+   "frame": {
+    "x": 1238,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_beak 116",
+   "frame": {
+    "x": 1250,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "trip.png",
   "size": {
-   "w": 1214,
+   "w": 1262,
    "h": 24
   },
   "frameTags": [
@@ -1695,6 +1735,30 @@
     "name": "egg_cloud",
     "from": 112,
     "to": 112,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_leaf",
+    "from": 113,
+    "to": 113,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_duck",
+    "from": 114,
+    "to": 114,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_hippo",
+    "from": 115,
+    "to": 115,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_beak",
+    "from": 116,
+    "to": 116,
     "direction": "forward"
    }
   ]

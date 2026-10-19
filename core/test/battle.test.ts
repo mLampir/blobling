@@ -9,7 +9,7 @@ import * as home from "../src/home";
 import * as life from "../src/life";
 import * as model from "../src/model";
 import { Random } from "../src/random";
-import { STATS, toDict, type PetState, type Trip } from "../src/state";
+import { STATS, fromDict, toDict, type PetState, type Trip } from "../src/state";
 import * as trip from "../src/trip";
 import { ALL_TRICKS, BEDTIME, HOUR, act, at, grown, refused, withRules } from "./helpers";
 
@@ -195,6 +195,27 @@ test("a guardian leaves its rare egg behind", () => {
   assert.equal(home.canAdd(pet, egg), false);
   assert.ok(home.EGGS[egg] in life.LINES);
   assert.equal(home.eggOf(home.EGGS[egg]), egg);
+});
+
+test("a guardian it got past before it had an egg leaves the egg at the end of the path", () => {
+  pet.guardians = [...trip.AREAS]; // got past them all, from a save before the stream had an egg
+  pet.guardian_eggs = ["cave"];
+  withRules(trip.rules, { encounterChance: 0.0, fight: battle.fight }, () => {
+    assert.deepEqual(act(pet, "trip", start, { item: "stream" }), [true, null]);
+    assert.equal(pet.trip!.guardian, null);
+    runUntil(pet.trip!.stations.at(-1)! + 60);
+    assert.equal(pet.trip!.found.at(-1), "egg_duck");
+    runUntil(start + 3 * HOUR);
+    assert.deepEqual(pet.guardian_eggs, ["cave", "stream"]);
+    assert.deepEqual(act(pet, "unpack", start + 3 * HOUR), [true, null]);
+    assert.deepEqual(act(pet, "trip", start + 30 * HOUR, { item: "stream" }), [true, null]); // only once
+    runUntil(start + 33 * HOUR);
+    assert.equal(pet.trip, null);
+    assert.ok(!pet.backpack.includes("egg_duck"));
+  });
+  // a save from before: only the cave's guardian had an egg to give
+  const { guardian_eggs: _, ...old } = toDict(pet);
+  assert.deepEqual(fromDict({ ...old, guardians: ["meadow", "cave"] }).guardian_eggs, ["cave"]);
 });
 
 test("the next pet keeps what is at home", () => {

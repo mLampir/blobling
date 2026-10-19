@@ -184,6 +184,8 @@ export interface PetState {
   trip: Trip | null;
   /** Areas whose guardian it has got past (trip.AREAS). */
   guardians: string[];
+  /** Areas whose guardian has left it its egg (trip.GUARDIAN_EGGS). */
+  guardian_eggs: string[];
   /** The trips it has been on, the latest last, at most trip.MAX_TRAVELS. */
   travels: Travel[];
   /** Brought home but not unpacked yet. */
@@ -260,6 +262,7 @@ export function newState(): PetState {
     training: null,
     trip: null,
     guardians: [],
+    guardian_eggs: [],
     travels: [],
     backpack: [],
     items: {},
@@ -302,6 +305,10 @@ export function fromDict(data: Record<string, unknown>): PetState {
   }
   if (!("house" in data) && state.guardians.includes("mountain")) {
     state.house = 1; // saved before there was a house, by a pet that has already earned the hut
+  }
+  if (!("guardian_eggs" in data)) {
+    // saved before guardians kept track of their eggs: back then only the cave's guardian had one
+    state.guardian_eggs = state.guardians.filter((area) => area === "cave");
   }
   if (!("form_rules" in data)) {
     state.form_rules = 1; // saved before the slime line was redrawn

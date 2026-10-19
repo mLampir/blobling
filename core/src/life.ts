@@ -32,6 +32,10 @@ export const LINES: Record<string, readonly string[]> = {
   stone: ["glimmerock", "bouldergrin"],
   fox: ["roamtail", "filchfox"],
   cloud: ["prismist", "rumblefluff"],
+  leaf: ["twiggle", "needlenub"],
+  duck: ["quill", "drakwing"],
+  hippo: ["lillypot", "steamo"],
+  beak: ["parcelbeak", "rapierre"],
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
@@ -56,6 +60,10 @@ export const FLARELET_PLAYS_PER_DAY = 2.5; // the ember line: played with this o
 export const GLIMMEROCK_LOVE_PER_DAY = 5; // the stone line: petting polishes it → glimmerock, otherwise bouldergrin
 export const ROAMTAIL_TRIPS_PER_DAY = 1; // the fox line: a trip a day makes a wanderer → roamtail, otherwise filchfox
 // The cloud line is decided by the weather when it grows up: in the rain → rumblefluff, otherwise prismist
+export const NEEDLENUB_LOVE_PER_DAY = 5; // the leaf line: a cactus that gets cuddled → needlenub, otherwise twiggle
+export const DRAKWING_WINS_PER_DAY = 1; // the duck line: a scuffle won a day → drakwing, otherwise quill
+export const STEAMO_BATHS_PER_DAY = 2; // the hippo line: bathed this often → steamo, otherwise lillypot
+export const RAPIERRE_TRICKS_PER_DAY = 2; // the beak line: tricks practiced → rapierre, otherwise parcelbeak
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
 // Character: factors on decay (awake) and on rewards. Small on purpose.
@@ -75,6 +83,12 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   filchfox: { satiety: 1.15 }, // always after something to eat
   rumblefluff: { mood: 0.85 }, // grumpy anyway: a bad day hardly makes it worse
   prismist: { hygiene: 0.8 }, // light as air: dirt doesn't weigh it down
+  twiggle: { energy: 0.85 }, // an old tree is patient
+  drakwing: { satiety: 1.15 }, // a fire needs feeding
+  steamo: { hygiene: 0.7 }, // always fresh from the sauna
+  lillypot: { energy: 0.85 }, // half asleep in the pond anyway
+  rapierre: { energy: 1.2, satiety: 1.15 }, // a hummingbird burns through everything
+  parcelbeak: { mood: 0.85 }, // a letter for everyone: it is always in a good mood
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -87,10 +101,13 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   glimmerock: { pet: 1.5 }, // loves being polished
   filchfox: { play: 1.25 }, // up for any mischief
   prismist: { pet: 1.25 }, // fluffy, and it knows how nice that is
+  needlenub: { pet: 1.5 }, // a cactus that wants to be petted: nothing makes it happier
+  quill: { play: 1.25 }, // an old sailor loves a good game
+  steamo: { sick: 0.5 }, // the sauna keeps it healthy
 };
 
 export function newDiary(): Record<string, number> {
-  return { minutes: 0, good_minutes: 0, meals: 0, snacks: 0, plays: 0, love: 0, trips: 0 };
+  return { minutes: 0, good_minutes: 0, meals: 0, snacks: 0, plays: 0, love: 0, trips: 0, wins: 0, baths: 0, tricks: 0 };
 }
 
 /** The line a species belongs to. */
@@ -168,6 +185,18 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", rain
   }
   if (line === "cloud") {
     return raining ? "rumblefluff" : "prismist";
+  }
+  if (line === "leaf") {
+    return (diary.love ?? 0) / days >= NEEDLENUB_LOVE_PER_DAY ? "needlenub" : "twiggle";
+  }
+  if (line === "duck") {
+    return (diary.wins ?? 0) / days >= DRAKWING_WINS_PER_DAY ? "drakwing" : "quill";
+  }
+  if (line === "hippo") {
+    return (diary.baths ?? 0) / days >= STEAMO_BATHS_PER_DAY ? "steamo" : "lillypot";
+  }
+  if (line === "beak") {
+    return (diary.tricks ?? 0) / days >= RAPIERRE_TRICKS_PER_DAY ? "rapierre" : "parcelbeak";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if ((diary.love ?? 0) / days >= PURRLOOP_LOVE_PER_DAY) {

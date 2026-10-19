@@ -127,7 +127,7 @@ test("the status line: clock, temperature and what the pet needs", () => {
 test("every form of the pet can be drawn, in every state", () => {
   const forms = [...Object.keys(life.LINES).flatMap((line) => life.STAGES.map((stage) => [stage, line])),
     ...Object.values(life.LINES).flat().map((name) => ["adult", name])];
-  assert.equal(forms.length, 5 * 4 + 16);
+  assert.equal(forms.length, 9 * 4 + 24);
   const moods = ["normal", "happy", "sad", "hungry", "dirty", "sick", "tired"];
   for (const [stage, species] of forms) {
     for (const mood of moods) {

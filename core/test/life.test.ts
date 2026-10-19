@@ -163,6 +163,26 @@ test("a cloud lamb that grows up in the rain becomes a thundercloud", () => {
   assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 }, "cloud", true), "rumblefluff");
 });
 
+test("the leaf, duck, hippo and beak lines grow up by what the child did most", () => {
+  const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
+  const cases: [string, string, string, string][] = [
+    ["leaf", "love", "needlenub", "twiggle"], ["duck", "wins", "drakwing", "quill"],
+    ["hippo", "baths", "steamo", "lillypot"], ["beak", "tricks", "rapierre", "parcelbeak"],
+  ];
+  for (const [line, kind, often, otherwise] of cases) {
+    assert.deepEqual(life.LINES[line].map(life.lineOf), [line, line]);
+    assert.equal(life.decideSpecies({ ...week, [kind]: 7 * 6 }, line), often);
+    assert.equal(life.decideSpecies({ ...week, [kind]: 2 }, line), otherwise);
+  }
+  // bathing and practicing a trick go into the child's diary
+  const hippo = model.newPet(start, "", "hippo");
+  Object.assign(hippo, { stage: "child", stage_since: start, diary: life.newDiary(), poops: 1 });
+  assert.equal(act(hippo, "clean", start + 600)[0], true);
+  assert.equal(hippo.diary.baths, 1);
+  assert.equal(act(hippo, "trick", start + 700, { item: "bow" })[0], true);
+  assert.equal(hippo.diary.tricks, 1);
+});
+
 test("child keeps a diary and grows up", () => {
   pet.stage = "child";
   pet.stage_since = start;

@@ -25,6 +25,10 @@ frameTags):
 - roamtail_body / roamtail_faces, filchfox_body / filchfox_faces – its adults (faces of their own)
 - cloud_baby_body / cloud_baby_faces, nimbit_body / cloud_faces – baby and child of the cloud line
 - rumblefluff_body / rumblefluff_faces, prismist_body / prismist_faces – its adults (faces of their own)
+- <line>_baby_body / <line>_baby_faces, <child>_body / <line>_faces – baby and child of the leaf
+  (sproutlet), duck (paddlet), hippo (soakling) and beak (crestling) lines
+- twiggle, needlenub, drakwing, quill, steamo, lillypot, rapierre, parcelbeak (_body / _faces) –
+  their adults (faces of their own)
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine
 - trip                             – backpack, plants, decorations, hats, things along the path,
                                      opponents and guardians
@@ -2477,6 +2481,749 @@ RARE_EGG_PALETTES = {
     "cloud": {"o": (60, 88, 150), "e": (165, 200, 245), "E": (120, 155, 215), "h": (220, 236, 255),
               "t": (255, 255, 255), "x": (40, 60, 120)},
 }
+
+
+# ---------------------------------------------------------------- The leaf, duck, hippo and beak lines
+
+# Four more lines, each with its egg (EGG_GRIDS), baby, child and two adults. What every form of a
+# line keeps: the seed shell (leaf: the baby's cap, the child's helmet, the adults' pot), the curl
+# (duck), the towel (hippo) and the red crest (beak; only the beak changes between its adults).
+# The child carries the colors the code recolors as a hint at its adult form (LURES in
+# core/src/scene.ts): the leaves of the sprout, the curl, the towel's stripe, the goggles.
+
+def face_place(grid, eye_row, left, width):
+    """faceTop and faceShift for a face `width` wide whose top row is `eye_row` and whose left
+    edge is column `left` of the grid, as faceAnchor (core/src/sprites.ts) places it."""
+    xs = [x for x, ch in enumerate(grid[eye_row]) if ch != "."]
+    return face_top(grid, eye_row), left + width / 2 - (xs[0] + xs[-1] + 1) / 2
+
+
+# The eggs: a seed with an acorn cap and little leaves; a cream egg floating in a pond; a lavender
+# egg caked with mud at the bottom; a robin-blue bird's egg with brown freckles.
+LEAF_EGG = [
+    "....oooo....",
+    "...okKkKo...",
+    "..oKkKkKko..",
+    "..okKkKkKo..",
+    ".oooooooooo.",
+    ".oeeeeeeeEo.",
+    ".oeetteeeEo.",
+    ".oeeetteeEo.",
+    ".oeeeeeeeEo.",
+    ".oeeeeetteo.",
+    "..oeeetteo..",
+    "..oEeeeeEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+DUCK_EGG = [
+    "....oooo....",
+    "...ohheeo...",
+    "..oheeeeeo..",
+    "..oeeeeeeo..",
+    ".oeeeeeeeeo.",
+    ".oeeeeeeeEo.",
+    ".oeeeeeeeEo.",
+    ".oeeeeeeeEo.",
+    ".oettetteEo.",
+    ".otteetteto.",
+    "..otttttTo..",
+    "..otTtttTo..",
+    "...oTTTTo...",
+    "....oooo....",
+]
+HIPPO_EGG = [
+    "....oooo....",
+    "...ohheeo...",
+    "..oheeeeeo..",
+    "..oeeteeeo..",
+    ".oeeeeeeeeo.",
+    ".oeeeeeteEo.",
+    ".oeteeeeeEo.",
+    ".oeeeeeeeEo.",
+    ".omeemeemEo.",
+    ".ommmmmmmMo.",
+    "..ommmmmMo..",
+    "..omMmmmMo..",
+    "...oMMMMo...",
+    "....oooo....",
+]
+BEAK_EGG = [
+    "....oooo....",
+    "...ohheeo...",
+    "..ohetteeo..",
+    "..oeetteto..",
+    ".oteeeeeeeo.",
+    ".oeeeteeeEo.",
+    ".oeeeeeeteo.",
+    ".otteeeeeEo.",
+    ".otteeteeEo.",
+    ".oeeeeeeeEo.",
+    "..oeteeeEo..",
+    "..oEeeetEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+EGG_GRIDS |= {"leaf": LEAF_EGG, "duck": DUCK_EGG, "hippo": HIPPO_EGG, "beak": BEAK_EGG}
+RARE_EGG_PALETTES |= {
+    "leaf": {"o": (70, 48, 26), "e": (215, 185, 130), "E": (170, 135, 85), "h": (240, 220, 175), "t": (95, 175, 60),
+             "x": (60, 40, 20), "k": (140, 95, 50), "K": (105, 70, 35)},
+    "duck": {"o": (90, 80, 55), "e": (250, 240, 200), "E": (215, 200, 150), "h": (255, 255, 235), "t": (90, 170, 230),
+             "T": (55, 120, 190), "x": (60, 50, 35)},
+    "hippo": {"o": (70, 55, 85), "e": (190, 170, 210), "E": (150, 130, 175), "h": (225, 210, 240), "t": (240, 150, 175),
+              "m": (130, 90, 60), "M": (95, 62, 40), "x": (50, 35, 60)},
+    "beak": {"o": (40, 85, 105), "e": (130, 205, 220), "E": (90, 165, 185), "h": (200, 240, 245), "t": (110, 70, 45),
+             "x": (30, 55, 70)},
+}
+
+# Shared by the adults of these lines: eyes 4×3 and the slime's mouths. A face: the two eyes
+# `gap` apart, rosy cheeks on their outer sides, the mouth `mouth_row` rows below the top,
+# centered (none for a beak or a bill: that is part of the body).
+KIT_EYES = {  # (left, right)
+    "open": (["wwpp", "wpgp", "wppp"],) * 2,
+    "closed": (["....", "....", "pppp"],) * 2,
+    "happy": (["....", ".pp.", "p..p"],) * 2,
+    "half": (["....", "dddd", "wppp"],) * 2,
+    "sad": (["p...", "wwpp", "wpgp"], ["...p", "wwpp", "wpgp"]),
+    "cross": (["..pp", "wwpp", "wpgp"], ["pp..", "wwpp", "wpgp"]),
+}
+
+
+def kit_face(gap, mouth_row=3, single=False):
+    """A face grid function for one of these adults; `single`: one eye, seen from the side."""
+    width = 1 + (4 if single else gap + 4) + 1
+    height = max(3, mouth_row + 2)
+
+    def grid(eyes, mouth, blush):
+        rows = [list("." * width) for _ in range(height)]
+        left, right = KIT_EYES[eyes]
+        for y in range(3):
+            for x in range(4):
+                rows[y][1 + x] = left[y][x]
+                if not single:
+                    rows[y][1 + gap + x] = right[y][x]
+        if mouth_row:
+            mx = (width - 4) // 2
+            for y in range(2):
+                for x in range(4):
+                    rows[mouth_row + y][mx + x] = MOUTHS[mouth][y][x]
+        if blush:
+            rows[2][0] = "k"
+            if not single:
+                rows[2][width - 1] = "k"
+        return ["".join(r) for r in rows]
+    grid.width = width
+    return grid
+
+
+def kit_faces(**changes):
+    """FACES with some of them changed; a form with a beak has no mouth of its own."""
+    return FACES | changes
+
+
+BEAKED_FACES = {name: (eyes, "none", blush) for name, (eyes, mouth, blush) in FACES.items()}
+
+# ---- The leaf line: a seed that grows up into a plant with a pot of its own
+
+LEAF_PALETTE = {
+    "o": (25, 80, 35),     # outline
+    "d": (60, 140, 55),    # shadow
+    "b": (95, 190, 75),    # leaf green
+    "l": (150, 225, 110),  # lit
+    "h": (210, 250, 180),  # highlight
+    "k": (160, 110, 60),   # the seed shell
+    "K": (115, 75, 40),
+    "x": (70, 45, 25),
+    "g": (130, 220, 90),   # the sprout's leaves (the hint)
+    "G": (60, 150, 50),
+    "s": (85, 130, 45),    # its stem
+}
+# Baby: the baby slime wearing the top of its seed as a cap, a little askew, a sprout on top
+LEAF_BABY = [
+    "........G.g.....",
+    "........Ggsg....",
+    "......xxxxsxxx..",
+    "....xxkkKkkkKkx.",
+    "..xxkKkkkKkkkxx.",
+    ".oKKKKKKKKKKKKo.",
+    ".olhbbbbbbbbbdo.",
+    "olbbbbbbbbbbbddo",
+    "olbbbbbbbbbbbddo",
+    "obbbbbbbbbbbbddo",
+    "odbbbbbbbbbbdddo",
+    "oddddddddddddddo",
+    ".oooooooooooooo.",
+]
+LEAF_BABY_TAGS = body_tags(LEAF_BABY, 8, 8, flat_rows=3)
+# Sproutlet, the child: a seedling with its seed shell pulled down to the eyes like a helmet; the
+# sprout has grown into a small leaf and a big one that flops to the right; two roots for feet
+SPROUTLET = [
+    "..............gggg......",
+    ".....gg.....ggggggg.....",
+    "....gGgg...gGGggggGg....",
+    ".....gGgs.gGgggggGg.....",
+    "........sGgggGgg........",
+    ".........s..............",
+    "......xxxxsxxxxx........",
+    "....xxkkKkkkKkkkxx......",
+    "...xkkKkkkKkkkKkkkx.....",
+    "..xkKkkkKkkkKkkkKkkx....",
+    ".oKKKKKKKKKKKKKKKKKKKo..",
+    ".olhhbbbbbbbbbbbbbbbdo..",
+    "olhbbbbbbbbbbbbbbbbbbdo.",
+    "olbbbbbbbbbbbbbbbbbbbdo.",
+    "obbbbbbbbbbbbbbbbbbbbdo.",
+    "obbbbbbbbbbbbbbbbbbbddo.",
+    "obbbbbbbbbbbbbbbbbbbddo.",
+    "odbbbbbbbbbbbbbbbbbdddo.",
+    ".odbbbbbbbbbbbbbbbdddo..",
+    "..oddddddddddddddddoo...",
+    "...ooKKooooooooKKoo.....",
+    "....KK.K......K.KK......",
+]
+SPROUTLET_FACE_TOP, SPROUTLET_FACE_SHIFT = face_place(SPROUTLET, 11, 3, FACE_W)
+SPROUTLET_TAGS = body_tags(SPROUTLET, 14, 11, flat_rows=3)
+LEAF_ADULT_PALETTE = {
+    "o": (25, 60, 30), "g": (150, 225, 110), "G": (95, 190, 75), "v": (55, 140, 55),  # leaves
+    "T": (150, 105, 65), "U": (105, 70, 40), "t": (190, 145, 95),  # bark
+    "k": (175, 125, 70), "K": (125, 85, 45),  # the pot: the seed shell, grown and woven
+    "m": (120, 160, 70), "M": (85, 120, 50),  # moss
+    "r": (110, 75, 45),  # roots
+    "s": (215, 245, 190),  # the cactus' spines
+    "p": (255, 150, 190), "P": (220, 90, 140), "y": (255, 225, 90),  # its flower
+}
+# Twiggle: an old bonsai master that walks around in its pot. Pads of leaves like clouds, one
+# reaching far to the right; a gnarled trunk with a calm old face and a beard of moss; the pot
+# stands on its roots. It walks, slowly.
+TWIGGLE = [
+    "........oooooo.......ooooo......",
+    "......ooggggGGoo...ooggggGoo....",
+    ".....ogggGGGGGGGo.ogggGGGGGGooo.",
+    "....ogggGGGGGGGGvoogGGGGGGGGgGGo",
+    "...oggGGGGGGGGGvvvGGGGGGGGGGGGvo",
+    "...oGGGGGGGGGGvvvvGGGGGGGGGGvvo.",
+    "....oovvvGGvvvvoovvvvvvvvvvvoo..",
+    "......oooovvoooUUoooooooooo.....",
+    "..........oUUooUUo..............",
+    "...........oUUUUo...............",
+    "...........oTTTTTTTTTTTUUo......",
+    "..........oTTtTTTTTTTTTTUo......",
+    "..........oTtTTTTTTTTTTTUo......",
+    "..........oTtTTTTTTTTTTTUo......",
+    "..........oTTTTTTTTTTTTTUo......",
+    "..........oTTTTTTTTTTTTTUo......",
+    "..........oTTmmmmmmmmmmTUo......",
+    "........ooooommMmmmmMmmooooo....",
+    ".......oKkKkKkKmmMmmmMKkKkKko...",
+    "......oKkkKkkKkkKkkKkkKkkKkkKo..",
+    "......okKkkKkkKkkKkkKkkKkkKkko..",
+    ".......okKkkKkkKkkKkkKkkKkkKo...",
+    "........oKKKKKKKKKKKKKKKKKKo....",
+    ".........ooooooooooooooooooo....",
+    "..........rr.r..........r.rr....",
+    ".........r....r........r....r...",
+]
+TWIGGLE_FACE_TOP, TWIGGLE_FACE_SHIFT = face_place(TWIGGLE, 12, 12, 13)
+TWIGGLE_TAGS = species_tags([TWIGGLE, drop_rows(TWIGGLE, 13)], 13, 18, idle_ms=900)
+TWIGGLE_TAGS["walk"] = walk_tags(TWIGGLE, 13, range(9, 15), range(23, 30), 24, ms=(260, 160))
+# Needlenub: a round cactus that wants to be petted. Its little arms are always up for a hug, the
+# one flower on its head opens when it is happy (closed, the code colors it as a bud); it sits in
+# the same seed-shell pot and hops.
+NEEDLENUB = [
+    "...............pp...............",
+    ".............pPyPp..............",
+    "..............pPp...............",
+    "...........ooooGooooo...........",
+    ".........ooGGsGGGGsGGoo.........",
+    "........oGGgGGGGGGGGGsvo........",
+    ".......oGgsGGGGGGsGGGGGvo.......",
+    "..oo..oGgGGGGGGGGGGGGGsGvo..oo..",
+    ".oGso.oGsGGGGGGGGGGGGGGGvo.osGo.",
+    ".oGGo.oGgGGGGGGGGGGGGGGGvo.oGvo.",
+    ".oGGvooGGGGGGGGGGGGGGGGsvooGvvo.",
+    "..oGGvoGsGGGGGGGGGGGGGGGvoGvvo..",
+    "...oGGGGGGGGGGGGGGGGGGGGGGvvo...",
+    "....ooGGGGGsGGGGGGGGsGGGvvoo....",
+    "......oGGGGGGGGGGGGGGGGGvo......",
+    "......ovGGGGsGGGGGGsGGGvvo......",
+    ".....ooooooooooooooooooooo......",
+    "....oKkKkKkKkKkKkKkKkKkKkKko....",
+    "....okkKkkKkkKkkKkkKkkKkkKko....",
+    ".....okKkkKkkKkkKkkKkkKkko......",
+    ".....oKkKkkKkkKkkKkkKkkKko......",
+    "......oKKKKKKKKKKKKKKKKKo.......",
+    ".......ooooooooooooooooo........",
+    "........rr.r.......r.rr.........",
+]
+NEEDLENUB_FACE_TOP, NEEDLENUB_FACE_SHIFT = face_place(NEEDLENUB, 8, 10, 13)
+NEEDLENUB_TAGS = species_tags([NEEDLENUB, drop_rows(NEEDLENUB, 14)], 14, 16)
+
+# ---- The duck line: a duckling that never quite leaves the water
+
+DUCK_PALETTE = {
+    "o": (120, 85, 15),    # outline
+    "d": (225, 175, 35),   # shadow
+    "b": (255, 215, 70),   # duckling yellow
+    "l": (255, 235, 140),  # lit
+    "h": (255, 250, 210),  # highlight
+    "a": (250, 140, 40),   # feet and bill
+    "A": (200, 95, 25),
+    "q": (245, 185, 40),   # the curl (the hint)
+    "Q": (210, 140, 30),
+    "e": (250, 240, 200),  # the eggshell
+    "E": (215, 200, 150),
+}
+# Baby: a yellow slime with a curl of down on top and orange webbed feet
+DUCK_BABY = [
+    "........dd......",
+    ".......d..d.....",
+    "..........d.....",
+    ".....oobbdo.....",
+    "...oolhllbboo...",
+    "..olhhlbbbbbdo..",
+    ".ollhbbbbbbbbdo.",
+    ".olbbbbbbbbbbdo.",
+    "olbbbbbbbbbbbddo",
+    "olbbbbbbbbbbbddo",
+    "obbbbbbbbbbbbddo",
+    "odbbbbbbbbbbdddo",
+    "oddddddddddddddo",
+    ".oaAaooooooaAao.",
+]
+DUCK_BABY = [row.replace("d", "q") if y < 3 else row for y, row in enumerate(DUCK_BABY)]
+DUCK_BABY_TAGS = body_tags(DUCK_BABY, 9, 8, flat_rows=3)
+# Paddlet, the child: a duckling that still sits in the bottom half of its eggshell and paddles it
+# like a little boat, its webbed feet sticking out underneath; a bill instead of a mouth
+PADDLET = [
+    "...........qq...........",
+    "..........q..q..........",
+    ".............Q..........",
+    "........oooobQoo........",
+    "......oolhhlbbbboo......",
+    ".....olhhlbbbbbbbbdo....",
+    "....olhlbbbbbbbbbbbdo...",
+    "...olhbbbbbbbbbbbbbbdo..",
+    "...olbbbbbbbbbbbbbbbdo..",
+    "..olbbbbbbbbbbbbbbbbbdo.",
+    "..obbbbbbbbbbbbbbbbbbdo.",
+    ".odbbbbbbbbbbbbbbbbbbddo",
+    "oddbbbbbbbbbbbbbbbbbbddo",
+    "odEbeEbeEbeEbeEbeEbeEddo",
+    ".oeeEeeeEeeeEeeeEeeeEEo.",
+    ".oeeeeeeeeeeeeeeeeeeeEo.",
+    "..oeeeeeeeeeeeeeeeeeEo..",
+    "...oEEEeeeeeeeeeeeEEo...",
+    "....ooEEEEEEEEEEEEoo....",
+    "......oaAao..oaAao......",
+    ".....aAaAa....aAaAa.....",
+]
+PADDLET_FACE_TOP, PADDLET_FACE_SHIFT = face_place(PADDLET, 5, 4, FACE_W)
+PADDLET_TAGS = body_tags(PADDLET, 9, 12, flat_rows=3)
+DUCK_ADULT_PALETTE = {
+    "o": (40, 40, 30),
+    "G": (40, 150, 90), "g": (90, 200, 130), "v": (20, 95, 60),  # a mallard's green
+    "b": (255, 215, 70), "l": (255, 235, 140), "d": (225, 175, 35),  # the duckling's yellow
+    "a": (250, 140, 40), "A": (200, 95, 25),  # bill and feet
+    "w": (120, 200, 120), "W": (70, 140, 80),  # the dragon's wing
+    "f": (255, 170, 60), "F": (255, 90, 40),  # a puff of flame
+    "n": (35, 45, 90), "N": (60, 75, 135), "y": (255, 210, 80), "s": (255, 255, 250),  # the cap
+    "B": (90, 160, 225), "r": (215, 50, 50),  # sailor collar and scarf
+}
+# Drakwing: a duck that is a little dragon (a drake is a male duck). A mallard-green head whose
+# curl has become a horn, a wide bill that puffs flames, small bat wings and a spiky tail; the
+# belly stays duckling yellow. It walks, waddling.
+DRAKWING = [
+    "..............oo................",
+    ".............ogo................",
+    "...............go...............",
+    "...........ooooogoo.............",
+    ".........oogggGGGGGoo.....o....o",
+    "........ogggGGGGGGGGvo...oWo..oW",
+    ".......oggGGGGGGGGGGGvo.oWwWooWw",
+    ".......ogGGGGGGGGGGGGvooWwwwWWww",
+    ".......oGGGGGGGGGGGGGvooWwwwwwww",
+    "..F....oGGGGGGGGGGGGGvooWwwwwwWo",
+    ".FfF..oaaaaaaaaaaaaaaaoooWwWwWo.",
+    "..FfFoaAAAAAAAAAAAAAAAAo.o.o.o..",
+    "....ooaaaaaaaaaaaaaaaaao........",
+    "......oovvGGGGGGGGGGGGvo........",
+    ".......ovlbbbbbbbbbbbdvo........",
+    "......ovlbbbbbbbbbbbbbdvo.ooo...",
+    "......ovbbbbbbbbbbbbbbdvo...gg..",
+    "......ovbbbbbbbbbbbbbddvoo.ogGo.",
+    "......ovdbbbbbbbbbbbbddvoggGGo..",
+    ".......ovddbbbbbbbbbdddvGGGo....",
+    "........ovvddddddddddvvvoo......",
+    ".........ooovvvvvvvvvooo........",
+    "............aAa...aAa...........",
+    "...........aAaAa.aAaAa..........",
+]
+DRAKWING_FACE_TOP, DRAKWING_FACE_SHIFT = face_place(DRAKWING, 7, 9, 13)
+DRAKWING_TAGS = species_tags([DRAKWING, dots(DRAKWING, {(1, 10): ".", (2, 9): ".", (3, 10): "f"})], 16, 15)
+DRAKWING_TAGS["walk"] = walk_tags(DRAKWING, 16, range(11, 15), range(18, 22), 22, ms=(180, 110))
+# Captain Quill: an old sea duck in a captain's cap with the curl sticking out under it, a
+# sailor collar with a red scarf. It walks, rolling like a sailor.
+QUILL = [
+    "...........b....................",
+    "..........bobooooooo............",
+    ".........oonnnnnnnnnnoo.........",
+    "........onnnnnyyynnnnnno........",
+    "........onnnnnynynnnnnno........",
+    ".......oNNNNNNNNNNNNNNNNo.......",
+    "......osssssssssssssssssso......",
+    "......oyyyyyyyyyyyyyyyyyyo......",
+    "......olllllllllllllllldo.......",
+    "......olllllllllllllllldo.......",
+    "......olllllllllllllllldo.......",
+    "......olllllllllllllllldo.......",
+    ".....oaaaaaaaaaaaaaaaaaaao......",
+    ".....oaAAAAAAAAAAAAAAAAAAo......",
+    "......oaaaaaaaaaaaaaaaaaoA......",
+    ".....oBBsBBBBrrrrrrBBBBsBBo.....",
+    "....oBBBsBBBBrrrrrrBBBsBBBBo....",
+    "....olsBBBBBlbrrrrblBBBBBsdo....",
+    "....olllbbbbbbbrrbbbbbbbbbdo....",
+    "....olbbbbbbbbbbbbbbbbbbbbdo....",
+    "....odbbbbbbbbbbbbbbbbbbbddo....",
+    ".....odbbbbbbbbbbbbbbbbbddo.....",
+    "......oddddddddddddddddddo......",
+    ".......ooooooooooooooooooo......",
+    "..........aAa......aAa..........",
+    ".........aAaAa....aAaAa.........",
+]
+QUILL_FACE_TOP, QUILL_FACE_SHIFT = face_place(QUILL, 8, 9, 13)
+QUILL_TAGS = species_tags([QUILL, drop_rows(QUILL, 19)], 19, 16)
+QUILL_TAGS["walk"] = walk_tags(QUILL, 19, range(9, 15), range(18, 24), 24, ms=(220, 130))
+
+# ---- The hippo line: a hippo that loves its bath
+
+HIPPO_PALETTE = {
+    "o": (70, 55, 85),     # outline
+    "d": (135, 115, 160),  # shadow
+    "b": (175, 155, 200),  # lavender
+    "l": (205, 190, 225),  # lit
+    "h": (235, 225, 245),  # highlight
+    "I": (240, 150, 175),  # inside the ears
+    "m": (225, 195, 210),  # muzzle
+    "M": (190, 160, 180),
+    "n": (90, 60, 80),     # nostrils
+    "w": (250, 245, 240),  # the towel
+    "W": (210, 200, 205),
+    "T": (240, 130, 160),  # its stripe (the hint)
+}
+# Baby: a round lavender baby with two little ears and a big pale muzzle
+HIPPO_BABY = [
+    "...oo......oo...",
+    "..oIIooooooIIo..",
+    "...olhllbbbbo...",
+    "..olhhlbbbbbdo..",
+    ".ollhbbbbbbbbdo.",
+    ".olbbbbbbbbbbdo.",
+    "olbbbbbbbbbbbddo",
+    "obbbmmmmmmmmbbdo",
+    "obmmmmmmmmmmmmdo",
+    "obmmnmmmmmmnmMdo",
+    "odmmmmmmmmmmMMdo",
+    "oddMMMMMMMMMMddo",
+    ".oooooooooooooo.",
+]
+HIPPO_BABY_TAGS = body_tags(HIPPO_BABY, 6, 8, flat_rows=3)
+# Soakling, the child: a young hippo on its way to the bath, a striped towel folded on its head
+# with the little ears poking out under it
+SOAKLING = [
+    "......oooooooooooo......",
+    ".....owwwwwwwwwwwwo.....",
+    "....owTTTTTTTTTTTTwo....",
+    "....owwwwwwwwwwwwwWo....",
+    "..oo.oWWWWWWWWWWWWWo.oo.",
+    ".oIIooolhhlbbbbbbbbooIIo",
+    "..oolhhlbbbbbbbbbbbbdoo.",
+    "..olhhbbbbbbbbbbbbbbbdo.",
+    ".olhbbbbbbbbbbbbbbbbbbdo",
+    ".olbbbbbbbbbbbbbbbbbbbdo",
+    "olbbbbbbbbbbbbbbbbbbbbdo",
+    "obbbbbbbbbbbbbbbbbbbbbdo",
+    "obbbmmmmmmmmmmmmmmmbbbdo",
+    "obmmmmmmmmmmmmmmmmmmmbdo",
+    "obmmmnnmmmmmmmmmnnmmMbdo",
+    "obmmmmmmmmmmmmmmmmmMMbdo",
+    "odbMMmmmmmmmmmmmmMMMbddo",
+    "oddbMMMMMMMMMMMMMMMbdddo",
+    ".oddddddddddddddddddddo.",
+    "..obbdo..........obbdo..",
+    "..ooooo..........ooooo..",
+]
+SOAKLING_FACE_TOP, SOAKLING_FACE_SHIFT = face_place(SOAKLING, 6, 4, FACE_W)
+SOAKLING_TAGS = body_tags(SOAKLING, 10, 12, flat_rows=3)
+HIPPO_ADULT_PALETTE = HIPPO_PALETTE | {
+    "o": (70, 45, 75), "d": (175, 120, 165), "b": (215, 160, 200), "l": (235, 195, 220), "h": (250, 225, 240),
+    "m": (245, 205, 215), "M": (215, 165, 185), "n": (110, 55, 85),  # Steamo: pink from the heat
+    "s": (235, 240, 250), "S": (195, 205, 225),  # steam
+    "e": (175, 155, 200), "E": (135, 115, 160), "u": (205, 190, 225),  # Lillypot: still lavender
+    "P": (90, 170, 120), "p": (140, 210, 150), "q": (55, 120, 85),  # lily pads
+    "L": (250, 170, 200), "Y": (255, 220, 100),  # the lotus
+}
+# Steamo: the sauna master. Pink from the heat, eyes closed in bliss, a towel wound round its head
+# like a turban and one round its middle, steam rising off it. It walks.
+STEAMO = [
+    "....s.......oooooooooo..........",
+    "...sSs....oowwwwwwwwwwoo...s....",
+    "....s....owTTwwwwwwwTTwwo.sSs...",
+    ".........owwwwTTTTTTwwwwo..s....",
+    "........oWwwwwwwwwwwwwwWWo......",
+    "......oo.oWWWWWWWWWWWWWWo.oo....",
+    ".....oIIooolhhlbbbbbbbbbooIIo...",
+    "......oolhhlbbbbbbbbbbbbbdoo....",
+    "......olhhbbbbbbbbbbbbbbbbdo....",
+    ".....olhbbbbbbbbbbbbbbbbbbdo....",
+    ".....olbbbbbbbbbbbbbbbbbbbbdo...",
+    "....olbmmmmmmmmmmmmmmmmmmmbdo...",
+    "..s.obmmmmnnmmmmmmmmmnnmmmmbdo..",
+    ".sSsobmmmmmmmmmmmmmmmmmmmmMbdo..",
+    "..s.odmmmmmmmmmmmmmmmmmmmMMbdo..",
+    "....odbMMmmmmmmmmmmmmmmMMMbddo..",
+    "....oddbMMMMMMMMMMMMMMMMMbdddo..",
+    "....owwwwwwwwwwwwwwwwwwwwwwwwo..",
+    "....owTTwwwwwwwwwwwwwwwwwTTwwo..",
+    "....oWWwwwwwwwwwwwwwwwwwwwwWWo..",
+    "....oddbbbbbbbbbbbbbbbbbbbbddo..",
+    ".....oddddddddddddddddddddddo...",
+    "......obbdo............obbdo....",
+    "......ooooo............ooooo....",
+]
+STEAMO_FACE_TOP, STEAMO_FACE_SHIFT = face_place(STEAMO, 7, 10, 15)
+STEAMO_TAGS = species_tags([STEAMO, dots(STEAMO, {(4, 0): ".", (3, 1): ".", (5, 1): ".", (4, 2): ".", (27, 1): ".",
+                                                  (26, 2): ".", (28, 2): ".", (27, 3): ".", (4, 1): "s"})], 10, 16)
+STEAMO_TAGS["walk"] = walk_tags(STEAMO, 10, range(6, 11), range(23, 28), 22, ms=(240, 140))
+# Lillypot: a pond hippo. Lily pads grow on its back like a coat, a lotus is tucked into the
+# towel folded on its head, and a lily leaf sticks out on the right. It walks.
+LILLYPOT = [
+    "...............LL...............",
+    "..............LhYL..............",
+    "...........oooLLLLooo...........",
+    "..........owwwwwwwwwwo..........",
+    ".........owTTTTTTTTTTwo.........",
+    ".........oWWWWWWWWWWWWo.........",
+    "......oo.oeeeeeeeeeeeeo.oo......",
+    ".....oIeooeuuueeeeeeeeeooeIo....",
+    "......ooueuueeeeeeeeeeeeeEoo....",
+    "......oueeeeeeeeeeeeeeeeeEo.ppp.",
+    ".....oueeeeeeeeeeeeeeeeeeeEopqqp",
+    "....oPPppeemmmmmmmmmmmmeePPPopq.",
+    "...oPpppPpmmmmmmmmmmmmmmPppPPo..",
+    "..oPpPPpPPmmnnmmmmmmnnmmPPpppPo.",
+    "..oPpppPPpmmmmmmmmmmmmmmPpPppPo.",
+    "..oPPpPpqpmMmmmmmmmmmmMmpqPpPPo.",
+    "..oqPPpPqqpMMMMMMMMMMMMMpPPqPPo.",
+    "...oqqPPPPpppPPPpppPPPpppPPqqo..",
+    "....oqqqqqqqqqqqqqqqqqqqqqqqo...",
+    ".....oEEeeeeeeeeeeeeeeeeeEEo....",
+    "......oEEEEEEEEEEEEEEEEEEEo.....",
+    "......oeeEo...........oeeEo.....",
+    "......ooooo...........ooooo.....",
+]
+LILLYPOT_FACE_TOP, LILLYPOT_FACE_SHIFT = face_place(LILLYPOT, 8, 11, 13)
+LILLYPOT_TAGS = species_tags([LILLYPOT, drop_rows(LILLYPOT, 12)], 12, 16)
+LILLYPOT_TAGS["walk"] = walk_tags(LILLYPOT, 12, range(6, 11), range(22, 27), 21, ms=(240, 140))
+
+# ---- The beak line: a bird whose crest stays and whose beak decides what it becomes
+
+BEAK_PALETTE = {
+    "o": (60, 45, 40),     # outline
+    "d": (120, 95, 80),    # shadow
+    "b": (165, 135, 110),  # downy grey-brown
+    "l": (200, 175, 150),  # lit
+    "h": (230, 215, 195),  # highlight
+    "c": (235, 225, 205),  # the belly
+    "r": (230, 90, 60),    # the crest
+    "R": (170, 55, 40),
+    "a": (230, 175, 70),   # beak and legs
+    "A": (175, 120, 40),
+    "L": (150, 220, 240),  # the lenses of the goggles (the hint)
+    "G": (95, 70, 50),     # their frame
+}
+# Baby: a fluffy chick with a lighter belly and a crest of three feathers
+BEAK_BABY = [
+    "......r.r.r.....",
+    "......rRrRr.....",
+    ".....oooRooo....",
+    "...oolhllbboo...",
+    "..olhhlbbbbbdo..",
+    ".ollhbbbbbbbbdo.",
+    ".olbbbbbbbbbbdo.",
+    "olbbbbccccbbbddo",
+    "olbbbccccccbbddo",
+    "obdbbccccccbdbdo",
+    "odbdbbccccbdbddo",
+    "odbdbdbbbbdbdddo",
+    ".oooooooooooooo.",
+]
+BEAK_BABY_TAGS = body_tags(BEAK_BABY, 8, 8, flat_rows=3)
+# Crestling, the child: a round young bird. The crest has grown into three feathers, and it wears
+# flying goggles pushed up on its head: it wants to fly long before it can. Little wings, thin legs.
+CRESTLING = [
+    "........r...r...r.......",
+    "........rr..r..rr.......",
+    ".........rRrRrRr........",
+    ".......oooRRRRRooo......",
+    ".....oolhhlbbbbbbboo....",
+    "....oGGGGGGGGGGGGGGGo...",
+    "...oGGLLLGGbbbbGGLLLGGo.",
+    "..olGGLhLGGbbbbGGLhLGGdo",
+    "..olhGGGGGbbbbbbGGGGGbdo",
+    ".olbbbbbbbbbbbbbbbbbbbdo",
+    ".olbbbbbbbbbbbbbbbbbbbdo",
+    "lobbbbbbbbbbbbbbbbbbbbol",
+    "ldobbbbbbbbbbbbbbbbbbodl",
+    ".ddobbbbbbbbbbbbbbbbodd.",
+    "..dobbbbbccccccbbbbbod..",
+    "...obbbbccccccccbbbbo...",
+    "...odbbbccccccccbbbdo...",
+    "....oddbbccccccbbddo....",
+    ".....oooooooooooooo.....",
+    "........aa....aa........",
+    ".......aAa...aAa........",
+    "......aa.a..aa.a........",
+]
+CRESTLING_FACE_TOP, CRESTLING_FACE_SHIFT = face_place(CRESTLING, 9, 4, FACE_W)
+CRESTLING_TAGS = body_tags(CRESTLING, 10, 12, flat_rows=3)
+BEAK_ADULT_PALETTE = {
+    "o": (35, 30, 45), "r": (230, 70, 55), "R": (165, 40, 35),  # the crest
+    "a": (240, 185, 70), "A": (185, 125, 40),  # Rapierre's beak and legs
+    "g": (60, 190, 140), "G": (30, 130, 110), "v": (20, 85, 85),  # a hummingbird's green
+    "q": (140, 90, 200), "Q": (95, 55, 150), "c": (235, 230, 215),  # its purple collar, the belly
+    "S": (190, 200, 210),  # the blur of its wings
+    "s": (250, 250, 250), "n": (45, 70, 120), "N": (70, 100, 160), "y": (255, 215, 80),  # the post
+    "e": (250, 240, 215), "E": (210, 195, 160),  # letters
+    "p": (245, 160, 60), "P": (205, 115, 35),  # the pelican's bill and feet
+    "z": (235, 200, 140), "Z": (170, 120, 70),  # the mail bag
+}
+# Rapierre: a hummingbird fencer. Slim and green, a long needle beak held like a rapier, the crest
+# swept back like a musketeer's plume, its wings a blur. It never walks: it hovers.
+RAPIERRE = [
+    ".............rr.................",
+    "...........rrRr.................",
+    "..........rRRr..................",
+    "...........ooooo................",
+    ".........oogggggoo..............",
+    "........ogggGGGGGvo.............",
+    ".......oggGggggGGvo.............",
+    ".......ogGgggggGGvoaaaaaaaaaaaaa",
+    ".......oggGggggGGvoAAAAAAAAAAAA.",
+    "..S.....ogGGGGGGvo..............",
+    ".S.S.S...ooqqqqqoo..............",
+    "S.S.S.S.oqQqqqqQqo..............",
+    ".S.S.S.oqqcccccqQqo.............",
+    "..S.S.oqqcccccccqQo.............",
+    ".......oqqccccccccqQo...........",
+    ".......oGqqccccccqqGo...........",
+    "........oGGqqqqqqqGGo...........",
+    ".........oGGGGGGGGvo............",
+    "..........oovGGGvoo.............",
+    "...........oaoGGoao.............",
+    "............o.oGGo..............",
+    "..............oGvGo.............",
+    ".............oGo.oGo............",
+    ".............oo...oo............",
+]
+RAPIERRE_FACE_TOP, RAPIERRE_FACE_SHIFT = face_place(RAPIERRE, 6, 10, 6)
+RAPIERRE_TAGS = species_tags([RAPIERRE, dots(RAPIERRE, {(x, y): ("S" if RAPIERRE[y][x] == "." else ".")
+                                                     for y in range(9, 14) for x in range(0, 7)
+                                                     if RAPIERRE[y][x] in ".S"})], 13, 13, idle_ms=90)
+# Parcelbeak: a pelican mail carrier. A postman's cap with the crest sticking through it, a huge
+# bill with a throat pouch full of letters, a mail bag across its chest, big webbed feet. It walks.
+PARCELBEAK = [
+    ".............r.r.r..............",
+    "..............rRr...............",
+    "..........oooonRnoooo...........",
+    ".........onnnnnnnnnnnno.........",
+    "........oNNNNNyyNNNNNNNo........",
+    "........oooooooooooooooo........",
+    "........osssssssssssssso........",
+    "........osssssssssssssso........",
+    "........osSsssssssssssSo........",
+    ".....ooooopppppppppppppppppppo..",
+    "....oPPPPPPPPPPPPPPPPPPPPPPPPo..",
+    ".....ooPpppppppppppppppppppoo...",
+    ".......oPeeeeEeeeeeeePo.........",
+    "......oPeesseeRReesseePo........",
+    "......oPeeeeeeRReeeeeePo........",
+    ".......oPeeEeeeeeeeEePo.........",
+    "........ooPPPPPPPPPPoo..........",
+    ".......ossoooooooooosso.........",
+    "......ossssSSsssssSSsssso.......",
+    ".....osssssZZsssssssssSSso......",
+    ".....osSssssSZZZZZZZsssSso......",
+    ".....osSsssssZnnyynnZsSSso......",
+    "......oSsssssZnnnnnnZsSso.......",
+    ".......oSSssssZZZZZZsSSo........",
+    "........oooooooooooooo..........",
+    ".........ppPp....ppPp...........",
+    "........pPpPpp..pPpPpp..........",
+]
+PARCELBEAK_FACE_TOP, PARCELBEAK_FACE_SHIFT = face_place(PARCELBEAK, 6, 11, 12)
+PARCELBEAK_TAGS = species_tags([PARCELBEAK, drop_rows(PARCELBEAK, 19)], 19, 15)
+PARCELBEAK_TAGS["walk"] = walk_tags(PARCELBEAK, 19, range(8, 14), range(16, 23), 24, ms=(220, 130))
+
+# Faces. Babies: the slime's baby faces, mouths in the line's colors. Children: the child's
+# face; the duckling and the young bird have a bill or a beak instead of a mouth.
+LEAF_FACE_PALETTE = FACE_PALETTE | {"d": (60, 140, 55), "m": (25, 80, 35)}
+DUCK_FACE_PALETTE = FACE_PALETTE | {"d": (225, 175, 35), "m": (250, 140, 40), "a": (250, 140, 40),
+                                    "A": (200, 95, 25), "r": (175, 40, 70)}
+HIPPO_FACE_PALETTE = FACE_PALETTE | {"d": (135, 115, 160), "m": (90, 60, 80), "p": (50, 40, 70)}
+BEAK_FACE_PALETTE = FACE_PALETTE | {"d": (120, 95, 80), "m": (230, 175, 70), "a": (230, 175, 70),
+                                    "A": (175, 120, 40), "p": (45, 35, 35)}
+BILL_SHUT = ["aaaaaa", ".AAAA."]
+BILL_OPEN = ["aaaaaa", "ArrrrA", ".AAAA."]
+BEAKLET_SHUT = ["aaaa", ".AA."]
+BEAKLET_OPEN = ["aaaa", "ArrA", ".AA."]
+
+
+def billed_face_grid(shut, open_):
+    def grid(eyes, mouth, blush):
+        rows = [list(r) for r in face_grid(eyes, "none", blush)] + [list("." * FACE_W)]
+        bill = open_ if mouth in ("open", "laugh") else shut
+        left = (FACE_W - len(bill[0])) // 2
+        for y, line in enumerate(bill):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[6 + y][left + x] = ch
+        return ["".join(r) for r in rows]
+    return grid
+
+
+duck_face_grid = billed_face_grid(BILL_SHUT, BILL_OPEN)
+beak_face_grid = billed_face_grid(BEAKLET_SHUT, BEAKLET_OPEN)
+
+# The adults' faces (kit_face): each its own set and palette
+twiggle_face_grid = kit_face(7)
+TWIGGLE_FACES = kit_faces(normal=("half", "small", False))  # calm, wise, a little sleepy
+TWIGGLE_FACE_PALETTE = {"w": (245, 240, 225), "p": (55, 35, 20), "g": (255, 255, 255), "d": (105, 70, 40),
+                        "m": (60, 40, 22), "r": (170, 60, 50), "k": (230, 140, 120)}
+needlenub_face_grid = kit_face(7)
+NEEDLENUB_FACES = kit_faces(normal=("open", "small", True))  # always hoping for a cuddle
+NEEDLENUB_FACE_PALETTE = {"w": (240, 250, 235), "p": (25, 50, 30), "g": (255, 255, 255), "d": (55, 140, 55),
+                          "m": (25, 60, 30), "r": (200, 60, 90), "k": (255, 150, 190)}
+drakwing_face_grid = kit_face(7, mouth_row=0)
+DRAKWING_FACE_PALETTE = {"w": (240, 250, 235), "p": (20, 40, 30), "g": (255, 255, 255), "d": (20, 95, 60),
+                         "k": (255, 130, 110)}
+quill_face_grid = kit_face(7, mouth_row=0)
+QUILL_FACE_PALETTE = {"w": (255, 255, 255), "p": (35, 45, 90), "g": (255, 255, 255), "d": (225, 175, 35),
+                      "k": (255, 150, 150)}
+steamo_face_grid = kit_face(9, mouth_row=6)
+STEAMO_FACES = kit_faces(normal=("closed", "small", True), smile=("closed", "small", True),
+                         blink=("closed", "small", True))  # its eyes closed in bliss
+STEAMO_FACE_PALETTE = {"w": (255, 250, 252), "p": (110, 55, 85), "g": (255, 255, 255), "d": (175, 120, 165),
+                       "m": (110, 55, 85), "r": (200, 70, 100), "k": (245, 120, 150)}
+lillypot_face_grid = kit_face(7, mouth_row=6)
+LILLYPOT_FACE_PALETTE = {"w": (245, 245, 255), "p": (50, 40, 70), "g": (255, 255, 255), "d": (135, 115, 160),
+                         "m": (90, 60, 80), "r": (200, 80, 110), "k": (250, 170, 200)}
+rapierre_face_grid = kit_face(0, mouth_row=0, single=True)
+RAPIERRE_FACE_PALETTE = {"w": (240, 255, 250), "p": (20, 40, 40), "g": (255, 255, 255), "d": (20, 85, 85),
+                         "k": (255, 130, 140)}
+parcelbeak_face_grid = kit_face(6, mouth_row=0)
+PARCELBEAK_FACE_PALETTE = {"w": (255, 255, 255), "p": (35, 30, 45), "g": (255, 255, 255), "d": (190, 200, 210),
+                           "k": (255, 160, 160)}
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
     "food_full": ["...fffff...", "..fffffFf..", ".fffffffFf."],
@@ -3539,6 +4286,30 @@ def main():
     write_sheet("prismist_body", body_sheet(PRISMIST_TAGS, PRISMIST_PALETTE), faceTop=PRISMIST_FACE_TOP,
                 faceShift=PRISMIST_FACE_SHIFT)
     write_sheet("prismist_faces", face_sheet(prismist_face_grid, PRISMIST_FACE_PALETTE, PRISMIST_FACES))
+    for line, palette, face_palette, baby_tags, child, child_tags, child_faces in (
+            ("leaf", LEAF_PALETTE, LEAF_FACE_PALETTE, LEAF_BABY_TAGS, "sproutlet", SPROUTLET_TAGS, face_grid),
+            ("duck", DUCK_PALETTE, DUCK_FACE_PALETTE, DUCK_BABY_TAGS, "paddlet", PADDLET_TAGS, duck_face_grid),
+            ("hippo", HIPPO_PALETTE, HIPPO_FACE_PALETTE, HIPPO_BABY_TAGS, "soakling", SOAKLING_TAGS, face_grid),
+            ("beak", BEAK_PALETTE, BEAK_FACE_PALETTE, BEAK_BABY_TAGS, "crestling", CRESTLING_TAGS, beak_face_grid)):
+        write_sheet(f"{line}_baby_body", body_sheet(baby_tags, palette))
+        write_sheet(f"{line}_baby_faces", face_sheet(baby_face_grid, face_palette))
+        name = child.upper()
+        write_sheet(f"{child}_body", body_sheet(child_tags, palette), faceTop=globals()[f"{name}_FACE_TOP"],
+                    faceShift=globals()[f"{name}_FACE_SHIFT"])
+        write_sheet(f"{line}_faces", face_sheet(child_faces, face_palette))
+    for name, palette, faces in (("twiggle", LEAF_ADULT_PALETTE, TWIGGLE_FACES),
+                                 ("needlenub", LEAF_ADULT_PALETTE, NEEDLENUB_FACES),
+                                 ("drakwing", DUCK_ADULT_PALETTE, BEAKED_FACES),
+                                 ("quill", DUCK_ADULT_PALETTE, BEAKED_FACES),
+                                 ("steamo", HIPPO_ADULT_PALETTE, STEAMO_FACES),
+                                 ("lillypot", HIPPO_ADULT_PALETTE, FACES),
+                                 ("rapierre", BEAK_ADULT_PALETTE, BEAKED_FACES),
+                                 ("parcelbeak", BEAK_ADULT_PALETTE, BEAKED_FACES)):
+        upper = name.upper()
+        write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], palette),
+                    faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])
+        write_sheet(f"{name}_faces", face_sheet(globals()[f"{name}_face_grid"], globals()[f"{upper}_FACE_PALETTE"],
+                                                faces))
     items = {name: [(to_image(rows, ITEM_PALETTE), 1000)] for name, rows in ITEMS.items()}
     items |= {tag: [(to_image(g, ITEM_PALETTE), ms) for g, ms in frames] for tag, frames in EGG_TAGS.items()}
     for line, palette in RARE_EGG_PALETTES.items():
