@@ -29,6 +29,7 @@ test("the pet is described, acted on, renamed and started over", async () => {
 
   assert.equal((await ask(pet, "POST", "/api/pet/settings", { name: " Mimi   Mau " })).name, "Mimi Mau");
   assert.deepEqual(await ask(pet, "GET", "/api/pet/ancestors"), { api: 1, ancestors: [] });
+  assert.deepEqual(await ask(pet, "GET", "/api/pet/travels"), { api: 1, travels: [] });
   assert.equal((await ask(pet, "POST", "/api/pet/new_egg", { confirm: true })).stage, "egg");
 });
 

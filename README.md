@@ -22,7 +22,7 @@ a day and also tells you the time and the weather.
 - **It grows up.** It hatches from an egg and grows over ten days into one of
   five adult forms, depending on how you cared for it. It learns tricks, trains,
   goes on trips, scuffles with whoever gets in its way there and brings things
-  home. Five areas open up one after the other, each one past a guardian, and
+  home, and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
   one of the guardians keeps a rare egg that something else hatches from.
 - **It makes friends.** A grown-up pet can impress a wild pet with its tricks.
   The friend comes to visit, brings a gift now and then, and in time the two
