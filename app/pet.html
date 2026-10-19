@@ -497,7 +497,7 @@
 
 <dialog id="choose">
   <form method="dialog">
-    <p data-t="page.app.choose_pet"></p>
+    <p id="choose-text"></p>
     <ul>
       <li><button class="choice" value="phone"><img id="choose-phone-icon" alt=""><span><strong id="choose-phone-name"></strong><small id="choose-phone-note"></small></span></button></li>
       <li><button class="choice" value="display"><img id="choose-display-icon" alt=""><span><strong id="choose-display-name"></strong><small id="choose-display-note"></small></span></button></li>
@@ -2176,12 +2176,15 @@ $("connect").addEventListener("click", async () => {
   }
 });
 
-// Which pet lives on the display: "phone", "display", or null if the player changed their mind
-function choosePet({ phone, display }) {
+// Which pet lives on the display (or, with `home`, on the phone): "phone", "display", or null if
+// the player changed their mind
+function choosePet({ phone, display }, home = false) {
+  $("choose-text").textContent = t(home ? "page.app.choose_home" : "page.app.choose_pet");
   for (const [key, pet] of [["phone", phone], ["display", display]]) {
     $(`choose-${key}-icon`).src = app.icon(pet.stage, pet.species);
     $(`choose-${key}-name`).textContent = pet.name;
-    $(`choose-${key}-note`).textContent = t(`page.app.choose_${key}`, { form: pet.stage === "egg" ? pet.stage_label : pet.species_label });
+    const note = key === "display" && home ? "choose_display_home" : `choose_${key}`;
+    $(`choose-${key}-note`).textContent = t(`page.app.${note}`, { form: pet.stage === "egg" ? pet.stage_label : pet.species_label });
   }
   const dialog = $("choose");
   dialog.returnValue = "";
@@ -2189,7 +2192,18 @@ function choosePet({ phone, display }) {
   return new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue || null), { once: true }));
 }
 $("choose-cancel").addEventListener("click", () => $("choose").close());
-$("disconnect").addEventListener("click", () => app.disconnect());
+// Going back to the phone: when the display has more than an egg, the player picks the pet that
+// lives on the phone from now on. A display that is gone (or does not fit) keeps its pet.
+$("disconnect").addEventListener("click", async () => {
+  try {
+    const pets = await app.petsToTakeHome().catch(() => null);
+    const keep = pets ? await choosePet(pets, true) : "phone";
+    if (!keep) return;
+    await app.disconnect(keep === "display");
+  } catch (err) {
+    say(err.message, true);
+  }
+});
 $("offline-leave").addEventListener("click", () => app.disconnect());
 
 // Only poll while the page is visible

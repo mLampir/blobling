@@ -579,7 +579,9 @@
       "searching": "Looking for the display …",
       "choose_pet": "Which pet should live on the display?",
       "choose_phone": "{form}, on this phone",
-      "choose_display": "{form}, already on the display"
+      "choose_display": "{form}, already on the display",
+      "choose_home": "Which pet should live on this phone?",
+      "choose_display_home": "{form}, on the display"
     },
     "train": {
       "hint": "Pick an exercise",

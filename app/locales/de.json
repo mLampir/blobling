@@ -579,7 +579,9 @@
       "searching": "Suche das Display …",
       "choose_pet": "Welches Pet soll auf dem Display leben?",
       "choose_phone": "{form}, auf diesem Handy",
-      "choose_display": "{form}, schon auf dem Display"
+      "choose_display": "{form}, schon auf dem Display",
+      "choose_home": "Welches Pet soll auf diesem Handy leben?",
+      "choose_display_home": "{form}, auf dem Display"
     },
     "train": {
       "hint": "Such eine Übung aus",
