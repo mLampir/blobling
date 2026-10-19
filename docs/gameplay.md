@@ -402,6 +402,18 @@ quarter of an hour, it finds something to do:
 - It **practices a trick** you have started teaching it. It gets a quarter of
   a point each time, but only half a point between two practices with you,
   and it never learns a trick alone.
+- It **builds something**: a little stone tower, or a drawing scratched into
+  the ground. When it really snows, it would rather build a tiny snowman,
+  and leaves footprints.
+
+**Traces.** What it did alone stays in the scene, so that somebody walking
+past the panel sees that something happened: the ball lies where it rolled,
+the tower stands, the drawing stays in the ground, the snowman stands in the
+snow. There is only ever one: as long as something lies around, it doesn't
+build anything new (playing with the ball again only moves the ball). It
+stays until somebody does something with the pet, from the app or on the Pi;
+a snowman also melts once it is warmer than 3 °C. It doesn't step in front
+of what it left behind, so it can be seen.
 
 None of this counts in the care diary, so it doesn't change which form a
 child grows into. Like everything else, it happens in the simulation: what
@@ -493,7 +505,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
-| What it does by itself, and what it tells when you come back | `core/src/idle.ts` |
+| What it does by itself, what it leaves behind, and what it tells when you come back | `core/src/idle.ts` |
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
 | Catching up, the state for the app, what is saved, ancestors and album | `core/src/pet.ts`, `core/src/state.ts` |

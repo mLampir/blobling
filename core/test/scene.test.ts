@@ -189,6 +189,25 @@ test("every activity can be drawn from its start to its end", () => {
   }
 });
 
+test("what it left behind lies in the scene, and what it builds grows while it builds it", () => {
+  const empty = frames({}, 1)[0];
+  for (const kind of ["ball", "tower", "drawing", "snowman"]) {
+    for (const look of [0, 1]) {
+      const [left] = frames({ trace: { kind, spot: 0, look } }, 1);
+      assert.ok(differing(empty, left, GROUND - 12) > 0, `${kind} ${look}`);
+    }
+  }
+  // a drawing is scratched into the ground, below the grass, where the pet never covers it
+  const [drawn] = frames({ trace: { kind: "drawing", spot: 0.5, look: 1 } }, 1);
+  assert.ok(differing(empty, drawn, GROUND + 2) > 0);
+  assert.equal(differing(empty, drawn, 0, GROUND + 2), 0);
+
+  const building = frames({ activity: "build", activity_item: "tower", trace: { kind: "tower", spot: 0.3, look: 0 } },
+    ACTIVITY_SECONDS.build * 10);
+  const grown = (image: Image) => differing(empty, image, GROUND - 8, GROUND + 1);
+  assert.ok(grown(building[25]) < grown(building[80]), `${grown(building[25])} ${grown(building[80])}`);
+});
+
 test("a trip: the landscape of every area, a scuffle, a wild pet and the ball", () => {
   const trip = { area: "meadow", returning: false, event: null, item: null, event_age: 0 };
   for (const area of ["meadow", "forest", "stream", "cave", "mountain"]) {
