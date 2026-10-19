@@ -101,7 +101,8 @@ test("every kind of thing it can tell has a text in English", () => {
     ["solo", "spin"], ["gift", "blob"], ["nest", "blob"], ["wild", "blob:friend"], ["wild", "blob:shrug"],
     ["battle", "diggle:win"], ["battle", "diggle:lose"], ["battle", "diggle:draw"], ["battle", "diggle:ball"],
     ["guardian", "diggle"], ["unlock", "forest"], ["trip", "home"], ["trip", "tired"], ["trip", "beaten"],
-    ["trip", "snack"], ["evolve", "baby:blob"], ["evolve", "child:blob"], ["evolve", "adult:cyclopuff"],
+    ["trip", "snack"], ["evolve", "baby:blob"], ["evolve", "child:blob"], ["evolve", "child:ember"],
+    ["evolve", "adult:cyclopuff"], ["found", "fruit_cherry"], ["found", "seed_herb"],
     ...Object.keys(home.PLANTS).map((kind): [string, string] => ["fruit", kind]),
   ];
   for (const grandma of story.GRANDMA) {

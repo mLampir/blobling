@@ -84,7 +84,8 @@ If you connect the app to a Blobling display (a Raspberry Pi) at home, the
 app talks to it directly over your home network, and the pet lives on the
 display. To find it, the app asks the usual names of a display in your home
 network (`blobling.local` and `raspberrypi.local`). If you choose to take the
-pet on your phone along, the app sends it to the display. The display is your own device; nothing goes through us. The
+pet on your phone along, the app sends it to the display, and if you take the
+display's pet back to your phone, the app loads it from there. The display is your own device; nothing goes through us. The
 display itself asks Open-Meteo for the weather at the place you set on it,
 and GitHub for new versions of its software. When it installs or updates its
 software, it also downloads Node.js from NodeSource.

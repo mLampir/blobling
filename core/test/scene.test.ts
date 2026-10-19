@@ -9,7 +9,9 @@ import * as life from "../src/life";
 import { ACTIVITY_SECONDS } from "../src/model";
 import { Random } from "../src/random";
 import {
-  APP_BACKGROUND, FPS, GROUND, PetScene, SLEEP_FPS, STATUS_HEIGHT, trickAnimation, type SceneView, type Weather,
+  AFTER_RAIN, APP_BACKGROUND, FPS, GROUND, PetScene, SLEEP_FPS, STATUS_HEIGHT, houseArea, skyColors, trickAnimation,
+  type SceneView,
+  type Weather,
 } from "../src/scene";
 import { readSheets } from "../../pi/src/assets";
 import { Disk } from "./helpers";
@@ -125,7 +127,7 @@ test("the status line: clock, temperature and what the pet needs", () => {
 test("every form of the pet can be drawn, in every state", () => {
   const forms = [...Object.keys(life.LINES).flatMap((line) => life.STAGES.map((stage) => [stage, line])),
     ...Object.values(life.LINES).flat().map((name) => ["adult", name])];
-  assert.equal(forms.length, 4 * 4 + 14);
+  assert.equal(forms.length, 5 * 4 + 16);
   const moods = ["normal", "happy", "sad", "hungry", "dirty", "sick", "tired"];
   for (const [stage, species] of forms) {
     for (const mood of moods) {
@@ -275,6 +277,36 @@ test("Flicker and Lumoth hop, Cyclopuff and Sneezle walk, Grumpcap walks and hop
   assert.ok(lifted("grumpcap") > 0 && lifted("grumpcap") < 8); // one hop in 2.5 seconds
 });
 
+test("the cloud adults follow the weather", () => {
+  // Rumblefluff's horns flash now and then in a thunderstorm, and only then
+  assert.equal(skyColors("rumblefluff", "storm", 0.05)?.[0], "flash");
+  assert.equal(skyColors("rumblefluff", "storm", 1.0), null);
+  assert.equal(skyColors("rumblefluff", "rain", 0.05), null);
+  // Prismist's rainbow fades in the rain, and runs along its arch when the sun comes out after it
+  assert.equal(skyColors("prismist", "rain", 0)?.[0], "faded");
+  assert.notEqual(skyColors("prismist", "after_rain", 0)?.[0], skyColors("prismist", "after_rain", 0.2)?.[0]);
+  assert.equal(skyColors("prismist", null, 0), null);
+  assert.equal(skyColors("angloop", "storm", 0.05), null);
+
+  const pixels = (image: Image, rgb: number[]) =>
+    Array.from({ length: image.width * image.height }, (_, i) => i).filter((i) =>
+      rgb.every((c, k) => image.data[i * 4 + k] === c)).length;
+  const storm = frames({ stage: "adult", species: "rumblefluff" }, 60, DAY, { temp: 14, code: 95 });
+  assert.ok(storm.some((image) => pixels(image, [255, 255, 235]) > 0)); // the flash on its horns
+  const red = [240, 80, 90]; // the outer band of the rainbow
+  assert.ok(pixels(frames({ stage: "adult", species: "prismist" }, 1)[0], red) > 0);
+  assert.equal(pixels(frames({ stage: "adult", species: "prismist" }, 1, DAY, { temp: 12, code: 63 })[0], red), 0);
+  // after the rain, for a while
+  const stage = scene();
+  const view = { ...BASE, stage: "adult", species: "prismist" };
+  stage.render(view, { temp: 12, code: 63 }, DAY, 1);
+  const runs = [1.1, 1.3, 1.5].map((t) => pixels(stage.render(view, null, DAY, t)[0], red));
+  assert.ok(new Set(runs).size > 1, `${runs}`);
+  const later = 2 + AFTER_RAIN;
+  assert.equal(new Set([later, later + 0.2, later + 0.4].map((t) =>
+    pixels(stage.render(view, null, DAY, t)[0], red))).size, 1);
+});
+
 /**
  * A whole visit, ten frames per second, with the pet already by the friend's side. Returns the
  * game of each frame (null: none) and the frames themselves, every `keep`th.
@@ -364,6 +396,7 @@ test("the app icon", () => {
   assert.ok(differing(stage.icon(160, "egg", "ember"), stage.icon(160, "egg", "blob")) > 0);
   assert.ok(differing(stage.icon(160, "egg", "stone"), stage.icon(160, "egg", "blob")) > 0);
   assert.ok(differing(stage.icon(160, "egg", "fox"), stage.icon(160, "egg", "stone")) > 0);
+  assert.ok(differing(stage.icon(160, "egg", "cloud"), stage.icon(160, "egg", "blob")) > 0);
   assert.throws(() => new PetScene(64, 64, { sheets: {}, font: null }).icon(160), /items|blob_body/);
 });
 
@@ -376,4 +409,33 @@ test("where the pet stands, for the app to know where a finger touches it", () =
     assert.ok(y >= 0 && y < GROUND && y + h === GROUND + 1, `${stage}: ${y} ${h}`);
     assert.ok(w >= 8 && h >= 4, `${stage}: ${w}×${h}`);
   }
+});
+
+test("the house: outside on the left, inside while the pet sleeps, and the way in and out", () => {
+  const garden = frames({}, 1)[0];
+  for (const step of [1, 2, 3]) {
+    // the app finds the house where the scene draws it
+    const [x, y, w, h] = houseArea(step).map((part) => Math.round(part * 64));
+    const sprite = sheets.house.image(`house_${step}`);
+    assert.deepEqual([x, y, w, h], [0, GROUND + 1 - sprite.height, sprite.width, sprite.height], `step ${step}`);
+    const outside = frames({ house: step }, 1)[0];
+    assert.ok(differing(garden, outside, y, GROUND + 1) > w * h / 3, `step ${step}`);
+
+    // asleep, the scene shows the room; its window (or the hut's doorway) shows the sky, as outside
+    const sky = frames({ asleep: true }, 1, NIGHT)[0];
+    const room = frames({ house: step, asleep: true, house_deco: ["crystal", "lantern", "flag"] }, 1, NIGHT)[0];
+    assert.ok(differing(sky, room, STATUS_HEIGHT, GROUND) > 64 * 20, `step ${step}`);
+    const [wx, wy] = step === 1 ? [6, 40] : [44, 15];
+    assert.deepEqual(color(room, wx, wy), color(sky, wx, wy), `step ${step}`);
+
+    // going in: the pet gets smaller at the door and is then gone; coming out the other way round
+    const going = frames({ house: step, asleep: true, activity: "go_in" }, 90, NIGHT);
+    assert.ok(differing(going[25], going[55]) > 0);
+    const coming = frames({ house: step, activity: "come_out" }, 80);
+    assert.ok(differing(coming[10], coming[50]) > 64 * 20); // first the room, then the garden
+  }
+  // a look in: the room, without the pet
+  const look = frames({ house: 2, look_in: true }, 1)[0];
+  const room = frames({ house: 2, asleep: true }, 1)[0];
+  assert.ok(differing(look, room) > 0);
 });

@@ -13,12 +13,13 @@ import { API_OLDEST, API_VERSION } from "./api";
 import * as battle from "./battle";
 import * as care from "./care";
 import * as companion from "./companion";
+import * as food from "./food";
 import * as habits from "./habits";
 import * as home from "./home";
 import * as life from "./life";
 import * as model from "./model";
 import * as notify from "./notify";
-import type { SceneView, TripView } from "./scene";
+import { houseArea, type SceneView, type TripView } from "./scene";
 import * as sky from "./sky";
 import { fromDict, toDict, type PetState } from "./state";
 import * as story from "./story";
@@ -221,14 +222,15 @@ export class Pet {
     this.advance(now);
     const s = this.state;
     return {
-      species: s.species, stage: s.stage, hint: life.hint(s),
+      species: s.species, stage: s.stage, hint: life.hint(s, sky.precipitation(this.weather()) === "rain"),
       asleep: s.asleep, sick: s.sick, poops: s.poops,
       activity: model.activityOf(s, now), mood: model.moodOf(s), cold: home.cold(s, now),
       needs: model.needs(s), activity_until: s.activity_until,
       activity_item: s.activity_item, ready: life.isDue(s, now),
       weight_status: care.weightStatus(s), game: care.gameActive(s, now),
       tricks: care.learned(s),
-      trip: tripView(s, now), hat: s.hat, deco: [...s.deco],
+      trip: tripView(s, now), hat: s.hat, ...decoView(s),
+      look_in: s.house > 0 && now < s.look_in_until && !s.asleep,
       backpack: s.backpack.length > 0,
       // a friend that is visiting right now, or the pet at the back that is out; and the egg in the nest (its line)
       visitor: s.friend && wild.visiting(s, now) && !s.trip
@@ -236,6 +238,7 @@ export class Pet {
         : this.secondView(now),
       nest: s.nest ? s.nest.line : null,
       gift: !!s.gift,
+      found: s.found,
       plant: s.plant ? { kind: s.plant.kind, stage: home.plantStage(s), ripe: home.ripe(s) } : null,
       trace: s.trace ? { ...s.trace } : null,
       waiting: habits.waiting(s, now),
@@ -382,7 +385,8 @@ export class Pet {
   private secondView(now: number): SceneView["visitor"] {
     const back = this.second;
     const how = back ? companion.out(this.state, now, false) : null;
-    if (!back || !how) {
+    // with a house, the two sleep inside it, and the scene shows the one at the front in its bed
+    if (!back || !how || (how === "asleep" && this.state.house > 0)) {
       return null;
     }
     const [start, end] = how === "asleep" ? [this.state.sleep_since, now + 3600] : companion.outWindow(now);
@@ -395,7 +399,7 @@ export class Pet {
   /** The ancestors, the last one first. */
   ancestorList() {
     return [...this.ancestors].reverse().map((a) => ({
-      ...a, species_label: this.t(`species.${a.species}`), stage_label: this.t(`stages.${a.stage}`),
+      ...a, species_label: this.t(`species.${a.species}`), stage_label: this.t(life.formKey(a.stage, a.species)),
     }));
   }
 
@@ -413,7 +417,7 @@ export class Pet {
         return null;
       }
       const [stage, species] = form.split(":");
-      return { stage, species, label: this.t(stage === "adult" ? `species.${species}` : `stages.${stage}`) };
+      return { stage, species, label: this.t(life.formKey(stage, species)) };
     });
   }
 
@@ -512,11 +516,12 @@ export class Pet {
     const t = this.t;
     const bedtime = this.bedtime();
     const due = life.dueAt(s);
+    const placed = home.placeDeco(s);
     return {
       api: API_VERSION, api_oldest: API_OLDEST,
       now: Math.round(now),
       name: s.name, species: s.species, stage: s.stage,
-      species_label: t(`species.${s.species}`), stage_label: t(`stages.${s.stage}`),
+      species_label: t(`species.${s.species}`), stage_label: t(life.formKey(s.stage, s.species)),
       age_days: s.stage === "egg" ? 0 : Math.max(0, Math.floor((now - s.born_at) / 86400)),
       // Next evolution: when it is due, and from when it happens by itself
       evolution: due === null ? null : {
@@ -534,9 +539,8 @@ export class Pet {
       bedtime: { start: bedtime[0], end: bedtime[1] },
       weight: Number(s.weight.toFixed(1)), ideal_weight: care.ideal(s), weight_status: care.weightStatus(s),
       bond: Math.round(s.bond), bond_level: care.bondLevel(s),
-      snacks: Object.keys(care.SNACKS).map((k) => ({ id: k, label: t(`snacks.${k}`) })),
-      // The favorite snack only shows once it has been fed
-      favorite_snack: s.counters.favorite_found ? care.favorite(s) : null,
+      // What it likes most and what it won't eat, once each has been tried with this form
+      favorite_food: food.known(s).favorite, disliked_food: food.known(s).disliked,
       game: gameInfo(s, now),
       tricks: Object.keys(care.TRICKS).map((k) => ({
         id: k, label: t(`tricks.${k}`), progress: Math.round(care.trickProgress(s, k) * 100), learned: care.knows(s, k),
@@ -564,11 +568,18 @@ export class Pet {
         guardian: trip.guardianWaiting(s, k) !== null,
       })),
       guardians: { passed: s.guardians.length, all: trip.AREAS.length },
-      // Finds: what there is, and which of them are being worn or are set out
+      // Finds: what there is, which of them are being worn or are set out, and where they stand
       items: Object.entries(s.items).filter(([k]) => k in home.ITEMS).map(([k, n]) => ({
         id: k, label: t(`items.${k}`), kind: home.ITEMS[k], count: n, active: k === s.hat || s.deco.includes(k),
-        effects: home.effects(k),
+        place: placed.outside.includes(k) ? "outside" : placed.inside.includes(k) ? "inside" : null,
+        effects: [...home.effects(k), ...food.effects(k)],
       })),
+      // The house (0 = none yet): how far it has grown, its spots for decorations, and where it
+      // stands in the scene (parts of the picture: x, y, width, height), for a tap that looks in
+      house: s.house ? {
+        step: s.house, steps: home.HOUSE_STEPS, spots: home.HOUSE_SPOTS[s.house], area: houseArea(s.house),
+        looking_in: now < s.look_in_until,
+      } : null,
       // The eggs that are kept; "id" is what newEgg takes. `skills`: what the egg was given
       eggs: s.eggs.map((egg, i) => ({
         id: i, line: egg.line, label: t(`items.${home.eggOf(egg.line)}`), from: egg.from ?? null,
@@ -582,6 +593,10 @@ export class Pet {
       nest: s.nest ? { line: s.nest.line, label: t(`items.${home.eggOf(s.nest.line)}`) } : null,
       // a friend's gift is lying there; what is in it is only told once it is unwrapped
       gift: !!s.gift,
+      // what it found at home by itself ("fruit_<plant>" or "seed_<plant>"), until it is picked up
+      found: s.found,
+      // what found food has left in it and is still waiting to be used (food.FOODS)
+      boosts: [...s.boosts],
       item_labels: Object.fromEntries(Object.keys(home.ITEMS).map((k) => [k, t(`items.${k}`)])),
       plant: s.plant ? {
         kind: s.plant.kind, label: t(`plants.${s.plant.kind}`),
@@ -620,6 +635,12 @@ function startAlbum(saved: Saved): string[] {
 }
 
 /** For the scene: where it is travelling and what happened there last. */
+/** The decorations as the scene places them: outside, and in the house. */
+function decoView(s: PetState): Pick<SceneView, "deco" | "house" | "house_deco"> {
+  const placed = home.placeDeco(s);
+  return { deco: placed.outside, house: s.house, house_deco: placed.inside };
+}
+
 function tripView(s: PetState, now: number): TripView | null {
   if (!s.trip) {
     return null;

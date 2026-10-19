@@ -23,9 +23,12 @@ frameTags):
 - glimmerock_body / glimmerock_faces, bouldergrin_body / bouldergrin_faces – its adults (faces of their own)
 - fox_baby_body / fox_baby_faces, kitlet_body / fox_faces – baby and child of the fox line
 - roamtail_body / roamtail_faces, filchfox_body / filchfox_faces – its adults (faces of their own)
+- cloud_baby_body / cloud_baby_faces, nimbit_body / cloud_faces – baby and child of the cloud line
+- rumblefluff_body / rumblefluff_faces, prismist_body / prismist_faces – its adults (faces of their own)
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine
 - trip                             – backpack, plants, decorations, hats, things along the path,
                                      opponents and guardians
+- house                            – the house in its three steps, outside and inside
 
 The pixels are written out below as text: one character per pixel, "." is
 transparent, and the letters are defined in the palettes. This script is the
@@ -1213,6 +1216,182 @@ FILCHFOX_TAGS = species_tags([FILCHFOX, FILCHFOX_B], 21, 13, idle_ms=500)
 # It walks, a little sideways, as a fox does that is up to something
 FILCHFOX_TAGS["walk"] = walk_tags(FILCHFOX, 21, range(7, 12), range(15, 20), 24, ms=(160, 100))
 
+# ---------------------------------------------------------------- The cloud line
+
+# The pet that hatches from the cloud egg: a lamb whose fleece is a cloud. What its forms keep is
+# the fleece: white and fluffy on the child, a storm cloud or a fair-weather cloud on the adults.
+# The two colors of the child's bell are its own: the code recolors them as a hint at the adult
+# form (LURES in core/src/scene.ts).
+CLOUD_PALETTE = {
+    "o": (60, 88, 150),    # outline: dark sky blue instead of black
+    "d": (110, 150, 215),  # shadow
+    "b": (150, 190, 245),  # sky blue: the face, the baby
+    "l": (190, 220, 255),  # lit
+    "h": (230, 242, 255),  # highlight
+    "f": (250, 252, 255),  # the cloud fleece
+    "F": (205, 215, 240),  # its shadow
+    "n": (80, 90, 130),    # the legs
+    "r": (235, 95, 120),   # Nimbit's ribbon
+    "y": (255, 215, 70),   # and its bell
+    "Y": (215, 160, 40),
+}
+
+# Baby: the baby slime with a puff of cloud fleece on top instead of the sprout; the fringe hangs
+# to the left, and two dark lamb's feet peek out underneath
+CLOUD_BABY = [
+    "....ff.fff......",
+    "...fffffffff....",
+    "..ffFfffffFff...",
+    ".ffoFllbbFFofo..",
+    ".fohhlbbbbbbdo..",
+    ".ollhbbbbbbbbdo.",
+    ".olbbbbbbbbbbdo.",
+    "olbbbbbbbbbbbddo",
+    "olbbbbbbbbbbbddo",
+    "obbbbbbbbbbbbddo",
+    "odbbbbbbbbbbdddo",
+    "oddddddddddddddo",
+    ".oonnooooooonno.",
+]
+CLOUD_BABY_TAGS = body_tags(CLOUD_BABY, 7, 8, flat_rows=3)
+
+# Nimbit, the child: a lamb whose fleece is a cloud. The fleece covers its head and its back, the
+# sky-blue face peeks out in front, the left ear flips up, four stubby legs, a puff of a tail on
+# the right, and a yellow bell on a pink ribbon. Row 10 is the one the poses get shorter at, column
+# 9 the one they get wider at.
+NIMBIT = [
+    ".......fff...fff.........",
+    ".....ofhhff.fffffo.......",
+    "....ofhhffffffffffo......",
+    "...ofhfffffffffffFfo.....",
+    "..offfffffffffffffFFo....",
+    ".obbofffffffffffffFFfo...",
+    "obllbbbbbbbbbbbbofffFFo..",
+    "obhlbbbbbbbbbbbbbofffFfo.",
+    ".oobbbbbbbbbbbbbbboffFFFo",
+    "...obbbbbbbbbbbbbdbofFFfo",
+    "...obbbbbbbbbbbbbddofffFo",
+    "...obbbbbbbbbbbbbddoffFFo",
+    "...obbbbbbbbbbbbddoffFFo.",
+    "...oodbbbbbbbbbdddoffFFFo",
+    "..offodddrrrrdddofffFFFo.",
+    "..offFFoooryYrooffFFFFoo.",
+    "..oFFFFFFFoYYoFFFFFFoo...",
+    "...ooonnoooooooonnooo....",
+    ".....onno......onno......",
+    ".....oooo......oooo......",
+]
+NIMBIT_FACE_TOP = face_top(NIMBIT, 6)  # on the top row of its face, right under the fleece
+NIMBIT_TAGS = body_tags(NIMBIT, 10, 9, flat_rows=3)
+
+# Rumblefluff: Nimbit grown into a thundercloud ram. The fleece is a dark storm cloud piled high,
+# light where the sun still catches its top, with a lock of it hanging over its brow; the face is
+# a stern slate-blue ram's face with a pale muzzle. Its horns are two golden ram's curls that end
+# in a zigzag bolt; the right one is bigger and forks, with a spark on top. Sturdy legs with dark
+# hooves. It walks. Slate, storm gray and lightning gold.
+RUMBLEFLUFF_PALETTE = {
+    "o": (45, 52, 95),     # outline
+    "f": (165, 175, 210),  # the storm cloud
+    "F": (115, 125, 168),  # its underside
+    "h": (215, 222, 242),  # where the light still catches it
+    "b": (125, 150, 210),  # the face
+    "l": (170, 195, 240),  # lit, the muzzle
+    "d": (85, 105, 165),   # shadow
+    "n": (40, 42, 70),     # legs and hooves
+    "y": (255, 225, 60),   # the lightning horns
+    "Y": (230, 150, 30),
+    "w": (255, 255, 255),  # the spark
+}
+RUMBLEFLUFF = [
+    "..............ooo...............",
+    "............oohffoo.............",
+    "...........ohhhhfffo............",
+    "..........ohhhhhhfffoooo........",
+    ".......ooohhhhhhhffhhhhho.......",
+    ".....oohffhhhhhhhfhhhhhhow......",
+    "....ohyyyyfhhhhhffhhhhfyyyy.....",
+    "....oyyYYyyfhhhfhfhhhhyyYYyy....",
+    "...oyyYhhYyffffffffohhyYfFYyy...",
+    "...oyYhhfffffffbffbboffffFFYy...",
+    "...oyYfdffoblhlbbbbbdofdfFFYyo..",
+    "....yyYfdfobllbbbbbbdodffFYyyo..",
+    "..oofyyYyfobbbbbbbbbdoffyYyyFFo.",
+    "..offffyYfobbbbbbbbbdoffYyFFFYo.",
+    ".offffyYffobbbbbbbbbdofffYyFFyo.",
+    ".offfffYfffobbbbbbbdoffffYFYyo..",
+    ".oFFFFFFFFFollllllldoFFFFFFFFo..",
+    "..oFFFFFFFFolllllllddoFFFFFFFo..",
+    "..oFFFFFFFFFoddddddoFFFFFFFFFo..",
+    "...oFFFFFFFFFooooooFFFFFFFFFo...",
+    "....oFFFFFFFFFFFFFFFFFFFFFFFo...",
+    "....oFFFFFFFFFFFFFFFFFFFFFFFo...",
+    ".....ooooooooooooooooooooooo....",
+    ".......nn...nn.....nn...nn......",
+    ".......nn...nn.....nn...nn......",
+    "......oooo.oooo...oooo.oooo.....",
+]
+RUMBLEFLUFF_FACE_TOP = face_top(RUMBLEFLUFF, 11)  # the eyes under its brow
+RUMBLEFLUFF_FACE_SHIFT = -1  # its bigger horn makes the row wider on the right than the head
+RUMBLEFLUFF_TAGS = species_tags([RUMBLEFLUFF, dots(RUMBLEFLUFF, {(25, 5): "."})], 20, 16)  # the spark flickers
+# It walks, heavily, as a ram does
+RUMBLEFLUFF_TAGS["walk"] = walk_tags(RUMBLEFLUFF, 20, range(6, 15), range(18, 28), 23, ms=(240, 140))
+
+# Prismist: Nimbit grown into an airy fair-weather ewe. The fleece is a light, sunlit cloud with
+# a warm blush underneath; the face is Nimbit's sky blue, gentle, with lashes; a rainbow arches
+# over its back, from a sparkle behind its head down to its tail. The ears hang, the right one
+# lower; it still wears Nimbit's bell on its ribbon; dainty legs. It walks. White, sky blue and
+# the rainbow.
+PRISMIST_PALETTE = {
+    "o": (70, 95, 160),    # outline
+    "f": (252, 252, 255),  # the cloud
+    "F": (220, 222, 245),  # its shadow
+    "p": (255, 205, 220),  # the blush of evening underneath
+    "b": (150, 190, 245),  # the face
+    "l": (195, 222, 255),  # lit, the muzzle
+    "h": (230, 242, 255),  # highlight
+    "d": (110, 150, 215),  # shadow, the ears
+    "n": (80, 90, 130),    # the legs
+    "r": (235, 95, 120),   # ribbon
+    "y": (255, 215, 70),   # bell
+    "Y": (215, 160, 40),
+    "w": (255, 255, 255),  # the sparkle
+    "1": (240, 80, 90), "2": (255, 165, 60), "3": (255, 225, 80),  # the rainbow, from the outside in
+    "4": (110, 210, 120), "5": (90, 160, 245), "6": (170, 120, 230),
+}
+PRISMIST = [
+    "................................",
+    ".........w......................",
+    "........www...1111111...........",
+    ".........w.1112222222111........",
+    "...........12233333332211.......",
+    "...........2334444444332211.....",
+    ".........oof4445555544433211....",
+    ".......oofffff56fff655543321....",
+    "......offffffffooofff65543321...",
+    "......offobffbbbbbofo.off43211..",
+    ".....offoblhlbbbbbdofofffFF321..",
+    ".....odfobllbbbbbbdofffffFF321..",
+    ".....dffobbbbbbbbbdodffffFFF321.",
+    ".....dffobbbbbbbbbdofdfffFFF321.",
+    ".....offfobbbbbbbdoffdfffFFo....",
+    ".....offfobllllbbdoffdfffFFo....",
+    "....offfffolllldoffffffffFFFo...",
+    "....offffffooooffffffffffFFFo...",
+    "....offffffffffffffffffffFFFo...",
+    "....oFFFFFrrrrrrrrFFFFFFFFFFo...",
+    ".....oFFFFFFFyYFFFFFFFFFFFFo....",
+    ".....oFFppppppYppppppppFFFo.....",
+    "......oooooooooooooooooooo......",
+    ".........nn..nn....nn..nn.......",
+    ".........nn..nn....nn..nn.......",
+    ".........oo..oo....oo..oo.......",
+]
+PRISMIST_FACE_TOP = face_top(PRISMIST, 11)  # the eyes
+PRISMIST_FACE_SHIFT = -4  # its fleece and the rainbow behind it reach further right than the head
+PRISMIST_TAGS = species_tags([PRISMIST, dots(PRISMIST, {(9, 1): ".", (8, 2): ".", (10, 2): ".", (9, 3): "."})], 18, 13)  # the sparkle twinkles
+# It walks, lightly
+PRISMIST_TAGS["walk"] = walk_tags(PRISMIST, 18, range(8, 16), range(18, 27), len(PRISMIST) - 3, ms=(180, 110))
+
 # ---------------------------------------------------------------- Faces
 
 FACE_PALETTE = {
@@ -1817,6 +1996,78 @@ FILCHFOX_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
     "sleep": ("closed", "none", False),
 }
 assert FILCHFOX_FACES.keys() == FACES.keys()
+# Baby and child of the cloud line: the slime's faces, with the eyelids in the shade of the face
+# and the mouth in its outline
+CLOUD_FACE_PALETTE = FACE_PALETTE | {"d": (110, 150, 215), "m": (60, 88, 150), "p": (50, 60, 110)}
+# Rumblefluff: stern – small eyes under heavy brows that slant down to its nose, nostrils on the
+# muzzle and a grumpy mouth that is a little crooked (5×2). Even happy it only smiles a little.
+# Face 9×7.
+RUMBLEFLUFF_EYES = {  # (left, right), 3×3
+    "stern": (["pp.", "wgp", "wpp"], [".pp", "pgw", "ppw"]),
+    "open": ([".p.", "wgp", "wpp"], [".p.", "pgw", "ppw"]),
+    "half": (["...", "ppp", "wpp"], ["...", "ppp", "ppw"]),
+    "closed": (["...", "...", "ppp"],) * 2,
+    "happy": (["...", ".p.", "p.p"],) * 2,
+    "sad": (["..p", "wgp", "wpp"], ["p..", "pgw", "ppw"]),
+    "cross": (["ppp", ".pp", "wgp"], ["ppp", "pp.", "pgw"]),
+}
+RUMBLEFLUFF_MOUTHS = {
+    "none": [".....", "....."],
+    "grumble": [".....", ".mmmm"],
+    "small": ["m...m", ".mmm."],
+    "flat": [".....", ".mmm."],
+    "sad": [".mmm.", "m...m"],
+    "open": [".mmm.", ".mrm."],
+    "laugh": ["mmmmm", ".mrm."],
+    "chew": [".....", "mmmmm"],
+}
+RUMBLEFLUFF_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
+    "normal": ("stern", "grumble", False),
+    "smile": ("open", "small", False),
+    "blink": ("closed", "grumble", False),
+    "happy": ("happy", "small", True),
+    "laugh": ("happy", "laugh", True),
+    "sad": ("sad", "sad", False),
+    "tired": ("half", "flat", False),
+    "yawn": ("closed", "open", False),
+    "sick": ("half", "sad", False),
+    "no": ("cross", "flat", False),
+    "eat_open": ("open", "open", False),
+    "eat_closed": ("happy", "chew", False),
+    "sleep": ("closed", "none", False),
+}
+assert RUMBLEFLUFF_FACES.keys() == FACES.keys()
+RUMBLEFLUFF_FACE_PALETTE = {"p": (35, 38, 70), "g": (255, 255, 255), "w": (240, 245, 255), "m": (45, 52, 95),
+                            "n": (45, 52, 95), "r": (190, 45, 60), "k": (255, 130, 160)}
+# Prismist: gentle – round eyes with a lash at the outer corner (3×3), a small smile; its normal
+# look is a kind one. Face 10×6.
+PRISMIST_EYES = {  # the left eye; the right one is its mirror image
+    "open": ["p..", ".wp", ".pp"],
+    "kind": ["p..", ".pp", ".wp"],
+    "half": ["p..", "...", ".pp"],
+    "closed": ["...", "p..", ".pp"],
+    "happy": ["...", "..p", ".p."],
+    "sad": ["..p", ".wp", ".pp"],
+    "cross": ["...", "pp.", ".wp"],
+}
+PRISMIST_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks); mouths as in MOUTHS
+    "normal": ("kind", "small", True),
+    "smile": ("open", "small", True),
+    "blink": ("closed", "small", True),
+    "happy": ("happy", "small", True),
+    "laugh": ("happy", "laugh", True),
+    "sad": ("sad", "sad", False),
+    "tired": ("half", "flat", False),
+    "yawn": ("closed", "open", False),
+    "sick": ("half", "sad", False),
+    "no": ("cross", "flat", False),
+    "eat_open": ("open", "open", False),
+    "eat_closed": ("happy", "chew", False),
+    "sleep": ("closed", "none", False),
+}
+assert PRISMIST_FACES.keys() == FACES.keys()
+PRISMIST_FACE_PALETTE = {"p": (50, 60, 110), "w": (255, 255, 255), "m": (70, 95, 160), "r": (235, 95, 120),
+                         "k": (255, 170, 200)}
 
 
 def face_grid(eyes, mouth, blush):
@@ -2083,6 +2334,41 @@ def filchfox_face_grid(eyes, mouth, blush):
     return ["".join(r) for r in rows]
 
 
+def rumblefluff_face_grid(eyes, mouth, blush):
+    rows = [list("." * 9) for _ in range(7)]
+
+    def put(part, left, top):
+        for y, line in enumerate(part):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[top + y][left + x] = ch
+
+    put(RUMBLEFLUFF_EYES[eyes][0], 0, 0)
+    put(RUMBLEFLUFF_EYES[eyes][1], 6, 0)
+    put(["n.n"], 3, 4)  # nostrils on the muzzle
+    put(RUMBLEFLUFF_MOUTHS[mouth], 2, 5)
+    if blush:
+        put(["k.......k"], 0, 3)
+    return ["".join(r) for r in rows]
+
+
+def prismist_face_grid(eyes, mouth, blush):
+    rows = [list("." * 10) for _ in range(6)]
+
+    def put(part, left, top):
+        for y, line in enumerate(part):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[top + y][left + x] = ch
+
+    put(PRISMIST_EYES[eyes], 0, 0)
+    put([r[::-1] for r in PRISMIST_EYES[eyes]], 7, 0)
+    put(MOUTHS[mouth], 3, 4)
+    if blush:
+        put(["kk......kk"], 0, 3)
+    return ["".join(r) for r in rows]
+
+
 def baby_face_grid(eyes, mouth, blush):
     left, right = BABY_EYES[eyes]
     rows = [list("." * BABY_W) for _ in range(BABY_H)]
@@ -2147,14 +2433,35 @@ def crack(grid):
     return ["".join(r) for r in rows]
 
 
-EGG_CRACKED = crack(EGG)
-EGG_OPEN = EGG_CRACKED[:7] + ["." * len(EGG[0])] + EGG_CRACKED[7:]  # the lid lifts
-EGG_TAGS = {
-    "egg": [(EGG, 1000)],
-    "egg_wobble": [(lean(EGG, -1), 150), (EGG, 150), (lean(EGG, 1), 150), (EGG, 150)],
-    "egg_crack": [(EGG_CRACKED, 1000)],
-    "egg_open": [(EGG_OPEN, 1000)],
-}
+def egg_tags(egg):
+    cracked = crack(egg)
+    return {
+        "egg": [(egg, 1000)],
+        "egg_wobble": [(lean(egg, -1), 150), (egg, 150), (lean(egg, 1), 150), (egg, 150)],
+        "egg_crack": [(cracked, 1000)],
+        "egg_open": [(cracked[:7] + ["." * len(egg[0])] + cracked[7:], 1000)],  # the lid lifts
+    }
+
+
+EGG_TAGS = egg_tags(EGG)
+# The cloud egg is sky blue, and its speckles are little clouds drifting across it
+CLOUD_EGG = [
+    "....oooo....",
+    "...ohheeo...",
+    "..oheeeeeo..",
+    "..oetttteo..",
+    ".otttttteeo.",
+    ".oeeeeeeeEo.",
+    ".oeeeeeeeEo.",
+    ".oeeeetttEo.",
+    ".oeeeetttto.",
+    ".oeeeeeeEEo.",
+    "..ottteeEo..",
+    "..otttteEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+EGG_GRIDS = {"cloud": CLOUD_EGG}  # lines whose egg is not the usual one in other colors
 # Rare eggs are the same egg in other colors: "<line>_egg", "<line>_egg_wobble", ...
 # The ember egg is a cooled crust with spots that glow.
 RARE_EGG_PALETTES = {
@@ -2166,6 +2473,9 @@ RARE_EGG_PALETTES = {
     # The fox egg: a russet shell with cream speckles, like a fox's chest.
     "fox": {"o": (105, 38, 18), "e": (235, 120, 48), "E": (190, 82, 32), "h": (255, 180, 110), "t": (255, 240, 215),
             "x": (70, 32, 22)},
+    # The cloud egg: a pale sky with white clouds (CLOUD_EGG), and a crack of dark blue.
+    "cloud": {"o": (60, 88, 150), "e": (165, 200, 245), "E": (120, 155, 215), "h": (220, 236, 255),
+              "t": (255, 255, 255), "x": (40, 60, 120)},
 }
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
@@ -2184,6 +2494,8 @@ ITEMS = {
     "medicine": [".hhh.", ".hhh.", "RRRRR", "RRhRR", "RhhhR", "RRhRR", "QQQQQ"],  # thrown from the app
     "sponge": ["L.....L.", ".L.YYYYY", "YYYYOYYY", "YOYYYYOY", "YYYOYYYY", "OOOOOOOO"],  # the app's, for cleaning
     "baton": ["......Y.", ".....YYY", "....h.Y.", "...h....", "..h.....", ".nn.....", "nn......"],  # the app's, for tricks
+    # the app's: the bag with what there is to eat and plant
+    "bag": ["..n..n..", "...nn...", "..KKKK..", ".KKKKKj.", "KKKKKKKj", "KKKKKKjj", "KKKKKjjj", ".jjjjjj."],
 }
 
 # ---------------------------------------------------------------- Trips and finds
@@ -2291,6 +2603,12 @@ TRIP_TAGS = {
     "fruit_cherry": [(["..G..", ".G.G.", "rr.rr", "rR.rR"], 1000)],
     "fruit_sunflower": [([".yy.", "yOOy", "yOOy", ".yy."], 1000)],
     "fruit_herb": [([".w.", "wyw", ".w.", ".g."], 1000)],
+    # Food from trips, one per area (core/src/food.ts): given by hand, held up when it is found
+    "honeycomb": [([".YYYY.", "YyYyYY", "YYyYyY", "YyYyYY", ".YYYY.", "..y..."], 1000)],
+    "hazelnut": [(["..l..", "dDdDd", ".ttt.", "ttttT", "ttttT", ".tTT."], 1000)],
+    "watercress": [(["l.l.l", "glglg", ".ggg.", "..g..", "..G.."], 1000)],
+    "glowberry": [(["..g..", ".cgc.", "cfccf", "cCcCC", ".cC.."], 1000)],
+    "pinenut": [(["..g..", ".tTt.", "tTtTt", ".tTt.", "tTtTt", ".tTt.", "..T.."], 1000)],
     # Plant: sprout, young plant, then per kind without and with a ripe fruit
     "sprout": [(["l...l", "gl.lg", ".ggg.", "..g..", "..G.."], 1000)],
     "young": [(["..lgl..", ".lgggl.", "lggGggl", ".ggGgg.", "..gGg..", "...G...", "..gGg..", "...G..."], 1000)],
@@ -2754,6 +3072,355 @@ FOE_TAGS = {
     "foe_frostfluff": [(FROSTFLUFF, 1800), (FROSTFLUFF_PEEK, 500)],
 }
 
+# ---------------------------------------------------------------- The house
+
+# The house grows in three steps (core/src/home.ts): a hut of thatch, a wooden cabin with a window,
+# then a whole house with a tiled roof. Outside it stands on the left (scene.HOUSE_X), with its door
+# shut ("house_N"), open ("house_N_open") and, at night with the pet inside, with its windows lit
+# ("house_N_lit"). Inside, a room fills the panel ("room_N"): its window, or the hut's doorway, is
+# left transparent, so the real sky shows through. "room_N_lit" is the room at night with its
+# light on, and "blanket_N" is laid over the sleeping pet.
+HOUSE_PALETTE = {
+    "O": (120, 78, 36), "T": (196, 156, 72), "t": (150, 112, 52), "h": (228, 196, 112),  # thatch
+    "D": (26, 18, 14),  # an open doorway: dark
+    "W": (160, 104, 60), "w": (124, 78, 45), "o": (95, 58, 32), "d": (132, 84, 48),  # wood, the door
+    "F": (235, 214, 170), "G": (140, 190, 230), "L": (215, 238, 252), "k": (235, 200, 90),  # frame, glass
+    "g": (70, 150, 60), "r": (225, 75, 85), "y": (245, 212, 80),  # flowers
+    "C": (236, 222, 190), "c": (205, 188, 152), "B": (112, 70, 40),  # plaster, beams
+    "R": (196, 78, 58), "q": (228, 112, 82), "e": (150, 55, 42), "E": (128, 50, 38),  # tiles
+    "S": (150, 142, 138), "s": (115, 108, 104),  # chimney
+    "Y": (240, 220, 150),  # the round attic window
+}
+LIT = {"G": (255, 200, 110), "L": (255, 230, 160), "Y": (255, 210, 120), "D": (120, 70, 30)}
+NIGHT = 0.4  # how dark the scene makes a sprite at night (scene.dimmedSprite); a lit one is drawn as it is
+
+HUT = [
+    "......Og.......",
+    "....OOOOOOO....",
+    "..OOhhhhhTTOO..",
+    ".OhhTTTTTTTttO.",
+    ".OttttttttttttO",
+    "OhTTTTTTtTTTTtO",
+    "OTTtTOOOOTTtTtO",
+    "OttttODDDOttttO",
+    "OhTTODDDDDOTTtO",
+    "OTtTODDDDDOTttO",
+    "OttODDDDDDDOttO",
+    "OTTODDDDDDDOTtO",
+    "OOOODDDDDDDOOOO",
+]
+
+
+def cabin():
+    roof = []
+    for i in range(10):
+        row = ""
+        for x in range(19):
+            d = abs(x - 9)
+            if d > i:
+                row += "."
+            elif d == i:
+                row += "O"
+            elif i % 3 == 0:
+                row += "t"
+            elif x - 9 == -(i - 1):
+                row += "h"
+            else:
+                row += "t" if (x + i) % 5 == 0 else "T"
+        roof.append(row)
+    roof[9] = "O" + "t" * 17 + "O"
+    return roof + [
+        ".oWWWWWWWWWWWWWWWo.",
+        ".owFFFFFFFwwoooowo.",
+        ".oWFGGFGGFWoDDDDoo.",
+        ".owFGLFGGFwoDDDDoo.",
+        ".oWFFFFFFFWoDDDDoo.",
+        ".owFGGFGGFwoDDDDoo.",
+        ".oWFGGFGGFWoDDDDoo.",
+        ".owFFFFFFFwoDDDDoo.",
+        ".oWgrgygrgWoDDDDoo.",
+    ]
+
+
+def house():
+    rows = []
+    for i in range(13):
+        row = ""
+        for x in range(25):
+            d = abs(x - 12)
+            if 17 <= x <= 20 and i <= 6:  # chimney
+                row += "s" if i == 0 or x in (17, 20) else ("s" if (x + i) % 3 == 0 else "S")
+                continue
+            if d > i:
+                row += "."
+            elif d == i:
+                row += "E"
+            elif 4 <= i <= 7 and d <= 2:  # round attic window
+                row += "B" if d == 2 or i in (4, 7) else "Y"
+            elif i % 2 == 0:
+                row += "e"
+            else:
+                row += "q" if (x + i // 2) % 3 == 0 else "R"
+        rows.append(row)
+    rows[12] = "E" + "e" * 23 + "E"
+    return rows + [
+        ".BCCCCCBCCCCCCCCCBCCCCCB.",
+        ".BCFFFFFBCCCBBBCCBFFFFFB.",
+        ".BcFGGFFBCcBDDDBcBFGGFFB.",
+        ".BCFGLFFBCBDDDDDBBFGLFFB.",
+        ".BBBBBBBBBBDDDDDBBBBBBBB.",
+        ".BCFFFFFBCBDDDDDBBFFFFFB.",
+        ".BcFGGFFBcBDDDDDBBFGGFFB.",
+        ".BCFFFFFBCBDDDDDBBFFFFFB.",
+        ".BCgrgygBCBDDDDDBBgygrgB.",
+        ".BBBBBBBBBBDDDDDBBBBBBBB.",
+        ".BCCcCCCBCBDDDDDBBCCCcCB.",
+        ".BBBBBBBBBBDDDDDBBBBBBBB.",
+    ]
+
+
+HOUSES = [HUT, cabin(), house()]
+
+
+def shut(grid, step):
+    """The door shut: the hut has none, the others a wooden one with a knob."""
+    if step == 1:
+        return grid
+    rows = [r.replace("D", "d") for r in grid]
+    knob = next(y for y, r in enumerate(rows) if "d" in r) + 4
+    x = rows[knob].rindex("d")
+    rows[knob] = rows[knob][:x] + "k" + rows[knob][x + 1:]
+    return rows
+
+
+def darkened(img, factor=NIGHT, keep=()):
+    """The picture as dark as the scene makes it at night, apart from the pixels in `keep`."""
+    out = img.copy()
+    px = out.load()
+    for y in range(out.height):
+        for x in range(out.width):
+            r, g, b, a = px[x, y]
+            if a and (x, y) not in keep:
+                px[x, y] = (int(r * factor), int(g * factor), int(b * factor), a)
+    return out
+
+
+def lit_house(grid):
+    """At night with the pet inside: as dark as the scene, but the windows (or the hut's doorway) glow."""
+    img = to_image(grid, HOUSE_PALETTE | LIT)
+    keep = {(x, y) for y, r in enumerate(grid) for x, ch in enumerate(r) if ch in LIT}
+    return darkened(img, keep=keep)
+
+
+class Canvas:
+    """A picture drawn with rectangles and points, like the scene draws its landscapes."""
+
+    def __init__(self, w=64, h=64):
+        self.img = Image.new("RGBA", (w, h))
+        self.px = self.img.load()
+
+    def point(self, x, y, c):
+        if 0 <= x < self.img.width and 0 <= y < self.img.height:
+            self.px[x, y] = tuple(c) + (255,)
+
+    def clear(self, x, y):
+        if 0 <= x < self.img.width and 0 <= y < self.img.height:
+            self.px[x, y] = (0, 0, 0, 0)
+
+    def rect(self, x0, y0, x1, y1, c):
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                self.point(x, y, c)
+
+    def hline(self, x0, x1, y, c):
+        self.rect(x0, y, x1, y, c)
+
+    def ellipse(self, x0, y0, x1, y1, c):
+        cx, cy, rx, ry = (x0 + x1) / 2, (y0 + y1) / 2, (x1 - x0) / 2 + 0.5, (y1 - y0) / 2 + 0.5
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                if ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1:
+                    self.point(x, y, c)
+
+    def window(self, x0, y0, x1, y1):
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                self.clear(x, y)
+
+
+FLOOR = 55  # the first row of the floor (scene.GROUND + 1)
+# Where the bed is (the pet sleeps in the middle) and where the light is, per step
+ROOM_LIGHT = {2: (6, 25), 3: (31, 14)}
+
+
+def room(step):
+    """The inside of the house; the window (or the doorway) stays transparent for the sky."""
+    c = Canvas()
+    if step == 1:
+        # a dome of thatch, darker towards the edges; the round doorway on the left
+        for y in range(FLOOR):
+            band = (92, 66, 30) if y % 6 == 0 else (140, 104, 50) if y % 6 == 1 else (118, 86, 40)
+            c.hline(0, 63, y, band)
+            for x in range((y * 7) % 5, 64, 5):
+                c.point(x, y, (132, 98, 46))
+        for y in range(FLOOR):
+            for x in range(64):
+                if ((x - 32) / 34) ** 2 + ((y - 60) / 56) ** 2 > 1:
+                    c.point(x, y, (70, 50, 26))
+        x0, y0, x1 = 1, 30, 12
+        for y in range(y0, FLOOR):
+            cut = round(4 - (16 - (4 - (y - y0)) ** 2) ** 0.5) if y < y0 + 4 else 0
+            for x in range(x0 + cut, x1 - cut + 1):
+                c.clear(x, y)
+            c.point(x0 + cut - 1, y, (90, 62, 30))
+            c.point(x1 - cut + 1, y, (90, 62, 30))
+        c.hline(x0 + 4, x1 - 4, y0 - 1, (90, 62, 30))
+        # floor of packed earth, the grass outside the doorway
+        c.rect(0, FLOOR, 63, 63, (92, 64, 40))
+        c.hline(0, 63, FLOOR, (120, 86, 52))
+        for x in range(3, 64, 6):
+            c.point(x, 58 + x % 3, (76, 52, 32))
+        c.hline(x0, x1, FLOOR, (70, 150, 60))
+        # a bed of leaves
+        c.ellipse(13, 49, 53, 58, (60, 115, 45))
+        c.ellipse(15, 50, 51, 57, (80, 135, 55))
+        for x in range(15, 52, 3):
+            c.point(x, 50 + x % 4, (110, 160, 60))
+    elif step == 2:
+        # a wooden cabin: planks, a window with a cross, a shelf with a candle
+        for x in range(64):
+            plank = (150, 98, 58) if (x // 6) % 2 == 0 else (138, 88, 52)
+            c.rect(x, 0, x, FLOOR - 1, (96, 60, 34) if x % 6 == 0 else plank)
+        for x in range(2, 64, 6):
+            c.point(x + 3, 20 + (x * 7) % 25, (96, 60, 34))
+        c.rect(0, 7, 63, 9, (90, 56, 32))  # a beam
+        x0, y0, x1, y1 = 40, 13, 58, 30
+        c.rect(x0 - 1, y0 - 1, x1 + 1, y1 + 1, (235, 214, 170))
+        c.window(x0, y0, x1, y1)
+        c.rect((x0 + x1) // 2, y0, (x0 + x1) // 2, y1, (235, 214, 170))
+        c.hline(x0, x1, (y0 + y1) // 2, (235, 214, 170))
+        c.rect(x0 - 2, y1 + 2, x1 + 2, y1 + 3, (200, 170, 120))  # sill
+        c.rect(3, 30, 16, 31, (96, 60, 34))  # shelf
+        c.rect(6, 26, 7, 29, (240, 230, 210))  # candle
+        c.point(6, 25, (200, 150, 70))
+        c.rect(11, 27, 14, 29, (90, 140, 190))  # a jar
+        c.rect(0, FLOOR, 63, 63, (110, 70, 40))
+        c.hline(0, 63, FLOOR, (150, 100, 60))
+        for y in range(57, 64, 3):
+            c.hline(0, 63, y, (90, 56, 32))
+        # a straw mattress on a low frame
+        c.rect(12, 49, 53, 54, (210, 180, 110))
+        for x in range(13, 53, 3):
+            c.point(x, 50 + x % 2, (180, 150, 80))
+        c.rect(11, 54, 54, 55, (96, 60, 34))
+        c.rect(10, 42, 12, 55, (96, 60, 34))
+    else:
+        # the whole house: wallpaper, a big window with curtains, a picture, a lamp, a rug, a bed
+        for y in range(FLOOR):
+            for x in range(64):
+                col = (214, 196, 160)
+                if x % 8 == 0:
+                    col = (196, 176, 140)
+                if x % 8 == 4 and y % 6 == 3:
+                    col = (190, 110, 110)
+                c.point(x, y, col)
+        c.rect(0, 44, 63, 54, (150, 96, 60))  # wainscoting
+        for x in range(0, 64, 5):
+            c.rect(x, 44, x, 54, (120, 76, 46))
+        c.hline(0, 63, 43, (110, 70, 40))
+        x0, y0, x1, y1 = 41, 12, 57, 30
+        c.rect(x0 - 1, y0 - 1, x1 + 1, y1 + 1, (245, 235, 215))
+        c.window(x0, y0, x1, y1)
+        c.rect((x0 + x1) // 2, y0, (x0 + x1) // 2, y1, (245, 235, 215))
+        c.hline(x0, x1, 21, (245, 235, 215))
+        for cx0, cx1 in ((37, 40), (58, 61)):  # curtains
+            c.rect(cx0, 10, cx1, 33, (180, 70, 80))
+            for y in range(10, 34, 2):
+                c.point(cx0 + 2, y, (150, 50, 62))
+        c.rect(36, 9, 62, 9, (110, 70, 40))  # curtain rail
+        # a picture of the hut it started in
+        c.rect(6, 14, 18, 24, (110, 70, 40))
+        c.rect(7, 15, 17, 23, (140, 190, 230))
+        c.hline(7, 17, 23, (70, 150, 60))
+        c.ellipse(9, 17, 15, 23, (196, 156, 72))
+        c.rect(11, 20, 13, 23, (60, 40, 25))
+        # a lamp hangs from the ceiling over the bed
+        c.rect(31, 0, 31, 10, (90, 70, 50))
+        for i, w in enumerate((1, 2, 3, 4)):
+            c.hline(31 - w, 31 + w, 10 + i, (220, 180, 120))
+        c.hline(28, 34, 14, (200, 150, 90))
+        # a shelf on the wall (a spot for a decoration)
+        c.rect(18, 30, 32, 31, (110, 70, 40))
+        c.rect(0, FLOOR, 63, 63, (130, 84, 50))
+        c.hline(0, 63, FLOOR, (160, 108, 66))
+        for x in range(4, 64, 9):
+            c.rect(x, 56, x, 63, (105, 66, 40))
+        c.rect(14, 58, 50, 62, (120, 140, 180))  # rug
+        c.hline(14, 50, 60, (200, 200, 220))
+        # the bed: a headboard, a sheet and a pillow
+        c.rect(10, 36, 14, 55, (110, 70, 40))
+        c.ellipse(10, 33, 14, 38, (110, 70, 40))
+        c.rect(51, 44, 54, 55, (110, 70, 40))
+        c.rect(14, 49, 51, 53, (240, 236, 226))
+        c.rect(14, 45, 22, 50, (250, 248, 240))
+    return c.img
+
+
+def lit_room(step):
+    """The room at night, as dark as the scene makes it, with its light on and a warm glow around it."""
+    img = darkened(room(step))
+    if step not in ROOM_LIGHT:
+        return None
+    lx, ly = ROOM_LIGHT[step]
+    px = img.load()
+    radius = 14 if step == 2 else 24
+    for y in range(img.height):
+        for x in range(img.width):
+            r, g, b, a = px[x, y]
+            d = ((x - lx) ** 2 + (y - ly) ** 2) ** 0.5 / radius
+            if a and d < 1:
+                f = 0.6 * (1 - d) ** 1.5
+                px[x, y] = (min(255, int(r + 255 * 0.6 * f)), min(255, int(g + 200 * 0.5 * f)), min(255, int(b + 120 * 0.3 * f)), a)
+    if step == 2:
+        px[6, 25] = (255, 200, 90, 255)
+        px[6, 24] = (255, 240, 160, 255)
+    else:
+        for i, w in enumerate((1, 2, 3, 4)):
+            for x in range(31 - w, 32 + w):
+                px[x, 10 + i] = (255, 225, 150, 255)
+    return img
+
+
+def blanket(step):
+    c = Canvas(26, 7)
+    if step == 2:
+        c.rect(0, 1, 25, 6, (90, 130, 170))
+        for x in range(1, 25, 4):
+            c.rect(x, 1, x + 1, 6, (200, 200, 210))
+        c.hline(0, 25, 0, (60, 95, 135))
+    else:
+        for y in range(1, 7):
+            for x in range(26):
+                c.point(x, y, (196, 78, 90) if (x // 3 + y // 3) % 2 == 0 else (240, 200, 120))
+        c.hline(0, 25, 0, (150, 50, 62))
+    return c.img
+
+
+def house_sheet():
+    tags = {}
+    for step, grid in enumerate(HOUSES, 1):
+        tags[f"house_{step}"] = [(to_image(shut(grid, step), HOUSE_PALETTE), 1000)]
+        tags[f"house_{step}_open"] = [(to_image(grid, HOUSE_PALETTE), 1000)]
+        tags[f"house_{step}_lit"] = [(lit_house(shut(grid, step)), 1000)]
+        tags[f"room_{step}"] = [(room(step), 1000)]
+        lit = lit_room(step)
+        if lit:
+            tags[f"room_{step}_lit"] = [(lit, 1000)]
+        if step > 1:
+            tags[f"blanket_{step}"] = [(blanket(step), 1000)]
+    return tags
+
+
 # ---------------------------------------------------------------- Output
 
 
@@ -2862,18 +3529,29 @@ def main():
                 faceCenter="left")  # on the body, not between it and the tail
     write_sheet("fox_faces", face_sheet(fox_face_grid, FOX_FACE_PALETTE))
     write_sheet("fox_baby_faces", face_sheet(baby_face_grid, FOX_BABY_FACE_PALETTE))
+    write_sheet("cloud_baby_body", body_sheet(CLOUD_BABY_TAGS, CLOUD_PALETTE))
+    write_sheet("nimbit_body", body_sheet(NIMBIT_TAGS, CLOUD_PALETTE), faceTop=NIMBIT_FACE_TOP)
+    write_sheet("cloud_faces", face_sheet(face_grid, CLOUD_FACE_PALETTE))
+    write_sheet("cloud_baby_faces", face_sheet(baby_face_grid, CLOUD_FACE_PALETTE))
+    write_sheet("rumblefluff_body", body_sheet(RUMBLEFLUFF_TAGS, RUMBLEFLUFF_PALETTE), faceTop=RUMBLEFLUFF_FACE_TOP,
+                faceShift=RUMBLEFLUFF_FACE_SHIFT)
+    write_sheet("rumblefluff_faces", face_sheet(rumblefluff_face_grid, RUMBLEFLUFF_FACE_PALETTE, RUMBLEFLUFF_FACES))
+    write_sheet("prismist_body", body_sheet(PRISMIST_TAGS, PRISMIST_PALETTE), faceTop=PRISMIST_FACE_TOP,
+                faceShift=PRISMIST_FACE_SHIFT)
+    write_sheet("prismist_faces", face_sheet(prismist_face_grid, PRISMIST_FACE_PALETTE, PRISMIST_FACES))
     items = {name: [(to_image(rows, ITEM_PALETTE), 1000)] for name, rows in ITEMS.items()}
     items |= {tag: [(to_image(g, ITEM_PALETTE), ms) for g, ms in frames] for tag, frames in EGG_TAGS.items()}
     for line, palette in RARE_EGG_PALETTES.items():
         items |= {f"{line}_{tag}": [(to_image(g, palette), ms) for g, ms in frames]
-                  for tag, frames in EGG_TAGS.items()}
+                  for tag, frames in egg_tags(EGG_GRIDS.get(line, EGG)).items()}
     write_sheet("items", items)
     trip = {tag: [(to_image(g, TRIP_PALETTE), ms) for g, ms in frames]
             for tag, frames in (TRIP_TAGS | FOE_TAGS).items()}
     # the eggs as finds, and as they lie in the nest
-    trip |= {f"egg_{line}": [(to_image(EGG, palette), 1000)]
+    trip |= {f"egg_{line}": [(to_image(EGG_GRIDS.get(line, EGG), palette), 1000)]
              for line, palette in ({"blob": ITEM_PALETTE} | RARE_EGG_PALETTES).items()}
     write_sheet("trip", trip)
+    write_sheet("house", house_sheet())
 
 
 if __name__ == "__main__":

@@ -20,14 +20,15 @@ beforeEach(() => {
 test("weight goes up with food and down with play", () => {
   pet.stats.satiety = 30;
   act(pet, "feed", start, { item: "meal" });
-  act(pet, "feed", start + 60, { item: "icecream" });
-  assert.equal(pet.weight, 35 + 1 + 3);
+  pet.items.honeycomb = 1;
+  act(pet, "feed", start + 60, { item: "honeycomb" });
+  assert.equal(pet.weight, 35 + 1 + 2.5);
   act(pet, "play", start + 120);
-  assert.equal(pet.weight, 37);
+  assert.equal(pet.weight, 36.5);
   for (let i = 0; i < 2 * 1440; i++) { // two days well fed: drifts back to the ideal
     care.driftWeight(pet, 1, false);
   }
-  near(pet.weight, 35 + 2 * Math.exp(-1), 0.05);
+  near(pet.weight, 35 + 1.5 * Math.exp(-1), 0.05);
 });
 
 test("hunger makes light", () => {
@@ -55,17 +56,6 @@ test("weight follows evolution", () => {
   act(pet, "evolve", start);
   assert.equal(pet.stage, "adult");
   near(pet.weight, 60.0);
-});
-
-test("snacks and the favorite", () => {
-  pet.stats.mood = 20;
-  act(pet, "feed", start, { item: "cookie" });
-  assert.equal(pet.stats.mood, 35);
-  assert.ok(!("favorite_found" in pet.counters));
-  act(pet, "feed", start + 60, { item: "icecream" }); // a blob's favorite snack
-  assert.equal(pet.stats.mood, 35 + 20 * 1.5 * 0.6);
-  assert.equal(pet.counters.favorite_found, 1);
-  assert.equal(pet.activity_item, "icecream");
 });
 
 test("bond grows with care and fades slowly", () => {

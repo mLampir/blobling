@@ -12,7 +12,7 @@
  * - Now and then it comes out (outWindow), like a friend's visit, and the two play. A pet that
  *   knows a trick shows it, and the other one copies it a little (teach), capped like practicing
  *   alone: it never learns a trick that way.
- * - At night it comes out too, and the two sleep side by side.
+ * - At night it comes out too, and the two sleep side by side (inside, once there is a house).
  *
  * Coming out depends on nothing but the time, so it is the same whether anybody is looking or not.
  */

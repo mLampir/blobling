@@ -9,7 +9,7 @@
  * (notify.ts).
  */
 
-import { NOT_A_PET_ROUTE, petRequest } from "../../core/src/api";
+import { NOT_A_PET_ROUTE, ownTarget, petRequest } from "../../core/src/api";
 import type { I18n } from "../../core/src/i18n";
 import { RequestError } from "../../core/src/model";
 import { MAX_NAME, Pet, readSave } from "../../core/src/pet";
@@ -19,7 +19,7 @@ import { Weather } from "../../core/src/weather";
 import { sceneAssets } from "./assets";
 import { imageData } from "./canvas";
 import { reminders, type Reminders } from "./notify";
-import { BROKEN_KEY, PET_KEY, openStore, type Store } from "./store";
+import { BROKEN_KEY, PET_KEY, openStore, takeInSave, type Store } from "./store";
 
 const SIZE = 64; // the panel's resolution: the scene looks exactly as it does there
 const WEATHER_MINUTES = 15;
@@ -79,18 +79,34 @@ export class LocalPet {
     return new LocalPet(store, i18n, await store.get(PET_KEY));
   }
 
+  /**
+   * The pet the phone keeps while the app shows a display's, as GET /api/pet describes it: for
+   * choosing between the two. Nothing is saved; a save that cannot be read counts as an egg.
+   */
+  static async describeKept(i18n: I18n): Promise<unknown> {
+    let saved: ReturnType<typeof readSave> | null = null;
+    try {
+      const file = await (await openStore()).get(PET_KEY);
+      saved = file === undefined ? null : readSave(file);
+    } catch {
+      // then a new egg, as LocalPet.open would start with
+    }
+    const pet = new Pet({ t: i18n.t, saved, location: savedLocation() });
+    return petRequest(ownTarget(pet), "GET", new URL("/api/pet", "http://app"), async () => null);
+  }
+
+  /** While the app shows a display's pet: the save `file` becomes the pet the phone keeps (store.ts, takeInSave). */
+  static async takeIn(file: unknown): Promise<void> {
+    await takeInSave(await openStore(), file);
+  }
+
   // ---------- The requests of the page ----------
 
   /** Answers a request of the page like the Pi would; throws an Error with the text for the page. */
   async request(method: string, path: string, body?: unknown): Promise<unknown> {
     let answer: unknown;
     try {
-      answer = await petRequest(
-        {
-          pet: this.pet, action: this.pet.action.bind(this.pet),
-          newEgg: (egg, keep) => this.pet.newEgg(egg, undefined, keep), swap: () => this.pet.swap(),
-        },
-        method, new URL(path, "http://app"), async () => body ?? null);
+      answer = await petRequest(ownTarget(this.pet), method, new URL(path, "http://app"), async () => body ?? null);
     } catch (error) {
       if (error instanceof RequestError) {
         throw new Error(this.i18n.t(`error.${error.message}`, { max: MAX_NAME }));

@@ -25,7 +25,7 @@ import type { Pet } from "./pet";
  * a change needs (CLAUDE.md, "The API between app and Pi").
  */
 export const API_VERSION = 4;
-export const API_OLDEST = 1;
+export const API_OLDEST = 4;
 
 /**
  * Where the requests go. `action`, `newEgg` and `swap` are the pet's own, or the Pi's, which also
@@ -36,6 +36,13 @@ export interface PetTarget {
   action: Pet["action"];
   newEgg: (egg: unknown, keep: unknown) => ReturnType<Pet["newEgg"]>;
   swap: () => ReturnType<Pet["swap"]>;
+}
+
+/** The pet's own handlers, for a pet that nothing else shows (the app's, or one in a test). */
+export function ownTarget(pet: Pet): PetTarget {
+  return {
+    pet, action: pet.action.bind(pet), newEgg: (egg, keep) => pet.newEgg(egg, undefined, keep), swap: () => pet.swap(),
+  };
 }
 
 /** What a request that is not one of the pet's routes gets back. */

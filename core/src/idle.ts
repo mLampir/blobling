@@ -7,6 +7,7 @@
  */
 
 import * as care from "./care";
+import * as home from "./home";
 import { Random } from "./random";
 import * as sky from "./sky";
 import type { PetEvent, PetState, WeatherSeen } from "./state";
@@ -18,14 +19,14 @@ export const ENERGY = 30; // it needs at least this much energy
 
 // Playing with the ball by itself: a little mood, much less than playing together
 export const BALL_MOOD = 4;
-export const BALL_ENERGY = 2;
+export const BALL_ENERGY = 1;
 
 // Practicing a trick by itself: only tricks it has been shown, a little at a time, and only
 // SOLO_LIMIT points between two practices together. It never learns a trick alone.
 export const PRACTICE_STEP = 0.25;
 export const SOLO_LIMIT = 0.5;
 export const PRACTICE_MOOD = 2;
-export const PRACTICE_ENERGY = 2;
+export const PRACTICE_ENERGY = 1;
 
 // What it leaves behind (state.trace) until somebody does something with it. Only one at a time;
 // playing with the ball again only moves the ball. A snowman is built only in real snow.
@@ -34,6 +35,11 @@ export const BUILD_CHANCE = 0.5; // instead of playing with the ball, when nothi
 export const SNOWMAN_CHANCE = 0.7; // when it snows, it would rather build a snowman
 export const MELT_ABOVE = 3; // °C: above this a snowman melts away
 export const DRAWINGS = 2; // how many different drawings it can scratch into the ground
+
+// Now and then it finds something small at home (state.found), like a friend's gift: mostly a
+// fruit, rarely a seed. It lies in one spot until somebody picks it up, and nothing new turns up
+// while it is there.
+export const FIND_CHANCE = 0.12; // of the times it gets busy by itself (about once a day)
 
 export const WELCOME_AFTER = 6 * 3600; // nobody did anything with it for this long: it has something to tell
 export const WELCOME_LINES = 8;
@@ -79,6 +85,11 @@ export function step(state: PetState, t: number, busy: boolean,
   }
   const rng = new Random(`${t}:idle`);
   state.idle_next = t + rng.uniform(...EVERY);
+  const look = new Random(`${t}:found`);
+  if (state.found === null && look.random() < FIND_CHANCE) {
+    state.found = home.smallThing(state, look);
+    return ["discover", state.found, "found", state.found];
+  }
   const tricks = practicable(state);
   const pastime: Pastime = tricks.length > 0 && rng.random() < 0.5 ? "practice" : "ball";
   const s = state.stats;
@@ -107,6 +118,14 @@ export function step(state: PetState, t: number, busy: boolean,
     state.trace = { kind: "ball", spot, look: 0 }; // it leaves the ball lying where it rolled
   }
   return ["play", "", "solo", "ball"];
+}
+
+/** Pick up what it found: a fruit is eaten straight away, a seed is kept. Returns what it was. */
+export function pickUp(state: PetState): string {
+  const found = state.found!;
+  state.found = null;
+  home.receive(state, found);
+  return found;
 }
 
 /** Somebody does something with it: what it left behind has been seen, and is cleared away. */

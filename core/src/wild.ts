@@ -6,7 +6,7 @@
  * of the pet's battle stats as its heirloom. The egg waits in the nest until it is collected.
  *
  * Some visits bring a gift. It lies in one spot until somebody unwraps it, and no new one comes
- * while it is there. Mostly it is a fruit the pet eats straight away; rarely a seed.
+ * while it is there. Mostly it is a fruit for the bag; rarely a seed.
  *
  * Lines whose egg a guardian gives (trip.GUARDIAN_EGGS) have no wild pets, so that egg stays
  * special.
@@ -25,6 +25,7 @@ export const WILD: Record<string, readonly (readonly [string, number, sky.Precip
     ["lumoth", 1, null]],
   forest: [["filchfox", 3, null], ["roamtail", 1, null]],
   stream: [["bouldergrin", 3, null], ["glimmerock", 1, null]],
+  mountain: [["rumblefluff", 3, "rain"], ["prismist", 1, null]], // the thundercloud only comes out in the rain
 };
 export const MEET_CHANCE = 0.2; // how often a wild pet is at a station, while the pet is looking for a friend
 export const SHOW = 3; // tricks the pet shows
@@ -35,10 +36,9 @@ export const VISIT_EVERY = [5 * 3600, 10 * 3600] as const; // from one visit to 
 export const VISIT_SECONDS = 10 * 60;
 export const VISIT_MOOD = 50; // a visit only counts if the pet is at least in this mood (and at home, and awake)
 export const VISIT_CHEER = 5;
-export const VISITS_FOR_NEST = 3;
+export const VISITS_FOR_NEST = 5;
 export const HEIRLOOM = 0.25; // this part of each battle stat goes into the egg
 export const GIFT_CHANCE = 0.4; // how often a visit that counts brings something
-export const SEED_CHANCE = 0.15; // how often that is a seed rather than a fruit
 
 /** What the tests turn: how often a wild pet is waiting. */
 export const rules = { meetChance: MEET_CHANCE };
@@ -137,24 +137,18 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
   return [["nest", line]];
 }
 
-/** What a friend brings: "fruit_<plant>", or now and then "seed_<plant>" if there is room for it. */
+/** What a friend brings: a small thing (home.smallThing), mostly a fruit and rarely a seed. */
 export function giftFrom(state: PetState, rng: Random): string {
-  const kind = rng.choice(Object.keys(home.PLANTS));
-  return rng.random() < SEED_CHANCE && home.canAdd(state, `seed_${kind}`) ? `seed_${kind}` : `fruit_${kind}`;
+  return home.smallThing(state, rng);
 }
 
 /**
- * Unwrap the gift: a fruit is eaten straight away, a seed is kept with the finds. Returns what
- * was in it.
+ * Unwrap the gift: it goes into the bag (home.receive). Returns what was in it.
  */
 export function unwrap(state: PetState): string {
   const gift = state.gift!;
   state.gift = null;
-  if (gift.startsWith("seed_")) {
-    home.addItem(state, gift);
-  } else {
-    home.eat(state, gift.slice("fruit_".length));
-  }
+  home.receive(state, gift);
   return gift;
 }
 

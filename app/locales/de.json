@@ -39,6 +39,13 @@
     "child": "Kind",
     "adult": "Erwachsen"
   },
+  "children": {
+    "blob": "Bloblet",
+    "ember": "Cindlet",
+    "stone": "Pebblet",
+    "fox": "Kitlet",
+    "cloud": "Nimbit"
+  },
   "species": {
     "blob": "Blob",
     "sneezle": "Sneezle",
@@ -57,12 +64,10 @@
     "bouldergrin": "Bouldergrin",
     "fox": "Fuchs",
     "roamtail": "Roamtail",
-    "filchfox": "Filchfox"
-  },
-  "snacks": {
-    "cookie": "Keks",
-    "icecream": "Eis",
-    "fruit": "Obst"
+    "filchfox": "Filchfox",
+    "cloud": "Wolke",
+    "rumblefluff": "Rumblefluff",
+    "prismist": "Prismist"
   },
   "tricks": {
     "bow": "Verbeugen",
@@ -127,6 +132,15 @@
     "seed_sunflower": "Sonnenblumenkern",
     "seed_cherry": "Kicherkirschkern",
     "seed_herb": "Heilkrautsamen",
+    "fruit_berry": "Beere",
+    "fruit_sunflower": "Sonnenblumenkern",
+    "fruit_cherry": "Kicherkirsche",
+    "fruit_herb": "Heilblüte",
+    "honeycomb": "Honigwabe",
+    "hazelnut": "Haselnuss",
+    "watercress": "Brunnenkresse",
+    "glowberry": "Leuchtbeere",
+    "pinenut": "Zirbenzapfen",
     "flag": "Wimpel",
     "windmill": "Windrad",
     "lantern": "Laterne",
@@ -148,7 +162,8 @@
     "egg_blob": "Schleim-Ei",
     "egg_ember": "Glut-Ei",
     "egg_stone": "Stein-Ei",
-    "egg_fox": "Fuchs-Ei"
+    "egg_fox": "Fuchs-Ei",
+    "egg_cloud": "Wolken-Ei"
   },
   "pack": {
     "snack": "Snack",
@@ -171,7 +186,6 @@
     "rejected": {
       "asleep": "{name} schläft gerade.",
       "full": "{name} ist satt.",
-      "too_many_snacks": "Genug Süßes für jetzt.",
       "tired": "{name} ist zu müde zum Spielen.",
       "tired_trick": "{name} ist zu müde zum Üben.",
       "rest_trick": "{name} braucht eine kurze Pause vor dem nächsten Trick.",
@@ -200,7 +214,12 @@
       "rest_train": "{name} braucht eine kurze Pause vor der nächsten Übung.",
       "no_training": "Zu spät – die Übung ist vorbei.",
       "no_nest": "Da liegt kein Ei in einem Nest.",
-      "no_gift": "Da liegt kein Geschenk."
+      "no_gift": "Da liegt kein Geschenk.",
+      "no_house": "Es gibt noch kein Haus.",
+      "inside": "{name} schläft im Haus.",
+      "boost_waiting": "{name} hat das letzte noch im Bauch.",
+      "nothing_found": "Da liegt nichts.",
+      "dislikes": "{name} dreht den Kopf weg: das nicht."
     },
     "notify": {
       "channel": "Wenn dein Pet dich braucht",
@@ -232,8 +251,16 @@
     "collect": "🥚 Ei einsammeln",
     "collected": "{egg} eingesammelt – es liegt jetzt bei deinen Funden",
     "unwrap": "🎁 Geschenk auspacken",
-    "unwrapped_fruit": "Drin war: {fruit} – {name} hat es gleich gegessen",
-    "unwrapped_seed": "Drin war: {seed} – es liegt jetzt bei deinen Funden",
+    "unwrapped_fruit": "Drin war: {fruit} – die Tasche war voll, also hat {name} es gleich gegessen",
+    "pickup": "👐 Aufheben: {thing}",
+    "picked_fruit": "Aufgehoben: {fruit} – die Tasche war voll, also hat {name} es gleich gegessen",
+    "boost": {
+      "heart": "Süß! {name} startet mit einem Herz mehr in die nächste Reise.",
+      "trick": "{name} fühlt sich schlau: Die nächste Trick-Übung zählt doppelt.",
+      "train": "{name} fühlt sich stark: Die nächste Übung zählt doppelt.",
+      "finder": "Die Augen leuchten: {name} entdeckt auf der nächsten Reise bei jeder Rast etwas.",
+      "fresh": "{name} ist voller Tatendrang: Die nächste Reise macht nicht müde."
+    },
     "rename": "✎ Umbenennen",
     "rename_prompt": "Neuer Name",
     "name_prompt": "Es ist geschlüpft! Wie soll es heißen?",
@@ -253,10 +280,9 @@
       "ball": "Ball",
       "medicine": "Medizin",
       "trip": "Ausflug",
-      "seeds": "Samen",
-      "seed_count": "Samen ×{n}",
       "sponge": "Schwamm",
-      "baton": "Taktstock"
+      "baton": "Taktstock",
+      "bag": "Tasche"
     },
     "tools": {
       "game": "Raten",
@@ -323,6 +349,7 @@
       },
       "visit": "{pet} hat mich besucht.",
       "gift": "{pet} hat mir ein Geschenk mitgebracht!",
+      "found": "Ich habe im Gras etwas gefunden und für dich aufgehoben: {thing}.",
       "nest": "Wir haben zu zweit ein Nest gebaut – und jetzt liegt ein Ei darin!",
       "wild_friend": "Ich habe {pet} meine Tricks gezeigt, und jetzt sind wir Freunde.",
       "wild_shrug": "Ich habe {pet} meine Tricks gezeigt, aber {pet} fand sie nicht so toll.",
@@ -332,6 +359,11 @@
       "battle_ball": "{foe} ist lieber meinem Ball hinterhergelaufen, statt mit mir zu raufen.",
       "guardian": "Ich bin an {foe} vorbeigekommen, dem Wächter des Weges!",
       "unlock": "Jetzt kenne ich einen neuen Weg: {area}!",
+      "house": {
+        "1": "Jetzt habe ich eine eigene Hütte zum Schlafen!",
+        "2": "Meine Hütte ist zu einem Häuschen gewachsen, mit Fenster!",
+        "3": "Mein Häuschen ist jetzt ein richtiges Haus!"
+      },
       "find": "Unterwegs habe ich etwas gefunden: {item}.",
       "trip_home": "Mit meinem Rucksack bin ich wieder heimgekommen.",
       "trip_tired": "Ich wurde müde und bin umgekehrt.",
@@ -339,7 +371,7 @@
       "trip_snack": "Unterwegs habe ich meinen Proviant gegessen, und dann ging es mir besser.",
       "evolve": {
         "hatched": "Ich bin geschlüpft! Hallo, Welt!",
-        "child": "Ich bin gewachsen – jetzt bin ich ein Kind!",
+        "child": "Ich bin gewachsen – jetzt bin ich ein {species}!",
         "adult": "Ich bin groß geworden – jetzt bin ich ein {species}!"
       },
       "postcard": {
@@ -425,9 +457,6 @@
       "heading_home": "{name} macht sich auf den Heimweg",
       "brought": "Mitgebracht: {items}"
     },
-    "tap": {
-      "choice": "{choice} – in die Szene ziehen"
-    },
     "finds": {
       "ripe": "eine Frucht ist reif",
       "ripening": "die nächste Frucht reift",
@@ -448,13 +477,25 @@
       "friend_here": "Freundschaft · gerade zu Besuch",
       "egg_brood": "ausbrüten",
       "effects": {
-        "growth": "Ei, Baby und Kind wachsen schneller"
-      }
+        "growth": "Ei, Baby und Kind wachsen schneller",
+        "heart": "ein Herz mehr auf der nächsten Reise",
+        "trick": "die nächste Trick-Übung zählt doppelt",
+        "train": "die nächste Übung zählt doppelt",
+        "finder": "findet auf der nächsten Reise bei jeder Rast etwas",
+        "fresh": "die nächste Reise macht nicht müde und bringt so viel wie die erste des Tages"
+      },
+      "house": "🏠 {house}",
+      "house_spots": {
+        "one": "1 Platz drinnen",
+        "other": "{n} Plätze drinnen"
+      },
+      "inside": "im Haus"
     },
     "kinds": {
       "hat": "Hut",
       "deco": "Deko",
-      "seed": "Samen"
+      "seed": "Samen",
+      "food": "Futter"
     },
     "events": {
       "meal": "Mahlzeit",
@@ -480,9 +521,16 @@
       "collect": "Ei eingesammelt",
       "gift": "{pet} hat ein Geschenk mitgebracht 🎁",
       "unwrap": "Geschenk ausgepackt: {what}",
+      "found": "hat zu Hause etwas gefunden: {thing}",
+      "pickup": "aufgehoben: {thing}",
+      "honeycomb": "Honigwabe 🍯",
+      "hazelnut": "Haselnuss 🌰",
+      "watercress": "Brunnenkresse 🌱",
+      "glowberry": "Leuchtbeere ✨",
+      "pinenut": "Zirbenzapfen 🌲",
       "evolve": "Entwickeln",
       "hatched": "ist geschlüpft 🐣",
-      "child": "ist jetzt ein Kind",
+      "child": "ist jetzt ein {species}",
       "adult": "ist jetzt ein {species} ✨",
       "learned": "kann jetzt {trick} ⭐",
       "practiced": "{trick} geübt",
@@ -513,11 +561,14 @@
       "guardian": "ist am Wächter vorbeigekommen: {foe} 🏆",
       "unlock": "kennt jetzt einen neuen Weg: {area} 🗺",
       "swap": "ist nach vorne gekommen – {pet} ist jetzt hinten",
-      "copied": "hat sich {trick} bei {pet} abgeschaut"
+      "copied": "hat sich {trick} bei {pet} abgeschaut",
+      "house_1": "hat sich eine Hütte gebaut 🏠",
+      "house_2": "hat aus der Hütte ein Häuschen gemacht 🏠",
+      "house_3": "hat aus dem Häuschen ein richtiges Haus gemacht 🏠"
     },
     "statistics": {
       "meals": "Mahlzeiten",
-      "snacks": "Snacks",
+      "snacks": "Aus der Tasche",
       "plays": "Gespielt",
       "game": "Links oder rechts?",
       "game_value": "{games} Spiele, {won} gewonnen",
@@ -529,7 +580,8 @@
       "trips": "Ausflüge",
       "fruits": "Früchte gefressen",
       "hearts": "Herzen",
-      "favorite": "Lieblingssnack",
+      "favorite": "Lieblingsessen",
+      "disliked": "Mag nicht",
       "favorite_unknown": "noch nicht entdeckt",
       "trainings": "Trainiert",
       "battles": "Raufereien",
@@ -577,7 +629,9 @@
       "searching": "Suche das Display …",
       "choose_pet": "Welches Pet soll auf dem Display leben?",
       "choose_phone": "{form}, auf diesem Handy",
-      "choose_display": "{form}, schon auf dem Display"
+      "choose_display": "{form}, schon auf dem Display",
+      "choose_home": "Welches Pet soll auf diesem Handy leben?",
+      "choose_display_home": "{form}, auf dem Display"
     },
     "train": {
       "hint": "Such eine Übung aus",
@@ -653,7 +707,18 @@
       "spin": "ein runder Kreis",
       "dance": "flach hin und her",
       "flip": "nach oben"
-    }
+    },
+    "houses": {
+      "1": "Hütte",
+      "2": "Häuschen",
+      "3": "Haus"
+    },
+    "bag": {
+      "empty": "Die Tasche ist leer.",
+      "favorite": "{name} strahlt: Das ist das Lieblingsessen!"
+    },
+    "unwrapped_bag": "Drin war: {thing} – es liegt jetzt in deiner Tasche",
+    "picked_bag": "Aufgehoben: {thing} – es liegt jetzt in deiner Tasche"
   },
   "settings": {
     "title": "LED-Matrix",

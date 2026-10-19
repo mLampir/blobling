@@ -9,6 +9,7 @@
  */
 
 import * as idle from "./idle";
+import * as life from "./life";
 import { Random } from "./random";
 import { NO_UMBRELLA } from "./scene";
 import type { PetEvent, PetState } from "./state";
@@ -136,6 +137,9 @@ function piece(event: PetEvent, t: Translate): Piece | null {
       return make("visit", 5, { pet: t(`species.${item}`) });
     case "gift":
       return make("gift", 6, { pet: t(`species.${item}`) });
+    case "found":
+      // something small it found at home: a fruit or a seed
+      return make("found", 3, { thing: item.startsWith("fruit_") ? t(`fruits.${item.slice(6)}`) : t(`items.${item}`) });
     case "nest":
       return make("nest", 8);
     case "wild":
@@ -146,6 +150,8 @@ function piece(event: PetEvent, t: Translate): Piece | null {
       return make("guardian", 8, { foe: t(`foes.${item}`) });
     case "unlock":
       return make("unlock", 8, { area: t(`areas.${item}.name`) });
+    case "house":
+      return make(`house.${item}`, 8);
     case "find":
       return make("find", 4, { item: t(`items.${item}`) });
     case "trip":
@@ -153,7 +159,7 @@ function piece(event: PetEvent, t: Translate): Piece | null {
     case "evolve": {
       const stage = name === "baby" ? "hatched" : name;
       return ["hatched", "child", "adult"].includes(stage)
-        ? make(`evolve.${stage}`, 9, { species: t(`species.${outcome}`) }) : null;
+        ? make(`evolve.${stage}`, 9, { species: t(life.formKey(name, outcome)) }) : null;
     }
     default:
       return null;

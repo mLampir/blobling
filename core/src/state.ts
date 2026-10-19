@@ -93,6 +93,8 @@ export interface Trip {
   hearts: number;
   pack: string[];
   guardian: string | null;
+  /** What it ate before setting off and still has in it on the way (food.ts). */
+  boosts?: string[];
   /** What has happened so far, for the travel diary (missing in trips saved before it). */
   log?: TravelStop[];
 }
@@ -194,9 +196,17 @@ export interface PetState {
   nest: Egg | null;
   /** What a friend has left behind (wild.giftFrom), until it is unwrapped. */
   gift: string | null;
+  /** What it found at home by itself (idle.ts), until somebody picks it up. */
+  found: string | null;
+  /** What found food has left in it, until it is used up (food.BOOSTS). */
+  boosts: string[];
   hat: string;
-  /** Decorations set out, at most home.MAX_DECO. */
+  /** Decorations set out, the oldest first, at most home.decoSpots (home.placeDeco says where they stand). */
   deco: string[];
+  /** How far the house has grown (home.HOUSE_STEPS), 0 = none yet; it stays from one pet to the next. */
+  house: number;
+  /** Until when somebody is looking into the house (the scene shows the inside). */
+  look_in_until: number;
   plant: Plant | null;
   events: PetEvent[];
   /** The latest scuffles, oldest first. */
@@ -257,8 +267,12 @@ export function newState(): PetState {
     friend: null,
     nest: null,
     gift: null,
+    found: null,
+    boosts: [],
     hat: "",
     deco: [],
+    house: 0,
+    look_in_until: 0.0,
     plant: null,
     events: [],
     replays: [],
@@ -285,6 +299,9 @@ export function fromDict(data: Record<string, unknown>): PetState {
     if (key in data) {
       fields[key] = data[key];
     }
+  }
+  if (!("house" in data) && state.guardians.includes("mountain")) {
+    state.house = 1; // saved before there was a house, by a pet that has already earned the hut
   }
   if (!("form_rules" in data)) {
     state.form_rules = 1; // saved before the slime line was redrawn

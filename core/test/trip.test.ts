@@ -162,7 +162,7 @@ test("second trip of the day brings less", () => {
 
 test("finds depend on weather and are unique", () => {
   pet.items = Object.fromEntries(Object.keys(home.ITEMS).filter((item) => home.kindOf(item) !== "seed")
-    .map((item) => [item, 1]));
+    .map((item) => [item, home.kindOf(item) === "food" ? home.MAX_FOOD : 1]));
   delete pet.items.bobble;
   Object.assign(pet.items, { seed_berry: home.MAX_SEEDS, seed_sunflower: home.MAX_SEEDS });
   act(pet, "trip", start, { item: "meadow" });

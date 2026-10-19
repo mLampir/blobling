@@ -46,6 +46,8 @@ test("only an adult without a friend is looking", () => {
   assert.deepEqual(met(pet, "cave"), new Set([null]));
   assert.deepEqual(met(pet, "stream"), new Set([null, "bouldergrin", "glimmerock"])); // the stone line
   assert.deepEqual(met(pet, "forest"), new Set([null, "filchfox", "roamtail"])); // the fox line
+  assert.deepEqual(met(pet, "mountain"), new Set([null, "prismist"])); // the cloud line; the thundercloud only in the rain
+  assert.ok(met(pet, "mountain", 63).has("rumblefluff"));
   const changes = [{ stage: "child" }, { friend: { species: "sneezle" } }, { nest: { line: "blob" } },
     { eggs: Array(home.MAX_EGGS).fill({ line: "blob" }) }];
   for (const change of changes) {
@@ -184,6 +186,18 @@ test("a friend of the fox line can bring its egg into the home", () => {
   assert.equal(home.eggOf("fox"), "egg_fox");
 });
 
+test("a friend of the cloud line can bring its egg into the home", () => {
+  const lines = new Set<string>();
+  for (let i = 0; i < 40; i++) {
+    const other = copy();
+    other.friend = { species: "rumblefluff", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 };
+    wild.step(other, start + i * 60, true);
+    lines.add(other.nest!.line);
+  }
+  assert.deepEqual(lines, new Set(["blob", "cloud"]));
+  assert.equal(home.eggOf("cloud"), "egg_cloud");
+});
+
 test("some visits bring a gift, and only one lies there at a time", () => {
   const gifts = new Set<string | null>();
   for (let i = 0; i < 200; i++) {
@@ -224,14 +238,12 @@ test("a seed is only brought while there is room for it", () => {
   }
 });
 
-test("unwrapping: a fruit is eaten straight away, a seed is kept", () => {
+test("unwrapping: it goes into the bag", () => {
   const now = start + 60;
   pet.gift = "fruit_herb";
-  pet.sick = true;
-  pet.stats.health = 40;
   assert.deepEqual(model.availableActions(pet, now).unwrap, true);
   assert.deepEqual(act(pet, "unwrap", now), [true, null]);
-  assert.deepEqual([pet.gift, pet.sick, pet.stats.health], [null, false, 70]);
+  assert.deepEqual([pet.gift, pet.items.fruit_herb], [null, 1]);
   assert.deepEqual([pet.activity, pet.activity_item], ["unwrap", "fruit_herb"]);
   assert.deepEqual([pet.events.at(-1)!.action, pet.events.at(-1)!.item], ["unwrap", "fruit_herb"]);
   assert.deepEqual(act(pet, "unwrap", now + 60), [false, "no_gift"]);

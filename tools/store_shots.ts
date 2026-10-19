@@ -159,7 +159,7 @@ class Life {
       this.until(`${date} 09:30`).do("trip", { item: "meadow" });
     }
     this.until(`${date} 12:30`).do("feed", { item: "meal" }).wait(30 * MINUTE).do("play");
-    this.until(`${date} 16:00`).do("feed", { item: "fruit" }).do("trick", { item: "bow" })
+    this.until(`${date} 16:00`).do("feed", { item: "fruit_cherry" }).do("trick", { item: "bow" })
       .do("pet").do("play");
     this.until(`${date} 17:00`).do("feed", { item: "meal" }).wait(HOUR).do("clean").do("pet");
     return this.until(`${date} 22:40`);
@@ -229,7 +229,7 @@ async function view(page: Page, name: string): Promise<void> {
 const SHOTS: Shot[] = [
   {
     id: "home",
-    moment: (t) => travelled(t).until("2026-10-08 16:00").do("clean").do("pet").do("feed", { item: "fruit" }).wait(5 * MINUTE).moment(),
+    moment: (t) => travelled(t).until("2026-10-08 16:00").do("clean").do("pet").do("feed", { item: "fruit_cherry" }).wait(5 * MINUTE).moment(),
   },
   {
     id: "eat",

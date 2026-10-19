@@ -13,6 +13,7 @@
     "start": "node tools/build.mjs && node --enable-source-maps dist/pi/server.mjs",
     "test": "node tools/test.mjs",
     "preview": "node tools/run.mjs pet_preview",
+    "balance": "node tools/run.mjs balance",
     "sounds": "node tools/run.mjs sounds",
     "deploy": "node tools/deploy.mjs",
     "package": "node tools/package.mjs",

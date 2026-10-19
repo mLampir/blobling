@@ -4,17 +4,13 @@ import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { API_OLDEST, API_VERSION, NOT_A_PET_ROUTE, petRequest } from "../src/api";
+import { API_OLDEST, API_VERSION, NOT_A_PET_ROUTE, ownTarget, petRequest } from "../src/api";
 import { ACTIONS, RequestError } from "../src/model";
 import type { Pet } from "../src/pet";
 import { Disk } from "./helpers";
 
 function ask(pet: Pet, method: string, path: string, body?: unknown): Promise<any> {
-  const target = {
-    pet, action: pet.action.bind(pet), newEgg: (egg: unknown, keep: unknown) => pet.newEgg(egg, undefined, keep),
-    swap: () => pet.swap(),
-  };
-  return petRequest(target, method, new URL(path, "http://pet"), async () => body ?? null);
+  return petRequest(ownTarget(pet), method, new URL(path, "http://pet"), async () => body ?? null);
 }
 
 test("the pet is described, acted on, renamed and started over", async () => {

@@ -1,9 +1,10 @@
-/** Finds from trips and what they do at home: seeds and the plant, decorations, hats, eggs, warmth. */
+/** Finds from trips and what they do at home: seeds and the plant, food, decorations, hats, eggs, warmth, the house. */
 
 import * as life from "./life";
+import type { Random } from "./random";
 import type { PetState, Stat } from "./state";
 
-export type ItemKind = "seed" | "deco" | "hat" | "egg";
+export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg";
 
 // Name: kind
 export const ITEMS: Record<string, ItemKind> = {
@@ -11,6 +12,15 @@ export const ITEMS: Record<string, ItemKind> = {
   seed_sunflower: "seed",
   seed_cherry: "seed",
   seed_herb: "seed",
+  fruit_berry: "fruit",
+  fruit_sunflower: "fruit",
+  fruit_cherry: "fruit",
+  fruit_herb: "fruit",
+  honeycomb: "food",
+  hazelnut: "food",
+  watercress: "food",
+  glowberry: "food",
+  pinenut: "food",
   flag: "deco",
   windmill: "deco",
   lantern: "deco",
@@ -33,13 +43,16 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_ember: "egg",
   egg_stone: "egg",
   egg_fox: "egg",
+  egg_cloud: "egg",
 };
 export const MAX_SEEDS = 9; // per kind; decorations and hats exist only once
+export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
 export const MAX_EGGS = 9; // this many are kept
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus
 // what a pet has passed on to it (wild.ts), until it is brooded (model.nextPet).
-export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "ember", egg_stone: "stone", egg_fox: "fox" };
-export const MAX_DECO = 2; // this many spots the scene has
+export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "ember", egg_stone: "stone", egg_fox: "fox",
+  egg_cloud: "cloud" };
+export const MAX_DECO = 2; // this many spots the scene has outside
 
 // Plant: [stat, effect of one fruit]
 export const PLANTS: Record<string, readonly [Stat, number]> = {
@@ -67,6 +80,13 @@ export const COLD_BELOW = 5; // °C: below this it wakes up shivering (a first g
 export const COLD_SECONDS = 3600; // it shivers this long, unless somebody rubs it warm
 export const RUB_MOOD = 5; // what rubbing it warm is worth
 
+// The house: a hut, then a cabin, then the whole house (state.house, 0 = none yet). Every pet that
+// gets past the last guardian adds a step, so it grows from one pet to the next. The pet sleeps
+// inside, and each step has room for more decorations.
+export const HOUSE_STEPS = 3;
+export const HOUSE_SPOTS = [0, 1, 2, 3]; // per step: spots for decorations inside
+export const OUTDOOR_DECO = ["snowman"]; // would melt inside
+
 export function kindOf(item: string): ItemKind {
   return ITEMS[item];
 }
@@ -79,7 +99,8 @@ export function canAdd(state: PetState, item: string): boolean {
   if (kindOf(item) === "egg") {
     return state.eggs.length < MAX_EGGS;
   }
-  return (state.items[item] ?? 0) < (kindOf(item) === "seed" ? MAX_SEEDS : 1);
+  const most = kindOf(item) === "seed" ? MAX_SEEDS : kindOf(item) === "food" || kindOf(item) === "fruit" ? MAX_FOOD : 1;
+  return (state.items[item] ?? 0) < most;
 }
 
 export function addItem(state: PetState, item: string): void {
@@ -183,6 +204,25 @@ export function eatFruit(state: PetState): string {
   return plant.kind;
 }
 
+// ---------- Small things: a friend's gift, what the pet finds at home ----------
+
+export const SEED_CHANCE = 0.15; // how often a small thing is a seed rather than a fruit
+
+/** A small thing: "fruit_<plant>", or now and then "seed_<plant>" if there is room for it. */
+export function smallThing(state: PetState, rng: Random): string {
+  const kind = rng.choice(Object.keys(PLANTS));
+  return rng.random() < SEED_CHANCE && canAdd(state, `seed_${kind}`) ? `seed_${kind}` : `fruit_${kind}`;
+}
+
+/** Take a small thing: it goes into the bag, and a fruit that doesn't fit any more is eaten. */
+export function receive(state: PetState, thing: string): void {
+  if (canAdd(state, thing)) {
+    addItem(state, thing);
+  } else if (thing.startsWith("fruit_")) {
+    eat(state, thing.slice("fruit_".length));
+  }
+}
+
 // ---------- Warmth ----------
 
 /** Is something warm set out? */
@@ -227,6 +267,28 @@ export function wear(state: PetState, hat: string): string | null {
   return null;
 }
 
+/** How many decorations can be set out, outside and in the house. */
+export function decoSpots(state: PetState): number {
+  return MAX_DECO + HOUSE_SPOTS[state.house];
+}
+
+/**
+ * Where the decorations that are set out stand: outside first, in the order they were set out,
+ * and what doesn't fit outside goes into the house. What only belongs outside always goes there.
+ */
+export function placeDeco(state: PetState): { outside: string[]; inside: string[] } {
+  const deco = state.deco.slice(-decoSpots(state));
+  const outside = deco.filter((item) => OUTDOOR_DECO.includes(item)).slice(0, MAX_DECO);
+  const inside: string[] = [];
+  for (const item of deco) {
+    if (outside.includes(item)) {
+      continue;
+    }
+    (outside.length < MAX_DECO ? outside : inside).push(item);
+  }
+  return { outside: deco.filter((item) => outside.includes(item)), inside };
+}
+
 /** Set out a decoration or put it away; if no spot is free, the oldest one makes room. */
 export function toggleDeco(state: PetState, item: string): string | null {
   if (!state.items[item]) {
@@ -237,7 +299,16 @@ export function toggleDeco(state: PetState, item: string): string | null {
     state.deco.splice(index, 1);
   } else {
     state.deco.push(item);
-    state.deco.splice(0, Math.max(0, state.deco.length - MAX_DECO));
+    state.deco.splice(0, Math.max(0, state.deco.length - decoSpots(state)));
   }
   return null;
+}
+
+/** The pet has got past the last guardian for the first time: the house grows by a step. Returns the new step, or null. */
+export function buildHouse(state: PetState): number | null {
+  if (state.house >= HOUSE_STEPS) {
+    return null;
+  }
+  state.house += 1;
+  return state.house;
 }

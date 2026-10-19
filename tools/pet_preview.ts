@@ -20,7 +20,8 @@ import { BDF_FONT_DIR } from "../pi/src/config";
 import { encodePng } from "../pi/src/png";
 import { encodeGif } from "./gif";
 
-type Scene = [changes: Partial<SceneView>, now: Date, weather: Weather];
+// `into`: how many seconds of the activity have passed at the first frame (0 = it starts there)
+type Scene = [changes: Partial<SceneView>, now: Date, weather: Weather, into?: number];
 
 const BASE: SceneView = {
   species: "blob", stage: "child", ready: false, asleep: false, sick: false, poops: 0, activity: "idle",
@@ -37,6 +38,8 @@ const PETS: Record<string, [string, string]> = {
   glimmerock: ["adult", "glimmerock"], bouldergrin: ["adult", "bouldergrin"],
   fox_egg: ["egg", "fox"], fox_baby: ["baby", "fox"], kitlet: ["child", "fox"],
   roamtail: ["adult", "roamtail"], filchfox: ["adult", "filchfox"],
+  cloud_egg: ["egg", "cloud"], cloud_baby: ["baby", "cloud"], nimbit: ["child", "cloud"],
+  rumblefluff: ["adult", "rumblefluff"], prismist: ["adult", "prismist"],
 };
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
 // leaves out the scenes that are only there to show another form, another line or what the lure
@@ -52,6 +55,9 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "wild_forest", "visit_fox", "fox_egg", "fox_hatch", "fox_baby", "kitlet", "kitlet_hint", "kitlet_hat", "kitlet_sick",
   "fox_evolve", "roamtail", "roamtail_trip", "roamtail_sleep", "roamtail_rain", "filchfox", "filchfox_hat",
   "filchfox_sad", "filchfox_sleep", "filchfox_night",
+  "wild_mountain", "visit_cloud", "cloud_egg", "cloud_hatch", "cloud_baby", "nimbit", "nimbit_hint", "nimbit_rain",
+  "nimbit_hat", "cloud_evolve", "rumblefluff", "rumblefluff_rain", "rumblefluff_sleep", "rumblefluff_trick", "rumblefluff_storm", "prismist",
+  "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip", "prismist_rain",
   "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
   "angloop", "angloop_night", "angloop_hungry", "angloop_hint",
   "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint"];
@@ -60,6 +66,7 @@ const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
 const DUSK = new Date(2026, 9, 12, 18, 10);
 const RAIN = { temp: 12.4, code: 63 }; // WMO weather codes, as Open-Meteo sends them
+const STORM = { temp: 16.0, code: 95 };
 
 /** A trip on which nothing has happened yet, with whatever is given changed. */
 function trip(area: string, changes: Partial<TripView> = {}): TripView {
@@ -71,7 +78,9 @@ const SCENES: Record<string, Scene> = {
   happy: [{ mood: "happy", activity: "happy" }, DAY, null],
   eat: [{ activity: "eat" }, DAY, null],
   throw_meal: [{ activity: "throw_meal", activity_item: "meal@0.90" }, DAY, null],
-  throw_snack: [{ activity: "throw_snack", activity_item: "icecream@0.05" }, DAY, null],
+  throw_snack: [{ activity: "throw_snack", activity_item: "fruit_cherry@0.05" }, DAY, null],
+  // food from a trip, given by hand like a snack
+  snack_found: [{ activity: "snack", activity_item: "honeycomb" }, DAY, null],
   throw_play: [{ activity: "throw_play", activity_item: "ball@0.80" }, DAY, null],
   throw_medicine: [{ activity: "throw_medicine", activity_item: "medicine@0.50", sick: true, mood: "sick" }, DAY,
     null],
@@ -180,6 +189,7 @@ const SCENES: Record<string, Scene> = {
   home_boat: [{ hat: "lily", deco: ["boat", "crystal"] }, DAY, null],
   trip_stream: [{ trip: trip("stream") }, DAY, null],
   trip_cave: [{ trip: trip("cave", { event: "find", item: "crystal" }) }, DAY, RAIN],
+  trip_food: [{ trip: trip("meadow", { event: "find", item: "honeycomb", event_age: 2 }) }, DAY, null],
   trip_mountain: [{ hat: "bobble", trip: trip("mountain") }, DAY, { temp: -4, code: 71 }],
   // the opponents of the later areas, each in the middle of its favorite move
   ...Object.fromEntries(([
@@ -265,6 +275,11 @@ const SCENES: Record<string, Scene> = {
   }, DAY, null],
   gift_nest: [{ stage: "adult", species: "angloop", gift: true, nest: "blob", deco: ["lantern"] }, NIGHT, null],
   unwrap: [{ stage: "adult", species: "angloop", activity: "unwrap", activity_item: "fruit_cherry" }, DAY, null],
+  // something it found at home by itself: it shows it, then it lies there until it is picked up
+  discover: [{ activity: "discover", activity_item: "fruit_berry", found: "fruit_berry" }, DAY, null],
+  found: [{ found: "fruit_cherry", deco: ["flag", "windmill"], plant: { kind: "berry", stage: "grown", ripe: false } },
+    DAY, null],
+  found_gift: [{ stage: "adult", species: "angloop", found: "seed_berry", gift: true, nest: "blob" }, NIGHT, null],
   // what it left behind while nobody was there, until somebody does something with it
   trace_ball: [{ trace: { kind: "ball", spot: 0.9, look: 0 }, deco: ["flag"] }, DAY, null],
   trace_tower: [{ trace: { kind: "tower", spot: 0.2, look: 0 }, plant: { kind: "berry", stage: "young", ripe: false } },
@@ -272,6 +287,23 @@ const SCENES: Record<string, Scene> = {
   trace_drawing: [{ trace: { kind: "drawing", spot: 0.5, look: 1 }, stage: "adult", species: "angloop" }, DAY, null],
   trace_snowman: [{ trace: { kind: "snowman", spot: 0.1, look: 0 } }, DAY, { temp: -2, code: 73 }],
   trace_night: [{ trace: { kind: "drawing", spot: 0.3, look: 0 } }, NIGHT, null],
+  // the house in its three steps, the way into it and out of it, and a look inside
+  house_hut: [{ house: 1, deco: ["windmill", "flag"], plant: { kind: "berry", stage: "grown", ripe: true },
+    found: "fruit_cherry" }, DAY, null],
+  house_cabin: [{ house: 2, deco: ["flag"], hat: "daisy", trace: { kind: "tower", spot: 0.5, look: 0 } }, DAY, null],
+  house_house: [{ house: 3, deco: ["windmill", "flag"], plant: { kind: "cherry", stage: "grown", ripe: true } }, DAY,
+    null],
+  house_lit: [{
+    house: 3, asleep: true, activity: "go_in", deco: ["lantern", "glowshroom"],
+    plant: { kind: "cherry", stage: "grown", ripe: true },
+  }, NIGHT, null, 2.6],
+  house_go_in: [{ house: 3, asleep: true, activity: "go_in", deco: ["lantern"] }, NIGHT, null, 1.5],
+  house_bed: [{ house: 3, asleep: true, activity: "go_in", house_deco: ["crystal", "snailshell"] }, NIGHT, null, 4.4],
+  house_sleep: [{ house: 3, asleep: true, house_deco: ["crystal", "snailshell", "lantern"] }, NIGHT, null],
+  house_nap: [{ house: 2, asleep: true, house_deco: ["boat", "cattail"] }, DAY, RAIN],
+  hut_sleep: [{ house: 1, asleep: true, house_deco: ["glowshroom"] }, NIGHT, null],
+  house_come_out: [{ house: 3, activity: "come_out", deco: ["flag"] }, DAY, null, 2.6],
+  house_look_in: [{ house: 2, look_in: true, house_deco: ["crystal", "lantern"], deco: ["flag"] }, DAY, null],
   build: [{ activity: "build", activity_item: "tower", trace: { kind: "tower", spot: 0.4, look: 0 } }, DAY, null],
   // the ember line, from the rare egg on
   egg_found: [{
@@ -353,6 +385,36 @@ const SCENES: Record<string, Scene> = {
   filchfox_sad: [{ stage: "adult", species: "filchfox", mood: "sad", trip: trip("meadow") }, DAY, null],
   filchfox_sleep: [{ stage: "adult", species: "filchfox", asleep: true }, NIGHT, null],
   filchfox_night: [{ stage: "adult", species: "filchfox", activity: "trick", activity_item: "bow:ok" }, NIGHT, null],
+  // the cloud line, from a friend met on the mountain on
+  wild_mountain: [{
+    stage: "adult", species: "bouldergrin",
+    trip: trip("mountain", {
+      event: "wild", event_age: 4.0, wild: "rumblefluff", outcome: "friend", rounds: [["bow", true], ["spin", true]],
+    }),
+  }, DAY, RAIN],
+  visit_cloud: [{ stage: "adult", species: "roamtail", visitor: { species: "prismist", age: 60, left: 500 } }, DAY,
+    null],
+  cloud_egg: [{ stage: "egg", species: "cloud", ready: true }, DAY, null],
+  cloud_hatch: [{ stage: "baby", species: "cloud", activity: "hatch", activity_item: "egg:cloud" }, DAY, null],
+  cloud_baby: [{ stage: "baby", species: "cloud", mood: "happy" }, DAY, null],
+  nimbit: [{ species: "cloud" }, DAY, null],
+  nimbit_hint: [{ species: "cloud", hint: "prismist", mood: "happy" }, DAY, null],
+  nimbit_rain: [{ species: "cloud", hint: "rumblefluff" }, DUSK, RAIN],
+  nimbit_hat: [{ species: "cloud", hat: "leaf", mood: "sad" }, DAY, null],
+  cloud_evolve: [{ stage: "adult", species: "rumblefluff", activity: "evolve", activity_item: "child:cloud" }, DAY,
+    RAIN],
+  rumblefluff: [{ stage: "adult", species: "rumblefluff" }, DAY, null],
+  rumblefluff_rain: [{ stage: "adult", species: "rumblefluff", mood: "happy" }, DUSK, RAIN],
+  rumblefluff_sleep: [{ stage: "adult", species: "rumblefluff", asleep: true }, NIGHT, null],
+  rumblefluff_trick: [{ stage: "adult", species: "rumblefluff", activity: "trick", activity_item: "flip:ok" }, DAY,
+    null],
+  rumblefluff_storm: [{ stage: "adult", species: "rumblefluff" }, DUSK, STORM], // its horns flash now and then
+  prismist: [{ stage: "adult", species: "prismist", mood: "happy" }, DAY, null],
+  prismist_rain: [{ stage: "adult", species: "prismist" }, DAY, RAIN], // the rainbow fades
+  prismist_hat: [{ stage: "adult", species: "prismist", hat: "bobble" }, DAY, null],
+  prismist_sad: [{ stage: "adult", species: "prismist", mood: "sad", needs: ["satiety"] }, DUSK, null],
+  prismist_sleep: [{ stage: "adult", species: "prismist", asleep: true }, NIGHT, null],
+  prismist_trip: [{ stage: "adult", species: "prismist", hat: "cap", trip: trip("mountain") }, DAY, null],
 };
 
 const assets = readAssets(BDF_FONT_DIR);
@@ -365,12 +427,12 @@ function spoils(name: string): boolean {
 
 /** Frames of a scene; the activity starts with the first frame and runs as long as it does on the Pi. */
 function frames(name: string, count: number, step = 0.1, spoilerFree = false): Image[] {
-  const [changes, now, weather] = SCENES[name];
+  const [changes, now, weather, into = 0] = SCENES[name];
   const view = { ...BASE, ...changes };
   if (spoilerFree && view.stage === "adult") {
     view.species = SHOWN_ADULT;
   }
-  view.activity_until = now.getTime() / 1000 + (ACTIVITY_SECONDS[view.activity] ?? 4);
+  view.activity_until = now.getTime() / 1000 + (ACTIVITY_SECONDS[view.activity] ?? 4) - into;
   const scene = new PetScene(64, 64, assets, { t: 0.0 });
   const images: Image[] = [];
   for (let i = 0; i < count; i++) {

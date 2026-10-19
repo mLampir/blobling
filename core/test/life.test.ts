@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 
-import * as care from "../src/care";
+import * as food from "../src/food";
 import * as life from "../src/life";
 import * as model from "../src/model";
 import { fromDict, toDict, type PetState } from "../src/state";
@@ -113,7 +113,7 @@ test("a rare egg grows up in its own line", () => {
   assert.deepEqual([ember.stage, ember.species], ["adult", "flarelet"]);
   assert.equal(life.decayFactor(ember, "satiety"), 1.25);
   for (const species of life.SPECIES) {
-    assert.ok(species in care.FAVORITE, species);
+    assert.ok(species in food.TASTES, species);
   }
 });
 
@@ -144,6 +144,23 @@ test("a fox cub that travels a lot grows up a wanderer", () => {
   assert.deepEqual([fox.stage, fox.species], ["adult", "roamtail"]);
   assert.equal(life.decayFactor(fox, "energy"), 0.85);
   assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 }, "fox"), "filchfox");
+});
+
+test("a cloud lamb that grows up in the rain becomes a thundercloud", () => {
+  const cloud = model.newPet(start, "", "cloud");
+  assert.deepEqual(["cloud", "rumblefluff", "prismist"].map(life.lineOf), ["cloud", "cloud", "cloud"]);
+  cloud.stage = "child";
+  cloud.stage_since = start;
+  cloud.diary = { ...life.newDiary(), minutes: 2880, good_minutes: 2880 };
+  assert.equal(life.hint(cloud), "prismist"); // the sun is out
+  assert.equal(life.hint(cloud, true), "rumblefluff"); // it rains right now
+  const sunny = structuredClone(cloud);
+  assert.equal(act(sunny, "evolve", start + 7 * 86400)[0], true);
+  assert.deepEqual([sunny.stage, sunny.species], ["adult", "prismist"]);
+  assert.equal(model.applyAction(cloud, "evolve", start + 7 * 86400, BEDTIME, { weather: 63 }).accepted, true);
+  assert.deepEqual([cloud.stage, cloud.species], ["adult", "rumblefluff"]);
+  assert.equal(life.decayFactor(cloud, "mood"), 0.85);
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 }, "cloud", true), "rumblefluff");
 });
 
 test("child keeps a diary and grows up", () => {

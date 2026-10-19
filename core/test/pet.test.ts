@@ -32,7 +32,7 @@ test("trip in snapshot and view", () => {
   assert.deepEqual(state.areas[1],
     { id: "forest", label: "Mushroom forest", unlocked: false, blocked_by: "Meadow", guardian: true });
   assert.deepEqual(state.guardians, { passed: 0, all: 5 });
-  assert.deepEqual(state.items[0], { id: "seed_berry", label: "Berry seed", kind: "seed", count: 2, active: false, effects: [] });
+  assert.deepEqual(state.items[0], { id: "seed_berry", label: "Berry seed", kind: "seed", count: 2, active: false, place: null, effects: [] });
   assert.equal(view.area, "meadow");
   assert.deepEqual(disk.pet().state.trip, pet.state.trip);
 });
@@ -221,4 +221,19 @@ test("a save from before the album fills it in from the ancestors", () => {
   const forms = ["adult:lumoth", "egg:blob", "baby:blob", "child:blob"];
   assert.deepEqual([...pet.toSave().album!].sort(), [...forms].sort());
   assert.deepEqual(readSave({ ...file, album: ["adult:lumoth", "adult:nobody"] }).album, ["adult:lumoth"]);
+});
+
+test("every child shows the name of its line", () => {
+  const now = at("2026-10-12 12:00");
+  const disk = new Disk();
+  const pet = disk.pet();
+  pet.state = grown(now);
+  for (const [line, name] of [["blob", "Bloblet"], ["ember", "Cindlet"], ["stone", "Pebblet"], ["fox", "Kitlet"], ["cloud", "Nimbit"]]) {
+    pet.state.species = line;
+    assert.equal(pet.snapshot(now).stage_label, name);
+    assert.equal(pet.albumList().find((form) => form?.stage === "child" && form.species === line)!.label, name);
+  }
+  // and a line added later cannot forget it
+  const texts = readLocales().en as Record<string, Record<string, string>>;
+  assert.deepEqual(Object.keys(texts.children).sort(), Object.keys(life.LINES).sort());
 });

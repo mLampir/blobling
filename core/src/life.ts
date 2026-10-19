@@ -5,7 +5,8 @@
  * stone of home.ts); after that the evolution is "due". It is triggered by hand in the app ("Hatch" / "Evolve"), so that you are watching and get to see the animation. If nobody
  * does that for a day, the pet evolves by itself (but only while awake and not at bedtime).
  *
- * Which adult form it becomes is decided by the care diary of the child stage (decideSpecies).
+ * Which adult form it becomes is decided by the care diary of the child stage (decideSpecies), and
+ * for the cloud line by the weather the moment it grows up.
  *
  * There are several lines of pets. The egg decides which line a pet belongs to: the usual egg is
  * a slime, and a rare egg from a trip (home.EGGS) is something else. Until a pet has grown up,
@@ -30,7 +31,18 @@ export const LINES: Record<string, readonly string[]> = {
   ember: ["lanternling", "flarelet"],
   stone: ["glimmerock", "bouldergrin"],
   fox: ["roamtail", "filchfox"],
+  cloud: ["prismist", "rumblefluff"],
 };
+/**
+ * The language key for the name of a form: an adult's species, the child of its line (every line's
+ * child has a name of its own, in `children` of the language files), or else the stage.
+ */
+export function formKey(stage: string, species: string): string {
+  if (stage === "adult") {
+    return `species.${species}`;
+  }
+  return stage === "child" ? `children.${species}` : `stages.${stage}`;
+}
 export const SPECIES = Object.entries(LINES).flatMap(([line, adults]) => [line, ...adults]);
 // Every form there is, as "stage:species", in the album's order: per line its egg, baby, child
 // and adult forms
@@ -40,9 +52,10 @@ export const FORMS = Object.entries(LINES).flatMap(([line, adults]) => [
 // Rules for the adult form (order = priority)
 export const PURRLOOP_LOVE_PER_DAY = 8; // counted pettings per day → purrloop
 export const GEMPEROR_CARE = 0.85; // well cared for this part of the time → gemperor, otherwise angloop
-export const FLARELET_PLAYS_PER_DAY = 3; // the ember line: played with this often → flarelet, otherwise lanternling
+export const FLARELET_PLAYS_PER_DAY = 2.5; // the ember line: played with this often → flarelet, otherwise lanternling
 export const GLIMMEROCK_LOVE_PER_DAY = 5; // the stone line: petting polishes it → glimmerock, otherwise bouldergrin
 export const ROAMTAIL_TRIPS_PER_DAY = 1; // the fox line: a trip a day makes a wanderer → roamtail, otherwise filchfox
+// The cloud line is decided by the weather when it grows up: in the rain → rumblefluff, otherwise prismist
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
 // Character: factors on decay (awake) and on rewards. Small on purpose.
@@ -60,6 +73,8 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   bouldergrin: { satiety: 1.2, mood: 0.8 }, // a heavy eater, and nothing wipes the grin off its face
   roamtail: { energy: 0.85 }, // used to long roads: it hardly tires
   filchfox: { satiety: 1.15 }, // always after something to eat
+  rumblefluff: { mood: 0.85 }, // grumpy anyway: a bad day hardly makes it worse
+  prismist: { hygiene: 0.8 }, // light as air: dirt doesn't weigh it down
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -71,6 +86,7 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   lanternling: { sick: 0.6 },
   glimmerock: { pet: 1.5 }, // loves being polished
   filchfox: { play: 1.25 }, // up for any mischief
+  prismist: { pet: 1.25 }, // fluffy, and it knows how nice that is
 };
 
 export function newDiary(): Record<string, number> {
@@ -134,7 +150,11 @@ export function record(state: PetState, kind: string, amount = 1): void {
   }
 }
 
-export function decideSpecies(diary: Record<string, number>, line = "blob"): string {
+/**
+ * The adult form the care diary and, for the cloud line, the weather lead to. `raining`: whether
+ * it rains where the pet lives right now.
+ */
+export function decideSpecies(diary: Record<string, number>, line = "blob", raining = false): string {
   const minutes = diary.minutes ?? 0;
   const days = Math.max(1.0, minutes / 1440);
   if (line === "ember") {
@@ -145,6 +165,9 @@ export function decideSpecies(diary: Record<string, number>, line = "blob"): str
   }
   if (line === "fox") {
     return (diary.trips ?? 0) / days >= ROAMTAIL_TRIPS_PER_DAY ? "roamtail" : "filchfox";
+  }
+  if (line === "cloud") {
+    return raining ? "rumblefluff" : "prismist";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if ((diary.love ?? 0) / days >= PURRLOOP_LOVE_PER_DAY) {
@@ -161,16 +184,22 @@ export const REFORMED: Record<string, string> = {
   sneezle: "gemperor", lumoth: "purrloop", cyclopuff: "angloop", grumpcap: "angloop", flicker: "angloop",
 };
 
-/** The adult form a child is heading for right now (null in its first day and at other stages). */
-export function hint(state: PetState): string | null {
+/**
+ * The adult form a child is heading for right now (null in its first day and at other stages).
+ * `raining`: whether it rains right now (the cloud line).
+ */
+export function hint(state: PetState, raining = false): string | null {
   if (state.stage !== "child" || (state.diary.minutes ?? 0) < HINT_AFTER) {
     return null;
   }
-  return decideSpecies(state.diary, lineOf(state.species));
+  return decideSpecies(state.diary, lineOf(state.species), raining);
 }
 
-/** Next stage. Returns the old form as "stage:species" (for the animation). */
-export function evolve(state: PetState, now: number): string {
+/**
+ * Next stage. Returns the old form as "stage:species" (for the animation). `raining`: whether it
+ * rains right now (the cloud line).
+ */
+export function evolve(state: PetState, now: number, raining = false): string {
   const old = `${state.stage}:${state.species}`;
   const next = NEXT_STAGE[state.stage];
   if (next === undefined) {
@@ -183,7 +212,7 @@ export function evolve(state: PetState, now: number): string {
     state.diary = newDiary();
   }
   if (next === "adult") {
-    state.species = decideSpecies(state.diary, lineOf(state.species));
+    state.species = decideSpecies(state.diary, lineOf(state.species), raining);
   }
   state.stage = next;
   state.stage_since = now;
