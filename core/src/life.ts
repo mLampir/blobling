@@ -130,9 +130,10 @@ export function decideSpecies(diary: Record<string, number>, line = "blob"): str
   return care >= GEMPEROR_CARE ? "gemperor" : "angloop";
 }
 
-// The slime's first adult forms and what a pet of that form turns into when it is loaded: the
-// slime line was redrawn with fewer forms that look more like the slime. They may come back as
-// lines of their own.
+// The slime's first adult forms and what a pet of that form turns into when a save from before
+// FORM_RULES 2 is loaded: the slime line was redrawn with fewer forms that look more like the
+// slime. Only those saves: the old forms may come back as lines of their own.
+export const FORM_RULES = 2;
 export const REFORMED: Record<string, string> = {
   sneezle: "gemperor", lumoth: "purrloop", cyclopuff: "angloop", grumpcap: "angloop", flicker: "angloop",
 };

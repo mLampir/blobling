@@ -497,18 +497,21 @@ function evolve(state: PetState, now: number, by: string): void {
 }
 
 /**
- * An adult of a form that grows no more (life.REFORMED) turns into its new form. Unless it is
- * asleep or busy, it is seen to evolve. Returns whether it changed.
+ * A pet saved under older rules for the adult forms: an adult of a form the slime grows into no
+ * more (life.REFORMED) turns into its new form, once. Unless it is asleep or busy, it is seen to
+ * evolve. Returns whether it changed.
  */
 export function reform(state: PetState, now: number): boolean {
-  const next = state.stage === "adult" ? life.REFORMED[state.species] : undefined;
+  const old = state.form_rules < 2; // REFORMED is the step from the first rules to the second
+  state.form_rules = life.FORM_RULES;
+  const next = old && state.stage === "adult" ? life.REFORMED[state.species] : undefined;
   if (next === undefined) {
     return false;
   }
-  const old = `${state.stage}:${state.species}`;
+  const before = `${state.stage}:${state.species}`;
   state.species = next;
   if (!state.asleep && !state.trip && state.activity === "idle") {
-    setActivity(state, "evolve", now, old);
+    setActivity(state, "evolve", now, before);
   }
   logEvent(state, now, "evolve", "system", { item: `${state.stage}:${state.species}` });
   return true;

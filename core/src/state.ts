@@ -146,6 +146,8 @@ export interface PetState {
   idle_next: number;
   /** Trick -> points practiced alone since it was last practiced together (idle.SOLO_LIMIT). */
   solo: Record<string, number>;
+  /** Which rules for the adult forms it was saved under (life.FORM_RULES); older ones are reformed once. */
+  form_rules: number;
 }
 
 /** A state with every field at its starting value. */
@@ -194,6 +196,7 @@ export function newState(): PetState {
     seen_at: 0.0,
     idle_next: 0.0,
     solo: {},
+    form_rules: life.FORM_RULES,
   };
 }
 
@@ -210,6 +213,9 @@ export function fromDict(data: Record<string, unknown>): PetState {
     if (key in data) {
       fields[key] = data[key];
     }
+  }
+  if (!("form_rules" in data)) {
+    state.form_rules = 1; // saved before the slime line was redrawn
   }
   const stats = (state.stats ?? {}) as Record<string, unknown>;
   state.stats = Object.fromEntries(STATS.map((k) => [k, Number(stats[k] ?? 50.0)])) as Record<Stat, number>;

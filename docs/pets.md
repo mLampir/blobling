@@ -133,8 +133,8 @@ The values are in `core/src/life.ts`.
 
 Until the slime was redrawn, it had five adult forms of its own. They don't
 grow out of a slime any more, but they still live in the wild and may come to
-visit as friends. A pet saved as one of them turns into its new form the next
-time it is loaded:
+visit as friends. A pet that grew into one of them before the change turns
+into its new form the first time it is loaded after it:
 
 | Before | Now |
 |---|---|

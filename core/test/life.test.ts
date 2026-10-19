@@ -6,7 +6,7 @@ import { beforeEach, test } from "node:test";
 import * as care from "../src/care";
 import * as life from "../src/life";
 import * as model from "../src/model";
-import type { PetState } from "../src/state";
+import { fromDict, toDict, type PetState } from "../src/state";
 import { BEDTIME, act, at, near } from "./helpers";
 
 let start: number;
@@ -157,16 +157,22 @@ test("an adult of the slime's first forms turns into its new form", () => {
     ["grumpcap", "angloop"], ["flicker", "angloop"]]) {
     pet.species = old;
     pet.activity = "idle";
+    pet.form_rules = 1;
     assert.equal(model.reform(pet, start), true);
     assert.deepEqual([pet.species, pet.activity, pet.activity_item], [next, "evolve", `adult:${old}`]);
   }
   assert.equal(model.reform(pet, start), false); // only once
   pet.species = "sneezle";
+  assert.equal(model.reform(pet, start), false); // saved under the new rules: a Sneezle of a line of its own
+  pet.form_rules = 1;
   pet.asleep = true;
   pet.activity = "idle";
   assert.equal(model.reform(pet, start), true);
   assert.deepEqual([pet.species, pet.activity], ["gemperor", "idle"]); // changed in its sleep, without a show
   pet.species = "lumoth";
   pet.stage = "child"; // only adults have a form
+  pet.form_rules = 1;
   assert.equal(model.reform(pet, start), false);
+  assert.equal(fromDict({ species: "sneezle" }).form_rules, 1); // a save from before
+  assert.equal(fromDict(toDict(pet) as unknown as Record<string, unknown>).form_rules, life.FORM_RULES);
 });
