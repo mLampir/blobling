@@ -10,8 +10,11 @@ import type { Pet } from "../src/pet";
 import { Disk } from "./helpers";
 
 function ask(pet: Pet, method: string, path: string, body?: unknown): Promise<any> {
-  return petRequest({ pet, action: pet.action.bind(pet), newEgg: pet.newEgg.bind(pet) },
-    method, new URL(path, "http://pet"), async () => body ?? null);
+  const target = {
+    pet, action: pet.action.bind(pet), newEgg: (egg: unknown, keep: unknown) => pet.newEgg(egg, undefined, keep),
+    swap: () => pet.swap(),
+  };
+  return petRequest(target, method, new URL(path, "http://pet"), async () => body ?? null);
 }
 
 test("the pet is described, acted on, renamed and started over", async () => {
@@ -44,6 +47,8 @@ test("an invalid request throws the key of its text, and other paths are not the
     ["/api/pet/action", { action: "pet", id: 5 }, "invalid_id"],
     ["/api/pet/new_egg", {}, "confirm"],
     ["/api/pet/new_egg", null, "confirm"],
+    ["/api/pet/new_egg", { confirm: true, keep: "both" }, "invalid_value"],
+    ["/api/pet/swap", {}, "no_second"],
     ["/api/pet/settings", { name: "  " }, "name_length"],
   ];
   for (const [path, body, key] of cases) {

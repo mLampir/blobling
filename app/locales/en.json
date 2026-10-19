@@ -30,7 +30,8 @@
     "unknown_language": "Unknown language.",
     "invalid_location": "Please enter a latitude from -90 to 90 and a longitude from -180 to 180.",
     "no_update": "There is no update to install right now.",
-    "not_a_save": "That is not a save file of a pet."
+    "not_a_save": "That is not a save file of a pet.",
+    "no_second": "There is no second pet."
   },
   "stages": {
     "egg": "Egg",
@@ -238,9 +239,14 @@
     "name_prompt": "It hatched! What would you like to call it?",
     "new_egg": "🥚 Start over with a usual egg",
     "new_egg_ok": "Start over",
-    "new_egg_confirm": "Really start over? {name} will move to the ancestors, and a usual egg starts from zero. Your finds stay.",
+    "new_egg_confirm": "Start over with a usual egg? {name} stays at home and moves to the back. Your finds stay.",
     "brood_ok": "Brood",
-    "brood_confirm": "Really brood the {egg}? {name} will move to the ancestors. Your finds stay.",
+    "brood_confirm_egg": "Brood the {egg} instead?",
+    "new_egg_confirm_egg": "Start over with a usual egg instead?",
+    "brood_confirm": "Brood the {egg}? {name} stays at home and moves to the back. Your finds stay.",
+    "keep_brood": "Brood the {egg}? Only two pets fit in your home – who stays with it? The other one moves to the ancestors.",
+    "keep_new_egg": "Start over with a usual egg? Only two pets fit in your home – who stays with it? The other one moves to the ancestors.",
+    "swap": "Bring {name} to the front",
     "new_egg_done": "A new egg is waiting 🥚",
     "things": {
       "meal": "Meal",
@@ -505,7 +511,9 @@
       "trip_snack": "ate its snack and felt better",
       "trip_beaten": "had enough and turned back",
       "guardian": "got past the guardian: {foe} 🏆",
-      "unlock": "knows a new way now: {area} 🗺"
+      "unlock": "knows a new way now: {area} 🗺",
+      "swap": "came to the front – {pet} is at the back now",
+      "copied": "copied {trick} from {pet}"
     },
     "statistics": {
       "meals": "Meals",

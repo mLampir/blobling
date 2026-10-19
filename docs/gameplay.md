@@ -131,8 +131,9 @@ The forms, their characters and the rules for getting them are in
 [pets.md](pets.md). That page keeps everything folded shut that would spoil
 finding it out by yourself.
 
-An adult stays forever, until a new egg takes its place. The previous pet then
-moves to the ancestors' gallery.
+An adult stays forever. When a new egg comes, the pet goes to the back and
+stays at home (see [Two pets at home](#two-pets-at-home)); only when there are
+two already, one of them moves to the ancestors' gallery.
 
 The **album** is the long-term goal: to have had every form once. It has one
 slot for each form there is (every egg, baby, child and adult of every line),
@@ -169,6 +170,39 @@ are set out and the plant. That includes what is still in the backpack, an
 egg in the nest and a gift that hasn't been unwrapped. The new pet itself starts from zero: its stats, tricks, bond,
 friend and the areas it knows the way to; and its training too, apart from
 the heirloom of its egg.
+
+### Two pets at home
+
+Two pets fit in the home: one at the front and one at the back. So a favorite
+can stay while new eggs are raised for the album.
+
+- **A new egg** comes to the front, and the pet that was there goes to the
+  back. If there are two already, the app shows both and you tap the one that
+  stays; the other one moves to the ancestors' gallery. An egg that hasn't
+  hatched goes nowhere.
+- **Swapping.** A small picture of the pet at the back sits at the top, next
+  to the name. A tap on it brings that pet to the front, and the other one
+  goes to the back, with nothing lost; it stays that way until the next tap.
+  Not while the pet at the front is away on a trip, or still an egg. The home
+  is the front pet's: the finds, the decorations, the plant and the eggs go
+  with it, and a pet going to the back takes its hat off.
+- **Only the pet at the front lives the game:** it has needs, goes on trips,
+  scuffles, makes friends, lays eggs and calls you.
+- **The pet at the back keeps growing.** The one at the front looks after it:
+  nothing it needs drops below 60, and it never gets sick. A child at the back
+  counts as decently cared for (70 % of the time), never as specially, and
+  what only you can give (petting, trips, training) doesn't happen there. So
+  a child that grows up at the back becomes the plain form of its line; for
+  the others it has to be at the front. It evolves by itself when it is due.
+- **It comes out** for a quarter of an hour once every four hours, like a
+  friend's visit (which comes first), and the two play the same games. A pet
+  that knows a trick shows it, and the other one copies it: a quarter point,
+  from the same allowance as practicing alone, so it never learns a trick that
+  way. A child at the back counts the time out as half a playtime.
+- **At night** it comes out too, and the two sleep side by side.
+
+Coming out follows the clock only, so it is the same whether anybody is
+looking or not.
 
 ## Tricks
 
@@ -477,7 +511,8 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
 
 - **The pet** fills the screen: the scene, with the sky going on above it, the
   pet's name, form, age and mood at the top, and the **Sleep** / **Wake up**
-  button next to them. Stroke the pet itself to pet it (an egg
+  button next to them; with a second pet at home, its picture too, to bring it
+  to the front. Stroke the pet itself to pet it (an egg
   or a shivering pet is rubbed warm); the rest of the scene doesn't count.
 - Below it, the **needs** as five small meters. A tap on one says what helps.
   When the pet is ready to evolve, it says so here (an egg also tells when it
@@ -544,6 +579,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
 | Catching up, the state for the app, what is saved, ancestors and album | `core/src/pet.ts`, `core/src/state.ts` |
+| The pet at the back: swapping, growing there, coming out, copying tricks | `core/src/companion.ts`, `Pet.swap` in `core/src/pet.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
 | Preview of the scene on a PC, pictures for [pets.md](pets.md) | `tools/pet_preview.ts` (`npm run preview`) |

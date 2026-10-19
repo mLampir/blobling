@@ -24,14 +24,18 @@ import type { Pet } from "./pet";
  * core/test/api.test.ts compares the API with core/test/api-contract.json and says which number
  * a change needs (CLAUDE.md, "The API between app and Pi").
  */
-export const API_VERSION = 3;
+export const API_VERSION = 4;
 export const API_OLDEST = 1;
 
-/** Where the requests go. `action` and `newEgg` are the pet's own, or the Pi's, which also show it on the panel. */
+/**
+ * Where the requests go. `action`, `newEgg` and `swap` are the pet's own, or the Pi's, which also
+ * show it on the panel.
+ */
 export interface PetTarget {
   pet: Pet;
   action: Pet["action"];
-  newEgg: Pet["newEgg"];
+  newEgg: (egg: unknown, keep: unknown) => ReturnType<Pet["newEgg"]>;
+  swap: () => ReturnType<Pet["swap"]>;
 }
 
 /** What a request that is not one of the pet's routes gets back. */
@@ -74,8 +78,11 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
       if (request.confirm !== true) {
         throw new RequestError("confirm");
       }
-      return target.newEgg(request.egg ?? null);
+      return target.newEgg(request.egg ?? null, request.keep ?? null);
     }
+
+    case "POST /api/pet/swap":
+      return { api: API_VERSION, ...target.swap() };
 
     case "GET /api/pet/travels":
       return { api: API_VERSION, travels: pet.travels() };

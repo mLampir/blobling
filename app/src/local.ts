@@ -86,7 +86,10 @@ export class LocalPet {
     let answer: unknown;
     try {
       answer = await petRequest(
-        { pet: this.pet, action: this.pet.action.bind(this.pet), newEgg: this.pet.newEgg.bind(this.pet) },
+        {
+          pet: this.pet, action: this.pet.action.bind(this.pet),
+          newEgg: (egg, keep) => this.pet.newEgg(egg, undefined, keep), swap: () => this.pet.swap(),
+        },
         method, new URL(path, "http://app"), async () => body ?? null);
     } catch (error) {
       if (error instanceof RequestError) {

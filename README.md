@@ -30,6 +30,9 @@ a day and also tells you the time and the weather.
   The friend comes to visit and plays with it, brings a gift now and then, and
   in time the two lay an egg that passes a part of your pet's training on to
   the next one.
+- **Two can live at home.** A new egg doesn't take your favorite away: the
+  older pet stays at the back, comes out to play and to teach the young one a
+  trick, sleeps next to it at night, and swaps places with a tap.
 - **It is forgiving.** The pet never dies. Neglect makes it hungry, sad or
   sick, and that can always be fixed.
 - **Quiet at night.** The panel dims or switches off in the hours you choose,

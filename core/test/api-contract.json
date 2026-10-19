@@ -1,5 +1,5 @@
 {
-  "api": 3,
+  "api": 4,
   "oldest": 1,
   "routes": [
     "GET /api/pet",
@@ -8,7 +8,8 @@
     "GET /api/pet/travels",
     "POST /api/pet/action",
     "POST /api/pet/new_egg",
-    "POST /api/pet/settings"
+    "POST /api/pet/settings",
+    "POST /api/pet/swap"
   ],
   "actions": [
     "clean",
@@ -88,6 +89,7 @@
     "GET /api/pet plant": "null",
     "GET /api/pet poops": "number",
     "GET /api/pet replays": "array",
+    "GET /api/pet second": "null",
     "GET /api/pet sick": "boolean",
     "GET /api/pet skills": "array",
     "GET /api/pet snacks": "array",
