@@ -1498,9 +1498,10 @@ export class PetScene {
       case "steamo": // swells up red-hot and lets the steam out all at once
         if (q < 0.45) {
           Object.assign(pose, { body: Math.trunc(t * 8) % 2 ? "stretch" : "idle", face: "blink", dx: Math.trunc(t * 16) % 2 });
-          this.trickFx(t, "sp_steamo", 0.15, STEAM, 1, this.rng.uniform(-8, 8), 22, [-3, 3], [-10, -6], 0.8);
+          this.trickFx(t, "sp_steamo", 0.08, STEAM, 2, this.rng.uniform(-8, 8), 22, [-4, 4], [-14, -6], 0.8);
         } else if (q < 0.6) {
           Object.assign(pose, { body: "squash", face: "laugh" });
+          this.trickFx(t, "sp_steamo_blast", once, STEAM_CLOUD, 12, 6, 14, [18, 46], [-14, 6], 0.9);
         }
         break;
       case "parcelbeak": // reaches into its pouch again and again: a whole sack of letters
