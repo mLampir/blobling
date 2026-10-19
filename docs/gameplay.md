@@ -417,7 +417,8 @@ each one the opponent makes a move, and the pet answers with a trick:
 - **Weight:** a pet that is too heavy has more force and less speed; one that
   is too light, the other way round.
 - **Special move:** an adult that knows how to dance lets its species' special
-  move go after every second trick that worked. It counts double.
+  move go after every second trick that worked. It counts double. Every form
+  has a move of its own for it: Angloop flashes its lure, for example.
 
 An opponent gives in after three hits (Drizzleshell, Puddlin and the ones in
 the cave and on the mountain after four, Duskwisp after five) and leaves
@@ -747,7 +748,8 @@ A new creature should make you think "that one is different".
     wings flutters through its flip; the gesture and the effect stay the
     same), in its special move in a scuffle, or now and then while it stands
     around. Every adult form has one trick of its own and a special move
-    (the particles in `hit`) that no other form uses.
+    that no other form uses: a move of its own (`special`) and its own
+    particles (`hit`).
 
 #### How to work
 

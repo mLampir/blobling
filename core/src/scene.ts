@@ -1528,11 +1528,13 @@ export class PetScene {
         }
         break;
       case "bouldergrin": // throws its top stone at the opponent; a new one grows back
-        if (q < 0.3) {
-          Object.assign(pose, { body: "toss_low", jump: 2 });
+        if (q < 0.15) {
+          Object.assign(pose, { body: "squash", face: "normal" });
+        } else if (q < 0.3) {
+          Object.assign(pose, { body: "toss_high", jump: 3 }); // winds up with the stone above its head
         } else if (q < 0.5) {
-          pose.body = "toss_high";
-          this.trickFx(t, "sp_bouldergrin", once, BOULDER, 1, 0, 28, [34, 34], [-10, -10], 0.7);
+          Object.assign(pose, { body: "stretch", dx: towards(2) });
+          this.trickFx(t, "sp_bouldergrin", once, BOULDER, 1, 4, 30, [30, 30], [22, 22], 0.8);
         } else {
           pose.body = q < 0.6 ? "squash" : "idle";
         }
