@@ -214,6 +214,8 @@
       "no_training": "Zu spät – die Übung ist vorbei.",
       "no_nest": "Da liegt kein Ei in einem Nest.",
       "no_gift": "Da liegt kein Geschenk.",
+      "no_house": "Es gibt noch kein Haus.",
+      "inside": "{name} schläft im Haus.",
       "boost_waiting": "{name} hat das letzte noch im Bauch.",
       "nothing_found": "Da liegt nichts.",
       "dislikes": "{name} dreht den Kopf weg: das nicht."
@@ -351,6 +353,11 @@
       "battle_ball": "{foe} ist lieber meinem Ball hinterhergelaufen, statt mit mir zu raufen.",
       "guardian": "Ich bin an {foe} vorbeigekommen, dem Wächter des Weges!",
       "unlock": "Jetzt kenne ich einen neuen Weg: {area}!",
+      "house": {
+        "1": "Jetzt habe ich eine eigene Hütte zum Schlafen!",
+        "2": "Meine Hütte ist zu einem Häuschen gewachsen, mit Fenster!",
+        "3": "Mein Häuschen ist jetzt ein richtiges Haus!"
+      },
       "find": "Unterwegs habe ich etwas gefunden: {item}.",
       "trip_home": "Mit meinem Rucksack bin ich wieder heimgekommen.",
       "trip_tired": "Ich wurde müde und bin umgekehrt.",
@@ -470,7 +477,13 @@
         "train": "die nächste Übung zählt doppelt",
         "finder": "findet auf der nächsten Reise bei jeder Rast etwas",
         "fresh": "die nächste Reise macht nicht müde und bringt so viel wie die erste des Tages"
-      }
+      },
+      "house": "🏠 {house}",
+      "house_spots": {
+        "one": "1 Platz drinnen",
+        "other": "{n} Plätze drinnen"
+      },
+      "inside": "im Haus"
     },
     "kinds": {
       "hat": "Hut",
@@ -540,7 +553,10 @@
       "trip_snack": "hat den Snack gegessen, schon besser",
       "trip_beaten": "hatte genug und ist umgekehrt",
       "guardian": "ist am Wächter vorbeigekommen: {foe} 🏆",
-      "unlock": "kennt jetzt einen neuen Weg: {area} 🗺"
+      "unlock": "kennt jetzt einen neuen Weg: {area} 🗺",
+      "house_1": "hat sich eine Hütte gebaut 🏠",
+      "house_2": "hat aus der Hütte ein Häuschen gemacht 🏠",
+      "house_3": "hat aus dem Häuschen ein richtiges Haus gemacht 🏠"
     },
     "statistics": {
       "meals": "Mahlzeiten",
@@ -683,6 +699,11 @@
       "spin": "ein runder Kreis",
       "dance": "flach hin und her",
       "flip": "nach oben"
+    },
+    "houses": {
+      "1": "Hütte",
+      "2": "Häuschen",
+      "3": "Haus"
     },
     "bag": {
       "empty": "Die Tasche ist leer.",

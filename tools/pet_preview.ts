@@ -20,7 +20,8 @@ import { BDF_FONT_DIR } from "../pi/src/config";
 import { encodePng } from "../pi/src/png";
 import { encodeGif } from "./gif";
 
-type Scene = [changes: Partial<SceneView>, now: Date, weather: Weather];
+// `into`: how many seconds of the activity have passed at the first frame (0 = it starts there)
+type Scene = [changes: Partial<SceneView>, now: Date, weather: Weather, into?: number];
 
 const BASE: SceneView = {
   species: "blob", stage: "child", ready: false, asleep: false, sick: false, poops: 0, activity: "idle",
@@ -277,6 +278,23 @@ const SCENES: Record<string, Scene> = {
   trace_drawing: [{ trace: { kind: "drawing", spot: 0.5, look: 1 }, stage: "adult", species: "angloop" }, DAY, null],
   trace_snowman: [{ trace: { kind: "snowman", spot: 0.1, look: 0 } }, DAY, { temp: -2, code: 73 }],
   trace_night: [{ trace: { kind: "drawing", spot: 0.3, look: 0 } }, NIGHT, null],
+  // the house in its three steps, the way into it and out of it, and a look inside
+  house_hut: [{ house: 1, deco: ["windmill", "flag"], plant: { kind: "berry", stage: "grown", ripe: true },
+    found: "fruit_cherry" }, DAY, null],
+  house_cabin: [{ house: 2, deco: ["flag"], hat: "daisy", trace: { kind: "tower", spot: 0.5, look: 0 } }, DAY, null],
+  house_house: [{ house: 3, deco: ["windmill", "flag"], plant: { kind: "cherry", stage: "grown", ripe: true } }, DAY,
+    null],
+  house_lit: [{
+    house: 3, asleep: true, activity: "go_in", deco: ["lantern", "glowshroom"],
+    plant: { kind: "cherry", stage: "grown", ripe: true },
+  }, NIGHT, null, 2.6],
+  house_go_in: [{ house: 3, asleep: true, activity: "go_in", deco: ["lantern"] }, NIGHT, null, 1.5],
+  house_bed: [{ house: 3, asleep: true, activity: "go_in", house_deco: ["crystal", "snailshell"] }, NIGHT, null, 4.4],
+  house_sleep: [{ house: 3, asleep: true, house_deco: ["crystal", "snailshell", "lantern"] }, NIGHT, null],
+  house_nap: [{ house: 2, asleep: true, house_deco: ["boat", "cattail"] }, DAY, RAIN],
+  hut_sleep: [{ house: 1, asleep: true, house_deco: ["glowshroom"] }, NIGHT, null],
+  house_come_out: [{ house: 3, activity: "come_out", deco: ["flag"] }, DAY, null, 2.6],
+  house_look_in: [{ house: 2, look_in: true, house_deco: ["crystal", "lantern"], deco: ["flag"] }, DAY, null],
   build: [{ activity: "build", activity_item: "tower", trace: { kind: "tower", spot: 0.4, look: 0 } }, DAY, null],
   // the ember line, from the rare egg on
   egg_found: [{
@@ -400,12 +418,12 @@ function spoils(name: string): boolean {
 
 /** Frames of a scene; the activity starts with the first frame and runs as long as it does on the Pi. */
 function frames(name: string, count: number, step = 0.1, spoilerFree = false): Image[] {
-  const [changes, now, weather] = SCENES[name];
+  const [changes, now, weather, into = 0] = SCENES[name];
   const view = { ...BASE, ...changes };
   if (spoilerFree && view.stage === "adult") {
     view.species = SHOWN_ADULT;
   }
-  view.activity_until = now.getTime() / 1000 + (ACTIVITY_SECONDS[view.activity] ?? 4);
+  view.activity_until = now.getTime() / 1000 + (ACTIVITY_SECONDS[view.activity] ?? 4) - into;
   const scene = new PetScene(64, 64, assets, { t: 0.0 });
   const images: Image[] = [];
   for (let i = 0; i < count; i++) {

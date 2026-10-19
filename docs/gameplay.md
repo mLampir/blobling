@@ -112,6 +112,33 @@ little extra mood and bond. It costs nothing if you don't; after an hour the
 pet has warmed up by itself. Some pets never shiver, and some things a pet
 can find keep the cold away. Which ones is for you to find out.
 
+## The house
+
+At first the pet sleeps outside, wherever it happens to be. The house is the
+long-term goal of the home: every pet that gets past the mountain's guardian
+for the first time adds a step, and like the finds it stays from one pet to
+the next. So the whole house takes three pets.
+
+| Step | Looks like | Spots inside |
+|---|---|---|
+| Hut | a dome of thatch with an open doorway; inside, a bed of leaves | 1 |
+| Cabin | wooden walls, a thatched roof, a window with a flower box; inside, a straw bed, a blanket and a candle | 2 |
+| House | a half-timbered house with a tiled roof and a chimney; inside, a real bed, curtains, a lamp and a picture of the old hut | 3 |
+
+The house stands at the left of the garden, and the plant next to it. The pet
+sleeps inside, at night and for a nap: it hops to the door, gets smaller as it
+goes in, the door shuts and at night the light goes on. Then the panel shows
+the inside, where it comes in and lies down in its bed. In the morning it
+stretches, goes out and comes back into the garden. Everything else happens
+outside, rain or not. Through the window (in the hut, the doorway) the real
+sky shows, with the weather, the moon and the stars; at night the candle or
+the lamp keeps the room just bright enough to make out.
+
+Each step has spots for decorations inside. Decorations go outside first, and
+what doesn't fit there goes into the house; the snowman always stays outside.
+A tap on the house in the app looks in for a moment, so what stands inside
+can be seen in the daytime too.
+
 ## Growing up
 
 | Stage | Lasts | Notes |
@@ -175,7 +202,7 @@ There are two ways to a new egg, both in the diary:
 
 **What stays, and what doesn't.** Everything the pets have found belongs to
 the home and stays: seeds, decorations, hats and eggs, the decorations that
-are set out and the plant. That includes what is still in the backpack, an
+are set out, the plant and the house. That includes what is still in the backpack, an
 egg in the nest and a gift that hasn't been unwrapped. The new pet itself starts from zero: its stats, tricks, bond,
 friend and the areas it knows the way to; and its training too, apart from
 the heirloom of its egg.
@@ -280,7 +307,8 @@ there to see what it brought:
   These don't add up: while one is still waiting, the pet won't eat the same
   food again. Nothing is combined or cooked, and the plant stays the one that
   feeds the pet by itself.
-- **Decorations** stand in the scene, two at a time. Some glow at night. One
+- **Decorations** stand in the scene, two at a time, and more in the house
+  (see [The house](#the-house)). Some glow at night. One
   of them does something: the ember stone from the cave makes a young pet grow
   faster, and the pet snuggles up to it now and then.
 - **Hats** – it wears one at a time.
@@ -424,7 +452,9 @@ tricks and a good deal of training. Progress counts per pet: a new egg starts
 in the meadow again.
 
 One of the guardians has been sitting on a rare egg. It leaves the egg behind
-the first time a pet gets past it, so every pet can earn it once.
+the first time a pet gets past it, so every pet can earn it once. Getting
+past the last one, on the mountain, adds a step to the house (see
+[The house](#the-house)).
 
 **Hearts.** The pet sets off with one to three hearts, depending on its
 condition that day (the average of satiety, energy and health: two hearts from
@@ -512,7 +542,8 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
 - **The pet** fills the screen: the scene, with the sky going on above it, the
   pet's name, form, age and mood at the top, and the **Sleep** / **Wake up**
   button next to them. Stroke the pet itself to pet it (an egg
-  or a shivering pet is rubbed warm); the rest of the scene doesn't count.
+  or a shivering pet is rubbed warm); the rest of the scene doesn't count,
+  apart from the house: a tap on it looks inside.
 - Below it, the **needs** as five small meters. A tap on one says what helps.
   When the pet is ready to evolve, it says so here (an egg also tells when it
   will hatch), and so do a trip that is on, a backpack to unpack, a gift and
@@ -574,7 +605,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | A scuffle watched again in the app | `app/src/replay.ts` |
-| Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
+| Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), the house and its spots | `core/src/home.ts` |
 | What it does by itself, what it leaves behind or finds at home, and what it tells when you come back | `core/src/idle.ts` |
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |

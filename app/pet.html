@@ -788,6 +788,12 @@ function onPet(x, y) {
   const [ax, ay, aw, ah] = area, m = 0.03;  // a little room around it
   return u >= ax - m && u <= ax + aw + m && v >= ay - m && v <= ay + ah + m;
 }
+// Whether a point is on the house (it stands at the same place on the phone and on the Pi)
+function onHouse(x, y) {
+  if (!current || !current.house || current.trip) return false;
+  const [u, v] = inScene(x, y), [ax, ay, aw, ah] = current.house.area;
+  return u >= ax && u <= ax + aw && v >= ay && v <= ay + ah;
+}
 function overHero(x, y) {
   const r = $("hero").getBoundingClientRect();
   return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
@@ -1112,11 +1118,13 @@ function renderFinds(s) {
     const state = t(s.plant.ripe ? "page.finds.ripe" : s.plant.stage === "grown" ? "page.finds.ripening" : "page.finds.growing");
     rows.push([`${PLANT_ICONS[s.plant.kind]} ${s.plant.label}`, `${state} · ${tn("page.finds.left", s.plant.left)}`]);
   }
+  if (s.house) rows.push([t("page.finds.house", { house: t(`page.houses.${s.house.step}`) }), tn("page.finds.house_spots", s.house.spots)]);
   for (const item of s.items) {
     rows.push(item.kind === "seed" || item.kind === "fruit" ? [item.label, t("page.finds.in_bag", { n: item.count })]
       : item.kind === "food" ? [item.label, [t("page.finds.in_bag", { n: item.count }),
         ...item.effects.map((k) => t(`page.finds.effects.${k}`))].join(" · ")]
-      : [item.label, [t(`page.kinds.${item.kind}`), ...item.effects.map((k) => t(`page.finds.effects.${k}`))].join(" · "), item]);
+      : [item.label, [t(`page.kinds.${item.kind}`), item.place === "inside" && t("page.finds.inside"),
+        ...item.effects.map((k) => t(`page.finds.effects.${k}`))].filter(Boolean).join(" · "), item]);
   }
   offerTab("finds", rows.length);
   $("finds").replaceChildren(...rows.map(([label, note, item]) => {
@@ -1276,6 +1284,7 @@ function eventText(e) {
     : e.action === "found" || e.action === "pickup" ? t(`page.events.${e.action}`, { thing: giftLabel(e.item) })
     : e.action === "guardian" ? t("page.events.guardian", { foe: T[`foes.${e.item}`] || e.item })
     : e.action === "unlock" ? t("page.events.unlock", { area: T[`areas.${e.item}.name`] || e.item })
+    : e.action === "house" ? t(`page.events.house_${e.item}`)
     : e.action === "train" ? t("page.events.trained", { skill: T[`skills.${e.item}`] || e.item })
     : e.action === "find" ? t("page.events.find", { item: labels[e.item] || e.item })
     : e.action === "fruit" ? t("page.events.picked", { fruit: T[`fruits.${e.item}`] || e.item })
@@ -1571,6 +1580,12 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
   });
   const end = (e) => {
     if (!stroke || e.pointerId !== stroke.id) return;
+    // a tap on the house looks inside for a moment
+    if (stroke.way < 8 && onHouse(e.clientX, e.clientY) && !(area && onPet(e.clientX, e.clientY))) {
+      stroke = null;
+      if (current.actions.look_in) act("look_in");
+      return;
+    }
     // a tap: one heart
     if (stroke.way < 8 && onPet(e.clientX, e.clientY)) {
       burst(e.clientX, e.clientY);

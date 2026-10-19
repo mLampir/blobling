@@ -86,18 +86,20 @@ const THROW_SPEED = 26; // pixels per second, faster than when wandering around
 const PROP_OVERLAP: Record<string, number> = { bowl: 5, snack: 6 }; // how far the item reaches into the pet's sprite frame
 const THROWN_BASE: Record<string, string> = { throw_meal: "eat", throw_snack: "snack" }; // otherwise: the name without "throw_"
 const POOP_X = [55, 1, 47]; // at the edges, so the pet doesn't cover them
-// Home: plant on the left, two spots for decorations on the right (the center of each)
-const PLANT_X = 8;
+// Home: plant on the left, two spots for decorations on the right (the center of each). Once there
+// is a house (home.ts), it stands at the left edge, and the plant and what the pet leaves behind
+// move to the right of it; per step of the house (0 = none yet):
+const PLANT_X = [8, 21, 25, 31];
 const DECO_X = [58, 49];
 const SNUGGLE = 0.35; // how often it goes and sits by something warm when it decides where to go
 const SNUGGLE_GAP = 34; // from its left edge to the center of what it snuggles up to
-const PICK_X = 10; // where the pet stands when it picks a fruit
+const PICK_GAP = 2; // where the pet stands when it picks a fruit: its left edge, from the plant
 const PICK_WALK = 1.6; // how long the walk there may take
 // A friend comes to visit: it stands on the right, and the pet keeps to the left. The nest with
 // the egg the two have laid is on the right as well, and the pet doesn't stand in front of it.
 // What it left behind while nobody was there (idle.ts): somewhere in the free middle of the
 // ground, between the plant and the decorations; while it builds, it stands to the right of it
-const TRACE_X = [16, 26] as const;
+const TRACE_X: readonly (readonly [number, number])[] = [[16, 26], [30, 36], [34, 38], [38, 42]];
 const TRACE_GAP = 18; // from the center of what it builds to its own center, so that it can be seen
 const BUILD_WALK = 2.0; // how long the walk there may take
 const FOOTPRINT: Color = [205, 215, 235];
@@ -105,7 +107,30 @@ const VISITOR_X = 33;
 const VISIT_PET_X = 2;
 const NEST_X = 40;
 const GIFT_X = 53; // what a friend has brought lies here, in front of the decorations, until it is unwrapped
-const FOUND_X = 15; // what the pet found at home by itself lies here, next to the plant, until it is picked up
+// The house, per step: the center of its door. It goes in to sleep: it hops to the door, gets
+// smaller as it goes in (further back into the picture), the door shuts and the light goes on;
+// then the scene shows the inside, where it comes in from the left and lies down in its bed. In
+// the morning it is the other way round. Seconds into "go_in" and "come_out" (model.ACTIVITY_SECONDS):
+const HOUSE_DOOR = [0, 7, 13, 13];
+const DOOR_SCALE = 0.3; // this small it is at the door
+const DOOR_STEP = 12; // how far it comes out of the door while it grows
+const GO_IN = { walk: 2.5, shrink: 4.5, inside: 6.0, bed: 8.0 }; // at the door, through it, shown inside, in bed
+const COME_OUT = { up: 1.5, out: 3.5, grown: 5.5 }; // stretched, out of the room, out of the door
+// Inside, per step: the spots for decorations in the order they fill up, as [center, bottom row]
+// (the third one in the house is on a shelf), and where the blanket lies over the pet
+const ROOM_SPOTS: readonly (readonly [number, number])[][] = [[], [[58, GROUND + 1]],
+  [[59, GROUND + 1], [5, GROUND + 1]], [[59, GROUND + 1], [5, GROUND + 1], [25, 30]]];
+const BLANKET_AT: [number, number] = [28, 48];
+// How big the house is from outside, per step (the sprites "house_N" are this size; it stands at the left edge)
+const HOUSE_SIZE: readonly (readonly [number, number])[] = [[0, 0], [15, 13], [19, 19], [25, 25]];
+
+/** Where the house stands in a 64×64 scene, as parts of it: [x, y, width, height] (for a tap in the app). */
+export function houseArea(step: number): [number, number, number, number] {
+  const [w, h] = HOUSE_SIZE[step];
+  const part = (n: number) => Number((n / 64).toFixed(3));
+  return [0, part(GROUND + 1 - h), part(w), part(h)];
+}
+const FOUND_X = [15, 28, 32, 38]; // per step: what the pet found at home by itself lies here, next to the plant, until it is picked up
 const VISIT_WALK = 3.0; // seconds it takes to hop in and out
 // While the friend is there, the two play now and then: a game, a rest standing together, the next
 // game. Only while the pet is in a decent mood, awake and has nothing else to do; otherwise the
@@ -336,7 +361,13 @@ export interface SceneView {
   tricks?: readonly string[];
   trip?: TripView | null;
   hat?: string | null;
+  /** The decorations outside. */
   deco?: readonly string[];
+  /** How far the house has grown (home.HOUSE_STEPS), 0 = none yet, and the decorations in it. */
+  house?: number;
+  house_deco?: readonly string[];
+  /** Somebody is looking into the house: the scene shows the inside for a moment. */
+  look_in?: boolean;
   backpack?: boolean;
   visitor?: { species: string; left: number; age: number } | null;
   nest?: string | null;
@@ -544,6 +575,9 @@ interface Pose {
   found: string | null;
   foe: Foe | null;
   wild: Guest | null;
+  /** Smaller than it is (going into the house, or coming out of it), and whether it can't be seen. */
+  scale: number;
+  hidden: boolean;
 }
 
 interface PetLook {
@@ -653,10 +687,13 @@ export class PetScene {
       this.skyLook = sky.isThunder(code) ? "storm" : raining ? "rain"
         : t - this.rainedAt < AFTER_RAIN ? "after_rain" : null;
     }
+    const indoors = !trip && this.indoors(view, seconds);
     if (trip) {
       const [grass, soil] = TRAVEL[trip.area];
       this.drawGround(img, grass, soil);
       this.drawTravel(img, trip, dt);
+    } else if (indoors) {
+      this.drawRoom(img, view, t);
     } else {
       this.drawGround(img);
       this.drawHome(img, view, t, seconds);
@@ -673,7 +710,7 @@ export class PetScene {
     this.drawProps(img, view, pose, t, seconds);
     const x = Math.round(this.x + pose.dx);
     const y = GROUND - SPRITE + 1 - Math.round(pose.jump);
-    let top: number;
+    let top = SPRITE; // a hidden pet: nothing of it shows
     if (pose.egg) {
       const tag = pose.egg.replace("egg", EGGS[life.lineOf(view.species)] ?? "egg");
       const [frame, index] = items.frame(tag, pose.eggT);
@@ -686,7 +723,7 @@ export class PetScene {
       // Outline: draw 1 pixel lower so the egg itself stands on the ground
       img.paste(egg, x + Math.floor((SPRITE - egg.width) / 2), GROUND + 2 - egg.height - Math.round(pose.jump));
       top = SPRITE - egg.height + 2;
-    } else {
+    } else if (!pose.hidden) {
       const [stage, species] = pose.form;
       let pet: Image;
       [pet, top] = this.pet(stage, species, pose.body, t, pose.face, {
@@ -704,14 +741,28 @@ export class PetScene {
         px -= SPIN_PAD;
         py -= SPIN_PAD;
       }
+      if (pose.scale < 1) {
+        // smaller, standing where it stood (going into the house or coming out of it)
+        const w = Math.max(1, Math.round(pet.width * pose.scale));
+        const h = Math.max(1, Math.round(pet.height * pose.scale));
+        px += Math.round((pet.width - w) / 2);
+        py += pet.height - h;
+        top = Math.round(top * pose.scale) + SPRITE - Math.round(SPRITE * pose.scale);
+        pet = pet.resized(w, h);
+      }
       img.paste(pet, px, py);
+      if (indoors && view.asleep && view.house! > 1 && pose.body === "sleep") {
+        // tucked in
+        const [bx, by] = BLANKET_AT;
+        img.paste(this.dimmedSprite(`blanket_${view.house}`, t, false, "house"), bx, by);
+      }
     }
-    if (view.found && !trip && pose.activity !== "discover") {
+    if (view.found && !trip && !indoors && pose.activity !== "discover") {
       // what it found at home lies in front of it, so that it can't be covered; while it shows it, it holds it up
-      this.stand(img, this.findImage(view.found), FOUND_X);
+      this.stand(img, this.findImage(view.found), PetScene.foundX(view));
     }
     this.petTop = y + top;
-    if (pose.pack || (view.backpack && !pose.egg && pose.body !== "sleep")) {
+    if (!pose.hidden && (pose.pack || (view.backpack && !pose.egg && pose.body !== "sleep" && pose.scale === 1))) {
       // Backpack: hangs at the pet's lower back – at home until it has been unpacked
       const pack = this.sheet("trip").image("backpack");
       img.paste(pack, x + (this.facing > 0 ? 3 : SPRITE - 3 - pack.width), y + SPRITE - pack.height - 2);
@@ -726,14 +777,14 @@ export class PetScene {
       bitmap(img, x + Math.floor((SPRITE - pose.symbol[1][0].length) / 2), y + top - 9 + Math.round(Math.sin(t * 4)),
         pose.symbol);
     }
-    if (pose.umbrella && !NO_UMBRELLA.includes(pose.form[1])) {
+    if (pose.umbrella && !pose.hidden && !NO_UMBRELLA.includes(pose.form[1])) {
       const umbrella = items.image("umbrella");
       img.paste(umbrella, x + Math.floor((SPRITE - umbrella.width) / 2), y + top - umbrella.height + 3);
     }
     if (pose.foe) {
       this.drawFoe(img, pose.foe, t);
     }
-    const guest = pose.wild || (!trip && this.visitor(view, t));
+    const guest = pose.wild || (!trip && !indoors && this.visitor(view, t));
     if (guest) {
       this.drawGuest(img, guest, t);
     }
@@ -763,7 +814,7 @@ export class PetScene {
       symbol: null, turn: null, rotate: 0,
       heart: null, form: [view.stage, view.species], white: false,
       egg: null, eggT: t, item: view.activity_item, propAt: null, thrown: null,
-      activity, pack: false, found: null, foe: null, wild: null,
+      activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false,
     };
     this.play = null;
     if (activity === "hatch") {
@@ -788,6 +839,15 @@ export class PetScene {
     if (activity === "trip_home") {
       return this.arrive(pose, view, t, dt);
     }
+    if (activity === "go_in" && view.house) {
+      return this.goIn(pose, view, t, dt, now);
+    }
+    if (activity === "come_out" && view.house) {
+      return this.comeOut(pose, view, t, dt, now);
+    }
+    if (view.look_in && !view.asleep) {
+      pose.hidden = true; // it is outside, and the scene shows the inside of the house
+    }
 
     if (activity.startsWith("throw_")) {
       // "fetch"/"wait" while the thrown item is on its way, then e.g. "eat" or "play"
@@ -795,6 +855,9 @@ export class PetScene {
     }
 
     if (activity === "wait" || (view.asleep && isOneOf(activity, "idle", "fall_asleep", "turn_over"))) {
+      if (view.house) { // in its bed
+        this.x = this.targetX = (this.width - SPRITE) / 2;
+      }
       pose.body = pose.face = "sleep";
       if (activity === "fall_asleep") {
         Object.assign(pose, { body: "flat", face: "tired" });
@@ -1658,7 +1721,7 @@ export class PetScene {
 
   /** Hops over to the plant and eats the ripe fruit. */
   private pick(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
-    if (this.elapsed(view, now) < PICK_WALK && this.moveTowards(PICK_X, THROW_SPEED, dt)) {
+    if (this.elapsed(view, now) < PICK_WALK && this.moveTowards(PetScene.plantX(view) + PICK_GAP, THROW_SPEED, dt)) {
       this.hop(pose, t, 3.5);
       pose.face = "eat_open";
     } else {
@@ -1671,7 +1734,7 @@ export class PetScene {
   /** Left to itself, it builds or draws something: it hops over and gets to work, then is pleased with it. */
   private build(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
     const e = this.elapsed(view, now);
-    const cx = PetScene.traceX(view.trace?.spot ?? 0.5);
+    const cx = PetScene.traceX(view, view.trace?.spot ?? 0.5);
     if (e < BUILD_WALK && this.moveTowards(cx + TRACE_GAP - SPRITE / 2, THROW_SPEED, dt)) {
       this.hop(pose, t, 3.5);
       pose.face = "happy";
@@ -1765,7 +1828,8 @@ export class PetScene {
     }
     // it doesn't settle down right in front of what it left behind or found, so that it can be seen
     const trace = view.trace;
-    const kept = [trace && trace.kind !== "drawing" ? PetScene.traceX(trace.spot) : null, view.found ? FOUND_X : null];
+    const kept = [trace && trace.kind !== "drawing" ? PetScene.traceX(view, trace.spot) : null,
+      view.found ? PetScene.foundX(view) : null];
     for (const cx of kept) {
       if (cx !== null && Math.abs(this.targetX + SPRITE / 2 - cx) < TRACE_GAP) {
         this.targetX = clamp(cx + TRACE_GAP - SPRITE / 2, lo, hi);
@@ -1849,14 +1913,14 @@ export class PetScene {
    * Sprite from the trip sheet, dimmed at night (cached per brightness level).
    * `lit`: glows by itself at night, if there is a separate image for that.
    */
-  private dimmedSprite(tag: string, t = 0.0, lit = false): Image {
-    const sprites = this.sheet("trip");
+  private dimmedSprite(tag: string, t = 0.0, lit = false, sheet = "trip"): Image {
+    const sprites = this.sheet(sheet);
     if (lit && this.night > 0.5 && sprites.has(`${tag}_lit`)) {
       return sprites.frame(`${tag}_lit`, t)[0];
     }
     const [image, index] = sprites.frame(tag, t);
     const level = Math.round((1 - this.night) * 4) / 4;
-    const key = `${tag}|${index}|${level}`;
+    const key = `${sheet}|${tag}|${index}|${level}`;
     let dim = this.dimCache.get(key);
     if (!dim) {
       const factor = 0.4 + 0.6 * level;
@@ -1908,20 +1972,24 @@ export class PetScene {
     return sprites.image([item, `hat_${item}`, "seed"].find((tag) => sprites.has(tag))!);
   }
 
-  /** What the pet has at home: plant, decorations, the nest and a gift (they stand behind it; what it found doesn't). */
+  /** What the pet has at home: the house, plant, decorations, the nest and a gift (they stand behind it; what it found doesn't). */
   private drawHome(img: Image, view: SceneView, t: number, now: number): void {
     const activity = view.activity;
+    const plantX = PetScene.plantX(view);
+    if (view.house) {
+      this.drawHouse(img, view, t, now);
+    }
     const e = activity === "plant" || activity === "pick" ? this.elapsed(view, now) : 0.0;
     const plant = view.plant;
     if (activity === "pick" && e < PICK_WALK) {
       // the fruit stays on the plant until the pet gets there
-      this.stand(img, this.dimmedSprite(`${view.activity_item}_ripe`), PLANT_X);
+      this.stand(img, this.dimmedSprite(`${view.activity_item}_ripe`), plantX);
     } else if (activity === "plant" && e < THROW_FALL + THROW_BOUNCE) {
       // the seed drops in and bounces once
-      this.stand(img, this.sheet("trip").image("seed"), PLANT_X, Math.round(dropLift(e)));
+      this.stand(img, this.sheet("trip").image("seed"), plantX, Math.round(dropLift(e)));
     } else if (plant) {
       const tag = plant.stage !== "grown" ? plant.stage : plant.kind + (plant.ripe ? "_ripe" : "");
-      this.stand(img, this.dimmedSprite(tag), PLANT_X);
+      this.stand(img, this.dimmedSprite(tag), plantX);
     }
     (view.deco ?? []).slice(0, DECO_X.length).forEach((item, i) => {
       this.stand(img, this.dimmedSprite(item, t, true), DECO_X[i]);
@@ -1941,13 +2009,130 @@ export class PetScene {
       const built = activity === "build"
         ? clamp((this.elapsed(view, now) - BUILD_WALK) / (ACTIVITY_SECONDS["build"] - BUILD_WALK - 1), 0.0, 1.0)
         : 1.0;
-      this.drawTrace(img, trace.kind, trace.look, PetScene.traceX(trace.spot), built);
+      this.drawTrace(img, trace.kind, trace.look, PetScene.traceX(view, trace.spot), built);
     }
   }
 
   /** Where a trace lies (its center). */
-  private static traceX(spot: number): number {
-    return Math.round(TRACE_X[0] + clamp(spot, 0.0, 1.0) * (TRACE_X[1] - TRACE_X[0]));
+  private static traceX(view: SceneView, spot: number): number {
+    const [lo, hi] = TRACE_X[view.house ?? 0];
+    return Math.round(lo + clamp(spot, 0.0, 1.0) * (hi - lo));
+  }
+
+  /** Where the plant stands (its center). */
+  private static plantX(view: SceneView): number {
+    return PLANT_X[view.house ?? 0];
+  }
+
+  private static foundX(view: SceneView): number {
+    return FOUND_X[view.house ?? 0];
+  }
+
+  // ---------- The house ----------
+
+  /**
+   * Whether the scene shows the inside of the house: while the pet sleeps in it (from the moment
+   * it has gone in, until it comes out), and while somebody looks in.
+   */
+  private indoors(view: SceneView, now: number): boolean {
+    if (!view.house || view.trip) {
+      return false;
+    }
+    const e = this.elapsed(view, now);
+    if (view.activity === "go_in") {
+      return e >= GO_IN.inside;
+    }
+    if (view.activity === "come_out") {
+      return e < COME_OUT.out;
+    }
+    return view.asleep || !!view.look_in;
+  }
+
+  /** The house from outside: the door opens while the pet goes in or comes out; inside at night, the light is on. */
+  private drawHouse(img: Image, view: SceneView, t: number, now: number): void {
+    const step = view.house!;
+    const e = this.elapsed(view, now);
+    const open = (view.activity === "go_in" && e >= GO_IN.walk - 1 && e < GO_IN.shrink + 0.4)
+      || (view.activity === "come_out" && e >= COME_OUT.out - 0.5 && e < COME_OUT.grown + 0.5);
+    const inside = view.asleep && !(view.activity === "go_in" && e < GO_IN.shrink);
+    const sprite = open ? this.dimmedSprite(`house_${step}_open`, t, false, "house")
+      : this.dimmedSprite(`house_${step}`, t, inside, "house");
+    img.paste(sprite, 0, GROUND + 1 - sprite.height);
+  }
+
+  /** The inside of the house: the room (its window shows the sky behind it) and the decorations in it. */
+  private drawRoom(img: Image, view: SceneView, t: number): void {
+    const step = view.house!;
+    img.paste(this.dimmedSprite(`room_${step}`, t, true, "house"), 0, 0);
+    (view.house_deco ?? []).slice(0, ROOM_SPOTS[step].length).forEach((item, i) => {
+      const [cx, bottom] = ROOM_SPOTS[step][i];
+      const sprite = this.dimmedSprite(item, t, true);
+      img.paste(sprite, cx - Math.floor(sprite.width / 2), bottom - sprite.height);
+    });
+  }
+
+  /** Off to bed: to the door, in through it, and inside into the bed. */
+  private goIn(pose: Pose, view: SceneView, t: number, dt: number, now: number): Pose {
+    const e = this.elapsed(view, now);
+    const door = HOUSE_DOOR[view.house!] - SPRITE / 2;
+    pose.face = "tired";
+    if (e < GO_IN.walk) {
+      if (this.moveTowards(door, THROW_SPEED, dt)) {
+        this.hop(pose, t, 3.0);
+      }
+    } else if (e < GO_IN.shrink) {
+      this.x = door;
+      this.facing = -1;
+      pose.scale = 1 - (1 - DOOR_SCALE) * (e - GO_IN.walk) / (GO_IN.shrink - GO_IN.walk);
+      this.hop(pose, t, 3.0);
+    } else if (e < GO_IN.inside) {
+      pose.hidden = true; // the door shuts behind it
+    } else if (e < GO_IN.bed) {
+      // in through the door on the left, and over to the bed
+      const bed = (this.width - SPRITE) / 2;
+      this.facing = 1;
+      this.x = -SPRITE + (bed + SPRITE) * clamp((e - GO_IN.inside) / (GO_IN.bed - GO_IN.inside - 0.4), 0.0, 1.0);
+      if (this.x < bed) {
+        this.hop(pose, t, 3.0);
+      }
+    } else {
+      this.x = (this.width - SPRITE) / 2;
+      Object.assign(pose, { body: "flat", face: "tired" });
+    }
+    this.targetX = this.x;
+    return pose;
+  }
+
+  /** Good morning: up, out of the room, out of the door, and back into the garden. */
+  private comeOut(pose: Pose, view: SceneView, t: number, dt: number, now: number): Pose {
+    const e = this.elapsed(view, now);
+    const door = HOUSE_DOOR[view.house!] - SPRITE / 2;
+    if (e < COME_OUT.up) {
+      this.x = (this.width - SPRITE) / 2;
+      Object.assign(pose, { body: "stretch", face: "yawn" });
+    } else if (e < COME_OUT.out) {
+      // out through the door on the left
+      const bed = (this.width - SPRITE) / 2;
+      this.facing = -1;
+      this.x = bed - (bed + SPRITE) * (e - COME_OUT.up) / (COME_OUT.out - COME_OUT.up);
+      this.hop(pose, t, 3.0);
+    } else if (e < COME_OUT.grown) {
+      // out of the door, growing as it comes to the front
+      this.x = door + DOOR_STEP * (e - COME_OUT.out) / (COME_OUT.grown - COME_OUT.out);
+      this.facing = 1;
+      pose.scale = DOOR_SCALE + (1 - DOOR_SCALE) * (e - COME_OUT.out) / (COME_OUT.grown - COME_OUT.out);
+      pose.face = "happy";
+      this.hop(pose, t, 3.0);
+    } else {
+      // and off into the garden
+      if (this.moveTowards((this.width - SPRITE) / 2, 8, dt)) {
+        this.hop(pose, t);
+      } else {
+        Object.assign(pose, { body: "stretch", face: "happy" });
+      }
+    }
+    this.targetX = this.x;
+    return pose;
   }
 
   /**

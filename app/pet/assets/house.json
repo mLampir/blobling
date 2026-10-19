@@ -1,0 +1,270 @@
+{
+ "frames": [
+  {
+   "filename": "house house_1 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 15,
+    "h": 13
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house house_1_open 1",
+   "frame": {
+    "x": 15,
+    "y": 0,
+    "w": 15,
+    "h": 13
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house house_1_lit 2",
+   "frame": {
+    "x": 30,
+    "y": 0,
+    "w": 15,
+    "h": 13
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house room_1 3",
+   "frame": {
+    "x": 45,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house house_2 4",
+   "frame": {
+    "x": 109,
+    "y": 0,
+    "w": 19,
+    "h": 19
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house house_2_open 5",
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 19,
+    "h": 19
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house house_2_lit 6",
+   "frame": {
+    "x": 147,
+    "y": 0,
+    "w": 19,
+    "h": 19
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house room_2 7",
+   "frame": {
+    "x": 166,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house room_2_lit 8",
+   "frame": {
+    "x": 230,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house blanket_2 9",
+   "frame": {
+    "x": 294,
+    "y": 0,
+    "w": 26,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house house_3 10",
+   "frame": {
+    "x": 320,
+    "y": 0,
+    "w": 25,
+    "h": 25
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house house_3_open 11",
+   "frame": {
+    "x": 345,
+    "y": 0,
+    "w": 25,
+    "h": 25
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house house_3_lit 12",
+   "frame": {
+    "x": 370,
+    "y": 0,
+    "w": 25,
+    "h": 25
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house room_3 13",
+   "frame": {
+    "x": 395,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house room_3_lit 14",
+   "frame": {
+    "x": 459,
+    "y": 0,
+    "w": 64,
+    "h": 64
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "house blanket_3 15",
+   "frame": {
+    "x": 523,
+    "y": 0,
+    "w": 26,
+    "h": 7
+   },
+   "duration": 1000
+  }
+ ],
+ "meta": {
+  "app": "tools/build_blob_sprites.py",
+  "image": "house.png",
+  "size": {
+   "w": 549,
+   "h": 64
+  },
+  "frameTags": [
+   {
+    "name": "house_1",
+    "from": 0,
+    "to": 0,
+    "direction": "forward"
+   },
+   {
+    "name": "house_1_open",
+    "from": 1,
+    "to": 1,
+    "direction": "forward"
+   },
+   {
+    "name": "house_1_lit",
+    "from": 2,
+    "to": 2,
+    "direction": "forward"
+   },
+   {
+    "name": "room_1",
+    "from": 3,
+    "to": 3,
+    "direction": "forward"
+   },
+   {
+    "name": "house_2",
+    "from": 4,
+    "to": 4,
+    "direction": "forward"
+   },
+   {
+    "name": "house_2_open",
+    "from": 5,
+    "to": 5,
+    "direction": "forward"
+   },
+   {
+    "name": "house_2_lit",
+    "from": 6,
+    "to": 6,
+    "direction": "forward"
+   },
+   {
+    "name": "room_2",
+    "from": 7,
+    "to": 7,
+    "direction": "forward"
+   },
+   {
+    "name": "room_2_lit",
+    "from": 8,
+    "to": 8,
+    "direction": "forward"
+   },
+   {
+    "name": "blanket_2",
+    "from": 9,
+    "to": 9,
+    "direction": "forward"
+   },
+   {
+    "name": "house_3",
+    "from": 10,
+    "to": 10,
+    "direction": "forward"
+   },
+   {
+    "name": "house_3_open",
+    "from": 11,
+    "to": 11,
+    "direction": "forward"
+   },
+   {
+    "name": "house_3_lit",
+    "from": 12,
+    "to": 12,
+    "direction": "forward"
+   },
+   {
+    "name": "room_3",
+    "from": 13,
+    "to": 13,
+    "direction": "forward"
+   },
+   {
+    "name": "room_3_lit",
+    "from": 14,
+    "to": 14,
+    "direction": "forward"
+   },
+   {
+    "name": "blanket_3",
+    "from": 15,
+    "to": 15,
+    "direction": "forward"
+   }
+  ]
+ }
+}
