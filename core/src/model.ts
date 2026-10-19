@@ -10,6 +10,7 @@
 import * as balance from "./balance";
 import * as battle from "./battle";
 import * as care from "./care";
+import * as habits from "./habits";
 import * as home from "./home";
 import * as idle from "./idle";
 import * as life from "./life";
@@ -618,6 +619,9 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
   clamp(state);
   const told = action === "unwrap" && reason === null ? state.activity_item : item;
   logEvent(state, now, action, by, { item: told, accepted: reason === null, reason });
+  if (reason === null && by !== "system") {
+    habits.record(state, action, now);
+  }
   return { accepted: reason === null, reason };
 }
 

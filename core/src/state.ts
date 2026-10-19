@@ -172,6 +172,8 @@ export interface PetState {
   idle_next: number;
   /** Trick -> points practiced alone since it was last practiced together (idle.SOLO_LIMIT). */
   solo: Record<string, number>;
+  /** When somebody fed it or played with it, over the last few days (habits.ts). */
+  habits: number[];
 }
 
 /** A state with every field at its starting value. */
@@ -221,6 +223,7 @@ export function newState(): PetState {
     seen_at: 0.0,
     idle_next: 0.0,
     solo: {},
+    habits: [],
   };
 }
 

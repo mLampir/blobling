@@ -64,7 +64,7 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
       return { api: 1, travels: pet.travels() };
 
     case "GET /api/pet/ancestors":
-      return { api: 1, ancestors: pet.ancestorList() };
+      return { api: 1, ancestors: pet.ancestorList(), album: pet.albumList() };
 
     case "POST /api/pet/settings":
       pet.rename(fields(await body()).name);
