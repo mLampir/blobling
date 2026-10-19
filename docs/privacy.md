@@ -2,7 +2,7 @@
 
 *[Deutsche Fassung](privacy.de.md)*
 
-Last updated: 15 October 2026
+Last updated: 19 October 2026
 
 This policy covers the Blobling app for Android and iOS and the pet page of
 a Blobling LED display at home.
@@ -75,7 +75,9 @@ is up to you in the phone's settings. Privacy:
 
 If you connect the app to a Blobling display (a Raspberry Pi) at home, the
 app talks to it directly over your home network, and the pet lives on the
-display. The display is your own device; nothing goes through us. The
+display. To find it, the app asks the usual names of a display in your home
+network (`blobling.local` and `raspberrypi.local`). If you choose to take the
+pet on your phone along, the app sends it to the display. The display is your own device; nothing goes through us. The
 display itself asks Open-Meteo for the weather at the place you set on it,
 and GitHub for new versions of its software. When it installs or updates its
 software, it also downloads Node.js from NodeSource.

@@ -2,7 +2,7 @@
 
 *[English version](privacy.md)*
 
-Stand: 15. Oktober 2026
+Stand: 19. Oktober 2026
 
 Diese Erklärung gilt für die Blobling-App für Android und iOS und für die
 Pet-Seite eines Blobling-LED-Displays zu Hause.
@@ -77,7 +77,10 @@ entscheidest du selbst in den Einstellungen des Handys. Datenschutz:
 
 Wenn du die App mit einem Blobling-Display (einem Raspberry Pi) zu Hause
 verbindest, spricht die App direkt über dein Heimnetz mit ihm, und das Pet
-lebt auf dem Display. Das Display ist dein eigenes Gerät; nichts läuft über
+lebt auf dem Display. Um es zu finden, fragt die App unter den üblichen Namen
+eines Displays in deinem Heimnetz nach (`blobling.local` und
+`raspberrypi.local`). Wenn du das Pet von deinem Handy mitnehmen willst,
+schickt die App es an das Display. Das Display ist dein eigenes Gerät; nichts läuft über
 uns. Das Display selbst fragt Open-Meteo nach dem Wetter an dem Ort, den du
 dort einstellst, und GitHub nach neuen Versionen seiner Software. Wenn es
 seine Software installiert oder aktualisiert, lädt es außerdem Node.js von

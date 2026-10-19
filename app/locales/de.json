@@ -45,6 +45,9 @@
     "cyclopuff": "Cyclopuff",
     "grumpcap": "Grumpcap",
     "lumoth": "Lumoth",
+    "gemperor": "Gemperor",
+    "angloop": "Angloop",
+    "purrloop": "Purrloop",
     "ember": "Glut",
     "lanternling": "Lanternling",
     "flarelet": "Flarelet",
@@ -205,6 +208,15 @@
     "evolved": "{name} {what}",
     "recall": "🏠 Heimrufen",
     "unpack": "🎒 Auspacken",
+    "replay": {
+      "watch": {
+        "one": "▶ Rauferei ansehen",
+        "other": "▶ Die {n} Raufereien ansehen"
+      },
+      "again": "Nochmal",
+      "play": "Nochmal ansehen",
+      "against": "Rauferei mit {foe} …"
+    },
     "collect": "🥚 Ei einsammeln",
     "collected": "{egg} eingesammelt – es liegt jetzt bei deinen Funden",
     "unwrap": "🎁 Geschenk auspacken",
@@ -532,7 +544,21 @@
       "place_fixed": "Fester Ort",
       "place_live": "Wandert mit",
       "display_heading": "Eigenes LED-Display",
-      "location_live": "Wetter von dort, wo du gerade bist."
+      "location_live": "Wetter von dort, wo du gerade bist.",
+      "update": "Display aktualisieren",
+      "update_version": "Version {version}.",
+      "update_available": "Version {latest} ist da.",
+      "update_running": "Wird aktualisiert … Das Display ist kurz dunkel.",
+      "update_failed": "Das letzte Update hat nicht geklappt.",
+      "update_done": "Das Display ist jetzt auf Version {version}.",
+      "display_old_title": "Das Display braucht ein Update",
+      "display_old_hint": "Diese App ist neuer als die Software auf deinem Display.",
+      "app_old_title": "Die App braucht ein Update",
+      "app_old_hint": "Dein Display ist neuer als diese App. Aktualisiere sie im App Store oder bei Google Play.",
+      "searching": "Suche das Display …",
+      "choose_pet": "Welches Pet soll auf dem Display leben?",
+      "choose_phone": "{form}, auf diesem Handy",
+      "choose_display": "{form}, schon auf dem Display"
     },
     "train": {
       "hint": "Such eine Übung aus",

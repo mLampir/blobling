@@ -29,7 +29,7 @@ const BASE: SceneView = {
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
-  ...Object.fromEntries(["sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth"].map((species) =>
+  ...Object.fromEntries(["sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth", "gemperor", "angloop", "purrloop"].map((species) =>
     [species, ["adult", species]])),
   ember_egg: ["egg", "ember"], ember_baby: ["baby", "ember"], cindlet: ["child", "ember"],
   lanternling: ["adult", "lanternling"], flarelet: ["adult", "flarelet"],
@@ -40,13 +40,16 @@ const PETS: Record<string, [string, string]> = {
 // leaves out the scenes that are only there to show another form, another line or what the lure
 // gives away, and plays the remaining scenes of an adult with that form. Of the trips it shows
 // the first area only: the later areas, their opponents and their guardians are left out.
-const SHOWN_ADULT = "cyclopuff";
+const SHOWN_ADULT = "angloop";
 const SHOWN_AREA = AREAS[0];
-const SPOILERS = ["hint", "evolve", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
+const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
   "ember_hatch", "ember_baby", "cindlet", "cindlet_hint", "cindlet_sick", "ember_evolve", "lanternling",
   "lanternling_sleep", "lanternling_trick", "flarelet", "flarelet_hat", "egg_found", "wild_shrug", "visit_night",
   "nest_ember", "stone_egg", "stone_baby", "pebblet", "pebblet_hint", "pebblet_hat", "pebblet_skip", "glimmerock",
-  "glimmerock_night", "glimmerock_shine", "bouldergrin", "bouldergrin_sad", "bouldergrin_sleep", "bouldergrin_toss", "wild_stream", "visit_stone"];
+  "glimmerock_night", "glimmerock_shine", "bouldergrin", "bouldergrin_sad", "bouldergrin_sleep", "bouldergrin_toss", "wild_stream", "visit_stone",
+  "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
+  "angloop", "angloop_night", "angloop_hungry", "angloop_hint",
+  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint"];
 const PETS_DIR = "docs/images/pets";
 const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
@@ -104,7 +107,7 @@ const SCENES: Record<string, Scene> = {
     plant: { kind: "sunflower", stage: "grown", ripe: true },
   }, NIGHT, null],
   home_young: [{
-    hat: "cap", deco: ["snailshell"], stage: "adult", species: "cyclopuff",
+    hat: "cap", deco: ["snailshell"], stage: "adult", species: "angloop",
     plant: { kind: "cherry", stage: "young", ripe: false },
   }, DAY, null],
   plant: [{
@@ -147,7 +150,7 @@ const SCENES: Record<string, Scene> = {
     }),
   }, DUSK, null],
   battle_drizzleshell: [{
-    stage: "adult", species: "cyclopuff",
+    stage: "adult", species: "angloop",
     trip: trip("forest", {
       returning: true, event: "battle", foe: "drizzleshell", outcome: "lose",
       rounds: [["charge", "bow", "ouch"], ["charge", "flip", "hold"], ["curl", "flip", "ouch"], ["charge", "bow", "ouch"]],
@@ -158,17 +161,17 @@ const SCENES: Record<string, Scene> = {
     trip: trip("meadow", { event: "battle", foe: "carrotnose", outcome: "draw", rounds: [["curl", "spin", "hit"]] }),
   }, DAY, { temp: -2, code: 73 }],
   battle_puddlin: [{
-    stage: "adult", species: "cyclopuff",
+    stage: "adult", species: "angloop",
     trip: trip("stream", { event: "battle", foe: "puddlin", outcome: "draw", rounds: [["charge", "flip", "hit"]] }),
   }, DAY, RAIN],
   battle_duskwisp: [{
-    stage: "adult", species: "cyclopuff",
+    stage: "adult", species: "angloop",
     trip: trip("mountain", { event: "battle", foe: "duskwisp", outcome: "draw", rounds: [["pounce", "bow", "dodge"]] }),
   }, DUSK, null],
   home_herb: [{
     hat: "edelweiss", deco: ["cairn", "snowman"], plant: { kind: "herb", stage: "grown", ripe: true },
   }, DAY, null],
-  home_crystal: [{ hat: "batears", deco: ["crystal", "cattail"], stage: "adult", species: "cyclopuff" }, NIGHT, null],
+  home_crystal: [{ hat: "batears", deco: ["crystal", "cattail"], stage: "adult", species: "angloop" }, NIGHT, null],
   home_boat: [{ hat: "lily", deco: ["boat", "crystal"] }, DAY, null],
   trip_stream: [{ trip: trip("stream") }, DAY, null],
   trip_cave: [{ trip: trip("cave", { event: "find", item: "crystal" }) }, DAY, RAIN],
@@ -201,14 +204,14 @@ const SCENES: Record<string, Scene> = {
   }, DAY, null],
   // a wild pet: meeting it on a trip, its visits at home, and the nest with the egg
   wild_meet: [{
-    stage: "adult", species: "cyclopuff",
+    stage: "adult", species: "angloop",
     trip: trip("meadow", {
       event: "wild", event_age: 1.0, wild: "cyclopuff", outcome: "friend",
       rounds: [["spin", true], ["flip", false], ["bow", true]],
     }),
   }, DAY, null],
   wild_friend: [{
-    stage: "adult", species: "cyclopuff", hat: "daisy",
+    stage: "adult", species: "angloop", hat: "daisy",
     trip: trip("meadow", {
       event: "wild", event_age: 9.0, wild: "cyclopuff", outcome: "friend", rounds: [["spin", true], ["bow", true]],
     }),
@@ -220,29 +223,29 @@ const SCENES: Record<string, Scene> = {
     }),
   }, DAY, RAIN],
   visit: [{
-    stage: "adult", species: "cyclopuff", mood: "happy", deco: ["flag", "windmill"],
-    visitor: { species: "cyclopuff", age: 60, left: 300 },
+    stage: "adult", species: "angloop", mood: "happy", deco: ["flag", "windmill"],
+    visitor: { species: "angloop", age: 60, left: 300 },
   }, DAY, null],
   visit_night: [{ stage: "adult", species: "flicker", visitor: { species: "lumoth", age: 1.5, left: 500 } }, NIGHT,
     null],
   nest: [{
-    stage: "adult", species: "cyclopuff", nest: "blob", deco: ["flag"],
+    stage: "adult", species: "angloop", nest: "blob", deco: ["flag"],
     plant: { kind: "berry", stage: "grown", ripe: false },
   }, DAY, null],
   nest_ember: [{ stage: "adult", species: "flarelet", nest: "ember" }, NIGHT, null],
-  collect: [{ stage: "adult", species: "cyclopuff", activity: "collect", activity_item: "egg_blob" }, DAY, null],
+  collect: [{ stage: "adult", species: "angloop", activity: "collect", activity_item: "egg_blob" }, DAY, null],
   // a friend's gift lies there until it is unwrapped
   gift: [{
-    stage: "adult", species: "cyclopuff", gift: true, deco: ["flag", "windmill"],
+    stage: "adult", species: "angloop", gift: true, deco: ["flag", "windmill"],
     plant: { kind: "berry", stage: "grown", ripe: false },
   }, DAY, null],
-  gift_nest: [{ stage: "adult", species: "cyclopuff", gift: true, nest: "blob", deco: ["lantern"] }, NIGHT, null],
-  unwrap: [{ stage: "adult", species: "cyclopuff", activity: "unwrap", activity_item: "fruit_cherry" }, DAY, null],
+  gift_nest: [{ stage: "adult", species: "angloop", gift: true, nest: "blob", deco: ["lantern"] }, NIGHT, null],
+  unwrap: [{ stage: "adult", species: "angloop", activity: "unwrap", activity_item: "fruit_cherry" }, DAY, null],
   // what it left behind while nobody was there, until somebody does something with it
   trace_ball: [{ trace: { kind: "ball", spot: 0.9, look: 0 }, deco: ["flag"] }, DAY, null],
   trace_tower: [{ trace: { kind: "tower", spot: 0.2, look: 0 }, plant: { kind: "berry", stage: "young", ripe: false } },
     DAY, null],
-  trace_drawing: [{ trace: { kind: "drawing", spot: 0.5, look: 1 }, stage: "adult", species: "cyclopuff" }, DAY, null],
+  trace_drawing: [{ trace: { kind: "drawing", spot: 0.5, look: 1 }, stage: "adult", species: "angloop" }, DAY, null],
   trace_snowman: [{ trace: { kind: "snowman", spot: 0.1, look: 0 } }, DAY, { temp: -2, code: 73 }],
   trace_night: [{ trace: { kind: "drawing", spot: 0.3, look: 0 } }, NIGHT, null],
   build: [{ activity: "build", activity_item: "tower", trace: { kind: "tower", spot: 0.4, look: 0 } }, DAY, null],
@@ -268,7 +271,7 @@ const SCENES: Record<string, Scene> = {
   flarelet_hat: [{ stage: "adult", species: "flarelet", hat: "bobble", mood: "sad" }, NIGHT, null],
   // the stone line, from a friend met at the stream on
   wild_stream: [{
-    stage: "adult", species: "cyclopuff",
+    stage: "adult", species: "angloop",
     trip: trip("stream", {
       event: "wild", event_age: 4.0, wild: "bouldergrin", outcome: "friend", rounds: [["bow", true], ["spin", true]],
     }),
@@ -282,6 +285,18 @@ const SCENES: Record<string, Scene> = {
   pebblet_hat: [{ species: "stone", hint: "bouldergrin", hat: "cap", mood: "sad" }, DUSK, null],
   pebblet_skip: [{ species: "stone", activity: "trick", activity_item: "flip:ok" }, DAY, null],
   glimmerock: [{ stage: "adult", species: "glimmerock", mood: "happy" }, DAY, null],
+  gemperor: [{ stage: "adult", species: "gemperor" }, DAY, null],
+  gemperor_night: [{ stage: "adult", species: "gemperor", hat: "cap" }, NIGHT, null],
+  gemperor_sad: [{ stage: "adult", species: "gemperor", mood: "sad" }, DAY, null],
+  gemperor_hint: [{ hint: "gemperor", mood: "happy" }, DAY, null],
+  angloop: [{ stage: "adult", species: "angloop", mood: "happy" }, DAY, null],
+  angloop_night: [{ stage: "adult", species: "angloop" }, NIGHT, null],
+  angloop_hungry: [{ stage: "adult", species: "angloop", mood: "hungry", needs: ["satiety"] }, DAY, null],
+  angloop_hint: [{ hint: "angloop" }, DAY, null],
+  purrloop: [{ stage: "adult", species: "purrloop" }, DAY, null],
+  purrloop_happy: [{ stage: "adult", species: "purrloop", mood: "happy", hat: "daisy" }, DAY, null],
+  purrloop_night: [{ stage: "adult", species: "purrloop" }, NIGHT, null],
+  purrloop_hint: [{ hint: "purrloop" }, DAY, null],
   glimmerock_night: [{ stage: "adult", species: "glimmerock", hat: "edelweiss" }, NIGHT, null],
   glimmerock_shine: [{ stage: "adult", species: "glimmerock", activity: "trick", activity_item: "spin:ok" }, DAY, null],
   bouldergrin: [{ stage: "adult", species: "bouldergrin", mood: "happy" }, DAY, null],
