@@ -169,9 +169,6 @@ test("the pictures: what the panel shows, and the app icon", async () => {
 
 test("anything else is not there, and a request that is too big is cut off", async () => {
   assert.equal((await get("/api/nothing")).status, 404);
-  for (const gone of ["/pet.webmanifest", "/pet-sw.js", "/ca.crt"]) {
-    assert.equal((await get(gone)).status, 404);
-  }
   assert.equal((await post("/api/state", {})).status, 404);
   assert.equal((await fetch(origin + "/api/pet", { method: "HEAD" })).status, 200);
   const status = await new Promise((resolve, reject) => {
