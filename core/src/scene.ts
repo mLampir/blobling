@@ -378,6 +378,7 @@ const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongu
 const STEAM_CLOUD: Bitmap = [[225, 240, 250], [".XX.", "XXXX", ".XX."]]; // Steamo's sauna steam
 const ENVELOPE: Bitmap = [[250, 240, 215], ["XXXXX", "X.X.X", "XX.XX", "XXXXX"]]; // what Parcelbeak delivers
 const TOUCHE: Bitmap = [[255, 255, 230], ["..X..", "..X..", "XX.XX", "..X..", "..X.."]];
+const RAINBOW_BURST: Bitmap[] = RAINBOW.map((color) => [color, ["XX", "XX"]]); // Prismist's rainbow, thrown at an opponent
 const FIREBALL: Bitmap = [[255, 150, 40], ["..XX..", ".XXXX.", "XXXXXX", "XXXXXX", ".XXXX."]]; // what Flarelet hurls
 const BOULDER: Bitmap = [[160, 165, 180], [".XXX.", "XXXXX", "XXXXX", ".XXX."]]; // Bouldergrin's top stone
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
@@ -1441,9 +1442,17 @@ export class PetScene {
           this.trickFx(t, "sp_filch_in", once, SMOKE, 8, 24, 12, [-12, 12], [-12, 4], 0.7);
         }
         break;
-      case "prismist": // spins faster and faster, its rainbow running, and throws the shimmer
-        Object.assign(pose, { turn: Math.cos(q * q * 8 * (2 * Math.PI)), jump: Math.sin(Math.min(1, q * 2) * Math.PI) * 4,
-          rainbow: true });
+      case "prismist": // spins up, its rainbow running, and throws it at the opponent in a burst of colors
+        if (q < 0.2) {
+          Object.assign(pose, { turn: Math.cos(q * q * 40 * (2 * Math.PI)), rainbow: true, face: "smile" });
+        } else if (q < 0.5) {
+          Object.assign(pose, { body: "stretch", rainbow: true, face: "laugh" });
+          if (q > 0.35) { // a burst in all the colors of its rainbow
+            RAINBOW_BURST.forEach((sprite, i) => {
+              this.trickFx(t, `sp_burst${i}`, once, sprite, 3, 4, 18, [14, 40], [-20, 14], 0.9);
+            });
+          }
+        }
         break;
       case "twiggle": // a whirlwind of leaves
         Object.assign(pose, { turn: Math.cos(q * 5 * (2 * Math.PI)), face: "smile" });
