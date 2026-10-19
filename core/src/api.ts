@@ -10,6 +10,23 @@
 import { RequestError } from "./model";
 import type { Pet } from "./pet";
 
+/**
+ * The version of this API. The app from the stores and the Pi are updated apart (the stores take
+ * days to review, a Pi updates itself within hours), so an app may talk to an older or a newer Pi.
+ * Every answer carries these two numbers, and the app compares them with its own (app/src/remote.ts):
+ *
+ * - API_VERSION goes up by one with every change the app may come to rely on: a new route,
+ *   action or field. An app that needs more than a Pi offers asks for the Pi to be updated.
+ * - API_OLDEST is the oldest API_VERSION an app may have and still work with this Pi. It is set
+ *   to API_VERSION when something an older app relies on is removed or changed. A Pi newer than
+ *   that asks for the app to be updated.
+ *
+ * core/test/api.test.ts compares the API with core/test/api-contract.json and says which number
+ * a change needs (CLAUDE.md, "The API between app and Pi").
+ */
+export const API_VERSION = 3;
+export const API_OLDEST = 1;
+
 /** Where the requests go. `action` and `newEgg` are the pet's own, or the Pi's, which also show it on the panel. */
 export interface PetTarget {
   pet: Pet;
@@ -38,7 +55,7 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
     case "GET /api/pet/events": {
       const asked = url.searchParams.get("limit") ?? "";
       const limit = /^\s*[+-]?\d+\s*$/.test(asked) ? Number(asked) : 20;
-      return { api: 1, events: pet.events(Math.min(100, Math.max(1, limit))) };
+      return { api: API_VERSION, events: pet.events(Math.min(100, Math.max(1, limit))) };
     }
 
     case "POST /api/pet/action": {
@@ -49,7 +66,7 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
       }
       const result = target.action(request.action as string,
         { item: request.item, by: request.by as string, requestId: id, throw: request.throw, value: request.value });
-      return { api: 1, ...result };
+      return { api: API_VERSION, ...result };
     }
 
     case "POST /api/pet/new_egg": {
@@ -60,8 +77,11 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
       return target.newEgg(request.egg ?? null);
     }
 
+    case "GET /api/pet/travels":
+      return { api: API_VERSION, travels: pet.travels() };
+
     case "GET /api/pet/ancestors":
-      return { api: 1, ancestors: pet.ancestorList() };
+      return { api: API_VERSION, ancestors: pet.ancestorList(), album: pet.albumList() };
 
     case "POST /api/pet/settings":
       pet.rename(fields(await body()).name);

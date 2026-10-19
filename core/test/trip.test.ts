@@ -5,7 +5,7 @@ import { beforeEach, test } from "node:test";
 
 import * as home from "../src/home";
 import * as model from "../src/model";
-import { STATS, toDict, type PetState } from "../src/state";
+import { STATS, toDict, type PetState, type Trip } from "../src/state";
 import * as trip from "../src/trip";
 import { BEDTIME, HOUR, act, at, grown, near, refused } from "./helpers";
 
@@ -246,4 +246,45 @@ test("no evolution on the way", () => {
   assert.deepEqual(act(pet, "evolve", start + 60), [false, "away"]);
   runUntil(start + 30 * 60);
   assert.equal(pet.stage, "child");
+});
+
+test("the travel diary keeps what happened on each trip", () => {
+  act(pet, "trip", start, { item: "meadow" });
+  const planned = pet.trip!;
+  runUntil(planned.end + 60);
+  assert.equal(pet.travels.length, 1);
+  const [travel] = pet.travels;
+  assert.deepEqual([travel.area, travel.start], ["meadow", start]);
+  assert.ok(travel.end >= planned.end && travel.end <= planned.end + 60);
+  // every find is in it, and no rounds of a scuffle
+  const found = travel.stops.flatMap((stop) => stop.item ? [stop.item] : []);
+  assert.deepEqual(found, pet.backpack);
+  for (const stop of travel.stops) {
+    assert.ok(stop.at >= start && stop.at <= travel.end);
+    assert.ok(!("rounds" in stop));
+  }
+  // called straight back home doesn't count
+  pet.backpack = [];
+  Object.assign(pet.stats, { satiety: 90, energy: 90 });
+  act(pet, "trip", travel.end + 600, { item: "meadow" });
+  act(pet, "trip", travel.end + 660, { item: "recall" });
+  runUntil(travel.end + 660 + trip.RECALL);
+  assert.equal(pet.trip, null);
+  assert.equal(pet.travels.length, 1);
+});
+
+test("the travel diary keeps the latest trips", () => {
+  const done = (n: number): Trip => ({ ...trip.plan(pet, "meadow", start + n), next: 1 });
+  for (let n = 0; n < trip.MAX_TRAVELS + 5; n++) {
+    trip.remember(pet, done(n), start + n);
+  }
+  assert.equal(pet.travels.length, trip.MAX_TRAVELS);
+  assert.equal(pet.travels.at(-1)!.start, start + trip.MAX_TRAVELS + 4);
+  // a trip saved before the diary was there has no log yet
+  const old = done(100);
+  delete old.log;
+  trip.remember(pet, old, start + 100);
+  assert.deepEqual(pet.travels.at(-1)!.stops, []);
+  // the next pet starts a diary of its own
+  assert.deepEqual(model.nextPet(pet, start + 200).travels, []);
 });

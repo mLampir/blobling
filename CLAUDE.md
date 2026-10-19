@@ -65,6 +65,23 @@ Where to look first:
   feedback after a try, not instructions before it.
 - **Ask before rebooting the Pi.**
 
+## The API between app and Pi
+
+The app from the stores and the Pi are updated apart (store review takes days,
+a Pi updates itself within hours), so an app often talks to an older or newer
+Pi. Two numbers in `core/src/api.ts` say what fits; every pet answer carries
+them, and the app shows "update the display" or "update the app" when they
+don't fit:
+
+- **`API_VERSION` + 1** with every change the app may rely on: a new route,
+  action or field of the pet's answers.
+- **`API_OLDEST` = `API_VERSION`** as well when something an older app relies
+  on is removed, renamed or changes its type.
+
+`core/test/api.test.ts` compares the API with `core/test/api-contract.json`,
+fails with the number a change needs, and once it is raised, the contract is
+written anew with `UPDATE_API_CONTRACT=1 npm test -- api`. Commit both.
+
 ## Keep the docs in step
 
 Docs are part of the change, not a follow-up:

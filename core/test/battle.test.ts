@@ -356,3 +356,17 @@ test("trips with opponents are the same after catching up", () => {
   assert.deepEqual(toDict(pet), toDict(other));
   assert.ok(pet.counters.battles >= 1);
 });
+
+test("the travel diary tells the scuffles", () => {
+  const lost = fixedFight(["charge", "bow", "ouch"], 3, "lose");
+  Object.assign(pet.stats, { satiety: 60, energy: 60, health: 60 });
+  withRules(trip.rules, { encounterChance: 1.0, fight: lost }, () => {
+    act(pet, "trip", start, { item: "meadow", value: ["snack", "ball"] });
+    runUntil(start + 3 * HOUR);
+  });
+  const stops = pet.travels.at(-1)!.stops;
+  // distracted with the ball, lost and ate the snack, lost twice more and had enough
+  assert.deepEqual(stops.map((stop) => stop.kind), ["ball", "battle", "snack", "battle", "battle", "beaten"]);
+  assert.deepEqual(stops.filter((stop) => stop.kind === "battle").map((stop) => stop.outcome), ["lose", "lose", "lose"]);
+  assert.ok(stops.every((stop) => stop.kind === "snack" || stop.kind === "beaten" || stop.foe));
+});

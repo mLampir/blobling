@@ -146,7 +146,7 @@ test("PNG files: the sprite sheets", () => {
     assert.deepEqual([image.width, image.height], [file.readUInt32BE(16), file.readUInt32BE(20)], name);
   }
   const body = decodePng(readFileSync(`${directory}/blob_body.png`));
-  assert.deepEqual([body.width, body.height], [224, 32]);
+  assert.deepEqual([body.width, body.height], [352, 32]);
   assert.deepEqual(pixel(body, 0, 0), [0, 0, 0, 0]);
   assert.equal(pixel(body, 16, 20)[3], 255);
 });

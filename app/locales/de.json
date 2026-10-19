@@ -272,14 +272,73 @@
       "save": "Speichern"
     },
     "welcome": {
-      "text": "{name} war {time} allein. In der Zeit:",
+      "text": "{name} war {time} allein und hat etwas zu erzählen:",
       "ok": "Schön"
+    },
+    "story": {
+      "when": {
+        "morning": "am Morgen",
+        "afternoon": "am Nachmittag",
+        "evening": "am Abend",
+        "night": "in der Nacht"
+      },
+      "weather": {
+        "rain": "Es hat {when} geregnet, da habe ich mich unter meinen Schirm gesetzt und den Tropfen zugehört.",
+        "rain_bare": "Es hat {when} geregnet, aber das hat mir gar nichts ausgemacht.",
+        "rain_night": "In der Nacht hat es geregnet – ich habe einfach weitergeschlafen.",
+        "snow": "Es hat {when} geschneit, und alles wurde weiß.",
+        "snow_night": "In der Nacht hat es geschneit, und danach war alles weiß."
+      },
+      "solo_ball": "Ich habe eine Weile mit meinem Ball gespielt.",
+      "solo_ball_more": "Ich habe immer wieder mit meinem Ball gespielt.",
+      "solo_tower": "Ich habe einen kleinen Turm aus Steinen gebaut.",
+      "solo_drawing": "Ich habe ein Bild in die Erde gemalt.",
+      "solo_snowman": "Es hat geschneit, da habe ich einen winzigen Schneemann gebaut.",
+      "solo_trick": "Ich habe ganz allein geübt: {trick}.",
+      "fruit": {
+        "berry": "Ich habe mir eine reife Beere gepflückt und gleich aufgegessen.",
+        "sunflower": "Ich habe an einem Sonnenblumenkern geknabbert.",
+        "cherry": "Ich habe eine Kicherkirsche gegessen und musste die ganze Zeit kichern.",
+        "herb": "Ich habe eine Heilblüte gegessen, und danach ging es mir viel besser."
+      },
+      "visit": "{pet} hat mich besucht.",
+      "gift": "{pet} hat mir ein Geschenk mitgebracht!",
+      "nest": "Wir haben zu zweit ein Nest gebaut – und jetzt liegt ein Ei darin!",
+      "wild_friend": "Ich habe {pet} meine Tricks gezeigt, und jetzt sind wir Freunde.",
+      "wild_shrug": "Ich habe {pet} meine Tricks gezeigt, aber {pet} fand sie nicht so toll.",
+      "battle_win": "{foe} wollte mit mir raufen, aber ich war stärker!",
+      "battle_lose": "{foe} hat mit mir gerauft, und diesmal habe ich verloren.",
+      "battle_draw": "{foe} und ich haben gerauft, aber keiner hat nachgegeben.",
+      "battle_ball": "{foe} ist lieber meinem Ball hinterhergelaufen, statt mit mir zu raufen.",
+      "guardian": "Ich bin an {foe} vorbeigekommen, dem Wächter des Weges!",
+      "unlock": "Jetzt kenne ich einen neuen Weg: {area}!",
+      "find": "Unterwegs habe ich etwas gefunden: {item}.",
+      "trip_home": "Mit meinem Rucksack bin ich wieder heimgekommen.",
+      "trip_tired": "Ich wurde müde und bin umgekehrt.",
+      "trip_beaten": "Ich hatte genug und bin umgekehrt.",
+      "trip_snack": "Unterwegs habe ich meinen Proviant gegessen, und dann ging es mir besser.",
+      "evolve": {
+        "hatched": "Ich bin geschlüpft! Hallo, Welt!",
+        "child": "Ich bin gewachsen – jetzt bin ich ein Kind!",
+        "adult": "Ich bin groß geworden – jetzt bin ich ein {species}!"
+      },
+      "postcard": {
+        "one": "Hallo!\n{name} war einen Tag bei mir, während das Display aus war. {did} Jetzt ist es wieder zu Hause – es hat dich vermisst!\nLiebe Grüße, deine Oma",
+        "other": "Hallo!\n{name} war {n} Tage bei mir, während das Display aus war. {did} Jetzt ist es wieder zu Hause – es hat dich vermisst!\nLiebe Grüße, deine Oma"
+      },
+      "grandma": {
+        "bake": "Wir haben zusammen Kekse gebacken.",
+        "knit": "Ich habe {name} einen kleinen Schal gestrickt.",
+        "garden": "Wir haben in meinem Garten Unkraut gezupft und Erdbeeren genascht.",
+        "tea": "Wir haben Tee getrunken und alte Fotos angeschaut."
+      }
     },
     "tabs": {
       "history": "Verlauf",
       "statistics": "Statistik",
+      "travels": "Ausflüge",
       "finds": "Fundstücke",
-      "gallery": "Ahnen",
+      "gallery": "Album",
       "more": "Mehr"
     },
     "headings": {
@@ -408,6 +467,9 @@
       "learned": "kann jetzt {trick} ⭐",
       "practiced": "{trick} geübt",
       "solo_ball": "hat allein mit dem Ball gespielt",
+      "solo_tower": "hat einen kleinen Steinturm gebaut",
+      "solo_drawing": "hat ein Bild in die Erde gemalt",
+      "solo_snowman": "hat einen winzigen Schneemann gebaut",
       "solo_trick": "hat allein {trick} geübt",
       "find": "hat etwas gefunden: {item}",
       "picked": "hat sich eine Frucht geholt: {fruit}",
@@ -454,7 +516,14 @@
       "guardians_value": "an {passed} von {all} vorbei"
     },
     "gallery": {
-      "entry": "{form} · {age} · seit {date}"
+      "entry": "{form} · {age} · seit {date}",
+      "album": "{met} von {all} Formen",
+      "missing": "Noch nicht getroffen",
+      "ancestors": "Ahnen"
+    },
+    "travels": {
+      "heading": "{area} · {day} · {time}",
+      "quiet": "ein ruhiger Spaziergang, nichts passiert"
     },
     "app": {
       "location_none": "Noch kein Ort: Dein Pet hat kein Wetter, und die Sonne richtet sich nach deiner Zeitzone.",
@@ -472,7 +541,17 @@
       "place_fixed": "Fester Ort",
       "place_live": "Wandert mit",
       "display_heading": "Eigenes LED-Display",
-      "location_live": "Wetter von dort, wo du gerade bist."
+      "location_live": "Wetter von dort, wo du gerade bist.",
+      "update": "Display aktualisieren",
+      "update_version": "Version {version}.",
+      "update_available": "Version {latest} ist da.",
+      "update_running": "Wird aktualisiert … Das Display ist kurz dunkel.",
+      "update_failed": "Das letzte Update hat nicht geklappt.",
+      "update_done": "Das Display ist jetzt auf Version {version}.",
+      "display_old_title": "Das Display braucht ein Update",
+      "display_old_hint": "Diese App ist neuer als die Software auf deinem Display.",
+      "app_old_title": "Die App braucht ein Update",
+      "app_old_hint": "Dein Display ist neuer als diese App. Aktualisiere sie im App Store oder bei Google Play."
     },
     "train": {
       "hint": "Such eine Übung aus",

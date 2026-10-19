@@ -125,3 +125,19 @@ test("the loop draws the pet, goes dark when switched off and shows the pet when
     display.stop();
   }
 });
+
+test("the preview gets the next frame as soon as it is drawn, or the last one if none comes", async () => {
+  const panel = new FakePanel();
+  const { display } = parts(tempDir(), panel);
+  const shown = display.lastFrame;
+  assert.equal(await display.nextFrame(0.05), shown); // the loop is not running: nothing new comes
+  try {
+    const next = display.nextFrame(5);
+    const drawn = panel.next();
+    display.start();
+    assert.equal(await next, await drawn);
+    assert.notEqual(await next, shown);
+  } finally {
+    display.stop();
+  }
+});

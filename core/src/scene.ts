@@ -95,6 +95,12 @@ const PICK_X = 10; // where the pet stands when it picks a fruit
 const PICK_WALK = 1.6; // how long the walk there may take
 // A friend comes to visit: it stands on the right, and the pet keeps to the left. The nest with
 // the egg the two have laid is on the right as well, and the pet doesn't stand in front of it.
+// What it left behind while nobody was there (idle.ts): somewhere in the free middle of the
+// ground, between the plant and the decorations; while it builds, it stands to the right of it
+const TRACE_X = [16, 26] as const;
+const TRACE_GAP = 18; // from the center of what it builds to its own center, so that it can be seen
+const BUILD_WALK = 2.0; // how long the walk there may take
+const FOOTPRINT: Color = [205, 215, 235];
 const VISITOR_X = 33;
 const VISIT_PET_X = 2;
 const NEST_X = 40;
@@ -198,7 +204,7 @@ const LURE_HINT: Record<string, readonly Color[]> = {
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
-const NO_UMBRELLA = ["lanternling", "grumpcap"]; // the rain can't get at its flame anyway; a toad likes the rain
+export const NO_UMBRELLA = ["lanternling", "grumpcap"]; // the rain can't get at its flame anyway; a toad likes the rain
 // Species that glow at night ([day color, night color], the day colors as in the palettes of
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals
 const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
@@ -267,6 +273,10 @@ export interface SceneView {
   nest?: string | null;
   gift?: boolean;
   plant?: { kind: string; stage: string; ripe: boolean } | null;
+  /** What it left behind while nobody was there (state.Trace). */
+  trace?: { kind: string; spot: number; look: number } | null;
+  /** It is about the time it is usually fed or played with: it waits at the edge (habits.ts). */
+  waiting?: boolean;
 }
 
 /** The weather as the weather service reports it: temperature in °C and a WMO code. */
@@ -704,8 +714,10 @@ export class PetScene {
       pose.dx = Math.trunc(t * 1.5) % 2 ? 1 : -1;
       pose.symbol = QUESTION;
     } else if (activity === "idle") {
-      const show = this.showOff(view, t);
-      if (show) {
+      const show = view.waiting ? null : this.showOff(view, t);
+      if (view.waiting) {
+        this.lookout(pose, view, t, dt);
+      } else if (show) {
         this.trick(pose, show[0], show[1], true, t);
       } else if (this.wander(view, t, dt)) {
         // slimes hop instead of walking
@@ -777,6 +789,8 @@ export class PetScene {
       pose.face = "happy"; // watches the seed
     } else if (activity === "pick") {
       this.pick(pose, view, t, dt, now);
+    } else if (activity === "build") {
+      this.build(pose, view, t, dt, now);
     } else if (activity === "train_strength") {
       this.trainStrength(pose, view, t, now);
     } else if (activity === "train_ready") {
@@ -1412,6 +1426,24 @@ export class PetScene {
     this.targetX = this.x;
   }
 
+  /** Left to itself, it builds or draws something: it hops over and gets to work, then is pleased with it. */
+  private build(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
+    const e = this.elapsed(view, now);
+    const cx = PetScene.traceX(view.trace?.spot ?? 0.5);
+    if (e < BUILD_WALK && this.moveTowards(cx + TRACE_GAP - SPRITE / 2, THROW_SPEED, dt)) {
+      this.hop(pose, t, 3.5);
+      pose.face = "happy";
+    } else if (e < ACTIVITY_SECONDS["build"] - 1) {
+      this.facing = -1;
+      pose.body = Math.trunc(t * 3) % 2 ? "squash" : "idle";
+      pose.face = "happy";
+    } else {
+      this.facing = -1;
+      this.cheer(pose, t);
+    }
+    this.targetX = this.x;
+  }
+
   /** The egg wobbles more and more wildly, cracks, a flash – and the baby is there. */
   private hatch(pose: Pose, view: SceneView, t: number, now: number): Pose {
     this.x = this.targetX = (this.width - SPRITE) / 2;
@@ -1452,6 +1484,24 @@ export class PetScene {
     return pose;
   }
 
+  /**
+   * About the time it is usually fed or played with: it goes to the nearer edge of the panel
+   * and waits there on tiptoe, looking out. With a friend or the nest there, it is the left one.
+   */
+  private lookout(pose: Pose, view: SceneView, t: number, dt: number): void {
+    const lo = 2;
+    const hi = this.width - SPRITE - 2;
+    const side = view.visitor || view.nest || this.x + SPRITE / 2 < this.width / 2 ? -1 : 1;
+    this.targetX = side < 0 ? lo : hi;
+    this.nextDecision = t + this.rng.uniform(4, 12); // when it stops waiting, it stays a moment
+    if (this.moveTowards(this.targetX, 8, dt)) {
+      this.hop(pose, t);
+      return;
+    }
+    this.facing = side;
+    pose.body = side < 0 ? "lookout_left" : "lookout_right";
+  }
+
   private wander(view: SceneView, t: number, dt: number): boolean {
     const lo = 2;
     let hi = this.width - SPRITE - 2;
@@ -1470,6 +1520,14 @@ export class PetScene {
         this.targetX = clamp(DECO_X[warm] - SNUGGLE_GAP, lo, hi);
       }
       this.nextDecision = t + this.rng.uniform(4, 12);
+    }
+    const trace = view.trace;
+    if (trace && trace.kind !== "drawing") {
+      // it doesn't settle down right in front of what it left behind, so that it can be seen
+      const cx = PetScene.traceX(trace.spot);
+      if (Math.abs(this.targetX + SPRITE / 2 - cx) < TRACE_GAP) {
+        this.targetX = clamp(cx + TRACE_GAP - SPRITE / 2, lo, hi);
+      }
     }
     const moving = this.moveTowards(this.targetX, slow ? 4 : 8, dt);
     this.x = clamp(this.x, lo, hi);
@@ -1629,6 +1687,52 @@ export class PetScene {
     if (view.gift) {
       // not dimmed either, like the egg
       this.stand(img, this.sheet("trip").image("gift"), GIFT_X);
+    }
+    const trace = view.trace;
+    if (trace && !(trace.kind === "ball" && activity === "play")) { // while it plays, the ball is in the air
+      const built = activity === "build"
+        ? clamp((this.elapsed(view, now) - BUILD_WALK) / (ACTIVITY_SECONDS["build"] - BUILD_WALK - 1), 0.0, 1.0)
+        : 1.0;
+      this.drawTrace(img, trace.kind, trace.look, PetScene.traceX(trace.spot), built);
+    }
+  }
+
+  /** Where a trace lies (its center). */
+  private static traceX(spot: number): number {
+    return Math.round(TRACE_X[0] + clamp(spot, 0.0, 1.0) * (TRACE_X[1] - TRACE_X[0]));
+  }
+
+  /**
+   * What it left behind: the ball, or what it has built, `built` 0–1 of it so far (towers and
+   * snowmen grow from the bottom up, a drawing from left to right).
+   */
+  private drawTrace(img: Image, kind: string, look: number, cx: number, built: number): void {
+    if (kind === "ball") {
+      this.stand(img, this.sheet("items").image("ball"), cx);
+      return;
+    }
+    const tag = kind === "drawing" ? `trace_drawing_${look}` : `trace_${kind}`;
+    if (!this.sheet("trip").has(tag)) {
+      return;
+    }
+    const sprite = this.dimmedSprite(tag);
+    if (built <= 0) {
+      return;
+    }
+    if (kind === "drawing") {
+      // scratched into the ground, just below the grass
+      const w = Math.ceil(sprite.width * built);
+      img.paste(sprite.crop(0, 0, w, sprite.height), cx - Math.floor(sprite.width / 2), GROUND + 3);
+      return;
+    }
+    const h = Math.ceil(sprite.height * built);
+    this.stand(img, sprite.crop(0, sprite.height - h, sprite.width, sprite.height), cx);
+    if (kind === "snowman" && built >= 1) {
+      // its footprints lead away to the right, where it went off to
+      const color = dimmed(FOOTPRINT, 0.45 + 0.55 * (1 - this.night));
+      for (let i = 0; i < 4; i++) {
+        img.point(cx + 6 + 4 * i, GROUND + 1 + (i % 2), color);
+      }
     }
   }
 

@@ -108,6 +108,21 @@ def dots(grid, pixels):
     return ["".join(r) for r in rows]
 
 
+def lookout_tags(base, row):
+    """Waiting at the edge of the panel for its usual meal or game (core/src/habits.ts): on tiptoe
+    now and then, everything above row `row` leaning a pixel towards the edge it looks out from.
+    The frames are a pixel wider on each side, so there is room for the lean."""
+    def leaning(grid, direction):
+        rows = ["." + r + "." for r in grid]
+        top = len(grid) - (len(base) - row)  # the rows below `row` stay where they are
+        shift = (lambda r: r[1:] + ".") if direction < 0 else (lambda r: "." + r[:-1])
+        return [shift(r) if i < top else r for i, r in enumerate(rows)]
+
+    tiptoe = double_rows(base, row)  # a pixel taller
+    return {f"lookout_{side}": [(leaning(base, direction), 900), (leaning(tiptoe, direction), 500)]
+            for side, direction in (("left", -1), ("right", 1))}
+
+
 # More poses come about the way they would when drawing by hand: drop rows in
 # the middle (squashed) or double them (stretched), double columns in the middle.
 def body_tags(base, row, col, flat_rows=4):
@@ -121,7 +136,7 @@ def body_tags(base, row, col, flat_rows=4):
         "flat": [(widen(drop_rows(base, *flat), col, 2), 100)],                # landing
         "sleep": [(widen(drop_rows(base, *flat), col, 2), 1600),
                   (widen(drop_rows(base, *lighter), col, 2), 1600)],
-    }
+    } | lookout_tags(base, row)
 
 
 BODY_TAGS = body_tags(BODY, 14, 13)
@@ -234,7 +249,7 @@ def species_tags(idle, row, col, up=None, idle_ms=700, sleep=None):
         "stretch": [(narrow(double_rows(up, row, 2), col), 100)],
         "flat": [(flat(base), 100)],
         "sleep": [(g, 1600) for g in sleep],
-    }
+    } | lookout_tags(base, row)
 
 
 
@@ -1702,6 +1717,16 @@ TRIP_TAGS = {
               1000)],
     "snowrock": [(["..fff..", ".fffis.", "fisssSS", "sssSSSS"], 1000)],
     "drift": [(["...fff...", ".fffffii.", "fffffiiii"], 1000)],
+    # What the pet leaves behind while nobody is there (scene.drawTrace): built from the bottom
+    # up, a drawing from left to right. A little tower of stacked stones,
+    "trace_tower": [(["...Ws..", "...sS..", "..WssS.", "..sSSS.", ".Wnnnn.", ".nnnNNN", "WsssssS", "sssSSSS"],
+                     1000)],
+    # a tiny snowman with twig arms and a carrot nose (only in real snow),
+    "trace_snowman": [(["..fff..", ".fSfSf.", ".fffoo.", "..fWW..", "t.fff.t", ".tfSft.", "ffffffW", "fffSffW",
+                        "fffffWW", ".WWWWW."], 1000)],
+    # and drawings scratched into the ground: a sun and the pet itself.
+    "trace_drawing_0": [(["D..d..D", ".ddddd.", "Dd...dD", ".ddddd.", "D..d..D"], 1000)],
+    "trace_drawing_1": [(["..ddddd..", ".d.D.D.d.", "d.......d", "d..DDD..d", ".ddddddd."], 1000)],
 }
 
 # Opponents on a trip. They look to the left, towards the pet. Mostly light, few dark pixels:
