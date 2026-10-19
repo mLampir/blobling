@@ -83,6 +83,10 @@ const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
+// Forms whose special move in a scuffle is a move of its own (`special`), not the trick it used
+const SPECIAL_MOVES = ["angloop", "gemperor", "purrloop", "lanternling", "flarelet", "roamtail", "filchfox", "rumblefluff",
+  "prismist", "twiggle", "needlenub", "quill", "drakwing", "lillypot", "steamo", "parcelbeak", "rapierre", "glimmerock",
+  "bouldergrin"];
 // The skipping stone: [start, length, height] of each hop, over the time in the air (0..1)
 const SKIPS: readonly (readonly [number, number, number])[] = [[0, 0.45, 12], [0.45, 0.3, 6], [0.75, 0.25, 3]];
 const SPIN_PAD = 8;
@@ -374,6 +378,8 @@ const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongu
 const STEAM_CLOUD: Bitmap = [[225, 240, 250], [".XX.", "XXXX", ".XX."]]; // Steamo's sauna steam
 const ENVELOPE: Bitmap = [[250, 240, 215], ["XXXXX", "X.X.X", "XX.XX", "XXXXX"]]; // what Parcelbeak delivers
 const TOUCHE: Bitmap = [[255, 255, 230], ["..X..", "..X..", "XX.XX", "..X..", "..X.."]];
+const FIREBALL: Bitmap = [[255, 150, 40], [".XX.", "XXXX", "XXXX", ".XX."]]; // what Flarelet hurls
+const BOULDER: Bitmap = [[160, 165, 180], [".XXX.", "XXXXX", "XXXXX", ".XXX."]]; // Bouldergrin's top stone
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
 const CANNONBALL: Bitmap = [[125, 125, 140], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
@@ -1348,6 +1354,157 @@ export class PetScene {
   }
 
   /**
+   * The special move of the species in a scuffle, over one round (q from 0 to 1). It builds up in
+   * the first half and strikes at q = 0.5, when `hit` sends the species' particles over.
+   */
+  private special(pose: Pose, q: number, t: number): void {
+    const towards = (d: number) => Math.round(d) * this.facing;
+    const out = Math.sin(clamp((q - 0.3) / 0.4, 0, 1) * Math.PI); // over to the opponent and back
+    const once = BATTLE_ROUND;
+    Object.assign(pose, { body: "idle", face: "laugh" });
+    switch (pose.form[1]) {
+      case "angloop": // casts its lure at the opponent, and the bulb flares up blinding bright
+        if (q < 0.42) {
+          Object.assign(pose, { body: "lure", face: "smile" });
+        } else if (q < 0.6) {
+          Object.assign(pose, { body: "stretch", dx: towards(4), white: q < 0.5, face: "eat_open" });
+        }
+        break;
+      case "gemperor": // a leap, and when it lands, crystals burst up out of the ground under the opponent
+        if (q < 0.45) {
+          Object.assign(pose, { body: q < 0.1 ? "squash" : "stretch", jump: Math.sin(q / 0.45 * Math.PI) * 16 });
+        } else if (q < 0.6) {
+          pose.body = "flat";
+          this.trickFx(t, "sp_gemperor", once, CRYSTAL, 8, SPRITE + 8, 2, [-8, 8], [-34, -16]);
+        }
+        break;
+      case "purrloop": // crouches, wiggles its back end, and pounces
+        if (q < 0.3) {
+          Object.assign(pose, { body: "squash", dx: Math.trunc(t * 14) % 2, face: "normal" });
+        } else if (q < 0.6) {
+          const f = (q - 0.3) / 0.3;
+          Object.assign(pose, { body: "stretch", dx: towards(Math.sin(f * Math.PI) * 14), jump: Math.sin(f * Math.PI) * 10 });
+        }
+        break;
+      case "lanternling": // turns its light up until it is white, and the moths come
+        if (q < 0.5) {
+          Object.assign(pose, { body: "stretch", white: Math.trunc(q * 16) % 2 === 1 && q > 0.25, face: "smile" });
+        }
+        break;
+      case "flarelet": // the flame swells, and it hurls a ball of fire
+        if (q < 0.45) {
+          Object.assign(pose, { body: Math.trunc(t * 10) % 2 ? "stretch" : "idle", jump: q * 8 });
+          this.trickFx(t, "sp_flarelet", 0.1, EMBER, 2, 0, 24, [-8, 8], [-24, -12]);
+        } else if (q < 0.6) {
+          Object.assign(pose, { body: "squash", dx: towards(3) });
+          this.trickFx(t, "sp_flarelet_ball", once, FIREBALL, 1, SPRITE / 2, 14, [40, 40], [0, 0], 0.6);
+        }
+        break;
+      case "roamtail": // dashes over and back in a cloud of dust
+      case "rumblefluff": // head down, a scrape, and it charges in
+        if (q < 0.3) {
+          Object.assign(pose, { body: "squash", face: "normal", dx: -Math.trunc(t * 8) % 2 * this.facing });
+          this.trickFx(t, "sp_scrape", 0.3, CLOD, 3, -SPRITE / 2 + 6, 2, [-22, -8], [-18, -6], 0.6);
+        } else {
+          Object.assign(pose, { body: out > 0.2 ? "stretch" : "idle", dx: towards(out * 18) });
+          if (out > 0.3) {
+            this.trickFx(t, "sp_dash", 0.08, pose.form[1] === "roamtail" ? DUST : BOLT, 2, -SPRITE / 2, 4, [-20, -6], [-10, 0], 0.5);
+          }
+        }
+        break;
+      case "filchfox": // vanishes in smoke and turns up right behind the opponent
+        if (q > 0.2 && q < 0.4) {
+          pose.hidden = true;
+        } else if (q >= 0.4 && q < 0.65) {
+          Object.assign(pose, { dx: towards(24), face: "laugh" });
+        }
+        if (q > 0.18 && q < 0.25) {
+          this.trickFx(t, "sp_filch", once, SMOKE, 12, 0, 12, [-16, 16], [-16, 4], 1.0);
+        } else if (q > 0.38 && q < 0.45) {
+          this.trickFx(t, "sp_filch_in", once, SMOKE, 8, 24, 12, [-12, 12], [-12, 4], 0.7);
+        }
+        break;
+      case "prismist": // spins faster and faster, its rainbow running, and throws the shimmer
+        Object.assign(pose, { turn: Math.cos(q * q * 8 * (2 * Math.PI)), jump: Math.sin(Math.min(1, q * 2) * Math.PI) * 4,
+          rainbow: true });
+        break;
+      case "twiggle": // a whirlwind of leaves
+        Object.assign(pose, { turn: Math.cos(q * 5 * (2 * Math.PI)), face: "smile" });
+        if (q < 0.5) {
+          this.trickFx(t, "sp_twiggle", 0.06, LEAFLET, 2, 0, 18, [-26, 26], [-20, 4], 1.0);
+        }
+        break;
+      case "needlenub": // closes into a bud, then bursts open in a shower of hearts
+        if (q < 0.45) {
+          Object.assign(pose, { body: "squash", face: "blink", bud: true, dx: Math.trunc(t * 12) % 2 });
+        } else {
+          Object.assign(pose, { body: q < 0.55 ? "stretch" : "idle", bud: false });
+          this.trickFx(t, "sp_needlenub", once, PETAL, 12, 0, 26, [-18, 18], [-22, -6], 1.0);
+        }
+        break;
+      case "quill": // fires its cannon: a bang, smoke, and it rocks back
+        if (q < 0.45) {
+          Object.assign(pose, { body: "stretch", face: "normal" });
+        } else if (q < 0.65) {
+          Object.assign(pose, { body: "squash", dx: towards(-3), face: "laugh" });
+          this.trickFx(t, "sp_quill", once, SMOKE, 8, SPRITE / 2, 14, [6, 18], [-10, 2], 0.9);
+        }
+        break;
+      case "drakwing": // flaps up and breathes fire down at the opponent
+        Object.assign(pose, { body: q < 0.4 && Math.trunc(t * 12) % 2 ? "squash" : "stretch",
+          jump: Math.sin(clamp(q / 0.8, 0, 1) * Math.PI) * 12, face: q > 0.4 ? "eat_open" : "laugh" });
+        if (q > 0.4 && q < 0.6) {
+          this.trickFx(t, "sp_drakwing", 0.06, FIRE, 2, SPRITE / 2, 14 + pose.jump, [24, 36], [6, 16], 0.6);
+        }
+        break;
+      case "lillypot": // dives into its pond and comes up with a fountain of bubbles
+        if (q < 0.4) {
+          Object.assign(pose, { body: "flat", face: "blink" });
+        } else if (q < 0.6) {
+          Object.assign(pose, { body: "stretch", jump: 4 });
+          this.trickFx(t, "sp_lillypot", 0.05, BUBBLE, 2, 0, 22, [-6, 26], [-30, -14], 0.9);
+        }
+        break;
+      case "steamo": // swells up red-hot and lets the steam out all at once
+        if (q < 0.45) {
+          Object.assign(pose, { body: Math.trunc(t * 8) % 2 ? "stretch" : "idle", face: "blink", dx: Math.trunc(t * 16) % 2 });
+          this.trickFx(t, "sp_steamo", 0.15, STEAM, 1, this.rng.uniform(-8, 8), 22, [-3, 3], [-10, -6], 0.8);
+        } else if (q < 0.6) {
+          Object.assign(pose, { body: "squash", face: "laugh" });
+        }
+        break;
+      case "parcelbeak": // reaches into its pouch again and again: a whole sack of letters
+        pose.body = Math.trunc(q * 12) % 2 && q < 0.6 ? "squash" : "idle";
+        if (q > 0.1 && q < 0.5) {
+          this.trickFx(t, "sp_parcelbeak", 0.12, ENVELOPE, 1, 6, 10, [24, 34], [-8, 4], 0.9);
+        }
+        break;
+      case "rapierre": // a flurry of lunges, too quick to follow
+        if (q < 0.6) {
+          const lunge = Math.trunc(q * 14) % 2 === 1;
+          Object.assign(pose, { body: lunge ? "stretch" : "squash", dx: towards(lunge ? 10 : 2) });
+          if (lunge) {
+            this.trickFx(t, "sp_rapierre", 0.12, TOUCHE, 1, SPRITE / 2 + 12, 20 - this.rng.uniform(0, 8), [0, 0], [0, 0], 0.25);
+          }
+        }
+        break;
+      case "glimmerock": // a spin with its crystals flashing, faster and faster
+        Object.assign(pose, { body: "shine", turn: Math.cos(q * q * 8 * (2 * Math.PI)), face: "smile" });
+        break;
+      case "bouldergrin": // throws its top stone at the opponent; a new one grows back
+        if (q < 0.3) {
+          Object.assign(pose, { body: "toss_low", jump: 2 });
+        } else if (q < 0.5) {
+          pose.body = "toss_high";
+          this.trickFx(t, "sp_bouldergrin", once, BOULDER, 1, 0, 28, [34, 34], [-10, -10], 0.7);
+        } else {
+          pose.body = q < 0.6 ? "squash" : "idle";
+        }
+        break;
+    }
+  }
+
+  /**
    * Particles of a trick of its own: `count` of them, at most once in `every` seconds per `key`
    * (once per trick: every = TRICK_SHOW). `dx` from the pet's middle (towards where it looks),
    * `dy` up from the ground; speeds as [from, to], vx towards where it looks.
@@ -1605,7 +1762,11 @@ export class PetScene {
     } else if (index < rounds.length) {
       const [move, trick, result] = rounds[index];
       const landed = battle.damageOf(result) > 0;
-      this.trick(pose, trick, q * BATTLE_ROUND, landed, t);
+      if (result === "special" && SPECIAL_MOVES.includes(pose.form[1])) {
+        this.special(pose, q, t);
+      } else {
+        this.trick(pose, trick, q * BATTLE_ROUND, landed, t);
+      }
       // the opponent's move carries it towards the pet and back to its place
       const reach = Math.sin(Math.min(1.0, q / 0.7) * Math.PI);
       x -= reach * (battle.isGuardian(name) ? GUARDIAN_REACH : FOE_REACH);
