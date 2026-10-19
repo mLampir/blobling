@@ -369,7 +369,14 @@ export interface SceneView {
   /** Somebody is looking into the house: the scene shows the inside for a moment. */
   look_in?: boolean;
   backpack?: boolean;
-  visitor?: { species: string; left: number; age: number } | null;
+  /**
+   * Another pet at home: a friend that is visiting, or the pet at the back (companion.ts) while it
+   * is out. The pet at the back may be younger (`stage`), sleeps side by side with it at night
+   * (`asleep`), and shows the tricks it knows (`tricks`) for the other one to copy.
+   */
+  visitor?: {
+    species: string; left: number; age: number; stage?: string; asleep?: boolean; tricks?: readonly string[];
+  } | null;
   nest?: string | null;
   gift?: boolean;
   /** What it found at home by itself (state.found), until it is picked up. */
@@ -543,13 +550,17 @@ interface Particle {
 type Foe = [string, number, number, boolean, number | null, number | null, string | null];
 /**
  * Another pet next to ours: species, left edge, lift, face, where it is heading (-1 left, 1 right,
- * 0 it stays), and while it plays, its body, how far it is turned and spun, and where it looks.
+ * 0 it stays), and while it plays, its body, how far it is turned and spun, and where it looks; and
+ * its stage (an adult unless it is the pet at the back).
  */
-type Guest = [string, number, number, string, number?, GuestMove?];
+type Guest = [string, number, number, string, number?, GuestMove?, string?];
 type GuestMove = { body: string; turn: number | null; rotate: number; dx: number; lookLeft: boolean };
 
-/** A game with the visiting friend: which one, how far into it (seconds), and the trick to copy. */
-type Play = { game: (typeof PLAY_GAMES)[number]; e: number; trick: string | null };
+/**
+ * A game with the visiting friend: which one, how far into it (seconds), the trick to copy, and who
+ * shows it first (the other one copies).
+ */
+type Play = { game: (typeof PLAY_GAMES)[number]; e: number; trick: string | null; lead: "pet" | "guest" };
 
 /** What the pet does in one frame: body animation, face, jump height, items. */
 interface Pose {
@@ -857,6 +868,8 @@ export class PetScene {
     if (activity === "wait" || (view.asleep && isOneOf(activity, "idle", "fall_asleep", "turn_over"))) {
       if (view.house) { // in its bed
         this.x = this.targetX = (this.width - SPRITE) / 2;
+      } else if (view.visitor) { // the pet at the back sleeps next to it
+        this.x = this.targetX = Math.min(this.x, VISIT_PET_X);
       }
       pose.body = pose.face = "sleep";
       if (activity === "fall_asleep") {
@@ -1445,11 +1458,13 @@ export class PetScene {
     }
     // the visit's own order of the games, so that the next visit can start with another one
     const came = Math.round((now - visit.age) / 10);
-    const games = PLAY_GAMES.filter((game) => game !== "copy" || view.tricks?.length);
+    const own = view.tricks ?? [];
+    // a trick only the other one knows (the pet at the back): it shows it, and ours copies it
+    const tricks = [...own, ...(visit.tricks ?? []).filter((trick) => !own.includes(trick))];
+    const games = PLAY_GAMES.filter((game) => game !== "copy" || tricks.length);
     const game = games[(came + round) % games.length];
-    const tricks = view.tricks ?? [];
     const trick = game === "copy" ? tricks[(came + round + Math.floor(e / (2 * COPY_TURN))) % tricks.length] : null;
-    return { game, e, trick };
+    return { game, e, trick, lead: trick === null || own.includes(trick) ? "pet" : "guest" };
   }
 
   /** The pet's part of the game: it stays where it is, facing its friend. */
@@ -1479,8 +1494,10 @@ export class PetScene {
       }
     } else if (game === "copy") {
       const into = e % (2 * COPY_TURN);
-      if (into < COPY_TURN) {
-        this.trick(pose, play.trick!, Math.min(into, TRICK_SHOW), true, t);
+      const mine = (into < COPY_TURN) === (play.lead === "pet");
+      if (mine) {
+        // a trick it is only copying doesn't work yet
+        this.trick(pose, play.trick!, Math.min(into % COPY_TURN, TRICK_SHOW), play.lead === "pet", t);
       } else {
         pose.face = "happy"; // watches its friend do it
       }
@@ -1507,7 +1524,7 @@ export class PetScene {
   }
 
   /** The friend's part of the game. */
-  private playGuest(species: string, play: Play, t: number): Guest {
+  private playGuest(species: string, play: Play, t: number, stage = "adult"): Guest {
     const move: GuestMove = { body: "idle", turn: null, rotate: 0, dx: 0, lookLeft: true };
     let face = "laugh";
     let lift = 0;
@@ -1526,13 +1543,13 @@ export class PetScene {
       }
     } else if (game === "copy") {
       const into = e % (2 * COPY_TURN);
-      if (into >= COPY_TURN) {
+      if ((into >= COPY_TURN) === (play.lead === "pet")) {
         // the same trick, in its own way: the scene's facing is borrowed for it, as the friend faces left
         const pose = { body: "idle", face: "happy", jump: 0, dx: 0, turn: null, rotate: 0,
-          form: ["adult", species], symbol: null } as unknown as Pose;
+          form: [stage, species], symbol: null } as unknown as Pose;
         const facing = this.facing;
         this.facing = -1;
-        this.trick(pose, play.trick!, Math.min(into - COPY_TURN, TRICK_SHOW), true, t);
+        this.trick(pose, play.trick!, Math.min(into % COPY_TURN, TRICK_SHOW), true, t);
         this.facing = facing;
         Object.assign(move, { body: pose.body, turn: pose.turn, rotate: pose.rotate, dx: pose.dx });
         [face, lift] = [pose.face, pose.jump];
@@ -1550,7 +1567,7 @@ export class PetScene {
       lift = e < PLAY_SECONDS / 2 || beat % 2 === 1 ? up * 6 : 0;
       move.body = lift > 2 ? "stretch" : lift > 0.5 ? "idle" : "squash";
     }
-    return [species, VISITOR_X, lift, face, 0, move];
+    return [species, VISITOR_X, lift, face, 0, move, stage];
   }
 
   /** The friend that is visiting at home: it hops in from the right, stays, and hops out again. */
@@ -1559,14 +1576,19 @@ export class PetScene {
     if (!visit) {
       return null;
     }
+    const stage = visit.stage ?? "adult";
     const coming = Math.min(1.0, visit.age / VISIT_WALK, Math.max(0.0, visit.left) / VISIT_WALK);
     const x = VISITOR_X + (1 - coming) * (this.width - VISITOR_X);
     if (coming < 1) {
       const heading = visit.age < VISIT_WALK ? -1 : 1;
-      return [visit.species, Math.round(x), Math.round(Math.abs(Math.sin(t * 6)) * 3), "happy", heading];
+      return [visit.species, Math.round(x), Math.round(Math.abs(Math.sin(t * 6)) * 3), "happy", heading, undefined, stage];
+    }
+    if (visit.asleep) { // the two sleep side by side
+      return [visit.species, Math.round(x), 0, "sleep", 0,
+        { body: "sleep", turn: null, rotate: 0, dx: 0, lookLeft: true }, stage];
     }
     if (this.play) {
-      return this.playGuest(visit.species, this.play, t);
+      return this.playGuest(visit.species, this.play, t, stage);
     }
     const cheerful = isOneOf(view.mood, "normal", "happy") && !view.asleep;
     if (cheerful && this.rng.random() < 0.02) {
@@ -1575,17 +1597,18 @@ export class PetScene {
       });
     }
     const hop = cheerful && Math.trunc(t) % 6 < 2 ? Math.abs(Math.sin(t * 5)) * 2 : 0;
-    return [visit.species, Math.round(x), Math.round(hop), hop ? "laugh" : Math.trunc(t) % 5 ? "smile" : "blink"];
+    return [visit.species, Math.round(x), Math.round(hop), hop ? "laugh" : Math.trunc(t) % 5 ? "smile" : "blink",
+      undefined, undefined, stage];
   }
 
   /** Another pet next to ours: a wild one on a trip, or the friend that is visiting. */
   private drawGuest(img: Image, guest: Guest, t: number): void {
-    const [species, x, hop, face, heading = 0, move] = guest;
-    const walking = heading !== 0 && this.walks("adult", species);
+    const [species, x, hop, face, heading = 0, move, stage = "adult"] = guest;
+    const walking = heading !== 0 && this.walks(stage, species);
     const [body, jump] = move ? [move.body, hop]
-      : walking ? this.stride("adult", species, t) ?? ["idle", 0] : [hop > 1.5 ? "stretch" : "idle", hop];
+      : walking ? this.stride(stage, species, t) ?? ["idle", 0] : [hop > 1.5 ? "stretch" : "idle", hop];
     const lift = Math.round(jump);
-    let [sprite] = this.pet("adult", species, body, t, face,
+    let [sprite] = this.pet(stage, species, body, t, face,
       { glow: this.night > 0.5, lookLeft: move ? move.lookLeft : walking && heading < 0,
         sky: this.skyLook });
     let px = x + (move?.dx ?? 0) - Math.floor((sprite.width - SPRITE) / 2);

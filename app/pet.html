@@ -72,6 +72,9 @@
     background: rgba(13, 18, 32, .62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font-weight: 700; font-size: 14px;
   }
   .pill svg { width: 20px; height: 20px; color: var(--energy); }
+  .hero-buttons { flex: none; display: flex; gap: 8px; }
+  .pill.second { padding: 0 6px; }
+  .pill.second img { width: 28px; height: 28px; image-rendering: pixelated; }
   .pill.wanted:not(:disabled) { box-shadow: 0 0 0 2px var(--energy); }
   .fx { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
   .fx span { position: absolute; font-size: 22px; color: var(--mood); animation: float 1s ease-out forwards; }
@@ -294,6 +297,9 @@
   dialog input:focus { outline: none; border-color: var(--accent); }
   dialog .buttons { display: flex; gap: 8px; }
   dialog .buttons .wide { flex: 1 1 0; min-width: 0; }
+  dialog .buttons.keep { margin-bottom: 8px; }
+  dialog .buttons.keep .wide { height: auto; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  dialog .buttons.keep img { width: 48px; height: 48px; image-rendering: pixelated; }
   dialog ul { margin: 0 0 16px; padding: 0; list-style: none; }
   dialog li { display: flex; padding: 6px 0; border-top: 1px solid var(--line); }
   .choice { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 4px 0; }
@@ -328,7 +334,10 @@
       <canvas class="scene" id="scene" width="64" height="64" hidden></canvas>
       <div class="hero-top">
         <div><h1 id="name">…</h1><p class="sub" id="sub"></p></div>
-        <button class="pill" id="sleep" hidden></button>
+        <div class="hero-buttons">
+          <button class="pill second" id="second" hidden><img alt=""></button>
+          <button class="pill" id="sleep" hidden></button>
+        </div>
       </div>
       <div class="fx" id="fx"></div>
     </div>
@@ -533,6 +542,19 @@
   </form>
 </dialog>
 
+<dialog id="keep">
+  <form method="dialog">
+    <p id="keep-text"></p>
+    <div class="buttons keep">
+      <button class="wide quiet" id="keep-front" value="front"><img alt=""><span></span></button>
+      <button class="wide quiet" id="keep-back" value="back"><img alt=""><span></span></button>
+    </div>
+    <div class="buttons">
+      <button type="button" class="wide quiet" id="keep-cancel" data-t="page.dialog.cancel"></button>
+    </div>
+  </form>
+</dialog>
+
 <dialog id="ask">
   <form method="dialog">
     <p id="ask-text"></p>
@@ -666,6 +688,20 @@ function ask(text, { value, ok, danger = false, address = false }) {
   }, { once: true }));
 }
 $("ask-cancel").addEventListener("click", () => $("ask").close());
+
+// Which of the two pets stays when a new egg comes: "front", "back", or null if nobody was picked
+function chooseKeep(text) {
+  const dialog = $("keep");
+  $("keep-text").textContent = text;
+  for (const [id, pet] of [["keep-front", current], ["keep-back", current.second]]) {
+    $(id).querySelector("img").src = app.icon(pet.stage, pet.species);
+    $(id).querySelector("span").textContent = pet.name;
+  }
+  dialog.returnValue = "";
+  dialog.showModal();
+  return new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue || null), { once: true }));
+}
+$("keep-cancel").addEventListener("click", () => $("keep").close());
 
 // What the phone does for a moment: a short buzz (app/src/haptics.ts) and a sound (app/src/sound.ts).
 // Each kind names its buzz ("touch", "done", "no", "joy" or "evolve"; "" for none) and its sound.
@@ -819,6 +855,14 @@ function render(s) {
   current = s;
   $("name").textContent = s.name;
   $("nav-name").textContent = s.name;
+  // the pet at the back: a tap brings it to the front
+  $("second").hidden = !s.second;
+  if (s.second) {
+    const icon = app.icon(s.second.stage, s.second.species);
+    const img = $("second").querySelector("img");
+    if (img.getAttribute("src") !== icon) img.src = icon;
+    $("second").setAttribute("aria-label", t("page.swap", { name: s.second.name }));
+  }
   document.querySelectorAll(".pet-name").forEach((e) => { e.textContent = s.name; });
   document.title = s.name;
   const egg = s.stage === "egg";
@@ -1053,14 +1097,25 @@ $("pack-go").addEventListener("click", async () => {
   }
 });
 
-// A new egg: one of those that are kept (an entry of "eggs" in the state), or a usual one to start over with
+// A new egg: one of those that are kept (an entry of "eggs" in the state), or a usual one to start over with.
+// The pet at the front goes to the back; if there is one there already, one of the two has to be picked to stay.
 async function newEgg(egg) {
   if (!current) return;
-  const sure = egg ? t("page.brood_confirm", { name: current.name, egg: egg.label })
-    : t("page.new_egg_confirm", { name: current.name });
-  if (!await ask(sure, { ok: t(egg ? "page.brood_ok" : "page.new_egg_ok"), danger: true })) return;
+  const hatched = current.stage !== "egg";
+  let keep = null;
+  if (hatched && current.second) {
+    keep = await chooseKeep(egg ? t("page.keep_brood", { egg: egg.label }) : t("page.keep_new_egg"));
+    if (!keep) return;
+  } else {
+    const key = egg ? "page.brood_confirm" : "page.new_egg_confirm";
+    const sure = t(hatched ? key : key + "_egg", { name: current.name, egg: egg && egg.label });
+    if (!await ask(sure, { ok: t(egg ? "page.brood_ok" : "page.new_egg_ok") })) return;
+  }
   try {
-    render(await api("POST", "/api/pet/new_egg", egg ? { confirm: true, egg: egg.id } : { confirm: true }));
+    const request = { confirm: true };
+    if (egg) request.egg = egg.id;
+    if (keep) request.keep = keep;
+    render(await api("POST", "/api/pet/new_egg", request));
     showView("home");
     say(t("page.new_egg_done"));
   } catch (err) {
@@ -1278,6 +1333,9 @@ function eventText(e) {
     : e.action === "battle" ? battleText(e.item)
     : e.action === "wild" ? wildText(e.item)
     : e.action === "visit" ? t("page.events.visit", { pet: T[`species.${e.item}`] || e.item })
+    : e.action === "swap" ? t("page.events.swap", { pet: e.item || "" })
+    : e.action === "copied" ? t("page.events.copied", {
+      trick: trickLabel((e.item || "").split(":")[0]), pet: (e.item || "").split(":").slice(1).join(":") })
     : e.action === "gift" ? t("page.events.gift", { pet: T[`species.${e.item}`] || e.item })
     : e.action === "nest" || e.action === "collect" ? t(`page.events.${e.action}`)
     : e.action === "unwrap" ? t("page.events.unwrap", { what: giftLabel(e.item) })
@@ -1781,6 +1839,19 @@ async function showTrick(path) {
 
 $("sleep").addEventListener("click", () => {
   if (current) act(current.asleep ? "wake" : "sleep");
+});
+
+// The pet at the back comes to the front, and the other one goes to the back
+$("second").addEventListener("click", async () => {
+  if (!current || !current.second) return;
+  try {
+    const r = await api("POST", "/api/pet/swap");
+    render(r.state);
+    say(r.accepted ? "" : r.message);
+    feel(r.accepted ? "ok" : "no");
+  } catch (err) {
+    fail(err);
+  }
 });
 
 $("unpack").addEventListener("click", async () => {

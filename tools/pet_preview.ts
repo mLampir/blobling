@@ -253,6 +253,15 @@ const SCENES: Record<string, Scene> = {
   }, new Date(2026, 9, 12, 13, 0, 7), null],
   visit_night: [{ stage: "adult", species: "flicker", visitor: { species: "lumoth", age: 1.5, left: 500 } }, NIGHT,
     null],
+  // the pet at the back (companion.ts): out to play, showing a trick, and asleep side by side at night
+  second: [{
+    stage: "child", species: "blob", mood: "happy",
+    visitor: { species: "angloop", stage: "adult", age: 47, left: 800, tricks: ["bow"] },
+  }, DAY, null],
+  second_night: [{
+    stage: "adult", species: "angloop", asleep: true,
+    visitor: { species: "blob", stage: "child", age: 60, left: 3600, asleep: true },
+  }, NIGHT, null],
   nest: [{
     stage: "adult", species: "angloop", nest: "blob", deco: ["flag"],
     plant: { kind: "berry", stage: "grown", ripe: false },

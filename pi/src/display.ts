@@ -171,10 +171,16 @@ export class Display {
     return night.enabled ? [night.start, night.end] : DEFAULT_BEDTIME;
   };
 
-  petNewEgg(egg: unknown = null): ReturnType<Pet["newEgg"]> {
-    const state = this.pet.newEgg(egg);
+  petNewEgg(egg: unknown = null, keep: unknown = null): ReturnType<Pet["newEgg"]> {
+    const state = this.pet.newEgg(egg, undefined, keep);
     this.showPet();
     return state;
+  }
+
+  petSwap(): ReturnType<Pet["swap"]> {
+    const result = this.pet.swap();
+    this.showPet();
+    return result;
   }
 
   petAction(action: string, request: ActionRequest = {}): ReturnType<Pet["action"]> {

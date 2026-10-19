@@ -311,7 +311,8 @@ test("the cloud adults follow the weather", () => {
  * A whole visit, ten frames per second, with the pet already by the friend's side. Returns the
  * game of each frame (null: none) and the frames themselves, every `keep`th.
  */
-function visit(changes: Partial<SceneView>, from = 0, seconds = 600, keep = 0): [(string | null)[], Image[]] {
+function visit(changes: Partial<SceneView>, from = 0, seconds = 600, keep = 0,
+    guest: Partial<NonNullable<SceneView["visitor"]>> = {}): [(string | null)[], Image[]] {
   const stage = scene();
   stage.x = stage.targetX = 2;
   const start = DAY.getTime() / 1000;
@@ -320,7 +321,7 @@ function visit(changes: Partial<SceneView>, from = 0, seconds = 600, keep = 0): 
   for (let i = from * 10; i < seconds * 10; i++) {
     const age = i / 10;
     const view = { ...BASE, stage: "adult", species: "angloop", mood: "happy", ...changes,
-      visitor: { species: "cyclopuff", age, left: 600 - age } };
+      visitor: { species: "cyclopuff", age, left: 600 - age, ...guest } };
     const [image] = stage.render(view, null, new Date((start + age) * 1000), 1 + age);
     games.push((stage as unknown as { play: { game: string } | null }).play?.game ?? null);
     if (keep && i % keep === 0) {
@@ -346,6 +347,20 @@ test("a friend only plays with a pet in a decent mood, that is awake and has not
   for (const changes of [{ mood: "sad" }, { mood: "hungry" }, { asleep: true }, { activity: "eat" }] as Partial<SceneView>[]) {
     assert.ok(visit(changes, 0, 120)[0].every((game) => game === null), JSON.stringify(changes));
   }
+});
+
+test("the pet at the back plays too, shows a trick ours doesn't know yet, and sleeps by its side", () => {
+  const [games] = visit({ tricks: [] }, 0, 600, 0, { species: "blob", stage: "child", tricks: ["flip"] });
+  assert.ok(games.includes("copy")); // it shows the trick, and ours copies it
+  const [night] = visit({ asleep: true }, 0, 60, 0, { stage: "adult", species: "angloop", asleep: true });
+  assert.ok(night.every((game) => game === null));
+  const alone = frames({ asleep: true }, 1, NIGHT)[0];
+  const together = frames({ asleep: true, visitor: { species: "angloop", age: 60, left: 3600, asleep: true } }, 1, NIGHT)[0];
+  let differ = 0;
+  for (let x = 33; x < 64; x++) {
+    differ += [0, 1, 2].some((c) => color(alone, x, GROUND - 4)[c] !== color(together, x, GROUND - 4)[c]) ? 1 : 0;
+  }
+  assert.ok(differ > 5, `${differ}`); // it lies there next to it
 });
 
 test("a game shows on the panel: the friend moves along, unlike while they rest", () => {

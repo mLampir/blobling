@@ -131,6 +131,33 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
   return state;
 }
 
+/**
+ * What belongs to the home, not to a pet, goes from `from` to `to`: the finds, the eggs, the
+ * decorations, the house, the plant, a gift, what it found at home, the nest and what lies
+ * around. What is still in the backpack is unpacked into the finds. Used when the pet at the back
+ * comes to the front (companion.ts).
+ */
+export function moveHome(from: PetState, to: PetState): void {
+  to.items = from.items;
+  to.eggs = from.eggs;
+  for (const found of [...from.backpack, ...(from.trip ? from.trip.found : [])]) {
+    home.addItem(to, found);
+  }
+  Object.assign(to, {
+    deco: from.deco, house: from.house, plant: from.plant, gift: from.gift, found: from.found, nest: from.nest,
+    trace: from.trace,
+  });
+  clearHome(from);
+}
+
+/** A pet without a home of its own: it lives at the back, and the home is the front pet's. Its hat stays among the finds. */
+export function clearHome(state: PetState): void {
+  Object.assign(state, {
+    items: {}, eggs: [], backpack: [], deco: [], house: 0, plant: null, gift: null, found: null, nest: null, trace: null,
+    trip: null, hat: "",
+  });
+}
+
 // ---------- Time of day ----------
 
 function minutes(hhmm: string): number {

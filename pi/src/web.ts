@@ -271,7 +271,10 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
       default: {
         // The pet's own routes (/api/pet…), the same ones the app answers on the phone
         const answer = await petRequest(
-          { pet, action: display.petAction.bind(display), newEgg: display.petNewEgg.bind(display) },
+          {
+            pet, action: display.petAction.bind(display), newEgg: display.petNewEgg.bind(display),
+            swap: display.petSwap.bind(display),
+          },
           request.method ?? "GET", url, () => readJson(request));
         if (answer === NOT_A_PET_ROUTE) {
           throw new Refusal(404);

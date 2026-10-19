@@ -4,14 +4,13 @@ import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { API_OLDEST, API_VERSION, NOT_A_PET_ROUTE, petRequest } from "../src/api";
+import { API_OLDEST, API_VERSION, NOT_A_PET_ROUTE, ownTarget, petRequest } from "../src/api";
 import { ACTIONS, RequestError } from "../src/model";
 import type { Pet } from "../src/pet";
 import { Disk } from "./helpers";
 
 function ask(pet: Pet, method: string, path: string, body?: unknown): Promise<any> {
-  return petRequest({ pet, action: pet.action.bind(pet), newEgg: pet.newEgg.bind(pet) },
-    method, new URL(path, "http://pet"), async () => body ?? null);
+  return petRequest(ownTarget(pet), method, new URL(path, "http://pet"), async () => body ?? null);
 }
 
 test("the pet is described, acted on, renamed and started over", async () => {
@@ -44,6 +43,8 @@ test("an invalid request throws the key of its text, and other paths are not the
     ["/api/pet/action", { action: "pet", id: 5 }, "invalid_id"],
     ["/api/pet/new_egg", {}, "confirm"],
     ["/api/pet/new_egg", null, "confirm"],
+    ["/api/pet/new_egg", { confirm: true, keep: "both" }, "invalid_value"],
+    ["/api/pet/swap", {}, "no_second"],
     ["/api/pet/settings", { name: "  " }, "name_length"],
   ];
   for (const [path, body, key] of cases) {

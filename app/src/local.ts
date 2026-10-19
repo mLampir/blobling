@@ -9,7 +9,7 @@
  * (notify.ts).
  */
 
-import { NOT_A_PET_ROUTE, petRequest } from "../../core/src/api";
+import { NOT_A_PET_ROUTE, ownTarget, petRequest } from "../../core/src/api";
 import type { I18n } from "../../core/src/i18n";
 import { RequestError } from "../../core/src/model";
 import { MAX_NAME, Pet, readSave } from "../../core/src/pet";
@@ -92,8 +92,7 @@ export class LocalPet {
       // then a new egg, as LocalPet.open would start with
     }
     const pet = new Pet({ t: i18n.t, saved, location: savedLocation() });
-    return petRequest({ pet, action: pet.action.bind(pet), newEgg: pet.newEgg.bind(pet) },
-      "GET", new URL("/api/pet", "http://app"), async () => null);
+    return petRequest(ownTarget(pet), "GET", new URL("/api/pet", "http://app"), async () => null);
   }
 
   /** While the app shows a display's pet: the save `file` becomes the pet the phone keeps (store.ts, takeInSave). */
@@ -107,9 +106,7 @@ export class LocalPet {
   async request(method: string, path: string, body?: unknown): Promise<unknown> {
     let answer: unknown;
     try {
-      answer = await petRequest(
-        { pet: this.pet, action: this.pet.action.bind(this.pet), newEgg: this.pet.newEgg.bind(this.pet) },
-        method, new URL(path, "http://app"), async () => body ?? null);
+      answer = await petRequest(ownTarget(this.pet), method, new URL(path, "http://app"), async () => body ?? null);
     } catch (error) {
       if (error instanceof RequestError) {
         throw new Error(this.i18n.t(`error.${error.message}`, { max: MAX_NAME }));

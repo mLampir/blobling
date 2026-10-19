@@ -30,7 +30,8 @@
     "unknown_language": "Unbekannte Sprache.",
     "invalid_location": "Bitte einen Breitengrad von -90 bis 90 und einen Längengrad von -180 bis 180 eingeben.",
     "no_update": "Gerade gibt es kein Update zu installieren.",
-    "not_a_save": "Das ist kein Spielstand eines Pets."
+    "not_a_save": "Das ist kein Spielstand eines Pets.",
+    "no_second": "Es gibt kein zweites Pet."
   },
   "stages": {
     "egg": "Ei",
@@ -265,9 +266,14 @@
     "name_prompt": "Es ist geschlüpft! Wie soll es heißen?",
     "new_egg": "🥚 Mit einem normalen Ei neu anfangen",
     "new_egg_ok": "Neu anfangen",
-    "new_egg_confirm": "Wirklich neu anfangen? {name} zieht in die Ahnengalerie um, und ein normales Ei fängt bei null an. Deine Funde bleiben.",
+    "new_egg_confirm": "Mit einem normalen Ei neu anfangen? {name} bleibt zu Hause und geht nach hinten. Deine Funde bleiben.",
     "brood_ok": "Ausbrüten",
-    "brood_confirm": "{egg} wirklich ausbrüten? {name} zieht in die Ahnengalerie um. Deine Funde bleiben.",
+    "brood_confirm_egg": "Lieber {egg} ausbrüten?",
+    "new_egg_confirm_egg": "Lieber mit einem normalen Ei neu anfangen?",
+    "brood_confirm": "{egg} ausbrüten? {name} bleibt zu Hause und geht nach hinten. Deine Funde bleiben.",
+    "keep_brood": "{egg} ausbrüten? Nur zwei Pets passen in dein Zuhause – wer bleibt dabei? Das andere zieht in die Ahnengalerie.",
+    "keep_new_egg": "Mit einem normalen Ei neu anfangen? Nur zwei Pets passen in dein Zuhause – wer bleibt dabei? Das andere zieht in die Ahnengalerie.",
+    "swap": "{name} nach vorne holen",
     "new_egg_done": "Ein neues Ei liegt bereit 🥚",
     "things": {
       "meal": "Mahlzeit",
@@ -554,6 +560,8 @@
       "trip_beaten": "hatte genug und ist umgekehrt",
       "guardian": "ist am Wächter vorbeigekommen: {foe} 🏆",
       "unlock": "kennt jetzt einen neuen Weg: {area} 🗺",
+      "swap": "ist nach vorne gekommen – {pet} ist jetzt hinten",
+      "copied": "hat sich {trick} bei {pet} abgeschaut",
       "house_1": "hat sich eine Hütte gebaut 🏠",
       "house_2": "hat aus der Hütte ein Häuschen gemacht 🏠",
       "house_3": "hat aus dem Häuschen ein richtiges Haus gemacht 🏠"

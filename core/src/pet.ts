@@ -12,6 +12,7 @@
 import { API_OLDEST, API_VERSION } from "./api";
 import * as battle from "./battle";
 import * as care from "./care";
+import * as companion from "./companion";
 import * as food from "./food";
 import * as habits from "./habits";
 import * as home from "./home";
@@ -59,13 +60,16 @@ export interface SaveFile {
   ancestors: Ancestor[];
   /** The album: every form (life.FORMS) one of the pets has been. Older files have none. */
   album?: string[];
+  /** The pet at the back (companion.ts), if there is one. Older files have none. */
+  second?: PetState | null;
 }
 
-/** A pet as it was saved: the pet itself, its ancestors and the album. */
+/** A pet as it was saved: the pet itself, its ancestors, the album and the pet at the back. */
 export interface Saved {
   state: PetState;
   ancestors: Ancestor[];
   album?: string[];
+  second?: PetState | null;
 }
 
 /** The pet, its ancestors and the album from what was saved. Throws if it cannot be read. */
@@ -81,7 +85,11 @@ export function readSave(data: unknown): Saved {
     throw new Error("no pet in the save file");
   }
   const album = Array.isArray(file.album) ? file.album.filter((form) => life.FORMS.includes(form)) : [];
-  return { state: fromDict(file.pet as unknown as Record<string, unknown>), ancestors: [...(file.ancestors ?? [])], album };
+  const second = file.second !== null && typeof file.second === "object"
+    ? fromDict(file.second as unknown as Record<string, unknown>) : null;
+  return {
+    state: fromDict(file.pet as unknown as Record<string, unknown>), ancestors: [...(file.ancestors ?? [])], album, second,
+  };
 }
 
 /** The weather as the weather service reports it: temperature in °C and a WMO code. */
@@ -115,8 +123,13 @@ export interface ActionRequest extends Omit<model.ActionOptions, "weather" | "te
   now?: number;
 }
 
+/** Which of the two stays when a new egg comes and there are two pets already. */
+export const KEEP = ["front", "back"] as const;
+
 export class Pet {
   state: PetState;
+  /** The pet at the back (companion.ts), or null. */
+  second: PetState | null = null;
   ancestors: Ancestor[];
   /** The forms met so far (see albumList); the current pet's are added on every save. */
   album: string[] = [];
@@ -141,7 +154,11 @@ export class Pet {
     if (options.saved) {
       this.state = options.saved.state;
       this.ancestors = options.saved.ancestors;
+      this.second = options.saved.second ?? null;
       model.reform(this.state, this.clock());
+      if (this.second) {
+        model.reform(this.second, this.clock());
+      }
       this.album = startAlbum(options.saved);
     } else {
       this.state = model.newPet(this.clock(), this.t("pet.default_name"));
@@ -215,10 +232,10 @@ export class Pet {
       trip: tripView(s, now), hat: s.hat, ...decoView(s),
       look_in: s.house > 0 && now < s.look_in_until && !s.asleep,
       backpack: s.backpack.length > 0,
-      // a friend that is visiting right now, and the egg in the nest (its line)
+      // a friend that is visiting right now, or the pet at the back that is out; and the egg in the nest (its line)
       visitor: s.friend && wild.visiting(s, now) && !s.trip
         ? { species: s.friend.species, left: s.friend.until! - now, age: now - s.friend.until! + wild.VISIT_SECONDS }
-        : null,
+        : this.secondView(now),
       nest: s.nest ? s.nest.line : null,
       gift: !!s.gift,
       found: s.found,
@@ -277,30 +294,106 @@ export class Pet {
   }
 
   /**
-   * Start a new egg; the current pet moves to the ancestors' gallery. `egg`: which of the eggs
-   * that are kept to brood (its "id" in the state for the app), or null to start over with a
-   * usual one. The finds stay (model.nextPet).
+   * Start a new egg at the front. `egg`: which of the eggs that are kept to brood (its "id" in the
+   * state for the app), or null to start over with a usual one. The finds stay (model.nextPet).
+   *
+   * The pet that was at the front goes to the back (companion.ts). If there is a pet at the back
+   * already, `keep` says which of the two stays at the back: "back" (the one that is there; the
+   * default) or "front"; the other moves to the ancestors' gallery. An egg that hasn't hatched
+   * goes nowhere (nextPet keeps a rare one among the eggs).
    * Throws a RequestError (a key from the "error" texts) if there is no such egg.
    */
-  newEgg(egg: unknown = null, now = this.clock()) {
+  newEgg(egg: unknown = null, now = this.clock(), keep: unknown = "back") {
+    if (keep === null || keep === undefined) {
+      keep = "back";
+    }
+    if (!KEEP.includes(keep as (typeof KEEP)[number])) {
+      throw new model.RequestError("invalid_value");
+    }
     this.advance(now);
     const s = this.state;
     const successor = model.nextPet(s, now, this.t("pet.default_name"), egg);
     this.collect();
     if (s.stage !== "egg") {
-      this.ancestors.push({
-        name: s.name, species: s.species, stage: s.stage,
-        born_at: Math.round(s.born_at), until: Math.round(now),
-        age_days: Math.max(0, Math.floor((now - s.born_at) / 86400)),
-        counters: { ...s.counters }, tricks: care.learned(s), hat: s.hat,
-      });
-      this.ancestors.splice(0, Math.max(0, this.ancestors.length - MAX_ANCESTORS));
+      if (this.second && keep === "back") {
+        this.archive(s, now);
+      } else {
+        if (this.second) {
+          this.archive(this.second, now);
+        }
+        this.second = s;
+        this.toBack(s, now);
+      }
     }
     this.state = successor;
     this.state.seen_at = now;
     model.logEvent(this.state, now, "new_egg", "app");
     this.write(now);
     return this.describe(now);
+  }
+
+  /**
+   * The pet at the back comes to the front, and the one at the front goes to the back, with the
+   * home and all that belongs to it (model.moveHome). Not while the pet at the front is away or
+   * still an egg. Returns like action(); throws a RequestError if there is no pet at the back.
+   */
+  swap(now = this.clock()) {
+    this.advance(now);
+    const front = this.state;
+    const back = this.second;
+    if (!back) {
+      throw new model.RequestError("no_second");
+    }
+    const reason = this.swapRefusal();
+    if (reason) {
+      return { accepted: false, reason, message: this.t(`pet.rejected.${reason}`, { name: front.name }), state: this.describe(now) };
+    }
+    model.moveHome(front, back);
+    Object.assign(back, { seen_at: now, weather_seen: front.weather_seen, updated_at: now, idle_next: 0.0 });
+    this.toBack(front, now);
+    this.state = back;
+    this.second = front;
+    model.logEvent(back, now, "swap", "app", { item: front.name });
+    this.write(now);
+    return { accepted: true, reason: null, message: null, state: this.describe(now) };
+  }
+
+  /** Why the two can't swap places right now, or null. */
+  private swapRefusal(): string | null {
+    const s = this.state;
+    return s.trip ? "away" : s.stage === "egg" ? "egg" : null;
+  }
+
+  /** A pet goes to the back: its home stays at the front, and it is no longer busy with anything. */
+  private toBack(state: PetState, now: number): void {
+    model.clearHome(state);
+    companion.rest(state, now);
+  }
+
+  /** A pet moves to the ancestors' gallery. */
+  private archive(state: PetState, now: number): void {
+    this.ancestors.push({
+      name: state.name, species: state.species, stage: state.stage,
+      born_at: Math.round(state.born_at), until: Math.round(now),
+      age_days: Math.max(0, Math.floor((now - state.born_at) / 86400)),
+      counters: { ...state.counters }, tricks: care.learned(state), hat: state.hat,
+    });
+    this.ancestors.splice(0, Math.max(0, this.ancestors.length - MAX_ANCESTORS));
+  }
+
+  /** The pet at the back, for the scene, while it is out; null while it isn't. */
+  private secondView(now: number): SceneView["visitor"] {
+    const back = this.second;
+    const how = back ? companion.out(this.state, now, false) : null;
+    // with a house, the two sleep inside it, and the scene shows the one at the front in its bed
+    if (!back || !how || (how === "asleep" && this.state.house > 0)) {
+      return null;
+    }
+    const [start, end] = how === "asleep" ? [this.state.sleep_since, now + 3600] : companion.outWindow(now);
+    return {
+      species: back.species, stage: back.stage, asleep: how === "asleep", tricks: care.learned(back),
+      left: end - now, age: now - start,
+    };
   }
 
   /** The ancestors, the last one first. */
@@ -342,17 +435,19 @@ export class Pet {
     this.write(this.clock());
   }
 
-  /** What is saved: the pet, its ancestors and the album, as the save file has them. */
+  /** What is saved: the pet, its ancestors, the album and the pet at the back, as the save file has them. */
   toSave(): SaveFile {
     this.collect();
     return {
       version: VERSION, pet: toDict(this.state), ancestors: structuredClone(this.ancestors), album: [...this.album],
+      second: this.second ? toDict(this.second) : null,
     };
   }
 
   /** Takes a pet that was saved (see readSave) in place of this one, ancestors and all. */
   replace(saved: Saved): void {
     this.state = saved.state;
+    this.second = saved.second ?? null;
     this.ancestors = saved.ancestors;
     this.album = startAlbum(saved);
     this.requestIds.clear();
@@ -361,11 +456,13 @@ export class Pet {
 
   // ---------- internal ----------
 
-  /** Adds the forms the current pet has been to the album. */
+  /** Adds the forms the two pets have been to the album. */
   private collect(): void {
-    for (const form of life.formsOf(this.state.stage, this.state.species)) {
-      if (!this.album.includes(form)) {
-        this.album.push(form);
+    for (const pet of [this.state, this.second]) {
+      for (const form of pet ? life.formsOf(pet.stage, pet.species) : []) {
+        if (!this.album.includes(form)) {
+          this.album.push(form);
+        }
       }
     }
   }
@@ -384,7 +481,34 @@ export class Pet {
         s.stage_since = now;
       }
     }
+    const back = this.second;
+    if (back && now > s.updated_at && now - s.updated_at <= model.MAX_CATCH_UP) {
+      // the two play together every time the pet at the back has been out by day
+      for (let end = companion.nextOutEnd(s.updated_at); end <= now; end = companion.nextOutEnd(end)) {
+        model.advance(s, end, this.bedtime(), this.weather(), this.temperature(), this.location);
+        companion.rest(back, end);
+        this.playedTogether(end);
+      }
+    }
     model.advance(s, now, this.bedtime(), this.weather(), this.temperature(), this.location);
+    if (back) {
+      companion.rest(back, now);
+    }
+  }
+
+  /** The pet at the back has just gone in again (at `end`): if the two could play, they did. */
+  private playedTogether(end: number): void {
+    const front = this.state;
+    const back = this.second!;
+    const at = end - 1;
+    if (companion.out(front, at, !!front.friend && wild.visiting(front, at)) !== "awake"
+        || !companion.canPlay(front, model.moodOf(front))) {
+      return;
+    }
+    for (const [who, trick] of companion.together(front, back)) {
+      model.logEvent(who === "front" ? front : back, end, "copied", "self",
+        { item: `${trick}:${(who === "front" ? back : front).name}` });
+    }
   }
 
   private describe(now: number) {
@@ -480,6 +604,14 @@ export class Pet {
       } : null,
       // What happened while nobody was there, told as a little story (story.tell), or null
       welcome: story.tell(s, now, t),
+      // The pet at the back (companion.ts): who it is, whether it is out, and why it can't come to the front
+      second: this.second ? {
+        name: this.second.name, species: this.second.species, stage: this.second.stage,
+        species_label: t(`species.${this.second.species}`), stage_label: t(`stages.${this.second.stage}`),
+        age_days: Math.max(0, Math.floor((now - this.second.born_at) / 86400)),
+        out: companion.out(s, now, !!s.friend && wild.visiting(s, now)) !== null,
+        swap: this.swapRefusal(),
+      } : null,
     };
   }
 
