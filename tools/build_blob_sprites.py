@@ -1306,18 +1306,18 @@ RUMBLEFLUFF = [
     "............oohffoo.............",
     "...........ohhhhfffo............",
     "..........ohhhhhhfffoooo........",
-    ".......ooohhhhhhhffhhhfwoo......",
-    ".....oohffhhhhhhhfhhhhhyyyy.....",
-    "....ohyyyyfhhhhhffhhhhyyYYyy....",
-    "....oyyYYyyfhhhfhfhhhhyYfFYyy...",
-    "...oyyYhhYyffffffffohhfffFFYy...",
+    ".......ooohhhhhhhffhhhhho.......",
+    ".....oohffhhhhhhhfhhhhhhow......",
+    "....ohyyyyfhhhhhffhhhhfyyyy.....",
+    "....oyyYYyyfhhhfhfhhhhyyYYyy....",
+    "...oyyYhhYyffffffffohhyYfFYyy...",
     "...oyYhhfffffffbffbboffffFFYy...",
-    "...oyYfdffoblhlbbbbbdofdfFYyyo..",
-    "....yyYfdfobllbbbbbbdodfyYyyFo..",
-    "..oofyyYyfobbbbbbbbbyyffYyFFFFo.",
-    "..offffyYfobbbbbbbbbdYyffYyFFFo.",
-    ".offffyYffobbbbbbbbbdoYyyYFFFFo.",
-    ".offfffYfffobbbbbbbdoffffFFFFo..",
+    "...oyYfdffoblhlbbbbbdofdfFFYyo..",
+    "....yyYfdfobllbbbbbbdodffFYyyo..",
+    "..oofyyYyfobbbbbbbbbdoffyYyyFFo.",
+    "..offffyYfobbbbbbbbbdoffYyFFFYo.",
+    ".offffyYffobbbbbbbbbdofffYyFFyo.",
+    ".offfffYfffobbbbbbbdoffffYFYyo..",
     ".oFFFFFFFFFollllllldoFFFFFFFFo..",
     "..oFFFFFFFFolllllllddoFFFFFFFo..",
     "..oFFFFFFFFFoddddddoFFFFFFFFFo..",
@@ -1331,7 +1331,7 @@ RUMBLEFLUFF = [
 ]
 RUMBLEFLUFF_FACE_TOP = face_top(RUMBLEFLUFF, 11)  # the eyes under its brow
 RUMBLEFLUFF_FACE_SHIFT = -1  # its bigger horn makes the row wider on the right than the head
-RUMBLEFLUFF_TAGS = species_tags([RUMBLEFLUFF, dots(RUMBLEFLUFF, {(23, 4): "h"})], 20, 16)  # the spark flickers
+RUMBLEFLUFF_TAGS = species_tags([RUMBLEFLUFF, dots(RUMBLEFLUFF, {(25, 5): "."})], 20, 16)  # the spark flickers
 # It walks, heavily, as a ram does
 RUMBLEFLUFF_TAGS["walk"] = walk_tags(RUMBLEFLUFF, 20, range(6, 15), range(18, 28), 23, ms=(240, 140))
 
