@@ -106,6 +106,18 @@ const VISIT_PET_X = 2;
 const NEST_X = 40;
 const GIFT_X = 53; // what a friend has brought lies here, in front of the decorations, until it is unwrapped
 const VISIT_WALK = 3.0; // seconds it takes to hop in and out
+// While the friend is there, the two play now and then: a game, a rest standing together, the next
+// game. Only while the pet is in a decent mood, awake and has nothing else to do; otherwise the
+// friend just waits by its side. Which game comes when follows from when the friend came.
+const PLAY_GAMES = ["catch", "copy", "bounce"] as const;
+const PLAY_SECONDS = 24; // one game
+const PLAY_REST = 16; // in between, and before the first one
+const CATCH_HOLD = 0.6; // the ball rests on the catcher's head before it goes back
+const CATCH_FLIGHT = 1.2;
+const CATCH_HIGH = 12; // how much higher than its head the ball flies
+const COPY_TURN = TRICK_SHOW + 0.8; // the pet shows a trick, then the friend does it too
+const BOUNCE_BEAT = 0.6; // one hop
+const NOTE: Bitmap = [[255, 220, 120], ["..XX", "..X.", "..X.", "XXX.", "XX.."]];
 const HAT_SINK = 2; // a hat sits this many rows into the head
 // Trip: grass, soil, what stands along the path (null = nothing) and what passes by behind it, per area
 const TRAVEL: Record<string, readonly [Color, Color, readonly (string | null)[], string]> = {
@@ -460,8 +472,15 @@ interface Particle {
 
 /** An opponent: name, left edge, lift, turned away, hearts left, how often the pet can still be knocked over, look. */
 type Foe = [string, number, number, boolean, number | null, number | null, string | null];
-/** Another pet next to ours: species, left edge, lift, face, where it is heading (-1 left, 1 right, 0 it stays). */
-type Guest = [string, number, number, string, number?];
+/**
+ * Another pet next to ours: species, left edge, lift, face, where it is heading (-1 left, 1 right,
+ * 0 it stays), and while it plays, its body, how far it is turned and spun, and where it looks.
+ */
+type Guest = [string, number, number, string, number?, GuestMove?];
+type GuestMove = { body: string; turn: number | null; rotate: number; dx: number; lookLeft: boolean };
+
+/** A game with the visiting friend: which one, how far into it (seconds), and the trick to copy. */
+type Play = { game: (typeof PLAY_GAMES)[number]; e: number; trick: string | null };
 
 /** What the pet does in one frame: body animation, face, jump height, items. */
 interface Pose {
@@ -536,6 +555,8 @@ export class PetScene {
   private arriveFor: number | null = null;
   private readonly foeCache = new Map<string, Image>();
   private roundFor: string | null = null; // effects of a round in a scuffle only once
+  private play: Play | null = null; // the game with the visiting friend in this frame
+  private noteAt = 0; // the beat the last note of a game went up on
   private readonly clouds: [number, number, boolean][];
   private readonly stars: [number, number, number][];
 
@@ -690,6 +711,7 @@ export class PetScene {
       egg: null, eggT: t, item: view.activity_item, propAt: null, thrown: null,
       activity, pack: false, found: null, foe: null, wild: null,
     };
+    this.play = null;
     if (activity === "hatch") {
       return this.hatch(pose, view, t, now);
     }
@@ -736,8 +758,11 @@ export class PetScene {
       pose.dx = Math.trunc(t * 1.5) % 2 ? 1 : -1;
       pose.symbol = QUESTION;
     } else if (activity === "idle") {
-      const show = view.waiting ? null : this.showOff(view, t);
-      if (view.waiting) {
+      const play = this.play = this.playing(view, now);
+      const show = view.waiting || play ? null : this.showOff(view, t);
+      if (play) {
+        this.playAlong(pose, play, t);
+      } else if (view.waiting) {
         this.lookout(pose, view, t, dt);
       } else if (show) {
         this.trick(pose, show[0], show[1], true, t);
@@ -750,8 +775,8 @@ export class PetScene {
       if (mood === "tired" && Math.trunc(t) % 9 === 0) {
         pose.face = "yawn";
       }
-      pose.umbrella = !show && sky.precipitation(sky.codeOf(weather)) !== null;
-      if (view.cold && !show) {
+      pose.umbrella = !show && !play && sky.precipitation(sky.codeOf(weather)) !== null;
+      if (view.cold && !show && !play) {
         // it shivers
         pose.dx = Math.trunc(t * 8) % 2;
       }
@@ -1286,6 +1311,131 @@ export class PetScene {
     pose.wild = [trip.wild!, Math.round(x), Math.round(lift), face, heading];
   }
 
+  /**
+   * The game with the visiting friend going on right now, or null: during a rest, while the friend
+   * is still coming or about to leave, and while the pet isn't up to it or isn't next to it yet.
+   */
+  private playing(view: SceneView, now: number): Play | null {
+    const visit = view.visitor;
+    if (!visit || view.asleep || !isOneOf(view.mood, "normal", "happy") || Math.abs(this.x - VISIT_PET_X) > 0.5) {
+      return null;
+    }
+    const since = visit.age - VISIT_WALK;
+    const round = Math.floor(since / (PLAY_REST + PLAY_SECONDS));
+    const e = since - round * (PLAY_REST + PLAY_SECONDS) - PLAY_REST;
+    if (since < 0 || e < 0 || visit.left - VISIT_WALK < PLAY_SECONDS - e) {
+      return null; // a game is only started if there is time to finish it
+    }
+    // the visit's own order of the games, so that the next visit can start with another one
+    const came = Math.round((now - visit.age) / 10);
+    const games = PLAY_GAMES.filter((game) => game !== "copy" || view.tricks?.length);
+    const game = games[(came + round) % games.length];
+    const tricks = view.tricks ?? [];
+    const trick = game === "copy" ? tricks[(came + round + Math.floor(e / (2 * COPY_TURN))) % tricks.length] : null;
+    return { game, e, trick };
+  }
+
+  /** The pet's part of the game: it stays where it is, facing its friend. */
+  private playAlong(pose: Pose, play: Play, t: number): void {
+    this.facing = 1;
+    const { game, e } = play;
+    if (game === "catch") {
+      const turn = CATCH_HOLD + CATCH_FLIGHT;
+      const throws = Math.floor(e / turn);
+      const f = (e - throws * turn - CATCH_HOLD) / CATCH_FLIGHT; // < 0: somebody holds the ball
+      const petThrows = throws % 2 === 0;
+      const onHead = GROUND - this.petTop + 1;
+      const [from, to] = petThrows ? [this.x, VISITOR_X] : [VISITOR_X, this.x];
+      const ballX = (at: number) => Math.round(at + SPRITE / 2 - 2);
+      if (f < 0) {
+        pose.thrown = ["ball", ballX(from), onHead - 3];
+      } else {
+        pose.thrown = ["ball", ballX(from + (to - from) * f), Math.round(onHead + 4 * f * (1 - f) * CATCH_HIGH)];
+      }
+      const has = (f < 0) === petThrows; // the ball is on its head, or it has just thrown it
+      if (has && f < 0) {
+        Object.assign(pose, { body: "squash", face: "happy" });
+      } else if (!has && f > 0.75) {
+        Object.assign(pose, { body: "stretch", face: "eat_open", jump: 2 }); // catches it
+      } else {
+        Object.assign(pose, { body: f >= 0 && f < 0.15 ? "stretch" : "idle", face: "laugh" });
+      }
+    } else if (game === "copy") {
+      const into = e % (2 * COPY_TURN);
+      if (into < COPY_TURN) {
+        this.trick(pose, play.trick!, Math.min(into, TRICK_SHOW), true, t);
+      } else {
+        pose.face = "happy"; // watches its friend do it
+      }
+      this.facing = 1;
+      if (into >= 2 * COPY_TURN - 0.8) {
+        this.cheer(pose, t);
+      }
+    } else {
+      // hops in step, then taking turns, and a note goes up on every other beat
+      const beat = Math.floor(e / BOUNCE_BEAT);
+      const lift = Math.sin(((e % BOUNCE_BEAT) / BOUNCE_BEAT) * Math.PI);
+      const mine = e < PLAY_SECONDS / 2 || beat % 2 === 0;
+      pose.jump = mine ? lift * 6 : 0;
+      pose.body = pose.jump > 2 ? "stretch" : pose.jump > 0.5 ? "idle" : "squash";
+      pose.face = "laugh";
+      if (beat % 2 === 0 && beat !== this.noteAt) {
+        this.noteAt = beat;
+        this.particles.push({
+          sprite: NOTE, x: VISITOR_X - 4 + this.rng.uniform(-3, 3), y: GROUND - 26, vx: this.rng.uniform(-3, 3), vy: -6,
+          life: 1.4,
+        });
+      }
+    }
+  }
+
+  /** The friend's part of the game. */
+  private playGuest(species: string, play: Play, t: number): Guest {
+    const move: GuestMove = { body: "idle", turn: null, rotate: 0, dx: 0, lookLeft: true };
+    let face = "laugh";
+    let lift = 0;
+    const { game, e } = play;
+    if (game === "catch") {
+      const turn = CATCH_HOLD + CATCH_FLIGHT;
+      const throws = Math.floor(e / turn);
+      const f = (e - throws * turn - CATCH_HOLD) / CATCH_FLIGHT;
+      const has = (f < 0) === (throws % 2 === 1);
+      if (has && f < 0) {
+        [move.body, face] = ["squash", "happy"];
+      } else if (!has && f > 0.75) {
+        [move.body, face, lift] = ["stretch", "eat_open", 2];
+      } else if (f >= 0 && f < 0.15) {
+        move.body = "stretch";
+      }
+    } else if (game === "copy") {
+      const into = e % (2 * COPY_TURN);
+      if (into >= COPY_TURN) {
+        // the same trick, in its own way: the scene's facing is borrowed for it, as the friend faces left
+        const pose = { body: "idle", face: "happy", jump: 0, dx: 0, turn: null, rotate: 0,
+          form: ["adult", species], symbol: null } as unknown as Pose;
+        const facing = this.facing;
+        this.facing = -1;
+        this.trick(pose, play.trick!, Math.min(into - COPY_TURN, TRICK_SHOW), true, t);
+        this.facing = facing;
+        Object.assign(move, { body: pose.body, turn: pose.turn, rotate: pose.rotate, dx: pose.dx });
+        [face, lift] = [pose.face, pose.jump];
+        if (into >= 2 * COPY_TURN - 0.8 && this.rng.random() < 0.15) {
+          this.particles.push({
+            sprite: HEART, x: VISITOR_X - 2, y: GROUND - 22, vx: this.rng.uniform(-3, 3), vy: -8, life: 1.5,
+          });
+        }
+      } else {
+        face = "happy"; // watches
+      }
+    } else {
+      const beat = Math.floor(e / BOUNCE_BEAT);
+      const up = Math.sin(((e % BOUNCE_BEAT) / BOUNCE_BEAT) * Math.PI);
+      lift = e < PLAY_SECONDS / 2 || beat % 2 === 1 ? up * 6 : 0;
+      move.body = lift > 2 ? "stretch" : lift > 0.5 ? "idle" : "squash";
+    }
+    return [species, VISITOR_X, lift, face, 0, move];
+  }
+
   /** The friend that is visiting at home: it hops in from the right, stays, and hops out again. */
   private visitor(view: SceneView, t: number): Guest | null {
     const visit = view.visitor;
@@ -1297,6 +1447,9 @@ export class PetScene {
     if (coming < 1) {
       const heading = visit.age < VISIT_WALK ? -1 : 1;
       return [visit.species, Math.round(x), Math.round(Math.abs(Math.sin(t * 6)) * 3), "happy", heading];
+    }
+    if (this.play) {
+      return this.playGuest(visit.species, this.play, t);
     }
     const cheerful = isOneOf(view.mood, "normal", "happy") && !view.asleep;
     if (cheerful && this.rng.random() < 0.02) {
@@ -1310,13 +1463,24 @@ export class PetScene {
 
   /** Another pet next to ours: a wild one on a trip, or the friend that is visiting. */
   private drawGuest(img: Image, guest: Guest, t: number): void {
-    const [species, x, hop, face, heading = 0] = guest;
+    const [species, x, hop, face, heading = 0, move] = guest;
     const walking = heading !== 0 && this.walks("adult", species);
-    const [body, jump] = walking ? this.stride("adult", species, t) ?? ["idle", 0] : [hop > 1.5 ? "stretch" : "idle", hop];
+    const [body, jump] = move ? [move.body, hop]
+      : walking ? this.stride("adult", species, t) ?? ["idle", 0] : [hop > 1.5 ? "stretch" : "idle", hop];
     const lift = Math.round(jump);
-    const [sprite] = this.pet("adult", species, body, t, face,
-      { glow: this.night > 0.5, lookLeft: walking && heading < 0 });
-    img.paste(sprite, x - Math.floor((sprite.width - SPRITE) / 2), GROUND - SPRITE - lift);
+    let [sprite] = this.pet("adult", species, body, t, face,
+      { glow: this.night > 0.5, lookLeft: move ? move.lookLeft : walking && heading < 0 });
+    let px = x + (move?.dx ?? 0) - Math.floor((sprite.width - SPRITE) / 2);
+    let py = GROUND - SPRITE - lift;
+    if (move?.turn !== null && move?.turn !== undefined) {
+      sprite = turned(sprite, move.turn);
+    }
+    if (move?.rotate) {
+      sprite = spun(sprite, move.rotate);
+      px -= SPIN_PAD;
+      py -= SPIN_PAD;
+    }
+    img.paste(sprite, px, py);
   }
 
   /** Left edge of an opponent standing in the pet's way. */
