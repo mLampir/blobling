@@ -469,7 +469,11 @@
       "update_available": "Version {latest} ist da.",
       "update_running": "Wird aktualisiert … Das Display ist kurz dunkel.",
       "update_failed": "Das letzte Update hat nicht geklappt.",
-      "update_done": "Das Display ist jetzt auf Version {version}."
+      "update_done": "Das Display ist jetzt auf Version {version}.",
+      "display_old_title": "Das Display braucht ein Update",
+      "display_old_hint": "Diese App ist neuer als die Software auf deinem Display.",
+      "app_old_title": "Die App braucht ein Update",
+      "app_old_hint": "Dein Display ist neuer als diese App. Aktualisiere sie im App Store oder bei Google Play."
     },
     "train": {
       "hint": "Such eine Übung aus",

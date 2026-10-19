@@ -64,6 +64,18 @@ test("a newer release is found and installed through the update unit", async () 
   assert.equal(await updates.start(), false);
 });
 
+test("the button looks again, so a release that came out since the last look is installed at once", async () => {
+  let tag = "v1.0.0";
+  const request = (async () => ({ ok: true, status: 200,
+    url: `https://github.com/someone/blobling/releases/tag/${tag}` })) as unknown as typeof fetch;
+  const updates = new Updates(release("v1.0.0"), request, systemctl("inactive"));
+  await updates.check();
+  assert.equal(updates.state().available, false);
+  tag = "v1.1.0";
+  assert.equal(await updates.start(), true);
+  assert.equal(updates.state().latest, "v1.1.0");
+});
+
 test("up to date, no release yet, or GitHub out of reach: nothing to install", async () => {
   const same = new Updates(release("v1.1.0"), github("https://github.com/someone/blobling/releases/tag/v1.1.0"),
     systemctl("inactive"));
