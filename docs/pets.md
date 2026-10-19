@@ -144,6 +144,9 @@ into its new form the first time it is loaded after it:
 | ![Grumpcap](images/pets/grumpcap.png) Grumpcap, a grumpy toad under a toadstool | Angloop |
 | ![Flicker](images/pets/flicker.png) Flicker, a candle of melted slime | Angloop |
 
+The album has no slot for them, unless one of the pets has been one: then it
+keeps its place there.
+
 </details>
 
 ## Rare eggs
