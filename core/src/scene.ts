@@ -371,6 +371,7 @@ const CRYSTAL: Bitmap = [[190, 150, 255], [".X", "XX", "XX"]]; // a shard of Gem
 const PAW: Bitmap = [[255, 130, 170], [".X.X.", "X...X", "..X..", ".XXX."]]; // Purrloop's paw prints
 const MOTH: Bitmap = [[235, 220, 190], ["X.X", ".X."]]; // moths drawn to Lanternling's light
 const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongue of Flarelet's flame
+const STEAM_CLOUD: Bitmap = [[225, 240, 250], [".XX.", "XXXX", ".XX."]]; // Steamo's sauna steam
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
 const CANNONBALL: Bitmap = [[125, 125, 140], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
@@ -1283,7 +1284,7 @@ export class PetScene {
       Object.assign(pose, { body: Math.sin(p * 4 * (2 * Math.PI)) > 0 ? "stretch" : "squash",
         dx: Math.round(Math.sin(p * 2 * (2 * Math.PI)) * 2), face: "blink" });
       if (p > 0.1 && p < 0.9) {
-        this.trickFx(t, "sauna", 0.2, STEAM, 1, this.rng.uniform(-8, 8), 22, [-3, 3], [-14, -8], 1.2);
+        this.trickFx(t, "sauna", 0.12, STEAM_CLOUD, 1, this.rng.uniform(-10, 10), 20, [-4, 4], [-14, -8], 1.4);
       }
     } else if (animation === "deliver") {
       // the bow, and a letter flies out of its pouch at the bottom
@@ -1889,7 +1890,7 @@ export class PetScene {
         sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: MOTH, flarelet: FLAME_TONGUE,
         glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: CRYSTAL, angloop: LURE_GLOW, purrloop: PAW,
         roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER, twiggle: LEAFLET, needlenub: LOVE,
-        drakwing: FIRE, quill: CANNONBALL, steamo: STEAM, lillypot: BUBBLE, rapierre: SLASH, parcelbeak: LETTER,
+        drakwing: FIRE, quill: CANNONBALL, steamo: STEAM_CLOUD, lillypot: BUBBLE, rapierre: SLASH, parcelbeak: LETTER,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;
       for (let i = 0; i < 10; i++) {
         this.particles.push({
