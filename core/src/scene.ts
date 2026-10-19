@@ -1191,10 +1191,10 @@ export class PetScene {
         this.trickFx(t, "flare_tongue", 0.25, FLAME_TONGUE, 1, 0, 26 + up * 9, [-4, 4], [-26, -18], 0.7);
       }
     } else if (animation === "chase") {
-      // runs round a small circle, turning to look after its tail all the time
+      // hops round a small circle, turning round and round after its tail, faster than in the spin
       const turn = p * 2 * (2 * Math.PI);
-      Object.assign(pose, { dx: Math.round(Math.sin(turn) * 6), jump: Math.abs(Math.sin(turn * 2)) * 3, face: "laugh" });
-      this.facing = Math.cos(turn) > 0 ? -1 : 1;
+      Object.assign(pose, { dx: Math.round(Math.sin(turn) * 7), jump: Math.abs(Math.sin(turn * 2)) * 4,
+        turn: Math.cos(p * 5 * (2 * Math.PI)), face: "laugh" });
     } else if (animation === "vanish") {
       // a puff of smoke, gone, and it is back a few steps further on with a grin
       const gone = p > 0.3 && p < 0.6;
