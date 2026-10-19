@@ -1462,12 +1462,13 @@ export class PetScene {
           }
         }
         break;
-      case "needlenub": // closes into a bud, then bursts open in a shower of hearts
-        if (q < 0.45) {
-          Object.assign(pose, { body: "squash", face: "blink", bud: true, dx: Math.trunc(t * 12) % 2 });
-        } else {
-          Object.assign(pose, { body: q < 0.55 ? "stretch" : "idle", bud: false });
-          this.trickFx(t, "sp_needlenub", once, PETAL, 12, 0, 26, [-18, 18], [-22, -6], 1.0);
+      case "needlenub": // hurries over to give the opponent a big, prickly hug
+        if (q < 0.25) {
+          Object.assign(pose, { body: "stretch", face: "happy", bud: false });
+        } else if (q < 0.7) {
+          const there = clamp((q - 0.25) / 0.15, 0, 1) * (1 - clamp((q - 0.6) / 0.1, 0, 1));
+          Object.assign(pose, { body: q > 0.4 && q < 0.6 ? "squash" : "stretch", dx: towards(there * 14),
+            jump: q < 0.4 ? Math.abs(Math.sin(q * 6 * Math.PI)) * 3 : 0, face: q > 0.4 ? "blink" : "happy", bud: false });
         }
         break;
       case "quill": // fires its cannon: a bang, smoke, and it rocks back
