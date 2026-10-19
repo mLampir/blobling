@@ -1,0 +1,147 @@
+/**
+ * What the pet eats from the bag: fruits of the plant's kinds and food from trips.
+ *
+ * Apart from the meal, which is always there, nothing to eat comes out of thin air: a fruit is a
+ * friend's gift, something the pet found at home or a find from a trip, and food from trips is
+ * one kind per area (trip.FINDS). All of it is kept in small numbers (home.MAX_FOOD), so finding
+ * out what a pet likes takes trying things with what there is.
+ *
+ * Every form has one favorite, which cheers it up a lot, and one thing it won't eat. A fruit
+ * works like one from the plant. Food from trips fills it up a little and leaves a boost that
+ * waits until it is used, such as one more heart on the next trip. A boost doesn't add up: while
+ * one is waiting, the same food is refused.
+ */
+
+import * as care from "./care";
+import * as home from "./home";
+import * as life from "./life";
+import type { PetState } from "./state";
+
+// Food from trips: the boost it leaves until it is used
+// - heart: the next trip starts with one more heart (trip.begin)
+// - trick: the next trick practiced together counts double (model)
+// - train: the next exercise counts double (model)
+// - finder: on the next trip it finds something at every stop where nothing else happens
+// - fresh: the next trip doesn't tire it or make it hungry, and finds as much as the first of the day
+export const FOODS: Record<string, string> = {
+  honeycomb: "heart",
+  hazelnut: "trick",
+  watercress: "train",
+  glowberry: "finder",
+  pinenut: "fresh",
+};
+export const FRUITS = Object.keys(home.PLANTS).map((kind) => `fruit_${kind}`);
+export const EDIBLE = [...FRUITS, ...Object.keys(FOODS)];
+export const SATIETY = 10; // food from trips
+export const FRUIT_MOOD = 5;
+export const FAVORITE_MOOD = 20;
+// Grams: the honeycomb is the sweet one
+export const WEIGHT: Record<string, number> = { honeycomb: 2.5 };
+export const FRUIT_WEIGHT = 0.5;
+
+// Form (or line, as baby and child): its favorite and what it won't eat. A baby can't go on trips
+// yet, so a line likes and dislikes fruits.
+export const TASTES: Record<string, readonly [string, string]> = {
+  blob: ["fruit_berry", "fruit_herb"],
+  ember: ["fruit_sunflower", "fruit_berry"],
+  stone: ["fruit_cherry", "fruit_sunflower"],
+  fox: ["fruit_berry", "fruit_cherry"],
+  angloop: ["glowberry", "pinenut"],
+  gemperor: ["honeycomb", "fruit_herb"],
+  purrloop: ["fruit_cherry", "watercress"],
+  lanternling: ["honeycomb", "watercress"],
+  flarelet: ["fruit_sunflower", "watercress"],
+  glimmerock: ["glowberry", "fruit_cherry"],
+  bouldergrin: ["hazelnut", "fruit_berry"],
+  roamtail: ["pinenut", "honeycomb"],
+  filchfox: ["honeycomb", "fruit_herb"],
+  cloud: ["fruit_cherry", "fruit_sunflower"],
+  rumblefluff: ["hazelnut", "glowberry"],
+  prismist: ["glowberry", "pinenut"],
+  // the old slime forms, which live on as wild pets
+  sneezle: ["fruit_herb", "pinenut"],
+  flicker: ["honeycomb", "watercress"],
+  cyclopuff: ["watercress", "glowberry"],
+  grumpcap: ["watercress", "honeycomb"],
+  lumoth: ["glowberry", "hazelnut"],
+};
+
+export function isFood(item: string): boolean {
+  return item in FOODS;
+}
+
+export function edible(item: string): boolean {
+  return EDIBLE.includes(item);
+}
+
+function tastes(state: PetState): readonly [string, string] {
+  return TASTES[state.species] ?? TASTES[life.lineOf(state.species)] ?? TASTES.blob;
+}
+
+export function favorite(state: PetState): string {
+  return tastes(state)[0];
+}
+
+export function disliked(state: PetState): string {
+  return tastes(state)[1];
+}
+
+/** What it is known to like and dislike: only once it has been tried, for this form. */
+export function known(state: PetState): { favorite: string | null; disliked: string | null } {
+  const c = state.counters;
+  return {
+    favorite: c[`favorite_${state.species}`] ? favorite(state) : null,
+    disliked: c[`disliked_${state.species}`] ? disliked(state) : null,
+  };
+}
+
+/** Give it something from the bag. Returns null, or why not. */
+export function give(state: PetState, item: string): string | null {
+  if (state.asleep) {
+    return "asleep";
+  }
+  if (!state.items[item]) {
+    return "no_item";
+  }
+  if (item === disliked(state)) {
+    state.counters[`disliked_${state.species}`] = 1; // from now on the app shows it
+    return "dislikes";
+  }
+  const boost = FOODS[item];
+  if (boost && state.boosts.includes(boost)) {
+    return "boost_waiting";
+  }
+  home.takeItem(state, item);
+  if (boost) {
+    state.boosts.push(boost);
+    state.stats.satiety += SATIETY;
+  } else {
+    home.eat(state, item.slice("fruit_".length));
+    state.stats.mood += FRUIT_MOOD;
+  }
+  care.addWeight(state, WEIGHT[item] ?? (boost ? 0 : FRUIT_WEIGHT));
+  if (item === favorite(state)) {
+    state.stats.mood += FAVORITE_MOOD;
+    state.counters[`favorite_${state.species}`] = 1;
+  }
+  return null;
+}
+
+/** Is this boost waiting? */
+export function waiting(state: PetState, boost: string): boolean {
+  return state.boosts.includes(boost);
+}
+
+/** Use the boost up. Returns whether it was waiting. */
+export function use(state: PetState, boost: string): boolean {
+  if (!waiting(state, boost)) {
+    return false;
+  }
+  state.boosts = state.boosts.filter((b) => b !== boost);
+  return true;
+}
+
+/** What a find does besides being there (for the app). */
+export function effects(item: string): string[] {
+  return isFood(item) ? [FOODS[item]] : [];
+}

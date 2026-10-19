@@ -238,14 +238,12 @@ test("a seed is only brought while there is room for it", () => {
   }
 });
 
-test("unwrapping: a fruit is eaten straight away, a seed is kept", () => {
+test("unwrapping: it goes into the bag", () => {
   const now = start + 60;
   pet.gift = "fruit_herb";
-  pet.sick = true;
-  pet.stats.health = 40;
   assert.deepEqual(model.availableActions(pet, now).unwrap, true);
   assert.deepEqual(act(pet, "unwrap", now), [true, null]);
-  assert.deepEqual([pet.gift, pet.sick, pet.stats.health], [null, false, 70]);
+  assert.deepEqual([pet.gift, pet.items.fruit_herb], [null, 1]);
   assert.deepEqual([pet.activity, pet.activity_item], ["unwrap", "fruit_herb"]);
   assert.deepEqual([pet.events.at(-1)!.action, pet.events.at(-1)!.item], ["unwrap", "fruit_herb"]);
   assert.deepEqual(act(pet, "unwrap", now + 60), [false, "no_gift"]);

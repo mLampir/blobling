@@ -1,9 +1,10 @@
-/** Finds from trips and what they do at home: seeds and the plant, decorations, hats, eggs, warmth. */
+/** Finds from trips and what they do at home: seeds and the plant, food, decorations, hats, eggs, warmth. */
 
 import * as life from "./life";
+import type { Random } from "./random";
 import type { PetState, Stat } from "./state";
 
-export type ItemKind = "seed" | "deco" | "hat" | "egg";
+export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg";
 
 // Name: kind
 export const ITEMS: Record<string, ItemKind> = {
@@ -11,6 +12,15 @@ export const ITEMS: Record<string, ItemKind> = {
   seed_sunflower: "seed",
   seed_cherry: "seed",
   seed_herb: "seed",
+  fruit_berry: "fruit",
+  fruit_sunflower: "fruit",
+  fruit_cherry: "fruit",
+  fruit_herb: "fruit",
+  honeycomb: "food",
+  hazelnut: "food",
+  watercress: "food",
+  glowberry: "food",
+  pinenut: "food",
   flag: "deco",
   windmill: "deco",
   lantern: "deco",
@@ -36,6 +46,7 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_cloud: "egg",
 };
 export const MAX_SEEDS = 9; // per kind; decorations and hats exist only once
+export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
 export const MAX_EGGS = 9; // this many are kept
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus
 // what a pet has passed on to it (wild.ts), until it is brooded (model.nextPet).
@@ -81,7 +92,8 @@ export function canAdd(state: PetState, item: string): boolean {
   if (kindOf(item) === "egg") {
     return state.eggs.length < MAX_EGGS;
   }
-  return (state.items[item] ?? 0) < (kindOf(item) === "seed" ? MAX_SEEDS : 1);
+  const most = kindOf(item) === "seed" ? MAX_SEEDS : kindOf(item) === "food" || kindOf(item) === "fruit" ? MAX_FOOD : 1;
+  return (state.items[item] ?? 0) < most;
 }
 
 export function addItem(state: PetState, item: string): void {
@@ -183,6 +195,25 @@ export function eatFruit(state: PetState): string {
     state.plant = null;
   }
   return plant.kind;
+}
+
+// ---------- Small things: a friend's gift, what the pet finds at home ----------
+
+export const SEED_CHANCE = 0.15; // how often a small thing is a seed rather than a fruit
+
+/** A small thing: "fruit_<plant>", or now and then "seed_<plant>" if there is room for it. */
+export function smallThing(state: PetState, rng: Random): string {
+  const kind = rng.choice(Object.keys(PLANTS));
+  return rng.random() < SEED_CHANCE && canAdd(state, `seed_${kind}`) ? `seed_${kind}` : `fruit_${kind}`;
+}
+
+/** Take a small thing: it goes into the bag, and a fruit that doesn't fit any more is eaten. */
+export function receive(state: PetState, thing: string): void {
+  if (canAdd(state, thing)) {
+    addItem(state, thing);
+  } else if (thing.startsWith("fruit_")) {
+    eat(state, thing.slice("fruit_".length));
+  }
 }
 
 // ---------- Warmth ----------

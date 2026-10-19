@@ -1,5 +1,5 @@
 /**
- * Weight, bond, snacks, the mini-game "Left or right?" and tricks.
+ * Weight, bond, the mini-game "Left or right?" and tricks.
  *
  * All kept small on purpose so the basic game stays simple.
  */
@@ -14,7 +14,7 @@ export const IDEAL_WEIGHT: Record<Stage, number> = { egg: 20.0, baby: 20.0, chil
 export const HEAVY = 1.3; // 30 % over the ideal: too heavy → tires faster, and it shows
 export const LIGHT = 0.8; // 20 % under the ideal: too light → gets sick more easily
 // Weight drifts back to the ideal by itself (half the difference per day).
-// Meals, snacks and exercise push it back and forth; only lots of snacks make a
+// Meals, sweet things and exercise push it back and forth; only lots of honeycomb makes a
 // pet too heavy, and only going hungry makes it too light. A round of play
 // (or the guessing game, or training) burns off a meal's worth twice, so a
 // heavy pet slims down again within a day or two of playing and trips.
@@ -80,26 +80,6 @@ export function moodFactor(state: PetState): number {
 /** 0–5 hearts for the app. */
 export function bondLevel(state: PetState): number {
   return Math.min(5, Math.floor(state.bond / 20));
-}
-
-// ---------- Snacks ----------
-
-// Name: [satiety, mood, weight, health]
-export const SNACKS: Record<string, readonly [number, number, number, number]> = {
-  cookie: [5, 15, 2.5, 0],
-  icecream: [5, 20, 3.0, 0],
-  fruit: [10, 8, 0.5, 3],
-};
-export const FAVORITE: Record<string, string> = {
-  blob: "icecream", sneezle: "fruit", flicker: "cookie", cyclopuff: "icecream", grumpcap: "fruit",
-  lumoth: "cookie", ember: "cookie", lanternling: "icecream", flarelet: "fruit", stone: "fruit",
-  glimmerock: "icecream", bouldergrin: "cookie", gemperor: "fruit", angloop: "icecream", purrloop: "cookie",
-  fox: "fruit", roamtail: "fruit", filchfox: "cookie", cloud: "icecream", rumblefluff: "cookie", prismist: "icecream",
-};
-export const FAVORITE_BONUS = 1.5;
-
-export function favorite(state: PetState): string {
-  return FAVORITE[state.species] ?? "icecream";
 }
 
 // ---------- Mini-game ----------

@@ -2493,6 +2493,8 @@ ITEMS = {
     "medicine": [".hhh.", ".hhh.", "RRRRR", "RRhRR", "RhhhR", "RRhRR", "QQQQQ"],  # thrown from the app
     "sponge": ["L.....L.", ".L.YYYYY", "YYYYOYYY", "YOYYYYOY", "YYYOYYYY", "OOOOOOOO"],  # the app's, for cleaning
     "baton": ["......Y.", ".....YYY", "....h.Y.", "...h....", "..h.....", ".nn.....", "nn......"],  # the app's, for tricks
+    # the app's: the bag with what there is to eat and plant
+    "bag": ["..n..n..", "...nn...", "..KKKK..", ".KKKKKj.", "KKKKKKKj", "KKKKKKjj", "KKKKKjjj", ".jjjjjj."],
 }
 
 # ---------------------------------------------------------------- Trips and finds
@@ -2600,6 +2602,12 @@ TRIP_TAGS = {
     "fruit_cherry": [(["..G..", ".G.G.", "rr.rr", "rR.rR"], 1000)],
     "fruit_sunflower": [([".yy.", "yOOy", "yOOy", ".yy."], 1000)],
     "fruit_herb": [([".w.", "wyw", ".w.", ".g."], 1000)],
+    # Food from trips, one per area (core/src/food.ts): given by hand, held up when it is found
+    "honeycomb": [([".YYYY.", "YyYyYY", "YYyYyY", "YyYyYY", ".YYYY.", "..y..."], 1000)],
+    "hazelnut": [(["..l..", "dDdDd", ".ttt.", "ttttT", "ttttT", ".tTT."], 1000)],
+    "watercress": [(["l.l.l", "glglg", ".ggg.", "..g..", "..G.."], 1000)],
+    "glowberry": [(["..g..", ".cgc.", "cfccf", "cCcCC", ".cC.."], 1000)],
+    "pinenut": [(["..g..", ".tTt.", "tTtTt", ".tTt.", "tTtTt", ".tTt.", "..T.."], 1000)],
     # Plant: sprout, young plant, then per kind without and with a ripe fruit
     "sprout": [(["l...l", "gl.lg", ".ggg.", "..g..", "..G.."], 1000)],
     "young": [(["..lgl..", ".lgggl.", "lggGggl", ".ggGgg.", "..gGg..", "...G...", "..gGg..", "...G..."], 1000)],

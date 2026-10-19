@@ -93,6 +93,8 @@ export interface Trip {
   hearts: number;
   pack: string[];
   guardian: string | null;
+  /** What it ate before setting off and still has in it on the way (food.ts). */
+  boosts?: string[];
   /** What has happened so far, for the travel diary (missing in trips saved before it). */
   log?: TravelStop[];
 }
@@ -194,6 +196,10 @@ export interface PetState {
   nest: Egg | null;
   /** What a friend has left behind (wild.giftFrom), until it is unwrapped. */
   gift: string | null;
+  /** What it found at home by itself (idle.ts), until somebody picks it up. */
+  found: string | null;
+  /** What found food has left in it, until it is used up (food.BOOSTS). */
+  boosts: string[];
   hat: string;
   /** Decorations set out, at most home.MAX_DECO. */
   deco: string[];
@@ -257,6 +263,8 @@ export function newState(): PetState {
     friend: null,
     nest: null,
     gift: null,
+    found: null,
+    boosts: [],
     hat: "",
     deco: [],
     plant: null,

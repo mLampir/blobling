@@ -57,7 +57,7 @@ and the app says why.
 | Action | Effect | Refused when |
 |---|---|---|
 | Meal | satiety +40, a little mood and health | it is full or asleep |
-| Snack | mostly mood; see below | more than three snacks in two hours |
+| Something from the bag | see below | it isn't there, the pet won't eat it, or it is asleep |
 | Play (ball) | mood +20, energy −10, satiety −5 | energy is below 15, or it is asleep |
 | Sleep / wake up | puts it to bed or wakes it | it isn't tired yet (daytime, energy above 80) |
 | Clean | removes the poops, hygiene back to 100 | everything is already clean |
@@ -70,13 +70,20 @@ times in a row gives +20, +12, +6), so there is no point in spamming.
 Every fifth counted petting, a heart falls from the sky and the pet catches
 it.
 
-**Snacks.** A cookie and ice cream cheer the pet up but add weight; fruit is
-the healthy choice. Every species has a favorite snack that works one and a
-half times as well. The app reveals it once you have fed it.
+**The bag.** Apart from the meal, which is always there, nothing to eat comes
+out of thin air. What there is lies in the bag: fruits of the plant's kinds
+(from a friend's gift or found at home), food from trips and seeds, up to three
+of each fruit and food. A fruit has the same effect as one from the plant and
+cheers the pet up a little more; food from trips is described under
+[Trips and finds](#trips-and-finds). Every form has one favorite, which cheers
+it up a lot (mood +20), and one thing it won't eat: it turns its head away, and
+the thing stays in the bag. The app marks both (❤ and ✕) once they have been
+tried with this form; a new form has tastes of its own. Since there is never
+much of anything, finding out what a pet likes takes trying what there is.
 
-**Weight.** Meals and snacks add weight; playing, the guessing game,
+**Weight.** Meals and food add weight; playing, the guessing game,
 training and trips take it off, and by itself the weight drifts back to the
-ideal. A meal adds 1 g, a cookie 2.5 g and ice cream 3 g; a round of play
+ideal. A meal adds 1 g, a fruit half a gram and a honeycomb 2.5 g; a round of play
 burns 2 g and every stop on a trip half a gram. A pet that is too heavy tires
 faster and looks visibly wider on the panel; one that is too light (only from
 going hungry) gets sick more easily. For a heavy pet, the app only hints
@@ -252,12 +259,27 @@ from doesn't count.
 Back home, it keeps the backpack on until you tap **Unpack** – so you are
 there to see what it brought:
 
-- **Seeds** are dragged into the scene like food. One plant grows at a time
+- **Seeds** go into the bag and are dragged from there into the scene like food. One plant grows at a time
   (a day to grow, then one fruit a day, twice as fast in real rain). The pet
   eats a ripe fruit by itself when it needs it. After three fruits the plant
   wilts. Berries fill it up, sunflower seeds wake it up, giggle cherries cheer
   it up. The rare healing herb is good for its health, and its blossom cures a
   sickness without medicine.
+- **Food** – every area has one kind, and up to three of each are kept in the
+  bag. It fills the pet up a little; what it is worth carrying home for is
+  what it leaves in the pet until it is used:
+
+  | Area | Food | What it does |
+  |---|---|---|
+  | Meadow | Honeycomb | one more heart on the next trip |
+  | Mushroom forest | Hazelnut | the next trick practice counts double |
+  | Stream | Watercress | the next training exercise counts double |
+  | Cave | Glow berry | on the next trip it finds something at every stop where nothing else happens |
+  | Mountain | Pine cone | the next trip doesn't tire it or make it hungry, and brings as much as the first trip of the day |
+
+  These don't add up: while one is still waiting, the pet won't eat the same
+  food again. Nothing is combined or cooked, and the plant stays the one that
+  feeds the pet by itself.
 - **Decorations** stand in the scene, two at a time. Some glow at night. One
   of them does something: the ember stone from the cave makes a young pet grow
   faster, and the pet snuggles up to it now and then.
@@ -364,8 +386,8 @@ leaves.
 Now and then a visit that counts brings a **gift**. The friend leaves it on
 the ground, wrapped, and it stays there until you tap **Unwrap the gift**; no
 new one comes while it is lying there. Mostly there is a fruit in it, of the
-same kinds as the plant's, and the pet eats it straight away with the same
-effect. Rarely it is a seed, as long as there are fewer than nine of that
+same kinds as the plant's, and it goes into the bag (if there are three of it
+already, the pet eats it straight away). Rarely it is a seed, as long as there are fewer than nine of that
 kind. The visit that builds the nest brings no gift; the egg is the present
 then.
 
@@ -437,6 +459,15 @@ None of this counts in the care diary, so it doesn't change which form a
 child grows into. Like everything else, it happens in the simulation: what
 the pet did is the same whether or not anybody was looking at the panel.
 
+**Finds at home.** Now and then, about once a day, the pet finds something
+small at home by itself: mostly a fruit of the plant's kinds, rarely a seed
+(as long as there are fewer than nine of that kind). It works like a friend's
+gift, but it isn't wrapped: it lies next to the plant, in front of everything
+else, until you tap **Pick up**, and nothing new turns up while it is there.
+Like a gift, it goes into the bag. Unlike what it builds, it stays when somebody does
+something with the pet, and it is kept for the next pet. A baby finds things
+too.
+
 **Habits.** The pet notices when it is usually fed or played with. A time
 of day becomes a habit when somebody fed it, played with it or started the
 guessing game at about that time (within half an hour) on at least three of
@@ -484,13 +515,14 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   or a shivering pet is rubbed warm); the rest of the scene doesn't count.
 - Below it, the **needs** as five small meters. A tap on one says what helps.
   When the pet is ready to evolve, it says so here (an egg also tells when it
-  will hatch), and so do a trip that is on, a backpack to unpack and a gift.
-- At the bottom, the **tray**: food, snacks, the ball, the sponge, the baton, medicine
-  when it is sick and seeds once there are any. Drag a thing onto the pet and
+  will hatch), and so do a trip that is on, a backpack to unpack, a gift and
+  what the pet found at home.
+- At the bottom, the **tray**: the meal, the bag, the ball, the sponge, the baton, and medicine
+  when it is sick. A tap on the bag opens it in place of the tray. Drag a thing onto the pet and
   let go: food dropped right on it is eaten at once. Dropped anywhere else in
   the scene, it lands there and the pet goes to get it. The sponge is rubbed
   over the pet to clean it. Connected to a Pi, things can also be flicked up,
-  as before. A tap on the seeds switches the kind.
+  as before.
 - **Adventure** has the trip, the tricks, the training and the guessing game.
   The tricks, the training and the game take the place of the needs and the
   tray, below the scene, so the pet stays where it is and answers there. On a
@@ -536,13 +568,14 @@ keep its own pet or connect to a Pi; the README explains how.
 |---|---|
 | Stats, decay, actions, sleep | `core/src/model.ts` |
 | Life cycle, lines and adult forms, the album's forms (`FORMS`) | `core/src/life.ts` |
-| Weight, bond, snacks, guessing game, tricks | `core/src/care.ts` |
+| Weight, bond, guessing game, tricks | `core/src/care.ts` |
 | Trips, areas, what is found where | `core/src/trip.ts` |
+| What is eaten from the bag, each form's favorite and dislike, and what food from trips leaves in the pet | `core/src/food.ts` |
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | A scuffle watched again in the app | `app/src/replay.ts` |
 | Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
-| What it does by itself, what it leaves behind, and what it tells when you come back | `core/src/idle.ts` |
+| What it does by itself, what it leaves behind or finds at home, and what it tells when you come back | `core/src/idle.ts` |
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |

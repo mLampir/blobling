@@ -12,6 +12,7 @@
 import { API_OLDEST, API_VERSION } from "./api";
 import * as battle from "./battle";
 import * as care from "./care";
+import * as food from "./food";
 import * as habits from "./habits";
 import * as home from "./home";
 import * as life from "./life";
@@ -219,6 +220,7 @@ export class Pet {
         : null,
       nest: s.nest ? s.nest.line : null,
       gift: !!s.gift,
+      found: s.found,
       plant: s.plant ? { kind: s.plant.kind, stage: home.plantStage(s), ripe: home.ripe(s) } : null,
       trace: s.trace ? { ...s.trace } : null,
       waiting: habits.waiting(s, now),
@@ -411,9 +413,8 @@ export class Pet {
       bedtime: { start: bedtime[0], end: bedtime[1] },
       weight: Number(s.weight.toFixed(1)), ideal_weight: care.ideal(s), weight_status: care.weightStatus(s),
       bond: Math.round(s.bond), bond_level: care.bondLevel(s),
-      snacks: Object.keys(care.SNACKS).map((k) => ({ id: k, label: t(`snacks.${k}`) })),
-      // The favorite snack only shows once it has been fed
-      favorite_snack: s.counters.favorite_found ? care.favorite(s) : null,
+      // What it likes most and what it won't eat, once each has been tried with this form
+      favorite_food: food.known(s).favorite, disliked_food: food.known(s).disliked,
       game: gameInfo(s, now),
       tricks: Object.keys(care.TRICKS).map((k) => ({
         id: k, label: t(`tricks.${k}`), progress: Math.round(care.trickProgress(s, k) * 100), learned: care.knows(s, k),
@@ -444,7 +445,7 @@ export class Pet {
       // Finds: what there is, and which of them are being worn or are set out
       items: Object.entries(s.items).filter(([k]) => k in home.ITEMS).map(([k, n]) => ({
         id: k, label: t(`items.${k}`), kind: home.ITEMS[k], count: n, active: k === s.hat || s.deco.includes(k),
-        effects: home.effects(k),
+        effects: [...home.effects(k), ...food.effects(k)],
       })),
       // The eggs that are kept; "id" is what newEgg takes. `skills`: what the egg was given
       eggs: s.eggs.map((egg, i) => ({
@@ -459,6 +460,10 @@ export class Pet {
       nest: s.nest ? { line: s.nest.line, label: t(`items.${home.eggOf(s.nest.line)}`) } : null,
       // a friend's gift is lying there; what is in it is only told once it is unwrapped
       gift: !!s.gift,
+      // what it found at home by itself ("fruit_<plant>" or "seed_<plant>"), until it is picked up
+      found: s.found,
+      // what found food has left in it and is still waiting to be used (food.FOODS)
+      boosts: [...s.boosts],
       item_labels: Object.fromEntries(Object.keys(home.ITEMS).map((k) => [k, t(`items.${k}`)])),
       plant: s.plant ? {
         kind: s.plant.kind, label: t(`plants.${s.plant.kind}`),
