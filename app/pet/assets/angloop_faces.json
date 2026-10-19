@@ -1,0 +1,222 @@
+{
+ "frames": [
+  {
+   "filename": "angloop_faces normal 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces smile 1",
+   "frame": {
+    "x": 16,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces blink 2",
+   "frame": {
+    "x": 32,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces happy 3",
+   "frame": {
+    "x": 48,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces laugh 4",
+   "frame": {
+    "x": 64,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces sad 5",
+   "frame": {
+    "x": 80,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces tired 6",
+   "frame": {
+    "x": 96,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces yawn 7",
+   "frame": {
+    "x": 112,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces sick 8",
+   "frame": {
+    "x": 128,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces no 9",
+   "frame": {
+    "x": 144,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces eat_open 10",
+   "frame": {
+    "x": 160,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces eat_closed 11",
+   "frame": {
+    "x": 176,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "angloop_faces sleep 12",
+   "frame": {
+    "x": 192,
+    "y": 0,
+    "w": 16,
+    "h": 8
+   },
+   "duration": 1000
+  }
+ ],
+ "meta": {
+  "app": "tools/build_blob_sprites.py",
+  "image": "angloop_faces.png",
+  "size": {
+   "w": 208,
+   "h": 8
+  },
+  "frameTags": [
+   {
+    "name": "normal",
+    "from": 0,
+    "to": 0,
+    "direction": "forward"
+   },
+   {
+    "name": "smile",
+    "from": 1,
+    "to": 1,
+    "direction": "forward"
+   },
+   {
+    "name": "blink",
+    "from": 2,
+    "to": 2,
+    "direction": "forward"
+   },
+   {
+    "name": "happy",
+    "from": 3,
+    "to": 3,
+    "direction": "forward"
+   },
+   {
+    "name": "laugh",
+    "from": 4,
+    "to": 4,
+    "direction": "forward"
+   },
+   {
+    "name": "sad",
+    "from": 5,
+    "to": 5,
+    "direction": "forward"
+   },
+   {
+    "name": "tired",
+    "from": 6,
+    "to": 6,
+    "direction": "forward"
+   },
+   {
+    "name": "yawn",
+    "from": 7,
+    "to": 7,
+    "direction": "forward"
+   },
+   {
+    "name": "sick",
+    "from": 8,
+    "to": 8,
+    "direction": "forward"
+   },
+   {
+    "name": "no",
+    "from": 9,
+    "to": 9,
+    "direction": "forward"
+   },
+   {
+    "name": "eat_open",
+    "from": 10,
+    "to": 10,
+    "direction": "forward"
+   },
+   {
+    "name": "eat_closed",
+    "from": 11,
+    "to": 11,
+    "direction": "forward"
+   },
+   {
+    "name": "sleep",
+    "from": 12,
+    "to": 12,
+    "direction": "forward"
+   }
+  ]
+ }
+}

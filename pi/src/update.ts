@@ -4,7 +4,7 @@
  * A Pi that was installed from a release knows its version and where it came from (VERSION and
  * REPO, which setup.sh puts next to the app). It looks for a newer release now and then: an
  * outgoing request, nothing is opened towards the internet. The settings page shows what it
- * found and has a button for it. The button starts the systemd unit led-matrix-update, which
+ * found and has a button for it (so has the app). The button looks once more and starts the systemd unit led-matrix-update, which
  * runs install.sh --app as a unit of its own, so it keeps going while this service is restarted.
  * Nothing is taken from the request: it only ever installs the newest official release.
  *
@@ -101,8 +101,15 @@ export class Updates {
     }
   }
 
-  /** Starts the update to the newest release; false if there is nothing to start. */
+  /**
+   * Starts the update to the newest release; false if there is nothing to start. It looks again
+   * first, so a release from a minute ago is found without waiting for the next regular look.
+   */
   async start(): Promise<boolean> {
+    if (!this.enabled || this.running) {
+      return false;
+    }
+    await this.check();
     if (!this.state().available) {
       return false;
     }

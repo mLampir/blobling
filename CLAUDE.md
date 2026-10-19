@@ -46,10 +46,11 @@ Where to look first:
   [docs/gameplay.md](docs/gameplay.md): two ideas, a creature rather than
   an object with a face (an animal or a living thing), a face of its own,
   body language, three colors, a way of moving that fits it, and it shows
-  its character and where it came from.
+  its character and where it came from. The forms of a line stay the same
+  kind of creature, and growing up is something to look forward to.
 - **No spoilers outside `docs/pets.md`.** Which forms a pet can grow into is
   for players to find out. Pictures and text in the README and the other docs
-  show only egg, baby, child and Cyclopuff, as the one example of an adult.
+  show only egg, baby, child and Angloop, as the one example of an adult.
   The other adult forms, every form of a later line, and all rules for getting
   a form appear only in [docs/pets.md](docs/pets.md), folded shut.
 - **No personal data in the repo:** no names, addresses, hostnames, IPs,
@@ -64,6 +65,23 @@ Where to look first:
   a tap does the obvious thing, the pet answers on the scene, and hints are
   feedback after a try, not instructions before it.
 - **Ask before rebooting the Pi.**
+
+## The API between app and Pi
+
+The app from the stores and the Pi are updated apart (store review takes days,
+a Pi updates itself within hours), so an app often talks to an older or newer
+Pi. Two numbers in `core/src/api.ts` say what fits; every pet answer carries
+them, and the app shows "update the display" or "update the app" when they
+don't fit:
+
+- **`API_VERSION` + 1** with every change the app may rely on: a new route,
+  action or field of the pet's answers.
+- **`API_OLDEST` = `API_VERSION`** as well when something an older app relies
+  on is removed, renamed or changes its type.
+
+`core/test/api.test.ts` compares the API with `core/test/api-contract.json`,
+fails with the number a change needs, and once it is raised, the contract is
+written anew with `UPDATE_API_CONTRACT=1 npm test -- api`. Commit both.
 
 ## Keep the docs in step
 

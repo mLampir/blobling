@@ -144,6 +144,8 @@
   .tabbar button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
   .tabbar svg { width: 24px; height: 24px; }
   .tabbar button[aria-current="page"] { color: var(--accent); }
+  .tabbar button { position: relative; }
+  .tabbar button.news::after { content: ""; position: absolute; top: 5px; left: calc(50% + 9px); width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
   /* ---------- The other tabs ---------- */
   .page { padding: calc(18px + var(--safe-top)) 16px 24px; display: grid; gap: 14px; align-content: start; }
@@ -288,12 +290,18 @@
   dialog .buttons .wide { flex: 1 1 0; min-width: 0; }
   dialog ul { margin: 0 0 16px; padding: 0; list-style: none; }
   dialog li { display: flex; padding: 6px 0; border-top: 1px solid var(--line); }
+  .choice { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 4px 0; }
+  .choice img { width: 48px; height: 48px; image-rendering: pixelated; flex: none; }
+  .choice small { display: block; color: var(--muted); font-size: 12px; }
   #welcome-story { max-height: 50dvh; overflow-y: auto; margin-bottom: 16px; }
   #welcome-story p { font-size: 16px; font-weight: 400; line-height: 1.45; }
   #welcome-story .postcard {
     white-space: pre-line; padding: 14px 16px; border-radius: 6px; transform: rotate(-1.5deg);
     background: var(--night); border: 2px dashed var(--accent); font-family: var(--round);
   }
+  /* A scuffle watched again */
+  dialog canvas { display: block; width: 100%; aspect-ratio: 1; margin-bottom: 14px; border-radius: 14px; image-rendering: pixelated; }
+  .list .play { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--raised); color: var(--accent); font-size: 13px; }
 
   /* The Pi can't be reached */
   .offline {
@@ -326,6 +334,7 @@
       <div class="actions">
         <button class="soft" id="recall" hidden data-t="page.recall"></button>
         <button class="soft" id="unpack" hidden data-t="page.unpack"></button>
+        <button class="soft" id="watch" hidden></button>
         <button class="soft" id="collect" hidden data-t="page.collect"></button>
         <button class="soft" id="unwrap" hidden data-t="page.unwrap"></button>
       </div>
@@ -440,8 +449,10 @@
       </div>
       <div id="display" hidden style="display: grid; gap: 8px">
         <div class="label" data-t="page.app.display_heading"></div>
-        <p class="note"><span id="display-text"></span> <a id="build-link" href="https://github.com/mLampir/blobling" target="_blank" rel="noopener" data-t="page.app.build_link"></a></p>
+        <p class="note" id="display-note"><span id="display-text"></span> <a id="build-link" href="https://github.com/mLampir/blobling" target="_blank" rel="noopener" data-t="page.app.build_link"></a></p>
         <button class="wide" id="connect" data-t="page.app.connect"></button>
+        <p class="note" id="update-text" hidden></p>
+        <button class="wide" id="update-start" data-t="page.app.update" hidden></button>
         <button class="wide quiet" id="disconnect" data-t="page.app.disconnect"></button>
       </div>
     </div>
@@ -466,6 +477,30 @@
   </form>
 </dialog>
 
+<dialog id="replay">
+  <form method="dialog">
+    <canvas id="replay-scene" width="64" height="64"></canvas>
+    <p id="replay-text"></p>
+    <div class="buttons">
+      <button type="button" class="wide quiet" id="replay-again" data-t="page.replay.again"></button>
+      <button class="wide primary" value="ok" data-t="page.close"></button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="choose">
+  <form method="dialog">
+    <p data-t="page.app.choose_pet"></p>
+    <ul>
+      <li><button class="choice" value="phone"><img id="choose-phone-icon" alt=""><span><strong id="choose-phone-name"></strong><small id="choose-phone-note"></small></span></button></li>
+      <li><button class="choice" value="display"><img id="choose-display-icon" alt=""><span><strong id="choose-display-name"></strong><small id="choose-display-note"></small></span></button></li>
+    </ul>
+    <div class="buttons">
+      <button type="button" class="wide quiet" id="choose-cancel" data-t="page.dialog.cancel"></button>
+    </div>
+  </form>
+</dialog>
+
 <dialog id="ask">
   <form method="dialog">
     <p id="ask-text"></p>
@@ -476,6 +511,14 @@
     </div>
   </form>
 </dialog>
+
+<div class="offline" id="mismatch" hidden>
+  <strong id="mismatch-title"></strong>
+  <span id="mismatch-hint"></span>
+  <span id="mismatch-update-text"></span>
+  <button class="wide" id="mismatch-update" data-t="page.app.update" hidden></button>
+  <button class="link" id="mismatch-leave" data-t="page.app.disconnect" hidden></button>
+</div>
 
 <div class="offline" id="offline" hidden>
   <strong data-t="page.offline.title"></strong>
@@ -605,6 +648,7 @@ async function api(method, url, body) {
   try {
     const data = await app.request(method, url, body);
     setOffline(false);
+    if (app.mode === "pi") renderFit();
     return data;
   } catch (err) {
     if (!err.offline) setOffline(false);
@@ -775,6 +819,10 @@ function render(s) {
   }
   $("unpack").hidden = !s.backpack;
   $("unpack").disabled = !s.actions.unpack;
+  // the scuffles of the last trip, until they have been watched or the next trip sets off
+  const fights = s.trip ? [] : lastFights(s);
+  $("watch").hidden = !fights.length || stored("watched") === String(s.last_trip);
+  $("watch").textContent = tn("page.replay.watch", fights.length);
   // an egg is lying in the nest
   $("collect").hidden = !s.nest;
   $("collect").disabled = !s.actions.collect;
@@ -1108,6 +1156,9 @@ async function refresh() {
   try {
     render(await api("GET", "/api/pet"));
     if (view === "diary") renderEvents((await api("GET", "/api/pet/events?limit=30")).events);
+    // the update: while "More" is open or it runs, otherwise now and then
+    if (app.mode === "pi" && (view === "more" || update?.running || app.fit() !== "ok"
+      || Date.now() - updateChecked > 600_000)) checkUpdate();
   } catch (err) {
     fail(err);
   }
@@ -1242,6 +1293,17 @@ function renderEvents(events) {
     last = { text: text.textContent, n: 1, times: document.createElement("span") };
     last.times.className = "times";
     li.append(time, text, last.times);
+    // a scuffle that was kept can be watched again
+    const replay = e.action === "battle" && current && (current.replays || [])
+      .find((r) => r.at === e.at && e.item === `${r.foe}:${r.outcome}`);
+    if (replay) {
+      const play = document.createElement("button");
+      play.className = "play";
+      play.textContent = "▶";
+      play.setAttribute("aria-label", t("page.replay.play"));
+      play.addEventListener("click", () => watch([replay]));
+      li.append(play);
+    }
     return heading ? [heading, li] : [li];
   });
   if (!items.length) {
@@ -1258,6 +1320,40 @@ function battleText(item) {
   const [foe, outcome] = (item || "").split(":");
   return t(`page.events.battle_${outcome}`, { foe: T[`foes.${foe}`] || foe });
 }
+
+// ---------- Scuffles watched again ----------
+
+// The scuffles on the latest trip
+function lastFights(s) {
+  return (s.replays || []).filter((r) => r.trip === s.last_trip); // none from a Pi that keeps none yet
+}
+
+let watching = [], stopReplay = null;
+async function watch(replays) {
+  if (stopReplay) stopReplay();
+  watching = replays;
+  $("replay-again").disabled = true;
+  stopReplay = await app.replay($("replay-scene"), replays,
+    // who it is up against, and once the rounds are over, how it ended
+    (i, over) => {
+      const r = replays[i];
+      $("replay-text").textContent = over ? battleText(`${r.foe}:${r.outcome}`)
+        : t("page.replay.against", { foe: T[`foes.${r.foe}`] || r.foe });
+    },
+    () => { $("replay-again").disabled = false; });
+  if (!$("replay").open) $("replay").showModal();
+}
+$("replay-again").addEventListener("click", () => watch(watching));
+$("replay").addEventListener("close", () => {
+  if (stopReplay) stopReplay();
+  stopReplay = null;
+});
+$("watch").addEventListener("click", () => {
+  if (!current) return;
+  store("watched", String(current.last_trip));
+  $("watch").hidden = true;
+  watch(lastFights(current));
+});
 
 // A wild pet it has shown its tricks to: "species:friend" or "species:shrug"
 function wildText(item) {
@@ -1926,6 +2022,75 @@ if (app.native) {
   $("build-link").hidden = $("connect").hidden = !!app.connectedTo;
   $("disconnect").hidden = $("offline-leave").hidden = !app.connectedTo;
 }
+// The Pi's own page shows the display part only for its update
+if (!app.native) $("display-note").hidden = $("connect").hidden = $("disconnect").hidden = true;
+
+// ---------- The update of the display ----------
+// A Pi installed from a release looks for new ones itself (pi/src/update.ts); here it can be
+// started. While it runs, the Pi restarts its app; once its version changes, the update is done.
+let update = null, updateChecked = 0;
+async function checkUpdate() {
+  updateChecked = Date.now();
+  let u;
+  try {
+    u = (await api("GET", "/api/state")).update;
+  } catch (_) {
+    return;  // during the update the Pi is away for a moment
+  }
+  if (!u?.current) return;  // set up from a checkout: no updates from here
+  if (update && u.current !== update.current) {
+    if (!app.native) return location.reload();  // the Pi's own page comes in the new version
+    say(t("page.app.update_done", { version: u.current }));
+  }
+  update = u;
+  renderUpdate();
+}
+
+function renderUpdate() {
+  const u = update;
+  renderFit();
+  $("display").hidden = false;
+  const lines = [t("page.app.update_version", { version: u.current })];
+  if (u.running) lines.push(t("page.app.update_running"));
+  else if (u.available) lines.push(t("page.app.update_available", { latest: u.latest }));
+  else if (u.failed) lines.push(t("page.app.update_failed"));
+  $("update-text").textContent = lines.join(" ");
+  $("update-text").hidden = false;
+  $("update-start").hidden = !u.available && !(app.fit() === "display_old" && !u.running);
+  document.querySelector('[data-view="more"]').classList.toggle("news", u.available);
+}
+
+// The Pi looks for the newest release once more before it starts, so this never waits for its next look
+async function startUpdate(button) {
+  button.disabled = true;
+  try {
+    update = (await api("POST", "/api/update")).update;
+    renderUpdate();
+  } catch (err) {
+    fail(err);
+  } finally {
+    button.disabled = false;
+  }
+}
+$("update-start").addEventListener("click", () => startUpdate($("update-start")));
+$("mismatch-update").addEventListener("click", () => startUpdate($("mismatch-update")));
+$("mismatch-leave").addEventListener("click", () => app.disconnect());
+
+// When the Pi and this app no longer understand each other (core/src/api.ts), nothing else works:
+// the one that is too old has to be updated. The display can be updated from here.
+function renderFit() {
+  const fit = app.fit();
+  $("mismatch").hidden = fit === "ok";
+  if (fit === "ok") return;
+  if (!update && Date.now() - updateChecked > 5000) checkUpdate();
+  $("mismatch-title").textContent = t(`page.app.${fit}_title`);
+  $("mismatch-hint").textContent = t(`page.app.${fit}_hint`);
+  const u = fit === "display_old" ? update : null;
+  $("mismatch-update-text").textContent = !u ? "" : u.running ? t("page.app.update_running")
+    : u.failed ? t("page.app.update_failed") : "";
+  $("mismatch-update").hidden = !u || u.running;
+  $("mismatch-leave").hidden = !app.connectedTo;
+}
 
 // Where it lives: nowhere (no weather), one place, or wherever the phone is
 async function showLocation() {
@@ -1954,15 +2119,44 @@ document.querySelectorAll("[data-place]").forEach((b) => b.addEventListener("cli
   showLocation();
 }));
 
+// Connecting: the display is looked for under its usual names first, and only asked for if none
+// answers. When both have a pet, the player picks the one that lives on the display.
 $("connect").addEventListener("click", async () => {
-  const address = await ask(t("page.app.connect_prompt"), { value: "", ok: t("page.app.connect_ok"), address: true });
+  const button = $("connect");
+  button.disabled = true;
+  button.textContent = t("page.app.searching");
+  let address;
+  try {
+    address = await app.findDisplay();
+  } finally {
+    button.disabled = false;
+    button.textContent = t("page.app.connect");
+  }
+  address ??= await ask(t("page.app.connect_prompt"), { value: "", ok: t("page.app.connect_ok"), address: true });
   if (!address) return;
   try {
-    await app.connect(address);
+    const pets = await app.petsToChoose(address).catch(() => null);  // connect() says if it is gone
+    const keep = pets ? await choosePet(pets) : "display";
+    if (!keep) return;
+    await app.connect(address, keep === "phone");
   } catch (err) {
     say(err.message, true);
   }
 });
+
+// Which pet lives on the display: "phone", "display", or null if the player changed their mind
+function choosePet({ phone, display }) {
+  for (const [key, pet] of [["phone", phone], ["display", display]]) {
+    $(`choose-${key}-icon`).src = app.icon(pet.stage, pet.species);
+    $(`choose-${key}-name`).textContent = pet.name;
+    $(`choose-${key}-note`).textContent = t(`page.app.choose_${key}`, { form: pet.stage === "egg" ? pet.stage_label : pet.species_label });
+  }
+  const dialog = $("choose");
+  dialog.returnValue = "";
+  dialog.showModal();
+  return new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue || null), { once: true }));
+}
+$("choose-cancel").addEventListener("click", () => $("choose").close());
 $("disconnect").addEventListener("click", () => app.disconnect());
 $("offline-leave").addEventListener("click", () => app.disconnect());
 

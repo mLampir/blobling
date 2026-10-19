@@ -9,6 +9,7 @@
  * the app. This class is handed what was saved and a function that saves.
  */
 
+import { API_OLDEST, API_VERSION } from "./api";
 import * as balance from "./balance";
 import * as battle from "./battle";
 import * as care from "./care";
@@ -143,6 +144,7 @@ export class Pet {
     if (options.saved) {
       this.state = options.saved.state;
       this.ancestors = options.saved.ancestors;
+      model.reform(this.state, this.clock());
       this.album = startAlbum(options.saved);
     } else {
       this.state = model.newPet(this.clock(), this.t("pet.default_name"));
@@ -306,7 +308,10 @@ export class Pet {
    */
   albumList() {
     this.collect();
-    return life.FORMS.map((form) => {
+    // A form that no longer grows (life.REFORMED) only has a slot once one of the pets has been it
+    const forms = life.FORMS.filter((form) => this.album.includes(form)
+      || !(form.startsWith("adult:") && form.slice("adult:".length) in life.REFORMED));
+    return forms.map((form) => {
       if (!this.album.includes(form)) {
         return null;
       }
@@ -380,7 +385,7 @@ export class Pet {
     const bedtime = this.bedtime();
     const due = life.dueAt(s);
     return {
-      api: 1,
+      api: API_VERSION, api_oldest: API_OLDEST,
       now: Math.round(now),
       name: s.name, species: s.species, stage: s.stage,
       species_label: t(`species.${s.species}`), stage_label: t(`stages.${s.stage}`),
@@ -417,6 +422,9 @@ export class Pet {
         returning: trip.returning(s.trip), found: [...s.trip.found],
         hearts: s.trip.hearts, pack: [...s.trip.pack],
       } : null,
+      // The latest scuffles, to be watched again; last_trip: when the latest trip set off
+      replays: s.replays.map((r) => ({ ...r, rounds: r.rounds.map((round) => [...round]) })),
+      last_trip: s.recent.trip?.at(-1) ?? null,
       // What can go into the backpack before a trip
       packable: trip.PACKABLE.map((k) => ({ id: k, label: t(`pack.${k}`) })),
       max_pack: trip.MAX_PACK,
