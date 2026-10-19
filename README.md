@@ -362,7 +362,7 @@ Studio for Android and Xcode on a Mac for iOS:
 ```bash
 npm run app:android   # build, copy into the projects, open Android Studio
 npm run app:ios       # the same for Xcode
-npm run app:icons     # the app icons and splash screens, drawn from the sprites
+npm run app:icons     # the app icons and splash screens, drawn from the sprites (and app/native/play-store-icon.png for Google Play)
 ```
 
 In Android Studio or Xcode the app is then started on a phone or packed for
