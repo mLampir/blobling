@@ -504,6 +504,7 @@ function comeHome(state: PetState, now: number, done: Trip): void {
   state.backpack = [...done.found];
   state.stats.mood += 10 * done.factor;
   care.addBond(state, "trip");
+  trip.remember(state, done, now);
   setActivity(state, "trip_home", now);
   logEvent(state, now, "trip", "system", { item: "home" });
 }
