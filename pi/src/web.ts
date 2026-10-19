@@ -273,7 +273,7 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         const answer = await petRequest(
           {
             pet, action: display.petAction.bind(display), newEgg: display.petNewEgg.bind(display),
-            swap: display.petSwap.bind(display),
+            swap: display.petSwap.bind(display), bringBack: display.petBringBack.bind(display),
           },
           request.method ?? "GET", url, () => readJson(request));
         if (answer === NOT_A_PET_ROUTE) {

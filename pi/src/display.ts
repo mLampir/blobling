@@ -183,6 +183,12 @@ export class Display {
     return result;
   }
 
+  petBringBack(bornAt: unknown, keep: unknown = null): ReturnType<Pet["bringBack"]> {
+    const result = this.pet.bringBack(bornAt, keep);
+    this.showPet();
+    return result;
+  }
+
   petAction(action: string, request: ActionRequest = {}): ReturnType<Pet["action"]> {
     const result = this.pet.action(action, request);
     this.showPet();

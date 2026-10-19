@@ -31,7 +31,8 @@
     "invalid_location": "Please enter a latitude from -90 to 90 and a longitude from -180 to 180.",
     "no_update": "There is no update to install right now.",
     "not_a_save": "That is not a save file of a pet.",
-    "no_second": "There is no second pet."
+    "no_second": "There is no second pet.",
+    "no_ancestor": "This pet can no longer come back."
   },
   "stages": {
     "egg": "Egg",
@@ -273,6 +274,7 @@
     "brood_confirm": "Brood the {egg}? {name} stays at home and moves to the back. Your finds stay.",
     "keep_brood": "Brood the {egg}? Only two pets fit in your home – who stays with it? The other one moves to the ancestors.",
     "keep_new_egg": "Start over with a usual egg? Only two pets fit in your home – who stays with it? The other one moves to the ancestors.",
+    "keep_bring_back": "Bring {name} home? Only two pets fit in your home – who stays with it? The other one goes to rest among the ancestors.",
     "swap": "Bring {name} to the front",
     "new_egg_done": "A new egg is waiting 🥚",
     "things": {
@@ -561,6 +563,8 @@
       "guardian": "got past the guardian: {foe} 🏆",
       "unlock": "knows a new way now: {area} 🗺",
       "swap": "came to the front – {pet} is at the back now",
+      "bring_back": "came home again – {pet} is at the back now",
+      "bring_back_alone": "came home again",
       "copied": "copied {trick} from {pet}",
       "house_1": "built itself a hut 🏠",
       "house_2": "made the hut into a cabin 🏠",
@@ -591,6 +595,7 @@
     },
     "gallery": {
       "entry": "{form} · {age} · born {date}",
+      "bring_back": "Bring home",
       "album": "{met} of {all} forms",
       "missing": "Not met yet",
       "ancestors": "Ancestors"

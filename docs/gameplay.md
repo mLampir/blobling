@@ -170,7 +170,8 @@ finding it out by yourself.
 
 An adult stays forever. When a new egg comes, the pet goes to the back and
 stays at home (see [Two pets at home](#two-pets-at-home)); only when there are
-two already, one of them moves to the ancestors' gallery.
+two already, one of them goes to rest in the ancestors' gallery, from where
+it can come home again.
 
 The **album** is the long-term goal: to have had every form once. It has one
 slot for each form there is (every egg, baby, child and adult of every line),
@@ -215,14 +216,21 @@ can stay while new eggs are raised for the album.
 
 - **A new egg** comes to the front, and the pet that was there goes to the
   back. If there are two already, the app shows both and you tap the one that
-  stays; the other one moves to the ancestors' gallery. An egg that hasn't
-  hatched goes nowhere.
+  stays; the other one goes to rest in the ancestors' gallery. An egg that
+  hasn't hatched goes nowhere.
 - **Swapping.** A small picture of the pet at the back sits at the top, next
   to the name. A tap on it brings that pet to the front, and the other one
   goes to the back, with nothing lost; it stays that way until the next tap.
   Not while the pet at the front is away on a trip, or still an egg. The home
   is the front pet's: the finds, the decorations, the plant and the eggs go
   with it, and a pet going to the back takes its hat off.
+- **The ancestors' gallery** keeps the pets that went to rest, frozen: they
+  lose nothing, don't grow on and don't get older.
+  **Bring home** next to one of them brings it back to the front, as it was
+  when it left; the pet at the front goes to the back, and if there are two
+  already, you pick again which one stays. Not while the pet at the front is
+  away on a trip, or still an egg. Ancestors from before the gallery kept the
+  pets are only pictures.
 - **Only the pet at the front lives the game:** it has needs, goes on trips,
   scuffles, makes friends, lays eggs and calls you.
 - **The pet at the back keeps growing.** The one at the front looks after it:
@@ -597,7 +605,8 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   scrolling, with the button to set off at the bottom.
 - **Diary** has one tab each for the history (where a scuffle can be watched
   again), the stats (with weight and bond), the trips, the finds and the
-  album, with the ancestors below it. Trips and finds show up once there are
+  album, with the ancestors below it, each one that can come home with a
+  button for it. Trips and finds show up once there are
   any, the album once the first egg has hatched.
 - **More**: renaming and starting over with a usual egg, sound on or off, the
   weather (off, a fixed place, or following the phone) and connecting to an
@@ -645,7 +654,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
-| Catching up, the state for the app, what is saved, ancestors and album | `core/src/pet.ts`, `core/src/state.ts` |
+| Catching up, the state for the app, what is saved, ancestors (resting, and coming home again) and album | `core/src/pet.ts`, `core/src/state.ts` |
 | The pet at the back: swapping, growing there, coming out, copying tricks | `core/src/companion.ts`, `Pet.swap` in `core/src/pet.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |

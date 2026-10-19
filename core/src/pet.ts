@@ -51,6 +51,11 @@ export interface Ancestor {
   counters: Record<string, number>;
   tricks: string[];
   hat: string;
+  /**
+   * The pet itself, resting, so it can come home again (Pet.bringBack); without the event log
+   * and the replays, which only the pet at the front shows. Ancestors from before have none.
+   */
+  pet?: PetState;
 }
 
 /** What is saved. */
@@ -333,6 +338,54 @@ export class Pet {
   }
 
   /**
+   * An ancestor comes home again, to the front; `bornAt` says which one (its "born_at"). Among the
+   * ancestors it rested frozen: it comes back as it went, without growing, getting older or losing
+   * anything. The pet that was at the front goes to the
+   * back, and `keep` decides as in newEgg which of two stays there; the other one goes to rest among
+   * the ancestors. Not while the pet at the front is away or still an egg. Returns like action();
+   * throws a RequestError if no ancestor that can come back was born then.
+   */
+  bringBack(bornAt: unknown, keep: unknown = "back", now = this.clock()) {
+    if (keep === null || keep === undefined) {
+      keep = "back";
+    }
+    if (!KEEP.includes(keep as (typeof KEEP)[number])) {
+      throw new model.RequestError("invalid_value");
+    }
+    const index = this.ancestors.findIndex((a) => a.pet && a.born_at === bornAt);
+    if (index < 0) {
+      throw new model.RequestError("no_ancestor");
+    }
+    this.advance(now);
+    const front = this.state;
+    const reason = this.swapRefusal();
+    if (reason) {
+      return { accepted: false, reason, message: this.t(`pet.rejected.${reason}`, { name: front.name }), state: this.describe(now) };
+    }
+    const [entry] = this.ancestors.splice(index, 1);
+    const back = fromDict(entry.pet as unknown as Record<string, unknown>);
+    model.reform(back, now);
+    const rested = Math.max(0, now - back.updated_at); // the time among the ancestors doesn't count
+    back.stage_since += rested;
+    back.born_at += rested;
+    model.moveHome(front, back);
+    Object.assign(back, { seen_at: now, weather_seen: front.weather_seen, updated_at: now, idle_next: 0.0 });
+    if (this.second && keep === "back") {
+      this.archive(front, now);
+    } else {
+      if (this.second) {
+        this.archive(this.second, now);
+      }
+      this.second = front;
+      this.toBack(front, now);
+    }
+    this.state = back;
+    model.logEvent(back, now, "bring_back", "app", { item: this.second === front ? front.name : null });
+    this.write(now);
+    return { accepted: true, reason: null, message: null, state: this.describe(now) };
+  }
+
+  /**
    * The pet at the back comes to the front, and the one at the front goes to the back, with the
    * home and all that belongs to it (model.moveHome). Not while the pet at the front is away or
    * still an egg. Returns like action(); throws a RequestError if there is no pet at the back.
@@ -370,13 +423,16 @@ export class Pet {
     companion.rest(state, now);
   }
 
-  /** A pet moves to the ancestors' gallery. */
+  /** A pet moves to the ancestors' gallery, where it rests frozen until it is brought back (bringBack). */
   private archive(state: PetState, now: number): void {
+    const hat = state.hat;
+    this.toBack(state, now);
     this.ancestors.push({
       name: state.name, species: state.species, stage: state.stage,
       born_at: Math.round(state.born_at), until: Math.round(now),
       age_days: Math.max(0, Math.floor((now - state.born_at) / 86400)),
-      counters: { ...state.counters }, tricks: care.learned(state), hat: state.hat,
+      counters: { ...state.counters }, tricks: care.learned(state), hat,
+      pet: { ...toDict(state), events: [], replays: [] },
     });
     this.ancestors.splice(0, Math.max(0, this.ancestors.length - MAX_ANCESTORS));
   }
@@ -396,10 +452,10 @@ export class Pet {
     };
   }
 
-  /** The ancestors, the last one first. */
+  /** The ancestors, the last one first; `home`: it can come home again (bringBack). */
   ancestorList() {
-    return [...this.ancestors].reverse().map((a) => ({
-      ...a, species_label: this.t(`species.${a.species}`), stage_label: this.t(life.formKey(a.stage, a.species)),
+    return [...this.ancestors].reverse().map(({ pet, ...a }) => ({
+      ...a, home: !!pet, species_label: this.t(`species.${a.species}`), stage_label: this.t(life.formKey(a.stage, a.species)),
     }));
   }
 

@@ -94,6 +94,55 @@ test("a new egg sends the pet to the back, and with two one of them moves to the
   refused(() => loaded.newEgg(null, now + 300, "both"), "invalid_value");
 });
 
+test("an ancestor comes home again, and the one it replaces goes to rest", () => {
+  const now = at("2026-10-12 12:00");
+  const disk = new Disk();
+  const pet = disk.pet();
+  pet.state = grown(now);
+  Object.assign(pet.state, { stage: "adult", species: "grumpcap", name: "Grumpy", hat: "bobble" });
+  pet.state.items = { daisy: 1, bobble: 1 };
+  pet.state.tricks = { bow: 3.0 };
+  pet.state.stats.satiety = 10;
+  pet.newEgg(null, now);
+  Object.assign(pet.state, { stage: "child", name: "Kid" });
+  pet.newEgg(null, now + 60, "front"); // Grumpy goes to rest among the ancestors
+  const [rests] = pet.ancestorList();
+  assert.deepEqual([rests.name, rests.home, "pet" in rests], ["Grumpy", true, false]);
+  assert.equal(pet.second!.name, "Kid");
+  // an egg at the front has to hatch first, and an ancestor from before is only a picture
+  const egg = pet.bringBack(rests.born_at, null, now + 120);
+  assert.deepEqual([egg.accepted, egg.reason], [false, "egg"]);
+  refused(() => pet.bringBack(12345, null, now + 120), "no_ancestor");
+  refused(() => pet.bringBack(rests.born_at, "both", now + 120), "invalid_value");
+
+  Object.assign(pet.state, { stage: "baby", name: "Bub" });
+  pet.save();
+  const later = now + 5 * 86400;
+  const result = disk.pet().bringBack(rests.born_at, "back", later); // it was saved; Kid stays at the back
+  assert.equal(result.accepted, true);
+  const loaded = disk.pet();
+  assert.deepEqual([loaded.state.name, loaded.second!.name, loaded.ancestors.map((a) => a.name)], ["Grumpy", "Kid", ["Bub"]]);
+  assert.deepEqual([loaded.state.tricks, loaded.state.items], [{ bow: 3.0 }, { daisy: 1, bobble: 1 }]); // the home came with it
+  assert.equal(loaded.state.stats.satiety, 60); // as it went to rest (the front pet had seen to it, companion.STAT_FLOOR)
+  assert.equal(loaded.ancestorList()[0].home, true); // Bub can come back too
+  assert.deepEqual(loaded.events(1)[0], { at: later, action: "bring_back", by: "app", accepted: true });
+
+  loaded.bringBack(loaded.ancestors[0].born_at, "front", later + 60); // Bub comes, Grumpy goes to the back, Kid to rest
+  assert.deepEqual([loaded.state.name, loaded.second!.name, loaded.ancestors.map((a) => a.name)], ["Bub", "Grumpy", ["Kid"]]);
+  assert.equal(loaded.events(1)[0].item, "Grumpy");
+
+  // Kid rested frozen: a month later it is still the child it was, with its values
+  const kid = loaded.ancestors[0];
+  kid.pet!.stats.mood = 77;
+  const due = life.dueAt(kid.pet!)! - kid.until;
+  const month = later + 30 * 86400;
+  loaded.state.stage = "adult"; // Bub is grown up by then
+  assert.equal(loaded.bringBack(kid.born_at, "front", month).accepted, true);
+  assert.deepEqual([loaded.state.name, loaded.state.stage, loaded.state.stats.mood], ["Kid", "child", 77]);
+  assert.equal(life.dueAt(loaded.state)! - month, due);
+  assert.equal(loaded.snapshot(month).age_days, kid.age_days); // and no older
+});
+
 test("a rare egg is kept until it is brooded", () => {
   const now = at("2026-10-12 12:00");
   const disk = new Disk();

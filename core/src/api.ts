@@ -28,7 +28,7 @@ export const API_VERSION = 4;
 export const API_OLDEST = 4;
 
 /**
- * Where the requests go. `action`, `newEgg` and `swap` are the pet's own, or the Pi's, which also
+ * Where the requests go. `action`, `newEgg`, `swap` and `bringBack` are the pet's own, or the Pi's, which also
  * show it on the panel.
  */
 export interface PetTarget {
@@ -36,12 +36,14 @@ export interface PetTarget {
   action: Pet["action"];
   newEgg: (egg: unknown, keep: unknown) => ReturnType<Pet["newEgg"]>;
   swap: () => ReturnType<Pet["swap"]>;
+  bringBack: (bornAt: unknown, keep: unknown) => ReturnType<Pet["bringBack"]>;
 }
 
 /** The pet's own handlers, for a pet that nothing else shows (the app's, or one in a test). */
 export function ownTarget(pet: Pet): PetTarget {
   return {
     pet, action: pet.action.bind(pet), newEgg: (egg, keep) => pet.newEgg(egg, undefined, keep), swap: () => pet.swap(),
+    bringBack: (bornAt, keep) => pet.bringBack(bornAt, keep),
   };
 }
 
@@ -90,6 +92,11 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
 
     case "POST /api/pet/swap":
       return { api: API_VERSION, ...target.swap() };
+
+    case "POST /api/pet/bring_back": {
+      const request = fields(await body());
+      return { api: API_VERSION, ...target.bringBack(request.born_at, request.keep ?? null) };
+    }
 
     case "GET /api/pet/travels":
       return { api: API_VERSION, travels: pet.travels() };
