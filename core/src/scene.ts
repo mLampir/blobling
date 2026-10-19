@@ -1454,10 +1454,12 @@ export class PetScene {
           }
         }
         break;
-      case "twiggle": // a whirlwind of leaves
-        Object.assign(pose, { turn: Math.cos(q * 5 * (2 * Math.PI)), face: "smile" });
+      case "twiggle": // plants its feet, shakes its crown, and a gust of leaves blows at the opponent
         if (q < 0.5) {
-          this.trickFx(t, "sp_twiggle", 0.06, LEAFLET, 2, 0, 18, [-26, 26], [-20, 4], 1.0);
+          Object.assign(pose, { body: "squash", dx: Math.trunc(t * 16) % 2, face: "normal" });
+          if (q > 0.15) {
+            this.trickFx(t, "sp_twiggle", 0.05, LEAFLET, 2, 0, 22, [30, 50], [-6, 6], 0.8);
+          }
         }
         break;
       case "needlenub": // closes into a bud, then bursts open in a shower of hearts
