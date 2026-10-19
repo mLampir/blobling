@@ -1472,11 +1472,12 @@ export class PetScene {
         }
         break;
       case "quill": // fires its cannon: a bang, smoke, and it rocks back
-        if (q < 0.45) {
-          Object.assign(pose, { body: "stretch", face: "normal" });
+        if (q < 0.42) { // stands to attention and takes aim
+          Object.assign(pose, { body: Math.trunc(q * 10) % 2 ? "stretch" : "idle", face: "normal" });
         } else if (q < 0.65) {
-          Object.assign(pose, { body: "squash", dx: towards(-3), face: "laugh" });
-          this.trickFx(t, "sp_quill", once, SMOKE, 8, SPRITE / 2, 14, [6, 18], [-10, 2], 0.9);
+          Object.assign(pose, { body: "squash", dx: towards(q < 0.5 ? -5 : -3), face: "laugh", white: q < 0.45 });
+          this.trickFx(t, "sp_quill_bang", once, TOUCHE, 1, SPRITE / 2 + 2, 14, [0, 0], [0, 0], 0.2);
+          this.trickFx(t, "sp_quill", once, SMOKE, 10, SPRITE / 2, 14, [4, 20], [-12, 2], 1.1);
         }
         break;
       case "drakwing": // flaps up and breathes fire down at the opponent
