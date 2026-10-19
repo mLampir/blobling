@@ -373,6 +373,7 @@ const MOTH: Bitmap = [[235, 220, 190], ["X.X", ".X."]]; // moths drawn to Lanter
 const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongue of Flarelet's flame
 const STEAM_CLOUD: Bitmap = [[225, 240, 250], [".XX.", "XXXX", ".XX."]]; // Steamo's sauna steam
 const ENVELOPE: Bitmap = [[250, 240, 215], ["XXXXX", "X.X.X", "XX.XX", "XXXXX"]]; // what Parcelbeak delivers
+const TOUCHE: Bitmap = [[255, 255, 230], ["..X..", "..X..", "XX.XX", "..X..", "..X.."]];
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
 const CANNONBALL: Bitmap = [[125, 125, 140], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
@@ -1298,9 +1299,9 @@ export class PetScene {
       // two quick lunges forward and back, a flash at the tip each time
       const q = (p * 2) % 1;
       const out = q > 0.3 && q < 0.6;
-      Object.assign(pose, { body: out ? "stretch" : "squash", dx: (out ? 6 : 0) * this.facing, face: out ? "laugh" : "normal" });
+      Object.assign(pose, { body: out ? "stretch" : "squash", dx: (out ? 8 : 0) * this.facing, face: out ? "laugh" : "normal" });
       if (out) {
-        this.trickFx(t, "fence", 0.5, SLASH, 1, SPRITE / 2 + 4, 14, [0, 0], [0, 0], 0.3);
+        this.trickFx(t, "fence", 0.5, TOUCHE, 1, SPRITE / 2 + 10, 20, [0, 0], [0, 0], 0.5); // a flash at the tip of its beak
       }
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps

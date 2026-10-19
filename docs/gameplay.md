@@ -278,8 +278,8 @@ the more often it works. Once it knows a trick, it shows it off by itself now
 and then when it is in a good mood. While nobody is there, it practices a
 little on its own (see [While nobody is there](#while-nobody-is-there)).
 
-Some forms do a trick in their own way. It looks different on the panel, but
-the gesture and what it does are the same.
+Every adult form, and some children, do one trick in their own way. It looks
+different on the panel, but the gesture and what it does are the same.
 
 ## The guessing game
 
