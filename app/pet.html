@@ -603,10 +603,7 @@ function inTime(seconds) {
 function evolveText(item) {
   const [stage, species] = (item || "").split(":");
   if (stage === "baby") return t("page.events.hatched");
-  if (stage === "child") {
-    const own = T[`children.${species}`]; // a child with a name of its own says it
-    return own ? t("page.events.child_named", { species: own }) : t("page.events.child");
-  }
+  if (stage === "child") return t("page.events.child", { species: t(`children.${species}`) });
   return t("page.events.adult", { species: t(`species.${species}`) });
 }
 

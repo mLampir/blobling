@@ -152,9 +152,8 @@ function piece(event: PetEvent, t: Translate): Piece | null {
     case "trip":
       return ["home", "tired", "beaten", "snack"].includes(item) ? make(`trip_${item}`, item === "snack" ? 3 : 5) : null;
     case "evolve": {
-      const named = name === "child" && life.NAMED_CHILDREN.includes(outcome);
-      const stage = name === "baby" ? "hatched" : named ? "child_named" : name;
-      return ["hatched", "child", "child_named", "adult"].includes(stage)
+      const stage = name === "baby" ? "hatched" : name;
+      return ["hatched", "child", "adult"].includes(stage)
         ? make(`evolve.${stage}`, 9, { species: t(life.formKey(name, outcome)) }) : null;
     }
     default:

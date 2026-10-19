@@ -39,6 +39,7 @@
     "adult": "Erwachsen"
   },
   "children": {
+    "blob": "Lurelet",
     "ember": "Cindlet",
     "stone": "Pebblet",
     "fox": "Kitlet"
@@ -338,8 +339,7 @@
       "trip_snack": "Unterwegs habe ich meinen Proviant gegessen, und dann ging es mir besser.",
       "evolve": {
         "hatched": "Ich bin geschlüpft! Hallo, Welt!",
-        "child": "Ich bin gewachsen – jetzt bin ich ein Kind!",
-        "child_named": "Ich bin gewachsen – jetzt bin ich ein {species}!",
+        "child": "Ich bin gewachsen – jetzt bin ich ein {species}!",
         "adult": "Ich bin groß geworden – jetzt bin ich ein {species}!"
       },
       "postcard": {
@@ -482,8 +482,7 @@
       "unwrap": "Geschenk ausgepackt: {what}",
       "evolve": "Entwickeln",
       "hatched": "ist geschlüpft 🐣",
-      "child": "ist jetzt ein Kind",
-      "child_named": "ist jetzt ein {species}",
+      "child": "ist jetzt ein {species}",
       "adult": "ist jetzt ein {species} ✨",
       "learned": "kann jetzt {trick} ⭐",
       "practiced": "{trick} geübt",

@@ -39,6 +39,7 @@
     "adult": "Adult"
   },
   "children": {
+    "blob": "Lurelet",
     "ember": "Cindlet",
     "stone": "Pebblet",
     "fox": "Kitlet"
@@ -338,8 +339,7 @@
       "trip_snack": "I ate my snack on the way and felt better.",
       "evolve": {
         "hatched": "I hatched! Hello, world!",
-        "child": "I've grown – I'm a child now!",
-        "child_named": "I've grown – I'm a {species} now!",
+        "child": "I've grown – I'm a {species} now!",
         "adult": "I've grown up – I'm a {species} now!"
       },
       "postcard": {
@@ -482,8 +482,7 @@
       "unwrap": "unwrapped a gift: {what}",
       "evolve": "Evolve",
       "hatched": "hatched 🐣",
-      "child": "is a child now",
-      "child_named": "is a {species} now",
+      "child": "is a {species} now",
       "adult": "is a {species} now ✨",
       "learned": "learned a new trick: {trick} ⭐",
       "practiced": "{trick} practice",

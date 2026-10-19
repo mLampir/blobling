@@ -12,7 +12,7 @@ it away is folded shut on this page. Open only what you want to know.
 |---|---|---|
 | ![Egg](images/pets/egg.png) | **Egg** – keep it warm by petting it | up to 1 hour |
 | ![Baby](images/pets/baby.png) | **Baby** – a small slime with a sprout | 3 days |
-| ![Child](images/pets/child.png) | **Child** – the sprout has grown into a lure with a glowing bulb | 7 days |
+| ![Child](images/pets/child.png) | **Child: Lurelet** – the sprout has grown into a lure with a glowing bulb | 7 days |
 | ![Angloop](images/pets/angloop.png) | **Adult** – one of three forms; this one is Angloop | forever |
 
 What the stages mean for the game is in [gameplay.md](gameplay.md#growing-up).

@@ -31,16 +31,15 @@ export const LINES: Record<string, readonly string[]> = {
   stone: ["glimmerock", "bouldergrin"],
   fox: ["roamtail", "filchfox"],
 };
-// Lines whose child has a name of its own (the text is in `children` of the language files); the
-// slime's child is simply "Child"
-export const NAMED_CHILDREN: readonly string[] = ["ember", "stone", "fox"];
-
-/** The language key for the name of a form: an adult's species, a named child, or the stage. */
+/**
+ * The language key for the name of a form: an adult's species, the child of its line (every line's
+ * child has a name of its own, in `children` of the language files), or else the stage.
+ */
 export function formKey(stage: string, species: string): string {
   if (stage === "adult") {
     return `species.${species}`;
   }
-  return stage === "child" && NAMED_CHILDREN.includes(species) ? `children.${species}` : `stages.${stage}`;
+  return stage === "child" ? `children.${species}` : `stages.${stage}`;
 }
 export const SPECIES = Object.entries(LINES).flatMap(([line, adults]) => [line, ...adults]);
 // Every form there is, as "stage:species", in the album's order: per line its egg, baby, child
