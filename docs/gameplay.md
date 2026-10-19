@@ -109,7 +109,7 @@ can find keep the cold away. Which ones is for you to find out.
 |---|---|---|
 | Egg | up to 1 hour | only warming helps; every time brings hatching forward by 15 minutes |
 | Baby | 3 days | gets hungry and tired faster, can't get sick |
-| Child (Blobling) | 7 days | keeps a care diary; grows a lure with a glowing bulb |
+| Child (Bloblet) | 7 days | keeps a care diary; grows a lure with a glowing bulb |
 | Adult | forever | one of three forms |
 
 When a stage is over, the pet sparkles and the app offers **Hatch** or

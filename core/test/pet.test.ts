@@ -221,7 +221,7 @@ test("every child shows the name of its line", () => {
   const disk = new Disk();
   const pet = disk.pet();
   pet.state = grown(now);
-  for (const [line, name] of [["blob", "Blobling"], ["ember", "Cindlet"], ["stone", "Pebblet"], ["fox", "Kitlet"]]) {
+  for (const [line, name] of [["blob", "Bloblet"], ["ember", "Cindlet"], ["stone", "Pebblet"], ["fox", "Kitlet"]]) {
     pet.state.species = line;
     assert.equal(pet.snapshot(now).stage_label, name);
     assert.equal(pet.albumList().find((form) => form?.stage === "child" && form.species === line)!.label, name);
