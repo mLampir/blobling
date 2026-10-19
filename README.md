@@ -73,7 +73,8 @@ choose:
 
 When asked about customisation, edit the settings:
 
-- **Hostname:** for example `raspberrypi`
+- **Hostname:** for example `raspberrypi` or `blobling`. The app finds the
+  display under either name by itself; with any other name, you type it in.
 - **Username and password:** for example `pi` and a password (needed for
   `sudo` later)
 - **Wi-Fi:** your network, its password and your country (not needed with a
@@ -84,7 +85,7 @@ When asked about customisation, edit the settings:
 Write the card, put it into the Pi, switch it on and wait about two minutes.
 
 The examples below use the user `pi` and the hostname `raspberrypi`. If you
-chose other names, replace them everywhere.
+chose other names (`blobling`, for example), replace them everywhere.
 
 ### 2. Install
 
