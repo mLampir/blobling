@@ -372,6 +372,7 @@ const PAW: Bitmap = [[255, 130, 170], [".X.X.", "X...X", "..X..", ".XXX."]]; // 
 const MOTH: Bitmap = [[235, 220, 190], ["X.X", ".X."]]; // moths drawn to Lanternling's light
 const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongue of Flarelet's flame
 const STEAM_CLOUD: Bitmap = [[225, 240, 250], [".XX.", "XXXX", ".XX."]]; // Steamo's sauna steam
+const ENVELOPE: Bitmap = [[250, 240, 215], ["XXXXX", "X.X.X", "XX.XX", "XXXXX"]]; // what Parcelbeak delivers
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
 const CANNONBALL: Bitmap = [[125, 125, 140], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
@@ -1291,7 +1292,7 @@ export class PetScene {
       pose.body = p < 0.1 || p > 0.85 ? "idle" : p < 0.3 || p > 0.7 ? "squash" : "flat";
       pose.face = p >= 0.3 && p <= 0.7 ? "happy" : "smile";
       if (p > 0.35) {
-        this.trickFx(t, "deliver", TRICK_SHOW, LETTER, 1, 6, 10, [14, 18], [-20, -16], 1.4);
+        this.trickFx(t, "deliver", TRICK_SHOW, ENVELOPE, 1, 6, 10, [10, 12], [-14, -12], 2.0);
       }
     } else if (animation === "fence") {
       // two quick lunges forward and back, a flash at the tip each time
