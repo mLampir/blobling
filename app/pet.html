@@ -144,6 +144,8 @@
   .tabbar button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
   .tabbar svg { width: 24px; height: 24px; }
   .tabbar button[aria-current="page"] { color: var(--accent); }
+  .tabbar button { position: relative; }
+  .tabbar button.news::after { content: ""; position: absolute; top: 5px; left: calc(50% + 9px); width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
   /* ---------- The other tabs ---------- */
   .page { padding: calc(18px + var(--safe-top)) 16px 24px; display: grid; gap: 14px; align-content: start; }
@@ -420,8 +422,10 @@
       </div>
       <div id="display" hidden style="display: grid; gap: 8px">
         <div class="label" data-t="page.app.display_heading"></div>
-        <p class="note"><span id="display-text"></span> <a id="build-link" href="https://github.com/mLampir/blobling" target="_blank" rel="noopener" data-t="page.app.build_link"></a></p>
+        <p class="note" id="display-note"><span id="display-text"></span> <a id="build-link" href="https://github.com/mLampir/blobling" target="_blank" rel="noopener" data-t="page.app.build_link"></a></p>
         <button class="wide" id="connect" data-t="page.app.connect"></button>
+        <p class="note" id="update-text" hidden></p>
+        <button class="wide" id="update-start" data-t="page.app.update" hidden></button>
         <button class="wide quiet" id="disconnect" data-t="page.app.disconnect"></button>
       </div>
     </div>
@@ -1084,6 +1088,8 @@ async function refresh() {
   try {
     render(await api("GET", "/api/pet"));
     if (view === "diary") renderEvents((await api("GET", "/api/pet/events?limit=30")).events);
+    // the update: while "More" is open or it runs, otherwise now and then
+    if (app.mode === "pi" && (view === "more" || update?.running || Date.now() - updateChecked > 600_000)) checkUpdate();
   } catch (err) {
     fail(err);
   }
@@ -1837,6 +1843,54 @@ if (app.native) {
   $("build-link").hidden = $("connect").hidden = !!app.connectedTo;
   $("disconnect").hidden = $("offline-leave").hidden = !app.connectedTo;
 }
+// The Pi's own page shows the display part only for its update
+if (!app.native) $("display-note").hidden = $("connect").hidden = $("disconnect").hidden = true;
+
+// ---------- The update of the display ----------
+// A Pi installed from a release looks for new ones itself (pi/src/update.ts); here it can be
+// started. While it runs, the Pi restarts its app; once its version changes, the update is done.
+let update = null, updateChecked = 0;
+async function checkUpdate() {
+  updateChecked = Date.now();
+  let u;
+  try {
+    u = (await api("GET", "/api/state")).update;
+  } catch (_) {
+    return;  // during the update the Pi is away for a moment
+  }
+  if (!u?.current) return;  // set up from a checkout: no updates from here
+  if (update && u.current !== update.current) {
+    if (!app.native) return location.reload();  // the Pi's own page comes in the new version
+    say(t("page.app.update_done", { version: u.current }));
+  }
+  update = u;
+  renderUpdate();
+}
+
+function renderUpdate() {
+  const u = update;
+  $("display").hidden = false;
+  const lines = [t("page.app.update_version", { version: u.current })];
+  if (u.running) lines.push(t("page.app.update_running"));
+  else if (u.available) lines.push(t("page.app.update_available", { latest: u.latest }));
+  else if (u.failed) lines.push(t("page.app.update_failed"));
+  $("update-text").textContent = lines.join(" ");
+  $("update-text").hidden = false;
+  $("update-start").hidden = !u.available;
+  document.querySelector('[data-view="more"]').classList.toggle("news", u.available);
+}
+
+$("update-start").addEventListener("click", async () => {
+  $("update-start").disabled = true;
+  try {
+    update = (await api("POST", "/api/update")).update;
+    renderUpdate();
+  } catch (err) {
+    fail(err);
+  } finally {
+    $("update-start").disabled = false;
+  }
+});
 
 // Where it lives: nowhere (no weather), one place, or wherever the phone is
 async function showLocation() {

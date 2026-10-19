@@ -463,7 +463,13 @@
       "place_fixed": "Fixed place",
       "place_live": "Follows me",
       "display_heading": "Own LED display",
-      "location_live": "Weather for where you are right now."
+      "location_live": "Weather for where you are right now.",
+      "update": "Update the display",
+      "update_version": "Version {version}.",
+      "update_available": "Version {latest} is out.",
+      "update_running": "Updating … The display goes dark for a moment.",
+      "update_failed": "The last update did not work out.",
+      "update_done": "The display is now on version {version}."
     },
     "train": {
       "hint": "Pick an exercise",
