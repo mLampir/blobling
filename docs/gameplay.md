@@ -28,7 +28,7 @@ critical: an icon pulses on the panel and the matching item glows in the app.
 | Stat | Awake, per hour | Asleep, per hour | Notes |
 |---|---|---|---|
 | Satiety | −5 | −2 | full to empty in about 20 waking hours |
-| Energy | −4 | +12 | drops twice as fast in the hour before bedtime |
+| Energy | −2.5 | +12 | drops twice as fast in the hour before bedtime |
 | Mood | −2 | −0.5 | another −2 for every critical stat |
 | Hygiene | −2 | −1 | another −4 for every poop lying around |
 | Health | – | – | −2 while two or more stats are critical or the pet is sick, +1 while all are above 50 |
@@ -37,7 +37,9 @@ A poop appears one to two hours after a meal (three at most). With health
 below 30 the pet can get sick, which only medicine cures. Every now and then
 it gets bored and loses a little mood, so playing stays worthwhile.
 
-Three meals, two play sessions and one cleanup a day keep the pet happy. With
+Three meals, two play sessions and one cleanup a day keep the pet happy. A
+day alone leaves it with about two thirds of its energy in the evening, enough
+to play and go on a trip. With
 no care at all it is hungry after about half a day, grumpy after a day and
 sick after roughly two and a half.
 
@@ -405,7 +407,7 @@ home, healthy and not too tired, and nobody has done anything with it for a
 quarter of an hour, it finds something to do:
 
 - It **plays with the ball by itself**: a little mood, much less than playing
-  together.
+  together, for a point of energy.
 - It **practices a trick** you have started teaching it. It gets a quarter of
   a point each time, but only half a point between two practices with you,
   and it never learns a trick alone.

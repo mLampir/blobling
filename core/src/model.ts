@@ -28,7 +28,7 @@ export const CRITICAL = 25;
 export const RATES = {
   satiety: [-5.0, -2.0],
   mood: [-2.0, -0.5],
-  energy: [-4.0, 12.0],
+  energy: [-2.5, 12.0], // a day alone leaves it rested enough for the evening
   hygiene: [-2.0, -1.0],
 } as const;
 const NEEDS = ["satiety", "energy", "hygiene", "mood"] as const;
@@ -249,7 +249,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   }
 
   if (!asleep && minutesUntilBed(t, bedtime) <= TIRED_BEFORE_BED) {
-    s.energy -= 5 * h; // twice as tired in the evening
+    s.energy += RATES.energy[0] * h; // twice as tired in the evening
   }
   s.mood -= 2 * h * criticalCount(state);
   s.hygiene -= 4 * h * state.poops;
