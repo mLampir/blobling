@@ -47,9 +47,11 @@ A DIARY OF ITS LIFE
 Everything it did is kept in its diary: the history, its stats, every trip, every find and an album of the forms your pets have been.
 
 ON AN LED DISPLAY, TOO (OPTIONAL)
-Blobling can also live on a small LED panel at home, driven by a Raspberry Pi. The app connects to it on your home network, and your pet goes on with its day there even while your phone is off. The building instructions are open source.
+Blobling can also live on a small LED panel at home, driven by a Raspberry Pi. The app connects to it on your home network, and your pet goes on with its day there even while your phone is off.
 
 PRIVATE
 No account, no ads, no tracking, no in-app purchases. Your pet lives on your phone. The only thing that ever leaves it is a rounded location for the weather, and only if you turn the weather on.
+
+Blobling is open source: the app and the LED display, with the building instructions, are on GitHub (mLampir/blobling).
 
 In English and German.

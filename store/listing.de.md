@@ -45,9 +45,11 @@ EIN TAGEBUCH SEINES LEBENS
 Alles, was es erlebt, steht in seinem Tagebuch: der Verlauf, seine Werte, jeder Ausflug, jedes Fundstück und ein Album der Formen, die deine Pets schon hatten.
 
 AUCH AUF EINEM LED-DISPLAY (OPTIONAL)
-Blobling kann auch auf einem kleinen LED-Panel zu Hause leben, gesteuert von einem Raspberry Pi. Die App verbindet sich im Heimnetz damit, und dein Pet lebt dort weiter, auch wenn dein Handy aus ist. Die Bauanleitung ist Open Source.
+Blobling kann auch auf einem kleinen LED-Panel zu Hause leben, gesteuert von einem Raspberry Pi. Die App verbindet sich im Heimnetz damit, und dein Pet lebt dort weiter, auch wenn dein Handy aus ist.
 
 PRIVAT
 Kein Konto, keine Werbung, kein Tracking, keine In-App-Käufe. Dein Pet lebt auf deinem Handy. Das Einzige, was es je verlässt, ist ein gerundeter Standort fürs Wetter, und nur, wenn du das Wetter einschaltest.
+
+Blobling ist Open Source: die App und das LED-Display samt Bauanleitung liegen auf GitHub (mLampir/blobling).
 
 Auf Deutsch und Englisch.
