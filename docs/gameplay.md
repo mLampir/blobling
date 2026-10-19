@@ -746,7 +746,8 @@ A new creature should make you think "that one is different".
     They show in a trick done in its own way (`OWN_TRICKS`: a creature with
     wings flutters through its flip; the gesture and the effect stay the
     same), in its special move in a scuffle, or now and then while it stands
-    around.
+    around. Every adult form has one trick of its own and a special move
+    (the particles in `hit`) that no other form uses.
 
 #### How to work
 
