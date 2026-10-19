@@ -13,9 +13,10 @@ a day and also tells you the time and the weather.
 - **It lives with you.** The sky follows the real time of day, with sunrise
   and sunset for your location; clouds, rain and snow come from the real
   weather. On a cold morning the pet wakes up shivering, until you rub it warm.
-  Left to itself, it plays and practices on its own, and when you come back
-  the app tells you what it has been up to. The panel also shows the time and
-  the temperature.
+  Left to itself, it plays and practices on its own, it waits at the edge of
+  the panel around the times it is usually fed, and when you come back it
+  tells you what it has been up to, as a little story in its own words.
+  The panel also shows the time and the temperature.
 - **The phone is your hand.** Drag food, snacks, a ball or medicine onto the
   pet, stroke it with your finger, rub it clean with the sponge, and put it to
   bed at night.

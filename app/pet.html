@@ -288,6 +288,12 @@
   dialog .buttons .wide { flex: 1 1 0; min-width: 0; }
   dialog ul { margin: 0 0 16px; padding: 0; list-style: none; }
   dialog li { display: flex; padding: 6px 0; border-top: 1px solid var(--line); }
+  #welcome-story { max-height: 50dvh; overflow-y: auto; margin-bottom: 16px; }
+  #welcome-story p { font-size: 16px; font-weight: 400; line-height: 1.45; }
+  #welcome-story .postcard {
+    white-space: pre-line; padding: 14px 16px; border-radius: 6px; transform: rotate(-1.5deg);
+    background: var(--night); border: 2px dashed var(--accent); font-family: var(--round);
+  }
 
   /* The Pi can't be reached */
   .offline {
@@ -306,7 +312,6 @@
   <section class="view home" id="view-home">
     <div class="hero" id="hero">
       <canvas class="scene" id="scene" width="64" height="64" hidden></canvas>
-      <img class="scene" id="preview" alt="" hidden>
       <div class="hero-top">
         <div><h1 id="name">…</h1><p class="sub" id="sub"></p></div>
         <button class="pill" id="sleep" hidden></button>
@@ -461,7 +466,7 @@
 <dialog id="welcome">
   <form method="dialog">
     <p id="welcome-text"></p>
-    <ul id="welcome-list"></ul>
+    <div id="welcome-story"></div>
     <div class="buttons">
       <button class="wide primary" value="ok" data-t="page.welcome.ok"></button>
     </div>
@@ -655,8 +660,8 @@ async function act(name, item, extra) {
 
 // ---------- The scene ----------
 
-// On the phone the scene is drawn here; with a Pi, the picture of the panel is fetched again and again
-const scene = app.mode === "local" ? $("scene") : $("preview");
+// The scene goes on this canvas: drawn on the phone, or with a Pi the panel's frames, one after the other
+const scene = $("scene");
 $("hero").classList.toggle("whole", app.mode !== "local");
 scene.hidden = false;
 if (app.mode === "local") app.showScene(scene);
@@ -677,21 +682,26 @@ function matchSky() {
 }
 setInterval(() => { if (!document.hidden && view === "home") matchSky(); }, 2000);
 
-// With a Pi: the panel's picture, a few times a second while the pet is in sight
-const PREVIEW_MS = 300;
-let previewBusy = false;
+// With a Pi: each frame the panel draws, while the pet is in sight. The Pi answers as soon as it
+// has drawn the next one, so the next request goes out right away; after a failure, a little later.
+const PREVIEW_RETRY_MS = 1000;
+let previewBusy = false, previewFailed = 0;
 function nextPreview() {
   if (app.mode === "local" || previewBusy || document.hidden || view !== "home") return;
+  if (Date.now() - previewFailed < PREVIEW_RETRY_MS) return;
   previewBusy = true;
   const img = new Image();
-  img.onload = () => { scene.src = img.src; previewBusy = false; };
-  img.onerror = () => { previewBusy = false; };
+  img.onload = () => {
+    scene.getContext("2d").drawImage(img, 0, 0, scene.width, scene.height);
+    if (!matchSky.done) { matchSky.done = true; matchSky(); }
+    previewBusy = false;
+    nextPreview();
+  };
+  img.onerror = () => { previewBusy = false; previewFailed = Date.now(); };
   img.src = app.previewUrl();
 }
-if (app.mode !== "local") {
-  setInterval(nextPreview, PREVIEW_MS);
-  scene.addEventListener("load", () => { if (!matchSky.done) { matchSky.done = true; matchSky(); } });
-}
+// picks it up again when the page comes back to the pet
+if (app.mode !== "local") setInterval(nextPreview, 250);
 
 // Where the pet is in the picture (on the phone); with a Pi the whole picture counts
 let area = null;
@@ -1173,7 +1183,7 @@ function eventText(e) {
   return e.action === "evolve" && e.accepted ? evolveText(e.item)
     : e.action === "learned" ? t("page.events.learned", { trick: trickLabel(e.item) })
     : e.action === "trick" ? t("page.events.practiced", { trick: trickLabel(e.item) })
-    : e.action === "solo" ? (e.item === "ball" ? t("page.events.solo_ball")
+    : e.action === "solo" ? (T[`page.events.solo_${e.item}`] ? t(`page.events.solo_${e.item}`)
       : t("page.events.solo_trick", { trick: trickLabel(e.item) }))
     : e.action === "trip" ? T[`areas.${e.item}.trip`] || T[`page.events.trip_${e.item}`] || t("page.events.trip")
     : e.action === "battle" ? battleText(e.item)
@@ -1203,20 +1213,16 @@ function giftLabel(gift) {
 let welcomed = stored("welcomed");
 function welcome(s) {
   const w = s.welcome;
-  if (!w || String(w.since) === welcomed || document.querySelector("dialog[open]")) return;
+  if (!w || !w.pages || String(w.since) === welcomed || document.querySelector("dialog[open]")) return;
   welcomed = String(w.since);
   store("welcomed", welcomed);
   $("welcome-text").textContent = t("page.welcome.text", { name: s.name, time: inTime(s.now - w.since) });
-  $("welcome-list").replaceChildren(...w.told.map((line) => {
-    const li = document.createElement("li");
-    li.textContent = eventText({ ...line, accepted: true });
-    if (line.count > 1) {
-      const times = document.createElement("span");
-      times.className = "times";
-      times.textContent = `×${line.count}`;
-      li.append(times);
-    }
-    return li;
+  // A few sentences a day in the pet's words; Grandma's postcard after a long time with the Pi off
+  $("welcome-story").replaceChildren(...w.pages.map((page) => {
+    const p = document.createElement("p");
+    p.className = page.postcard ? "postcard" : "story";
+    p.textContent = page.text;
+    return p;
   }));
   $("welcome").showModal();
 }

@@ -288,13 +288,6 @@ if ! grep -qE '^\s*latitude\s*=\s*\S' "$CONFIG_DIR/config.ini" && ! grep -q '"lo
     info "No location yet: enter it on the settings page (http://$(hostname).local/) for the weather"
 fi
 
-# Older versions served HTTPS with a CA of their own; the apps don't need it, so its key goes.
-if [[ -e "$CONFIG_DIR/tls" || -e "$INSTALL_DIR/tls-cert.sh" ]]; then
-    step "Removing the old HTTPS certificate and its CA"
-    rm -rf "$CONFIG_DIR/tls" "$INSTALL_DIR/tls-cert.sh"
-    warn "If a phone has the Pi's CA installed, remove it there too (Android: Settings → Security → Trusted credentials → User; iPhone: the profile under General → VPN & Device Management)"
-fi
-
 step "systemd service $SERVICE_NAME"
 install -m 644 "$REPO_DIR/systemd/$SERVICE_NAME.service" "/etc/systemd/system/$SERVICE_NAME.service"
 # The update button's unit (started on demand only, so it is not enabled)

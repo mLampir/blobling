@@ -120,9 +120,9 @@ const app = {
     return local ? (await local).petArea() : null;
   },
 
-  /** With a Pi: a fresh picture of what the panel shows, as a URL for an <img>. */
+  /** With a Pi: the next frame the panel shows, as a URL for an <img> (the Pi answers once it is drawn). */
   previewUrl(): string {
-    return `${remote?.base ?? ""}/preview.png?t=${Date.now()}`;
+    return `${remote?.base ?? ""}/preview.png?next&t=${Date.now()}`;
   },
 
   /** On the phone: where it lives (for the weather and the sun times). */

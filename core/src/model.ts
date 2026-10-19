@@ -9,6 +9,7 @@
 
 import * as battle from "./battle";
 import * as care from "./care";
+import * as habits from "./habits";
 import * as home from "./home";
 import * as idle from "./idle";
 import * as life from "./life";
@@ -61,7 +62,7 @@ export const ACTIVITY_SECONDS: Record<string, number> = {
   eat: 6, snack: 4, play: 8, fall_asleep: 3, wake_up: 3, clean: 4,
   happy: 3, no: 2.5, medicine: 4, turn_over: 2, catch_heart: 7,
   egg_wobble: 2, hatch: 6, evolve: 8, game_wait: care.GAME_TIMEOUT, game_turn: 2.5,
-  trick: 4, throw_meal: THROW_SECONDS + 6, throw_snack: THROW_SECONDS + 4,
+  trick: 4, build: 10, throw_meal: THROW_SECONDS + 6, throw_snack: THROW_SECONDS + 4,
   trip_start: 4, trip_home: 4, unpack: 6, plant: 3, pick: 4, collect: 4, unwrap: 4,
   train_strength: 5, train_speed: 3, train_smarts: 3,
   // waiting for the signal, and showing the sequence: as long as the longest one can take
@@ -230,6 +231,8 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   care.driftWeight(state, TICK / 60, s.satiety < CRITICAL);
   state.bond = Math.max(0.0, state.bond - care.BOND_DECAY_PER_DAY / 1440);
   home.grow(state, TICK / 60, sky.precipitation(weather) === "rain");
+  idle.noteWeather(state, t, sky.precipitation(weather));
+  idle.melt(state, temp);
   if (state.trip) {
     const [events, done] = trip.step(state, t, weather, location);
     for (const [action, item] of events) {
@@ -298,7 +301,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   if (!state.asleep && !state.trip) {
     // left to itself, it finds something to do
     const busy = t < state.activity_until || wild.visiting(state, t);
-    const pastime = idle.step(state, t, busy);
+    const pastime = idle.step(state, t, busy, weather);
     if (pastime) {
       const [activity, shown, action, item] = pastime;
       setActivity(state, activity, t, shown);
@@ -323,6 +326,7 @@ export function advance(state: PetState, now: number, bedtime: Bedtime, weather:
     return true;
   }
   if (now - state.updated_at > MAX_CATCH_UP) {
+    const days = Math.max(1, Math.round((now - state.updated_at) / 86400));
     for (const k of STATS) {
       state.stats[k] = Math.max(state.stats[k], 50.0);
     }
@@ -332,7 +336,8 @@ export function advance(state: PetState, now: number, bedtime: Bedtime, weather:
     state.asleep = false;
     state.trip = null;
     state.updated_at = now;
-    logEvent(state, now, "away", "system");
+    // item: about how many days it was off, for Grandma's postcard
+    logEvent(state, now, "away", "system", { item: String(days) });
     return true;
   }
   let changed = false;
@@ -579,6 +584,7 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
   }
   const value = checkValue(action, item, options.value);
   state.seen_at = now; // somebody is there (for idle.welcome)
+  idle.noticed(state);
   let thrown: number | null = null;
   if (THROW_ACTIONS.includes(action) && options.throw != null) {
     if (!isUnit(options.throw)) {
@@ -612,6 +618,9 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
   clamp(state);
   const told = action === "unwrap" && reason === null ? state.activity_item : item;
   logEvent(state, now, action, by, { item: told, accepted: reason === null, reason });
+  if (reason === null && by !== "system") {
+    habits.record(state, action, now);
+  }
   return { accepted: reason === null, reason };
 }
 
