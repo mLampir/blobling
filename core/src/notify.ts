@@ -14,7 +14,7 @@ import * as model from "./model";
 import type { PetState } from "./state";
 import type { Location } from "./sun";
 
-export const HORIZON = model.MAX_CATCH_UP; // longer away and it was at Grandma's anyway
+export const HORIZON = 24 * 3600; // a day ahead at most (a little later it is at Grandma's anyway)
 // The needs it calls for, in order of priority
 export const CALLS = ["health", "satiety", "hygiene", "mood"] as const;
 export type Call = (typeof CALLS)[number];
@@ -27,7 +27,7 @@ export interface Reminder {
 
 /** The needs it would call for right now. */
 export function calls(state: PetState): Call[] {
-  if (state.stage === "egg") {
+  if (state.stage === "egg" || state.grandma) { // at Grandma's it is looked after
     return [];
   }
   return CALLS.filter((need) => need === "health" ? state.sick : state.stats[need] < model.CRITICAL);

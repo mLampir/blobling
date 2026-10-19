@@ -86,13 +86,21 @@ test("each day gets its own paragraph", () => {
   ]);
 });
 
-test("after a long time with the Pi off, Grandma writes a postcard", () => {
+test("fetched from Grandma's, the story ends with her postcard", () => {
   model.logEvent(pet, start + HOUR, "solo", "system", { item: "ball" });
-  model.advance(pet, start + 3 * 86400 + HOUR, BEDTIME);
-  const [before, card] = pages(start + 3 * 86400 + 2 * HOUR);
-  assert.equal(before.postcard, false);
+  const fetched = start + 4 * 86400 + 2 * HOUR;
+  for (let when = start; when <= fetched; when += HOUR) {
+    model.advance(pet, when, BEDTIME); // the Pi keeps running: a day after somebody was there, it goes
+  }
+  assert.equal(pet.grandma, start + model.GRANDMA_AFTER);
+  assert.equal(story.tell(pet, fetched, t), null); // nothing is told before it is home
+  act(pet, "grandma", fetched);
+  const told = pages(fetched);
+  const [before, card] = [told[0], told.at(-1)!];
+  assert.equal(before.postcard, false); // the day before it went
+  assert.equal(told.filter((page) => page.postcard).length, 1);
   assert.equal(card.postcard, true);
-  assert.match(card.text, /^Hello!\n.* stayed with me for 3 days while the display was off\. .+\nLove, Grandma$/);
+  assert.match(card.text, /^Hello!\n.* stayed with me for 3 days\. .+\nLove, Grandma$/);
   assert.deepEqual(warnings, []);
 });
 

@@ -196,6 +196,7 @@ test("plant grows and feeds", () => {
   // well fed: the ripe fruit stays on the plant
   for (let hours = 18; hours < 73; hours += 6) {
     pet.stats.satiety = 90;
+    pet.seen_at = start + (hours - 6) * HOUR; // somebody looks after it
     runUntil(start + hours * HOUR);
   }
   assert.equal(home.ripe(pet), true);

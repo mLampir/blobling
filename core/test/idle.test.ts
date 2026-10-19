@@ -97,6 +97,7 @@ test("now and then it finds something small, one at a time, and keeps it until s
   const found = new Set<string>();
   for (let day = 0; day < 20; day++) {
     const morning = start + day * 86400;
+    pet.seen_at = morning - HOUR; // somebody was there last night
     let first: string | null = null;
     for (let t = morning; t < morning + 12 * HOUR; t += HOUR) {
       model.advance(pet, t, BEDTIME);

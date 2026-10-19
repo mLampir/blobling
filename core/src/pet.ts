@@ -234,11 +234,11 @@ export class Pet {
       activity_item: s.activity_item, ready: life.isDue(s, now),
       weight_status: care.weightStatus(s), game: care.gameActive(s, now),
       tricks: care.learned(s),
-      trip: tripView(s, now), hat: s.hat, ...decoView(s),
+      trip: tripView(s, now), grandma: !!s.grandma, hat: s.hat, ...decoView(s),
       look_in: s.house > 0 && now < s.look_in_until && !s.asleep,
       backpack: s.backpack.length > 0,
       // a friend that is visiting right now, or the pet at the back that is out; and the egg in the nest (its line)
-      visitor: s.friend && wild.visiting(s, now) && !s.trip
+      visitor: s.friend && wild.visiting(s, now) && !s.trip && !s.grandma
         ? { species: s.friend.species, left: s.friend.until! - now, age: now - s.friend.until! + wild.VISIT_SECONDS }
         : this.secondView(now),
       nest: s.nest ? s.nest.line : null,
@@ -316,6 +316,7 @@ export class Pet {
       throw new model.RequestError("invalid_value");
     }
     this.advance(now);
+    this.fetchHome(now);
     const s = this.state;
     const successor = model.nextPet(s, now, this.t("pet.default_name"), egg);
     this.collect();
@@ -357,6 +358,7 @@ export class Pet {
       throw new model.RequestError("no_ancestor");
     }
     this.advance(now);
+    this.fetchHome(now);
     const front = this.state;
     const reason = this.swapRefusal();
     if (reason) {
@@ -392,6 +394,7 @@ export class Pet {
    */
   swap(now = this.clock()) {
     this.advance(now);
+    this.fetchHome(now);
     const front = this.state;
     const back = this.second;
     if (!back) {
@@ -542,13 +545,30 @@ export class Pet {
       // the two play together every time the pet at the back has been out by day
       for (let end = companion.nextOutEnd(s.updated_at); end <= now; end = companion.nextOutEnd(end)) {
         model.advance(s, end, this.bedtime(), this.weather(), this.temperature(), this.location);
-        companion.rest(back, end);
+        this.restBack(end);
         this.playedTogether(end);
       }
     }
     model.advance(s, now, this.bedtime(), this.weather(), this.temperature(), this.location);
     if (back) {
-      companion.rest(back, now);
+      this.restBack(now);
+    }
+  }
+
+  /** The pet at the back up to `now`; at Grandma's it is there too, and doesn't grow on either. */
+  private restBack(now: number): void {
+    const back = this.second!;
+    const grandma = this.state.grandma;
+    companion.rest(back, grandma ? Math.max(back.updated_at, grandma) : now);
+    if (grandma) {
+      model.stayAtGrandmas(back, now);
+    }
+  }
+
+  /** Fetches the pet at the front from Grandma's, if it is there: before it changes places. */
+  private fetchHome(now: number): void {
+    if (this.state.grandma) {
+      model.comeBack(this.state, now);
     }
   }
 
@@ -658,6 +678,8 @@ export class Pet {
         kind: s.plant.kind, label: t(`plants.${s.plant.kind}`),
         stage: home.plantStage(s), ripe: home.ripe(s), left: s.plant.left,
       } : null,
+      // Since when it has been at Grandma's (it waits there to be fetched: action "grandma"), or null
+      grandma: s.grandma ? { since: Math.round(s.grandma) } : null,
       // What happened while nobody was there, told as a little story (story.tell), or null
       welcome: story.tell(s, now, t),
       // The pet at the back (companion.ts): who it is, whether it is out, and why it can't come to the front
