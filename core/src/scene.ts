@@ -370,6 +370,7 @@ const LEAFLET: Bitmap = [[150, 225, 110], ["XX", ".X"]]; // a leaf off Twiggle's
 const CRYSTAL: Bitmap = [[190, 150, 255], [".X", "XX", "XX"]]; // a shard of Gemperor's crystals
 const PAW: Bitmap = [[255, 130, 170], [".X.X.", "X...X", "..X..", ".XXX."]]; // Purrloop's paw prints
 const MOTH: Bitmap = [[235, 220, 190], ["X.X", ".X."]]; // moths drawn to Lanternling's light
+const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongue of Flarelet's flame
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
 const CANNONBALL: Bitmap = [[70, 70, 85], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
@@ -1184,9 +1185,10 @@ export class PetScene {
     } else if (animation === "flare") {
       // stretches up high, flickering, and embers shoot out of its top
       const up = Math.sin(p * Math.PI);
-      Object.assign(pose, { body: Math.trunc(p * 20) % 2 ? "stretch" : "idle", jump: up * 5, face: "laugh" });
-      if (p > 0.3 && p < 0.7) {
-        this.trickFx(t, "flare", 0.12, EMBER, 3, 0, 22 + up * 5, [-10, 10], [-30, -18]);
+      Object.assign(pose, { body: Math.trunc(p * 20) % 2 ? "stretch" : "idle", jump: up * 9, face: "laugh" });
+      if (p > 0.25 && p < 0.75) {
+        this.trickFx(t, "flare", 0.08, EMBER, 4, 0, 24 + up * 9, [-16, 16], [-40, -20], 1.0);
+        this.trickFx(t, "flare_tongue", 0.25, FLAME_TONGUE, 1, 0, 26 + up * 9, [-4, 4], [-26, -18], 0.7);
       }
     } else if (animation === "chase") {
       // runs round a small circle, turning to look after its tail all the time
@@ -1875,7 +1877,7 @@ export class PetScene {
     }
     if (special) {
       const sprite = ({
-        sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: MOTH, flarelet: EMBER,
+        sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: MOTH, flarelet: FLAME_TONGUE,
         glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: CRYSTAL, angloop: LURE_GLOW, purrloop: PAW,
         roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER, twiggle: LEAFLET, needlenub: LOVE,
         drakwing: FIRE, quill: CANNONBALL, steamo: STEAM, lillypot: BUBBLE, rapierre: SLASH, parcelbeak: LETTER,
