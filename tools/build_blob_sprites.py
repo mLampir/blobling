@@ -623,6 +623,22 @@ PURRLOOP_B = [r[:11] + "." + r[11:20] + r[21:] for r in PURRLOOP[:5]] + PURRLOOP
 PURRLOOP_FACE_TOP = 14  # counted from the heart
 PURRLOOP_TAGS = species_tags([PURRLOOP, PURRLOOP_B], 20, 14)
 
+
+def cat_stretch(grid, row, drop):
+    """A cat's stretch: the front (on the right) sinks and the back stays up; column x loses
+    round(drop * x / width) rows at `row` and moves down by as much."""
+    width = len(grid[0])
+    cols = []
+    for x in range(width):
+        col = [r[x] for r in grid]
+        n = round(drop * x / (width - 1))
+        cols.append(["."] * n + col[:row] + col[row + n:])
+    return ["".join(c[y] for c in cols) for y in range(len(grid))]
+
+
+# Its own bow: front down in a long stretch with a yawn
+PURRLOOP_TAGS["stretch_low"] = [(cat_stretch(PURRLOOP, 10, 7), 1000)]
+
 # Gemperor: the slime grown into a king. The jelly on its back has hardened into a crown of
 # crystals, one of them broken off, and the bulb of the child's lure has sunk into its belly,
 # where it glows as its core. One crystal fist planted on the ground, the other raised. It still

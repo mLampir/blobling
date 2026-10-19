@@ -65,6 +65,7 @@ const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:glimmerock": { spin: "shine" }, // a show: its crystals flash as it turns
   "adult:bouldergrin": { flip: "toss" }, // its top stone does the flip for it and lands back on top
   "adult:gemperor": { flip: "slam" }, // a king doesn't somersault: it leaps up and lands so hard that crystals shoot up
+  "adult:purrloop": { bow: "stretch" }, // a cat's bow: front down, a long stretch and a yawn, then a shake
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
@@ -353,6 +354,7 @@ const BOLT: Bitmap = [[255, 225, 60], ["X.", ".X", "X."]]; // Rumblefluff's ligh
 const SHIMMER: Bitmap = [[255, 170, 210], [".X.", "X.X", ".X."]]; // the shimmer of Prismist's rainbow
 const LEAFLET: Bitmap = [[150, 225, 110], ["XX", ".X"]]; // a leaf off Twiggle's crown
 const CRYSTAL: Bitmap = [[190, 150, 255], [".X", "XX", "XX"]]; // a shard of Gemperor's crystals
+const PAW: Bitmap = [[255, 130, 170], [".X.X.", "X...X", "..X..", ".XXX."]]; // Purrloop's paw prints
 const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
 const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Parcelbeak's pouch
 const DIRT: Bitmap = [[60, 60, 60], ["X"]];
@@ -1149,6 +1151,17 @@ export class PetScene {
         pose.body = q <= 0 ? "squash" : "idle";
       }
       pose.face = q > 0 && q < 0.6 ? "happy" : "laugh";
+    } else if (animation === "stretch") {
+      // leans down at the front and stretches with a yawn, settles, then gives itself a shake
+      if (p < 0.1 || p > 0.9) {
+        Object.assign(pose, { body: "idle", face: "smile" });
+      } else if (p < 0.45) {
+        Object.assign(pose, { body: "stretch_low", face: "yawn" }); // front down and the back up (the "stretch_low" frame)
+      } else if (p < 0.7) {
+        Object.assign(pose, { body: "squash", face: "blink" });
+      } else {
+        Object.assign(pose, { body: "idle", dx: Math.trunc(p * 60) % 2 ? 1 : -1, face: "happy" });
+      }
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
       if (p < 0.1 || p > 0.9) {
@@ -1717,7 +1730,7 @@ export class PetScene {
     if (special) {
       const sprite = ({
         sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: EMBER, flarelet: EMBER,
-        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: CRYSTAL, angloop: LURE_GLOW, purrloop: LOVE,
+        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: CRYSTAL, angloop: LURE_GLOW, purrloop: PAW,
         roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER, twiggle: LEAFLET, needlenub: LOVE,
         drakwing: EMBER, quill: BUBBLE, steamo: STEAM, lillypot: BUBBLE, rapierre: GLINT, parcelbeak: LETTER,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;

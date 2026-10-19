@@ -109,13 +109,23 @@
     "h": 32
    },
    "duration": 500
+  },
+  {
+   "filename": "purrloop_body stretch_low 11",
+   "frame": {
+    "x": 352,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "purrloop_body.png",
   "size": {
-   "w": 352,
+   "w": 384,
    "h": 32
   },
   "frameTags": [
@@ -159,6 +169,12 @@
     "name": "lookout_right",
     "from": 9,
     "to": 10,
+    "direction": "forward"
+   },
+   {
+    "name": "stretch_low",
+    "from": 11,
+    "to": 11,
     "direction": "forward"
    }
   ],

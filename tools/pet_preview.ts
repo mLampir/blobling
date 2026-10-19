@@ -77,7 +77,7 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip", "prismist_rain",
   "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint", "gemperor_slam", "gemperor_special",
   "angloop", "angloop_night", "angloop_hungry", "angloop_hint", "angloop_lure", "angloop_special",
-  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", ...NEW_SCENES];
+  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", "purrloop_stretch", "purrloop_special", ...NEW_SCENES];
 const PETS_DIR = "docs/images/pets";
 const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
@@ -369,6 +369,11 @@ const SCENES: Record<string, Scene> = {
   gemperor_slam: [{ stage: "adult", species: "gemperor", activity: "trick", activity_item: "flip:ok" }, DAY, null],
   gemperor_special: [{
     stage: "adult", species: "gemperor",
+    trip: trip("stream", { event: "battle", foe: "puddlin", outcome: "win", rounds: [["charge", "flip", "special"]] }),
+  }, DAY, null],
+  purrloop_stretch: [{ stage: "adult", species: "purrloop", activity: "trick", activity_item: "bow:ok" }, DAY, null],
+  purrloop_special: [{
+    stage: "adult", species: "purrloop",
     trip: trip("stream", { event: "battle", foe: "puddlin", outcome: "win", rounds: [["charge", "flip", "special"]] }),
   }, DAY, null],
   angloop_lure: [{ stage: "adult", species: "angloop", activity: "trick", activity_item: "bow:ok" }, DAY, null],
