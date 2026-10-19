@@ -1261,6 +1261,9 @@ export class PetScene {
         Object.assign(pose, { body: q < 0.35 ? (Math.trunc(q * 30) % 2 ? "stretch" : "squash") : "stretch",
           jump: Math.sin(q * Math.PI) * 14, dx: Math.round(Math.sin(q * 2 * Math.PI) * 8) * this.facing,
           rotate: q > 0.35 ? -8 * this.facing : 0 });
+        if (q > 0.4 && q < 0.6) {
+          this.trickFx(t, "glide", TRICK_SHOW, FIRE, 4, 0, 26 + pose.jump, [-8, 8], [-26, -14], 0.7); // a puff of fire for joy
+        }
       } else {
         pose.body = "squash";
       }
