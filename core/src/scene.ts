@@ -1275,7 +1275,7 @@ export class PetScene {
       } else {
         Object.assign(pose, { body: "flat", face: "blink" });
         if (p > 0.2 && p < 0.85) {
-          this.trickFx(t, "soak", 0.18, BUBBLE, 1, 4, 10, [-4, 8], [-18, -10], 1.2);
+          this.trickFx(t, "soak", 0.12, BUBBLE, 2, 6, 8, [-6, 10], [-16, -8], 1.6);
         }
       }
     } else if (animation === "sauna") {
