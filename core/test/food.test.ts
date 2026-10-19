@@ -1,4 +1,4 @@
-// Food from trips: one kind per area, given by hand, and what it leaves in the pet.
+// The bag: fruits and food from trips, given by hand, what each form likes and what food leaves in the pet.
 
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
@@ -9,7 +9,7 @@ import * as home from "../src/home";
 import * as model from "../src/model";
 import { fromDict, toDict, type PetState } from "../src/state";
 import * as trip from "../src/trip";
-import { BEDTIME, HOUR, act, at, grown, withRules } from "./helpers";
+import { BEDTIME, HOUR, act, at, grown, refused, withRules } from "./helpers";
 
 let start: number;
 let pet: PetState;
@@ -45,25 +45,54 @@ test("it is kept in small numbers", () => {
   assert.equal(home.canAdd(pet, "hazelnut"), true);
 });
 
-test("given by hand: a little filling, no snack, and a boost that doesn't add up", () => {
-  assert.deepEqual(act(pet, "feed", start, { item: "honeycomb" }), [false, "no_item"]);
+test("only what is in the bag, and no more than a few of each", () => {
+  assert.deepEqual(act(pet, "feed", start, { item: "fruit_cherry" }), [false, "no_item"]);
+  refused(() => act(pet, "feed", start, { item: "cookie" }), "unknown_food"); // no snacks out of thin air
+  for (let i = 0; i < home.MAX_FOOD; i++) {
+    home.receive(pet, "fruit_cherry"); // a friend's gift or something found at home
+  }
+  assert.equal(pet.items.fruit_cherry, home.MAX_FOOD);
+  const mood = pet.stats.mood;
+  home.receive(pet, "fruit_cherry"); // no room left: eaten straight away
+  assert.equal(pet.items.fruit_cherry, home.MAX_FOOD);
+  assert.equal(pet.stats.mood, mood + home.PLANTS.cherry[1]);
+  pet.stats.mood = 20;
+  assert.deepEqual(act(pet, "feed", start, { item: "fruit_cherry", throw: 0.5 }), [true, null]);
+  assert.equal(pet.items.fruit_cherry, home.MAX_FOOD - 1);
+  assert.equal(pet.stats.mood, 20 + home.PLANTS.cherry[1] + food.FRUIT_MOOD);
+  assert.equal(pet.activity, "throw_snack");
+  assert.deepEqual([pet.counters.snacks, pet.counters.food_fruit_cherry], [1, 1]);
+  assert.equal(pet.diary.food_fruit_cherry, 1); // which food a child gets most could decide a form one day
+});
+
+test("every form has a favorite and something it won't eat, and both show once tried", () => {
+  for (const [favorite, disliked] of Object.values(food.TASTES)) {
+    assert.ok(food.edible(favorite) && food.edible(disliked) && favorite !== disliked);
+  }
+  assert.deepEqual(food.known(pet), { favorite: null, disliked: null });
+  const [favorite, disliked] = food.TASTES.blob;
+  pet.items[disliked] = 1;
+  pet.items[favorite] = 1;
+  assert.deepEqual(act(pet, "feed", start, { item: disliked }), [false, "dislikes"]);
+  assert.equal(pet.items[disliked], 1); // it stays in the bag
+  pet.stats.mood = 20;
+  act(pet, "feed", start + 60, { item: favorite });
+  assert.equal(pet.stats.mood, 20 + food.FRUIT_MOOD + food.FAVORITE_MOOD);
+  assert.deepEqual(food.known(pet), { favorite, disliked });
+  // a new form has tastes of its own, found out anew
+  pet.species = "angloop";
+  assert.deepEqual(food.known(pet), { favorite: null, disliked: null });
+});
+
+test("food from trips: a little filling and a boost that doesn't add up", () => {
   pet.items.honeycomb = 2;
-  const snacks = pet.counters.snacks ?? 0;
-  assert.deepEqual(act(pet, "feed", start, { item: "honeycomb", throw: 0.5 }), [true, null]);
+  assert.deepEqual(act(pet, "feed", start, { item: "honeycomb" }), [true, null]);
   assert.equal(pet.items.honeycomb, 1);
   assert.deepEqual(pet.boosts, ["heart"]);
   assert.equal(pet.stats.satiety, 60 + food.SATIETY);
-  assert.equal(pet.activity, "throw_snack");
-  assert.equal(pet.counters.snacks ?? 0, snacks); // it doesn't count as a snack
-  assert.equal(pet.counters.food_honeycomb, 1);
-  assert.equal(pet.diary.food_honeycomb, 1); // which food a child gets most could decide a form one day
   // while the heart is waiting, another honeycomb is refused
   assert.deepEqual(act(pet, "feed", start + 60, { item: "honeycomb" }), [false, "boost_waiting"]);
   assert.equal(pet.items.honeycomb, 1);
-  // three snacks in a row don't keep it from eating found food
-  for (let i = 0; i < model.MAX_SNACKS; i++) {
-    act(pet, "feed", start + 120 + i, { item: "cookie" });
-  }
   pet.items.hazelnut = 1;
   assert.deepEqual(act(pet, "feed", start + 200, { item: "hazelnut" }), [true, null]);
   assert.deepEqual(pet.boosts, ["heart", "trick"]);

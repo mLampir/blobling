@@ -4,7 +4,7 @@ import * as life from "./life";
 import type { Random } from "./random";
 import type { PetState, Stat } from "./state";
 
-export type ItemKind = "seed" | "food" | "deco" | "hat" | "egg";
+export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg";
 
 // Name: kind
 export const ITEMS: Record<string, ItemKind> = {
@@ -12,6 +12,10 @@ export const ITEMS: Record<string, ItemKind> = {
   seed_sunflower: "seed",
   seed_cherry: "seed",
   seed_herb: "seed",
+  fruit_berry: "fruit",
+  fruit_sunflower: "fruit",
+  fruit_cherry: "fruit",
+  fruit_herb: "fruit",
   honeycomb: "food",
   hazelnut: "food",
   watercress: "food",
@@ -41,7 +45,7 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_fox: "egg",
 };
 export const MAX_SEEDS = 9; // per kind; decorations and hats exist only once
-export const MAX_FOOD = 3; // per kind: food from trips is kept in small numbers (food.ts)
+export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
 export const MAX_EGGS = 9; // this many are kept
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus
 // what a pet has passed on to it (wild.ts), until it is brooded (model.nextPet).
@@ -86,7 +90,7 @@ export function canAdd(state: PetState, item: string): boolean {
   if (kindOf(item) === "egg") {
     return state.eggs.length < MAX_EGGS;
   }
-  const most = kindOf(item) === "seed" ? MAX_SEEDS : kindOf(item) === "food" ? MAX_FOOD : 1;
+  const most = kindOf(item) === "seed" ? MAX_SEEDS : kindOf(item) === "food" || kindOf(item) === "fruit" ? MAX_FOOD : 1;
   return (state.items[item] ?? 0) < most;
 }
 
@@ -201,11 +205,11 @@ export function smallThing(state: PetState, rng: Random): string {
   return rng.random() < SEED_CHANCE && canAdd(state, `seed_${kind}`) ? `seed_${kind}` : `fruit_${kind}`;
 }
 
-/** Take a small thing: a fruit is eaten straight away, a seed is kept with the finds. */
+/** Take a small thing: it goes into the bag, and a fruit that doesn't fit any more is eaten. */
 export function receive(state: PetState, thing: string): void {
-  if (thing.startsWith("seed_")) {
+  if (canAdd(state, thing)) {
     addItem(state, thing);
-  } else {
+  } else if (thing.startsWith("fruit_")) {
     eat(state, thing.slice("fruit_".length));
   }
 }

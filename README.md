@@ -19,9 +19,9 @@ a day and also tells you the time and the weather.
   tells you what it has been up to, as a little story in its own words. With
   the pet on the phone, it calls you when it really needs you, but never at
   night. The panel also shows the time and the temperature.
-- **The phone is your hand.** Drag food, snacks, a ball or medicine onto the
-  pet, stroke it with your finger, rub it clean with the sponge, and put it to
-  bed at night.
+- **The phone is your hand.** Drag a meal, a ball, medicine or something from
+  the bag onto the pet, stroke it with your finger, rub it clean with the
+  sponge, and put it to bed at night. What a pet likes you find out by trying.
 - **It grows up.** It hatches from an egg and grows over ten days into one of
   three adult forms, depending on how you cared for it. It learns tricks, trains,
   goes on trips, scuffles with whoever gets in its way there and brings things

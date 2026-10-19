@@ -6,7 +6,7 @@
  * of the pet's battle stats as its heirloom. The egg waits in the nest until it is collected.
  *
  * Some visits bring a gift. It lies in one spot until somebody unwraps it, and no new one comes
- * while it is there. Mostly it is a fruit the pet eats straight away; rarely a seed.
+ * while it is there. Mostly it is a fruit for the bag; rarely a seed.
  *
  * Lines whose egg a guardian gives (trip.GUARDIAN_EGGS) have no wild pets, so that egg stays
  * special.
@@ -142,8 +142,7 @@ export function giftFrom(state: PetState, rng: Random): string {
 }
 
 /**
- * Unwrap the gift: a fruit is eaten straight away, a seed is kept with the finds. Returns what
- * was in it.
+ * Unwrap the gift: it goes into the bag (home.receive). Returns what was in it.
  */
 export function unwrap(state: PetState): string {
   const gift = state.gift!;

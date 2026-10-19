@@ -78,9 +78,10 @@ test("thrown food lands first and counts like feeding", () => {
   assert.equal(pet.stats.satiety, 90);
   assert.deepEqual([pet.activity, pet.activity_item], ["throw_meal", "meal@0.25"]);
   assert.equal(pet.activity_until, start + model.THROW_SECONDS + model.ACTIVITY_SECONDS.eat);
-  act(pet, "feed", start + 60, { item: "fruit", throw: 1 });
-  assert.deepEqual([pet.activity, pet.activity_item], ["throw_snack", "fruit@1.00"]);
-  assert.equal(pet.events.at(-1)!.item, "fruit");
+  pet.items.fruit_cherry = 1;
+  act(pet, "feed", start + 60, { item: "fruit_cherry", throw: 1 });
+  assert.deepEqual([pet.activity, pet.activity_item], ["throw_snack", "fruit_cherry@1.00"]);
+  assert.equal(pet.events.at(-1)!.item, "fruit_cherry");
   // where nothing gets thrown, a throw has no meaning
   assert.equal(act(pet, "pet", start + 120, { throw: "x" })[0], true);
   assert.equal(pet.activity, "happy");
@@ -114,13 +115,6 @@ test("repeated play gives less", () => {
     gains.push(pet.stats.mood - before);
   }
   assert.deepEqual(gains, [20, 12, 6]);
-});
-
-test("snack limit", () => {
-  for (let i = 0; i < 3; i++) {
-    assert.equal(act(pet, "feed", start + i, { item: "cookie" })[0], true);
-  }
-  assert.deepEqual(act(pet, "feed", start + 3, { item: "cookie" }), [false, "too_many_snacks"]);
 });
 
 test("sleep needs tiredness during the day", () => {

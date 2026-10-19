@@ -121,12 +121,11 @@ test("now and then it finds something small, one at a time, and keeps it until s
   assert.deepEqual(act(pet, "pickup", start + 30 * 86400), [false, "nothing_found"]);
 });
 
-test("picking it up: a fruit is eaten straight away, a seed is kept, and it stays for the next pet", () => {
+test("picking it up: it goes into the bag, and it stays for the next pet", () => {
   pet.found = "fruit_berry";
-  pet.stats.satiety = 30;
   assert.equal(model.availableActions(pet, start).pickup, true);
   assert.deepEqual(act(pet, "pickup", start), [true, null]);
-  assert.equal(pet.stats.satiety, 60);
+  assert.equal(pet.items.fruit_berry, 1);
   assert.deepEqual([pet.events.at(-1)!.action, pet.events.at(-1)!.item], ["pickup", "fruit_berry"]);
   pet.found = "seed_cherry";
   act(pet, "pickup", start + 60);

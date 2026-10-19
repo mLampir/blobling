@@ -58,11 +58,6 @@
     "roamtail": "Roamtail",
     "filchfox": "Filchfox"
   },
-  "snacks": {
-    "cookie": "Cookie",
-    "icecream": "Ice cream",
-    "fruit": "Fruit"
-  },
   "tricks": {
     "bow": "Bow",
     "spin": "Spin",
@@ -126,6 +121,10 @@
     "seed_sunflower": "Sunflower seed",
     "seed_cherry": "Giggle cherry pit",
     "seed_herb": "Healing herb seed",
+    "fruit_berry": "Berry",
+    "fruit_sunflower": "Sunflower seed",
+    "fruit_cherry": "Giggle cherry",
+    "fruit_herb": "Healing blossom",
     "honeycomb": "Honeycomb",
     "hazelnut": "Hazelnut",
     "watercress": "Watercress",
@@ -175,7 +174,6 @@
     "rejected": {
       "asleep": "{name} is asleep.",
       "full": "{name} is full.",
-      "too_many_snacks": "That's enough sweets for now.",
       "tired": "{name} is too tired to play.",
       "tired_trick": "{name} is too tired to practice.",
       "rest_trick": "{name} needs a short break before the next trick.",
@@ -206,7 +204,8 @@
       "no_nest": "There is no egg in a nest.",
       "no_gift": "There is no gift lying there.",
       "boost_waiting": "{name} still has the last one in its tummy.",
-      "nothing_found": "There is nothing lying there."
+      "nothing_found": "There is nothing lying there.",
+      "dislikes": "{name} turns its head away: not that."
     },
     "notify": {
       "channel": "When your pet needs you",
@@ -238,11 +237,9 @@
     "collect": "🥚 Collect the egg",
     "collected": "{egg} collected – it is among your finds now",
     "unwrap": "🎁 Unwrap the gift",
-    "unwrapped_fruit": "There was a {fruit} in it – {name} ate it straight away",
-    "unwrapped_seed": "There was a {seed} in it – it is among your finds now",
+    "unwrapped_fruit": "There was a {fruit} in it – the bag was full, so {name} ate it straight away",
     "pickup": "👐 Pick up: {thing}",
-    "picked_fruit": "Picked up: {fruit} – {name} ate it straight away",
-    "picked_seed": "Picked up: {seed} – it is among your finds now",
+    "picked_fruit": "Picked up: {fruit} – the bag was full, so {name} ate it straight away",
     "boost": {
       "heart": "Sweet! {name} sets off on its next trip with one more heart.",
       "trick": "{name} feels clever: the next trick practice counts double.",
@@ -264,10 +261,9 @@
       "ball": "Ball",
       "medicine": "Medicine",
       "trip": "Trip",
-      "seeds": "Seeds",
-      "seed_count": "Seeds ×{n}",
       "sponge": "Sponge",
-      "baton": "Baton"
+      "baton": "Baton",
+      "bag": "Bag"
     },
     "tools": {
       "game": "Guess",
@@ -437,9 +433,6 @@
       "heading_home": "{name} is heading home",
       "brought": "Brought home: {items}"
     },
-    "tap": {
-      "choice": "{choice} – drag it into the scene"
-    },
     "finds": {
       "ripe": "a fruit is ripe",
       "ripening": "the next fruit is ripening",
@@ -540,7 +533,7 @@
     },
     "statistics": {
       "meals": "Meals",
-      "snacks": "Snacks",
+      "snacks": "From the bag",
       "plays": "Playtimes",
       "game": "Left or right?",
       "game_value": "{games} games, {won} won",
@@ -552,7 +545,8 @@
       "trips": "Trips",
       "fruits": "Fruits eaten",
       "hearts": "Hearts",
-      "favorite": "Favorite snack",
+      "favorite": "Favorite food",
+      "disliked": "Won't eat",
       "favorite_unknown": "not discovered yet",
       "trainings": "Training sessions",
       "battles": "Scuffles",
@@ -676,7 +670,13 @@
       "spin": "a round circle",
       "dance": "flat, back and forth",
       "flip": "up"
-    }
+    },
+    "bag": {
+      "empty": "The bag is empty.",
+      "favorite": "{name} beams: that is the favorite!"
+    },
+    "unwrapped_bag": "There was a {thing} in it – it is in your bag now",
+    "picked_bag": "Picked up: {thing} – it is in your bag now"
   },
   "settings": {
     "title": "LED Matrix",

@@ -71,7 +71,7 @@ const SCENES: Record<string, Scene> = {
   happy: [{ mood: "happy", activity: "happy" }, DAY, null],
   eat: [{ activity: "eat" }, DAY, null],
   throw_meal: [{ activity: "throw_meal", activity_item: "meal@0.90" }, DAY, null],
-  throw_snack: [{ activity: "throw_snack", activity_item: "icecream@0.05" }, DAY, null],
+  throw_snack: [{ activity: "throw_snack", activity_item: "fruit_cherry@0.05" }, DAY, null],
   // food from a trip, given by hand like a snack
   snack_found: [{ activity: "snack", activity_item: "honeycomb" }, DAY, null],
   throw_play: [{ activity: "throw_play", activity_item: "ball@0.80" }, DAY, null],

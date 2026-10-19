@@ -25,7 +25,7 @@ import type { Pet } from "./pet";
  * a change needs (CLAUDE.md, "The API between app and Pi").
  */
 export const API_VERSION = 4;
-export const API_OLDEST = 1;
+export const API_OLDEST = 4;
 
 /** Where the requests go. `action` and `newEgg` are the pet's own, or the Pi's, which also show it on the panel. */
 export interface PetTarget {

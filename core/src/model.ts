@@ -37,8 +37,6 @@ export const TIRED_BEFORE_BED = 60; // it gets tired this many minutes before be
 export const STAY_AWAKE_AFTER_WAKE = 30 * 60; // woken at night: it stays awake this long
 export const POOP_DELAY = [60 * 60, 120 * 60] as const;
 export const MAX_POOPS = 3;
-export const SNACK_WINDOW = 2 * 3600;
-export const MAX_SNACKS = 3;
 export const PET_COOLDOWN = 120;
 export const HEART_EVERY = 5; // every fifth counted petting, a heart falls from the sky
 export const HEART_MOOD = 10;
@@ -51,7 +49,7 @@ export const EVENT_LIMIT = 100;
 
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
   "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup"];
-export const FOODS = ["meal", ...Object.keys(care.SNACKS), ...Object.keys(food.FOODS)];
+export const FOODS = ["meal", ...food.EDIBLE];
 export const GAME_MOVES = ["start", "left", "right"];
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
 export const TRAIN_MOVES = [...battle.SKILLS, "tap", "answer"]; // an exercise, or the answer to one that is waiting
@@ -649,7 +647,7 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
   return { accepted: reason === null, reason };
 }
 
-/** A meal, a snack (care.SNACKS, at most MAX_SNACKS within SNACK_WINDOW) or food from a trip (food.FOODS). */
+/** A meal, which is always there, or something from the bag (food.ts). */
 function feed(state: PetState, now: number, name: string, thrown: number | null): string | null {
   const s = state.stats;
   if (state.asleep) {
@@ -672,43 +670,16 @@ function feed(state: PetState, now: number, name: string, thrown: number | null)
     life.record(state, "meals");
     return null;
   }
-  if (food.isFood(name)) {
-    return feedFound(state, now, name, thrown);
-  }
-  const snacks = (state.recent.snack ?? []).filter((t) => now - t < SNACK_WINDOW);
-  if (snacks.length >= MAX_SNACKS) {
-    return "too_many_snacks";
-  }
-  const factor = repeatFactor(state, "snack", now);
-  const [satiety, liked, weight, health] = care.SNACKS[name];
-  let mood = liked;
-  if (name === care.favorite(state)) {
-    mood *= care.FAVORITE_BONUS;
-    state.counters.favorite_found = 1; // from now on the app shows the favorite snack
-  }
-  s.satiety += satiety;
-  s.mood += mood * factor;
-  s.health += health;
-  care.addWeight(state, weight);
-  care.addBond(state, "snack");
-  setThrown(state, "snack", now, thrown, name, ["snack", name]);
-  count(state, "snacks");
-  count(state, `snack_${name}`);
-  life.record(state, "snacks");
-  return null;
-}
-
-/** Food from a trip (food.ts): it doesn't count as a snack; what matters is what it leaves in the pet. */
-function feedFound(state: PetState, now: number, item: string, thrown: number | null): string | null {
-  const reason = food.give(state, item);
+  const reason = food.give(state, name);
   if (reason !== null) {
     return reason;
   }
   care.addBond(state, "snack");
-  setThrown(state, "snack", now, thrown, item, ["snack", item]);
-  count(state, "found_food");
-  count(state, `food_${item}`);
-  life.record(state, `food_${item}`); // which food a child gets most could decide a form one day
+  setThrown(state, "snack", now, thrown, name, ["snack", name]);
+  count(state, "snacks");
+  count(state, `food_${name}`);
+  life.record(state, "snacks");
+  life.record(state, `food_${name}`); // which food a child gets most could decide a form one day
   return null;
 }
 

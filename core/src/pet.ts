@@ -413,9 +413,8 @@ export class Pet {
       bedtime: { start: bedtime[0], end: bedtime[1] },
       weight: Number(s.weight.toFixed(1)), ideal_weight: care.ideal(s), weight_status: care.weightStatus(s),
       bond: Math.round(s.bond), bond_level: care.bondLevel(s),
-      snacks: Object.keys(care.SNACKS).map((k) => ({ id: k, label: t(`snacks.${k}`) })),
-      // The favorite snack only shows once it has been fed
-      favorite_snack: s.counters.favorite_found ? care.favorite(s) : null,
+      // What it likes most and what it won't eat, once each has been tried with this form
+      favorite_food: food.known(s).favorite, disliked_food: food.known(s).disliked,
       game: gameInfo(s, now),
       tricks: Object.keys(care.TRICKS).map((k) => ({
         id: k, label: t(`tricks.${k}`), progress: Math.round(care.trickProgress(s, k) * 100), learned: care.knows(s, k),

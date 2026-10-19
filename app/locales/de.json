@@ -58,11 +58,6 @@
     "roamtail": "Roamtail",
     "filchfox": "Filchfox"
   },
-  "snacks": {
-    "cookie": "Keks",
-    "icecream": "Eis",
-    "fruit": "Obst"
-  },
   "tricks": {
     "bow": "Verbeugen",
     "spin": "Pirouette",
@@ -126,6 +121,10 @@
     "seed_sunflower": "Sonnenblumenkern",
     "seed_cherry": "Kicherkirschkern",
     "seed_herb": "Heilkrautsamen",
+    "fruit_berry": "Beere",
+    "fruit_sunflower": "Sonnenblumenkern",
+    "fruit_cherry": "Kicherkirsche",
+    "fruit_herb": "Heilblüte",
     "honeycomb": "Honigwabe",
     "hazelnut": "Haselnuss",
     "watercress": "Brunnenkresse",
@@ -175,7 +174,6 @@
     "rejected": {
       "asleep": "{name} schläft gerade.",
       "full": "{name} ist satt.",
-      "too_many_snacks": "Genug Süßes für jetzt.",
       "tired": "{name} ist zu müde zum Spielen.",
       "tired_trick": "{name} ist zu müde zum Üben.",
       "rest_trick": "{name} braucht eine kurze Pause vor dem nächsten Trick.",
@@ -206,7 +204,8 @@
       "no_nest": "Da liegt kein Ei in einem Nest.",
       "no_gift": "Da liegt kein Geschenk.",
       "boost_waiting": "{name} hat das letzte noch im Bauch.",
-      "nothing_found": "Da liegt nichts."
+      "nothing_found": "Da liegt nichts.",
+      "dislikes": "{name} dreht den Kopf weg: das nicht."
     },
     "notify": {
       "channel": "Wenn dein Pet dich braucht",
@@ -238,11 +237,9 @@
     "collect": "🥚 Ei einsammeln",
     "collected": "{egg} eingesammelt – es liegt jetzt bei deinen Funden",
     "unwrap": "🎁 Geschenk auspacken",
-    "unwrapped_fruit": "Drin war: {fruit} – {name} hat es gleich gegessen",
-    "unwrapped_seed": "Drin war: {seed} – es liegt jetzt bei deinen Funden",
+    "unwrapped_fruit": "Drin war: {fruit} – die Tasche war voll, also hat {name} es gleich gegessen",
     "pickup": "👐 Aufheben: {thing}",
-    "picked_fruit": "Aufgehoben: {fruit} – {name} hat es gleich gegessen",
-    "picked_seed": "Aufgehoben: {seed} – es liegt jetzt bei deinen Funden",
+    "picked_fruit": "Aufgehoben: {fruit} – die Tasche war voll, also hat {name} es gleich gegessen",
     "boost": {
       "heart": "Süß! {name} startet mit einem Herz mehr in die nächste Reise.",
       "trick": "{name} fühlt sich schlau: Die nächste Trick-Übung zählt doppelt.",
@@ -264,10 +261,9 @@
       "ball": "Ball",
       "medicine": "Medizin",
       "trip": "Ausflug",
-      "seeds": "Samen",
-      "seed_count": "Samen ×{n}",
       "sponge": "Schwamm",
-      "baton": "Taktstock"
+      "baton": "Taktstock",
+      "bag": "Tasche"
     },
     "tools": {
       "game": "Raten",
@@ -437,9 +433,6 @@
       "heading_home": "{name} macht sich auf den Heimweg",
       "brought": "Mitgebracht: {items}"
     },
-    "tap": {
-      "choice": "{choice} – in die Szene ziehen"
-    },
     "finds": {
       "ripe": "eine Frucht ist reif",
       "ripening": "die nächste Frucht reift",
@@ -540,7 +533,7 @@
     },
     "statistics": {
       "meals": "Mahlzeiten",
-      "snacks": "Snacks",
+      "snacks": "Aus der Tasche",
       "plays": "Gespielt",
       "game": "Links oder rechts?",
       "game_value": "{games} Spiele, {won} gewonnen",
@@ -552,7 +545,8 @@
       "trips": "Ausflüge",
       "fruits": "Früchte gefressen",
       "hearts": "Herzen",
-      "favorite": "Lieblingssnack",
+      "favorite": "Lieblingsessen",
+      "disliked": "Mag nicht",
       "favorite_unknown": "noch nicht entdeckt",
       "trainings": "Trainiert",
       "battles": "Raufereien",
@@ -676,7 +670,13 @@
       "spin": "ein runder Kreis",
       "dance": "flach hin und her",
       "flip": "nach oben"
-    }
+    },
+    "bag": {
+      "empty": "Die Tasche ist leer.",
+      "favorite": "{name} strahlt: Das ist das Lieblingsessen!"
+    },
+    "unwrapped_bag": "Drin war: {thing} – es liegt jetzt in deiner Tasche",
+    "picked_bag": "Aufgehoben: {thing} – es liegt jetzt in deiner Tasche"
   },
   "settings": {
     "title": "LED-Matrix",

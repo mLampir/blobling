@@ -2184,6 +2184,8 @@ ITEMS = {
     "medicine": [".hhh.", ".hhh.", "RRRRR", "RRhRR", "RhhhR", "RRhRR", "QQQQQ"],  # thrown from the app
     "sponge": ["L.....L.", ".L.YYYYY", "YYYYOYYY", "YOYYYYOY", "YYYOYYYY", "OOOOOOOO"],  # the app's, for cleaning
     "baton": ["......Y.", ".....YYY", "....h.Y.", "...h....", "..h.....", ".nn.....", "nn......"],  # the app's, for tricks
+    # the app's: the bag with what there is to eat and plant
+    "bag": ["..n..n..", "...nn...", "..KKKK..", ".KKKKKj.", "KKKKKKKj", "KKKKKKjj", "KKKKKjjj", ".jjjjjj."],
 }
 
 # ---------------------------------------------------------------- Trips and finds
