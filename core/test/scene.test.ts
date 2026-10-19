@@ -136,6 +136,22 @@ test("every form of the pet can be drawn, in every state", () => {
   }
 });
 
+test("about its usual time, every form waits at the nearer edge, looking out", () => {
+  const forms = [...Object.keys(life.LINES).flatMap((line) => ["baby", "child"].map((stage) => [stage, line])),
+    ...Object.values(life.LINES).flat().map((name) => ["adult", name])];
+  for (const [stage, species] of forms) {
+    for (const [start, edge] of [[4, 2], [26, 30]]) {
+      const view = { ...BASE, stage, species, waiting: true };
+      const waiter = scene();
+      waiter.x = waiter.targetX = start;
+      const images = Array.from({ length: 40 }, (_, i) => waiter.render(view, null, DAY, 1 + i * 0.1)[0]);
+      assert.equal(waiter.x, edge, `${stage} ${species}`);
+      assert.equal(waiter.facing, edge < 16 ? -1 : 1);
+      assert.ok(differing(images[30], images[35]) > 0, `${stage} ${species} goes on tiptoe`);
+    }
+  }
+});
+
 test("some forms do a trick in their own way", () => {
   assert.equal(trickAnimation("adult", "sneezle", "flip"), "flutter");
   assert.equal(trickAnimation("adult", "sneezle", "spin"), "spin");

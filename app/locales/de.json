@@ -269,8 +269,9 @@
     "tabs": {
       "history": "Verlauf",
       "statistics": "Statistik",
+      "travels": "Ausflüge",
       "finds": "Fundstücke",
-      "gallery": "Ahnen",
+      "gallery": "Album",
       "more": "Mehr"
     },
     "headings": {
@@ -448,7 +449,14 @@
       "guardians_value": "an {passed} von {all} vorbei"
     },
     "gallery": {
-      "entry": "{form} · {age} · seit {date}"
+      "entry": "{form} · {age} · seit {date}",
+      "album": "{met} von {all} Formen",
+      "missing": "Noch nicht getroffen",
+      "ancestors": "Ahnen"
+    },
+    "travels": {
+      "heading": "{area} · {day} · {time}",
+      "quiet": "ein ruhiger Spaziergang, nichts passiert"
     },
     "app": {
       "location_none": "Noch kein Ort: Dein Pet hat kein Wetter, und die Sonne richtet sich nach deiner Zeitzone.",

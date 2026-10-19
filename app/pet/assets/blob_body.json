@@ -69,13 +69,53 @@
     "h": 32
    },
    "duration": 1600
+  },
+  {
+   "filename": "blob_body lookout_left 7",
+   "frame": {
+    "x": 224,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 900
+  },
+  {
+   "filename": "blob_body lookout_left 8",
+   "frame": {
+    "x": 256,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 500
+  },
+  {
+   "filename": "blob_body lookout_right 9",
+   "frame": {
+    "x": 288,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 900
+  },
+  {
+   "filename": "blob_body lookout_right 10",
+   "frame": {
+    "x": 320,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 500
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "blob_body.png",
   "size": {
-   "w": 224,
+   "w": 352,
    "h": 32
   },
   "frameTags": [
@@ -107,6 +147,18 @@
     "name": "sleep",
     "from": 5,
     "to": 6,
+    "direction": "forward"
+   },
+   {
+    "name": "lookout_left",
+    "from": 7,
+    "to": 8,
+    "direction": "forward"
+   },
+   {
+    "name": "lookout_right",
+    "from": 9,
+    "to": 10,
     "direction": "forward"
    }
   ]

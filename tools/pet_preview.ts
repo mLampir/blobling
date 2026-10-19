@@ -82,6 +82,8 @@ const SCENES: Record<string, Scene> = {
   cloudy: [{ mood: "happy" }, DAY, { temp: 15, code: 2 }],
   cold: [{ cold: true }, DAY, { temp: -4, code: 1 }],
   emberstone: [{ deco: ["emberstone"] }, NIGHT, { temp: -4, code: 0 }],
+  waiting: [{ waiting: true }, DAY, null],
+  waiting_rain: [{ waiting: true, stage: "adult", species: "cyclopuff" }, DUSK, RAIN],
   wake_up: [{ activity: "wake_up" }, new Date(2026, 9, 12, 7, 0), null],
   heart: [{ activity: "catch_heart", mood: "happy" }, DAY, null],
   egg: [{ stage: "egg", ready: true }, DAY, null],
