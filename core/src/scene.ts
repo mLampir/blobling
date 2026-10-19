@@ -1375,7 +1375,7 @@ export class PetScene {
           Object.assign(pose, { body: q < 0.1 ? "squash" : "stretch", jump: Math.sin(q / 0.45 * Math.PI) * 16 });
         } else if (q < 0.6) {
           pose.body = "flat";
-          this.trickFx(t, "sp_gemperor", once, CRYSTAL, 8, SPRITE + 8, 2, [-8, 8], [-34, -16]);
+          this.trickFx(t, "sp_gemperor", once, CRYSTAL, 10, SPRITE / 2 + 14, 2, [-10, 10], [-36, -16]);
         }
         break;
       case "purrloop": // crouches, wiggles its back end, and pounces
