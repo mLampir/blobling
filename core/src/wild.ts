@@ -25,6 +25,7 @@ export const WILD: Record<string, readonly (readonly [string, number, sky.Precip
     ["lumoth", 1, null]],
   forest: [["filchfox", 3, null], ["roamtail", 1, null]],
   stream: [["bouldergrin", 3, null], ["glimmerock", 1, null]],
+  mountain: [["rumblefluff", 3, "rain"], ["prismist", 1, null]], // the thundercloud only comes out in the rain
 };
 export const MEET_CHANCE = 0.2; // how often a wild pet is at a station, while the pet is looking for a friend
 export const SHOW = 3; // tricks the pet shows
@@ -35,7 +36,7 @@ export const VISIT_EVERY = [5 * 3600, 10 * 3600] as const; // from one visit to 
 export const VISIT_SECONDS = 10 * 60;
 export const VISIT_MOOD = 50; // a visit only counts if the pet is at least in this mood (and at home, and awake)
 export const VISIT_CHEER = 5;
-export const VISITS_FOR_NEST = 3;
+export const VISITS_FOR_NEST = 5;
 export const HEIRLOOM = 0.25; // this part of each battle stat goes into the egg
 export const GIFT_CHANCE = 0.4; // how often a visit that counts brings something
 

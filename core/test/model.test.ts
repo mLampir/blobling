@@ -29,6 +29,16 @@ test("decay while awake", () => {
   assert.equal(pet.asleep, false);
 });
 
+test("a day alone leaves it rested enough for the evening", () => {
+  // fed at 7:00 and left alone until 18:00, with the pastimes of its own along the way
+  pet = grown(at("2026-10-12 07:00"));
+  pet.stats = { satiety: 100, mood: 90, energy: 100, hygiene: 100, health: 100 };
+  model.advance(pet, at("2026-10-12 18:00"), BEDTIME);
+  assert.equal(pet.asleep, false);
+  assert.ok(pet.stats.energy >= 60, `energy ${pet.stats.energy}`);
+  assert.ok(pet.stats.energy <= 75, `energy ${pet.stats.energy}`);
+});
+
 test("falls asleep at bedtime and wakes in the morning", () => {
   runUntil("2026-10-12 23:01");
   assert.equal(pet.asleep, true);

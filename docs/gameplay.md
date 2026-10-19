@@ -28,16 +28,18 @@ critical: an icon pulses on the panel and the matching item glows in the app.
 | Stat | Awake, per hour | Asleep, per hour | Notes |
 |---|---|---|---|
 | Satiety | −5 | −2 | full to empty in about 20 waking hours |
-| Energy | −4 | +12 | drops twice as fast in the hour before bedtime |
+| Energy | −2.5 | +12 | drops twice as fast in the hour before bedtime |
 | Mood | −2 | −0.5 | another −2 for every critical stat |
-| Hygiene | −2 | −1 | another −4 for every poop lying around |
+| Hygiene | −2 | −1 | another −3 for every poop lying around |
 | Health | – | – | −2 while two or more stats are critical or the pet is sick, +1 while all are above 50 |
 
 A poop appears one to two hours after a meal (three at most). With health
 below 30 the pet can get sick, which only medicine cures. Every now and then
 it gets bored and loses a little mood, so playing stays worthwhile.
 
-Three meals, two play sessions and one cleanup a day keep the pet happy. With
+Three meals, two play sessions and one cleanup a day keep the pet happy. A
+day alone leaves it with about two thirds of its energy in the evening, enough
+to play and go on a trip. With
 no care at all it is hungry after about half a day, grumpy after a day and
 sick after roughly two and a half.
 
@@ -116,7 +118,7 @@ can find keep the cold away. Which ones is for you to find out.
 |---|---|---|
 | Egg | up to 1 hour | only warming helps; every time brings hatching forward by 15 minutes |
 | Baby | 3 days | gets hungry and tired faster, can't get sick |
-| Child | 7 days | keeps a care diary; grows a lure with a glowing bulb |
+| Child (Bloblet) | 7 days | keeps a care diary; grows a lure with a glowing bulb |
 | Adult | forever | one of three forms |
 
 When a stage is over, the pet sparkles and the app offers **Hatch** or
@@ -130,9 +132,10 @@ A grown-up has no use for it.
 
 The care diary of the child stage decides the adult form: how well the pet was
 looked after, how often it was played with and petted, and how often it went
-on a trip. Each form has a
-character of its own, with small effects on the game. From its second day on,
-the bulb on the child's lure shows by its color which form it is heading for.
+on a trip. For one line, the weather at the moment it grows up decides. Each
+form has a character of its own, with small effects on the game. From its
+second day on, the bulb on the child's lure shows by its color which form it
+is heading for.
 
 The forms, their characters and the rules for getting them are in
 [pets.md](pets.md). That page keeps everything folded shut that would spoil
@@ -388,7 +391,7 @@ already, the pet eats it straight away). Rarely it is a seed, as long as there a
 kind. The visit that builds the nest brings no gift; the egg is the present
 then.
 
-After three visits that counted, the two build a **nest**, and an egg lies in
+After five visits that counted, the two build a **nest**, and an egg lies in
 it. The egg is of the pet's own line or of the friend's, and it carries the
 pet's heirloom (see [Growing up](#growing-up)). The friend moves on. The egg
 waits in the nest until you tap **Collect the egg**; then it is among the
@@ -435,7 +438,7 @@ home, healthy and not too tired, and nobody has done anything with it for a
 quarter of an hour, it finds something to do:
 
 - It **plays with the ball by itself**: a little mood, much less than playing
-  together.
+  together, for a point of energy.
 - It **practices a trick** you have started teaching it. It gets a quarter of
   a point each time, but only half a point between two practices with you,
   and it never learns a trick alone.
@@ -580,6 +583,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
 | Preview of the scene on a PC, pictures for [pets.md](pets.md) | `tools/pet_preview.ts` (`npm run preview`) |
+| Checking the values: pets played for weeks with owners of different kinds | `tools/balance.ts` (`npm run balance`) |
 | The phone app: the page, and where its pet lives (on the phone or on the Pi) | `app/pet.html`, `app/src/` |
 | The Pi's side: web server, display loop, save file | `pi/src/` |
 
@@ -691,6 +695,7 @@ For an adult form with pixel art of its own:
 | Eyes, mouths, `*_FACES` with every name of `FACES`, a `*_face_grid` function | `tools/build_blob_sprites.py` |
 | `write_sheet` for the body and the faces, and the list at the top of the script | `tools/build_blob_sprites.py` |
 | Body and face sheet | `SPECIES_SHEETS` in `core/src/scene.ts` |
+| A face that is not to sit in the middle of its row (`faceTop`, `faceCenter`, `faceShift` in `write_sheet`) | `tools/build_blob_sprites.py`, `faceAnchor` in `core/src/sprites.ts` |
 | Colors of the child's lure, walking and hopping, umbrella, special move | `LURE_HINT`, `WALK_HOPS`, `NO_UMBRELLA`, `hit` in `core/src/scene.ts` |
 | A trick in its own way: the same gesture and effect, another animation | `OWN_TRICKS` and `trick` in `core/src/scene.ts`, frames of its own if it needs them |
 | Tests: every form in every state, how it moves, where the face sits | `core/test/scene.test.ts`, `core/test/sprites.test.ts` |

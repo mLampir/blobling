@@ -19,14 +19,14 @@ export const ENERGY = 30; // it needs at least this much energy
 
 // Playing with the ball by itself: a little mood, much less than playing together
 export const BALL_MOOD = 4;
-export const BALL_ENERGY = 2;
+export const BALL_ENERGY = 1;
 
 // Practicing a trick by itself: only tricks it has been shown, a little at a time, and only
 // SOLO_LIMIT points between two practices together. It never learns a trick alone.
 export const PRACTICE_STEP = 0.25;
 export const SOLO_LIMIT = 0.5;
 export const PRACTICE_MOOD = 2;
-export const PRACTICE_ENERGY = 2;
+export const PRACTICE_ENERGY = 1;
 
 // What it leaves behind (state.trace) until somebody does something with it. Only one at a time;
 // playing with the ball again only moves the ball. A snowman is built only in real snow.

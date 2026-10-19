@@ -55,6 +55,9 @@ export const TASTES: Record<string, readonly [string, string]> = {
   bouldergrin: ["hazelnut", "fruit_berry"],
   roamtail: ["pinenut", "honeycomb"],
   filchfox: ["honeycomb", "fruit_herb"],
+  cloud: ["fruit_cherry", "fruit_sunflower"],
+  rumblefluff: ["hazelnut", "glowberry"],
+  prismist: ["glowberry", "pinenut"],
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],

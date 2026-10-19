@@ -146,6 +146,23 @@ test("a fox cub that travels a lot grows up a wanderer", () => {
   assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 }, "fox"), "filchfox");
 });
 
+test("a cloud lamb that grows up in the rain becomes a thundercloud", () => {
+  const cloud = model.newPet(start, "", "cloud");
+  assert.deepEqual(["cloud", "rumblefluff", "prismist"].map(life.lineOf), ["cloud", "cloud", "cloud"]);
+  cloud.stage = "child";
+  cloud.stage_since = start;
+  cloud.diary = { ...life.newDiary(), minutes: 2880, good_minutes: 2880 };
+  assert.equal(life.hint(cloud), "prismist"); // the sun is out
+  assert.equal(life.hint(cloud, true), "rumblefluff"); // it rains right now
+  const sunny = structuredClone(cloud);
+  assert.equal(act(sunny, "evolve", start + 7 * 86400)[0], true);
+  assert.deepEqual([sunny.stage, sunny.species], ["adult", "prismist"]);
+  assert.equal(model.applyAction(cloud, "evolve", start + 7 * 86400, BEDTIME, { weather: 63 }).accepted, true);
+  assert.deepEqual([cloud.stage, cloud.species], ["adult", "rumblefluff"]);
+  assert.equal(life.decayFactor(cloud, "mood"), 0.85);
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 }, "cloud", true), "rumblefluff");
+});
+
 test("child keeps a diary and grows up", () => {
   pet.stage = "child";
   pet.stage_since = start;

@@ -344,6 +344,7 @@ export LED_MATRIX_BDF_DIR=<path-to>/rpi-rgb-led-matrix/fonts
 npm run preview -- --spoiler-free   # → pet_preview.png
 npm run preview -- play --gif       # → pet_play.gif
 npm run sounds                      # the sound files, from the recipes in tools/sfx.ts → app/pet/sounds/
+npm run balance                     # owners of different kinds play pets for three weeks → the values checked (names forms)
 ```
 
 ### The app
@@ -494,6 +495,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `pi/src/update.ts` | Looks for a newer release and starts the update unit (only on a Pi installed from a release) |
 | `tools/deploy.mjs` | `npm run deploy`: builds the app on the PC, copies it to the Pi and runs the setup there |
 | `tools/serve.mjs` | `npm run app`: the app in the browser of the PC |
+| `tools/balance.ts` | `npm run balance`: plays pets for three weeks in fast-forward with owners of different kinds, through the core, and prints what came of it (stats, calls, stages, trips, guardians, friends); its output names the adult forms |
 | `tools/store_shots.ts`, `store/` | `npm run store`: the screenshots for the stores, and their headlines per language |
 | `install.sh` | Downloads a release on the Pi and runs its `setup.sh` (attached to every release) |
 | `tools/package.mjs`, `tools/bundle.mjs` | `npm run package`: the release package; `bundle.mjs` lists the files that go to the Pi, for the package and for `npm run deploy` |

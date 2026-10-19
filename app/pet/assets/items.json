@@ -439,13 +439,83 @@
     "h": 15
    },
    "duration": 1000
+  },
+  {
+   "filename": "items cloud_egg 44",
+   "frame": {
+    "x": 476,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items cloud_egg_wobble 45",
+   "frame": {
+    "x": 488,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_wobble 46",
+   "frame": {
+    "x": 500,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_wobble 47",
+   "frame": {
+    "x": 512,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_wobble 48",
+   "frame": {
+    "x": 524,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_crack 49",
+   "frame": {
+    "x": 536,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items cloud_egg_open 50",
+   "frame": {
+    "x": 548,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 476,
+   "w": 560,
    "h": 15
   },
   "frameTags": [
@@ -639,6 +709,30 @@
     "name": "fox_egg_open",
     "from": 43,
     "to": 43,
+    "direction": "forward"
+   },
+   {
+    "name": "cloud_egg",
+    "from": 44,
+    "to": 44,
+    "direction": "forward"
+   },
+   {
+    "name": "cloud_egg_wobble",
+    "from": 45,
+    "to": 48,
+    "direction": "forward"
+   },
+   {
+    "name": "cloud_egg_crack",
+    "from": 49,
+    "to": 49,
+    "direction": "forward"
+   },
+   {
+    "name": "cloud_egg_open",
+    "from": 50,
+    "to": 50,
     "direction": "forward"
    }
   ]
