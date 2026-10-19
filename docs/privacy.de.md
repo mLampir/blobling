@@ -79,7 +79,9 @@ Wenn du die App mit einem Blobling-Display (einem Raspberry Pi) zu Hause
 verbindest, spricht die App direkt über dein Heimnetz mit ihm, und das Pet
 lebt auf dem Display. Das Display ist dein eigenes Gerät; nichts läuft über
 uns. Das Display selbst fragt Open-Meteo nach dem Wetter an dem Ort, den du
-dort einstellst, und GitHub nach neuen Versionen seiner Software.
+dort einstellst, und GitHub nach neuen Versionen seiner Software. Wenn es
+seine Software installiert oder aktualisiert, lädt es außerdem Node.js von
+NodeSource.
 
 ## 6. App-Stores und diese Seite
 
