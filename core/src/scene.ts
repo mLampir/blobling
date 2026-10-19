@@ -378,7 +378,7 @@ const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongu
 const STEAM_CLOUD: Bitmap = [[225, 240, 250], [".XX.", "XXXX", ".XX."]]; // Steamo's sauna steam
 const ENVELOPE: Bitmap = [[250, 240, 215], ["XXXXX", "X.X.X", "XX.XX", "XXXXX"]]; // what Parcelbeak delivers
 const TOUCHE: Bitmap = [[255, 255, 230], ["..X..", "..X..", "XX.XX", "..X..", "..X.."]];
-const FIREBALL: Bitmap = [[255, 150, 40], [".XX.", "XXXX", "XXXX", ".XX."]]; // what Flarelet hurls
+const FIREBALL: Bitmap = [[255, 150, 40], ["..XX..", ".XXXX.", "XXXXXX", "XXXXXX", ".XXXX."]]; // what Flarelet hurls
 const BOULDER: Bitmap = [[160, 165, 180], [".XXX.", "XXXXX", "XXXXX", ".XXX."]]; // Bouldergrin's top stone
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
 const CANNONBALL: Bitmap = [[125, 125, 140], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
@@ -1392,12 +1392,12 @@ export class PetScene {
         }
         break;
       case "flarelet": // the flame swells, and it hurls a ball of fire
-        if (q < 0.45) {
-          Object.assign(pose, { body: Math.trunc(t * 10) % 2 ? "stretch" : "idle", jump: q * 8 });
+        if (q < 0.25) {
+          Object.assign(pose, { body: Math.trunc(t * 10) % 2 ? "stretch" : "idle", jump: q * 16 });
           this.trickFx(t, "sp_flarelet", 0.1, EMBER, 2, 0, 24, [-8, 8], [-24, -12]);
-        } else if (q < 0.6) {
+        } else if (q < 0.45) {
           Object.assign(pose, { body: "squash", dx: towards(3) });
-          this.trickFx(t, "sp_flarelet_ball", once, FIREBALL, 1, SPRITE / 2, 14, [40, 40], [0, 0], 0.6);
+          this.trickFx(t, "sp_flarelet_ball", once, FIREBALL, 1, 6, 20, [28, 28], [6, 6], 0.7);
         }
         break;
       case "roamtail": // dashes over and back in a cloud of dust
