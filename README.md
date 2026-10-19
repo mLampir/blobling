@@ -401,7 +401,9 @@ npm run store -- --frames-only        # new frames from the last pictures, after
 
 Each picture starts from a pet of its own, played through a short life with
 the core up to the moment of the picture (`SHOTS` in `tools/store_shots.ts`);
-the headlines are in `store/en.json` and `store/de.json`. Like the docs, the
+the headlines are in `store/en.json` and `store/de.json`. The texts of the listings
+(descriptions, App Store subtitle and keywords) are in `store/listing.en.md`
+and `store/listing.de.md`. Like the docs, the
 pictures show only egg, baby, child and Angloop and the first area. Judge
 them on `dist/store/contact-<language>.png`, about the size a store shows
 them, and upload the folders in `dist/store/` by hand.
