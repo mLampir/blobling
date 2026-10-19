@@ -225,7 +225,7 @@ can stay while new eggs are raised for the album.
   is the front pet's: the finds, the decorations, the plant and the eggs go
   with it, and a pet going to the back takes its hat off.
 - **The ancestors' gallery** keeps the pets that went to rest, frozen: they
-  lose nothing and don't grow on, and only their birthday keeps counting.
+  lose nothing, don't grow on and don't get older.
   **Bring home** next to one of them brings it back to the front, as it was
   when it left; the pet at the front goes to the back, and if there are two
   already, you pick again which one stays. Not while the pet at the front is

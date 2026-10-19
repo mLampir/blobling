@@ -339,8 +339,8 @@ export class Pet {
 
   /**
    * An ancestor comes home again, to the front; `bornAt` says which one (its "born_at"). Among the
-   * ancestors it rested frozen: it comes back as it went, without growing on or losing anything,
-   * only its birthday stays. The pet that was at the front goes to the
+   * ancestors it rested frozen: it comes back as it went, without growing, getting older or losing
+   * anything. The pet that was at the front goes to the
    * back, and `keep` decides as in newEgg which of two stays there; the other one goes to rest among
    * the ancestors. Not while the pet at the front is away or still an egg. Returns like action();
    * throws a RequestError if no ancestor that can come back was born then.
@@ -365,7 +365,9 @@ export class Pet {
     const [entry] = this.ancestors.splice(index, 1);
     const back = fromDict(entry.pet as unknown as Record<string, unknown>);
     model.reform(back, now);
-    back.stage_since += Math.max(0, now - back.updated_at); // the time among the ancestors doesn't count
+    const rested = Math.max(0, now - back.updated_at); // the time among the ancestors doesn't count
+    back.stage_since += rested;
+    back.born_at += rested;
     model.moveHome(front, back);
     Object.assign(back, { seen_at: now, weather_seen: front.weather_seen, updated_at: now, idle_next: 0.0 });
     if (this.second && keep === "back") {

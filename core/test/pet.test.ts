@@ -140,6 +140,7 @@ test("an ancestor comes home again, and the one it replaces goes to rest", () =>
   assert.equal(loaded.bringBack(kid.born_at, "front", month).accepted, true);
   assert.deepEqual([loaded.state.name, loaded.state.stage, loaded.state.stats.mood], ["Kid", "child", 77]);
   assert.equal(life.dueAt(loaded.state)! - month, due);
+  assert.equal(loaded.snapshot(month).age_days, kid.age_days); // and no older
 });
 
 test("a rare egg is kept until it is brooded", () => {
