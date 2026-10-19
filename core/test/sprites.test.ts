@@ -45,11 +45,12 @@ test("sheets: both of Aseprite's formats, and the default duration", () => {
     assert.equal(sheet.faceTop, null);
   }
   assert.equal(new Sheet({ frames, meta: { ...meta, faceTop: 3, faceCenter: "bottom" } }, picture).faceTop, 3);
+  assert.equal(new Sheet({ frames, meta: { ...meta, faceShift: -4 } }, picture).faceShift, -4);
 });
 
 test("where the face sits", () => {
   const anchors = (name: string) => ["idle", "squash", "stretch"].map((tag) =>
-    faceAnchor(sheets[name].image(tag), sheets[name].faceTop, sheets[name].faceCenter));
+    faceAnchor(sheets[name].image(tag), sheets[name].faceTop, sheets[name].faceCenter, sheets[name].faceShift));
   assert.deepEqual(anchors("blob_body"), [[16.0, 16], [15.5, 18], [15.5, 15]]);
   assert.deepEqual(anchors("sneezle_body"), [[16.0, 13], [15.5, 15], [15.5, 11]]); // in the head, centered on the feet
   assert.deepEqual(anchors("blob_baby_body"), [[16.0, 25], [15.5, 27], [15.5, 24]]);
@@ -62,6 +63,9 @@ test("where the face sits", () => {
   }
   // the eyes of Filchfox sit in the holes of its mask (rows 11 and 12 of the grid, 6 rows below the canvas top)
   assert.deepEqual(anchors("filchfox_body")[0], [13.5, 17]);
+  // the faces of the cloud adults sit on their heads, not in the middle of fleece, horns and rainbow
+  assert.deepEqual(anchors("rumblefluff_body")[0], [16, 17]);
+  assert.deepEqual(anchors("prismist_body")[0], [13.5, 17]);
 });
 
 test("recoloring", () => {

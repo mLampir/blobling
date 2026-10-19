@@ -23,6 +23,8 @@ frameTags):
 - glimmerock_body / glimmerock_faces, bouldergrin_body / bouldergrin_faces – its adults (faces of their own)
 - fox_baby_body / fox_baby_faces, kitlet_body / fox_faces – baby and child of the fox line
 - roamtail_body / roamtail_faces, filchfox_body / filchfox_faces – its adults (faces of their own)
+- cloud_baby_body / cloud_baby_faces, nimbit_body / cloud_faces – baby and child of the cloud line
+- rumblefluff_body / rumblefluff_faces, prismist_body / prismist_faces – its adults (faces of their own)
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine
 - trip                             – backpack, plants, decorations, hats, things along the path,
                                      opponents and guardians
@@ -1213,6 +1215,182 @@ FILCHFOX_TAGS = species_tags([FILCHFOX, FILCHFOX_B], 21, 13, idle_ms=500)
 # It walks, a little sideways, as a fox does that is up to something
 FILCHFOX_TAGS["walk"] = walk_tags(FILCHFOX, 21, range(7, 12), range(15, 20), 24, ms=(160, 100))
 
+# ---------------------------------------------------------------- The cloud line
+
+# The pet that hatches from the cloud egg: a lamb whose fleece is a cloud. What its forms keep is
+# the fleece: white and fluffy on the child, a storm cloud or a fair-weather cloud on the adults.
+# The two colors of the child's bell are its own: the code recolors them as a hint at the adult
+# form (LURES in core/src/scene.ts).
+CLOUD_PALETTE = {
+    "o": (60, 88, 150),    # outline: dark sky blue instead of black
+    "d": (110, 150, 215),  # shadow
+    "b": (150, 190, 245),  # sky blue: the face, the baby
+    "l": (190, 220, 255),  # lit
+    "h": (230, 242, 255),  # highlight
+    "f": (250, 252, 255),  # the cloud fleece
+    "F": (205, 215, 240),  # its shadow
+    "n": (80, 90, 130),    # the legs
+    "r": (235, 95, 120),   # Nimbit's ribbon
+    "y": (255, 215, 70),   # and its bell
+    "Y": (215, 160, 40),
+}
+
+# Baby: the baby slime with a puff of cloud fleece on top instead of the sprout; the fringe hangs
+# to the left, and two dark lamb's feet peek out underneath
+CLOUD_BABY = [
+    "....ff.fff......",
+    "...fffffffff....",
+    "..ffFfffffFff...",
+    ".ffoFllbbFFofo..",
+    ".fohhlbbbbbbdo..",
+    ".ollhbbbbbbbbdo.",
+    ".olbbbbbbbbbbdo.",
+    "olbbbbbbbbbbbddo",
+    "olbbbbbbbbbbbddo",
+    "obbbbbbbbbbbbddo",
+    "odbbbbbbbbbbdddo",
+    "oddddddddddddddo",
+    ".oonnooooooonno.",
+]
+CLOUD_BABY_TAGS = body_tags(CLOUD_BABY, 7, 8, flat_rows=3)
+
+# Nimbit, the child: a lamb whose fleece is a cloud. The fleece covers its head and its back, the
+# sky-blue face peeks out in front, the left ear flips up, four stubby legs, a puff of a tail on
+# the right, and a yellow bell on a pink ribbon. Row 10 is the one the poses get shorter at, column
+# 9 the one they get wider at.
+NIMBIT = [
+    ".......fff...fff.........",
+    ".....ofhhff.fffffo.......",
+    "....ofhhffffffffffo......",
+    "...ofhfffffffffffFfo.....",
+    "..offfffffffffffffFFo....",
+    ".obbofffffffffffffFFfo...",
+    "obllbbbbbbbbbbbbofffFFo..",
+    "obhlbbbbbbbbbbbbbofffFfo.",
+    ".oobbbbbbbbbbbbbbboffFFFo",
+    "...obbbbbbbbbbbbbdbofFFfo",
+    "...obbbbbbbbbbbbbddofffFo",
+    "...obbbbbbbbbbbbbddoffFFo",
+    "...obbbbbbbbbbbbddoffFFo.",
+    "...oodbbbbbbbbbdddoffFFFo",
+    "..offodddrrrrdddofffFFFo.",
+    "..offFFoooryYrooffFFFFoo.",
+    "..oFFFFFFFoYYoFFFFFFoo...",
+    "...ooonnoooooooonnooo....",
+    ".....onno......onno......",
+    ".....oooo......oooo......",
+]
+NIMBIT_FACE_TOP = face_top(NIMBIT, 6)  # on the top row of its face, right under the fleece
+NIMBIT_TAGS = body_tags(NIMBIT, 10, 9, flat_rows=3)
+
+# Rumblefluff: Nimbit grown into a thundercloud ram. The fleece is a dark storm cloud piled high,
+# light where the sun still catches its top, with a lock of it hanging over its brow; the face is
+# a stern slate-blue ram's face with a pale muzzle. Its horns are two golden ram's curls that end
+# in a zigzag bolt; the right one is bigger and forks, with a spark on top. Sturdy legs with dark
+# hooves. It walks. Slate, storm gray and lightning gold.
+RUMBLEFLUFF_PALETTE = {
+    "o": (45, 52, 95),     # outline
+    "f": (165, 175, 210),  # the storm cloud
+    "F": (115, 125, 168),  # its underside
+    "h": (215, 222, 242),  # where the light still catches it
+    "b": (125, 150, 210),  # the face
+    "l": (170, 195, 240),  # lit, the muzzle
+    "d": (85, 105, 165),   # shadow
+    "n": (40, 42, 70),     # legs and hooves
+    "y": (255, 225, 60),   # the lightning horns
+    "Y": (230, 150, 30),
+    "w": (255, 255, 255),  # the spark
+}
+RUMBLEFLUFF = [
+    "..............ooo...............",
+    "............oohffoo.............",
+    "...........ohhhhfffo............",
+    "..........ohhhhhhfffoooo........",
+    ".......ooohhhhhhhffhhhhho.......",
+    ".....oohffhhhhhhhfhhhhhhow......",
+    "....ohyyyyfhhhhhffhhhhfyyyy.....",
+    "....oyyYYyyfhhhfhfhhhhyyYYyy....",
+    "...oyyYhhYyffffffffohhyYfFYyy...",
+    "...oyYhhfffffffbffbboffffFFYy...",
+    "...oyYfdffoblhlbbbbbdofdfFFYyo..",
+    "....yyYfdfobllbbbbbbdodffFYyyo..",
+    "..oofyyYyfobbbbbbbbbdoffyYyyFFo.",
+    "..offffyYfobbbbbbbbbdoffYyFFFYo.",
+    ".offffyYffobbbbbbbbbdofffYyFFyo.",
+    ".offfffYfffobbbbbbbdoffffYFYyo..",
+    ".oFFFFFFFFFollllllldoFFFFFFFFo..",
+    "..oFFFFFFFFolllllllddoFFFFFFFo..",
+    "..oFFFFFFFFFoddddddoFFFFFFFFFo..",
+    "...oFFFFFFFFFooooooFFFFFFFFFo...",
+    "....oFFFFFFFFFFFFFFFFFFFFFFFo...",
+    "....oFFFFFFFFFFFFFFFFFFFFFFFo...",
+    ".....ooooooooooooooooooooooo....",
+    ".......nn...nn.....nn...nn......",
+    ".......nn...nn.....nn...nn......",
+    "......oooo.oooo...oooo.oooo.....",
+]
+RUMBLEFLUFF_FACE_TOP = face_top(RUMBLEFLUFF, 11)  # the eyes under its brow
+RUMBLEFLUFF_FACE_SHIFT = -1  # its bigger horn makes the row wider on the right than the head
+RUMBLEFLUFF_TAGS = species_tags([RUMBLEFLUFF, dots(RUMBLEFLUFF, {(25, 5): "."})], 20, 16)  # the spark flickers
+# It walks, heavily, as a ram does
+RUMBLEFLUFF_TAGS["walk"] = walk_tags(RUMBLEFLUFF, 20, range(6, 15), range(18, 28), 23, ms=(240, 140))
+
+# Prismist: Nimbit grown into an airy fair-weather ewe. The fleece is a light, sunlit cloud with
+# a warm blush underneath; the face is Nimbit's sky blue, gentle, with lashes; a rainbow arches
+# over its back, from a sparkle behind its head down to its tail. The ears hang, the right one
+# lower; it still wears Nimbit's bell on its ribbon; dainty legs. It walks. White, sky blue and
+# the rainbow.
+PRISMIST_PALETTE = {
+    "o": (70, 95, 160),    # outline
+    "f": (252, 252, 255),  # the cloud
+    "F": (220, 222, 245),  # its shadow
+    "p": (255, 205, 220),  # the blush of evening underneath
+    "b": (150, 190, 245),  # the face
+    "l": (195, 222, 255),  # lit, the muzzle
+    "h": (230, 242, 255),  # highlight
+    "d": (110, 150, 215),  # shadow, the ears
+    "n": (80, 90, 130),    # the legs
+    "r": (235, 95, 120),   # ribbon
+    "y": (255, 215, 70),   # bell
+    "Y": (215, 160, 40),
+    "w": (255, 255, 255),  # the sparkle
+    "1": (240, 80, 90), "2": (255, 165, 60), "3": (255, 225, 80),  # the rainbow, from the outside in
+    "4": (110, 210, 120), "5": (90, 160, 245), "6": (170, 120, 230),
+}
+PRISMIST = [
+    "................................",
+    ".........w......................",
+    "........www...1111111...........",
+    ".........w.1112222222111........",
+    "...........12233333332211.......",
+    "...........2334444444332211.....",
+    ".........oof4445555544433211....",
+    ".......oofffff56fff655543321....",
+    "......offffffffooofff65543321...",
+    "......offobffbbbbbofo.off43211..",
+    ".....offoblhlbbbbbdofofffFF321..",
+    ".....odfobllbbbbbbdofffffFF321..",
+    ".....dffobbbbbbbbbdodffffFFF321.",
+    ".....dffobbbbbbbbbdofdfffFFF321.",
+    ".....offfobbbbbbbdoffdfffFFo....",
+    ".....offfobllllbbdoffdfffFFo....",
+    "....offfffolllldoffffffffFFFo...",
+    "....offffffooooffffffffffFFFo...",
+    "....offffffffffffffffffffFFFo...",
+    "....oFFFFFrrrrrrrrFFFFFFFFFFo...",
+    ".....oFFFFFFFyYFFFFFFFFFFFFo....",
+    ".....oFFppppppYppppppppFFFo.....",
+    "......oooooooooooooooooooo......",
+    ".........nn..nn....nn..nn.......",
+    ".........nn..nn....nn..nn.......",
+    ".........oo..oo....oo..oo.......",
+]
+PRISMIST_FACE_TOP = face_top(PRISMIST, 11)  # the eyes
+PRISMIST_FACE_SHIFT = -4  # its fleece and the rainbow behind it reach further right than the head
+PRISMIST_TAGS = species_tags([PRISMIST, dots(PRISMIST, {(9, 1): ".", (8, 2): ".", (10, 2): ".", (9, 3): "."})], 18, 13)  # the sparkle twinkles
+# It walks, lightly
+PRISMIST_TAGS["walk"] = walk_tags(PRISMIST, 18, range(8, 16), range(18, 27), len(PRISMIST) - 3, ms=(180, 110))
+
 # ---------------------------------------------------------------- Faces
 
 FACE_PALETTE = {
@@ -1817,6 +1995,78 @@ FILCHFOX_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
     "sleep": ("closed", "none", False),
 }
 assert FILCHFOX_FACES.keys() == FACES.keys()
+# Baby and child of the cloud line: the slime's faces, with the eyelids in the shade of the face
+# and the mouth in its outline
+CLOUD_FACE_PALETTE = FACE_PALETTE | {"d": (110, 150, 215), "m": (60, 88, 150), "p": (50, 60, 110)}
+# Rumblefluff: stern – small eyes under heavy brows that slant down to its nose, nostrils on the
+# muzzle and a grumpy mouth that is a little crooked (5×2). Even happy it only smiles a little.
+# Face 9×7.
+RUMBLEFLUFF_EYES = {  # (left, right), 3×3
+    "stern": (["pp.", "wgp", "wpp"], [".pp", "pgw", "ppw"]),
+    "open": ([".p.", "wgp", "wpp"], [".p.", "pgw", "ppw"]),
+    "half": (["...", "ppp", "wpp"], ["...", "ppp", "ppw"]),
+    "closed": (["...", "...", "ppp"],) * 2,
+    "happy": (["...", ".p.", "p.p"],) * 2,
+    "sad": (["..p", "wgp", "wpp"], ["p..", "pgw", "ppw"]),
+    "cross": (["ppp", ".pp", "wgp"], ["ppp", "pp.", "pgw"]),
+}
+RUMBLEFLUFF_MOUTHS = {
+    "none": [".....", "....."],
+    "grumble": [".....", ".mmmm"],
+    "small": ["m...m", ".mmm."],
+    "flat": [".....", ".mmm."],
+    "sad": [".mmm.", "m...m"],
+    "open": [".mmm.", ".mrm."],
+    "laugh": ["mmmmm", ".mrm."],
+    "chew": [".....", "mmmmm"],
+}
+RUMBLEFLUFF_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
+    "normal": ("stern", "grumble", False),
+    "smile": ("open", "small", False),
+    "blink": ("closed", "grumble", False),
+    "happy": ("happy", "small", True),
+    "laugh": ("happy", "laugh", True),
+    "sad": ("sad", "sad", False),
+    "tired": ("half", "flat", False),
+    "yawn": ("closed", "open", False),
+    "sick": ("half", "sad", False),
+    "no": ("cross", "flat", False),
+    "eat_open": ("open", "open", False),
+    "eat_closed": ("happy", "chew", False),
+    "sleep": ("closed", "none", False),
+}
+assert RUMBLEFLUFF_FACES.keys() == FACES.keys()
+RUMBLEFLUFF_FACE_PALETTE = {"p": (35, 38, 70), "g": (255, 255, 255), "w": (240, 245, 255), "m": (45, 52, 95),
+                            "n": (45, 52, 95), "r": (190, 45, 60), "k": (255, 130, 160)}
+# Prismist: gentle – round eyes with a lash at the outer corner (3×3), a small smile; its normal
+# look is a kind one. Face 10×6.
+PRISMIST_EYES = {  # the left eye; the right one is its mirror image
+    "open": ["p..", ".wp", ".pp"],
+    "kind": ["p..", ".pp", ".wp"],
+    "half": ["p..", "...", ".pp"],
+    "closed": ["...", "p..", ".pp"],
+    "happy": ["...", "..p", ".p."],
+    "sad": ["..p", ".wp", ".pp"],
+    "cross": ["...", "pp.", ".wp"],
+}
+PRISMIST_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks); mouths as in MOUTHS
+    "normal": ("kind", "small", True),
+    "smile": ("open", "small", True),
+    "blink": ("closed", "small", True),
+    "happy": ("happy", "small", True),
+    "laugh": ("happy", "laugh", True),
+    "sad": ("sad", "sad", False),
+    "tired": ("half", "flat", False),
+    "yawn": ("closed", "open", False),
+    "sick": ("half", "sad", False),
+    "no": ("cross", "flat", False),
+    "eat_open": ("open", "open", False),
+    "eat_closed": ("happy", "chew", False),
+    "sleep": ("closed", "none", False),
+}
+assert PRISMIST_FACES.keys() == FACES.keys()
+PRISMIST_FACE_PALETTE = {"p": (50, 60, 110), "w": (255, 255, 255), "m": (70, 95, 160), "r": (235, 95, 120),
+                         "k": (255, 170, 200)}
 
 
 def face_grid(eyes, mouth, blush):
@@ -2083,6 +2333,41 @@ def filchfox_face_grid(eyes, mouth, blush):
     return ["".join(r) for r in rows]
 
 
+def rumblefluff_face_grid(eyes, mouth, blush):
+    rows = [list("." * 9) for _ in range(7)]
+
+    def put(part, left, top):
+        for y, line in enumerate(part):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[top + y][left + x] = ch
+
+    put(RUMBLEFLUFF_EYES[eyes][0], 0, 0)
+    put(RUMBLEFLUFF_EYES[eyes][1], 6, 0)
+    put(["n.n"], 3, 4)  # nostrils on the muzzle
+    put(RUMBLEFLUFF_MOUTHS[mouth], 2, 5)
+    if blush:
+        put(["k.......k"], 0, 3)
+    return ["".join(r) for r in rows]
+
+
+def prismist_face_grid(eyes, mouth, blush):
+    rows = [list("." * 10) for _ in range(6)]
+
+    def put(part, left, top):
+        for y, line in enumerate(part):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[top + y][left + x] = ch
+
+    put(PRISMIST_EYES[eyes], 0, 0)
+    put([r[::-1] for r in PRISMIST_EYES[eyes]], 7, 0)
+    put(MOUTHS[mouth], 3, 4)
+    if blush:
+        put(["kk......kk"], 0, 3)
+    return ["".join(r) for r in rows]
+
+
 def baby_face_grid(eyes, mouth, blush):
     left, right = BABY_EYES[eyes]
     rows = [list("." * BABY_W) for _ in range(BABY_H)]
@@ -2147,14 +2432,35 @@ def crack(grid):
     return ["".join(r) for r in rows]
 
 
-EGG_CRACKED = crack(EGG)
-EGG_OPEN = EGG_CRACKED[:7] + ["." * len(EGG[0])] + EGG_CRACKED[7:]  # the lid lifts
-EGG_TAGS = {
-    "egg": [(EGG, 1000)],
-    "egg_wobble": [(lean(EGG, -1), 150), (EGG, 150), (lean(EGG, 1), 150), (EGG, 150)],
-    "egg_crack": [(EGG_CRACKED, 1000)],
-    "egg_open": [(EGG_OPEN, 1000)],
-}
+def egg_tags(egg):
+    cracked = crack(egg)
+    return {
+        "egg": [(egg, 1000)],
+        "egg_wobble": [(lean(egg, -1), 150), (egg, 150), (lean(egg, 1), 150), (egg, 150)],
+        "egg_crack": [(cracked, 1000)],
+        "egg_open": [(cracked[:7] + ["." * len(egg[0])] + cracked[7:], 1000)],  # the lid lifts
+    }
+
+
+EGG_TAGS = egg_tags(EGG)
+# The cloud egg is sky blue, and its speckles are little clouds drifting across it
+CLOUD_EGG = [
+    "....oooo....",
+    "...ohheeo...",
+    "..oheeeeeo..",
+    "..oetttteo..",
+    ".otttttteeo.",
+    ".oeeeeeeeEo.",
+    ".oeeeeeeeEo.",
+    ".oeeeetttEo.",
+    ".oeeeetttto.",
+    ".oeeeeeeEEo.",
+    "..ottteeEo..",
+    "..otttteEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+EGG_GRIDS = {"cloud": CLOUD_EGG}  # lines whose egg is not the usual one in other colors
 # Rare eggs are the same egg in other colors: "<line>_egg", "<line>_egg_wobble", ...
 # The ember egg is a cooled crust with spots that glow.
 RARE_EGG_PALETTES = {
@@ -2166,6 +2472,9 @@ RARE_EGG_PALETTES = {
     # The fox egg: a russet shell with cream speckles, like a fox's chest.
     "fox": {"o": (105, 38, 18), "e": (235, 120, 48), "E": (190, 82, 32), "h": (255, 180, 110), "t": (255, 240, 215),
             "x": (70, 32, 22)},
+    # The cloud egg: a pale sky with white clouds (CLOUD_EGG), and a crack of dark blue.
+    "cloud": {"o": (60, 88, 150), "e": (165, 200, 245), "E": (120, 155, 215), "h": (220, 236, 255),
+              "t": (255, 255, 255), "x": (40, 60, 120)},
 }
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
@@ -2862,16 +3171,26 @@ def main():
                 faceCenter="left")  # on the body, not between it and the tail
     write_sheet("fox_faces", face_sheet(fox_face_grid, FOX_FACE_PALETTE))
     write_sheet("fox_baby_faces", face_sheet(baby_face_grid, FOX_BABY_FACE_PALETTE))
+    write_sheet("cloud_baby_body", body_sheet(CLOUD_BABY_TAGS, CLOUD_PALETTE))
+    write_sheet("nimbit_body", body_sheet(NIMBIT_TAGS, CLOUD_PALETTE), faceTop=NIMBIT_FACE_TOP)
+    write_sheet("cloud_faces", face_sheet(face_grid, CLOUD_FACE_PALETTE))
+    write_sheet("cloud_baby_faces", face_sheet(baby_face_grid, CLOUD_FACE_PALETTE))
+    write_sheet("rumblefluff_body", body_sheet(RUMBLEFLUFF_TAGS, RUMBLEFLUFF_PALETTE), faceTop=RUMBLEFLUFF_FACE_TOP,
+                faceShift=RUMBLEFLUFF_FACE_SHIFT)
+    write_sheet("rumblefluff_faces", face_sheet(rumblefluff_face_grid, RUMBLEFLUFF_FACE_PALETTE, RUMBLEFLUFF_FACES))
+    write_sheet("prismist_body", body_sheet(PRISMIST_TAGS, PRISMIST_PALETTE), faceTop=PRISMIST_FACE_TOP,
+                faceShift=PRISMIST_FACE_SHIFT)
+    write_sheet("prismist_faces", face_sheet(prismist_face_grid, PRISMIST_FACE_PALETTE, PRISMIST_FACES))
     items = {name: [(to_image(rows, ITEM_PALETTE), 1000)] for name, rows in ITEMS.items()}
     items |= {tag: [(to_image(g, ITEM_PALETTE), ms) for g, ms in frames] for tag, frames in EGG_TAGS.items()}
     for line, palette in RARE_EGG_PALETTES.items():
         items |= {f"{line}_{tag}": [(to_image(g, palette), ms) for g, ms in frames]
-                  for tag, frames in EGG_TAGS.items()}
+                  for tag, frames in egg_tags(EGG_GRIDS.get(line, EGG)).items()}
     write_sheet("items", items)
     trip = {tag: [(to_image(g, TRIP_PALETTE), ms) for g, ms in frames]
             for tag, frames in (TRIP_TAGS | FOE_TAGS).items()}
     # the eggs as finds, and as they lie in the nest
-    trip |= {f"egg_{line}": [(to_image(EGG, palette), 1000)]
+    trip |= {f"egg_{line}": [(to_image(EGG_GRIDS.get(line, EGG), palette), 1000)]
              for line, palette in ({"blob": ITEM_PALETTE} | RARE_EGG_PALETTES).items()}
     write_sheet("trip", trip)
 

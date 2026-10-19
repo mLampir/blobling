@@ -313,7 +313,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   life.recordMinute(state, !state.sick && s.satiety >= CRITICAL && s.hygiene >= CRITICAL && s.mood >= CRITICAL);
   const due = life.dueAt(state);
   if (due !== null && t >= due + life.AUTO_EVOLVE_AFTER && !state.asleep && !state.trip && !isBedtime(t, bedtime)) {
-    evolve(state, t, "system");
+    evolve(state, t, "system", weather);
   }
 }
 
@@ -487,9 +487,9 @@ function count(state: PetState, key: string): void {
   state.counters[key] = (state.counters[key] ?? 0) + 1;
 }
 
-function evolve(state: PetState, now: number, by: string): void {
+function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCode = null): void {
   const oldStage = state.stage;
-  const old = life.evolve(state, now);
+  const old = life.evolve(state, now, sky.precipitation(weather) === "rain");
   care.rescaleWeight(state, oldStage);
   state.game = null;
   const hatched = old.startsWith("egg");
@@ -623,7 +623,7 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
     } else if (state.trip) {
       reason = "away";
     } else {
-      evolve(state, now, by); // gets its own entry in the history
+      evolve(state, now, by, weather); // gets its own entry in the history
       return { accepted: true, reason: null };
     }
     logEvent(state, now, action, by, { accepted: false, reason });

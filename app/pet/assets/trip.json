@@ -1069,13 +1069,23 @@
     "h": 14
    },
    "duration": 1000
+  },
+  {
+   "filename": "trip egg_cloud 107",
+   "frame": {
+    "x": 1176,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "trip.png",
   "size": {
-   "w": 1176,
+   "w": 1188,
    "h": 24
   },
   "frameTags": [
@@ -1599,6 +1609,12 @@
     "name": "egg_fox",
     "from": 106,
     "to": 106,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_cloud",
+    "from": 107,
+    "to": 107,
     "direction": "forward"
    }
   ]

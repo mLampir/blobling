@@ -56,7 +56,10 @@
     "bouldergrin": "Bouldergrin",
     "fox": "Fuchs",
     "roamtail": "Roamtail",
-    "filchfox": "Filchfox"
+    "filchfox": "Filchfox",
+    "cloud": "Wolke",
+    "rumblefluff": "Rumblefluff",
+    "prismist": "Prismist"
   },
   "snacks": {
     "cookie": "Keks",
@@ -147,7 +150,8 @@
     "egg_blob": "Schleim-Ei",
     "egg_ember": "Glut-Ei",
     "egg_stone": "Stein-Ei",
-    "egg_fox": "Fuchs-Ei"
+    "egg_fox": "Fuchs-Ei",
+    "egg_cloud": "Wolken-Ei"
   },
   "pack": {
     "snack": "Snack",
