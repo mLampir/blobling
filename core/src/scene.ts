@@ -241,6 +241,32 @@ const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
     [[175, 160, 215], [200, 165, 255]], [[130, 115, 180], [150, 100, 255]], [[220, 212, 245], [255, 245, 255]],
   ],
 };
+// The cloud adults follow the weather (the colors as in the palettes of tools/build_blob_sprites.py):
+// in a thunderstorm Rumblefluff's horns of lightning flash now and then; in the rain Prismist's
+// rainbow fades, and when the sun comes out after it, its colors run along the arch for a while.
+const HORNS: readonly Color[] = [[255, 225, 60], [230, 150, 30]];
+const HORNS_FLASH: readonly Color[] = [[255, 255, 235], [255, 240, 160]];
+const RAINBOW: readonly Color[] = [[240, 80, 90], [255, 165, 60], [255, 225, 80], [110, 210, 120], [90, 160, 245],
+  [170, 120, 230]];
+const FADED: Color = [215, 222, 240]; // the rainbow in the rain: halfway to the gray of the clouds
+export const AFTER_RAIN = 30 * 60; // seconds the rainbow shines after the rain has stopped
+export type SkyLook = "storm" | "rain" | "after_rain" | null;
+
+/** The colors a form swaps for the weather at time t, and a key for the cache; null if none. */
+export function skyColors(species: string, look: SkyLook, t: number): [string, (readonly [Color, Color])[]] | null {
+  if (species === "rumblefluff" && look === "storm") {
+    const flash = t % 5 < 0.12 || (t % 5 > 0.25 && t % 5 < 0.35); // a double flash every few seconds
+    return flash ? ["flash", HORNS.map((from, i) => [from, HORNS_FLASH[i]] as const)] : null;
+  }
+  if (species === "prismist" && (look === "rain" || look === "storm")) {
+    return ["faded", RAINBOW.map((from) => [from, lerp(from, FADED, 0.6)] as const)];
+  }
+  if (species === "prismist" && look === "after_rain") {
+    const step = Math.floor(t / 0.2) % RAINBOW.length;
+    return [`run${step}`, RAINBOW.map((from, i) => [from, RAINBOW[(i + step) % RAINBOW.length]] as const)];
+  }
+  return null;
+}
 // Flicker's flame shows the mood: shift the hue of the flame (red–yellow)
 const FLICKER_FLAME: Record<string, number> = { blue: 140, gold: 8 };
 const EMBER: Bitmap = [[255, 170, 60], ["X"]];
@@ -510,6 +536,8 @@ interface PetLook {
   glow?: boolean;
   /** The face is mirrored; as drawn, the pupils sit towards the right. The body stays as it is: its light comes from the top left. */
   lookLeft?: boolean;
+  /** The weather as it shows on a form that follows it (skyColors). */
+  sky?: SkyLook;
 }
 
 export class PetScene {
@@ -529,6 +557,8 @@ export class PetScene {
   private skyKey: string | null = null;
   private skyPicture: Image | null = null;
   private night = 0.0;
+  private skyLook: SkyLook = null; // the weather as the cloud adults show it
+  private rainedAt = -Infinity; // when it last rained (animation time)
   private readonly petCache = new Map<string, [Image, number]>();
   private readonly eggCache = new Map<string, Image>();
   private petTop = GROUND - 20; // top row of the pet on the panel (for particles)
@@ -588,8 +618,16 @@ export class PetScene {
     if (trip && INDOORS.includes(trip.area)) {
       this.drawCave(img);
       this.weatherDrops = [];
+      this.skyLook = null;
     } else {
       this.drawWeather(img, weather, t, dt);
+      const code = sky.codeOf(weather);
+      const raining = sky.precipitation(code) === "rain";
+      if (raining) {
+        this.rainedAt = t;
+      }
+      this.skyLook = sky.isThunder(code) ? "storm" : raining ? "rain"
+        : t - this.rainedAt < AFTER_RAIN ? "after_rain" : null;
     }
     if (trip) {
       const [grass, soil] = TRAVEL[trip.area];
@@ -630,7 +668,7 @@ export class PetScene {
       [pet, top] = this.pet(stage, species, pose.body, t, pose.face, {
         sick: view.sick, whiteOut: pose.white, flame: species === "flicker" ? flickerFlame(view.mood) : null,
         heavy: view.weight_status === "heavy", hat: view.hat, hint: view.hint || view.species,
-        glow: this.night > 0.5, lookLeft: this.facing < 0,
+        glow: this.night > 0.5, lookLeft: this.facing < 0, sky: this.skyLook,
       });
       let px = x - Math.floor((pet.width - SPRITE) / 2);
       let py = y - 1; // -1 because of the outline
@@ -1324,7 +1362,7 @@ export class PetScene {
     const [body, jump] = walking ? this.stride("adult", species, t) ?? ["idle", 0] : [hop > 1.5 ? "stretch" : "idle", hop];
     const lift = Math.round(jump);
     const [sprite] = this.pet("adult", species, body, t, face,
-      { glow: this.night > 0.5, lookLeft: walking && heading < 0 });
+      { glow: this.night > 0.5, lookLeft: walking && heading < 0, sky: this.skyLook });
     img.paste(sprite, x - Math.floor((sprite.width - SPRITE) / 2), GROUND - SPRITE - lift);
   }
 
@@ -2089,13 +2127,17 @@ export class PetScene {
     const [body, index] = bodies.frame(bodyTag, t);
     const hint = stage === "child" && look.hint && life.LINES[line].includes(look.hint) ? look.hint : null;
     const glow = Boolean(look.glow) && ownArt && species in GLOWS;
+    const weathered = ownArt ? skyColors(species, look.sky ?? null, t) : null;
     const key = [stage, species, bodyTag, index, faceName, sick, whiteOut, flame, heavy, hat, hint, glow,
-      lookLeft].join("|");
+      lookLeft, weathered?.[0]].join("|");
     let cached = this.petCache.get(key);
     if (!cached) {
       let img = hint ? swapColors(body, LURES[line].map((from, i) => [from, LURE_HINT[hint][i]] as const)) : body.copy();
       if (glow) {
         img = swapColors(img, GLOWS[species]);
+      }
+      if (weathered) {
+        img = swapColors(img, weathered[1]);
       }
       if (ownArt && flame) {
         img = recolor(img, 0, 40, FLICKER_FLAME[flame]);

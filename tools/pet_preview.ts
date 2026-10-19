@@ -55,8 +55,8 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "fox_evolve", "roamtail", "roamtail_trip", "roamtail_sleep", "roamtail_rain", "filchfox", "filchfox_hat",
   "filchfox_sad", "filchfox_sleep", "filchfox_night",
   "wild_mountain", "visit_cloud", "cloud_egg", "cloud_hatch", "cloud_baby", "nimbit", "nimbit_hint", "nimbit_rain",
-  "nimbit_hat", "cloud_evolve", "rumblefluff", "rumblefluff_rain", "rumblefluff_sleep", "rumblefluff_trick", "prismist",
-  "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip",
+  "nimbit_hat", "cloud_evolve", "rumblefluff", "rumblefluff_rain", "rumblefluff_sleep", "rumblefluff_trick", "rumblefluff_storm", "prismist",
+  "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip", "prismist_rain",
   "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
   "angloop", "angloop_night", "angloop_hungry", "angloop_hint",
   "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint"];
@@ -65,6 +65,7 @@ const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
 const DUSK = new Date(2026, 9, 12, 18, 10);
 const RAIN = { temp: 12.4, code: 63 }; // WMO weather codes, as Open-Meteo sends them
+const STORM = { temp: 16.0, code: 95 };
 
 /** A trip on which nothing has happened yet, with whatever is given changed. */
 function trip(area: string, changes: Partial<TripView> = {}): TripView {
@@ -362,7 +363,9 @@ const SCENES: Record<string, Scene> = {
   rumblefluff_sleep: [{ stage: "adult", species: "rumblefluff", asleep: true }, NIGHT, null],
   rumblefluff_trick: [{ stage: "adult", species: "rumblefluff", activity: "trick", activity_item: "flip:ok" }, DAY,
     null],
+  rumblefluff_storm: [{ stage: "adult", species: "rumblefluff" }, DUSK, STORM], // its horns flash now and then
   prismist: [{ stage: "adult", species: "prismist", mood: "happy" }, DAY, null],
+  prismist_rain: [{ stage: "adult", species: "prismist" }, DAY, RAIN], // the rainbow fades
   prismist_hat: [{ stage: "adult", species: "prismist", hat: "bobble" }, DAY, null],
   prismist_sad: [{ stage: "adult", species: "prismist", mood: "sad", needs: ["satiety"] }, DUSK, null],
   prismist_sleep: [{ stage: "adult", species: "prismist", asleep: true }, NIGHT, null],

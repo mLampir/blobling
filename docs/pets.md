@@ -381,13 +381,16 @@ fleece. Both adults walk rather than hop, and a cloud needs no umbrella.
 
 **Rumblefluff**, the thundercloud ram. Its fleece is a dark storm cloud piled
 high, and its horns are two golden curls of lightning that end in a bolt; the
-right one is bigger and forks. It looks stern, under heavy brows, and even a
-bad day hardly makes it grumpier than it is.
+right one is bigger and forks. In a real thunderstorm they flash now and then.
+It looks stern, under heavy brows, and even a bad day hardly makes it grumpier
+than it is.
 
 ![Prismist](images/pets/prismist.png)
 
 **Prismist**, the fair-weather ewe. Its fleece is a light, sunlit cloud with a
-blush of evening underneath, and a rainbow arches over its back. It still wears
+blush of evening underneath, and a rainbow arches over its back. In the rain the
+rainbow fades; when the sun comes out after it, its colors run along the arch
+for half an hour. It still wears
 Nimbit's bell. It looks kind, with lashes and a small smile, loves being
 petted, and dirt hardly weighs it down.
 
