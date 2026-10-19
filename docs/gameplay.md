@@ -30,7 +30,7 @@ critical: an icon pulses on the panel and the matching item glows in the app.
 | Satiety | −5 | −2 | full to empty in about 20 waking hours |
 | Energy | −2.5 | +12 | drops twice as fast in the hour before bedtime |
 | Mood | −2 | −0.5 | another −2 for every critical stat |
-| Hygiene | −2 | −1 | another −4 for every poop lying around |
+| Hygiene | −2 | −1 | another −3 for every poop lying around |
 | Health | – | – | −2 while two or more stats are critical or the pet is sick, +1 while all are above 50 |
 
 A poop appears one to two hours after a meal (three at most). With health
@@ -360,7 +360,7 @@ effect. Rarely it is a seed, as long as there are fewer than nine of that
 kind. The visit that builds the nest brings no gift; the egg is the present
 then.
 
-After three visits that counted, the two build a **nest**, and an egg lies in
+After five visits that counted, the two build a **nest**, and an egg lies in
 it. The egg is of the pet's own line or of the friend's, and it carries the
 pet's heirloom (see [Growing up](#growing-up)). The friend moves on. The egg
 waits in the nest until you tap **Collect the egg**; then it is among the

@@ -230,7 +230,7 @@ too):
 
 | Form | Rule |
 |---|---|
-| Flarelet | the child was played with at least 3 times a day |
+| Flarelet | the child was played with at least 2.5 times a day on average |
 | Lanternling | everything else |
 
 From its second day on, the flame on Cindlet's head shows where it is heading:

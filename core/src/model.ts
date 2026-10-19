@@ -252,7 +252,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     s.energy += RATES.energy[0] * h; // twice as tired in the evening
   }
   s.mood -= 2 * h * criticalCount(state);
-  s.hygiene -= 4 * h * state.poops;
+  s.hygiene -= 3 * h * state.poops;
 
   const critical = criticalCount(state);
   if (critical >= 2 || state.sick) {
