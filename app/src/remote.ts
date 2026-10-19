@@ -26,6 +26,25 @@ export function piAddress(text: string): string | null {
   }
 }
 
+/** The names a display usually has on the home network: the one to give it, and the Pi's own. */
+export const DISPLAY_NAMES = ["blobling.local", "raspberrypi.local"];
+
+/** The first of `names` where `reachable` finds a pet, as its address, or null; all are asked at once. */
+export function findDisplay(reachable: (base: string) => Promise<boolean>,
+    names: readonly string[] = DISPLAY_NAMES): Promise<string | null> {
+  const bases = names.map((name) => piAddress(name)).filter((base): base is string => base !== null);
+  return new Promise((resolve) => {
+    let left = bases.length;
+    if (!left) resolve(null);
+    for (const base of bases) {
+      reachable(base).catch(() => false).then((found) => {
+        if (found) resolve(base);
+        else if (--left === 0) resolve(null);
+      });
+    }
+  });
+}
+
 /**
  * Whether a Pi and this app understand each other (core/src/api.ts): "ok", "display_old" (the
  * app needs more than the Pi offers) or "app_old" (the Pi no longer serves an app this old).

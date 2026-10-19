@@ -290,6 +290,9 @@
   dialog .buttons .wide { flex: 1 1 0; min-width: 0; }
   dialog ul { margin: 0 0 16px; padding: 0; list-style: none; }
   dialog li { display: flex; padding: 6px 0; border-top: 1px solid var(--line); }
+  .choice { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 4px 0; }
+  .choice img { width: 48px; height: 48px; image-rendering: pixelated; flex: none; }
+  .choice small { display: block; color: var(--muted); font-size: 12px; }
   #welcome-story { max-height: 50dvh; overflow-y: auto; margin-bottom: 16px; }
   #welcome-story p { font-size: 16px; font-weight: 400; line-height: 1.45; }
   #welcome-story .postcard {
@@ -481,6 +484,19 @@
     <div class="buttons">
       <button type="button" class="wide quiet" id="replay-again" data-t="page.replay.again"></button>
       <button class="wide primary" value="ok" data-t="page.close"></button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="choose">
+  <form method="dialog">
+    <p data-t="page.app.choose_pet"></p>
+    <ul>
+      <li><button class="choice" value="phone"><img id="choose-phone-icon" alt=""><span><strong id="choose-phone-name"></strong><small id="choose-phone-note"></small></span></button></li>
+      <li><button class="choice" value="display"><img id="choose-display-icon" alt=""><span><strong id="choose-display-name"></strong><small id="choose-display-note"></small></span></button></li>
+    </ul>
+    <div class="buttons">
+      <button type="button" class="wide quiet" id="choose-cancel" data-t="page.dialog.cancel"></button>
     </div>
   </form>
 </dialog>
@@ -2103,15 +2119,44 @@ document.querySelectorAll("[data-place]").forEach((b) => b.addEventListener("cli
   showLocation();
 }));
 
+// Connecting: the display is looked for under its usual names first, and only asked for if none
+// answers. When both have a pet, the player picks the one that lives on the display.
 $("connect").addEventListener("click", async () => {
-  const address = await ask(t("page.app.connect_prompt"), { value: "", ok: t("page.app.connect_ok"), address: true });
+  const button = $("connect");
+  button.disabled = true;
+  button.textContent = t("page.app.searching");
+  let address;
+  try {
+    address = await app.findDisplay();
+  } finally {
+    button.disabled = false;
+    button.textContent = t("page.app.connect");
+  }
+  address ??= await ask(t("page.app.connect_prompt"), { value: "", ok: t("page.app.connect_ok"), address: true });
   if (!address) return;
   try {
-    await app.connect(address);
+    const pets = await app.petsToChoose(address).catch(() => null);  // connect() says if it is gone
+    const keep = pets ? await choosePet(pets) : "display";
+    if (!keep) return;
+    await app.connect(address, keep === "phone");
   } catch (err) {
     say(err.message, true);
   }
 });
+
+// Which pet lives on the display: "phone", "display", or null if the player changed their mind
+function choosePet({ phone, display }) {
+  for (const [key, pet] of [["phone", phone], ["display", display]]) {
+    $(`choose-${key}-icon`).src = app.icon(pet.stage, pet.species);
+    $(`choose-${key}-name`).textContent = pet.name;
+    $(`choose-${key}-note`).textContent = t(`page.app.choose_${key}`, { form: pet.stage === "egg" ? pet.stage_label : pet.species_label });
+  }
+  const dialog = $("choose");
+  dialog.returnValue = "";
+  dialog.showModal();
+  return new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue || null), { once: true }));
+}
+$("choose-cancel").addEventListener("click", () => $("choose").close());
 $("disconnect").addEventListener("click", () => app.disconnect());
 $("offline-leave").addEventListener("click", () => app.disconnect());
 

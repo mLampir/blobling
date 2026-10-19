@@ -187,8 +187,12 @@ installs it over the one in `/etc/led-matrix/` (the previous file is kept as
 The Blobling app for Android and iPhone is the pet page as a real app, from
 Google Play and the App Store (the links follow once the apps are out). On
 its own it keeps a pet on the phone; connected to a Pi, it looks after the
-pet on the panel instead. To connect it, enter the Pi's address
-(`raspberrypi.local`, or its IP address) in the app under *More*. The app
+pet on the panel instead. To connect it, tap *Connect to the display* under
+*More*: the app looks for the Pi as `blobling.local` and `raspberrypi.local`
+and only asks for its address (or IP address) if neither answers. When both
+the phone and the display have a pet, it asks which of them lives on the
+display; the other one is kept (on the phone, or set aside on the Pi like a
+loaded save). The app
 talks to the Pi over plain HTTP on the home network, so nothing has to be
 installed on the Pi or the phone for it.
 
