@@ -375,7 +375,7 @@ const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwi
 const CANNONBALL: Bitmap = [[70, 70, 85], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
 const PETAL: Bitmap = [[255, 170, 200], ["X"]];
-const SMOKE: Bitmap = [[150, 150, 160], ["XX", "XX"]];
+const SMOKE: Bitmap = [[175, 175, 185], [".X.", "XXX", ".X."]]; // Filchfox's puff of smoke
 const RAINBOW_SHIMMER: Bitmap[] = RAINBOW.map((color) => [color, [".X.", "XXX", ".X."]]); // Prismist's own spin
 const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
 const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Parcelbeak's pouch
@@ -1198,12 +1198,13 @@ export class PetScene {
     } else if (animation === "vanish") {
       // a puff of smoke, gone, and it is back a few steps further on with a grin
       const gone = p > 0.3 && p < 0.6;
-      Object.assign(pose, { hidden: gone, dx: p >= 0.6 ? 6 * this.facing : 0, face: p >= 0.6 ? "laugh" : "smile",
-        body: p > 0.2 && p < 0.3 ? "squash" : "idle" });
+      const back = clamp((p - 0.82) / 0.12, 0, 1); // and hops back to where it was
+      Object.assign(pose, { hidden: gone, dx: p >= 0.6 ? Math.round(10 * (1 - back)) * this.facing : 0,
+        jump: Math.sin(back * Math.PI) * 4, face: p >= 0.6 ? "laugh" : "smile", body: p > 0.2 && p < 0.3 ? "squash" : "idle" });
       if (p > 0.28 && p < 0.4) {
-        this.trickFx(t, "vanish", TRICK_SHOW, SMOKE, 10, 0, 10, [-14, 14], [-14, 6], 0.9);
+        this.trickFx(t, "vanish", TRICK_SHOW, SMOKE, 14, 0, 12, [-16, 16], [-16, 4], 1.0);
       } else if (p > 0.58 && p < 0.7) {
-        this.trickFx(t, "appear", TRICK_SHOW, SMOKE, 6, 6, 10, [-10, 10], [-10, 4], 0.7);
+        this.trickFx(t, "appear", TRICK_SHOW, SMOKE, 8, 10, 12, [-12, 12], [-12, 4], 0.7);
       }
     } else if (animation === "charge") {
       // lowers its head and scrapes the ground twice, then charges forward and sparks fly off its horns
