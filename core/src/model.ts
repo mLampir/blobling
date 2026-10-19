@@ -231,6 +231,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   care.driftWeight(state, TICK / 60, s.satiety < CRITICAL);
   state.bond = Math.max(0.0, state.bond - care.BOND_DECAY_PER_DAY / 1440);
   home.grow(state, TICK / 60, sky.precipitation(weather) === "rain");
+  idle.noteWeather(state, t, sky.precipitation(weather));
   idle.melt(state, temp);
   if (state.trip) {
     const [events, done] = trip.step(state, t, weather, location);
@@ -325,6 +326,7 @@ export function advance(state: PetState, now: number, bedtime: Bedtime, weather:
     return true;
   }
   if (now - state.updated_at > MAX_CATCH_UP) {
+    const days = Math.max(1, Math.round((now - state.updated_at) / 86400));
     for (const k of STATS) {
       state.stats[k] = Math.max(state.stats[k], 50.0);
     }
@@ -334,7 +336,8 @@ export function advance(state: PetState, now: number, bedtime: Bedtime, weather:
     state.asleep = false;
     state.trip = null;
     state.updated_at = now;
-    logEvent(state, now, "away", "system");
+    // item: about how many days it was off, for Grandma's postcard
+    logEvent(state, now, "away", "system", { item: String(days) });
     return true;
   }
   let changed = false;
