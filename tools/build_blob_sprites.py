@@ -12,6 +12,7 @@ frameTags):
 - sneezle_body / sneezle_faces     – Sneezle (faces of its own)
 - flicker_body / flicker_faces     – Flicker (faces of its own)
 - lumoth_body / lumoth_faces       – Lumoth (faces of its own)
+- gemperor_body / gemperor_faces   – Gemperor (faces of its own)
 - grumpcap_body / grumpcap_faces   – Grumpcap (faces of its own)
 - cyclopuff_body / cyclopuff_faces – Cyclopuff (one big eye, faces of its own)
 - ember_baby_body / ember_baby_faces, cindlet_body / ember_faces – baby and child of the ember line
@@ -491,6 +492,53 @@ LUMOTH_FACE_TOP = 4
 LUMOTH_TAGS = species_tags([LUMOTH, LUMOTH_FLAP], 16, 15, up=LUMOTH_FLAP, idle_ms=450)
 # Its spin is circling, as a moth circles a lamp (OWN_TRICKS in core/src/scene.ts)
 LUMOTH_TAGS["flutter"] = [(LUMOTH_FLAP, 80), (LUMOTH, 80)]
+
+# Gemperor: the slime grown into a king. The jelly on its back has hardened into a crown of
+# crystals, one of them broken off, and the bulb of the child's lure has sunk into its belly,
+# where it glows as its core. One crystal fist planted on the ground, the other raised. It still
+# hops, only heavier. The face is a hero's (GEMPEROR_EYES). Teal, the lilac of the crystals and
+# the gold of the core; at night the crystals and the core glow (GLOWS in core/src/scene.ts).
+GEMPEROR_PALETTE = {
+    "o": (12, 92, 98), "d": (22, 150, 150), "b": (40, 200, 188), "l": (105, 228, 212), "h": (205, 255, 244),
+    "E": (95, 60, 160), "C": (190, 150, 255), "c": (140, 95, 215), "X": (235, 220, 255),  # crystal
+    "x": (255, 255, 255),                                                                  # sparkle
+    "y": (255, 225, 110), "Y": (240, 165, 50), "w": (255, 250, 220),                       # core
+}
+GEMPEROR = [
+    "...............E..............",
+    "..............EXE.............",
+    ".............ECXcE............",
+    "............ECCXccE...........",
+    ".........E..ECCXccE...........",
+    "........EXE.ECxXccE...........",
+    ".......ECXcEECCCccE..E........",
+    ".......ExXcEECCCccE.EXE.......",
+    ".......ECXcEECCCccEECXcE......",
+    ".......ECCcEECCCccEExXcE......",
+    "......oECCcEECCCccEECXcE......",
+    "....EXEECCcEECCCccEECCcEo.....",
+    "....EXEECCcEhhbbbbbECCcEdo....",
+    "...oEXEbhhhhbbbbbbbbbbbbddEEE.",
+    "...oECEbhhhbbbbbbbbbbbbbdoCcCo",
+    "..olECEbbbbbbbbbbbbbbbbbbobbbo",
+    "..ollbbbbbbbbbbbbbbbbbbbbobbdo",
+    "..ollbbbbbbbbbbbbbbbbbbbbobbo.",
+    "..ollbbbbbbbbbbbbbbbbbbbbobo..",
+    "..ollbbbbbbbbbbbbbbbbbbbbddo..",
+    "..ollbbbbbbbbbbbbbbbbbbbbddo..",
+    ".ooolbbbbbbbbbbbbbbbbbbbbddo..",
+    "olbbobbbbbbbbblllbbbbbbbbddo..",
+    "olbbobbbbbbbblywylbbbbbbbddo..",
+    "oCcCobbbbbbbblyyYlbbbbbbbddo..",
+    ".EEElbbbbbbbblYYYlbbbbbbbddo..",
+    "..ollbbbbbbbbblllbbbbbbbbddo..",
+    "..oddddddddddddddddddddddddo..",
+    "..oooooooooooooooooooooooooo..",
+]
+# A sparkle runs over the crystals
+GEMPEROR_B = dots(GEMPEROR, {(14, 5): "X", (8, 7): "X", (20, 9): "X", (16, 2): "x", (10, 9): "x", (22, 11): "x"})
+GEMPEROR_FACE_TOP = 8  # brows just under the crown
+GEMPEROR_TAGS = species_tags([GEMPEROR, GEMPEROR_B], 18, 15, idle_ms=800)
 
 # ---------------------------------------------------------------- The ember line
 
@@ -1066,6 +1114,45 @@ LUMOTH_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
 }
 assert LUMOTH_FACES.keys() == FACES.keys()
 
+# Gemperor: a hero's face – bright eyes (4×6) under brows set low at the inner ends, and a broad
+# grin with one fang (8×3). Face 16×9. Its brows only lift when something good is coming.
+GEMPEROR_EYES = {  # (left, right), brow in the top two rows
+    "brave": (["mm..", "..mm", ".ww.", "wgpw", "wppw", ".ww."], ["..mm", "mm..", ".ww.", "wgpw", "wppw", ".ww."]),
+    "open": (["....", ".mm.", ".ww.", "wgpw", "wppw", ".ww."],) * 2,
+    "half": (["....", "....", "....", "dddd", "wppw", ".ww."],) * 2,
+    "closed": (["....", "....", "....", "....", "pppp", "...."],) * 2,
+    "happy": (["....", "....", ".pp.", "p..p", "....", "...."],) * 2,
+    "sad": (["....", "...m", ".mm.", "wgpw", "wppw", ".ww."], ["....", "m...", ".mm.", "wgpw", "wppw", ".ww."]),
+    "cross": (["mm..", "..mm", "....", "pppp", ".pp.", "...."], ["..mm", "mm..", "....", "pppp", ".pp.", "...."]),
+}
+GEMPEROR_MOUTHS = {
+    "none": ["........", "........", "........"],
+    "grin": ["m......m", ".mmmmmm.", "..f....."],
+    "small": ["........", ".m....m.", "..mmmm.."],
+    "flat": ["........", "..mmmm..", "..f....."],
+    "sad": ["........", "..mmmm..", ".m....m."],
+    "open": ["..mmmm..", ".mrrrrm.", "..mmmm.."],
+    "laugh": [".mmmmmm.", ".mrrrrm.", "..mrrm.."],
+    "chew": ["........", ".mmmmmm.", "..f....."],
+}
+GEMPEROR_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
+    "normal": ("brave", "grin", False),
+    "smile": ("open", "grin", True),
+    "blink": ("closed", "grin", False),
+    "happy": ("happy", "small", True),
+    "laugh": ("happy", "laugh", True),
+    "sad": ("sad", "sad", False),
+    "tired": ("half", "flat", False),
+    "yawn": ("closed", "open", False),
+    "sick": ("half", "sad", False),
+    "no": ("cross", "flat", False),
+    "eat_open": ("open", "open", False),
+    "eat_closed": ("happy", "chew", False),
+    "sleep": ("closed", "none", False),
+}
+assert GEMPEROR_FACES.keys() == FACES.keys()
+GEMPEROR_FACE_PALETTE = FACE_PALETTE | {"f": (255, 255, 255)}
+
 # Lanternling: calm and snug in its lantern – soft round eyes (4×4) with a big shine, a small
 # content smile (6×2), and rosy cheeks whenever it is warm and well. Face 14×7.
 LANTERNLING_EYES = {  # (left, right)
@@ -1358,6 +1445,23 @@ def lumoth_face_grid(eyes, mouth, blush):
     put(LUMOTH_MOUTHS[mouth], 5, 5)
     if blush:
         put(["kk............kk"], 0, 5)
+    return ["".join(r) for r in rows]
+
+
+def gemperor_face_grid(eyes, mouth, blush):
+    rows = [list("." * 16) for _ in range(9)]
+
+    def put(part, left, top):
+        for y, line in enumerate(part):
+            for x, ch in enumerate(line):
+                if ch != ".":
+                    rows[top + y][left + x] = ch
+
+    put(GEMPEROR_EYES[eyes][0], 1, 0)
+    put(GEMPEROR_EYES[eyes][1], 11, 0)
+    put(GEMPEROR_MOUTHS[mouth], 4, 6)
+    if blush:
+        put(["kk............kk"], 0, 6)
     return ["".join(r) for r in rows]
 
 
@@ -2163,6 +2267,9 @@ def main():
     write_sheet("flarelet_faces", face_sheet(flarelet_face_grid, DARK_FACE_PALETTE, FLARELET_FACES))
     write_sheet("flicker_faces", face_sheet(flicker_face_grid, FLICKER_FACE_PALETTE, FLICKER_FACES))
     write_sheet("lumoth_faces", face_sheet(lumoth_face_grid, DARK_FACE_PALETTE, LUMOTH_FACES))
+    write_sheet("gemperor_body", body_sheet(GEMPEROR_TAGS, GEMPEROR_PALETTE),
+                faceTop=GEMPEROR_FACE_TOP, faceCenter="bottom")  # its raised fist sticks out to the side
+    write_sheet("gemperor_faces", face_sheet(gemperor_face_grid, GEMPEROR_FACE_PALETTE, GEMPEROR_FACES))
     write_sheet("sneezle_faces", face_sheet(sneezle_face_grid, SNEEZLE_FACE_PALETTE, SNEEZLE_FACES))
     write_sheet("grumpcap_faces", face_sheet(grumpcap_face_grid, GRUMPCAP_FACE_PALETTE, GRUMPCAP_FACES))
     write_sheet("cyclopuff_faces", face_sheet(cyclops_face_grid, CYCLOPUFF_FACE_PALETTE, CYCLOPUFF_FACES))

@@ -25,7 +25,7 @@ export const AUTO_EVOLVE_AFTER = 24 * 3600; // due and nobody taps → it evolve
 
 // Line: its adult forms
 export const LINES: Record<string, readonly string[]> = {
-  blob: ["sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth"],
+  blob: ["sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth", "gemperor"],
   ember: ["lanternling", "flarelet"],
   stone: ["glimmerock", "bouldergrin"],
 };
@@ -57,6 +57,7 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   grumpcap: { pet: 2.0 },
   lumoth: { heart: 1.5 },
   sneezle: { sick: 0.5 }, // gets sick less often
+  gemperor: { sick: 0.5 }, // strong: gets sick less often
   lanternling: { sick: 0.6 },
   glimmerock: { pet: 1.5 }, // loves being polished
 };
