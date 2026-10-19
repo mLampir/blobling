@@ -1418,6 +1418,12 @@ export class PetScene {
           this.trickFx(t, "sp_scrape", 0.3, CLOD, 3, -SPRITE / 2 + 6, 2, [-22, -8], [-18, -6], 0.6);
         } else {
           Object.assign(pose, { body: out > 0.2 ? "stretch" : "idle", dx: towards(out * 18) });
+          if (q > 0.42 && q < 0.5) { // and lightning strikes the opponent from above
+            pose.white = Math.trunc(t * 20) % 2 === 0;
+            for (let i = 0; i < 5; i++) {
+              this.trickFx(t, `sp_strike${i}`, once, BOLT, 1, SPRITE / 2 + 14, 60 - i * 3, [0, 0], [120, 120], 0.4);
+            }
+          }
           if (out > 0.3) {
             this.trickFx(t, "sp_dash", 0.08, BOLT, 2, -SPRITE / 2, 4, [-20, -6], [-10, 0], 0.5);
           }
