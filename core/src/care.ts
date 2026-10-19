@@ -94,7 +94,7 @@ export const FAVORITE: Record<string, string> = {
   blob: "icecream", sneezle: "fruit", flicker: "cookie", cyclopuff: "icecream", grumpcap: "fruit",
   lumoth: "cookie", ember: "cookie", lanternling: "icecream", flarelet: "fruit", stone: "fruit",
   glimmerock: "icecream", bouldergrin: "cookie", gemperor: "fruit", angloop: "icecream", purrloop: "cookie",
-  fox: "fruit", roamtail: "fruit", filchfox: "cookie",
+  fox: "fruit", roamtail: "fruit", filchfox: "cookie", cloud: "icecream", rumblefluff: "cookie", prismist: "icecream",
 };
 export const FAVORITE_BONUS = 1.5;
 

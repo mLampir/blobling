@@ -184,7 +184,11 @@ more rarely Glimmerock. A friend of theirs is the only way to a stone egg.
 In the forest live the two adults of the fox line (below): Filchfox, and more
 rarely Roamtail. A friend of theirs is the only way to a fox egg.
 
-The cave and the mountain have no wild pets so far. The ember line
+On the mountain live the two adults of the cloud line (below): Rumblefluff,
+which only comes out in the rain, and more rarely Prismist. A friend of theirs
+is the only way to a cloud egg.
+
+The cave has no wild pets so far. The ember line
 has none: its egg comes from a guardian. An ember pet with a slime for a
 friend can still lay an ember egg, though.
 
@@ -354,6 +358,60 @@ heading:
 | white | nothing yet (the first day) |
 | turquoise, like the scarf | Roamtail |
 | dusky violet, like the mask | Filchfox |
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+### The cloud line
+
+<details>
+<summary>Show the cloud line</summary>
+
+| | Stage |
+|---|---|
+| ![Cloud egg](images/pets/cloud_egg.png) | **Cloud egg** – a sky-blue shell with little white clouds drifting across it |
+| ![Cloud baby](images/pets/cloud_baby.png) | **Baby** – a small sky-blue blob with a puff of cloud fleece on its head and two dark lamb's feet |
+| ![Nimbit](images/pets/nimbit.png) | **Child: Nimbit** – a lamb whose fleece is a white cloud, with a sky-blue face, one ear flipped up, stubby legs and a yellow bell on a pink ribbon |
+
+The stages last as long as the slime's. What the adults keep is the cloud
+fleece. Both adults walk rather than hop, and a cloud needs no umbrella.
+
+![Rumblefluff](images/pets/rumblefluff.png)
+
+**Rumblefluff**, the thundercloud ram. Its fleece is a dark storm cloud piled
+high, and its horns are two golden curls of lightning that end in a bolt; the
+right one is bigger and forks. It looks stern, under heavy brows, and even a
+bad day hardly makes it grumpier than it is.
+
+![Prismist](images/pets/prismist.png)
+
+**Prismist**, the fair-weather ewe. Its fleece is a light, sunlit cloud with a
+blush of evening underneath, and a rainbow arches over its back. It still wears
+Nimbit's bell. It looks kind, with lashes and a small smile, loves being
+petted, and dirt hardly weighs it down.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+For this line, the care diary doesn't count: the weather does, the moment the
+child grows up. The real weather where the pet lives, as on the panel.
+
+| Form | Rule |
+|---|---|
+| Rumblefluff | it rains (or storms) when the child grows up |
+| Prismist | everything else |
+
+So whoever wants a thundercloud waits for rain before tapping **Evolve**.
+From its second day on, Nimbit's bell shows what it would become right now:
+
+| Bell | Heading for |
+|---|---|
+| yellow | nothing yet (the first day) |
+| storm blue, while it rains | Rumblefluff |
+| rainbow pink | Prismist |
 
 The values are in `core/src/life.ts`.
 

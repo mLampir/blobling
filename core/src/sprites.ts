@@ -23,6 +23,7 @@ export interface SheetData {
     frameTags: { name: string; from: number; to: number }[];
     faceTop?: number;
     faceCenter?: string;
+    faceShift?: number;
   };
 }
 
@@ -33,6 +34,8 @@ export class Sheet {
   readonly faceTop: number | null;
   /** Optional: "bottom" centers the face on the bottom row (see faceAnchor). */
   readonly faceCenter: string | null;
+  /** Optional: how many pixels right of that center the face sits (see faceAnchor). */
+  readonly faceShift: number;
 
   /** `data`: the content of the .json file; `image`: the picture it names, or the PNG file itself. */
   constructor(data: SheetData, image: Image | Uint8Array) {
@@ -45,6 +48,7 @@ export class Sheet {
     }
     this.faceTop = data.meta.faceTop ?? null;
     this.faceCenter = data.meta.faceCenter ?? null;
+    this.faceShift = data.meta.faceShift ?? 0;
   }
 
   has(tag: string): boolean {
@@ -95,9 +99,12 @@ export function wideRow(image: Image): [number, number[][]] {
  * in the head rather than the belly), it sits that many rows below that row. It is centered on
  * its own row, or with `center = "bottom"` on the feet, the bottom two rows (Sneezle: handle and
  * spout stick out to the sides further up), or with `center = "left"` on the first stretch of its own row from the
- * left (Kitlet: its tail stands apart from its body on the right).
+ * left (Kitlet: its tail stands apart from its body on the right). `shift` moves it that many pixels
+ * to the right from there (Prismist: its fleece and the rainbow behind it reach further right than
+ * its head).
  */
-export function faceAnchor(body: Image, faceTop: number | null = null, center: string | null = null): [number, number] {
+export function faceAnchor(body: Image, faceTop: number | null = null, center: string | null = null,
+    shift = 0): [number, number] {
   const [top, rows] = wideRow(body);
   const filled = rows.map((xs, y) => (xs.length ? y : -1)).filter((y) => y >= 0);
   const bottom = filled.length ? Math.max(...filled) : body.height - 1;
@@ -107,7 +114,7 @@ export function faceAnchor(body: Image, faceTop: number | null = null, center: s
   const feet = [...rows[bottom], ...(rows[bottom - 1] ?? [])].sort((a, b) => a - b);
   const xs = center === "bottom" || !own.length ? feet
     : center === "left" ? own.filter((x, i) => x - own[0] === i) : own;
-  return [(xs[0] + xs.at(-1)! + 1) / 2, y];
+  return [(xs[0] + xs.at(-1)! + 1) / 2 + shift, y];
 }
 
 // Hue, saturation and value of a color and back, each 0–255.

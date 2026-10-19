@@ -204,7 +204,7 @@ export class Pet {
     this.advance(now);
     const s = this.state;
     return {
-      species: s.species, stage: s.stage, hint: life.hint(s),
+      species: s.species, stage: s.stage, hint: life.hint(s, sky.precipitation(this.weather()) === "rain"),
       asleep: s.asleep, sick: s.sick, poops: s.poops,
       activity: model.activityOf(s, now), mood: model.moodOf(s), cold: home.cold(s, now),
       needs: model.needs(s), activity_until: s.activity_until,

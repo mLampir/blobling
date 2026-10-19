@@ -25,6 +25,7 @@ export const WILD: Record<string, readonly (readonly [string, number, sky.Precip
     ["lumoth", 1, null]],
   forest: [["filchfox", 3, null], ["roamtail", 1, null]],
   stream: [["bouldergrin", 3, null], ["glimmerock", 1, null]],
+  mountain: [["rumblefluff", 3, "rain"], ["prismist", 1, null]], // the thundercloud only comes out in the rain
 };
 export const MEET_CHANCE = 0.2; // how often a wild pet is at a station, while the pet is looking for a friend
 export const SHOW = 3; // tricks the pet shows

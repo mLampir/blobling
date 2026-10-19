@@ -162,9 +162,10 @@ const STAGE_SHEETS: Record<string, Record<string, readonly [string, string]>> = 
   ember: { baby: ["ember_baby_body", "ember_baby_faces"], child: ["cindlet_body", "ember_faces"] },
   stone: { baby: ["stone_baby_body", "stone_baby_faces"], child: ["pebblet_body", "stone_faces"] },
   fox: { baby: ["fox_baby_body", "fox_baby_faces"], child: ["kitlet_body", "fox_faces"] },
+  cloud: { baby: ["cloud_baby_body", "cloud_baby_faces"], child: ["nimbit_body", "cloud_faces"] },
 };
 // The egg of a line: the tags in the items sheet start with this
-const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg" };
+const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg", cloud: "cloud_egg" };
 // Color per adult species: hue shift (0–255) starting from teal.
 // Fallback for a species without pixel art of its own.
 const SPECIES_HUE: Record<string, number> = {
@@ -187,17 +188,20 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
   bouldergrin: ["bouldergrin_body", "bouldergrin_faces", 0],
   roamtail: ["roamtail_body", "roamtail_faces", 0],
   filchfox: ["filchfox_body", "filchfox_faces", 0],
+  rumblefluff: ["rumblefluff_body", "rumblefluff_faces", 0],
+  prismist: ["prismist_body", "prismist_faces", 0],
 };
 // What grows on a child's head hints at the adult form it is heading for. Per line, the three
 // colors the code replaces: the bulb of the slime's lure (glow, shadow, highlight), the flame
-// of the ember slime (edge, middle, heart), the pebble's quartz band (band, shadow, sparkle) and
-// the white tip of the fox cub's tail (tip, shadow) –
+// of the ember slime (edge, middle, heart), the pebble's quartz band (band, shadow, sparkle), the
+// white tip of the fox cub's tail (tip, shadow) and the bell of the cloud lamb (bell, shadow) –
 // as in the palettes of tools/build_blob_sprites.py.
 const LURES: Record<string, readonly Color[]> = {
   blob: [[255, 235, 150], [240, 190, 90], [255, 255, 255]],
   ember: [[225, 60, 30], [250, 130, 30], [255, 200, 60]],
   stone: [[245, 238, 215], [205, 192, 165], [255, 252, 232]],
   fox: [[255, 255, 250], [225, 225, 215]],
+  cloud: [[255, 215, 70], [215, 160, 40]],
 };
 const LURE_HINT: Record<string, readonly Color[]> = {
   sneezle: [[125, 220, 105], [60, 170, 70], [235, 255, 205]],
@@ -214,10 +218,13 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   bouldergrin: [[255, 205, 110], [215, 150, 70], [255, 240, 190]], // sunny, like its grin
   roamtail: [[120, 215, 195], [40, 150, 140]], // turquoise, like its scarf
   filchfox: [[150, 125, 175], [100, 80, 125]], // dusky, like its mask
+  rumblefluff: [[125, 140, 205], [75, 85, 145]], // storm blue: it rains right now
+  prismist: [[255, 150, 200], [215, 95, 160]], // the pink of a rainbow
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
-export const NO_UMBRELLA = ["lanternling", "grumpcap"]; // the rain can't get at its flame anyway; a toad likes the rain
+// the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain
+export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist"];
 // Species that glow at night ([day color, night color], the day colors as in the palettes of
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals,
 // Gemperor's crystals and core, the bulb of Angloop's lure
@@ -242,6 +249,8 @@ const DUST: Bitmap = [[255, 230, 160], ["X"]];
 const GLINT: Bitmap = [[230, 210, 255], ["X"]];
 const PEBBLE: Bitmap = [[192, 203, 220], ["XX", "XX"]];
 const LOOT: Bitmap = [[255, 210, 80], ["XX", "XX"]]; // what Filchfox has filched
+const BOLT: Bitmap = [[255, 225, 60], ["X.", ".X", "X."]]; // Rumblefluff's lightning
+const SHIMMER: Bitmap = [[255, 170, 210], [".X.", "X.X", ".X."]]; // the shimmer of Prismist's rainbow
 const DIRT: Bitmap = [[60, 60, 60], ["X"]];
 const SICK_TINT: readonly [Color, number] = [[185, 195, 90], 0.28]; // sickly pale, for everything that isn't the teal slime
 const STEAM: Bitmap = [[215, 235, 245], [".X.", "XXX"]];
@@ -1087,7 +1096,7 @@ export class PetScene {
     return phase < 0.75 ? ["stretch", Math.sin((phase - 0.15) / 0.6 * Math.PI) * 3] : null;
   }
 
-  /** Whether the body sheet of this form has a walk of its own (Cyclopuff, Grumpcap, Sneezle, the stone and fox adults). */
+  /** Whether the body sheet of this form has a walk of its own (Cyclopuff, Grumpcap, Sneezle, the stone, fox and cloud adults). */
   private walks(stage: string, species: string): boolean {
     return stage === "adult" && species in SPECIES_SHEETS && this.sheet(SPECIES_SHEETS[species][0]).has("walk");
   }
@@ -1337,7 +1346,7 @@ export class PetScene {
       const sprite = ({
         sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: EMBER, flarelet: EMBER,
         glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: GLINT, angloop: BUBBLE, purrloop: LOVE,
-        roamtail: DUST, filchfox: LOOT,
+        roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;
       for (let i = 0; i < 10; i++) {
         this.particles.push({
@@ -2098,7 +2107,7 @@ export class PetScene {
       if (lookLeft) {
         face = face.mirrored();
       }
-      const [cx, anchor] = faceAnchor(body, bodies.faceTop, bodies.faceCenter);
+      const [cx, anchor] = faceAnchor(body, bodies.faceTop, bodies.faceCenter, bodies.faceShift);
       const fy = Math.min(anchor, img.bbox()![3] - 1 - face.height); // never on the bottom outline
       img.alphaComposite(face, Math.round(cx - face.width / 2), fy);
       if (teal) {
