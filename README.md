@@ -196,7 +196,9 @@ it needs you (see *While nobody is there* in
 and only asks for its address (or IP address) if neither answers. When both
 the phone and the display have a pet, it asks which of them lives on the
 display; the other one is kept (on the phone, or set aside on the Pi like a
-loaded save). The app
+loaded save). The way back works the same: *Back to the pet on this phone*
+asks which pet lives on the phone from now on, and can bring the display's
+pet along (the phone keeps its old one aside, the display keeps its copy). The app
 talks to the Pi over plain HTTP on the home network, so nothing has to be
 installed on the Pi or the phone for it. Sound comes from the phone (it can be
 turned off under *More*); the Pi stays silent.
