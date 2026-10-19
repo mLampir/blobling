@@ -117,16 +117,19 @@ test("a rare egg grows up in its own line", () => {
   }
 });
 
-test("a pebble that is petted a lot grows up polished", () => {
+test("a pebble that grows up at night grows up glowing", () => {
   const stone = model.newPet(start, "", "stone");
   assert.deepEqual(["stone", "glimmerock", "bouldergrin"].map(life.lineOf), ["stone", "stone", "stone"]);
   stone.stage = "child";
   stone.stage_since = start;
-  stone.diary = { ...life.newDiary(), minutes: 2880, good_minutes: 2880, plays: 10, love: 8 };
-  assert.equal(life.hint(stone), "bouldergrin"); // well cared for and played with, but hardly petted
-  stone.diary.love = 2 * life.GLIMMEROCK_LOVE_PER_DAY;
-  assert.equal(life.hint(stone), "glimmerock");
-  assert.equal(act(stone, "evolve", start + 7 * 86400)[0], true);
+  stone.diary = { ...life.newDiary(), minutes: 2880, good_minutes: 2880, plays: 10, love: 40 };
+  assert.equal(life.hint(stone), "bouldergrin"); // in daylight, however much it was petted
+  assert.equal(life.hint(stone, { dark: true }), "glimmerock");
+  const day = structuredClone(stone);
+  assert.equal(act(day, "evolve", at("2026-10-19 13:00"))[0], true);
+  assert.deepEqual([day.stage, day.species], ["adult", "bouldergrin"]);
+  // after sunset, before bedtime (or woken at night): the crystals come out
+  assert.equal(act(stone, "evolve", at("2026-10-19 21:00"))[0], true);
   assert.deepEqual([stone.stage, stone.species], ["adult", "glimmerock"]);
   assert.equal(life.bonusFactor(stone, "pet"), 1.5);
 });
@@ -153,14 +156,32 @@ test("a cloud lamb that grows up in the rain becomes a thundercloud", () => {
   cloud.stage_since = start;
   cloud.diary = { ...life.newDiary(), minutes: 2880, good_minutes: 2880 };
   assert.equal(life.hint(cloud), "prismist"); // the sun is out
-  assert.equal(life.hint(cloud, true), "rumblefluff"); // it rains right now
+  assert.equal(life.hint(cloud, { raining: true }), "rumblefluff"); // it rains right now
   const sunny = structuredClone(cloud);
   assert.equal(act(sunny, "evolve", start + 7 * 86400)[0], true);
   assert.deepEqual([sunny.stage, sunny.species], ["adult", "prismist"]);
   assert.equal(model.applyAction(cloud, "evolve", start + 7 * 86400, BEDTIME, { weather: 63 }).accepted, true);
   assert.deepEqual([cloud.stage, cloud.species], ["adult", "rumblefluff"]);
   assert.equal(life.decayFactor(cloud, "mood"), 0.85);
-  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 }, "cloud", true), "rumblefluff");
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 }, "cloud", { raining: true }), "rumblefluff");
+});
+
+test("a rule per day is a total for the child stage", () => {
+  const goal = 7 * life.NEEDLENUB_LOVE_PER_DAY;
+  // a day away: made up on the others
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080, love: goal }, "leaf"), "needlenub");
+  // waiting for the tap doesn't raise the goal any more
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 + 1440, love: goal }, "leaf"), "needlenub");
+  // on its way: half the stage, half the goal
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 5040, love: goal / 2 }, "leaf"), "needlenub");
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 5040, love: goal / 2 - 1 }, "leaf"), "twiggle");
+  // the ember stone shortens the stage, and the goal with it
+  const leaf = model.newPet(start, "", "leaf");
+  leaf.stage = "child";
+  leaf.diary = { ...life.newDiary(), minutes: 8640, love: 5 * life.NEEDLENUB_LOVE_PER_DAY };
+  assert.equal(life.hint(leaf), "twiggle");
+  leaf.egg_warmth = 2 * 86400;
+  assert.equal(life.hint(leaf), "needlenub");
 });
 
 test("the leaf, duck, hippo and beak lines grow up by what the child did most", () => {

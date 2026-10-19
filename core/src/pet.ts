@@ -227,7 +227,7 @@ export class Pet {
     this.advance(now);
     const s = this.state;
     return {
-      species: s.species, stage: s.stage, hint: life.hint(s, sky.precipitation(this.weather()) === "rain"),
+      species: s.species, stage: s.stage, hint: life.hint(s, model.worldAt(now, this.weather(), this.location)),
       asleep: s.asleep, sick: s.sick, poops: s.poops,
       activity: model.activityOf(s, now), mood: model.moodOf(s), cold: home.cold(s, now),
       needs: model.needs(s), activity_until: s.activity_until,
@@ -285,7 +285,7 @@ export class Pet {
       this.advance(now);
       result = model.applyAction(this.state, action, now, this.bedtime(),
         { item: request.item, by, throw: request.throw, weather: this.weather(), temp: this.temperature(),
-          value: request.value });
+          location: this.location, value: request.value });
       if (id !== null) {
         this.requestIds.set(id, result);
         while (this.requestIds.size > MAX_REQUEST_IDS) {

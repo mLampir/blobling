@@ -49,3 +49,11 @@ export function isDusk(t: number, location: Location = null): boolean {
   const minute = date.getHours() * 60 + date.getMinutes();
   return Math.abs(minute - sunTimes(date, location)[1]) <= DUSK_MINUTES;
 }
+
+/** Is the sun down at the time t (Unix seconds), between sunset and sunrise? */
+export function isDark(t: number, location: Location = null): boolean {
+  const date = new Date(t * 1000);
+  const minute = date.getHours() * 60 + date.getMinutes();
+  const [sunrise, sunset] = sunTimes(date, location);
+  return minute < sunrise || minute >= sunset;
+}

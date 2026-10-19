@@ -6,7 +6,7 @@
  * does that for a day, the pet evolves by itself (but only while awake and not at bedtime).
  *
  * Which adult form it becomes is decided by the care diary of the child stage (decideSpecies), and
- * for the cloud line by the weather the moment it grows up.
+ * for the cloud and the stone line by the world the moment it grows up (rain, night).
  *
  * There are several lines of pets. The egg decides which line a pet belongs to: the usual egg is
  * a slime, and a rare egg from a trip (home.EGGS) is something else. Until a pet has grown up,
@@ -57,7 +57,6 @@ export const FORMS = Object.entries(LINES).flatMap(([line, adults]) => [
 export const PURRLOOP_LOVE_PER_DAY = 8; // counted pettings per day → purrloop
 export const GEMPEROR_CARE = 0.85; // well cared for this part of the time → gemperor, otherwise angloop
 export const FLARELET_PLAYS_PER_DAY = 2.5; // the ember line: played with this often → flarelet, otherwise lanternling
-export const GLIMMEROCK_LOVE_PER_DAY = 5; // the stone line: petting polishes it → glimmerock, otherwise bouldergrin
 export const ROAMTAIL_TRIPS_PER_DAY = 1; // the fox line: a trip a day makes a wanderer → roamtail, otherwise filchfox
 // The cloud line is decided by the weather when it grows up: in the rain → rumblefluff, otherwise prismist
 export const NEEDLENUB_LOVE_PER_DAY = 5; // the leaf line: a cactus that gets cuddled → needlenub, otherwise twiggle
@@ -168,38 +167,60 @@ export function record(state: PetState, kind: string, amount = 1): void {
 }
 
 /**
- * The adult form the care diary and, for the cloud line, the weather lead to. `raining`: whether
- * it rains where the pet lives right now.
+ * The world where the pet lives at the moment it grows up: two lines go by it instead of the care
+ * diary (the cloud by the rain, the stone by the night).
  */
-export function decideSpecies(diary: Record<string, number>, line = "blob", raining = false): string {
+export interface World {
+  /** It rains (or storms) right now. */
+  raining?: boolean;
+  /** The sun is down. */
+  dark?: boolean;
+}
+
+/** How many days the child stage of this pet lasts: less what the ember stone took off it. */
+export function childDays(state: PetState): number {
+  return Math.max(1.0, (STAGE_SECONDS.child! - state.egg_warmth) / 86400);
+}
+
+/**
+ * The adult form the care diary and, for the cloud and the stone line, the world lead to.
+ *
+ * A rule "so often per day" is a total for the whole child stage (`stageDays`): a day away is made
+ * up on the others, and while the evolution waits for a tap the goal doesn't grow any more. Until
+ * then the rule asks for the share of the days so far, so that the hint shows whether the child is
+ * on its way.
+ */
+export function decideSpecies(diary: Record<string, number>, line = "blob", world: World = {},
+    stageDays = STAGE_SECONDS.child! / 86400): string {
   const minutes = diary.minutes ?? 0;
-  const days = Math.max(1.0, minutes / 1440);
+  const days = Math.min(Math.max(1.0, minutes / 1440), stageDays);
+  const enough = (kind: string, perDay: number) => (diary[kind] ?? 0) >= perDay * days;
   if (line === "ember") {
-    return (diary.plays ?? 0) / days >= FLARELET_PLAYS_PER_DAY ? "flarelet" : "lanternling";
+    return enough("plays", FLARELET_PLAYS_PER_DAY) ? "flarelet" : "lanternling";
   }
   if (line === "stone") {
-    return (diary.love ?? 0) / days >= GLIMMEROCK_LOVE_PER_DAY ? "glimmerock" : "bouldergrin";
+    return world.dark ? "glimmerock" : "bouldergrin"; // its crystals light up at night
   }
   if (line === "fox") {
-    return (diary.trips ?? 0) / days >= ROAMTAIL_TRIPS_PER_DAY ? "roamtail" : "filchfox";
+    return enough("trips", ROAMTAIL_TRIPS_PER_DAY) ? "roamtail" : "filchfox";
   }
   if (line === "cloud") {
-    return raining ? "rumblefluff" : "prismist";
+    return world.raining ? "rumblefluff" : "prismist";
   }
   if (line === "leaf") {
-    return (diary.love ?? 0) / days >= NEEDLENUB_LOVE_PER_DAY ? "needlenub" : "twiggle";
+    return enough("love", NEEDLENUB_LOVE_PER_DAY) ? "needlenub" : "twiggle";
   }
   if (line === "duck") {
-    return (diary.battles ?? 0) / days >= DRAKWING_BATTLES_PER_DAY ? "drakwing" : "quill";
+    return enough("battles", DRAKWING_BATTLES_PER_DAY) ? "drakwing" : "quill";
   }
   if (line === "hippo") {
-    return (diary.baths ?? 0) / days >= STEAMO_BATHS_PER_DAY ? "steamo" : "lillypot";
+    return enough("baths", STEAMO_BATHS_PER_DAY) ? "steamo" : "lillypot";
   }
   if (line === "beak") {
-    return (diary.tricks ?? 0) / days >= RAPIERRE_TRICKS_PER_DAY ? "rapierre" : "parcelbeak";
+    return enough("tricks", RAPIERRE_TRICKS_PER_DAY) ? "rapierre" : "parcelbeak";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
-  if ((diary.love ?? 0) / days >= PURRLOOP_LOVE_PER_DAY) {
+  if (enough("love", PURRLOOP_LOVE_PER_DAY)) {
     return "purrloop";
   }
   return care >= GEMPEROR_CARE ? "gemperor" : "angloop";
@@ -215,20 +236,20 @@ export const REFORMED: Record<string, string> = {
 
 /**
  * The adult form a child is heading for right now (null in its first day and at other stages).
- * `raining`: whether it rains right now (the cloud line).
+ * `world`: the weather and the time of day right now (the cloud and the stone line).
  */
-export function hint(state: PetState, raining = false): string | null {
+export function hint(state: PetState, world: World = {}): string | null {
   if (state.stage !== "child" || (state.diary.minutes ?? 0) < HINT_AFTER) {
     return null;
   }
-  return decideSpecies(state.diary, lineOf(state.species), raining);
+  return decideSpecies(state.diary, lineOf(state.species), world, childDays(state));
 }
 
 /**
- * Next stage. Returns the old form as "stage:species" (for the animation). `raining`: whether it
- * rains right now (the cloud line).
+ * Next stage. Returns the old form as "stage:species" (for the animation). `world`: the weather
+ * and the time of day right now (the cloud and the stone line).
  */
-export function evolve(state: PetState, now: number, raining = false): string {
+export function evolve(state: PetState, now: number, world: World = {}): string {
   const old = `${state.stage}:${state.species}`;
   const next = NEXT_STAGE[state.stage];
   if (next === undefined) {
@@ -241,7 +262,7 @@ export function evolve(state: PetState, now: number, raining = false): string {
     state.diary = newDiary();
   }
   if (next === "adult") {
-    state.species = decideSpecies(state.diary, lineOf(state.species), raining);
+    state.species = decideSpecies(state.diary, lineOf(state.species), world, childDays(state));
   }
   state.stage = next;
   state.stage_since = now;

@@ -86,7 +86,7 @@ Hearts mean more to it, and it stays clean longer.
 <details>
 <summary>Show how to get it</summary>
 
-The child was petted at least 8 times a day.
+The child was petted 56 times in its week (8 a day).
 
 </details>
 
@@ -113,12 +113,15 @@ heading for right now. It changes as soon as the care points somewhere else.
 <summary>Show the exact rules</summary>
 
 During the child stage the pet keeps a care diary: how many minutes it was
-well cared for, and how often it was played with and petted. When it grows up,
-the first rule in this order that matches decides the form:
+well cared for, and how often it was played with and petted. A number "a day"
+is a total for the whole child stage: a day away is made up on the others, and
+with the ember stone (a shorter stage) the total is smaller. Until then the
+lure shows whether the child is on its way. When it grows up, the first rule in
+this order that matches decides the form:
 
 | Order | Form | Rule |
 |---|---|---|
-| 1 | Purrloop | petted at least 8 times a day |
+| 1 | Purrloop | petted 56 times (8 a day) |
 | 2 | Gemperor | well cared for at least 85 % of the time |
 | 3 | Angloop | everything else |
 
@@ -248,7 +251,7 @@ too):
 
 | Form | Rule |
 |---|---|
-| Flarelet | the child was played with at least 2.5 times a day on average |
+| Flarelet | the child was played with 18 times (2.5 a day) |
 | Lanternling | everything else |
 
 From its second day on, the flame on Cindlet's head shows where it is heading:
@@ -301,19 +304,23 @@ lands back on top.
 <details>
 <summary>Show how to get them</summary>
 
-Only petting counts for this line: petting polishes the pebble.
+For this line, the care diary doesn't count: the night does, the moment the
+child grows up. Its crystals want the dark to light up in.
 
 | Form | Rule |
 |---|---|
-| Glimmerock | the child was petted at least 5 times a day |
+| Glimmerock | the sun is down when the child grows up |
 | Bouldergrin | everything else |
 
-From its second day on, the quartz band of Pebblet shows where it is heading:
+So whoever wants Glimmerock taps **Evolve** after sunset, before bedtime. On a
+short summer evening it can be woken at night for it, at the cost of a grumpy
+pebble. From its second day on, the quartz band of Pebblet shows what it would
+become right now:
 
 | Band | Heading for |
 |---|---|
 | white | nothing yet (the first day) |
-| lilac, like crystal | Glimmerock |
+| lilac, like crystal, after sunset | Glimmerock |
 | sunny yellow | Bouldergrin |
 
 The values are in `core/src/life.ts`.
@@ -361,7 +368,7 @@ called straight back from doesn't count.
 
 | Form | Rule |
 |---|---|
-| Roamtail | the child went on at least 1 trip a day |
+| Roamtail | the child went on 7 trips (1 a day) |
 | Filchfox | everything else |
 
 From its second day on, the white tip of Kitlet's tail shows where it is
@@ -473,7 +480,7 @@ Only petting counts for this line: a cactus that gets cuddled.
 
 | Form | Rule |
 |---|---|
-| Needlenub | the child was petted at least 5 times a day on average |
+| Needlenub | the child was petted 35 times (5 a day) |
 | Twiggle | everything else |
 
 From its second day on, Sproutlet's leaves show where it is heading:
@@ -526,7 +533,7 @@ more trips first.
 
 | Form | Rule |
 |---|---|
-| Drakwing | the child had at least 2 scuffles a day on average |
+| Drakwing | the child had 14 scuffles (2 a day) |
 | Captain Quill | everything else |
 
 From its second day on, Paddlet's curl shows where it is heading:
@@ -577,7 +584,7 @@ Only baths count for this line.
 
 | Form | Rule |
 |---|---|
-| Steamo | the child was bathed at least twice a day on average |
+| Steamo | the child was bathed 14 times (twice a day) |
 | Lillypot | everything else |
 
 From its second day on, the stripe on Soakling's towel shows where it is
@@ -631,7 +638,7 @@ already knows doesn't).
 
 | Form | Rule |
 |---|---|
-| Rapierre | the child practiced tricks at least twice a day on average |
+| Rapierre | the child practiced tricks 14 times (twice a day) |
 | Parcelbeak | everything else |
 
 From its second day on, Crestling's goggles show where it is heading:
