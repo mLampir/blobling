@@ -159,7 +159,9 @@ A grown-up has no use for it.
 
 The care diary of the child stage decides the adult form: how well the pet was
 looked after, how often it was played with, petted, bathed and taught tricks,
-how often it went on a trip and how many scuffles it had. For one line, the weather at the moment it grows up decides. Each
+how often it went on a trip and how many scuffles it had. These count for the
+whole child stage, so a day away can be made up on the others. For two lines,
+the world at the moment it grows up decides instead. Each
 form has a character of its own, with small effects on the game. From its
 second day on, the bulb on the child's lure shows by its color which form it
 is heading for.

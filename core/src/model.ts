@@ -17,7 +17,7 @@ import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
 import { STATS, newState, type PetState, type Trip } from "./state";
-import type { Location } from "./sun";
+import { isDark, type Location } from "./sun";
 import * as trip from "./trip";
 import * as wild from "./wild";
 
@@ -349,7 +349,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   life.recordMinute(state, !state.sick && s.satiety >= CRITICAL && s.hygiene >= CRITICAL && s.mood >= CRITICAL);
   const due = life.dueAt(state);
   if (due !== null && t >= due + life.AUTO_EVOLVE_AFTER && !state.asleep && !state.trip && !isBedtime(t, bedtime)) {
-    evolve(state, t, "system", weather);
+    evolve(state, t, "system", weather, location);
   }
 }
 
@@ -525,9 +525,15 @@ function count(state: PetState, key: string): void {
   state.counters[key] = (state.counters[key] ?? 0) + 1;
 }
 
-function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCode = null): void {
+/** The weather and the time of day at the time t, as far as they decide an adult form. */
+export function worldAt(t: number, weather: sky.WeatherCode, location: Location): life.World {
+  return { raining: sky.precipitation(weather) === "rain", dark: isDark(t, location) };
+}
+
+function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCode = null,
+    location: Location = null): void {
   const oldStage = state.stage;
-  const old = life.evolve(state, now, sky.precipitation(weather) === "rain");
+  const old = life.evolve(state, now, worldAt(now, weather, location));
   care.rescaleWeight(state, oldStage);
   state.game = null;
   const hatched = old.startsWith("egg");
@@ -606,6 +612,8 @@ export interface ActionOptions {
   weather?: sky.WeatherCode;
   /** The temperature in °C, or null without weather data. */
   temp?: number | null;
+  /** Where the sun rises and sets (the night decides a form). */
+  location?: Location;
   /** What else belongs to the action (see checkValue). */
   value?: unknown;
 }
@@ -669,7 +677,7 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
     } else if (state.trip) {
       reason = "away";
     } else {
-      evolve(state, now, by, weather); // gets its own entry in the history
+      evolve(state, now, by, weather, options.location ?? null); // gets its own entry in the history
       return { accepted: true, reason: null };
     }
     logEvent(state, now, action, by, { accepted: false, reason });
