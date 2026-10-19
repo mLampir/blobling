@@ -196,5 +196,5 @@ workflows:
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
-        # while the app is not out yet, Google Play only takes drafts; also the last check by hand
-        submit_as_draft: true
+        # straight to the internal testers; production is still released by hand
+        submit_as_draft: false
