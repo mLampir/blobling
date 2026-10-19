@@ -1519,8 +1519,13 @@ export class PetScene {
           }
         }
         break;
-      case "glimmerock": // a spin with its crystals flashing, faster and faster
-        Object.assign(pose, { body: "shine", turn: Math.cos(q * q * 8 * (2 * Math.PI)), face: "smile" });
+      case "glimmerock": // strikes a pose and lets its crystals flash until the opponent is dazzled
+        if (q < 0.5) {
+          Object.assign(pose, { body: "shine", face: "smile", white: q > 0.35 && Math.trunc(t * 12) % 2 === 0 });
+        }
+        if (q > 0.4 && q < 0.5) {
+          this.trickFx(t, "sp_glimmerock", once, TOUCHE, 3, 4, 22, [16, 36], [-12, 8], 0.6);
+        }
         break;
       case "bouldergrin": // throws its top stone at the opponent; a new one grows back
         if (q < 0.3) {
