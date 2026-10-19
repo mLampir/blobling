@@ -125,6 +125,7 @@ export class Pet {
     if (options.saved) {
       this.state = options.saved.state;
       this.ancestors = options.saved.ancestors;
+      model.reform(this.state, this.clock());
     } else {
       this.state = model.newPet(this.clock(), this.t("pet.default_name"));
       this.ancestors = [];

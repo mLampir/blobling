@@ -73,12 +73,12 @@ test("no evolution while asleep", () => {
 
 test("diary decides the adult", () => {
   const cases: [Record<string, number>, string][] = [
-    [{ minutes: 10080, good_minutes: 4000 }, "grumpcap"],
-    [{ minutes: 10080, good_minutes: 9500, love: 60, plays: 30 }, "lumoth"],
-    [{ minutes: 10080, good_minutes: 9500, love: 50, plays: 30 }, "flicker"],
-    [{ minutes: 10080, good_minutes: 9500, plays: 25 }, "flicker"],
-    [{ minutes: 10080, good_minutes: 9500, plays: 10 }, "sneezle"],
-    [{ minutes: 10080, good_minutes: 7000, plays: 10 }, "cyclopuff"],
+    [{ minutes: 10080, good_minutes: 4000 }, "angloop"],
+    [{ minutes: 10080, good_minutes: 4000, love: 60 }, "purrloop"], // petting wins even without the rest
+    [{ minutes: 10080, good_minutes: 9500, love: 60, plays: 30 }, "purrloop"],
+    [{ minutes: 10080, good_minutes: 9500, love: 50, plays: 30 }, "gemperor"],
+    [{ minutes: 10080, good_minutes: 9500, plays: 10 }, "gemperor"],
+    [{ minutes: 10080, good_minutes: 7000, plays: 10 }, "angloop"],
   ];
   for (const [diary, species] of cases) {
     assert.equal(life.decideSpecies({ ...life.newDiary(), ...diary }), species);
@@ -91,7 +91,9 @@ test("lure hints at the adult after a day", () => {
   pet.diary = { ...life.newDiary(), minutes: 600, good_minutes: 600, plays: 5 };
   assert.equal(life.hint(pet), null);
   Object.assign(pet.diary, { minutes: 2880, good_minutes: 2800, plays: 8 });
-  assert.equal(life.hint(pet), "flicker");
+  assert.equal(life.hint(pet), "gemperor");
+  pet.diary.good_minutes = 2000;
+  assert.equal(life.hint(pet), "angloop");
   pet.stage = "adult";
   assert.equal(life.hint(pet), null);
 });
@@ -144,7 +146,27 @@ test("child keeps a diary and grows up", () => {
   assert.ok(pet.diary.minutes > 10000);
   assert.equal(pet.diary.plays, 21);
   assert.equal(act(pet, "evolve", start + 7 * 86400 + 600)[0], true);
-  assert.deepEqual([pet.stage, pet.species], ["adult", "flicker"]);
+  assert.deepEqual([pet.stage, pet.species], ["adult", "angloop"]); // played with, but hungry at night
   assert.equal(life.dueAt(pet), null);
   assert.deepEqual(act(pet, "evolve", start + 8 * 86400), [false, "not_ready"]);
+});
+
+test("an adult of the slime's first forms turns into its new form", () => {
+  pet.stage = "adult";
+  for (const [old, next] of [["sneezle", "gemperor"], ["lumoth", "purrloop"], ["cyclopuff", "angloop"],
+    ["grumpcap", "angloop"], ["flicker", "angloop"]]) {
+    pet.species = old;
+    pet.activity = "idle";
+    assert.equal(model.reform(pet, start), true);
+    assert.deepEqual([pet.species, pet.activity, pet.activity_item], [next, "evolve", `adult:${old}`]);
+  }
+  assert.equal(model.reform(pet, start), false); // only once
+  pet.species = "sneezle";
+  pet.asleep = true;
+  pet.activity = "idle";
+  assert.equal(model.reform(pet, start), true);
+  assert.deepEqual([pet.species, pet.activity], ["gemperor", "idle"]); // changed in its sleep, without a show
+  pet.species = "lumoth";
+  pet.stage = "child"; // only adults have a form
+  assert.equal(model.reform(pet, start), false);
 });

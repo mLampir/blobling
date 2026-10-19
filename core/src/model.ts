@@ -496,6 +496,24 @@ function evolve(state: PetState, now: number, by: string): void {
   logEvent(state, now, "evolve", by, { item: `${state.stage}:${state.species}` });
 }
 
+/**
+ * An adult of a form that grows no more (life.REFORMED) turns into its new form. Unless it is
+ * asleep or busy, it is seen to evolve. Returns whether it changed.
+ */
+export function reform(state: PetState, now: number): boolean {
+  const next = state.stage === "adult" ? life.REFORMED[state.species] : undefined;
+  if (next === undefined) {
+    return false;
+  }
+  const old = `${state.stage}:${state.species}`;
+  state.species = next;
+  if (!state.asleep && !state.trip && state.activity === "idle") {
+    setActivity(state, "evolve", now, old);
+  }
+  logEvent(state, now, "evolve", "system", { item: `${state.stage}:${state.species}` });
+  return true;
+}
+
 /** Back from the trip. The finds stay in the backpack until someone is watching (action "unpack"). */
 function comeHome(state: PetState, now: number, done: Trip): void {
   state.backpack = [...done.found];

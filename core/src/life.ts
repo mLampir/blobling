@@ -23,19 +23,18 @@ export const STAGE_SECONDS: Partial<Record<Stage, number>> = { egg: 3600, baby: 
 export const EGG_WARMTH = 15 * 60; // petting warms the egg: it hatches this much sooner
 export const AUTO_EVOLVE_AFTER = 24 * 3600; // due and nobody taps → it evolves by itself
 
-// Line: its adult forms
+// Line: its adult forms. The slime's first five forms grow no more (REFORMED); they stay here
+// because they still live in the wild and in the ancestors' gallery.
 export const LINES: Record<string, readonly string[]> = {
-  blob: ["sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth", "gemperor", "angloop", "purrloop"],
+  blob: ["angloop", "gemperor", "purrloop", "sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth"],
   ember: ["lanternling", "flarelet"],
   stone: ["glimmerock", "bouldergrin"],
 };
 export const SPECIES = Object.entries(LINES).flatMap(([line, adults]) => [line, ...adults]);
 
 // Rules for the adult form (order = priority)
-export const NEGLECT_CARE = 0.5; // care below this → grumpcap
-export const LUMOTH_LOVE_PER_DAY = 8; // counted pettings per day → lumoth (secret; a starting value to try out)
-export const FLICKER_PLAYS_PER_DAY = 3;
-export const SNEEZLE_CARE = 0.85;
+export const PURRLOOP_LOVE_PER_DAY = 8; // counted pettings per day → purrloop
+export const GEMPEROR_CARE = 0.85; // well cared for this part of the time → gemperor, otherwise angloop
 export const FLARELET_PLAYS_PER_DAY = 3; // the ember line: played with this often → flarelet, otherwise lanternling
 export const GLIMMEROCK_LOVE_PER_DAY = 5; // the stone line: petting polishes it → glimmerock, otherwise bouldergrin
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
@@ -125,20 +124,18 @@ export function decideSpecies(diary: Record<string, number>, line = "blob"): str
     return (diary.love ?? 0) / days >= GLIMMEROCK_LOVE_PER_DAY ? "glimmerock" : "bouldergrin";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
-  if (care < NEGLECT_CARE) {
-    return "grumpcap";
+  if ((diary.love ?? 0) / days >= PURRLOOP_LOVE_PER_DAY) {
+    return "purrloop";
   }
-  if ((diary.love ?? 0) / days >= LUMOTH_LOVE_PER_DAY) {
-    return "lumoth";
-  }
-  if ((diary.plays ?? 0) / days >= FLICKER_PLAYS_PER_DAY) {
-    return "flicker";
-  }
-  if (care >= SNEEZLE_CARE) {
-    return "sneezle";
-  }
-  return "cyclopuff";
+  return care >= GEMPEROR_CARE ? "gemperor" : "angloop";
 }
+
+// The slime's first adult forms and what a pet of that form turns into when it is loaded: the
+// slime line was redrawn with fewer forms that look more like the slime. They may come back as
+// lines of their own.
+export const REFORMED: Record<string, string> = {
+  sneezle: "gemperor", lumoth: "purrloop", cyclopuff: "angloop", grumpcap: "angloop", flicker: "angloop",
+};
 
 /** The adult form a child is heading for right now (null in its first day and at other stages). */
 export function hint(state: PetState): string | null {

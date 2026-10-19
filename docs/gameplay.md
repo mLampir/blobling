@@ -109,7 +109,7 @@ can find keep the cold away. Which ones is for you to find out.
 | Egg | up to 1 hour | only warming helps; every time brings hatching forward by 15 minutes |
 | Baby | 3 days | gets hungry and tired faster, can't get sick |
 | Child | 7 days | keeps a care diary; grows a lure with a glowing bulb |
-| Adult | forever | one of five forms |
+| Adult | forever | one of three forms |
 
 When a stage is over, the pet sparkles and the app offers **Hatch** or
 **Evolve**. You hold the button while standing in front of the panel and watch
@@ -475,7 +475,7 @@ it is kept in IndexedDB.
 How a new form of the pet or a new opponent is designed and built. The rules
 come from reworking the adult forms: next to a Pokémon, the first versions
 looked plain, mostly an object with a face. The examples here are the slime
-and Cyclopuff, because the other forms are for players to find out (they are
+and Angloop, because the other forms are for players to find out (they are
 in [pets.md](pets.md), folded shut).
 
 #### The idea
@@ -483,7 +483,7 @@ in [pets.md](pets.md), folded shut).
 A new creature should make you think "that one is different".
 
 1. **Two ideas, not one.** Never just "animal X": combine it with a thing or a
-   trait. Cyclopuff is a ram calf and a cyclops, Drizzleshell a snail and a
+   trait. Angloop is the slime and an anglerfish, Drizzleshell a snail and a
    rain cloud, Diggle a mole and a miner.
 2. **A creature, not an object with a face.** An animal is one way: you see
    it before the object (ears, snout, horns, wings, paws, a tail). A living
@@ -492,37 +492,43 @@ A new creature should make you think "that one is different".
    and a way of moving of its own. If the creature lives somewhere or comes
    out in some weather, let what it is explain it (a toad likes the rain).
 3. **The character shows.** What a form does in the game should be visible in
-   its picture. Cyclopuff is easy-going: its eye is usually half shut.
+   its picture. Angloop has a big mouth and is always a little hungry: it
+   grins from ear to ear.
 4. **Where it comes from shows.** A form keeps something of what it grew out
    of, and the child hints at it: the bulb of the slime's lure takes on the
-   adult's colors (for Cyclopuff it looks like an eye).
+   adult's colors (for Angloop a warm gold, the light it will carry in front
+   of its brow). The forms of a line stay the same kind of creature: every
+   adult of the slime is still a slime, only grown.
+5. **Something to look forward to.** Growing up should feel like a reward:
+   the adult is bigger and more than the child, and the form for the best
+   care is the most impressive one.
 
 #### The look
 
-5. **A face of its own.** Every adult form gets its own eyes and mouths, for
+6. **A face of its own.** Every adult form gets its own eyes and mouths, for
    all the moods the scene asks for (the names in `FACES`). The eyes carry the
    character more than anything else: their shape, the lid, a brow, the
    pupil (round, a slit, sideways). Its normal look is its character, not a
-   neutral face: Cyclopuff's lid hangs halfway down. Small extras help: a
+   neutral face: Angloop grins and shows two fangs. Small extras help: a
    crooked tooth, fangs, nostrils, cheeks only where they fit.
-6. **Body language.** Arms and feet, even if they are only two or three
+7. **Body language.** Arms and feet, even if they are only two or three
    pixels, or whatever stands in for them on an object; a pose. And something
-   that is not symmetric: Cyclopuff's cowlick falls to one side and only one
-   of its teeth sticks out.
-7. **Three colors.** A main color, a second one for larger parts (belly,
+   that is not symmetric: Angloop raises only one of its fins, and its lure
+   hangs to one side.
+8. **Three colors.** A main color, a second one for larger parts (belly,
    horns, a cap) and a small accent that stands out (the iris, the claws).
-   Cyclopuff is purple, cream and amber. One color in three shades looks
+   Angloop is teal, orange and gold. One color in three shades looks
    flat, and on the LED panel clear colors read better than fine shades.
-8. **The silhouette reads.** Filled in with one color, the creature is still
+9. **The silhouette reads.** Filled in with one color, the creature is still
    recognizable at 32 pixels. A rounded rectangle is not a silhouette.
 
 #### Movement
 
-9. **It moves like what it is.** The slime hops. A creature with feet walks
-   (a `walk` animation). One that jumps by nature, like a toad, walks and
-   hops now and then (`WALK_HOPS`), and its jump frame shows how it jumps:
-   the hind legs stretch out. Jumps for joy stay jumps for everyone.
-10. **Special abilities are for tricks.** Wings, a tail, a gulp of steam don't
+10. **It moves like what it is.** The slime hops. A creature with feet walks
+    (a `walk` animation). One that jumps by nature, like a toad, walks and
+    hops now and then (`WALK_HOPS`), and its jump frame shows how it jumps:
+    the hind legs stretch out. Jumps for joy stay jumps for everyone.
+11. **Special abilities are for tricks.** Wings, a tail, a gulp of steam don't
     belong in the everyday walk, where they soon look like any other jump.
     They show in a trick done in its own way (`OWN_TRICKS`: a creature with
     wings flutters through its flip; the gesture and the effect stay the
