@@ -1,0 +1,26 @@
+{
+  "home": {
+    "title": "Ein kleines Pet zum Umsorgen",
+    "subtitle": "Es lebt auf deinem Handy, Tag und Nacht"
+  },
+  "eat": {
+    "title": "Füttern, spielen, sauber halten",
+    "subtitle": "Alles mit dem Finger, direkt am Pet"
+  },
+  "trip": {
+    "title": "Ab auf kleine Abenteuer",
+    "subtitle": "Es kommt mit Fundstücken und Geschichten heim"
+  },
+  "night": {
+    "title": "Es schläft, wenn du schläfst",
+    "subtitle": "Sonne, Mond und Wetter wie draußen"
+  },
+  "diary": {
+    "title": "Alles, was es erlebt, im Tagebuch",
+    "subtitle": "Auch, während du weg warst"
+  },
+  "grown": {
+    "title": "Eines Tages ist es groß",
+    "subtitle": "Was aus ihm wird, liegt an dir"
+  }
+}
