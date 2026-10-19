@@ -288,6 +288,12 @@
   dialog .buttons .wide { flex: 1 1 0; min-width: 0; }
   dialog ul { margin: 0 0 16px; padding: 0; list-style: none; }
   dialog li { display: flex; padding: 6px 0; border-top: 1px solid var(--line); }
+  #welcome-story { max-height: 50dvh; overflow-y: auto; margin-bottom: 16px; }
+  #welcome-story p { font-size: 16px; font-weight: 400; line-height: 1.45; }
+  #welcome-story .postcard {
+    white-space: pre-line; padding: 14px 16px; border-radius: 6px; transform: rotate(-1.5deg);
+    background: var(--night); border: 2px dashed var(--accent); font-family: var(--round);
+  }
 
   /* The Pi can't be reached */
   .offline {
@@ -453,7 +459,7 @@
 <dialog id="welcome">
   <form method="dialog">
     <p id="welcome-text"></p>
-    <ul id="welcome-list"></ul>
+    <div id="welcome-story"></div>
     <div class="buttons">
       <button class="wide primary" value="ok" data-t="page.welcome.ok"></button>
     </div>
@@ -1189,20 +1195,16 @@ function giftLabel(gift) {
 let welcomed = stored("welcomed");
 function welcome(s) {
   const w = s.welcome;
-  if (!w || String(w.since) === welcomed || document.querySelector("dialog[open]")) return;
+  if (!w || !w.pages || String(w.since) === welcomed || document.querySelector("dialog[open]")) return;
   welcomed = String(w.since);
   store("welcomed", welcomed);
   $("welcome-text").textContent = t("page.welcome.text", { name: s.name, time: inTime(s.now - w.since) });
-  $("welcome-list").replaceChildren(...w.told.map((line) => {
-    const li = document.createElement("li");
-    li.textContent = eventText({ ...line, accepted: true });
-    if (line.count > 1) {
-      const times = document.createElement("span");
-      times.className = "times";
-      times.textContent = `×${line.count}`;
-      li.append(times);
-    }
-    return li;
+  // A few sentences a day in the pet's words; Grandma's postcard after a long time with the Pi off
+  $("welcome-story").replaceChildren(...w.pages.map((page) => {
+    const p = document.createElement("p");
+    p.className = page.postcard ? "postcard" : "story";
+    p.textContent = page.text;
+    return p;
   }));
   $("welcome").showModal();
 }

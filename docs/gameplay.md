@@ -44,7 +44,8 @@ sick after roughly two and a half.
 The simulation runs in fixed one-minute steps with seeded randomness. After a
 restart the Pi simply catches up, with the same result as if it had never
 been off. If it was off for more than a day, the pet "stayed at Grandma's"
-and comes back with middling stats.
+and comes back with middling stats; Grandma sends a postcard about it (see
+[While nobody is there](#while-nobody-is-there)).
 
 ## Looking after it
 
@@ -436,6 +437,14 @@ tells once, when it is opened, what happened in the meantime: what the pet
 did by itself, fruits it ate, visits, trips and what came of them. The night
 counts too, so it also has something to tell in the morning.
 
+The pet tells it as a little story in its own words, a paragraph for each
+day (the last three at most): up to three sentences, the things that matter
+most (growing up, a nest, a new way, a friend, a scuffle) before the small
+ones (a fruit, the ball), told in the order they happened. Rain or snow while
+it was alone opens the day ("It rained in the morning, so I sat under my
+umbrella"). If the Pi was off for more than a day, a postcard from Grandma
+says how long the pet stayed with her and what they did together.
+
 ## The app
 
 Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
@@ -495,6 +504,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
 | What it does by itself, what it leaves behind, and what it tells when you come back | `core/src/idle.ts` |
+| The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
 | Catching up, the state for the app, what is saved, ancestors and album | `core/src/pet.ts`, `core/src/state.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |

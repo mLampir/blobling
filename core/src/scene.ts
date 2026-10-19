@@ -204,7 +204,7 @@ const LURE_HINT: Record<string, readonly Color[]> = {
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
-const NO_UMBRELLA = ["lanternling", "grumpcap"]; // the rain can't get at its flame anyway; a toad likes the rain
+export const NO_UMBRELLA = ["lanternling", "grumpcap"]; // the rain can't get at its flame anyway; a toad likes the rain
 // Species that glow at night ([day color, night color], the day colors as in the palettes of
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals
 const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {

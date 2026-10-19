@@ -13,12 +13,12 @@ import * as battle from "./battle";
 import * as care from "./care";
 import * as habits from "./habits";
 import * as home from "./home";
-import * as idle from "./idle";
 import * as life from "./life";
 import * as model from "./model";
 import type { SceneView, TripView } from "./scene";
 import * as sky from "./sky";
 import { fromDict, toDict, type PetState } from "./state";
+import * as story from "./story";
 import type { Location } from "./sun";
 import * as trip from "./trip";
 import * as wild from "./wild";
@@ -446,8 +446,8 @@ export class Pet {
         kind: s.plant.kind, label: t(`plants.${s.plant.kind}`),
         stage: home.plantStage(s), ripe: home.ripe(s), left: s.plant.left,
       } : null,
-      // What happened while nobody was there (the history's action and item, and how often), or null
-      welcome: idle.welcome(s, now),
+      // What happened while nobody was there, told as a little story (story.tell), or null
+      welcome: story.tell(s, now, t),
     };
   }
 

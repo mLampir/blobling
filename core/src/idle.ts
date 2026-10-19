@@ -9,7 +9,7 @@
 import * as care from "./care";
 import { Random } from "./random";
 import * as sky from "./sky";
-import type { PetEvent, PetState } from "./state";
+import type { PetEvent, PetState, WeatherSeen } from "./state";
 
 export const EVERY = [60 * 60, 120 * 60] as const; // seconds between two things it does by itself
 export const RETRY = 10 * 60; // it was busy when the time came: it tries again this much later
@@ -159,6 +159,39 @@ export function welcome(state: PetState, now: number): { since: number; told: To
   return told.length > 0 ? { since: Math.round(since), told: told.slice(0, WELCOME_LINES) } : null;
 }
 
-function worthTelling(event: PetEvent, since: number): boolean {
+export function worthTelling(event: PetEvent, since: number): boolean {
   return event.at > since && event.by === "system" && event.accepted && !UNTOLD.includes(event.action);
+}
+
+// ---------- The weather while nobody is there ----------
+
+export type PartOfDay = "morning" | "afternoon" | "evening" | "night";
+
+/** The part of the day at the time t, in local time. */
+export function partOfDay(t: number): PartOfDay {
+  const hour = new Date(t * 1000).getHours();
+  return hour >= 5 && hour < 12 ? "morning" : hour >= 12 && hour < 17 ? "afternoon"
+    : hour >= 17 && hour < 22 ? "evening" : "night";
+}
+
+/** The local day and part of the day at the time t, as a key ("2026-9-15:morning"). */
+function slot(t: number): string {
+  const date = new Date(t * 1000);
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}:${partOfDay(t)}`;
+}
+
+/**
+ * One minute of weather at the time t ("rain", "snow" or null): kept for the story when somebody
+ * comes back, once per kind and part of the day. What was before somebody was last there is
+ * dropped, so the list stays short.
+ */
+export function noteWeather(state: PetState, t: number, kind: WeatherSeen["kind"] | null): void {
+  if (kind === null) {
+    return;
+  }
+  const seen = state.weather_seen.filter((w) => w.at > state.seen_at);
+  if (!seen.some((w) => w.kind === kind && slot(w.at) === slot(t))) {
+    seen.push({ at: t, kind });
+  }
+  state.weather_seen = seen;
 }
