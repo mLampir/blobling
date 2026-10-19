@@ -148,3 +148,12 @@ test("child keeps a diary and grows up", () => {
   assert.equal(life.dueAt(pet), null);
   assert.deepEqual(act(pet, "evolve", start + 8 * 86400), [false, "not_ready"]);
 });
+
+test("every form is in the album once, and a pet has been the ones on its way", () => {
+  assert.equal(new Set(life.FORMS).size, life.FORMS.length);
+  assert.equal(life.FORMS.length, Object.values(life.LINES).reduce((n, adults) => n + 3 + adults.length, 0));
+  assert.deepEqual(life.formsOf("egg", "blob"), ["egg:blob"]);
+  assert.deepEqual(life.formsOf("child", "stone"), ["egg:stone", "baby:stone", "child:stone"]);
+  assert.deepEqual(life.formsOf("adult", "flarelet"), ["egg:ember", "baby:ember", "child:ember", "adult:flarelet"]);
+  assert.deepEqual(life.formsOf("ghost", "blob"), []);
+});

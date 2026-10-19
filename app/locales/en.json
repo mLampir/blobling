@@ -278,7 +278,7 @@
       "statistics": "Stats",
       "travels": "Trips",
       "finds": "Finds",
-      "gallery": "Ancestors",
+      "gallery": "Album",
       "more": "More"
     },
     "headings": {
@@ -453,7 +453,10 @@
       "guardians_value": "got past {passed} of {all}"
     },
     "gallery": {
-      "entry": "{form} · {age} · born {date}"
+      "entry": "{form} · {age} · born {date}",
+      "album": "{met} of {all} forms",
+      "missing": "Not met yet",
+      "ancestors": "Ancestors"
     },
     "travels": {
       "heading": "{area} · {day} · {time}",

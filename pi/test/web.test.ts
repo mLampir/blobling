@@ -149,7 +149,8 @@ test("the pet is described, acted on and renamed", async () => {
 
   assert.equal((await json(post("/api/pet/settings", { name: " Mimi   Mau " }))).name, "Mimi Mau");
   assert.equal((await json(post("/api/pet/new_egg", { confirm: true }))).stage, "egg");
-  assert.deepEqual(await json(get("/api/pet/ancestors")), { api: 1, ancestors: [] });
+  const { ancestors, album } = await json(get("/api/pet/ancestors"));
+  assert.deepEqual([ancestors, album.filter(Boolean).length], [[], 1]); // an egg is no ancestor, but in the album
 });
 
 test("the pictures: what the panel shows, and the app icon", async () => {
@@ -157,6 +158,8 @@ test("the pictures: what the panel shows, and the app icon", async () => {
   assert.equal(preview.headers.get("cache-control"), "no-store");
   const frame = decodePng(new Uint8Array(await preview.arrayBuffer()));
   assert.deepEqual([frame.width, frame.height], [64, 64]);
+  const next = decodePng(new Uint8Array(await (await get("/preview.png?next")).arrayBuffer()));
+  assert.deepEqual([next.width, next.height], [64, 64]); // the loop does not run here: the last one, after a wait
 
   for (const [query, size] of [["", 192], ["?size=512&maskable=1", 512], ["?stage=adult&species=cyclopuff", 192],
     ["?stage=adult&species=dragon", 192]] as const) {

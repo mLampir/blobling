@@ -7,6 +7,7 @@
 
 export * as battle from "./battle";
 export * as care from "./care";
+export * as habits from "./habits";
 export * as home from "./home";
 export * as idle from "./idle";
 export * as life from "./life";
