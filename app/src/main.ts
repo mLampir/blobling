@@ -22,7 +22,7 @@ import { haptic } from "./haptics";
 import { iconUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
-import { RemotePet, piAddress } from "./remote";
+import { RemotePet, findDisplay, piAddress } from "./remote";
 import { playReplays, type Replay } from "./replay";
 
 const PI_KEY = "pi"; // the address of the Pi the app is connected to
@@ -167,13 +167,40 @@ const app = {
     }
   },
 
-  /** In the app from the stores: the pet of a Pi from now on. Throws with the text for the page if none answers. */
-  async connect(address: string): Promise<void> {
+  /** In the app from the stores: a display that answers under one of its usual names, as its address, or null. */
+  findDisplay(): Promise<string | null> {
+    return findDisplay((base) => new RemotePet(base, i18n).reachable());
+  },
+
+  /**
+   * Before connecting to a display: the pet on the phone and the one on the display (as /api/pet
+   * describes them), to choose which of them lives on. null when there is nothing to choose,
+   * because the phone only has an egg. Throws with the text for the page if the display is gone.
+   */
+  async petsToChoose(address: string): Promise<{ phone: any; display: any } | null> {
+    const phone = await (await local!).request("GET", "/api/pet") as { stage: string };
+    if (phone.stage === "egg") {
+      return null;
+    }
+    return { phone, display: await new RemotePet(piAddress(address) ?? "", i18n).request("GET", "/api/pet") };
+  },
+
+  /**
+   * In the app from the stores: the pet of a Pi from now on. With `bringPet`, the pet on the phone
+   * moves there first (the display keeps its own one aside, like loading a save on its settings
+   * page); the phone keeps its copy for when it is disconnected again. Throws with the text for the
+   * page if none answers.
+   */
+  async connect(address: string, bringPet = false): Promise<void> {
     const base = piAddress(address);
-    if (!base || !await new RemotePet(base, i18n).reachable()) {
+    const pi = base ? new RemotePet(base, i18n) : null;
+    if (!pi || !await pi.reachable()) {
       throw new Error(i18n.t("page.app.connect_failed", { address: base ?? address }));
     }
-    localStorage.setItem(PI_KEY, base);
+    if (bringPet) {
+      await pi.request("POST", "/api/pet/save", (await local!).pet.toSave());
+    }
+    localStorage.setItem(PI_KEY, base!);
     location.reload();
   },
 

@@ -554,7 +554,11 @@
       "display_old_title": "Das Display braucht ein Update",
       "display_old_hint": "Diese App ist neuer als die Software auf deinem Display.",
       "app_old_title": "Die App braucht ein Update",
-      "app_old_hint": "Dein Display ist neuer als diese App. Aktualisiere sie im App Store oder bei Google Play."
+      "app_old_hint": "Dein Display ist neuer als diese App. Aktualisiere sie im App Store oder bei Google Play.",
+      "searching": "Suche das Display …",
+      "choose_pet": "Welches Pet soll auf dem Display leben?",
+      "choose_phone": "{form}, auf diesem Handy",
+      "choose_display": "{form}, schon auf dem Display"
     },
     "train": {
       "hint": "Such eine Übung aus",
