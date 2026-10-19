@@ -81,7 +81,7 @@
 
   /* What the pet (or the app) has to say: at the top, over everything, gone again by itself */
   .toast {
-    position: absolute; z-index: 35; left: 16px; right: 16px; top: calc(10px + var(--safe-top)); margin: 0;
+    position: absolute; z-index: 45; left: 16px; right: 16px; top: calc(10px + var(--safe-top)); margin: 0;
     padding: 12px 16px; border-radius: 16px; background: var(--raised); border: 1px solid var(--line);
     box-shadow: 0 10px 30px rgba(0, 0, 0, .45); font-weight: 600; pointer-events: none;
     opacity: 0; transform: translateY(-12px); transition: opacity .2s, transform .2s;
@@ -2086,6 +2086,7 @@ function renderUpdate() {
   if (u.running) lines.push(t("page.app.update_running"));
   else if (u.available) lines.push(t("page.app.update_available", { latest: u.latest }));
   else if (u.failed) lines.push(t("page.app.update_failed"));
+  if (!u.running && updateRefused) lines.push(updateRefused);
   $("update-text").textContent = lines.join(" ");
   $("update-text").hidden = false;
   $("update-start").hidden = !u.available && !(app.fit() === "display_old" && !u.running);
@@ -2093,15 +2094,20 @@ function renderUpdate() {
 }
 
 // The Pi looks for the newest release once more before it starts, so this never waits for its next look
+// The text under the button after a try that did not start (a display from before v0.2.0 only
+// knows the release it saw at its last look, up to six hours ago)
+let updateRefused = "";
 async function startUpdate(button) {
   button.disabled = true;
+  updateRefused = "";
   try {
     update = (await api("POST", "/api/update")).update;
-    renderUpdate();
   } catch (err) {
-    fail(err);
+    if (err.offline) fail(err);
+    else updateRefused = t("page.app.update_not_found");
   } finally {
     button.disabled = false;
+    if (update) renderUpdate();
   }
 }
 $("update-start").addEventListener("click", () => startUpdate($("update-start")));
@@ -2119,7 +2125,7 @@ function renderFit() {
   $("mismatch-hint").textContent = t(`page.app.${fit}_hint`);
   const u = fit === "display_old" ? update : null;
   $("mismatch-update-text").textContent = !u ? "" : u.running ? t("page.app.update_running")
-    : u.failed ? t("page.app.update_failed") : "";
+    : updateRefused || (u.failed ? t("page.app.update_failed") : "");
   $("mismatch-update").hidden = !u || u.running;
   $("mismatch-leave").hidden = !app.connectedTo;
 }

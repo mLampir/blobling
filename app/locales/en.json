@@ -562,7 +562,8 @@
       "searching": "Looking for the display …",
       "choose_pet": "Which pet should live on the display?",
       "choose_phone": "{form}, on this phone",
-      "choose_display": "{form}, already on the display"
+      "choose_display": "{form}, already on the display",
+      "update_not_found": "The display has not found the new version yet. Restart it (unplug it briefly), wait a minute and try again."
     },
     "train": {
       "hint": "Pick an exercise",

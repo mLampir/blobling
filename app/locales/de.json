@@ -562,7 +562,8 @@
       "searching": "Suche das Display …",
       "choose_pet": "Welches Pet soll auf dem Display leben?",
       "choose_phone": "{form}, auf diesem Handy",
-      "choose_display": "{form}, schon auf dem Display"
+      "choose_display": "{form}, schon auf dem Display",
+      "update_not_found": "Das Display hat die neue Version noch nicht gefunden. Starte es neu (kurz vom Strom nehmen), warte eine Minute und versuch es dann nochmal."
     },
     "train": {
       "hint": "Such eine Übung aus",
