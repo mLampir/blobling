@@ -100,6 +100,20 @@ export interface Plant {
   left: number;
 }
 
+/** Rain or snow the pet saw while it was on its own, for the story when somebody comes back. */
+export interface WeatherSeen {
+  at: number;
+  kind: "rain" | "snow";
+}
+
+/** Something it left behind while nobody was there (idle.ts); `spot`: 0–1 along the free ground. */
+export interface Trace {
+  kind: string;
+  spot: number;
+  /** Which of its drawings (idle.DRAWINGS). */
+  look: number;
+}
+
 export interface PetEvent {
   at: number;
   action: string;
@@ -172,6 +186,10 @@ export interface PetState {
   idle_next: number;
   /** Trick -> points practiced alone since it was last practiced together (idle.SOLO_LIMIT). */
   solo: Record<string, number>;
+  /** Rain and snow since somebody was last there, at most one of each per part of the day (idle.noteWeather). */
+  weather_seen: WeatherSeen[];
+  /** What it left behind while nobody was there, until somebody does something with it (idle.ts). */
+  trace: Trace | null;
   /** When somebody fed it or played with it, over the last few days (habits.ts). */
   habits: number[];
 }
@@ -223,6 +241,8 @@ export function newState(): PetState {
     seen_at: 0.0,
     idle_next: 0.0,
     solo: {},
+    weather_seen: [],
+    trace: null,
     habits: [],
   };
 }

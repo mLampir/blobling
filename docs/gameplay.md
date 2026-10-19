@@ -51,7 +51,8 @@ app), and they are starting values to try out.
 The simulation runs in fixed one-minute steps with seeded randomness. After a
 restart the Pi simply catches up, with the same result as if it had never
 been off. If it was off for more than a day, the pet "stayed at Grandma's"
-and comes back with middling stats.
+and comes back with middling stats; Grandma sends a postcard about it (see
+[While nobody is there](#while-nobody-is-there)).
 
 ## Looking after it
 
@@ -409,6 +410,18 @@ quarter of an hour, it finds something to do:
 - It **practices a trick** you have started teaching it. It gets a quarter of
   a point each time, but only half a point between two practices with you,
   and it never learns a trick alone.
+- It **builds something**: a little stone tower, or a drawing scratched into
+  the ground. When it really snows, it would rather build a tiny snowman,
+  and leaves footprints.
+
+**Traces.** What it did alone stays in the scene, so that somebody walking
+past the panel sees that something happened: the ball lies where it rolled,
+the tower stands, the drawing stays in the ground, the snowman stands in the
+snow. There is only ever one: as long as something lies around, it doesn't
+build anything new (playing with the ball again only moves the ball). It
+stays until somebody does something with the pet, from the app or on the Pi;
+a snowman also melts once it is warmer than 3 °C. It doesn't step in front
+of what it left behind, so it can be seen.
 
 None of this counts in the care diary, so it doesn't change which form a
 child grows into. Like everything else, it happens in the simulation: what
@@ -430,6 +443,14 @@ with the pet, from any phone. If that was six hours ago or more, the app
 tells once, when it is opened, what happened in the meantime: what the pet
 did by itself, fruits it ate, visits, trips and what came of them. The night
 counts too, so it also has something to tell in the morning.
+
+The pet tells it as a little story in its own words, a paragraph for each
+day (the last three at most): up to three sentences, the things that matter
+most (growing up, a nest, a new way, a friend, a scuffle) before the small
+ones (a fruit, the ball), told in the order they happened. Rain or snow while
+it was alone opens the day ("It rained in the morning, so I sat under my
+umbrella"). If the Pi was off for more than a day, a postcard from Grandma
+says how long the pet stayed with her and what they did together.
 
 ## The app
 
@@ -490,7 +511,8 @@ keep its own pet or connect to a Pi; the README explains how.
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
-| What it does by itself, and what it tells when you come back | `core/src/idle.ts` |
+| What it does by itself, what it leaves behind, and what it tells when you come back | `core/src/idle.ts` |
+| The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
 | Catching up, the state for the app, what is saved, ancestors and album | `core/src/pet.ts`, `core/src/state.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
