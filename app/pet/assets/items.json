@@ -359,13 +359,83 @@
     "h": 15
    },
    "duration": 1000
+  },
+  {
+   "filename": "items fox_egg 36",
+   "frame": {
+    "x": 384,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items fox_egg_wobble 37",
+   "frame": {
+    "x": 396,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_wobble 38",
+   "frame": {
+    "x": 408,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_wobble 39",
+   "frame": {
+    "x": 420,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_wobble 40",
+   "frame": {
+    "x": 432,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_crack 41",
+   "frame": {
+    "x": 444,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items fox_egg_open 42",
+   "frame": {
+    "x": 456,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 384,
+   "w": 468,
    "h": 15
   },
   "frameTags": [
@@ -529,6 +599,30 @@
     "name": "stone_egg_open",
     "from": 35,
     "to": 35,
+    "direction": "forward"
+   },
+   {
+    "name": "fox_egg",
+    "from": 36,
+    "to": 36,
+    "direction": "forward"
+   },
+   {
+    "name": "fox_egg_wobble",
+    "from": 37,
+    "to": 40,
+    "direction": "forward"
+   },
+   {
+    "name": "fox_egg_crack",
+    "from": 41,
+    "to": 41,
+    "direction": "forward"
+   },
+   {
+    "name": "fox_egg_open",
+    "from": 42,
+    "to": 42,
     "direction": "forward"
    }
   ]

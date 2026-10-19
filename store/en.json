@@ -1,0 +1,26 @@
+{
+  "home": {
+    "title": "A little pet to look after",
+    "subtitle": "It lives on your phone, day and night"
+  },
+  "eat": {
+    "title": "Feed it, play, keep it clean",
+    "subtitle": "All with a touch, right on the pet"
+  },
+  "trip": {
+    "title": "Off on little adventures",
+    "subtitle": "It comes home with finds and stories"
+  },
+  "night": {
+    "title": "It sleeps when you do",
+    "subtitle": "Sun, moon and weather as outside"
+  },
+  "diary": {
+    "title": "Everything it did, in its diary",
+    "subtitle": "Even while you were away"
+  },
+  "grown": {
+    "title": "One day, it grows up",
+    "subtitle": "What it becomes is up to how you raise it"
+  }
+}

@@ -131,6 +131,21 @@ test("a pebble that is petted a lot grows up polished", () => {
   assert.equal(life.bonusFactor(stone, "pet"), 1.5);
 });
 
+test("a fox cub that travels a lot grows up a wanderer", () => {
+  const fox = model.newPet(start, "", "fox");
+  assert.deepEqual(["fox", "roamtail", "filchfox"].map(life.lineOf), ["fox", "fox", "fox"]);
+  fox.stage = "child";
+  fox.stage_since = start;
+  fox.diary = { ...life.newDiary(), minutes: 2880, good_minutes: 2880, plays: 10, love: 20, trips: 1 };
+  assert.equal(life.hint(fox), "filchfox"); // well cared for, played with and petted, but hardly out
+  fox.diary.trips = 2 * life.ROAMTAIL_TRIPS_PER_DAY;
+  assert.equal(life.hint(fox), "roamtail");
+  assert.equal(act(fox, "evolve", start + 7 * 86400)[0], true);
+  assert.deepEqual([fox.stage, fox.species], ["adult", "roamtail"]);
+  assert.equal(life.decayFactor(fox, "energy"), 0.85);
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 }, "fox"), "filchfox");
+});
+
 test("child keeps a diary and grows up", () => {
   pet.stage = "child";
   pet.stage_since = start;

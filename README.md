@@ -370,7 +370,7 @@ Studio for Android and Xcode on a Mac for iOS:
 ```bash
 npm run app:android   # build, copy into the projects, open Android Studio
 npm run app:ios       # the same for Xcode
-npm run app:icons     # the app icons, splash screens and Android's notification icon, drawn from the sprites
+npm run app:icons     # the app icons, splash screens and Android's notification icon, drawn from the sprites (and app/native/play-store-icon.png for Google Play)
 ```
 
 In Android Studio or Xcode the app is then started on a phone or packed for
@@ -392,6 +392,24 @@ support page the stores link to is [docs/support.md](docs/support.md) (German:
 [docs/support.de.md](docs/support.de.md))
 (<https://mlampir.github.io/blobling/support>). A change
 to what the app stores or sends goes into both.
+
+The screenshots for the stores come from the app in the browser, put into
+frames with a headline in every size the stores take (iPhone and iPad for the
+App Store, a phone for Google Play). It needs Chromium for Playwright once:
+
+```bash
+npx playwright install chromium
+npm run store                         # all pictures in English and German → dist/store/
+npm run store -- --only=home --lang=de
+npm run store -- --frames-only        # new frames from the last pictures, after changing a headline
+```
+
+Each picture starts from a pet of its own, played through a short life with
+the core up to the moment of the picture (`SHOTS` in `tools/store_shots.ts`);
+the headlines are in `store/en.json` and `store/de.json`. Like the docs, the
+pictures show only egg, baby, child and Angloop and the first area. Judge
+them on `dist/store/contact-<language>.png`, about the size a store shows
+them, and upload the folders in `dist/store/` by hand.
 
 ### Deploy to the Pi
 
@@ -470,6 +488,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `pi/src/update.ts` | Looks for a newer release and starts the update unit (only on a Pi installed from a release) |
 | `tools/deploy.mjs` | `npm run deploy`: builds the app on the PC, copies it to the Pi and runs the setup there |
 | `tools/serve.mjs` | `npm run app`: the app in the browser of the PC |
+| `tools/store_shots.ts`, `store/` | `npm run store`: the screenshots for the stores, and their headlines per language |
 | `install.sh` | Downloads a release on the Pi and runs its `setup.sh` (attached to every release) |
 | `tools/package.mjs`, `tools/bundle.mjs` | `npm run package`: the release package; `bundle.mjs` lists the files that go to the Pi, for the package and for `npm run deploy` |
 | `.github/workflows/release.yml` | Builds the package and attaches it and `install.sh` to each release |
