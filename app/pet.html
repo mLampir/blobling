@@ -180,6 +180,14 @@
   .list button.small { min-height: 38px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; flex: none; }
   .list button.small.on { border-color: var(--accent); color: var(--accent); }
   .gallery img { width: 40px; height: 40px; border-radius: 8px; image-rendering: pixelated; }
+  /* The album: one slot per form, the ones not met yet stay empty */
+  .album { list-style: none; margin: 0; padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 20px; }
+  .album li { display: grid; justify-items: center; align-content: start; gap: 4px; padding: 8px 2px; border-radius: 14px; background: var(--raised);
+    min-width: 0; font-size: 11px; text-align: center; overflow-wrap: anywhere; }
+  .album img { width: 48px; height: 48px; image-rendering: pixelated; }
+  .album li.missing { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
+  .album li.missing span { width: 48px; height: 48px; display: grid; place-items: center; font: 700 20px/1 var(--round); }
   .figure { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; flex: none; max-width: 55%; }
   .empty { padding: 16px; color: var(--muted); font-size: 14px; }
   .note { margin: 0 4px; color: var(--muted); font-size: 13px; }
@@ -399,7 +407,12 @@
       </div>
       <ul class="list" data-panel="travels" id="travels" hidden></ul>
       <ul class="list" data-panel="finds" id="finds" hidden></ul>
-      <ul class="list gallery" data-panel="gallery" id="gallery" hidden></ul>
+      <div data-panel="gallery" hidden style="display: grid; gap: 14px">
+        <div class="label" id="album-count"></div>
+        <ul class="album" id="album"></ul>
+        <div class="label" id="ancestors-label" data-t="page.gallery.ancestors" hidden></div>
+        <ul class="list gallery" id="gallery" hidden></ul>
+      </div>
     </div>
   </section>
 
@@ -1310,8 +1323,32 @@ function stopEvents(stop) {
 
 async function loadGallery() {
   try {
-    const { ancestors } = await api("GET", "/api/pet/ancestors");
-    offerTab("gallery", ancestors.length);
+    // A display with an older version has no album
+    const { ancestors, album = [] } = await api("GET", "/api/pet/ancestors");
+    const met = album.filter(Boolean);
+    // The album shows once there is more than the first egg in it
+    offerTab("gallery", ancestors.length || met.length > 1);
+    $("album-count").hidden = !album.length;
+    $("album-count").textContent = t("page.gallery.album", { met: met.length, all: album.length });
+    // A form not met yet is an empty slot: no picture and no name, so nothing is given away
+    $("album").hidden = !album.length;
+    $("album").replaceChildren(...album.map((form) => {
+      const li = document.createElement("li");
+      if (!form) {
+        li.className = "missing";
+        const slot = document.createElement("span");
+        slot.textContent = "?";
+        li.setAttribute("aria-label", t("page.gallery.missing"));
+        li.append(slot);
+        return li;
+      }
+      const img = document.createElement("img");
+      img.src = app.icon(form.stage, form.species);
+      img.alt = "";
+      li.append(img, form.label);
+      return li;
+    }));
+    $("ancestors-label").hidden = $("gallery").hidden = !ancestors.length;
     $("gallery").replaceChildren(...ancestors.map((a) => {
       const img = document.createElement("img");
       img.src = app.icon(a.stage, a.species);

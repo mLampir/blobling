@@ -149,7 +149,8 @@ test("the pet is described, acted on and renamed", async () => {
 
   assert.equal((await json(post("/api/pet/settings", { name: " Mimi   Mau " }))).name, "Mimi Mau");
   assert.equal((await json(post("/api/pet/new_egg", { confirm: true }))).stage, "egg");
-  assert.deepEqual(await json(get("/api/pet/ancestors")), { api: 1, ancestors: [] });
+  const { ancestors, album } = await json(get("/api/pet/ancestors"));
+  assert.deepEqual([ancestors, album.filter(Boolean).length], [[], 1]); // an egg is no ancestor, but in the album
 });
 
 test("the pictures: what the panel shows, and the app icon", async () => {
