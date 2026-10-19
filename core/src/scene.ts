@@ -372,7 +372,7 @@ const PAW: Bitmap = [[255, 130, 170], [".X.X.", "X...X", "..X..", ".XXX."]]; // 
 const MOTH: Bitmap = [[235, 220, 190], ["X.X", ".X."]]; // moths drawn to Lanternling's light
 const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongue of Flarelet's flame
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
-const CANNONBALL: Bitmap = [[70, 70, 85], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
+const CANNONBALL: Bitmap = [[125, 125, 140], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
 const PETAL: Bitmap = [[255, 170, 200], ["XX"]]; // off Needlenub's flower
 const CLOD: Bitmap = [[150, 110, 70], ["XX", "X."]]; // what Rumblefluff's hoof kicks up
@@ -1250,8 +1250,10 @@ export class PetScene {
     } else if (animation === "hornpipe") {
       // quick steps from one foot to the other, arms (wings) out, faster and faster
       const beat = Math.trunc(p * (6 + p * 8));
-      Object.assign(pose, { body: beat % 2 ? "stretch" : "squash", dx: (beat % 4 < 2 ? 3 : -3), jump: beat % 2 ? 2 : 0,
+      const side = beat % 4 < 2 ? 1 : -1;
+      Object.assign(pose, { body: beat % 2 ? "stretch" : "idle", dx: side * 3, jump: beat % 2 ? 3 : 0, rotate: side * 10,
         face: "laugh" });
+      this.trickFx(t, "hornpipe", 0.5, NOTE, 1, -side * 10, 26, [-6, 6], [-14, -8], 1.2); // someone plays the fiddle
     } else if (animation === "glide") {
       // flaps up and glides down in a long arc out in front and back
       const q = (p - 0.1) / 0.8;
