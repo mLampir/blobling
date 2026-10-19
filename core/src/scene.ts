@@ -377,7 +377,6 @@ const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's bl
 const PETAL: Bitmap = [[255, 170, 200], ["X"]];
 const CLOD: Bitmap = [[150, 110, 70], ["XX", "X."]]; // what Rumblefluff's hoof kicks up
 const SMOKE: Bitmap = [[175, 175, 185], [".X.", "XXX", ".X."]]; // Filchfox's puff of smoke
-const RAINBOW_SHIMMER: Bitmap[] = RAINBOW.map((color) => [color, [".X.", "XXX", ".X."]]); // Prismist's own spin
 const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
 const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Parcelbeak's pouch
 const DIRT: Bitmap = [[60, 60, 60], ["X"]];
@@ -651,6 +650,8 @@ interface Pose {
   found: string | null;
   foe: Foe | null;
   wild: Guest | null;
+  /** Prismist's rainbow runs, as after the rain. */
+  rainbow: boolean;
   /** Needlenub's flower: closed into a bud or open; null = as its mood has it. */
   bud: boolean | null;
   /** Smaller than it is (going into the house, or coming out of it), and whether it can't be seen. */
@@ -809,7 +810,7 @@ export class PetScene {
         sick: view.sick, whiteOut: pose.white,
         flame: species === "flicker" ? flickerFlame(view.mood) : species === "needlenub" && (pose.bud ?? view.mood !== "happy") ? "bud" : null,
         heavy: view.weight_status === "heavy", hat: view.hat, hint: view.hint || view.species,
-        glow: this.night > 0.5, lookLeft: this.facing < 0, sky: this.skyLook,
+        glow: this.night > 0.5, lookLeft: this.facing < 0, sky: pose.rainbow ? "after_rain" : this.skyLook,
       });
       let px = x - Math.floor((pet.width - SPRITE) / 2);
       let py = y - 1; // -1 because of the outline
@@ -894,7 +895,7 @@ export class PetScene {
       symbol: null, turn: null, rotate: 0,
       heart: null, form: [view.stage, view.species], white: false,
       egg: null, eggT: t, item: view.activity_item, propAt: null, thrown: null,
-      activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false, bud: null,
+      activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false, bud: null, rainbow: false,
     };
     this.play = null;
     if (activity === "hatch") {
@@ -1224,12 +1225,11 @@ export class PetScene {
         Object.assign(pose, { body: "squash", dx: Math.round((1 - p) / 0.25 * 10) * this.facing, face: "happy" });
       }
     } else if (animation === "rainbow") {
-      // the spin, and shimmer in the colors of the rainbow rises in an arc over it
-      Object.assign(pose, { turn: Math.cos(p * 2 * (2 * Math.PI)), jump: Math.sin(p * Math.PI) * 3, face: "smile" });
-      if (p > 0.1 && p < 0.9) {
-        const i = Math.trunc(p * 12) % RAINBOW_SHIMMER.length;
-        this.trickFx(t, "rainbow", 0.1, RAINBOW_SHIMMER[i], 1, -SPRITE / 2 + p * SPRITE, 26 + Math.sin(p * Math.PI) * 8, [-2, 2],
-          [-4, -1], 1.2);
+      // the spin, its rainbow's colors running round, and shimmer flying off it
+      Object.assign(pose, { turn: Math.cos(p * 2 * (2 * Math.PI)), jump: Math.sin(p * Math.PI) * 3, face: "smile",
+        rainbow: true });
+      if (p > 0.15 && p < 0.85) {
+        this.trickFx(t, "rainbow", 0.15, SHIMMER, 2, 0, 22, [-20, 20], [-16, 0], 0.9);
       }
     } else if (animation === "rustle") {
       // the spin, and leaves whirl off its crown
