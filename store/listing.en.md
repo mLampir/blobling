@@ -1,0 +1,57 @@
+# Store listing (English)
+
+The texts for Google Play and the App Store. Limits: Play short description
+80 characters, Play full description and App Store description 4000, App
+Store subtitle 30, promotional text 170, keywords 100 (comma-separated, no
+spaces needed). Like the docs, they name no adult form but Angloop.
+
+## Google Play: short description
+
+A tiny pixel pet to raise: feed it, play with it and watch it grow up.
+
+## App Store: subtitle
+
+A tiny pixel pet to raise
+
+## App Store: promotional text
+
+Meet Blobling, a little pixel pet that lives on your phone. Hatch it, look after it a few times a day and see what it grows into.
+
+## App Store: keywords
+
+virtual pet,pixel,cute,slime,egg,hatch,raise,care,adventure,retro,cozy,chiptune,led,offline
+
+## Description (Google Play full description and App Store description)
+
+Blobling is a little pixel pet that lives on your phone. It hatches from an egg, wants your attention a few times a day, and grows up depending on how you raise it.
+
+LOOK AFTER IT WITH YOUR FINGER
+Drag a meal, a snack or the ball onto your pet, rub it clean with the sponge, stroke it and put it to bed at night. It answers right there in its little world, with a happy face, a soft buzz and a chiptune sound.
+
+IT LIVES ITS OWN DAY
+The sky follows the real time of day, with sunrise and sunset where you live. Turn on the weather and the rain, snow and clouds outside show up in its world too. On a cold morning it wakes up shivering until you rub it warm. When you are away, it plays and practices on its own, and when you come back it tells you what it has been up to.
+
+FROM EGG TO GROWN-UP
+Keep the egg warm and it hatches sooner. Over about ten days your baby grows into a child and then into one of several adult forms. Which one depends on how you cared for it, and finding out is part of the fun.
+
+TRICKS, TRAINING AND ADVENTURES
+Teach it tricks, train its strength, speed and smarts, and send it off on trips. It comes home with finds, from seeds for the garden to hats and decorations, and with stories of the scuffles it had on the way. Watch them again in the diary. New areas open up one after another, each one past a guardian.
+
+FRIENDS AND A NEW GENERATION
+A grown-up pet can win over a wild pet with its tricks. The friend comes to visit, leaves a gift now and then, and in time the two lay an egg that passes part of what your pet learned on to the next one.
+
+GENTLE BY DESIGN
+Your pet never dies. If you forget it, it gets hungry, grubby or sad, and that can always be put right. No timers that punish you, no pressure.
+
+A DIARY OF ITS LIFE
+Everything it did is kept in its diary: the history, its stats, every trip, every find and an album of the forms your pets have been.
+
+ON AN LED DISPLAY, TOO (OPTIONAL)
+Blobling can also live on a small LED panel at home, driven by a Raspberry Pi. The app connects to it on your home network, and your pet goes on with its day there even while your phone is off.
+
+PRIVATE
+No account, no ads, no tracking, no in-app purchases. Your pet lives on your phone. The only thing that ever leaves it is a rounded location for the weather, and only if you turn the weather on.
+
+Blobling is open source: the app and the LED display, with the building instructions, are on GitHub (mLampir/blobling).
+
+In English and German.

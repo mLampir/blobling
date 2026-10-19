@@ -21,6 +21,7 @@
  *   dist/store/<size>/<language>/<nn>-<id>.png    the framed pictures, one folder per size
  *   dist/store/shots/<language>/<device>/<id>.png the pictures of the app alone
  *   dist/store/contact-<language>.png             all framed phone pictures side by side, to judge them as a set
+ *   dist/store/play-feature-1024x500/<language>.png  the feature graphic of the Google Play listing
  *
  * Needs Chromium for Playwright once: npx playwright install chromium
  */
@@ -36,6 +37,9 @@ import { chromium, type Browser, type Page } from "playwright";
 import { I18n } from "../core/src/i18n";
 import * as model from "../core/src/model";
 import { Pet, type SaveFile } from "../core/src/pet";
+import { APP_BACKGROUND, PetScene, SPRITE } from "../core/src/scene";
+import { readAssets } from "../pi/src/assets";
+import { encodePng } from "../pi/src/png";
 
 // What the functions handed to page.evaluate find in the page (the tools are type-checked without the DOM)
 declare const document: { body: { insertAdjacentHTML(where: string, html: string): void }; fonts: { ready: Promise<unknown> } };
@@ -440,6 +444,68 @@ async function contactSheet(browser: Browser, language: string): Promise<void> {
   console.log(`  ${file}`);
 }
 
+// ---------- The feature graphic ----------
+
+/** The pet in one of its forms, as a PNG in base64: cut to its pixels, transparent around it. */
+function form(scene: PetScene, stage: string, species: string): { png: string; width: number; height: number } {
+  const img = scene.icon(SPRITE + 8, stage, species); // scene.icon pads the sprite by 4
+  for (let i = 0; i < img.data.length; i += 4) {
+    if (img.data[i] === APP_BACKGROUND[0] && img.data[i + 1] === APP_BACKGROUND[1] && img.data[i + 2] === APP_BACKGROUND[2]) {
+      img.data[i + 3] = 0;
+    }
+  }
+  const [x0, y0, x1, y1] = img.bbox()!;
+  const pet = img.crop(x0, y0, x1, y1);
+  return { png: Buffer.from(encodePng(pet)).toString("base64"), width: pet.width, height: pet.height };
+}
+
+/**
+ * The feature graphic Google Play shows at the top of the listing (1024 × 500): the name and a
+ * line on the left, and on the right the pet growing up, from egg to Angloop, on the meadow under
+ * the night sky. Play may cover the middle with a play button and crops the edges in some places,
+ * so the text keeps its distance from them. A line break in the text ("\n") is kept.
+ */
+async function featureGraphic(browser: Browser, language: string): Promise<void> {
+  const copy = JSON.parse(readFileSync(join(COPY_DIR, `${language}.json`), "utf-8")) as Record<string, Copy>;
+  const text = copy.feature;
+  if (!text) {
+    throw new Error(`No "feature" text in ${COPY_DIR}/${language}.json`);
+  }
+  const scene = new PetScene(64, 64, readAssets());
+  const PIXEL = 6; // one pixel of the sprites, in pixels of the graphic
+  const forms = [["egg", "blob"], ["baby", "blob"], ["child", "blob"], ["adult", "angloop"]].map(([stage, species]) => {
+    const { png, width, height } = form(scene, stage, species);
+    return `<img src="data:image/png;base64,${png}" style="width:${width * PIXEL}px;height:${height * PIXEL}px">`;
+  });
+  const page = await browser.newPage({ viewport: { width: 1024, height: 500 } });
+  await page.setContent(`<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=block">
+<style>
+  body { margin: 0; width: 1024px; height: 500px; overflow: hidden; position: relative; color: #eef1f8; container-type: inline-size;
+    font-family: "Nunito", system-ui, sans-serif;
+    background: radial-gradient(90% 120% at 72% 100%, #2c4290 0%, #172347 50%, #0d1220 100%); }
+  .stars i { position: absolute; background: #eef1f8; }
+  .ground { position: absolute; left: 0; right: 0; bottom: 0; height: 70px; background: #46290f; border-top: 14px solid #2e8c34; }
+  .text { position: absolute; left: 72px; top: 0; bottom: 70px; width: 420px; display: flex; flex-direction: column; justify-content: center; }
+  h1 { margin: 0; font-weight: 800; font-size: 88px; line-height: 1; letter-spacing: -0.01em; }
+  p { margin: 18px 0 0; font-weight: 600; font-size: 30px; line-height: 1.25; color: #ffb347; white-space: pre-line; }
+  .line { position: absolute; right: 56px; bottom: 70px; display: flex; align-items: flex-end; gap: 26px; }
+  .line img { image-rendering: pixelated; display: block; }
+</style></head><body>
+<div class="stars">${stars(28)}</div>
+<div class="ground"></div>
+<div class="text"><h1>${escape(text.title)}</h1>${text.subtitle ? `<p>${escape(text.subtitle)}</p>` : ""}</div>
+<div class="line">${forms.join("")}</div>
+</body></html>`, { waitUntil: "networkidle" });
+  await page.evaluate(() => document.fonts.ready);
+  const dir = join(OUT, "play-feature-1024x500");
+  mkdirSync(dir, { recursive: true });
+  const file = join(dir, `${language}.png`);
+  await page.screenshot({ path: file });
+  await page.close();
+  console.log(`  ${file}`);
+}
+
 // ---------- Main ----------
 
 const { values } = parseArgs({
@@ -479,6 +545,7 @@ try {
   }
   for (const language of languages) {
     await frame(browser, language, shots);
+    await featureGraphic(browser, language);
   }
 } finally {
   await browser.close();
