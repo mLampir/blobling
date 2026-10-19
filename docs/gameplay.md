@@ -428,14 +428,25 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   over the pet to clean it. Connected to a Pi, things can also be flicked up,
   as before. A tap on the seeds switches the kind.
 - **Adventure** has the trip, the tricks, the training and the guessing game.
-  Each takes the place of the needs and the tray, below the scene, so the pet
-  stays where it is and answers there. On a tall phone the scene grows into
-  the sky above it.
+  The tricks, the training and the game take the place of the needs and the
+  tray, below the scene, so the pet stays where it is and answers there. On a
+  tall phone the scene grows into the sky above it. Packing for a trip needs
+  no pet in sight: it covers the scene too and fits any phone without
+  scrolling, with the button to set off at the bottom.
 - **Diary** has one tab each for the history, the stats (with weight and
   bond), the finds and the ancestors. Finds and ancestors show up once there
   are any.
 - **More**: renaming and starting over with a usual egg, the weather (off, a
   fixed place, or following the phone) and connecting to an LED display.
+
+The phone buzzes softly with the pet's answers (in the app from the stores,
+and in a browser that can vibrate; the phone's own vibration setting
+applies): a light tick for a hand on the pet and for a step of an exercise,
+a short one when it does what it was asked, a double one when it won't, a
+longer one for something new (a trick learned, a big step in training, a
+game won) and a firm one when it evolves. Plain buttons and menus stay
+still, and quick strokes are spaced out, so it stays a touch and not a
+rattle.
 
 Connected to a Pi, the screen is the same; the scene is then the panel's own
 picture. The pet lives on the Pi either way: it goes on with its day and can
