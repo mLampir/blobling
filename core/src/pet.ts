@@ -139,6 +139,7 @@ export class Pet {
     if (options.saved) {
       this.state = options.saved.state;
       this.ancestors = options.saved.ancestors;
+      model.reform(this.state, this.clock());
       this.album = startAlbum(options.saved);
     } else {
       this.state = model.newPet(this.clock(), this.t("pet.default_name"));
@@ -302,7 +303,10 @@ export class Pet {
    */
   albumList() {
     this.collect();
-    return life.FORMS.map((form) => {
+    // A form that no longer grows (life.REFORMED) only has a slot once one of the pets has been it
+    const forms = life.FORMS.filter((form) => this.album.includes(form)
+      || !(form.startsWith("adult:") && form.slice("adult:".length) in life.REFORMED));
+    return forms.map((form) => {
       if (!this.album.includes(form)) {
         return null;
       }

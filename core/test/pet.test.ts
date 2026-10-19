@@ -189,7 +189,7 @@ test("the album keeps every form met, across new eggs and restarts", () => {
   const pet = disk.pet();
   const met = (p: Pet) => p.albumList().filter((form) => form !== null).map((form) => `${form.stage}:${form.species}`);
   const slots = pet.albumList();
-  assert.equal(slots.length, life.FORMS.length);
+  assert.equal(slots.length, life.FORMS.length - Object.keys(life.REFORMED).length); // no slots for forms that no longer grow
   assert.deepEqual(slots[0], { stage: "egg", species: "blob", label: "Egg" });
   assert.ok(slots.slice(1).every((form) => form === null)); // a form not met yet gives nothing away
   pet.state = grown(now);
@@ -200,7 +200,8 @@ test("the album keeps every form met, across new eggs and restarts", () => {
   assert.deepEqual(met(disk.pet()), forms);
   const again = disk.pet();
   again.newEgg(null, now + 120); // the ember egg goes back to the eggs, the album stays
-  assert.equal(again.albumList().find((form) => form?.species === "grumpcap")!.label, "Grumpcap");
+  assert.equal(again.albumList().find((form) => form?.species === "grumpcap")!.label, "Grumpcap"); // met: it keeps its slot
+  assert.equal(again.albumList().length, slots.length + 1);
   assert.deepEqual(met(disk.pet()), forms);
 });
 

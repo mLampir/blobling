@@ -21,7 +21,7 @@ a day and also tells you the time and the weather.
   pet, stroke it with your finger, rub it clean with the sponge, and put it to
   bed at night.
 - **It grows up.** It hatches from an egg and grows over ten days into one of
-  five adult forms, depending on how you cared for it. It learns tricks, trains,
+  three adult forms, depending on how you cared for it. It learns tricks, trains,
   goes on trips, scuffles with whoever gets in its way there and brings things
   home, and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
   one of the guardians keeps a rare egg that something else hatches from.
