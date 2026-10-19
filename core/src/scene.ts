@@ -64,6 +64,7 @@ const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:lumoth": { spin: "circle" }, // a moth: it flutters round in circles, as round a lamp
   "adult:glimmerock": { spin: "shine" }, // a show: its crystals flash as it turns
   "adult:bouldergrin": { flip: "toss" }, // its top stone does the flip for it and lands back on top
+  "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
 // The skipping stone: [start, length, height] of each hop, over the time in the air (0..1)
@@ -350,6 +351,7 @@ const LOOT: Bitmap = [[255, 210, 80], ["XX", "XX"]]; // what Filchfox has filche
 const BOLT: Bitmap = [[255, 225, 60], ["X.", ".X", "X."]]; // Rumblefluff's lightning
 const SHIMMER: Bitmap = [[255, 170, 210], [".X.", "X.X", ".X."]]; // the shimmer of Prismist's rainbow
 const LEAFLET: Bitmap = [[150, 225, 110], ["XX", ".X"]]; // a leaf off Twiggle's crown
+const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
 const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Parcelbeak's pouch
 const DIRT: Bitmap = [[60, 60, 60], ["X"]];
 const SICK_TINT: readonly [Color, number] = [[185, 195, 90], 0.28]; // sickly pale, for everything that isn't the teal slime
@@ -1121,6 +1123,17 @@ export class PetScene {
       Object.assign(pose, { body: "flutter", dx: Math.round(Math.sin(turn) * 7 * up),
         jump: up * (8 + Math.cos(turn) * 3), face: "happy" });
       this.facing = Math.cos(turn) > 0 ? 1 : -1;
+    } else if (animation === "lure") {
+      // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
+      if (p < 0.1 || p > 0.9) {
+        Object.assign(pose, { body: "idle", face: "smile" });
+      } else if (p < 0.62) {
+        Object.assign(pose, { body: "lure", face: "smile" });
+      } else if (p < 0.76) {
+        Object.assign(pose, { body: "stretch", dx: 4 * this.facing, jump: 2, face: "eat_open" });
+      } else {
+        Object.assign(pose, { body: "squash", dx: 2 * this.facing, face: "laugh" });
+      }
     } else if (trick === "bow") {
       pose.body = p < 0.1 || p > 0.85 ? "idle" : p < 0.3 || p > 0.7 ? "squash" : "flat";
       pose.face = p >= 0.1 && p <= 0.85 ? "blink" : "smile";
@@ -1678,7 +1691,7 @@ export class PetScene {
     if (special) {
       const sprite = ({
         sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: EMBER, flarelet: EMBER,
-        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: GLINT, angloop: BUBBLE, purrloop: LOVE,
+        glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: GLINT, angloop: LURE_GLOW, purrloop: LOVE,
         roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER, twiggle: LEAFLET, needlenub: LOVE,
         drakwing: EMBER, quill: BUBBLE, steamo: STEAM, lillypot: BUBBLE, rapierre: GLINT, parcelbeak: LETTER,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;

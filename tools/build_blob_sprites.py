@@ -561,6 +561,26 @@ ANGLOOP = [
 ANGLOOP_B = ANGLOOP[:4] + [r[:20] + r[21:27] + "." + r[27:] for r in ANGLOOP[4:9]] + ANGLOOP[9:]
 ANGLOOP_FACE_TOP = 9  # counted from the bulb
 ANGLOOP_TAGS = species_tags([ANGLOOP, ANGLOOP_B], 20, 14)
+# Its own bow, the lure: it casts its line out in front and lets the bulb dangle, flashing (the
+# bulb light, then bright), before it snaps. The stalk arcs further out, the rest stays the same.
+ANGLOOP_LURE_TOP = [  # columns 17 on; a space keeps what is there
+    "..ooooooo....",
+    ".obbbbbbbo...",
+    "obooooooobo..",
+    "obo.....obo..",
+    "obo.....obo..",
+    "obo.....obo..",
+    "obo.....obo..",
+    "bbo.....obo..",
+    "bbo......o...",
+    "         ggg.",
+    "        ggwgg",
+    "        ggggG",
+    "         GGG.",
+]
+ANGLOOP_LURE = [r[:17] + "".join(o if t == " " else t for o, t in zip(r[17:], top))
+                for r, top in zip(ANGLOOP, ANGLOOP_LURE_TOP)] + ANGLOOP[len(ANGLOOP_LURE_TOP):]
+ANGLOOP_TAGS["lure"] = [(ANGLOOP_LURE, 150), ([r[:25] + r[25:].replace("g", "w").replace("G", "g") for r in ANGLOOP_LURE], 150)]
 
 # Purrloop: what the slime becomes when it is petted a lot – a cat of jelly. Ears of jelly (the
 # right one folded over at the tip), the bulb of the lure turned into a heart, whiskers, and two
