@@ -180,6 +180,8 @@ export interface PetState {
   solo: Record<string, number>;
   /** Rain and snow since somebody was last there, at most one of each per part of the day (idle.noteWeather). */
   weather_seen: WeatherSeen[];
+  /** When somebody fed it or played with it, over the last few days (habits.ts). */
+  habits: number[];
 }
 
 /** A state with every field at its starting value. */
@@ -230,6 +232,7 @@ export function newState(): PetState {
     idle_next: 0.0,
     solo: {},
     weather_seen: [],
+    habits: [],
   };
 }
 
