@@ -29,8 +29,9 @@ a day and also tells you the time and the weather.
   Every pet that gets past the last guardian adds a step to its house, from a
   hut of thatch to a whole house, where it sleeps and keeps more decorations.
 - **It makes friends.** A grown-up pet can impress a wild pet with its tricks.
-  The friend comes to visit, brings a gift now and then, and in time the two
-  lay an egg that passes a part of your pet's training on to the next one.
+  The friend comes to visit and plays with it, brings a gift now and then, and
+  in time the two lay an egg that passes a part of your pet's training on to
+  the next one.
 - **It is forgiving.** The pet never dies. Neglect makes it hungry, sad or
   sick, and that can always be fixed.
 - **Quiet at night.** The panel dims or switches off in the hours you choose,
@@ -343,6 +344,7 @@ export LED_MATRIX_BDF_DIR=<path-to>/rpi-rgb-led-matrix/fonts
 npm run preview -- --spoiler-free   # → pet_preview.png
 npm run preview -- play --gif       # → pet_play.gif
 npm run sounds                      # the sound files, from the recipes in tools/sfx.ts → app/pet/sounds/
+npm run balance                     # owners of different kinds play pets for three weeks → the values checked (names forms)
 ```
 
 ### The app
@@ -493,6 +495,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `pi/src/update.ts` | Looks for a newer release and starts the update unit (only on a Pi installed from a release) |
 | `tools/deploy.mjs` | `npm run deploy`: builds the app on the PC, copies it to the Pi and runs the setup there |
 | `tools/serve.mjs` | `npm run app`: the app in the browser of the PC |
+| `tools/balance.ts` | `npm run balance`: plays pets for three weeks in fast-forward with owners of different kinds, through the core, and prints what came of it (stats, calls, stages, trips, guardians, friends); its output names the adult forms |
 | `tools/store_shots.ts`, `store/` | `npm run store`: the screenshots for the stores, and their headlines per language |
 | `install.sh` | Downloads a release on the Pi and runs its `setup.sh` (attached to every release) |
 | `tools/package.mjs`, `tools/bundle.mjs` | `npm run package`: the release package; `bundle.mjs` lists the files that go to the Pi, for the package and for `npm run deploy` |

@@ -40,7 +40,7 @@ export const FORMS = Object.entries(LINES).flatMap(([line, adults]) => [
 // Rules for the adult form (order = priority)
 export const PURRLOOP_LOVE_PER_DAY = 8; // counted pettings per day → purrloop
 export const GEMPEROR_CARE = 0.85; // well cared for this part of the time → gemperor, otherwise angloop
-export const FLARELET_PLAYS_PER_DAY = 3; // the ember line: played with this often → flarelet, otherwise lanternling
+export const FLARELET_PLAYS_PER_DAY = 2.5; // the ember line: played with this often → flarelet, otherwise lanternling
 export const GLIMMEROCK_LOVE_PER_DAY = 5; // the stone line: petting polishes it → glimmerock, otherwise bouldergrin
 export const ROAMTAIL_TRIPS_PER_DAY = 1; // the fox line: a trip a day makes a wanderer → roamtail, otherwise filchfox
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading

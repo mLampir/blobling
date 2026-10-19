@@ -28,16 +28,18 @@ critical: an icon pulses on the panel and the matching item glows in the app.
 | Stat | Awake, per hour | Asleep, per hour | Notes |
 |---|---|---|---|
 | Satiety | −5 | −2 | full to empty in about 20 waking hours |
-| Energy | −4 | +12 | drops twice as fast in the hour before bedtime |
+| Energy | −2.5 | +12 | drops twice as fast in the hour before bedtime |
 | Mood | −2 | −0.5 | another −2 for every critical stat |
-| Hygiene | −2 | −1 | another −4 for every poop lying around |
+| Hygiene | −2 | −1 | another −3 for every poop lying around |
 | Health | – | – | −2 while two or more stats are critical or the pet is sick, +1 while all are above 50 |
 
 A poop appears one to two hours after a meal (three at most). With health
 below 30 the pet can get sick, which only medicine cures. Every now and then
 it gets bored and loses a little mood, so playing stays worthwhile.
 
-Three meals, two play sessions and one cleanup a day keep the pet happy. With
+Three meals, two play sessions and one cleanup a day keep the pet happy. A
+day alone leaves it with about two thirds of its energy in the evening, enough
+to play and go on a trip. With
 no care at all it is hungry after about half a day, grumpy after a day and
 sick after roughly two and a half.
 
@@ -378,6 +380,14 @@ and leaves again, once or twice a day while the pet is at home and awake. A
 visit counts if the pet is in a decent mood when the friend leaves (mood 50
 or more); it cheers the pet up a little, too.
 
+While the friend is there, the two **play**: a game, a little rest side by
+side, the next game. They throw a ball to and fro, the friend copies a trick
+the pet shows it (each in its own way), or they hop in step and then by turns.
+The pet only joins in when it is in a decent mood, awake and not busy with
+something else; otherwise the friend waits by its side. Playing is something
+to watch; what counts for the visit is still the pet's mood when the friend
+leaves.
+
 Now and then a visit that counts brings a **gift**. The friend leaves it on
 the ground, wrapped, and it stays there until you tap **Unwrap the gift**; no
 new one comes while it is lying there. Mostly there is a fruit in it, of the
@@ -386,7 +396,7 @@ effect. Rarely it is a seed, as long as there are fewer than nine of that
 kind. The visit that builds the nest brings no gift; the egg is the present
 then.
 
-After three visits that counted, the two build a **nest**, and an egg lies in
+After five visits that counted, the two build a **nest**, and an egg lies in
 it. The egg is of the pet's own line or of the friend's, and it carries the
 pet's heirloom (see [Growing up](#growing-up)). The friend moves on. The egg
 waits in the nest until you tap **Collect the egg**; then it is among the
@@ -435,7 +445,7 @@ home, healthy and not too tired, and nobody has done anything with it for a
 quarter of an hour, it finds something to do:
 
 - It **plays with the ball by itself**: a little mood, much less than playing
-  together.
+  together, for a point of energy.
 - It **practices a trick** you have started teaching it. It gets a quarter of
   a point each time, but only half a point between two practices with you,
   and it never learns a trick alone.
@@ -570,6 +580,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
 | Preview of the scene on a PC, pictures for [pets.md](pets.md) | `tools/pet_preview.ts` (`npm run preview`) |
+| Checking the values: pets played for weeks with owners of different kinds | `tools/balance.ts` (`npm run balance`) |
 | The phone app: the page, and where its pet lives (on the phone or on the Pi) | `app/pet.html`, `app/src/` |
 | The Pi's side: web server, display loop, save file | `pi/src/` |
 
