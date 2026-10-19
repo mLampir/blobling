@@ -407,6 +407,17 @@ None of this counts in the care diary, so it doesn't change which form a
 child grows into. Like everything else, it happens in the simulation: what
 the pet did is the same whether or not anybody was looking at the panel.
 
+**Habits.** The pet notices when it is usually fed or played with. A time
+of day becomes a habit when somebody fed it, played with it or started the
+guessing game at about that time (within half an hour) on at least three of
+the last seven days. About twenty minutes before such a time it goes to the
+nearer edge of the panel and waits there, leaning out and now and then on
+tiptoe, until its meal or game comes, or the time has passed. Once it has
+been fed or played with in the last hour, it doesn't wait. It only waits when
+it is awake, at home, healthy and not busy, and it shows this only by how it
+stands: no icon, no need and no message, so it never nags. What it does by
+itself never makes a habit; only what a person does counts.
+
 **Back after a while.** The Pi remembers when somebody last did something
 with the pet, from any phone. If that was six hours ago or more, the app
 tells once, when it is opened, what happened in the meantime: what the pet
@@ -472,6 +483,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
 | What it does by itself, and what it tells when you come back | `core/src/idle.ts` |
+| Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
 | Catching up, the state for the app, what is saved, ancestors and album | `core/src/pet.ts`, `core/src/state.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
@@ -577,7 +589,7 @@ For an adult form with pixel art of its own:
 | What | Where |
 |---|---|
 | Palette, pixel grid, where the face sits (`*_FACE_TOP`) | `tools/build_blob_sprites.py` |
-| Poses: `species_tags`, a walk with `walk_tags`, a jump or trick frame of its own (`stretch`, `flutter`) | `tools/build_blob_sprites.py` |
+| Poses: `species_tags` (it also derives `lookout_left`/`lookout_right`, for waiting at the edge), a walk with `walk_tags`, a jump or trick frame of its own (`stretch`, `flutter`) | `tools/build_blob_sprites.py` |
 | Eyes, mouths, `*_FACES` with every name of `FACES`, a `*_face_grid` function | `tools/build_blob_sprites.py` |
 | `write_sheet` for the body and the faces, and the list at the top of the script | `tools/build_blob_sprites.py` |
 | Body and face sheet | `SPECIES_SHEETS` in `core/src/scene.ts` |

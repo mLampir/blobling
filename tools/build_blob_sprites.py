@@ -108,6 +108,21 @@ def dots(grid, pixels):
     return ["".join(r) for r in rows]
 
 
+def lookout_tags(base, row):
+    """Waiting at the edge of the panel for its usual meal or game (core/src/habits.ts): on tiptoe
+    now and then, everything above row `row` leaning a pixel towards the edge it looks out from.
+    The frames are a pixel wider on each side, so there is room for the lean."""
+    def leaning(grid, direction):
+        rows = ["." + r + "." for r in grid]
+        top = len(grid) - (len(base) - row)  # the rows below `row` stay where they are
+        shift = (lambda r: r[1:] + ".") if direction < 0 else (lambda r: "." + r[:-1])
+        return [shift(r) if i < top else r for i, r in enumerate(rows)]
+
+    tiptoe = double_rows(base, row)  # a pixel taller
+    return {f"lookout_{side}": [(leaning(base, direction), 900), (leaning(tiptoe, direction), 500)]
+            for side, direction in (("left", -1), ("right", 1))}
+
+
 # More poses come about the way they would when drawing by hand: drop rows in
 # the middle (squashed) or double them (stretched), double columns in the middle.
 def body_tags(base, row, col, flat_rows=4):
@@ -121,7 +136,7 @@ def body_tags(base, row, col, flat_rows=4):
         "flat": [(widen(drop_rows(base, *flat), col, 2), 100)],                # landing
         "sleep": [(widen(drop_rows(base, *flat), col, 2), 1600),
                   (widen(drop_rows(base, *lighter), col, 2), 1600)],
-    }
+    } | lookout_tags(base, row)
 
 
 BODY_TAGS = body_tags(BODY, 14, 13)
@@ -234,7 +249,7 @@ def species_tags(idle, row, col, up=None, idle_ms=700, sleep=None):
         "stretch": [(narrow(double_rows(up, row, 2), col), 100)],
         "flat": [(flat(base), 100)],
         "sleep": [(g, 1600) for g in sleep],
-    }
+    } | lookout_tags(base, row)
 
 
 

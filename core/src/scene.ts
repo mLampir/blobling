@@ -267,6 +267,8 @@ export interface SceneView {
   nest?: string | null;
   gift?: boolean;
   plant?: { kind: string; stage: string; ripe: boolean } | null;
+  /** It is about the time it is usually fed or played with: it waits at the edge (habits.ts). */
+  waiting?: boolean;
 }
 
 /** The weather as the weather service reports it: temperature in °C and a WMO code. */
@@ -704,8 +706,10 @@ export class PetScene {
       pose.dx = Math.trunc(t * 1.5) % 2 ? 1 : -1;
       pose.symbol = QUESTION;
     } else if (activity === "idle") {
-      const show = this.showOff(view, t);
-      if (show) {
+      const show = view.waiting ? null : this.showOff(view, t);
+      if (view.waiting) {
+        this.lookout(pose, view, t, dt);
+      } else if (show) {
         this.trick(pose, show[0], show[1], true, t);
       } else if (this.wander(view, t, dt)) {
         // slimes hop instead of walking
@@ -1444,6 +1448,24 @@ export class PetScene {
       pose.face = "laugh";
     }
     return pose;
+  }
+
+  /**
+   * About the time it is usually fed or played with: it goes to the nearer edge of the panel
+   * and waits there on tiptoe, looking out. With a friend or the nest there, it is the left one.
+   */
+  private lookout(pose: Pose, view: SceneView, t: number, dt: number): void {
+    const lo = 2;
+    const hi = this.width - SPRITE - 2;
+    const side = view.visitor || view.nest || this.x + SPRITE / 2 < this.width / 2 ? -1 : 1;
+    this.targetX = side < 0 ? lo : hi;
+    this.nextDecision = t + this.rng.uniform(4, 12); // when it stops waiting, it stays a moment
+    if (this.moveTowards(this.targetX, 8, dt)) {
+      this.hop(pose, t);
+      return;
+    }
+    this.facing = side;
+    pose.body = side < 0 ? "lookout_left" : "lookout_right";
   }
 
   private wander(view: SceneView, t: number, dt: number): boolean {
