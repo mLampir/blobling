@@ -33,6 +33,16 @@ export const LINES: Record<string, readonly string[]> = {
   fox: ["roamtail", "filchfox"],
   cloud: ["prismist", "rumblefluff"],
 };
+/**
+ * The language key for the name of a form: an adult's species, the child of its line (every line's
+ * child has a name of its own, in `children` of the language files), or else the stage.
+ */
+export function formKey(stage: string, species: string): string {
+  if (stage === "adult") {
+    return `species.${species}`;
+  }
+  return stage === "child" ? `children.${species}` : `stages.${stage}`;
+}
 export const SPECIES = Object.entries(LINES).flatMap(([line, adults]) => [line, ...adults]);
 // Every form there is, as "stage:species", in the album's order: per line its egg, baby, child
 // and adult forms
