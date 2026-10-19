@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { join } from "node:path";
 
+import type { Image } from "../../core/src/image";
 import * as life from "../../core/src/life";
 import { NOT_A_PET_ROUTE, petRequest } from "../../core/src/api";
 import { RequestError } from "../../core/src/model";
@@ -21,6 +22,7 @@ const log = getLog("web");
 
 const MAX_BODY = 64 * 1024; // small JSON requests only
 const MAX_SAVE = 2 * 1024 * 1024; // a save file loaded on the settings page
+const PREVIEW_WAIT = 1; // seconds the preview waits for the next frame at most
 // background of the pet app, as "#111318"
 
 // ---------- Pages ----------
@@ -125,6 +127,7 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
   const t = settings.t;
   const templates = new Map<string, string>();
   const icons = new PetScene(64, 64, options.assets);
+  let png: [Image, Buffer] | null = null; // the last frame of the preview, encoded
 
   /**
    * A page in the chosen language; `strings` is for the page's own script. While no language is
@@ -230,9 +233,15 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         return json(stateJson());
       }
 
-      case "GET /preview.png":
-        // What the matrix is showing right now (for the live preview).
-        return send(200, encodePng(display.lastFrame), { "Content-Type": "image/png", "Cache-Control": "no-store" });
+      case "GET /preview.png": {
+        // What the matrix is showing right now (for the live preview); with ?next, the frame after
+        // that one, as soon as it is drawn (the app's scene, one frame after the other).
+        const frame = url.searchParams.has("next") ? await display.nextFrame(PREVIEW_WAIT) : display.lastFrame;
+        if (png?.[0] !== frame) {
+          png = [frame, encodePng(frame)]; // encoded once, however many are watching
+        }
+        return send(200, png[1], { "Content-Type": "image/png", "Cache-Control": "no-store" });
+      }
 
       // ---------- Pet ----------
 

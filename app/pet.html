@@ -306,7 +306,6 @@
   <section class="view home" id="view-home">
     <div class="hero" id="hero">
       <canvas class="scene" id="scene" width="64" height="64" hidden></canvas>
-      <img class="scene" id="preview" alt="" hidden>
       <div class="hero-top">
         <div><h1 id="name">…</h1><p class="sub" id="sub"></p></div>
         <button class="pill" id="sleep" hidden></button>
@@ -637,8 +636,8 @@ async function act(name, item, extra) {
 
 // ---------- The scene ----------
 
-// On the phone the scene is drawn here; with a Pi, the picture of the panel is fetched again and again
-const scene = app.mode === "local" ? $("scene") : $("preview");
+// The scene goes on this canvas: drawn on the phone, or with a Pi the panel's frames, one after the other
+const scene = $("scene");
 $("hero").classList.toggle("whole", app.mode !== "local");
 scene.hidden = false;
 if (app.mode === "local") app.showScene(scene);
@@ -659,21 +658,26 @@ function matchSky() {
 }
 setInterval(() => { if (!document.hidden && view === "home") matchSky(); }, 2000);
 
-// With a Pi: the panel's picture, a few times a second while the pet is in sight
-const PREVIEW_MS = 300;
-let previewBusy = false;
+// With a Pi: each frame the panel draws, while the pet is in sight. The Pi answers as soon as it
+// has drawn the next one, so the next request goes out right away; after a failure, a little later.
+const PREVIEW_RETRY_MS = 1000;
+let previewBusy = false, previewFailed = 0;
 function nextPreview() {
   if (app.mode === "local" || previewBusy || document.hidden || view !== "home") return;
+  if (Date.now() - previewFailed < PREVIEW_RETRY_MS) return;
   previewBusy = true;
   const img = new Image();
-  img.onload = () => { scene.src = img.src; previewBusy = false; };
-  img.onerror = () => { previewBusy = false; };
+  img.onload = () => {
+    scene.getContext("2d").drawImage(img, 0, 0, scene.width, scene.height);
+    if (!matchSky.done) { matchSky.done = true; matchSky(); }
+    previewBusy = false;
+    nextPreview();
+  };
+  img.onerror = () => { previewBusy = false; previewFailed = Date.now(); };
   img.src = app.previewUrl();
 }
-if (app.mode !== "local") {
-  setInterval(nextPreview, PREVIEW_MS);
-  scene.addEventListener("load", () => { if (!matchSky.done) { matchSky.done = true; matchSky(); } });
-}
+// picks it up again when the page comes back to the pet
+if (app.mode !== "local") setInterval(nextPreview, 250);
 
 // Where the pet is in the picture (on the phone); with a Pi the whole picture counts
 let area = null;
