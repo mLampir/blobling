@@ -35,6 +35,7 @@ test("trip brings finds home", () => {
   assert.equal(pet.trip, null);
   assert.equal(pet.activity, "trip_home");
   assert.equal(pet.counters.trips, 1);
+  assert.equal(pet.diary.trips, 1); // the child's care diary counts it as well
   let found = pet.events.filter((e) => e.action === "find").map((e) => e.item!);
   assert.equal(pet.events.at(-1)!.item, "home");
   // the finds stay in the backpack until they are unpacked

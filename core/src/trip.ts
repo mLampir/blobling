@@ -16,6 +16,7 @@
 import * as battle from "./battle";
 import * as care from "./care";
 import * as home from "./home";
+import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
 import type { PetState, Replay, Travel, TravelStop, Trip, TripEvent } from "./state";
@@ -294,6 +295,7 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
   }
   if (trip.next) { // called straight back home doesn't count
     state.counters.trips = (state.counters.trips ?? 0) + 1;
+    life.record(state, "trips"); // in a child's care diary too (the fox line)
   }
   state.trip = null;
   return [events, trip];

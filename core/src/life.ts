@@ -29,6 +29,7 @@ export const LINES: Record<string, readonly string[]> = {
   blob: ["angloop", "gemperor", "purrloop", "sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth"],
   ember: ["lanternling", "flarelet"],
   stone: ["glimmerock", "bouldergrin"],
+  fox: ["roamtail", "filchfox"],
 };
 export const SPECIES = Object.entries(LINES).flatMap(([line, adults]) => [line, ...adults]);
 // Every form there is, as "stage:species", in the album's order: per line its egg, baby, child
@@ -41,6 +42,7 @@ export const PURRLOOP_LOVE_PER_DAY = 8; // counted pettings per day → purrloop
 export const GEMPEROR_CARE = 0.85; // well cared for this part of the time → gemperor, otherwise angloop
 export const FLARELET_PLAYS_PER_DAY = 3; // the ember line: played with this often → flarelet, otherwise lanternling
 export const GLIMMEROCK_LOVE_PER_DAY = 5; // the stone line: petting polishes it → glimmerock, otherwise bouldergrin
+export const ROAMTAIL_TRIPS_PER_DAY = 1; // the fox line: a trip a day makes a wanderer → roamtail, otherwise filchfox
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
 // Character: factors on decay (awake) and on rewards. Small on purpose.
@@ -56,6 +58,8 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   flarelet: { satiety: 1.25, energy: 0.85 }, // burns through its food and hardly tires
   glimmerock: { hygiene: 0.7 }, // polished: dirt doesn't stick
   bouldergrin: { satiety: 1.2, mood: 0.8 }, // a heavy eater, and nothing wipes the grin off its face
+  roamtail: { energy: 0.85 }, // used to long roads: it hardly tires
+  filchfox: { satiety: 1.15 }, // always after something to eat
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -66,10 +70,11 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   gemperor: { sick: 0.5 }, // strong: gets sick less often
   lanternling: { sick: 0.6 },
   glimmerock: { pet: 1.5 }, // loves being polished
+  filchfox: { play: 1.25 }, // up for any mischief
 };
 
 export function newDiary(): Record<string, number> {
-  return { minutes: 0, good_minutes: 0, meals: 0, snacks: 0, plays: 0, love: 0 };
+  return { minutes: 0, good_minutes: 0, meals: 0, snacks: 0, plays: 0, love: 0, trips: 0 };
 }
 
 /** The line a species belongs to. */
@@ -137,6 +142,9 @@ export function decideSpecies(diary: Record<string, number>, line = "blob"): str
   }
   if (line === "stone") {
     return (diary.love ?? 0) / days >= GLIMMEROCK_LOVE_PER_DAY ? "glimmerock" : "bouldergrin";
+  }
+  if (line === "fox") {
+    return (diary.trips ?? 0) / days >= ROAMTAIL_TRIPS_PER_DAY ? "roamtail" : "filchfox";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if ((diary.love ?? 0) / days >= PURRLOOP_LOVE_PER_DAY) {
