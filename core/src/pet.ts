@@ -16,6 +16,7 @@ import * as habits from "./habits";
 import * as home from "./home";
 import * as life from "./life";
 import * as model from "./model";
+import * as notify from "./notify";
 import type { SceneView, TripView } from "./scene";
 import * as sky from "./sky";
 import { fromDict, toDict, type PetState } from "./state";
@@ -233,6 +234,15 @@ export class Pet {
   /** The history, newest first. */
   events(limit = 20): PetState["events"] {
     return this.state.events.slice(-limit).reverse();
+  }
+
+  /** When it will call for somebody next, if nobody does anything until then (see notify.ts). */
+  nextReminder(now = this.clock()): notify.Reminder | null {
+    if (!clockValid(now)) {
+      return null;
+    }
+    this.advance(now);
+    return notify.nextReminder(this.state, now, this.bedtime(), this.location);
   }
 
   /** The travel diary: the trips it has been on, the latest first. */

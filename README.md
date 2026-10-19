@@ -15,8 +15,9 @@ a day and also tells you the time and the weather.
   weather. On a cold morning the pet wakes up shivering, until you rub it warm.
   Left to itself, it plays and practices on its own, it waits at the edge of
   the panel around the times it is usually fed, and when you come back it
-  tells you what it has been up to, as a little story in its own words.
-  The panel also shows the time and the temperature.
+  tells you what it has been up to, as a little story in its own words. With
+  the pet on the phone, it calls you when it really needs you, but never at
+  night. The panel also shows the time and the temperature.
 - **The phone is your hand.** Drag food, snacks, a ball or medicine onto the
   pet, stroke it with your finger, rub it clean with the sponge, and put it to
   bed at night.
@@ -188,7 +189,9 @@ installs it over the one in `/etc/led-matrix/` (the previous file is kept as
 The Blobling app for Android and iPhone is the pet page as a real app, from
 Google Play and the App Store (the links follow once the apps are out). On
 its own it keeps a pet on the phone; connected to a Pi, it looks after the
-pet on the panel instead. To connect it, tap *Connect to the display* under
+pet on the panel instead. A pet on the phone calls with a notification when
+it needs you (see *While nobody is there* in
+[docs/gameplay.md](docs/gameplay.md)). To connect it, tap *Connect to the display* under
 *More*: the app looks for the Pi as `blobling.local` and `raspberrypi.local`
 and only asks for its address (or IP address) if neither answers. When both
 the phone and the display have a pet, it asks which of them lives on the
@@ -348,7 +351,10 @@ the game runs in the page, the scene is drawn above the needs and the pet is
 kept in the app's storage, or on a Pi, which shows it on the panel. The Pi
 serves the page at `/pet` and is its pet there; the app from the stores keeps
 its own pet, saved where the phone's backup takes it along, and can be
-connected to a Pi under *More*.
+connected to a Pi under *More*. A pet on the phone leaves a local
+notification for its next need when the app goes into the background
+(`app/src/notify.ts`, with the moment from `core/src/notify.ts`; Capacitor's
+Local Notifications plugin), so no server or push service is involved.
 
 To try the pet on the phone in the browser of this computer:
 
@@ -364,7 +370,7 @@ Studio for Android and Xcode on a Mac for iOS:
 ```bash
 npm run app:android   # build, copy into the projects, open Android Studio
 npm run app:ios       # the same for Xcode
-npm run app:icons     # the app icons and splash screens, drawn from the sprites (and app/native/play-store-icon.png for Google Play)
+npm run app:icons     # the app icons, splash screens and Android's notification icon, drawn from the sprites (and app/native/play-store-icon.png for Google Play)
 ```
 
 In Android Studio or Xcode the app is then started on a phone or packed for
@@ -466,7 +472,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | Path | Purpose |
 |---|---|
 | `setup.sh` | Sets up the Pi completely (`--app`: update the app only) |
-| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo |
+| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications |
 | `pi/src/main.ts` | Entry point on the Pi: panel driver, display loop, web server |
 | `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) |
 | `pi/src/web.ts`, `pi/src/network.ts` | Web interface and API, and the check that a request comes from the home network |

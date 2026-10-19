@@ -32,6 +32,13 @@ E-Mail: <blobling@lampir.at>
 Das alles bleibt im Speicher der App auf deinem Handy. Nichts davon wird an
 uns oder an jemand anderen geschickt. Wenn du die App löschst, ist es weg.
 
+**Mitteilungen**: Die App fragt, ob sie Mitteilungen zeigen darf. Wenn du es
+erlaubst, meldet sich das Pet auf deinem Handy mit einer, wenn es dich braucht
+(nie in der Nacht). Die App legt sie beim Verlassen auf dem Handy selbst an,
+und das System des Handys zeigt sie zur passenden Zeit; dafür wird nichts
+verschickt, und es gibt keinen Push-Dienst. Abschalten kannst du Mitteilungen
+in den Einstellungen des Handys.
+
 ## 3. Standort und Wetter
 
 Das Wetter in der Welt des Pets ist freiwillig und aus, bis du es

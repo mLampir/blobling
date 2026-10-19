@@ -451,6 +451,17 @@ it was alone opens the day ("It rained in the morning, so I sat under my
 umbrella"). If the Pi was off for more than a day, a postcard from Grandma
 says how long the pet stayed with her and what they did together.
 
+**It calls you.** In the app from the stores, with the pet on the phone, it
+calls with a notification when it needs you: once it is really hungry, dirty
+or sad (the stat is critical), or when it is sick. Only for something new: a
+need it already had when you left the app doesn't count, and neither does
+tiredness (it goes to sleep by itself) or a single poop. Only one call is ever
+waiting, and never at night: a need that comes up while it sleeps or at
+bedtime waits until it is up in the morning. Opening the app takes the call
+back. The app asks whether the pet may call the first time you feed it.
+Connected to a Pi, the app doesn't call: it can't know what happens there in
+the meantime, and somebody else may already have seen to it.
+
 ## The app
 
 Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
@@ -522,6 +533,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Seeds, plant, decorations, hats, eggs, warmth (the ember stone, cold mornings) | `core/src/home.ts` |
 | What it does by itself, what it leaves behind, and what it tells when you come back | `core/src/idle.ts` |
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
+| When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
 | Catching up, the state for the app, what is saved, ancestors and album | `core/src/pet.ts`, `core/src/state.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |

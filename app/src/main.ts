@@ -22,6 +22,7 @@ import { haptic } from "./haptics";
 import { iconUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
+import { reminders } from "./notify";
 import { RemotePet, findDisplay, piAddress } from "./remote";
 import { playReplays, type Replay } from "./replay";
 import { pageSounds, type SoundName } from "./sound";
@@ -68,6 +69,11 @@ translate();
 const remote = mode === "pi" ? new RemotePet(connectedTo ?? "", i18n) : null;
 const local = remote ? null : LocalPet.open(i18n);
 const sounds = pageSounds(soundFiles);
+// The pet on the phone calls when it needs somebody (notify.ts); one on a Pi doesn't, the app
+// can't know what happens there. A call the phone's pet left before the app was connected goes.
+if (remote) {
+  reminders(i18n)?.clear();
+}
 
 const app = {
   /** Where the pet lives: "local" (on the phone) or "pi". */

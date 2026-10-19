@@ -31,6 +31,13 @@ Email: <blobling@lampir.at>
 All of this stays in the app's storage on your phone. None of it is sent to
 us or to anyone else. Deleting the app deletes it.
 
+**Notifications**: the app asks whether it may show notifications. If you
+allow it, the pet on your phone calls with one when it needs you (never at
+night). The app sets it up on the phone itself when you leave it, and the
+phone's own system shows it at that time; nothing is sent anywhere for it,
+and there is no push service. You turn notifications off in the phone's
+settings.
+
 ## 3. Location and weather
 
 The weather in the pet's world is optional and off until you turn it on.
