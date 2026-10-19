@@ -63,7 +63,8 @@ const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const
 const OWN_TRICK_FORMS: Record<string, string> = {
   angloop: "bow", gemperor: "flip", purrloop: "bow", lanternling: "spin", flarelet: "flip", roamtail: "spin",
   filchfox: "spin", rumblefluff: "bow", prismist: "spin", twiggle: "spin", needlenub: "bow", quill: "dance",
-  drakwing: "flip", lillypot: "bow", steamo: "dance", parcelbeak: "bow", rapierre: "spin",
+  drakwing: "flip", lillypot: "bow", steamo: "dance", parcelbeak: "bow", rapierre: "spin", glimmerock: "spin",
+  bouldergrin: "flip",
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It

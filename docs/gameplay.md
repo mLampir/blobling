@@ -417,7 +417,8 @@ each one the opponent makes a move, and the pet answers with a trick:
 - **Weight:** a pet that is too heavy has more force and less speed; one that
   is too light, the other way round.
 - **Special move:** an adult that knows how to dance lets its species' special
-  move go after every second trick that worked. It counts double.
+  move go after every second trick that worked. It counts double. Every form
+  has a move of its own for it: Angloop flashes its lure, for example.
 
 An opponent gives in after three hits (Drizzleshell, Puddlin and the ones in
 the cave and on the mountain after four, Duskwisp after five) and leaves
@@ -747,7 +748,8 @@ A new creature should make you think "that one is different".
     wings flutters through its flip; the gesture and the effect stay the
     same), in its special move in a scuffle, or now and then while it stands
     around. Every adult form has one trick of its own and a special move
-    (the particles in `hit`) that no other form uses.
+    that no other form uses: a move of its own (`special`) and its own
+    particles (`hit`).
 
 #### How to work
 
@@ -777,7 +779,7 @@ For an adult form with pixel art of its own:
 | `write_sheet` for the body and the faces, and the list at the top of the script | `tools/build_blob_sprites.py` |
 | Body and face sheet | `SPECIES_SHEETS` in `core/src/scene.ts` |
 | A face that is not to sit in the middle of its row (`faceTop`, `faceCenter`, `faceShift` in `write_sheet`) | `tools/build_blob_sprites.py`, `faceAnchor` in `core/src/sprites.ts` |
-| Colors of the child's lure, walking and hopping, umbrella, special move | `LURE_HINT`, `WALK_HOPS`, `NO_UMBRELLA`, `hit` in `core/src/scene.ts` |
+| Colors of the child's lure, walking and hopping, umbrella, special move | `LURE_HINT`, `WALK_HOPS`, `NO_UMBRELLA`, `special` and `hit` in `core/src/scene.ts` |
 | A trick in its own way: the same gesture and effect, another animation | `OWN_TRICKS` and `trick` in `core/src/scene.ts`, frames of its own if it needs them |
 | Tests: every form in every state, how it moves, where the face sits | `core/test/scene.test.ts`, `core/test/sprites.test.ts` |
 | Text and picture, spoilers folded shut | [pets.md](pets.md), `npm run preview -- --pets` |
