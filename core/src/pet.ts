@@ -9,15 +9,17 @@
  * the app. This class is handed what was saved and a function that saves.
  */
 
+import { API_OLDEST, API_VERSION } from "./api";
 import * as battle from "./battle";
 import * as care from "./care";
+import * as habits from "./habits";
 import * as home from "./home";
-import * as idle from "./idle";
 import * as life from "./life";
 import * as model from "./model";
 import type { SceneView, TripView } from "./scene";
 import * as sky from "./sky";
 import { fromDict, toDict, type PetState } from "./state";
+import * as story from "./story";
 import type { Location } from "./sun";
 import * as trip from "./trip";
 import * as wild from "./wild";
@@ -53,10 +55,19 @@ export interface SaveFile {
   version: number;
   pet: PetState;
   ancestors: Ancestor[];
+  /** The album: every form (life.FORMS) one of the pets has been. Older files have none. */
+  album?: string[];
 }
 
-/** The pet and its ancestors from what was saved. Throws if it cannot be read. */
-export function readSave(data: unknown): { state: PetState; ancestors: Ancestor[] } {
+/** A pet as it was saved: the pet itself, its ancestors and the album. */
+export interface Saved {
+  state: PetState;
+  ancestors: Ancestor[];
+  album?: string[];
+}
+
+/** The pet, its ancestors and the album from what was saved. Throws if it cannot be read. */
+export function readSave(data: unknown): Saved {
   const file = data as Partial<SaveFile> | null;
   if (file === null || typeof file !== "object") {
     throw new Error("not a save file");
@@ -67,7 +78,8 @@ export function readSave(data: unknown): { state: PetState; ancestors: Ancestor[
   if (file.pet === null || typeof file.pet !== "object") {
     throw new Error("no pet in the save file");
   }
-  return { state: fromDict(file.pet as unknown as Record<string, unknown>), ancestors: [...(file.ancestors ?? [])] };
+  const album = Array.isArray(file.album) ? file.album.filter((form) => life.FORMS.includes(form)) : [];
+  return { state: fromDict(file.pet as unknown as Record<string, unknown>), ancestors: [...(file.ancestors ?? [])], album };
 }
 
 /** The weather as the weather service reports it: temperature in °C and a WMO code. */
@@ -80,7 +92,7 @@ export interface PetOptions {
   /** Text for a key (I18n.t). */
   t: (key: string, values?: Record<string, unknown>) => string;
   /** What was saved (see readSave); without it a new egg is waiting. */
-  saved?: { state: PetState; ancestors: Ancestor[] } | null;
+  saved?: Saved | null;
   /** Keeps the pet. May throw; the pet then tries again later. */
   save?: (file: SaveFile) => void;
   /** Returns [start, end] as "HH:MM". */
@@ -104,6 +116,8 @@ export interface ActionRequest extends Omit<model.ActionOptions, "weather" | "te
 export class Pet {
   state: PetState;
   ancestors: Ancestor[];
+  /** The forms met so far (see albumList); the current pet's are added on every save. */
+  album: string[] = [];
   private readonly t: PetOptions["t"];
   private readonly saveFile: (file: SaveFile) => void;
   private readonly clock: () => number;
@@ -126,6 +140,7 @@ export class Pet {
       this.state = options.saved.state;
       this.ancestors = options.saved.ancestors;
       model.reform(this.state, this.clock());
+      this.album = startAlbum(options.saved);
     } else {
       this.state = model.newPet(this.clock(), this.t("pet.default_name"));
       this.ancestors = [];
@@ -204,6 +219,8 @@ export class Pet {
       nest: s.nest ? s.nest.line : null,
       gift: !!s.gift,
       plant: s.plant ? { kind: s.plant.kind, stage: home.plantStage(s), ripe: home.ripe(s) } : null,
+      trace: s.trace ? { ...s.trace } : null,
+      waiting: habits.waiting(s, now),
     };
   }
 
@@ -216,6 +233,11 @@ export class Pet {
   /** The history, newest first. */
   events(limit = 20): PetState["events"] {
     return this.state.events.slice(-limit).reverse();
+  }
+
+  /** The travel diary: the trips it has been on, the latest first. */
+  travels(): PetState["travels"] {
+    return [...this.state.travels].reverse();
   }
 
   /** Carries out an action; throws a RequestError (a key from the "error" texts) for invalid requests. */
@@ -251,6 +273,7 @@ export class Pet {
     this.advance(now);
     const s = this.state;
     const successor = model.nextPet(s, now, this.t("pet.default_name"), egg);
+    this.collect();
     if (s.stage !== "egg") {
       this.ancestors.push({
         name: s.name, species: s.species, stage: s.stage,
@@ -274,6 +297,24 @@ export class Pet {
     }));
   }
 
+  /**
+   * The album: one slot per form there is (life.FORMS), in a fixed order. A form one of the pets
+   * has been shows its stage, species and name; one not met yet is null and gives nothing away.
+   */
+  albumList() {
+    this.collect();
+    // A form that no longer grows (life.REFORMED) only has a slot once one of the pets has been it
+    const forms = life.FORMS.filter((form) => this.album.includes(form)
+      || !(form.startsWith("adult:") && form.slice("adult:".length) in life.REFORMED));
+    return forms.map((form) => {
+      if (!this.album.includes(form)) {
+        return null;
+      }
+      const [stage, species] = form.split(":");
+      return { stage, species, label: this.t(stage === "adult" ? `species.${species}` : `stages.${stage}`) };
+    });
+  }
+
   rename(name: unknown): void {
     const text = String(name ?? "").split(/\s+/).filter(Boolean).join(" ");
     const length = [...text].length;
@@ -288,20 +329,33 @@ export class Pet {
     this.write(this.clock());
   }
 
-  /** What is saved: the pet and its ancestors, as the save file has them. */
+  /** What is saved: the pet, its ancestors and the album, as the save file has them. */
   toSave(): SaveFile {
-    return { version: VERSION, pet: toDict(this.state), ancestors: structuredClone(this.ancestors) };
+    this.collect();
+    return {
+      version: VERSION, pet: toDict(this.state), ancestors: structuredClone(this.ancestors), album: [...this.album],
+    };
   }
 
   /** Takes a pet that was saved (see readSave) in place of this one, ancestors and all. */
-  replace(saved: { state: PetState; ancestors: Ancestor[] }): void {
+  replace(saved: Saved): void {
     this.state = saved.state;
     this.ancestors = saved.ancestors;
+    this.album = startAlbum(saved);
     this.requestIds.clear();
     this.write(this.clock());
   }
 
   // ---------- internal ----------
+
+  /** Adds the forms the current pet has been to the album. */
+  private collect(): void {
+    for (const form of life.formsOf(this.state.stage, this.state.species)) {
+      if (!this.album.includes(form)) {
+        this.album.push(form);
+      }
+    }
+  }
 
   private advance(now: number): void {
     if (!clockValid(now)) {
@@ -326,7 +380,7 @@ export class Pet {
     const bedtime = this.bedtime();
     const due = life.dueAt(s);
     return {
-      api: 1,
+      api: API_VERSION, api_oldest: API_OLDEST,
       now: Math.round(now),
       name: s.name, species: s.species, stage: s.stage,
       species_label: t(`species.${s.species}`), stage_label: t(`stages.${s.stage}`),
@@ -363,6 +417,9 @@ export class Pet {
         returning: trip.returning(s.trip), found: [...s.trip.found],
         hearts: s.trip.hearts, pack: [...s.trip.pack],
       } : null,
+      // The latest scuffles, to be watched again; last_trip: when the latest trip set off
+      replays: s.replays.map((r) => ({ ...r, rounds: r.rounds.map((round) => [...round]) })),
+      last_trip: s.recent.trip?.at(-1) ?? null,
       // What can go into the backpack before a trip
       packable: trip.PACKABLE.map((k) => ({ id: k, label: t(`pack.${k}`) })),
       max_pack: trip.MAX_PACK,
@@ -397,8 +454,8 @@ export class Pet {
         kind: s.plant.kind, label: t(`plants.${s.plant.kind}`),
         stage: home.plantStage(s), ripe: home.ripe(s), left: s.plant.left,
       } : null,
-      // What happened while nobody was there (the history's action and item, and how often), or null
-      welcome: idle.welcome(s, now),
+      // What happened while nobody was there, told as a little story (story.tell), or null
+      welcome: story.tell(s, now, t),
     };
   }
 
@@ -410,6 +467,15 @@ export class Pet {
       this.log("Could not save the pet", error);
     }
   }
+}
+
+/** The album of a saved pet; a file from before the album has it filled in from the ancestors. */
+function startAlbum(saved: Saved): string[] {
+  const album = new Set(saved.album ?? []);
+  for (const a of saved.ancestors) {
+    life.formsOf(a.stage, a.species).forEach((form) => album.add(form));
+  }
+  return [...album];
 }
 
 /** For the scene: where it is travelling and what happened there last. */

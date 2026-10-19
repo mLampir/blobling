@@ -18,10 +18,12 @@ import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
 import { MAX_NAME } from "../../core/src/pet";
 import type { Location } from "../../core/src/sun";
 import { locales } from "./assets";
+import { haptic } from "./haptics";
 import { iconUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
 import { RemotePet, piAddress } from "./remote";
+import { playReplays, type Replay } from "./replay";
 
 const PI_KEY = "pi"; // the address of the Pi the app is connected to
 const LIVE_KEY = "location.live"; // "1": the pet lives wherever the phone is
@@ -87,6 +89,9 @@ const app = {
   /** A thing the player hands the pet ("meal", "ball", "sponge", …) as a URL for an <img>; "" if there is no picture. */
   thing: thingUrl,
 
+  /** A short buzz for what the pet just did: "touch", "done", "no", "joy" or "evolve" (haptics.ts). */
+  buzz: haptic,
+
   /** On the phone: the scene goes on this canvas. */
   async showScene(canvas: HTMLCanvasElement): Promise<void> {
     (await local!).show(canvas);
@@ -100,9 +105,25 @@ const app = {
     return local ? (await local).petArea() : null;
   },
 
-  /** With a Pi: a fresh picture of what the panel shows, as a URL for an <img>. */
+  /** With a Pi: whether it and this app understand each other ("ok", "display_old", "app_old"). */
+  fit(): string {
+    return remote?.fit ?? "ok";
+  },
+
+  /** With a Pi: the next frame the panel shows, as a URL for an <img> (the Pi answers once it is drawn). */
   previewUrl(): string {
-    return `${remote?.base ?? ""}/preview.png?t=${Date.now()}`;
+    return `${remote?.base ?? ""}/preview.png?next&t=${Date.now()}`;
+  },
+
+  /**
+   * Plays scuffles from the pet's state (`replays`) on `canvas`, one after the other, wherever the
+   * pet lives. `onChange(i, over)` when the i-th begins and when its rounds are over, `onEnd` after
+   * the last. Returns a function that stops it.
+   */
+  async replay(canvas: HTMLCanvasElement, replays: readonly Replay[],
+      onChange: (index: number, over: boolean) => void, onEnd: () => void): Promise<() => void> {
+    const location = local ? (await local).location : null;
+    return playReplays(canvas, replays, location, onChange, onEnd);
   },
 
   /** On the phone: where it lives (for the weather and the sun times). */

@@ -39,6 +39,47 @@ export interface TripEvent {
   outcome?: string;
 }
 
+/** A scuffle on a trip, kept to be watched again (trip.REPLAYS). */
+export interface Replay {
+  at: number;
+  /** When the trip it happened on set off (Trip.start). */
+  trip: number;
+  area: string;
+  foe: string;
+  /** [move, trick, result] per round (battle.Round). */
+  rounds: unknown[][];
+  outcome: string;
+  /** What the opponent left behind. */
+  item: string | null;
+  /** How the pet looked then, and the weather. */
+  species: string;
+  stage: string;
+  hat: string;
+  weather: number | null;
+}
+
+/**
+ * One line of the travel diary: what happened at a station, without the rounds of a scuffle.
+ * Besides the kinds of TripEvent: "snack" (it ate its snack after a lost scuffle) and "beaten"
+ * (it had enough and turned back). A rest is not worth a line.
+ */
+export interface TravelStop {
+  kind: TripEvent["kind"] | "snack" | "beaten";
+  at: number;
+  item?: string;
+  foe?: string;
+  wild?: string;
+  outcome?: string;
+}
+
+/** A trip that is over, for the travel diary (trip.remember). */
+export interface Travel {
+  area: string;
+  start: number;
+  end: number;
+  stops: TravelStop[];
+}
+
 /** A trip in progress (trip.plan). */
 export interface Trip {
   area: string;
@@ -52,6 +93,8 @@ export interface Trip {
   hearts: number;
   pack: string[];
   guardian: string | null;
+  /** What has happened so far, for the travel diary (missing in trips saved before it). */
+  log?: TravelStop[];
 }
 
 /** An egg that is kept: its line, and what a pet has passed on to it (wild.ts). */
@@ -74,6 +117,20 @@ export interface Plant {
   grown: number;
   ripening: number;
   left: number;
+}
+
+/** Rain or snow the pet saw while it was on its own, for the story when somebody comes back. */
+export interface WeatherSeen {
+  at: number;
+  kind: "rain" | "snow";
+}
+
+/** Something it left behind while nobody was there (idle.ts); `spot`: 0–1 along the free ground. */
+export interface Trace {
+  kind: string;
+  spot: number;
+  /** Which of its drawings (idle.DRAWINGS). */
+  look: number;
 }
 
 export interface PetEvent {
@@ -125,6 +182,8 @@ export interface PetState {
   trip: Trip | null;
   /** Areas whose guardian it has got past (trip.AREAS). */
   guardians: string[];
+  /** The trips it has been on, the latest last, at most trip.MAX_TRAVELS. */
+  travels: Travel[];
   /** Brought home but not unpacked yet. */
   backpack: string[];
   /** Find -> count (home.ITEMS), except for eggs. */
@@ -140,6 +199,8 @@ export interface PetState {
   deco: string[];
   plant: Plant | null;
   events: PetEvent[];
+  /** The latest scuffles, oldest first. */
+  replays: Replay[];
   /** When somebody last did something with it (idle.welcome); 0 = not known yet. */
   seen_at: number;
   /** When it next gets busy by itself (idle.step); 0 = not planned yet. */
@@ -148,6 +209,12 @@ export interface PetState {
   solo: Record<string, number>;
   /** Which rules for the adult forms it was saved under (life.FORM_RULES); older ones are reformed once. */
   form_rules: number;
+  /** Rain and snow since somebody was last there, at most one of each per part of the day (idle.noteWeather). */
+  weather_seen: WeatherSeen[];
+  /** What it left behind while nobody was there, until somebody does something with it (idle.ts). */
+  trace: Trace | null;
+  /** When somebody fed it or played with it, over the last few days (habits.ts). */
+  habits: number[];
 }
 
 /** A state with every field at its starting value. */
@@ -183,6 +250,7 @@ export function newState(): PetState {
     training: null,
     trip: null,
     guardians: [],
+    travels: [],
     backpack: [],
     items: {},
     eggs: [],
@@ -193,10 +261,14 @@ export function newState(): PetState {
     deco: [],
     plant: null,
     events: [],
+    replays: [],
     seen_at: 0.0,
     idle_next: 0.0,
     solo: {},
     form_rules: life.FORM_RULES,
+    weather_seen: [],
+    trace: null,
+    habits: [],
   };
 }
 

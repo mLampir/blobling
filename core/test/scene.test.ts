@@ -136,6 +136,22 @@ test("every form of the pet can be drawn, in every state", () => {
   }
 });
 
+test("about its usual time, every form waits at the nearer edge, looking out", () => {
+  const forms = [...Object.keys(life.LINES).flatMap((line) => ["baby", "child"].map((stage) => [stage, line])),
+    ...Object.values(life.LINES).flat().map((name) => ["adult", name])];
+  for (const [stage, species] of forms) {
+    for (const [start, edge] of [[4, 2], [26, 30]]) {
+      const view = { ...BASE, stage, species, waiting: true };
+      const waiter = scene();
+      waiter.x = waiter.targetX = start;
+      const images = Array.from({ length: 40 }, (_, i) => waiter.render(view, null, DAY, 1 + i * 0.1)[0]);
+      assert.equal(waiter.x, edge, `${stage} ${species}`);
+      assert.equal(waiter.facing, edge < 16 ? -1 : 1);
+      assert.ok(differing(images[30], images[35]) > 0, `${stage} ${species} goes on tiptoe`);
+    }
+  }
+});
+
 test("some forms do a trick in their own way", () => {
   assert.equal(trickAnimation("adult", "sneezle", "flip"), "flutter");
   assert.equal(trickAnimation("adult", "sneezle", "spin"), "spin");
@@ -171,6 +187,25 @@ test("every activity can be drawn from its start to its end", () => {
     }
     assert.equal(frames(changes, Math.ceil(seconds * 10) + 10).length > 0, true, activity);
   }
+});
+
+test("what it left behind lies in the scene, and what it builds grows while it builds it", () => {
+  const empty = frames({}, 1)[0];
+  for (const kind of ["ball", "tower", "drawing", "snowman"]) {
+    for (const look of [0, 1]) {
+      const [left] = frames({ trace: { kind, spot: 0, look } }, 1);
+      assert.ok(differing(empty, left, GROUND - 12) > 0, `${kind} ${look}`);
+    }
+  }
+  // a drawing is scratched into the ground, below the grass, where the pet never covers it
+  const [drawn] = frames({ trace: { kind: "drawing", spot: 0.5, look: 1 } }, 1);
+  assert.ok(differing(empty, drawn, GROUND + 2) > 0);
+  assert.equal(differing(empty, drawn, 0, GROUND + 2), 0);
+
+  const building = frames({ activity: "build", activity_item: "tower", trace: { kind: "tower", spot: 0.3, look: 0 } },
+    ACTIVITY_SECONDS.build * 10);
+  const grown = (image: Image) => differing(empty, image, GROUND - 8, GROUND + 1);
+  assert.ok(grown(building[25]) < grown(building[80]), `${grown(building[25])} ${grown(building[80])}`);
 });
 
 test("a trip: the landscape of every area, a scuffle, a wild pet and the ball", () => {

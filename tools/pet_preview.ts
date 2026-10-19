@@ -85,6 +85,8 @@ const SCENES: Record<string, Scene> = {
   cloudy: [{ mood: "happy" }, DAY, { temp: 15, code: 2 }],
   cold: [{ cold: true }, DAY, { temp: -4, code: 1 }],
   emberstone: [{ deco: ["emberstone"] }, NIGHT, { temp: -4, code: 0 }],
+  waiting: [{ waiting: true }, DAY, null],
+  waiting_rain: [{ waiting: true, stage: "adult", species: "cyclopuff" }, DUSK, RAIN],
   wake_up: [{ activity: "wake_up" }, new Date(2026, 9, 12, 7, 0), null],
   heart: [{ activity: "catch_heart", mood: "happy" }, DAY, null],
   egg: [{ stage: "egg", ready: true }, DAY, null],
@@ -239,6 +241,14 @@ const SCENES: Record<string, Scene> = {
   }, DAY, null],
   gift_nest: [{ stage: "adult", species: "angloop", gift: true, nest: "blob", deco: ["lantern"] }, NIGHT, null],
   unwrap: [{ stage: "adult", species: "angloop", activity: "unwrap", activity_item: "fruit_cherry" }, DAY, null],
+  // what it left behind while nobody was there, until somebody does something with it
+  trace_ball: [{ trace: { kind: "ball", spot: 0.9, look: 0 }, deco: ["flag"] }, DAY, null],
+  trace_tower: [{ trace: { kind: "tower", spot: 0.2, look: 0 }, plant: { kind: "berry", stage: "young", ripe: false } },
+    DAY, null],
+  trace_drawing: [{ trace: { kind: "drawing", spot: 0.5, look: 1 }, stage: "adult", species: "angloop" }, DAY, null],
+  trace_snowman: [{ trace: { kind: "snowman", spot: 0.1, look: 0 } }, DAY, { temp: -2, code: 73 }],
+  trace_night: [{ trace: { kind: "drawing", spot: 0.3, look: 0 } }, NIGHT, null],
+  build: [{ activity: "build", activity_item: "tower", trace: { kind: "tower", spot: 0.4, look: 0 } }, DAY, null],
   // the ember line, from the rare egg on
   egg_found: [{
     trip: trip("cave", {

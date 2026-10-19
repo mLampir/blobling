@@ -176,3 +176,12 @@ test("an adult of the slime's first forms turns into its new form", () => {
   assert.equal(fromDict({ species: "sneezle" }).form_rules, 1); // a save from before
   assert.equal(fromDict(toDict(pet) as unknown as Record<string, unknown>).form_rules, life.FORM_RULES);
 });
+
+test("every form is in the album once, and a pet has been the ones on its way", () => {
+  assert.equal(new Set(life.FORMS).size, life.FORMS.length);
+  assert.equal(life.FORMS.length, Object.values(life.LINES).reduce((n, adults) => n + 3 + adults.length, 0));
+  assert.deepEqual(life.formsOf("egg", "blob"), ["egg:blob"]);
+  assert.deepEqual(life.formsOf("child", "stone"), ["egg:stone", "baby:stone", "child:stone"]);
+  assert.deepEqual(life.formsOf("adult", "flarelet"), ["egg:ember", "baby:ember", "child:ember", "adult:flarelet"]);
+  assert.deepEqual(life.formsOf("ghost", "blob"), []);
+});

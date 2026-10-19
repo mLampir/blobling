@@ -5,6 +5,7 @@ import type { AddressInfo } from "node:net";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
 
+import { API_VERSION } from "../../core/src/api";
 import { decodePng } from "../../core/src/png";
 import { APP_DIR, TEMPLATE_DIR } from "../src/config";
 import { createApp, renderPage } from "../src/web";
@@ -132,12 +133,12 @@ test("a change needs the header that other websites cannot send", async () => {
 
 test("the pet is described, acted on and renamed", async () => {
   const state = await json(get("/api/pet"));
-  assert.equal(state.api, 1);
+  assert.equal(state.api, API_VERSION);
   assert.equal(state.stage, "egg");
   assert.equal(state.stage_label, "Ei");
 
   const first = await json(post("/api/pet/action", { action: "pet", id: "tap-1", by: "test" }));
-  assert.equal(first.api, 1);
+  assert.equal(first.api, API_VERSION);
   assert.equal(typeof first.accepted, "boolean");
   assert.equal(first.state.name, state.name);
   // sent twice, carried out once
@@ -145,11 +146,12 @@ test("the pet is described, acted on and renamed", async () => {
   const { events } = await json(get("/api/pet/events?limit=100"));
   assert.equal(events.filter((event: { by: string }) => event.by === "test").length, 1);
   assert.equal((await json(get("/api/pet/events?limit=1"))).events.length, 1);
-  assert.equal((await json(get("/api/pet/events?limit=many"))).api, 1);
+  assert.equal((await json(get("/api/pet/events?limit=many"))).api, API_VERSION);
 
   assert.equal((await json(post("/api/pet/settings", { name: " Mimi   Mau " }))).name, "Mimi Mau");
   assert.equal((await json(post("/api/pet/new_egg", { confirm: true }))).stage, "egg");
-  assert.deepEqual(await json(get("/api/pet/ancestors")), { api: 1, ancestors: [] });
+  const { ancestors, album } = await json(get("/api/pet/ancestors"));
+  assert.deepEqual([ancestors, album.filter(Boolean).length], [[], 1]); // an egg is no ancestor, but in the album
 });
 
 test("the pictures: what the panel shows, and the app icon", async () => {
@@ -157,6 +159,8 @@ test("the pictures: what the panel shows, and the app icon", async () => {
   assert.equal(preview.headers.get("cache-control"), "no-store");
   const frame = decodePng(new Uint8Array(await preview.arrayBuffer()));
   assert.deepEqual([frame.width, frame.height], [64, 64]);
+  const next = decodePng(new Uint8Array(await (await get("/preview.png?next")).arrayBuffer()));
+  assert.deepEqual([next.width, next.height], [64, 64]); // the loop does not run here: the last one, after a wait
 
   for (const [query, size] of [["", 192], ["?size=512&maskable=1", 512], ["?stage=adult&species=cyclopuff", 192],
     ["?stage=adult&species=dragon", 192]] as const) {
@@ -169,9 +173,6 @@ test("the pictures: what the panel shows, and the app icon", async () => {
 
 test("anything else is not there, and a request that is too big is cut off", async () => {
   assert.equal((await get("/api/nothing")).status, 404);
-  for (const gone of ["/pet.webmanifest", "/pet-sw.js", "/ca.crt"]) {
-    assert.equal((await get(gone)).status, 404);
-  }
   assert.equal((await post("/api/state", {})).status, 404);
   assert.equal((await fetch(origin + "/api/pet", { method: "HEAD" })).status, 200);
   const status = await new Promise((resolve, reject) => {

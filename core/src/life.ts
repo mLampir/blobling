@@ -31,6 +31,10 @@ export const LINES: Record<string, readonly string[]> = {
   stone: ["glimmerock", "bouldergrin"],
 };
 export const SPECIES = Object.entries(LINES).flatMap(([line, adults]) => [line, ...adults]);
+// Every form there is, as "stage:species", in the album's order: per line its egg, baby, child
+// and adult forms
+export const FORMS = Object.entries(LINES).flatMap(([line, adults]) => [
+  ...STAGES.slice(0, -1).map((stage) => `${stage}:${line}`), ...adults.map((adult) => `adult:${adult}`)]);
 
 // Rules for the adult form (order = priority)
 export const PURRLOOP_LOVE_PER_DAY = 8; // counted pettings per day → purrloop
@@ -76,6 +80,17 @@ export function lineOf(species: string): string {
 
 function key(state: PetState): string {
   return state.stage === "adult" ? state.species : state.stage;
+}
+
+/** The forms a pet of this stage and species has been so far, as "stage:species" (see FORMS). */
+export function formsOf(stage: string, species: string): string[] {
+  const reached = STAGES.indexOf(stage as Stage);
+  if (reached < 0) {
+    return [];
+  }
+  const line = lineOf(species);
+  return STAGES.slice(0, reached + 1).map((s) => `${s}:${s === "adult" ? species : line}`)
+    .filter((form) => FORMS.includes(form));
 }
 
 export function decayFactor(state: PetState, stat: string): number {

@@ -13,16 +13,17 @@ a day and also tells you the time and the weather.
 - **It lives with you.** The sky follows the real time of day, with sunrise
   and sunset for your location; clouds, rain and snow come from the real
   weather. On a cold morning the pet wakes up shivering, until you rub it warm.
-  Left to itself, it plays and practices on its own, and when you come back
-  the app tells you what it has been up to. The panel also shows the time and
-  the temperature.
+  Left to itself, it plays and practices on its own, it waits at the edge of
+  the panel around the times it is usually fed, and when you come back it
+  tells you what it has been up to, as a little story in its own words.
+  The panel also shows the time and the temperature.
 - **The phone is your hand.** Drag food, snacks, a ball or medicine onto the
   pet, stroke it with your finger, rub it clean with the sponge, and put it to
   bed at night.
 - **It grows up.** It hatches from an egg and grows over ten days into one of
   three adult forms, depending on how you cared for it. It learns tricks, trains,
   goes on trips, scuffles with whoever gets in its way there and brings things
-  home. Five areas open up one after the other, each one past a guardian, and
+  home, and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
   one of the guardians keeps a rare egg that something else hatches from.
 - **It makes friends.** A grown-up pet can impress a wild pet with its tricks.
   The friend comes to visit, brings a gift now and then, and in time the two
@@ -110,9 +111,11 @@ setup:
 2. installs [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix)
    in a pinned version, with its Python bindings, for the small script that
    drives the panel.
-3. installs Node and the app (built in advance for the release) with the
-   configuration and the systemd service `led-matrix`, which starts at
-   boot.
+3. installs Node.js in its current LTS line from
+   [NodeSource](https://github.com/nodesource/distributions) (the one of
+   Raspberry Pi OS no longer gets security fixes) and the app (built in
+   advance for the release) with the configuration and the systemd service
+   `led-matrix`, which starts at boot.
 
 It can be run as often as you like; steps that are already done are skipped.
 
@@ -220,7 +223,13 @@ sudo systemctl restart led-matrix    # after changing config.ini
 an *Update now* button. The Pi looks for one a minute after it starts and
 then every six hours; it only asks GitHub, nothing is opened towards the
 internet. The button takes about a minute, the panel goes dark briefly, and
-the page reloads in the new version. The same from the command line:
+the page reloads in the new version. The app connected to the display offers
+the same under *More*, with a dot on the tab while an update is waiting. The
+button looks for the newest release once more before it starts, so it never
+waits for the next look. When the app and the display no longer understand each
+other (a newer app needs a newer display, or the other way round), the app says
+which one to update, with the button for the display. The same from the command
+line:
 
 ```bash
 curl -fsSL https://github.com/mLampir/blobling/releases/latest/download/install.sh | sudo bash -s -- --app
@@ -250,6 +259,7 @@ Where things are on the Pi:
 | `/opt/led-matrix/` | The app, the Python environment of the panel driver and the matrix library; `VERSION` is the installed release |
 | `/opt/led-matrix/releases/` | The installed release and the one before |
 | `/etc/led-matrix/config.ini` | Configuration |
+| `/etc/apt/sources.list.d/nodesource.list` | Where Node.js comes from (with `/etc/apt/keyrings/nodesource.asc` and `/etc/apt/preferences.d/nodesource`) |
 | `/var/lib/led-matrix/pet.json` | The pet's save file |
 | `/var/lib/led-matrix/pet.before-load.json` | The pet a loaded save file replaced (settings page) |
 | `/var/lib/led-matrix/state.json` | Panel on or off, brightness, night mode |
@@ -274,7 +284,7 @@ the [hardware guide](docs/hardware.md#if-something-looks-wrong).
 
 The app is written in TypeScript. To work on it you need, on your PC:
 
-- [Node.js](https://nodejs.org/) 20 or newer; it brings `npm` along.
+- [Node.js](https://nodejs.org/) 22 or newer; it brings `npm` along.
 - The repo, and in its folder, once and again whenever `package-lock.json`
   has changed, the build tools:
 

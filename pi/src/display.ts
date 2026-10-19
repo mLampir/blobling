@@ -94,6 +94,8 @@ export class Display {
   readonly height: number;
   /** What the panel is showing right now (for the live preview). */
   lastFrame: Image;
+  /** Who waits for the next frame (the live preview of the app). */
+  private frameWaiters: (() => void)[] = [];
   private readonly panel: FrameSink | null;
   private readonly scene: PetScene;
   private readonly weather: Weather;
@@ -262,6 +264,7 @@ export class Display {
         }
         await this.panel?.show(frame);
         this.lastFrame = frame;
+        this.frameDone();
 
         if (night.enabled) {
           // Catch the start and end of the night to the minute
@@ -275,6 +278,29 @@ export class Display {
 
       // Sleep until the next update or until the state changes.
       await this.sleep(delay);
+    }
+  }
+
+  /**
+   * The next frame the loop draws, or the one it shows if none comes within `seconds` (the loop
+   * sleeps while the panel is off). The app asks for one frame after the other this way, so it
+   * gets each one as soon as it is drawn instead of guessing when that will be.
+   */
+  nextFrame(seconds: number): Promise<Image> {
+    return new Promise((resolve) => {
+      const done = (): void => {
+        clearTimeout(timer);
+        this.frameWaiters = this.frameWaiters.filter((waiter) => waiter !== done);
+        resolve(this.lastFrame);
+      };
+      const timer = setTimeout(done, seconds * 1000);
+      this.frameWaiters.push(done);
+    });
+  }
+
+  private frameDone(): void {
+    for (const waiter of [...this.frameWaiters]) {
+      waiter();
     }
   }
 

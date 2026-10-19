@@ -208,6 +208,15 @@
     "evolved": "{name} {what}",
     "recall": "🏠 Call home",
     "unpack": "🎒 Unpack",
+    "replay": {
+      "watch": {
+        "one": "▶ Watch the scuffle",
+        "other": "▶ Watch the {n} scuffles"
+      },
+      "again": "Again",
+      "play": "Watch again",
+      "against": "Scuffle with {foe} …"
+    },
     "collect": "🥚 Collect the egg",
     "collected": "{egg} collected – it is among your finds now",
     "unwrap": "🎁 Unwrap the gift",
@@ -266,14 +275,73 @@
       "save": "Save"
     },
     "welcome": {
-      "text": "{name} was on its own for {time}. Meanwhile:",
+      "text": "{name} was on its own for {time} and has something to tell:",
       "ok": "Nice"
+    },
+    "story": {
+      "when": {
+        "morning": "in the morning",
+        "afternoon": "in the afternoon",
+        "evening": "in the evening",
+        "night": "at night"
+      },
+      "weather": {
+        "rain": "It rained {when}, so I sat under my umbrella and listened to the drops.",
+        "rain_bare": "It rained {when}, and I didn't mind one bit.",
+        "rain_night": "It rained in the night – I slept right through it.",
+        "snow": "It snowed {when}, and everything turned white.",
+        "snow_night": "It snowed in the night, and afterwards everything was white."
+      },
+      "solo_ball": "I played with my ball for a while.",
+      "solo_ball_more": "I played with my ball again and again.",
+      "solo_tower": "I built a little tower out of stones.",
+      "solo_drawing": "I drew a picture in the ground.",
+      "solo_snowman": "It was snowing, so I built a tiny snowman.",
+      "solo_trick": "I practiced {trick} all by myself.",
+      "fruit": {
+        "berry": "I picked a ripe berry and ate it right away.",
+        "sunflower": "I nibbled a sunflower seed.",
+        "cherry": "I ate a giggle cherry and couldn't stop giggling.",
+        "herb": "I ate a healing blossom and felt much better."
+      },
+      "visit": "{pet} came to visit me.",
+      "gift": "{pet} brought me a present!",
+      "nest": "The two of us built a nest – and now there's an egg in it!",
+      "wild_friend": "I showed {pet} my tricks, and now we're friends.",
+      "wild_shrug": "I showed {pet} my tricks, but {pet} wasn't impressed.",
+      "battle_win": "{foe} wanted to scuffle, but I was stronger!",
+      "battle_lose": "{foe} picked a scuffle with me, and this time I lost.",
+      "battle_draw": "{foe} and I scuffled, but neither of us gave in.",
+      "battle_ball": "{foe} ran after my ball instead of scuffling with me.",
+      "guardian": "I got past {foe}, the guardian of the path!",
+      "unlock": "Now I know a new way: {area}!",
+      "find": "On the way I found something: {item}.",
+      "trip_home": "I came back home with my backpack.",
+      "trip_tired": "I got tired and turned back.",
+      "trip_beaten": "I'd had enough and turned back.",
+      "trip_snack": "I ate my snack on the way and felt better.",
+      "evolve": {
+        "hatched": "I hatched! Hello, world!",
+        "child": "I've grown – I'm a child now!",
+        "adult": "I've grown up – I'm a {species} now!"
+      },
+      "postcard": {
+        "one": "Hello!\n{name} stayed with me for a day while the display was off. {did} Now it's back home – it missed you!\nLove, Grandma",
+        "other": "Hello!\n{name} stayed with me for {n} days while the display was off. {did} Now it's back home – it missed you!\nLove, Grandma"
+      },
+      "grandma": {
+        "bake": "We baked cookies together.",
+        "knit": "I knitted {name} a tiny scarf.",
+        "garden": "We pulled weeds in my garden and ate strawberries.",
+        "tea": "We drank tea and looked at old photos."
+      }
     },
     "tabs": {
       "history": "History",
       "statistics": "Stats",
+      "travels": "Trips",
       "finds": "Finds",
-      "gallery": "Ancestors",
+      "gallery": "Album",
       "more": "More"
     },
     "headings": {
@@ -402,6 +470,9 @@
       "learned": "learned a new trick: {trick} ⭐",
       "practiced": "{trick} practice",
       "solo_ball": "played with the ball by itself",
+      "solo_tower": "built a little stone tower",
+      "solo_drawing": "drew a picture in the ground",
+      "solo_snowman": "built a tiny snowman in the snow",
       "solo_trick": "practiced {trick} by itself",
       "find": "found something: {item}",
       "picked": "helped itself to a fruit: {fruit}",
@@ -448,7 +519,14 @@
       "guardians_value": "got past {passed} of {all}"
     },
     "gallery": {
-      "entry": "{form} · {age} · born {date}"
+      "entry": "{form} · {age} · born {date}",
+      "album": "{met} of {all} forms",
+      "missing": "Not met yet",
+      "ancestors": "Ancestors"
+    },
+    "travels": {
+      "heading": "{area} · {day} · {time}",
+      "quiet": "a quiet walk, nothing happened"
     },
     "app": {
       "location_none": "No location yet: your pet has no weather, and the sun keeps the hours of your time zone.",
@@ -466,7 +544,17 @@
       "place_fixed": "Fixed place",
       "place_live": "Follows me",
       "display_heading": "Own LED display",
-      "location_live": "Weather for where you are right now."
+      "location_live": "Weather for where you are right now.",
+      "update": "Update the display",
+      "update_version": "Version {version}.",
+      "update_available": "Version {latest} is out.",
+      "update_running": "Updating … The display goes dark for a moment.",
+      "update_failed": "The last update did not work out.",
+      "update_done": "The display is now on version {version}.",
+      "display_old_title": "The display needs an update",
+      "display_old_hint": "This app is newer than the software on your display.",
+      "app_old_title": "The app needs an update",
+      "app_old_hint": "Your display is newer than this app. Update it in the App Store or on Google Play."
     },
     "train": {
       "hint": "Pick an exercise",

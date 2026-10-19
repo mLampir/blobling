@@ -18,7 +18,7 @@ import * as care from "./care";
 import * as home from "./home";
 import { Random } from "./random";
 import * as sky from "./sky";
-import type { PetState, Trip } from "./state";
+import type { PetState, Replay, Travel, TravelStop, Trip, TripEvent } from "./state";
 import * as sun from "./sun";
 import * as wild from "./wild";
 
@@ -59,6 +59,8 @@ export const GUARDIAN_EGGS: Record<string, string> = { cave: "egg_ember" };
 // What can go into the backpack: a snack heals a heart on the way, a ball distracts an opponent
 export const PACKABLE = ["snack", "ball"];
 export const MAX_PACK = 2;
+export const MAX_TRAVELS = 30; // trips kept in the travel diary
+export const REPLAYS = 10; // the latest scuffles are kept, to be watched again in the app
 
 /** What the tests turn: how often an opponent is waiting, and how a scuffle goes. */
 export const rules = { encounterChance: ENCOUNTER_CHANCE, fight: battle.fight };
@@ -101,7 +103,7 @@ export function plan(state: PetState, area: string, now: number, pack: readonly 
   }
   return {
     area, start: now, end: t + WAY_HOME, stations, next: 0, found: [], factor: dayFactor(state, now), last: null,
-    hearts: startHearts(state), pack: [...pack], guardian: guardianWaiting(state, area),
+    hearts: startHearts(state), pack: [...pack], guardian: guardianWaiting(state, area), log: [],
   };
 }
 
@@ -118,6 +120,37 @@ export function recall(state: PetState, now: number): void {
   const trip = state.trip!;
   trip.stations.length = Math.min(trip.stations.length, trip.next);
   trip.end = Math.min(trip.end, now + RECALL);
+}
+
+/** What happened at a station: shown in the scene (trip.last) and kept for the diary. */
+function happened(trip: Trip, event: TripEvent): TravelStop {
+  trip.last = event;
+  return note(trip, event);
+}
+
+/** A line for the travel diary, without the rounds of a scuffle. */
+function note(trip: Trip, event: { kind: TravelStop["kind"]; at: number; item?: string | null; foe?: string;
+    wild?: string; outcome?: string }): TravelStop {
+  const stop: TravelStop = { kind: event.kind, at: Math.round(event.at) };
+  for (const key of ["item", "foe", "wild", "outcome"] as const) {
+    const value = event[key];
+    if (value) {
+      stop[key] = value;
+    }
+  }
+  trip.log = [...(trip.log ?? []), stop];
+  return stop;
+}
+
+/** Keeps a finished trip in the travel diary. Called straight back home doesn't count. */
+export function remember(state: PetState, done: Trip, now: number): void {
+  if (!done.next) {
+    return;
+  }
+  const travel: Travel = {
+    area: done.area, start: Math.round(done.start), end: Math.round(now), stops: done.log ?? [],
+  };
+  state.travels = [...(state.travels ?? []), travel].slice(-MAX_TRAVELS);
 }
 
 function turnBack(trip: Trip, t: number): void {
@@ -154,13 +187,19 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
   const guardian = battle.isGuardian(foe);
   if (trip.pack.includes("ball") && !guardian) {
     trip.pack.splice(trip.pack.indexOf("ball"), 1);
-    trip.last = { kind: "ball", foe, at: t };
+    happened(trip, { kind: "ball", foe, at: t });
     events.push(["battle", `${foe}:ball`]);
     return;
   }
   const fight = rules.fight(state, foe, rng);
   const outcome = fight.outcome;
-  trip.last = { kind: "battle", foe, rounds: fight.rounds, outcome, at: t };
+  const last: TripEvent = { kind: "battle", foe, rounds: fight.rounds, outcome, at: t };
+  const stop = happened(trip, last);
+  const replay: Replay = {
+    at: Math.round(t), trip: trip.start, area: trip.area, foe, rounds: fight.rounds, outcome, item: null,
+    species: state.species, stage: state.stage, hat: state.hat, weather,
+  };
+  state.replays = [...state.replays, replay].slice(-REPLAYS);
   events.push(["battle", `${foe}:${outcome}`]);
   count.battles = (count.battles ?? 0) + 1;
   if (outcome === "win") {
@@ -181,7 +220,7 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
     }
     if (item) {
       trip.found.push(item);
-      trip.last.item = item;
+      last.item = stop.item = replay.item = item;
       events.push(["find", item]);
     }
   } else if (outcome === "lose") {
@@ -190,10 +229,12 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
     if (trip.pack.includes("snack")) {
       trip.pack.splice(trip.pack.indexOf("snack"), 1);
       trip.hearts += 1;
+      note(trip, { kind: "snack", at: t });
       events.push(["trip", "snack"]);
     } else if (trip.hearts <= 0) {
       // beaten: it goes home, is merely tired and keeps what it already has
       turnBack(trip, t);
+      note(trip, { kind: "beaten", at: t });
       events.push(["trip", "beaten"]);
     }
   }
@@ -217,7 +258,7 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
     care.addWeight(state, care.HIKE_WEIGHT);
     if (s.energy < TURN_BACK || s.satiety < TURN_BACK) {
       turnBack(trip, t);
-      trip.last = { kind: "tired", at: t };
+      happened(trip, { kind: "tired", at: t });
       events.push(["trip", "tired"]);
       break;
     }
@@ -227,7 +268,7 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
     const met = guardian ? null : wild.meet(state, trip.area, at, weather);
     if (met) {
       const shown = wild.show(state, met, rng, t);
-      trip.last = { kind: "wild", wild: met, rounds: shown.rounds, outcome: shown.outcome, at: t };
+      happened(trip, { kind: "wild", wild: met, rounds: shown.rounds, outcome: shown.outcome, at: t });
       events.push(["wild", `${met}:${shown.outcome}`]);
       continue;
     }
@@ -242,7 +283,11 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
       trip.found.push(item);
       events.push(["find", item]);
     }
-    trip.last = { kind: item ? "find" : "rest", item, at: t };
+    if (item) {
+      happened(trip, { kind: "find", item, at: t });
+    } else {
+      trip.last = { kind: "rest", item, at: t }; // a rest is not worth a line in the diary
+    }
   }
   if (t < trip.end) {
     return [events, null];

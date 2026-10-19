@@ -315,6 +315,29 @@ test("an opponent it chased off leaves a find", () => {
   assert.deepEqual([pet.counters.battles, pet.counters.battles_won], [1, 1]);
 });
 
+test("scuffles are kept to be watched again", () => {
+  const won = (): battle.Fight => ({ rounds: [["pounce", "bow", "strong"], ["pounce", "bow", "hit"]], outcome: "win" });
+  pet.hat = "cap";
+  withRules(trip.rules, { encounterChance: 1.0, fight: won }, () => {
+    act(pet, "trip", start, { item: "meadow", value: ["ball"] });
+    runUntil(pet.trip!.stations[1] + 60, 61);
+  });
+  // the ball distracted the first one: nothing to watch there
+  assert.equal(pet.replays.length, 1);
+  const [replay] = pet.replays;
+  const event = pet.events.find((e) => e.action === "battle" && e.item!.endsWith(":win"))!;
+  assert.equal(replay.at, event.at); // the history finds it by the time
+  assert.deepEqual(replay.rounds, won().rounds);
+  assert.equal(replay.item, pet.trip!.found[0]);
+  assert.deepEqual([replay.trip, replay.area, replay.species, replay.stage, replay.hat, replay.weather],
+    [start, "meadow", pet.species, pet.stage, "cap", 61]);
+
+  pet.replays = Array.from({ length: trip.REPLAYS }, () => ({ ...replay, at: 0 }));
+  withRules(trip.rules, { encounterChance: 1.0, fight: won }, () => runUntil(pet.trip!.stations[2] + 60));
+  assert.equal(pet.replays.length, trip.REPLAYS);
+  assert.ok(pet.replays.at(-1)!.at > 0); // the oldest makes room
+});
+
 test("trips with opponents are the same after catching up", () => {
   const other = grown(start);
   withRules(trip.rules, { encounterChance: 1.0 }, () => {
@@ -332,4 +355,18 @@ test("trips with opponents are the same after catching up", () => {
   });
   assert.deepEqual(toDict(pet), toDict(other));
   assert.ok(pet.counters.battles >= 1);
+});
+
+test("the travel diary tells the scuffles", () => {
+  const lost = fixedFight(["charge", "bow", "ouch"], 3, "lose");
+  Object.assign(pet.stats, { satiety: 60, energy: 60, health: 60 });
+  withRules(trip.rules, { encounterChance: 1.0, fight: lost }, () => {
+    act(pet, "trip", start, { item: "meadow", value: ["snack", "ball"] });
+    runUntil(start + 3 * HOUR);
+  });
+  const stops = pet.travels.at(-1)!.stops;
+  // distracted with the ball, lost and ate the snack, lost twice more and had enough
+  assert.deepEqual(stops.map((stop) => stop.kind), ["ball", "battle", "snack", "battle", "battle", "beaten"]);
+  assert.deepEqual(stops.filter((stop) => stop.kind === "battle").map((stop) => stop.outcome), ["lose", "lose", "lose"]);
+  assert.ok(stops.every((stop) => stop.kind === "snack" || stop.kind === "beaten" || stop.foe));
 });

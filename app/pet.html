@@ -144,6 +144,8 @@
   .tabbar button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
   .tabbar svg { width: 24px; height: 24px; }
   .tabbar button[aria-current="page"] { color: var(--accent); }
+  .tabbar button { position: relative; }
+  .tabbar button.news::after { content: ""; position: absolute; top: 5px; left: calc(50% + 9px); width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
   /* ---------- The other tabs ---------- */
   .page { padding: calc(18px + var(--safe-top)) 16px 24px; display: grid; gap: 14px; align-content: start; }
@@ -180,6 +182,14 @@
   .list button.small { min-height: 38px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; flex: none; }
   .list button.small.on { border-color: var(--accent); color: var(--accent); }
   .gallery img { width: 40px; height: 40px; border-radius: 8px; image-rendering: pixelated; }
+  /* The album: one slot per form, the ones not met yet stay empty */
+  .album { list-style: none; margin: 0; padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 20px; }
+  .album li { display: grid; justify-items: center; align-content: start; gap: 4px; padding: 8px 2px; border-radius: 14px; background: var(--raised);
+    min-width: 0; font-size: 11px; text-align: center; overflow-wrap: anywhere; }
+  .album img { width: 48px; height: 48px; image-rendering: pixelated; }
+  .album li.missing { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
+  .album li.missing span { width: 48px; height: 48px; display: grid; place-items: center; font: 700 20px/1 var(--round); }
   .figure { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; flex: none; max-width: 55%; }
   .empty { padding: 16px; color: var(--muted); font-size: 14px; }
   .note { margin: 0 4px; color: var(--muted); font-size: 13px; }
@@ -280,6 +290,15 @@
   dialog .buttons .wide { flex: 1 1 0; min-width: 0; }
   dialog ul { margin: 0 0 16px; padding: 0; list-style: none; }
   dialog li { display: flex; padding: 6px 0; border-top: 1px solid var(--line); }
+  #welcome-story { max-height: 50dvh; overflow-y: auto; margin-bottom: 16px; }
+  #welcome-story p { font-size: 16px; font-weight: 400; line-height: 1.45; }
+  #welcome-story .postcard {
+    white-space: pre-line; padding: 14px 16px; border-radius: 6px; transform: rotate(-1.5deg);
+    background: var(--night); border: 2px dashed var(--accent); font-family: var(--round);
+  }
+  /* A scuffle watched again */
+  dialog canvas { display: block; width: 100%; aspect-ratio: 1; margin-bottom: 14px; border-radius: 14px; image-rendering: pixelated; }
+  .list .play { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--raised); color: var(--accent); font-size: 13px; }
 
   /* The Pi can't be reached */
   .offline {
@@ -298,7 +317,6 @@
   <section class="view home" id="view-home">
     <div class="hero" id="hero">
       <canvas class="scene" id="scene" width="64" height="64" hidden></canvas>
-      <img class="scene" id="preview" alt="" hidden>
       <div class="hero-top">
         <div><h1 id="name">…</h1><p class="sub" id="sub"></p></div>
         <button class="pill" id="sleep" hidden></button>
@@ -313,6 +331,7 @@
       <div class="actions">
         <button class="soft" id="recall" hidden data-t="page.recall"></button>
         <button class="soft" id="unpack" hidden data-t="page.unpack"></button>
+        <button class="soft" id="watch" hidden></button>
         <button class="soft" id="collect" hidden data-t="page.collect"></button>
         <button class="soft" id="unwrap" hidden data-t="page.unwrap"></button>
       </div>
@@ -388,6 +407,7 @@
       <nav class="segments" role="tablist">
         <button role="tab" data-tab="history" data-t="page.tabs.history"></button>
         <button role="tab" data-tab="statistics" data-t="page.tabs.statistics" hidden></button>
+        <button role="tab" data-tab="travels" data-t="page.tabs.travels" hidden></button>
         <button role="tab" data-tab="finds" data-t="page.tabs.finds" hidden></button>
         <button role="tab" data-tab="gallery" data-t="page.tabs.gallery" hidden></button>
       </nav>
@@ -396,8 +416,14 @@
         <ul class="list" id="values"></ul>
         <ul class="list" id="statistics"></ul>
       </div>
+      <ul class="list" data-panel="travels" id="travels" hidden></ul>
       <ul class="list" data-panel="finds" id="finds" hidden></ul>
-      <ul class="list gallery" data-panel="gallery" id="gallery" hidden></ul>
+      <div data-panel="gallery" hidden style="display: grid; gap: 14px">
+        <div class="label" id="album-count"></div>
+        <ul class="album" id="album"></ul>
+        <div class="label" id="ancestors-label" data-t="page.gallery.ancestors" hidden></div>
+        <ul class="list gallery" id="gallery" hidden></ul>
+      </div>
     </div>
   </section>
 
@@ -420,8 +446,10 @@
       </div>
       <div id="display" hidden style="display: grid; gap: 8px">
         <div class="label" data-t="page.app.display_heading"></div>
-        <p class="note"><span id="display-text"></span> <a id="build-link" href="https://github.com/mLampir/blobling" target="_blank" rel="noopener" data-t="page.app.build_link"></a></p>
+        <p class="note" id="display-note"><span id="display-text"></span> <a id="build-link" href="https://github.com/mLampir/blobling" target="_blank" rel="noopener" data-t="page.app.build_link"></a></p>
         <button class="wide" id="connect" data-t="page.app.connect"></button>
+        <p class="note" id="update-text" hidden></p>
+        <button class="wide" id="update-start" data-t="page.app.update" hidden></button>
         <button class="wide quiet" id="disconnect" data-t="page.app.disconnect"></button>
       </div>
     </div>
@@ -439,9 +467,20 @@
 <dialog id="welcome">
   <form method="dialog">
     <p id="welcome-text"></p>
-    <ul id="welcome-list"></ul>
+    <div id="welcome-story"></div>
     <div class="buttons">
       <button class="wide primary" value="ok" data-t="page.welcome.ok"></button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="replay">
+  <form method="dialog">
+    <canvas id="replay-scene" width="64" height="64"></canvas>
+    <p id="replay-text"></p>
+    <div class="buttons">
+      <button type="button" class="wide quiet" id="replay-again" data-t="page.replay.again"></button>
+      <button class="wide primary" value="ok" data-t="page.close"></button>
     </div>
   </form>
 </dialog>
@@ -456,6 +495,14 @@
     </div>
   </form>
 </dialog>
+
+<div class="offline" id="mismatch" hidden>
+  <strong id="mismatch-title"></strong>
+  <span id="mismatch-hint"></span>
+  <span id="mismatch-update-text"></span>
+  <button class="wide" id="mismatch-update" data-t="page.app.update" hidden></button>
+  <button class="link" id="mismatch-leave" data-t="page.app.disconnect" hidden></button>
+</div>
 
 <div class="offline" id="offline" hidden>
   <strong data-t="page.offline.title"></strong>
@@ -572,9 +619,8 @@ function ask(text, { value, ok, danger = false, address = false }) {
 }
 $("ask-cancel").addEventListener("click", () => $("ask").close());
 
-function buzz(pattern) {
-  if (navigator.vibrate) navigator.vibrate(pattern);
-}
+// A short buzz: "touch", "done", "no", "joy" or "evolve" (app/src/haptics.ts)
+const buzz = app.buzz;
 
 function setOffline(off) {
   $("offline").hidden = !off;
@@ -586,6 +632,7 @@ async function api(method, url, body) {
   try {
     const data = await app.request(method, url, body);
     setOffline(false);
+    if (app.mode === "pi") renderFit();
     return data;
   } catch (err) {
     if (!err.offline) setOffline(false);
@@ -613,7 +660,7 @@ async function act(name, item, extra) {
     const r = await action(name, item, extra);
     render(r.state);
     say(r.accepted ? "" : r.message);
-    buzz(r.accepted ? 20 : [30, 70, 30]);
+    buzz(r.accepted ? "done" : "no");
     return r;
   } catch (err) {
     fail(err);
@@ -623,8 +670,8 @@ async function act(name, item, extra) {
 
 // ---------- The scene ----------
 
-// On the phone the scene is drawn here; with a Pi, the picture of the panel is fetched again and again
-const scene = app.mode === "local" ? $("scene") : $("preview");
+// The scene goes on this canvas: drawn on the phone, or with a Pi the panel's frames, one after the other
+const scene = $("scene");
 $("hero").classList.toggle("whole", app.mode !== "local");
 scene.hidden = false;
 if (app.mode === "local") app.showScene(scene);
@@ -645,21 +692,26 @@ function matchSky() {
 }
 setInterval(() => { if (!document.hidden && view === "home") matchSky(); }, 2000);
 
-// With a Pi: the panel's picture, a few times a second while the pet is in sight
-const PREVIEW_MS = 300;
-let previewBusy = false;
+// With a Pi: each frame the panel draws, while the pet is in sight. The Pi answers as soon as it
+// has drawn the next one, so the next request goes out right away; after a failure, a little later.
+const PREVIEW_RETRY_MS = 1000;
+let previewBusy = false, previewFailed = 0;
 function nextPreview() {
   if (app.mode === "local" || previewBusy || document.hidden || view !== "home") return;
+  if (Date.now() - previewFailed < PREVIEW_RETRY_MS) return;
   previewBusy = true;
   const img = new Image();
-  img.onload = () => { scene.src = img.src; previewBusy = false; };
-  img.onerror = () => { previewBusy = false; };
+  img.onload = () => {
+    scene.getContext("2d").drawImage(img, 0, 0, scene.width, scene.height);
+    if (!matchSky.done) { matchSky.done = true; matchSky(); }
+    previewBusy = false;
+    nextPreview();
+  };
+  img.onerror = () => { previewBusy = false; previewFailed = Date.now(); };
   img.src = app.previewUrl();
 }
-if (app.mode !== "local") {
-  setInterval(nextPreview, PREVIEW_MS);
-  scene.addEventListener("load", () => { if (!matchSky.done) { matchSky.done = true; matchSky(); } });
-}
+// picks it up again when the page comes back to the pet
+if (app.mode !== "local") setInterval(nextPreview, 250);
 
 // Where the pet is in the picture (on the phone); with a Pi the whole picture counts
 let area = null;
@@ -751,6 +803,10 @@ function render(s) {
   }
   $("unpack").hidden = !s.backpack;
   $("unpack").disabled = !s.actions.unpack;
+  // the scuffles of the last trip, until they have been watched or the next trip sets off
+  const fights = s.trip ? [] : lastFights(s);
+  $("watch").hidden = !fights.length || stored("watched") === String(s.last_trip);
+  $("watch").textContent = tn("page.replay.watch", fights.length);
   // an egg is lying in the nest
   $("collect").hidden = !s.nest;
   $("collect").disabled = !s.actions.collect;
@@ -1084,6 +1140,9 @@ async function refresh() {
   try {
     render(await api("GET", "/api/pet"));
     if (view === "diary") renderEvents((await api("GET", "/api/pet/events?limit=30")).events);
+    // the update: while "More" is open or it runs, otherwise now and then
+    if (app.mode === "pi" && (view === "more" || update?.running || app.fit() !== "ok"
+      || Date.now() - updateChecked > 600_000)) checkUpdate();
   } catch (err) {
     fail(err);
   }
@@ -1141,7 +1200,7 @@ function eventText(e) {
   return e.action === "evolve" && e.accepted ? evolveText(e.item)
     : e.action === "learned" ? t("page.events.learned", { trick: trickLabel(e.item) })
     : e.action === "trick" ? t("page.events.practiced", { trick: trickLabel(e.item) })
-    : e.action === "solo" ? (e.item === "ball" ? t("page.events.solo_ball")
+    : e.action === "solo" ? (T[`page.events.solo_${e.item}`] ? t(`page.events.solo_${e.item}`)
       : t("page.events.solo_trick", { trick: trickLabel(e.item) }))
     : e.action === "trip" ? T[`areas.${e.item}.trip`] || T[`page.events.trip_${e.item}`] || t("page.events.trip")
     : e.action === "battle" ? battleText(e.item)
@@ -1171,20 +1230,16 @@ function giftLabel(gift) {
 let welcomed = stored("welcomed");
 function welcome(s) {
   const w = s.welcome;
-  if (!w || String(w.since) === welcomed || document.querySelector("dialog[open]")) return;
+  if (!w || !w.pages || String(w.since) === welcomed || document.querySelector("dialog[open]")) return;
   welcomed = String(w.since);
   store("welcomed", welcomed);
   $("welcome-text").textContent = t("page.welcome.text", { name: s.name, time: inTime(s.now - w.since) });
-  $("welcome-list").replaceChildren(...w.told.map((line) => {
-    const li = document.createElement("li");
-    li.textContent = eventText({ ...line, accepted: true });
-    if (line.count > 1) {
-      const times = document.createElement("span");
-      times.className = "times";
-      times.textContent = `×${line.count}`;
-      li.append(times);
-    }
-    return li;
+  // A few sentences a day in the pet's words; Grandma's postcard after a long time with the Pi off
+  $("welcome-story").replaceChildren(...w.pages.map((page) => {
+    const p = document.createElement("p");
+    p.className = page.postcard ? "postcard" : "story";
+    p.textContent = page.text;
+    return p;
   }));
   $("welcome").showModal();
 }
@@ -1222,6 +1277,17 @@ function renderEvents(events) {
     last = { text: text.textContent, n: 1, times: document.createElement("span") };
     last.times.className = "times";
     li.append(time, text, last.times);
+    // a scuffle that was kept can be watched again
+    const replay = e.action === "battle" && current && (current.replays || [])
+      .find((r) => r.at === e.at && e.item === `${r.foe}:${r.outcome}`);
+    if (replay) {
+      const play = document.createElement("button");
+      play.className = "play";
+      play.textContent = "▶";
+      play.setAttribute("aria-label", t("page.replay.play"));
+      play.addEventListener("click", () => watch([replay]));
+      li.append(play);
+    }
     return heading ? [heading, li] : [li];
   });
   if (!items.length) {
@@ -1239,16 +1305,118 @@ function battleText(item) {
   return t(`page.events.battle_${outcome}`, { foe: T[`foes.${foe}`] || foe });
 }
 
+// ---------- Scuffles watched again ----------
+
+// The scuffles on the latest trip
+function lastFights(s) {
+  return (s.replays || []).filter((r) => r.trip === s.last_trip); // none from a Pi that keeps none yet
+}
+
+let watching = [], stopReplay = null;
+async function watch(replays) {
+  if (stopReplay) stopReplay();
+  watching = replays;
+  $("replay-again").disabled = true;
+  stopReplay = await app.replay($("replay-scene"), replays,
+    // who it is up against, and once the rounds are over, how it ended
+    (i, over) => {
+      const r = replays[i];
+      $("replay-text").textContent = over ? battleText(`${r.foe}:${r.outcome}`)
+        : t("page.replay.against", { foe: T[`foes.${r.foe}`] || r.foe });
+    },
+    () => { $("replay-again").disabled = false; });
+  if (!$("replay").open) $("replay").showModal();
+}
+$("replay-again").addEventListener("click", () => watch(watching));
+$("replay").addEventListener("close", () => {
+  if (stopReplay) stopReplay();
+  stopReplay = null;
+});
+$("watch").addEventListener("click", () => {
+  if (!current) return;
+  store("watched", String(current.last_trip));
+  $("watch").hidden = true;
+  watch(lastFights(current));
+});
+
 // A wild pet it has shown its tricks to: "species:friend" or "species:shrug"
 function wildText(item) {
   const [species, outcome] = (item || "").split(":");
   return t(`page.events.wild_${outcome}`, { pet: T[`species.${species}`] || species });
 }
 
+// The travel diary: one heading per trip (where, which day, how long), below it what happened
+async function loadTravels() {
+  try {
+    const { travels } = await api("GET", "/api/pet/travels");
+    offerTab("travels", travels.length);
+    $("travels").replaceChildren(...travels.flatMap((travel) => {
+      const heading = document.createElement("li");
+      heading.className = "day";
+      heading.textContent = t("page.travels.heading", {
+        area: T[`areas.${travel.area}.name`] || travel.area,
+        day: dayLabel(new Date(travel.start * 1000)), time: inTime(travel.end - travel.start),
+      });
+      const lines = travel.stops.flatMap(stopEvents);
+      if (!lines.some((e) => e.action !== "trip")) lines.push({ at: travel.end, quiet: true });
+      lines.push({ at: travel.end, action: "trip", item: "home" });
+      return [heading, ...lines.map((e) => {
+        const li = document.createElement("li");
+        const time = document.createElement("time");
+        time.textContent = new Date(e.at * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const text = document.createElement("span");
+        text.textContent = e.quiet ? t("page.travels.quiet") : eventText({ ...e, accepted: true });
+        li.append(time, text);
+        return li;
+      })];
+    }));
+  } catch (err) {
+    // An older Pi has no travel diary yet; the tab then stays away
+    offerTab("travels", false);
+  }
+}
+
+// A station of a trip as lines of the history: the scuffle, and what it left behind
+function stopEvents(stop) {
+  const at = stop.at;
+  if (stop.kind === "find") return [{ at, action: "find", item: stop.item }];
+  if (stop.kind === "ball") return [{ at, action: "battle", item: `${stop.foe}:ball` }];
+  if (stop.kind === "wild") return [{ at, action: "wild", item: `${stop.wild}:${stop.outcome}` }];
+  if (stop.kind === "battle") {
+    const scuffle = { at, action: "battle", item: `${stop.foe}:${stop.outcome}` };
+    return stop.item ? [scuffle, { at, action: "find", item: stop.item }] : [scuffle];
+  }
+  return [{ at, action: "trip", item: stop.kind }]; // tired, snack, beaten
+}
+
 async function loadGallery() {
   try {
-    const { ancestors } = await api("GET", "/api/pet/ancestors");
-    offerTab("gallery", ancestors.length);
+    // A display with an older version has no album
+    const { ancestors, album = [] } = await api("GET", "/api/pet/ancestors");
+    const met = album.filter(Boolean);
+    // The album shows once there is more than the first egg in it
+    offerTab("gallery", ancestors.length || met.length > 1);
+    $("album-count").hidden = !album.length;
+    $("album-count").textContent = t("page.gallery.album", { met: met.length, all: album.length });
+    // A form not met yet is an empty slot: no picture and no name, so nothing is given away
+    $("album").hidden = !album.length;
+    $("album").replaceChildren(...album.map((form) => {
+      const li = document.createElement("li");
+      if (!form) {
+        li.className = "missing";
+        const slot = document.createElement("span");
+        slot.textContent = "?";
+        li.setAttribute("aria-label", t("page.gallery.missing"));
+        li.append(slot);
+        return li;
+      }
+      const img = document.createElement("img");
+      img.src = app.icon(form.stage, form.species);
+      img.alt = "";
+      li.append(img, form.label);
+      return li;
+    }));
+    $("ancestors-label").hidden = $("gallery").hidden = !ancestors.length;
     $("gallery").replaceChildren(...ancestors.map((a) => {
       const img = document.createElement("img");
       img.src = app.icon(a.stage, a.species);
@@ -1289,6 +1457,7 @@ function showView(name) {
   });
   if (name === "diary") {
     refresh();
+    loadTravels();
     loadGallery();
   }
   if (name === "more" && app.mode === "local") showLocation();  // the live location may have moved meanwhile
@@ -1322,7 +1491,7 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
     if (stroke.way - stroke.puffed > 50) {
       stroke.puffed = stroke.way;
       burst(e.clientX, e.clientY);
-      buzz(8);
+      buzz("touch");
     }
     if (stroke.way > STROKE_PX && Date.now() - lastPet > PET_EVERY_MS) {
       stroke.way = stroke.puffed = 0;
@@ -1330,7 +1499,7 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
       const cold = current.cold;
       action("pet").then((r) => {
         render(r.state);
-        if (!r.accepted) say(r.message);
+        if (!r.accepted) { say(r.message); buzz("no"); }
         else if (cold && !r.state.cold) say(t("page.petting.warmed", { name: r.state.name }));
       }).catch(fail);
     }
@@ -1340,7 +1509,7 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
     // a tap: one heart
     if (stroke.way < 8 && onPet(e.clientX, e.clientY)) {
       burst(e.clientX, e.clientY);
-      buzz(10);
+      buzz("touch");
     }
     stroke = null;
   };
@@ -1438,8 +1607,8 @@ document.querySelectorAll(".thing").forEach((b) => {
       const r = await action(b.dataset.action, b.dataset.item, direct ? {} : { throw: where });
       render(r.state);
       say(r.accepted ? "" : r.message);
-      if (r.accepted) setTimeout(() => buzz(25), direct ? 0 : LAND_MS);
-      else buzz([30, 70, 30]);
+      if (r.accepted) setTimeout(() => buzz("done"), direct ? 0 : LAND_MS);
+      else buzz("no");
     } catch (err) {
       fail(err);
     }
@@ -1520,7 +1689,7 @@ async function showTrick(path) {
       : result === "learned" ? t("page.trick.learned", { name: r.state.name, trick })
       : known ? t("page.trick.known", { trick })
       : t(result === "fail" ? "page.trick.fail" : "page.trick.ok", { trick }));
-    buzz(!r.accepted ? [30, 70, 30] : result === "learned" ? [40, 60, 40, 60, 120] : 20);
+    buzz(!r.accepted ? "no" : result === "learned" ? "joy" : "done");
   } catch (err) {
     fail(err);
   }
@@ -1635,7 +1804,7 @@ let openTraining;
       render(r.state);
       if (!r.accepted) {
         tell.textContent = r.message;
-        buzz([30, 70, 30]);
+        buzz("no");
         show("menu");
       }
       busy = false;
@@ -1653,7 +1822,7 @@ let openTraining;
     const points = Math.round((after.value - before.value) * 10) / 10;
     const gain = t(points > 0 ? "page.train.gained" : "page.train.nothing", { skill: after.label, points });
     tell.textContent = failed ? how : how ? `${how} · ${gain}` : gain;
-    buzz(points >= 2 ? [40, 60, 40, 60, 120] : 20);
+    buzz(points >= 2 ? "joy" : "done");
     show("menu");
     const row = $("skills").querySelector(`[data-skill="${skill}"]`);
     if (row && points > 0) row.classList.add("hit");
@@ -1728,7 +1897,7 @@ let openTraining;
     } else if (Math.max(Math.abs(dx), Math.abs(dy)) >= 40) {
       answer.push(Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? "left" : "right") : (dy < 0 ? "up" : "down"));
       slots();
-      buzz(15);
+      buzz("touch");
       if (answer.length < length) return;
       const done = await send("answer", answer, "smarts");
       if (done) {
@@ -1758,7 +1927,7 @@ let openTraining;
     timer = setTimeout(async () => {
       timer = null;
       b.classList.remove("holding");
-      buzz([40, 60, 120]);
+      buzz("evolve");
       try {
         const before = current;
         const r = await action("evolve");
@@ -1793,11 +1962,11 @@ document.querySelectorAll("[data-move]").forEach((b) => b.addEventListener("clic
       // Leave the result up for a moment, then go back
       gameHold = Date.now() + 3500;
       $("game-info").textContent = t("page.game.result", { result: g.result, rounds: g.rounds, verdict: t(g.won ? "page.game.won" : "page.game.lost") });
-      buzz(g.won ? [40, 60, 40, 60, 120] : 60);
+      buzz(g.won ? "joy" : "done");
       setTimeout(() => current && renderGame(current), 3600);
     }
     render(r.state);
-    if (!r.accepted) say(r.message);
+    if (!r.accepted) { say(r.message); buzz("no"); }
   } catch (err) {
     fail(err);
     document.querySelectorAll("[data-move]").forEach((x) => { x.disabled = false; });
@@ -1836,6 +2005,75 @@ if (app.native) {
     : t("page.app.connect_note");
   $("build-link").hidden = $("connect").hidden = !!app.connectedTo;
   $("disconnect").hidden = $("offline-leave").hidden = !app.connectedTo;
+}
+// The Pi's own page shows the display part only for its update
+if (!app.native) $("display-note").hidden = $("connect").hidden = $("disconnect").hidden = true;
+
+// ---------- The update of the display ----------
+// A Pi installed from a release looks for new ones itself (pi/src/update.ts); here it can be
+// started. While it runs, the Pi restarts its app; once its version changes, the update is done.
+let update = null, updateChecked = 0;
+async function checkUpdate() {
+  updateChecked = Date.now();
+  let u;
+  try {
+    u = (await api("GET", "/api/state")).update;
+  } catch (_) {
+    return;  // during the update the Pi is away for a moment
+  }
+  if (!u?.current) return;  // set up from a checkout: no updates from here
+  if (update && u.current !== update.current) {
+    if (!app.native) return location.reload();  // the Pi's own page comes in the new version
+    say(t("page.app.update_done", { version: u.current }));
+  }
+  update = u;
+  renderUpdate();
+}
+
+function renderUpdate() {
+  const u = update;
+  renderFit();
+  $("display").hidden = false;
+  const lines = [t("page.app.update_version", { version: u.current })];
+  if (u.running) lines.push(t("page.app.update_running"));
+  else if (u.available) lines.push(t("page.app.update_available", { latest: u.latest }));
+  else if (u.failed) lines.push(t("page.app.update_failed"));
+  $("update-text").textContent = lines.join(" ");
+  $("update-text").hidden = false;
+  $("update-start").hidden = !u.available && !(app.fit() === "display_old" && !u.running);
+  document.querySelector('[data-view="more"]').classList.toggle("news", u.available);
+}
+
+// The Pi looks for the newest release once more before it starts, so this never waits for its next look
+async function startUpdate(button) {
+  button.disabled = true;
+  try {
+    update = (await api("POST", "/api/update")).update;
+    renderUpdate();
+  } catch (err) {
+    fail(err);
+  } finally {
+    button.disabled = false;
+  }
+}
+$("update-start").addEventListener("click", () => startUpdate($("update-start")));
+$("mismatch-update").addEventListener("click", () => startUpdate($("mismatch-update")));
+$("mismatch-leave").addEventListener("click", () => app.disconnect());
+
+// When the Pi and this app no longer understand each other (core/src/api.ts), nothing else works:
+// the one that is too old has to be updated. The display can be updated from here.
+function renderFit() {
+  const fit = app.fit();
+  $("mismatch").hidden = fit === "ok";
+  if (fit === "ok") return;
+  if (!update && Date.now() - updateChecked > 5000) checkUpdate();
+  $("mismatch-title").textContent = t(`page.app.${fit}_title`);
+  $("mismatch-hint").textContent = t(`page.app.${fit}_hint`);
+  const u = fit === "display_old" ? update : null;
+  $("mismatch-update-text").textContent = !u ? "" : u.running ? t("page.app.update_running")
+    : u.failed ? t("page.app.update_failed") : "";
+  $("mismatch-update").hidden = !u || u.running;
+  $("mismatch-leave").hidden = !app.connectedTo;
 }
 
 // Where it lives: nowhere (no weather), one place, or wherever the phone is
