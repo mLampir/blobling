@@ -48,7 +48,7 @@ const SHOWN_ADULT = "angloop";
 const SHOWN_AREA = AREAS[0];
 const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
   "ember_hatch", "ember_baby", "cindlet", "cindlet_hint", "cindlet_sick", "ember_evolve", "lanternling",
-  "lanternling_sleep", "lanternling_trick", "flarelet", "flarelet_hat", "egg_found", "wild_shrug", "visit_night",
+  "lanternling_sleep", "lanternling_trick", "flarelet", "flarelet_hat", "egg_found", "wild_shrug", "visit_copy", "visit_bounce", "visit_night",
   "nest_ember", "stone_egg", "stone_baby", "pebblet", "pebblet_hint", "pebblet_hat", "pebblet_skip", "glimmerock",
   "glimmerock_night", "glimmerock_shine", "bouldergrin", "bouldergrin_sad", "bouldergrin_sleep", "bouldergrin_toss", "wild_stream", "visit_stone",
   "wild_forest", "visit_fox", "fox_egg", "fox_hatch", "fox_baby", "kitlet", "kitlet_hint", "kitlet_hat", "kitlet_sick",
@@ -237,6 +237,16 @@ const SCENES: Record<string, Scene> = {
     stage: "adult", species: "angloop", mood: "happy", deco: ["flag", "windmill"],
     visitor: { species: "angloop", age: 60, left: 300 },
   }, DAY, null],
+  // while the friend is there, the two play: catch, copying a trick, hopping in step
+  visit_play: [{
+    stage: "adult", species: "angloop", mood: "happy", visitor: { species: "angloop", age: 22, left: 500 },
+  }, new Date(2026, 9, 12, 13, 0, 17), null],
+  visit_copy: [{
+    stage: "adult", species: "flicker", mood: "happy", tricks: ["flip"], visitor: { species: "sneezle", age: 22, left: 500 },
+  }, new Date(2026, 9, 12, 13, 0, 0), null],
+  visit_bounce: [{
+    stage: "adult", species: "bouldergrin", visitor: { species: "cyclopuff", age: 22, left: 500 },
+  }, new Date(2026, 9, 12, 13, 0, 7), null],
   visit_night: [{ stage: "adult", species: "flicker", visitor: { species: "lumoth", age: 1.5, left: 500 } }, NIGHT,
     null],
   nest: [{
@@ -393,6 +403,10 @@ function frames(name: string, count: number, step = 0.1, spoilerFree = false): I
   for (let i = 0; i < count; i++) {
     if (view.trip) { // what happened on the trip gets older, the way it does on the Pi
       view.trip = { ...view.trip, event_age: changes.trip!.event_age + i * step };
+    }
+    if (view.visitor) { // the friend's visit goes on as well
+      const { age, left } = changes.visitor!;
+      view.visitor = { ...view.visitor, age: age + i * step, left: left - i * step };
     }
     images.push(scene.render(view, weather, new Date(now.getTime() + Math.round(i * step * 1000)), 1 + i * step)[0]);
   }

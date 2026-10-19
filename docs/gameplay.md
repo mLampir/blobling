@@ -351,6 +351,14 @@ and leaves again, once or twice a day while the pet is at home and awake. A
 visit counts if the pet is in a decent mood when the friend leaves (mood 50
 or more); it cheers the pet up a little, too.
 
+While the friend is there, the two **play**: a game, a little rest side by
+side, the next game. They throw a ball to and fro, the friend copies a trick
+the pet shows it (each in its own way), or they hop in step and then by turns.
+The pet only joins in when it is in a decent mood, awake and not busy with
+something else; otherwise the friend waits by its side. Playing is something
+to watch; what counts for the visit is still the pet's mood when the friend
+leaves.
+
 Now and then a visit that counts brings a **gift**. The friend leaves it on
 the ground, wrapped, and it stays there until you tap **Unwrap the gift**; no
 new one comes while it is lying there. Mostly there is a fruit in it, of the

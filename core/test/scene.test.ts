@@ -306,6 +306,64 @@ test("the cloud adults follow the weather", () => {
     pixels(stage.render(view, null, DAY, t)[0], red))).size, 1);
 });
 
+/**
+ * A whole visit, ten frames per second, with the pet already by the friend's side. Returns the
+ * game of each frame (null: none) and the frames themselves, every `keep`th.
+ */
+function visit(changes: Partial<SceneView>, from = 0, seconds = 600, keep = 0): [(string | null)[], Image[]] {
+  const stage = scene();
+  stage.x = stage.targetX = 2;
+  const start = DAY.getTime() / 1000;
+  const games: (string | null)[] = [];
+  const images: Image[] = [];
+  for (let i = from * 10; i < seconds * 10; i++) {
+    const age = i / 10;
+    const view = { ...BASE, stage: "adult", species: "angloop", mood: "happy", ...changes,
+      visitor: { species: "cyclopuff", age, left: 600 - age } };
+    const [image] = stage.render(view, null, new Date((start + age) * 1000), 1 + age);
+    games.push((stage as unknown as { play: { game: string } | null }).play?.game ?? null);
+    if (keep && i % keep === 0) {
+      images.push(image);
+    }
+  }
+  return [games, images];
+}
+
+test("while a friend visits, the two play now and then: catch, copying a trick, hopping in step", () => {
+  const [games] = visit({ tricks: ["flip"] });
+  const played = games.filter((game) => game).length;
+  // a game, then a rest two thirds as long: they play for more than half of the visit
+  assert.ok(played > 0.5 * games.length && played < 0.62 * games.length, `${played}`);
+  assert.deepEqual(new Set(games), new Set([null, "catch", "copy", "bounce"]));
+  assert.ok(games.slice(0, 190).every((game) => game === null)); // hopping in, then a rest first
+  assert.ok(games.slice(-30).every((game) => game === null)); // nothing it couldn't finish before leaving
+  // without a trick to show there is nothing to copy
+  assert.ok(!visit({ tricks: [] })[0].includes("copy"));
+});
+
+test("a friend only plays with a pet in a decent mood, that is awake and has nothing else to do", () => {
+  for (const changes of [{ mood: "sad" }, { mood: "hungry" }, { asleep: true }, { activity: "eat" }] as Partial<SceneView>[]) {
+    assert.ok(visit(changes, 0, 120)[0].every((game) => game === null), JSON.stringify(changes));
+  }
+});
+
+test("a game shows on the panel: the friend moves along, unlike while they rest", () => {
+  // the friend's half of the panel above the ground, one frame a second
+  const [games, images] = visit({ tricks: ["flip"] }, 0, 300, 10);
+  const moving = (i: number) => {
+    let count = 0;
+    for (let y = STATUS_HEIGHT; y < GROUND; y++) {
+      for (let x = 33; x < 64; x++) {
+        const at = (y * 64 + x) * 4;
+        count += [0, 1, 2].some((c) => images[i].data[at + c] !== images[i - 1].data[at + c]) ? 1 : 0;
+      }
+    }
+    return count;
+  };
+  const during = images.map((_, i) => i).filter((i) => i && games[i * 10] && games[(i - 1) * 10]);
+  assert.ok(during.filter((i) => moving(i) > 20).length > during.length / 2);
+});
+
 test("the app icon", () => {
   const stage = scene();
   const icon = stage.icon(160);
