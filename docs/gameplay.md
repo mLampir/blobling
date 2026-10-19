@@ -479,8 +479,9 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   again), the stats (with weight and bond), the trips, the finds and the
   album, with the ancestors below it. Trips and finds show up once there are
   any, the album once the first egg has hatched.
-- **More**: renaming and starting over with a usual egg, the weather (off, a
-  fixed place, or following the phone) and connecting to an LED display.
+- **More**: renaming and starting over with a usual egg, sound on or off, the
+  weather (off, a fixed place, or following the phone) and connecting to an
+  LED display.
 
 The phone buzzes softly with the pet's answers (in the app from the stores,
 and in a browser that can vibrate; the phone's own vibration setting
@@ -490,6 +491,15 @@ longer one for something new (a trick learned, a big step in training, a
 game won) and a firm one when it evolves. Plain buttons and menus stay
 still, and quick strokes are spaced out, so it stays a touch and not a
 rattle.
+
+With each buzz comes a short sound, a soft chiptune effect that fits the
+pixels: a boop for a tap on the pet, a plop when a thing lands, a little
+fanfare for a trick learned or a game won, a lullaby when it goes to bed.
+Both come from one call in the page (`feel` in `app/pet.html`). The sounds
+are small WAV files in `app/pet/sounds/`, built into the app's script and
+played by `app/src/sound.ts`; like the sprites they are generated, by
+`npm run sounds` from the recipes in `tools/sfx.ts`. They can be turned off
+under *More*. With a Pi they come from the phone too; the Pi stays silent.
 
 Connected to a Pi, the screen is the same; the scene is then the panel's own
 picture. The pet lives on the Pi either way: it goes on with its day and can
