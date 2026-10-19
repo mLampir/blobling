@@ -38,6 +38,11 @@
     "child": "Kind",
     "adult": "Erwachsen"
   },
+  "children": {
+    "ember": "Cindlet",
+    "stone": "Pebblet",
+    "fox": "Kitlet"
+  },
   "species": {
     "blob": "Blob",
     "sneezle": "Sneezle",
@@ -334,6 +339,7 @@
       "evolve": {
         "hatched": "Ich bin geschlüpft! Hallo, Welt!",
         "child": "Ich bin gewachsen – jetzt bin ich ein Kind!",
+        "child_named": "Ich bin gewachsen – jetzt bin ich ein {species}!",
         "adult": "Ich bin groß geworden – jetzt bin ich ein {species}!"
       },
       "postcard": {
@@ -477,6 +483,7 @@
       "evolve": "Entwickeln",
       "hatched": "ist geschlüpft 🐣",
       "child": "ist jetzt ein Kind",
+      "child_named": "ist jetzt ein {species}",
       "adult": "ist jetzt ein {species} ✨",
       "learned": "kann jetzt {trick} ⭐",
       "practiced": "{trick} geübt",

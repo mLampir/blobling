@@ -38,6 +38,11 @@
     "child": "Child",
     "adult": "Adult"
   },
+  "children": {
+    "ember": "Cindlet",
+    "stone": "Pebblet",
+    "fox": "Kitlet"
+  },
   "species": {
     "blob": "Blob",
     "sneezle": "Sneezle",
@@ -334,6 +339,7 @@
       "evolve": {
         "hatched": "I hatched! Hello, world!",
         "child": "I've grown – I'm a child now!",
+        "child_named": "I've grown – I'm a {species} now!",
         "adult": "I've grown up – I'm a {species} now!"
       },
       "postcard": {
@@ -477,6 +483,7 @@
       "evolve": "Evolve",
       "hatched": "hatched 🐣",
       "child": "is a child now",
+      "child_named": "is a {species} now",
       "adult": "is a {species} now ✨",
       "learned": "learned a new trick: {trick} ⭐",
       "practiced": "{trick} practice",

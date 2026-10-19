@@ -303,7 +303,7 @@ export class Pet {
   /** The ancestors, the last one first. */
   ancestorList() {
     return [...this.ancestors].reverse().map((a) => ({
-      ...a, species_label: this.t(`species.${a.species}`), stage_label: this.t(`stages.${a.stage}`),
+      ...a, species_label: this.t(`species.${a.species}`), stage_label: this.t(life.formKey(a.stage, a.species)),
     }));
   }
 
@@ -321,7 +321,7 @@ export class Pet {
         return null;
       }
       const [stage, species] = form.split(":");
-      return { stage, species, label: this.t(stage === "adult" ? `species.${species}` : `stages.${stage}`) };
+      return { stage, species, label: this.t(life.formKey(stage, species)) };
     });
   }
 
@@ -393,7 +393,7 @@ export class Pet {
       api: API_VERSION, api_oldest: API_OLDEST,
       now: Math.round(now),
       name: s.name, species: s.species, stage: s.stage,
-      species_label: t(`species.${s.species}`), stage_label: t(`stages.${s.stage}`),
+      species_label: t(`species.${s.species}`), stage_label: t(life.formKey(s.stage, s.species)),
       age_days: s.stage === "egg" ? 0 : Math.max(0, Math.floor((now - s.born_at) / 86400)),
       // Next evolution: when it is due, and from when it happens by itself
       evolution: due === null ? null : {

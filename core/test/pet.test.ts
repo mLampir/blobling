@@ -215,3 +215,16 @@ test("a save from before the album fills it in from the ancestors", () => {
   assert.deepEqual([...pet.toSave().album!].sort(), [...forms].sort());
   assert.deepEqual(readSave({ ...file, album: ["adult:lumoth", "adult:nobody"] }).album, ["adult:lumoth"]);
 });
+
+test("a child with a name of its own shows it, the slime's child is a child", () => {
+  const now = at("2026-10-12 12:00");
+  const disk = new Disk();
+  const pet = disk.pet();
+  pet.state = grown(now);
+  assert.equal(pet.snapshot(now).stage_label, "Child");
+  for (const [line, name] of [["ember", "Cindlet"], ["stone", "Pebblet"], ["fox", "Kitlet"]]) {
+    pet.state.species = line;
+    assert.equal(pet.snapshot(now).stage_label, name);
+    assert.equal(pet.albumList().find((form) => form?.stage === "child" && form.species === line)!.label, name);
+  }
+});
