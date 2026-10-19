@@ -66,6 +66,20 @@ const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:bouldergrin": { flip: "toss" }, // its top stone does the flip for it and lands back on top
   "adult:gemperor": { flip: "slam" }, // a king doesn't somersault: it leaps up and lands so hard that crystals shoot up
   "adult:purrloop": { bow: "stretch" }, // a cat's bow: front down, a long stretch and a yawn, then a shake
+  "adult:lanternling": { spin: "swing" }, // it swings to and fro as a lantern does on its handle
+  "adult:flarelet": { flip: "flare" }, // the flame shoots up out of its bowl and rains embers
+  "adult:roamtail": { spin: "chase" }, // goes round in circles after its own tail
+  "adult:filchfox": { spin: "vanish" }, // a puff of smoke, gone, and it pops up again a little further on
+  "adult:rumblefluff": { bow: "charge" }, // head down, a scrape with the hoof, and a charge with sparks
+  "adult:prismist": { spin: "rainbow" }, // it turns, and a rainbow of shimmer arcs over it
+  "adult:twiggle": { spin: "rustle" }, // it turns, and leaves whirl off its crown
+  "adult:needlenub": { bow: "bloom" }, // it closes into a bud and blooms, and petals fly
+  "adult:quill": { dance: "hornpipe" }, // the sailor's dance: quick steps from one foot to the other
+  "adult:drakwing": { flip: "glide" }, // a few beats of its wings up, and it glides down in a long arc
+  "adult:lillypot": { bow: "soak" }, // sinks low, as into its pond, and blows bubbles
+  "adult:steamo": { dance: "sauna" }, // a bath dance that makes it steam
+  "adult:parcelbeak": { bow: "deliver" }, // a bow, and a letter flies out of its pouch
+  "adult:rapierre": { spin: "fence" }, // a fencer's lunge, forward and back, twice, with a flash
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
@@ -355,6 +369,13 @@ const SHIMMER: Bitmap = [[255, 170, 210], [".X.", "X.X", ".X."]]; // the shimmer
 const LEAFLET: Bitmap = [[150, 225, 110], ["XX", ".X"]]; // a leaf off Twiggle's crown
 const CRYSTAL: Bitmap = [[190, 150, 255], [".X", "XX", "XX"]]; // a shard of Gemperor's crystals
 const PAW: Bitmap = [[255, 130, 170], [".X.X.", "X...X", "..X..", ".XXX."]]; // Purrloop's paw prints
+const MOTH: Bitmap = [[235, 220, 190], ["X.X", ".X."]]; // moths drawn to Lanternling's light
+const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
+const CANNONBALL: Bitmap = [[70, 70, 85], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
+const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
+const PETAL: Bitmap = [[255, 170, 200], ["X"]];
+const SMOKE: Bitmap = [[150, 150, 160], ["XX", "XX"]];
+const RAINBOW_SHIMMER: Bitmap[] = RAINBOW.map((color) => [color, [".X.", "XXX", ".X."]]); // Prismist's own spin
 const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
 const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Parcelbeak's pouch
 const DIRT: Bitmap = [[60, 60, 60], ["X"]];
@@ -628,6 +649,8 @@ interface Pose {
   found: string | null;
   foe: Foe | null;
   wild: Guest | null;
+  /** Needlenub's flower: closed into a bud or open; null = as its mood has it. */
+  bud: boolean | null;
   /** Smaller than it is (going into the house, or coming out of it), and whether it can't be seen. */
   scale: number;
   hidden: boolean;
@@ -672,7 +695,7 @@ export class PetScene {
   private readonly eggCache = new Map<string, Image>();
   private petTop = GROUND - 20; // top row of the pet on the panel (for particles)
   private burstFor: number | null = null; // one-off effects only once per animation
-  private slamAt = -Infinity; // when the crystals last shot up from a landing (Gemperor's flip)
+  private trickFxAt = new Map<string, number>(); // when an effect of a trick of its own last went off
   private throwFor: number | null = null;
   private throwX: number;
   private throwFacing = 1;
@@ -782,7 +805,7 @@ export class PetScene {
       let pet: Image;
       [pet, top] = this.pet(stage, species, pose.body, t, pose.face, {
         sick: view.sick, whiteOut: pose.white,
-        flame: species === "flicker" ? flickerFlame(view.mood) : species === "needlenub" && view.mood !== "happy" ? "bud" : null,
+        flame: species === "flicker" ? flickerFlame(view.mood) : species === "needlenub" && (pose.bud ?? view.mood !== "happy") ? "bud" : null,
         heavy: view.weight_status === "heavy", hat: view.hat, hint: view.hint || view.species,
         glow: this.night > 0.5, lookLeft: this.facing < 0, sky: this.skyLook,
       });
@@ -869,7 +892,7 @@ export class PetScene {
       symbol: null, turn: null, rotate: 0,
       heart: null, form: [view.stage, view.species], white: false,
       egg: null, eggT: t, item: view.activity_item, propAt: null, thrown: null,
-      activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false,
+      activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false, bud: null,
     };
     this.play = null;
     if (activity === "hatch") {
@@ -1136,16 +1159,8 @@ export class PetScene {
         pose.jump = q < 0.6 ? Math.sin(q / 0.6 * Math.PI / 2) * 14 : 14 * (1 - ((q - 0.6) / 0.4) ** 2); // slow up, fast down
       } else if (q >= 1 && p < 0.85) {
         pose.body = "flat";
-        if (t - this.slamAt > TRICK_SHOW) {
-          this.slamAt = t;
-          for (const side of [-1, 1]) {
-            for (let i = 0; i < 4; i++) {
-              this.particles.push({
-                sprite: CRYSTAL, x: this.x + SPRITE / 2 + side * (SPRITE / 2 - 2), y: GROUND - 3,
-                vx: side * this.rng.uniform(8, 22), vy: -this.rng.uniform(14, 30), life: 0.8,
-              });
-            }
-          }
+        for (const side of [-1, 1]) {
+          this.trickFx(t, `slam${side}`, TRICK_SHOW, CRYSTAL, 4, side * (SPRITE / 2 - 2), 3, [8 * side, 22 * side], [-30, -14]);
         }
       } else {
         pose.body = q <= 0 ? "squash" : "idle";
@@ -1161,6 +1176,118 @@ export class PetScene {
         Object.assign(pose, { body: "squash", face: "blink" });
       } else {
         Object.assign(pose, { body: "idle", dx: Math.trunc(p * 60) % 2 ? 1 : -1, face: "happy" });
+      }
+    } else if (animation === "swing") {
+      // lifted a little, as if it hung from its handle, and swinging further out each time and back
+      const env = Math.sin(p * Math.PI);
+      Object.assign(pose, { rotate: Math.sin(p * 3 * (2 * Math.PI)) * 22 * env, jump: env * 4, face: "smile" });
+    } else if (animation === "flare") {
+      // stretches up high, flickering, and embers shoot out of its top
+      const up = Math.sin(p * Math.PI);
+      Object.assign(pose, { body: Math.trunc(p * 20) % 2 ? "stretch" : "idle", jump: up * 5, face: "laugh" });
+      if (p > 0.3 && p < 0.7) {
+        this.trickFx(t, "flare", 0.12, EMBER, 3, 0, 22 + up * 5, [-10, 10], [-30, -18]);
+      }
+    } else if (animation === "chase") {
+      // runs round a small circle, turning to look after its tail all the time
+      const turn = p * 2 * (2 * Math.PI);
+      Object.assign(pose, { dx: Math.round(Math.sin(turn) * 6), jump: Math.abs(Math.sin(turn * 2)) * 3, face: "laugh" });
+      this.facing = Math.cos(turn) > 0 ? -1 : 1;
+    } else if (animation === "vanish") {
+      // a puff of smoke, gone, and it is back a few steps further on with a grin
+      const gone = p > 0.3 && p < 0.6;
+      Object.assign(pose, { hidden: gone, dx: p >= 0.6 ? 6 * this.facing : 0, face: p >= 0.6 ? "laugh" : "smile",
+        body: p > 0.2 && p < 0.3 ? "squash" : "idle" });
+      if (p > 0.28 && p < 0.4) {
+        this.trickFx(t, "vanish", TRICK_SHOW, SMOKE, 10, 0, 10, [-14, 14], [-14, 6], 0.9);
+      } else if (p > 0.58 && p < 0.7) {
+        this.trickFx(t, "appear", TRICK_SHOW, SMOKE, 6, 6, 10, [-10, 10], [-10, 4], 0.7);
+      }
+    } else if (animation === "charge") {
+      // lowers its head and scrapes the ground twice, then charges forward and sparks fly off its horns
+      if (p < 0.5) {
+        Object.assign(pose, { body: p > 0.1 ? "squash" : "idle", dx: p > 0.1 ? -Math.trunc(p * 16) % 2 * this.facing : 0,
+          face: "normal" });
+        if (p > 0.15) {
+          this.trickFx(t, "scrape", 0.4, DIRT, 3, -SPRITE / 2 + 4, 1, [-16, -6], [-12, -4], 0.5);
+        }
+      } else if (p < 0.75) {
+        Object.assign(pose, { body: "stretch", dx: Math.round((p - 0.5) / 0.25 * 8) * this.facing, face: "laugh" });
+        this.trickFx(t, "charge", TRICK_SHOW, BOLT, 5, SPRITE / 2, 16, [10, 26], [-12, 8]);
+      } else {
+        Object.assign(pose, { body: "squash", dx: Math.round((1 - p) / 0.25 * 8) * this.facing, face: "happy" });
+      }
+    } else if (animation === "rainbow") {
+      // the spin, and shimmer in the colors of the rainbow rises in an arc over it
+      Object.assign(pose, { turn: Math.cos(p * 2 * (2 * Math.PI)), jump: Math.sin(p * Math.PI) * 3, face: "smile" });
+      if (p > 0.1 && p < 0.9) {
+        const i = Math.trunc(p * 12) % RAINBOW_SHIMMER.length;
+        this.trickFx(t, "rainbow", 0.1, RAINBOW_SHIMMER[i], 1, -SPRITE / 2 + p * SPRITE, 26 + Math.sin(p * Math.PI) * 8, [-2, 2],
+          [-4, -1], 1.2);
+      }
+    } else if (animation === "rustle") {
+      // the spin, and leaves whirl off its crown
+      Object.assign(pose, { turn: Math.cos(p * 2 * (2 * Math.PI)), jump: Math.sin(p * Math.PI) * 3, face: "smile" });
+      if (p > 0.15 && p < 0.85) {
+        this.trickFx(t, "rustle", 0.15, LEAFLET, 2, 0, 24, [-22, 22], [-12, 2], 1.0);
+      }
+    } else if (animation === "bloom") {
+      // closes into a bud, squeezes, and blooms with a pop, petals flying
+      if (p < 0.1 || p > 0.9) {
+        Object.assign(pose, { body: "idle", face: "smile" });
+      } else if (p < 0.5) {
+        Object.assign(pose, { body: "squash", face: "blink", bud: true });
+      } else {
+        Object.assign(pose, { body: p < 0.6 ? "stretch" : "idle", jump: p < 0.6 ? 2 : 0, face: "laugh", bud: false });
+        this.trickFx(t, "bloom", TRICK_SHOW, PETAL, 8, 0, 26, [-18, 18], [-22, -6], 1.0);
+      }
+    } else if (animation === "hornpipe") {
+      // quick steps from one foot to the other, arms (wings) out, faster and faster
+      const beat = Math.trunc(p * (6 + p * 8));
+      Object.assign(pose, { body: beat % 2 ? "stretch" : "squash", dx: (beat % 4 < 2 ? 3 : -3), jump: beat % 2 ? 2 : 0,
+        face: "laugh" });
+    } else if (animation === "glide") {
+      // flaps up and glides down in a long arc out in front and back
+      const q = (p - 0.1) / 0.8;
+      if (q > 0 && q < 1) {
+        Object.assign(pose, { body: q < 0.35 ? (Math.trunc(q * 30) % 2 ? "stretch" : "squash") : "stretch",
+          jump: Math.sin(q * Math.PI) * 14, dx: Math.round(Math.sin(q * 2 * Math.PI) * 8) * this.facing,
+          rotate: q > 0.35 ? -8 * this.facing : 0 });
+      } else {
+        pose.body = "squash";
+      }
+      pose.face = "happy";
+    } else if (animation === "soak") {
+      // sinks low and blows bubbles, eyes shut in bliss
+      if (p < 0.1 || p > 0.9) {
+        Object.assign(pose, { body: "idle", face: "smile" });
+      } else {
+        Object.assign(pose, { body: "flat", face: "blink" });
+        if (p > 0.2 && p < 0.85) {
+          this.trickFx(t, "soak", 0.18, BUBBLE, 1, 4, 10, [-4, 8], [-18, -10], 1.2);
+        }
+      }
+    } else if (animation === "sauna") {
+      // a slow bouncy dance with steam rising off it
+      Object.assign(pose, { body: Math.sin(p * 4 * (2 * Math.PI)) > 0 ? "stretch" : "squash",
+        dx: Math.round(Math.sin(p * 2 * (2 * Math.PI)) * 2), face: "blink" });
+      if (p > 0.1 && p < 0.9) {
+        this.trickFx(t, "sauna", 0.2, STEAM, 1, this.rng.uniform(-8, 8), 22, [-3, 3], [-14, -8], 1.2);
+      }
+    } else if (animation === "deliver") {
+      // the bow, and a letter flies out of its pouch at the bottom
+      pose.body = p < 0.1 || p > 0.85 ? "idle" : p < 0.3 || p > 0.7 ? "squash" : "flat";
+      pose.face = p >= 0.3 && p <= 0.7 ? "happy" : "smile";
+      if (p > 0.35) {
+        this.trickFx(t, "deliver", TRICK_SHOW, LETTER, 1, 6, 10, [14, 18], [-20, -16], 1.4);
+      }
+    } else if (animation === "fence") {
+      // two quick lunges forward and back, a flash at the tip each time
+      const q = (p * 2) % 1;
+      const out = q > 0.3 && q < 0.6;
+      Object.assign(pose, { body: out ? "stretch" : "squash", dx: (out ? 6 : 0) * this.facing, face: out ? "laugh" : "normal" });
+      if (out) {
+        this.trickFx(t, "fence", 0.5, SLASH, 1, SPRITE / 2 + 4, 14, [0, 0], [0, 0], 0.3);
       }
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
@@ -1203,6 +1330,25 @@ export class PetScene {
         pose.body = "squash";
       }
       pose.face = "happy";
+    }
+  }
+
+  /**
+   * Particles of a trick of its own: `count` of them, at most once in `every` seconds per `key`
+   * (once per trick: every = TRICK_SHOW). `dx` from the pet's middle (towards where it looks),
+   * `dy` up from the ground; speeds as [from, to], vx towards where it looks.
+   */
+  private trickFx(t: number, key: string, every: number, sprite: Bitmap, count: number, dx: number, dy: number,
+    vx: [number, number], vy: [number, number], life = 0.8): void {
+    if (t - (this.trickFxAt.get(key) ?? -Infinity) < every) {
+      return;
+    }
+    this.trickFxAt.set(key, t);
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        sprite, x: this.x + SPRITE / 2 + dx * this.facing, y: GROUND - dy,
+        vx: this.rng.uniform(...vx) * this.facing, vy: this.rng.uniform(...vy), life,
+      });
     }
   }
 
@@ -1729,10 +1875,10 @@ export class PetScene {
     }
     if (special) {
       const sprite = ({
-        sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: EMBER, flarelet: EMBER,
+        sneezle: STEAM, flicker: EMBER, grumpcap: SPORE, lumoth: DUST, lanternling: MOTH, flarelet: EMBER,
         glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: CRYSTAL, angloop: LURE_GLOW, purrloop: PAW,
         roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER, twiggle: LEAFLET, needlenub: LOVE,
-        drakwing: EMBER, quill: BUBBLE, steamo: STEAM, lillypot: BUBBLE, rapierre: GLINT, parcelbeak: LETTER,
+        drakwing: FIRE, quill: CANNONBALL, steamo: STEAM, lillypot: BUBBLE, rapierre: SLASH, parcelbeak: LETTER,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;
       for (let i = 0; i < 10; i++) {
         this.particles.push({
