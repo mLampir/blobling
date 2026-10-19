@@ -1235,7 +1235,7 @@ export class PetScene {
       // the spin, and leaves whirl off its crown
       Object.assign(pose, { turn: Math.cos(p * 2 * (2 * Math.PI)), jump: Math.sin(p * Math.PI) * 3, face: "smile" });
       if (p > 0.15 && p < 0.85) {
-        this.trickFx(t, "rustle", 0.15, LEAFLET, 2, 0, 24, [-22, 22], [-12, 2], 1.0);
+        this.trickFx(t, "rustle", 0.1, LEAFLET, 3, 0, 24, [-26, 26], [-14, 4], 1.3);
       }
     } else if (animation === "bloom") {
       // closes into a bud, squeezes, and blooms with a pop, petals flying
