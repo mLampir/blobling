@@ -1201,12 +1201,15 @@ function meter(percent, color) {
   return bar;
 }
 
-// Finds: the friend, eggs to brood, hats to put on, decorations to set out, the seeds and the plant
+// Finds: the friends, eggs to brood, hats to put on, decorations to set out, the seeds and the plant
 function renderFinds(s) {
   const rows = [];
-  if (s.friend) {
-    rows.push([t("page.finds.friend", { pet: s.friend.label }), s.friend.visiting ? t("page.finds.friend_here")
-      : t("page.finds.friend_visits", { n: s.friend.visits, needed: s.friend.needed })]);
+  // a display from before there could be several friends only tells of one
+  for (const friend of s.friends ?? (s.friend ? [s.friend] : [])) {
+    // after a nest the visits don't count for a while: an old friend, without a count that doesn't move
+    rows.push([t("page.finds.friend", { pet: friend.label }), friend.visiting ? t("page.finds.friend_here")
+      : friend.resting ? t("page.finds.friend_old")
+      : t("page.finds.friend_visits", { n: friend.visits, needed: friend.needed })]);
   }
   for (const egg of s.eggs) {
     // what a pet has passed on to its egg

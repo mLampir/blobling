@@ -21,7 +21,7 @@ import * as model from "./model";
 import * as notify from "./notify";
 import { houseArea, type SceneView, type TripView } from "./scene";
 import * as sky from "./sky";
-import { fromDict, toDict, type PetState } from "./state";
+import { fromDict, toDict, type Friend, type PetState } from "./state";
 import * as story from "./story";
 import type { Location } from "./sun";
 import * as trip from "./trip";
@@ -325,6 +325,7 @@ export class Pet {
   view(now = this.clock(), id?: unknown): SceneView {
     this.advance(now);
     const s = this.find(id);
+    const guest = wild.visitor(s, now);
     return {
       species: s.species, stage: s.stage, hint: life.hint(s, model.worldAt(now, this.weather(), this.location)),
       asleep: s.asleep, sick: s.sick, poops: s.poops,
@@ -337,8 +338,8 @@ export class Pet {
       look_in: s.house > 0 && now < s.look_in_until && !s.asleep,
       backpack: s.backpack.length > 0,
       // a friend that is visiting right now, or a neighbour that is with it; and the egg in the nest (its line)
-      visitor: s.friend && wild.visiting(s, now) && !s.trip && !s.grandma
-        ? { species: s.friend.species, left: s.friend.until! - now, age: now - s.friend.until! + wild.VISIT_SECONDS }
+      visitor: guest && !s.trip && !s.grandma
+        ? { species: guest.species, left: guest.until! - now, age: now - guest.until! + wild.VISIT_SECONDS }
         : this.neighbourView(s, now),
       nest: s.nest ? s.nest.line : null,
       gift: !!s.gift,
@@ -540,7 +541,7 @@ export class Pet {
 
   /** Is a friend of its own visiting `pet` at the time t? Then it has no time for its neighbour. */
   private friendThere(pet: PetState, t: number): boolean {
-    return !!pet.friend && wild.visiting(pet, t);
+    return wild.visiting(pet, t);
   }
 
   // ---------- Moving between a phone and a display ----------
@@ -907,6 +908,10 @@ export class Pet {
     const bedtime = this.bedtime();
     const due = life.dueAt(s);
     const placed = home.placeDeco(s);
+    const friendView = (f: Friend) => ({
+      species: f.species, label: t(`species.${f.species}`), visits: f.visits, needed: wild.VISITS_FOR_NEST,
+      visiting: now < (f.until ?? 0), resting: wild.resting(f, now),
+    });
     return {
       api: API_VERSION, api_oldest: API_OLDEST,
       now: Math.round(now),
@@ -977,10 +982,10 @@ export class Pet {
         skills: Object.entries(egg.skills ?? {}).filter(([, v]) => Math.round(v) !== 0)
           .map(([k, v]) => ({ id: k, label: t(`skills.${k}`), value: Math.round(v) })),
       })),
-      friend: s.friend ? {
-        species: s.friend.species, label: t(`species.${s.friend.species}`),
-        visits: s.friend.visits, needed: wild.VISITS_FOR_NEST, visiting: wild.visiting(s, now),
-      } : null,
+      // its friends; `resting`: they have just built a nest, and visits don't count towards the next one yet
+      friends: s.friends.map(friendView),
+      // one of them, the one visiting or else the latest, for apps from before there could be several
+      friend: s.friends.length ? friendView(wild.visitor(s, now) ?? s.friends.at(-1)!) : null,
       nest: s.nest ? { line: s.nest.line, label: t(`items.${home.eggOf(s.nest.line)}`) } : null,
       // a friend's gift is lying there; what is in it is only told once it is unwrapped
       gift: !!s.gift,

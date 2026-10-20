@@ -293,7 +293,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
       comeHome(state, t, done);
     }
   }
-  if (state.friend) {
+  if (state.friends.length) {
     for (const [action, item] of wild.step(state, t, !asleep && !state.trip)) {
       logEvent(state, t, action, "system", { item });
     }
@@ -417,17 +417,20 @@ export function goToGrandma(state: PetState, t: number): void {
 
 /**
  * At Grandma's, time stands still for it, as among the ancestors: it doesn't get older or grow on,
- * and what it waits for (the next visit of its friend) waits too. The pet at the back goes with it
+ * and what it waits for (the next visit of a friend) waits too. The pet at the back goes with it
  * (Pet.advance).
  */
 export function stayAtGrandmas(state: PetState, now: number): void {
   const gap = Math.max(0, now - state.updated_at);
   state.stage_since += gap;
   state.born_at += gap;
-  if (state.friend) {
-    state.friend.next += gap;
-    if (state.friend.until !== undefined) {
-      state.friend.until += gap;
+  for (const friend of state.friends) {
+    friend.next += gap;
+    if (friend.until !== undefined) {
+      friend.until += gap;
+    }
+    if (friend.rest_until !== undefined) {
+      friend.rest_until += gap;
     }
   }
   state.updated_at = Math.max(state.updated_at, now);

@@ -505,6 +505,7 @@
       "friend": "💛 {pet}",
       "friend_visits": "a friend · visits: {n} of {needed}",
       "friend_here": "a friend · visiting right now",
+      "friend_old": "an old friend",
       "egg_brood": "brood",
       "effects": {
         "growth": "eggs, babies and children grow faster",

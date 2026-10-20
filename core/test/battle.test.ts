@@ -253,7 +253,7 @@ test("an egg passes on what it was given", () => {
   const next = model.nextPet(old, start, "", 1);
   assert.deepEqual([next.species, next.skills], ["blob", { strength: 20.0, speed: 0.0, smarts: 5.0 }]);
   assert.deepEqual(next.eggs, [{ line: "ember" }, old.nest]); // the egg in the nest isn't lost either
-  assert.deepEqual([next.nest, next.friend], [null, null]);
+  assert.deepEqual([next.nest, next.friends], [null, []]);
   // replaced before it has hatched: the egg goes back with what it was given
   assert.deepEqual(model.nextPet(next, start + 60).eggs.at(-1),
     { line: "blob", skills: { strength: 20.0, speed: 0.0, smarts: 5.0 } });

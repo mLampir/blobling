@@ -211,6 +211,7 @@ interface Run {
   friendVisits: number;
   visitsCounted: number;
   nestAt: number | null;
+  nests: number;
   eggsCollected: number;
   skillsAtAdult: Record<string, number> | null;
   skillsAtEnd: Record<string, number>;
@@ -246,7 +247,7 @@ class Sim {
       profile, line, start, end: start, arrivals: [], calls: new Map(), days: new Map(),
       criticalMinutes: {}, stageMinutes: {}, sickCount: {}, naps: {}, minHealth: {}, stages: { egg: start },
       adult: null, diary: null, trips: [], guardianTries: {}, guardianTrips: {}, guardianBeatenAt: {},
-      emberstoneAt: null, friendAt: null, friendVisits: 0, visitsCounted: 0, nestAt: null, eggsCollected: 0,
+      emberstoneAt: null, friendAt: null, friendVisits: 0, visitsCounted: 0, nestAt: null, nests: 0, eggsCollected: 0,
       skillsAtAdult: null, skillsAtEnd: {}, tricksKnown: [], rejected: {}, shivering: 0, mornings: 0,
     };
   }
@@ -258,7 +259,9 @@ class Sim {
     while (s.updated_at + model.TICK <= t) {
       s.updated_at += model.TICK;
       const stage = s.stage;
-      const friendBefore = s.friend ? { ...s.friend } : null;
+      const guestBefore = s.friends.findIndex((f) => f.until !== undefined);
+      const friendBefore = guestBefore >= 0 ? { ...s.friends[guestBefore] } : null;
+      const nestBefore = s.nest;
       this.lastTrip = s.trip;
       model.tick(s, s.updated_at, BEDTIME, null, this.temp, null);
       const now = s.updated_at;
@@ -285,18 +288,20 @@ class Sim {
       if (this.lastTrip && !s.trip) {
         this.tripDone(this.lastTrip, now);
       }
-      if (s.friend && !this.seenFriend) {
+      if (s.friends.length && !this.seenFriend) {
         this.seenFriend = true;
         r.friendAt ??= now;
       }
-      if (friendBefore && friendBefore.until !== undefined && (!s.friend || s.friend.until === undefined)) {
+      const after = friendBefore ? s.friends[guestBefore] : null;
+      if (friendBefore && after && after.until === undefined) {
         r.friendVisits += 1;
-        if (!s.friend || s.friend.visits > friendBefore.visits) {
+        if (after.visits > friendBefore.visits || (after.nests ?? 0) > (friendBefore.nests ?? 0)) {
           r.visitsCounted += 1;
         }
       }
-      if (s.nest && r.nestAt === null) {
-        r.nestAt = now;
+      if (s.nest && !nestBefore) {
+        r.nestAt ??= now;
+        r.nests += 1;
       }
     }
     this.now = Math.max(this.now, t);
@@ -691,6 +696,7 @@ function reportProfile(profile: Profile, runs: Run[]): string {
     out.push(`Friends: ${withFriend.length}/${adults.length} adults made one, after ${fmt(avg(withFriend.map((run) => days(run.friendAt! - run.stages.adult))), 1)} days as an adult; `
       + `visits ${fmt(avg(withFriend.map((run) => run.friendVisits)), 1)} (counted ${fmt(avg(withFriend.map((run) => run.visitsCounted)), 1)}); `
       + `nest in ${withNest.length}, ${fmt(avg(withNest.map((run) => days(run.nestAt! - run.friendAt!))), 1)} days after the friendship; `
+      + `nests per adult with a friend ${fmt(avg(withFriend.map((run) => run.nests)), 1)}; `
       + `wild pets met per trip ${fmt(avg(adults.map((run) =>
         run.trips.reduce((a, t) => a + t.wild, 0) / Math.max(1, run.trips.length))), 2)} (wild pets live in ${Object.keys(wild.WILD).join(", ")})`);
   }

@@ -5,6 +5,11 @@
  * build a nest, and an egg lies in it: of the pet's own line or of the friend's, and with a part
  * of the pet's battle stats as its heirloom. The egg waits in the nest until it is collected.
  *
+ * The friend stays a friend after that. It comes less often, and only after a rest (NEST_REST)
+ * do its visits count towards the next nest again, so that an egg stays something to look forward
+ * to. Once every friend has built a nest, the pet may make another one, up to MAX_FRIENDS; one
+ * visits at a time.
+ *
  * Some visits bring a gift. It lies in one spot until somebody unwraps it, and no new one comes
  * while it is there. Mostly it is a fruit for the bag; rarely a seed.
  *
@@ -17,7 +22,7 @@ import * as home from "./home";
 import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
-import type { Egg, PetState } from "./state";
+import type { Egg, Friend, PetState } from "./state";
 
 // Area: who lives there, as [adult form, weight, only in this weather]
 export const WILD: Record<string, readonly (readonly [string, number, sky.Precipitation])[]> = {
@@ -33,10 +38,14 @@ export const IMPRESS = 2; // this many have to work
 export const GLUM = 40; // with its mood below this, a trick works only half as often
 export const FIRST_VISIT = [1 * 3600, 3 * 3600] as const; // seconds from making friends to the first visit
 export const VISIT_EVERY = [5 * 3600, 10 * 3600] as const; // from one visit to the next
+export const OLD_VISIT_EVERY = [20 * 3600, 28 * 3600] as const; // the same, for a friend that has built a nest
+export const BETWEEN_VISITS = 3600; // when one friend leaves, the next comes no sooner than this
 export const VISIT_SECONDS = 10 * 60;
 export const VISIT_MOOD = 50; // a visit only counts if the pet is at least in this mood (and at home, and awake)
 export const VISIT_CHEER = 5;
 export const VISITS_FOR_NEST = 5;
+export const NEST_REST = 14 * 86400; // after a nest, this long before the visits count again
+export const MAX_FRIENDS = 3;
 export const HEIRLOOM = 0.25; // this part of each battle stat goes into the egg
 export const GIFT_CHANCE = 0.4; // how often a visit that counts brings something
 
@@ -49,10 +58,17 @@ export type Shown = [string, boolean];
 /** A history entry to write: [action, item]. */
 export type Happened = [string, string];
 
-/** Is the pet looking for a friend? Only an adult without one, and with room for another egg. */
+/**
+ * Is the pet looking for a friend? Only an adult whose friends have all built a nest with it
+ * (or that has none yet), with room for another friend and another egg.
+ */
 export function looking(state: PetState): boolean {
-  return state.stage === "adult" && !state.friend && !state.nest
-    && home.canAdd(state, home.eggOf(life.lineOf(state.species)));
+  return state.stage === "adult" && state.friends.length < MAX_FRIENDS && state.friends.every((f) => f.nests)
+    && !state.nest && roomForEgg(state);
+}
+
+function roomForEgg(state: PetState): boolean {
+  return home.canAdd(state, home.eggOf(life.lineOf(state.species)));
 }
 
 /** The wild pet waiting at the station reached at `at`, or null. */
@@ -86,55 +102,75 @@ export function show(state: PetState, species: string, rng: Random, now: number)
   }
   const friends = rounds.filter(([, worked]) => worked).length >= IMPRESS;
   if (friends) {
-    state.friend = { species, visits: 0, next: now + Math.round(rng.uniform(...FIRST_VISIT)) };
+    state.friends.push({ species, visits: 0, next: now + Math.round(rng.uniform(...FIRST_VISIT)) });
   }
   return { rounds, outcome: friends ? "friend" : "shrug" };
 }
 
+/** The friend visiting right now, if one is. */
+export function visitor(state: PetState, now: number): Friend | null {
+  return state.friends.find((f) => now < (f.until ?? 0)) ?? null;
+}
+
 export function visiting(state: PetState, now: number): boolean {
-  return !!state.friend && now < (state.friend.until ?? 0);
+  return visitor(state, now) !== null;
+}
+
+/** Has the friend built a nest lately, so that its visits don't count towards the next one yet? */
+export function resting(friend: Friend, now: number): boolean {
+  return now < (friend.rest_until ?? 0);
 }
 
 /**
- * One minute with a friend, ending at t. `atHome`: the pet is there and awake.
+ * One minute with the friends, ending at t. `atHome`: the pet is there and awake.
  * Returns what happened, for the history.
  */
 export function step(state: PetState, t: number, atHome: boolean): Happened[] {
-  const friend = state.friend!;
-  if (friend.until === undefined) {
-    if (atHome && t >= friend.next) {
-      friend.until = t + VISIT_SECONDS;
-      return [["visit", friend.species]];
+  const friend = state.friends.find((f) => f.until !== undefined);
+  if (!friend) {
+    const due = atHome ? state.friends.find((f) => t >= f.next) : undefined;
+    if (due) {
+      due.until = t + VISIT_SECONDS;
+      return [["visit", due.species]];
     }
     return [];
   }
-  if (t < friend.until) {
+  if (t < friend.until!) {
     return [];
   }
   const rng = new Random(`visit:${Math.trunc(t)}`);
   delete friend.until;
-  friend.next = t + Math.round(rng.uniform(...VISIT_EVERY));
+  friend.next = t + Math.round(rng.uniform(...(friend.nests ? OLD_VISIT_EVERY : VISIT_EVERY)));
+  for (const other of state.friends) {
+    other.next = Math.max(other.next, t + BETWEEN_VISITS); // one at a time, and not straight after each other
+  }
   if (!atHome || state.stats.mood < VISIT_MOOD) {
     return []; // nobody was in the mood: this one doesn't count
   }
-  friend.visits += 1;
   state.stats.mood += VISIT_CHEER;
-  if (friend.visits < VISITS_FOR_NEST) {
-    const gift = !state.gift && rng.random() < GIFT_CHANCE ? giftFrom(state, rng) : null;
-    if (gift) {
-      state.gift = gift;
-      return [["gift", friend.species]]; // what is in it stays a surprise
-    }
-    return [];
+  if (!resting(friend, t)) {
+    friend.visits = Math.min(friend.visits + 1, VISITS_FOR_NEST);
   }
-  const line = rng.choice([life.lineOf(state.species), life.lineOf(friend.species)]);
-  state.nest = {
-    line,
-    from: state.name,
-    skills: Object.fromEntries(Object.entries(state.skills).map(([skill, value]) => [skill, Number((value * HEIRLOOM).toFixed(1))])),
-  };
-  state.friend = null; // the friend moves on; the pet can look for another one once the egg is collected
-  return [["nest", line]];
+  if (friend.visits >= VISITS_FOR_NEST && !state.nest && roomForEgg(state)) {
+    const line = rng.choice([life.lineOf(state.species), life.lineOf(friend.species)]);
+    state.nest = {
+      line,
+      from: state.name,
+      skills: Object.fromEntries(Object.entries(state.skills).map(([skill, value]) => [skill, Number((value * HEIRLOOM).toFixed(1))])),
+    };
+    // the friend stays, and comes less often from now on
+    Object.assign(friend, {
+      visits: 0, nests: (friend.nests ?? 0) + 1, rest_until: t + NEST_REST,
+      next: t + Math.round(rng.uniform(...OLD_VISIT_EVERY)),
+    });
+    return [["nest", line]];
+  }
+  const gift = !state.gift && rng.random() < GIFT_CHANCE ? giftFrom(state, rng) : null;
+  if (gift) {
+    state.gift = gift;
+    return [["gift", friend.species]]; // what is in it stays a surprise
+  }
+  return [];
 }
 
 /** What a friend brings: a small thing (home.smallThing), mostly a fruit and rarely a seed. */

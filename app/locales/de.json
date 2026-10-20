@@ -505,6 +505,7 @@
       "friend": "💛 {pet}",
       "friend_visits": "Freundschaft · Besuche: {n} von {needed}",
       "friend_here": "Freundschaft · gerade zu Besuch",
+      "friend_old": "alte Freundschaft",
       "egg_brood": "ausbrüten",
       "effects": {
         "growth": "Ei, Baby und Kind wachsen schneller",

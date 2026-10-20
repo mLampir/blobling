@@ -456,8 +456,9 @@ a ▶.
 
 ### Friends
 
-Not everybody on a trip is in the way. An adult that has no friend yet
-sometimes meets a **wild pet**, a grown-up of some line that lives out there.
+Not everybody on a trip is in the way. An adult that has no friend yet, or
+whose friends have all built a nest with it (see below), sometimes meets a
+**wild pet**, a grown-up of some line that lives out there.
 There is no scuffle: the pet shows three of its tricks, and the wild pet
 watches.
 
@@ -490,10 +491,19 @@ then.
 
 After five visits that counted, the two build a **nest**, and an egg lies in
 it. The egg is of the pet's own line or of the friend's, and it carries the
-pet's heirloom (see [Growing up](#growing-up)). The friend moves on. The egg
-waits in the nest until you tap **Collect the egg**; then it is among the
-finds, to be brooded whenever you like. After that the pet can look for a new
-friend.
+pet's heirloom (see [Growing up](#growing-up)). The egg waits in the nest until
+you tap **Collect the egg**; then it is among the finds, to be brooded whenever
+you like. While the nest is full, or there are nine eggs already, the next nest
+waits.
+
+The friend **stays** after that. It comes less often, about once a day, still
+plays and still brings a gift now and then. For two weeks after a nest its
+visits don't count; after that, five more that count build the next nest. So a
+friend brings an egg about every three weeks at most.
+
+Once all its friends have built a nest with it, the pet can make another friend
+on a trip, up to three. They come one at a time, never straight after each
+other.
 
 Which wild pets live where is in [pets.md](pets.md), folded shut. A line
 whose egg a guardian gives is never among them.
