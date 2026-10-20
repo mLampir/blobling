@@ -38,6 +38,8 @@
 	<false/>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>To find your LED display on your home Wi-Fi.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>So your pet gets the weather where you are.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>So your pet gets the weather where you are.</string>
 	<key>UIApplicationSceneManifest</key>

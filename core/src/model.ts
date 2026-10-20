@@ -17,7 +17,7 @@ import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
 import { STATS, newState, type Egg, type PetState, type Trip } from "./state";
-import { isDark, type Location } from "./sun";
+import { isDark, isFullMoon, sunTimes, type Location } from "./sun";
 import * as trip from "./trip";
 import * as wild from "./wild";
 
@@ -292,6 +292,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   home.grow(state, TICK / 60, sky.precipitation(weather) === "rain");
   idle.noteWeather(state, t, sky.precipitation(weather));
   idle.melt(state, temp);
+  home.noteHeat(state, temp, t);
   if (state.trip) {
     const [events, done] = trip.step(state, t, weather, location);
     for (const [action, item] of events) {
@@ -354,6 +355,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     // ripe fruit: it helps itself
     const kind = home.eatFruit(state);
     count(state, "fruits");
+    life.record(state, "plant_fruits");
     setActivity(state, "pick", t, kind);
     logEvent(state, t, "fruit", "system", { item: kind });
   }
@@ -372,7 +374,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   life.recordMinute(state, !state.sick && s.satiety >= CRITICAL && s.hygiene >= CRITICAL && s.mood >= CRITICAL);
   const due = life.dueAt(state);
   if (due !== null && t >= due + life.AUTO_EVOLVE_AFTER && !state.asleep && !state.trip && !isBedtime(t, bedtime)) {
-    evolve(state, t, "system", weather, location);
+    evolve(state, t, "system", weather, location, temp);
   }
 }
 
@@ -540,7 +542,7 @@ export function availableActions(state: PetState, now: number): Record<string, b
     play: !asleep,
     sleep: !asleep,
     wake: asleep,
-    clean: state.poops > 0 || state.stats.hygiene < 90,
+    clean: state.poops > 0 || state.stats.hygiene < 90 || home.hot(state, now),
     pet: true,
     medicine: state.sick,
     trip: !asleep && state.stage !== "baby" && !packed,
@@ -609,15 +611,22 @@ function count(state: PetState, key: string): void {
   state.counters[key] = (state.counters[key] ?? 0) + 1;
 }
 
-/** The weather and the time of day at the time t, as far as they decide an adult form. */
-export function worldAt(t: number, weather: sky.WeatherCode, location: Location): life.World {
-  return { raining: sky.precipitation(weather) === "rain", dark: isDark(t, location) };
+/** The weather, the time of day and the moon at the time t, as far as they may decide an adult form. */
+export function worldAt(t: number, weather: sky.WeatherCode, location: Location, temp: number | null = null): life.World {
+  const date = new Date(t * 1000);
+  const [sunrise, sunset] = sunTimes(date, location);
+  return {
+    raining: sky.precipitation(weather) === "rain", snowing: sky.precipitation(weather) === "snow",
+    storm: sky.isThunder(weather), temp, dark: isDark(t, location),
+    minute: date.getHours() * 60 + date.getMinutes(), sunrise: Math.round(sunrise), sunset: Math.round(sunset),
+    fullMoon: isFullMoon(t),
+  };
 }
 
 function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCode = null,
-    location: Location = null): void {
+    location: Location = null, temp: number | null = null): void {
   const oldStage = state.stage;
-  const old = life.evolve(state, now, worldAt(now, weather, location));
+  const old = life.evolve(state, now, worldAt(now, weather, location, temp));
   care.rescaleWeight(state, oldStage);
   state.game = null;
   const hatched = old.startsWith("egg");
@@ -755,7 +764,7 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
     } else if (state.trip) {
       reason = "away";
     } else {
-      evolve(state, now, by, weather, options.location ?? null); // gets its own entry in the history
+      evolve(state, now, by, weather, options.location ?? null, options.temp ?? null); // gets its own entry in the history
       return { accepted: true, reason: null };
     }
     logEvent(state, now, action, by, { accepted: false, reason });
@@ -846,6 +855,8 @@ function game(state: PetState, now: number, move: string): string | null {
   care.addBond(state, "game");
   count(state, "games");
   count(state, "plays");
+  life.record(state, "games");
+  life.record(state, "games_won", won ? 1 : 0);
   if (won) {
     count(state, "games_won");
   }
@@ -1091,6 +1102,7 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     }
     if (nearBed) {
       s.mood += 10 * repeatFactor(state, "tuck_in", now); // tucked in by hand
+      life.record(state, "tucked");
     }
     fallAsleep(state, now);
     state.stay_awake_until = 0.0;
@@ -1116,8 +1128,15 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
   }
 
   if (action === "clean") {
-    if (!state.poops && s.hygiene >= 90) {
+    const hot = home.hot(state, now);
+    if (!state.poops && s.hygiene >= 90 && !hot) {
       return "already_clean";
+    }
+    if (hot) {
+      // a bath on a hot afternoon cools it down
+      home.coolDown(state);
+      s.mood += home.COOL_MOOD;
+      count(state, "cooled");
     }
     state.poops = 0;
     s.hygiene = 100.0;

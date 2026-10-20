@@ -12,7 +12,8 @@ a day and also tells you the time and the weather.
 
 - **It lives with you.** The sky follows the real time of day, with sunrise
   and sunset for your location; clouds, rain and snow come from the real
-  weather. On a cold morning the pet wakes up shivering, until you rub it warm.
+  weather. On a cold morning the pet wakes up shivering, until you rub it warm,
+  and on a hot afternoon it sweats, until a bath cools it down.
   Left to itself, it plays and practices on its own, now and then it finds a
   little something and keeps it for you, it waits at the edge of
   the panel around the times it is usually fed, and when you come back it
