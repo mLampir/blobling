@@ -460,10 +460,7 @@ export class Pet {
    */
   albumList() {
     this.collect();
-    // A form that no longer grows (life.RETIRED) only has a slot once one of the pets has been it
-    const forms = life.FORMS.filter((form) => this.album.includes(form)
-      || !(form.startsWith("adult:") && life.RETIRED.includes(form.slice("adult:".length))));
-    return forms.map((form) => {
+    return life.FORMS.map((form) => {
       if (!this.album.includes(form)) {
         return null;
       }
