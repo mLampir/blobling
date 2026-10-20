@@ -89,7 +89,15 @@
     "steamo": "Steamo",
     "lillypot": "Lillypot",
     "rapierre": "Rapierre",
-    "parcelbeak": "Parcelbeak"
+    "parcelbeak": "Parcelbeak",
+    "salamber": "Salamber",
+    "lunarock": "Lunarock",
+    "foxfire": "Foxfire",
+    "flurrbleat": "Flurrbleat",
+    "sakurin": "Sakurin",
+    "bubblehelm": "Bubblehelm",
+    "hippula": "Hippula",
+    "acewing": "Acewing"
   },
   "tricks": {
     "bow": "Bow",
@@ -173,6 +181,7 @@
     "crystal": "Crystal",
     "cairn": "Cairn",
     "emberstone": "Ember stone",
+    "snowglobe": "Snow globe",
     "snowman": "Snowman",
     "daisy": "Daisy crown",
     "leaf": "Leaf",
@@ -528,6 +537,7 @@
       "egg_brood": "hatch",
       "effects": {
         "growth": "eggs, babies and children grow faster",
+        "snow": "it snows around the house",
         "heart": "one more heart on the next trip",
         "trick": "the next trick practice counts double",
         "train": "the next exercise counts double",

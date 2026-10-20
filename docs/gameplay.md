@@ -169,7 +169,10 @@ The care diary of the child stage decides the adult form: how well the pet was
 looked after, how often it was played with, petted, bathed and taught tricks,
 how often it went on a trip and how many scuffles it had. These count for the
 whole child stage, so a day away can be made up on the others. For two lines,
-the world at the moment it grows up decides instead. Each
+the world at the moment it grows up decides instead. Every line has a secret
+third adult form, the most impressive of the three: it takes a rare deed of
+the child (counted over the whole stage, not per day) or a rare moment when it
+grows up, and its rule goes first. Each
 form has a character of its own, with small effects on the game. From its
 second day on, the bulb on the child's lure shows by its color which form it
 is heading for.
@@ -405,9 +408,11 @@ there to see what it brought:
   food again. Nothing is combined or cooked, and the plant stays the one that
   feeds the pet by itself.
 - **Decorations** stand in the scene, two at a time, and more in the house
-  (see [The house](#the-house)). Some glow at night. One
-  of them does something: the ember stone from the cave makes a young pet grow
-  faster, and the pet snuggles up to it now and then.
+  (see [The house](#the-house)). Some glow at night. Two
+  of them do something: the ember stone from the cave makes a young pet grow
+  faster, and the pet snuggles up to it now and then; the snow globe from the
+  mountain makes it snow a little around the house, and a pet that grows up
+  then counts it as snow.
 - **Hats** – it wears one at a time.
 - **A rare egg** is kept until you brood it (see [Growing up](#growing-up)),
   like an egg your pet has laid itself.

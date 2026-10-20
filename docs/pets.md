@@ -270,6 +270,27 @@ The values are in `core/src/life.ts`.
 
 </details>
 
+#### The secret form
+
+*It is about something it ate.*
+
+<details>
+<summary>Show this form</summary>
+
+![Salamber](images/pets/salamber.png)
+
+**Salamber**, a fire salamander of glowing crust. A crest of flames runs over its head, its tail curls up into a torch, glowing spots dot its back, and it sits on a lump of cooling lava. It burns through its food, dirt burns off its crust, and it rarely gets sick. At night its spots glow brighter.
+Its dance leaves a ring of embers round it; for its special move it rolls itself up into a wheel of fire.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+The child ate 3 glowberries from the bag. A glowberry kept from an earlier pet counts too. This rule goes before the others of the line. While the child is on its way there, its hint color is glowing lava.
+
+</details>
+
 ### The stone line
 
 <details>
@@ -328,6 +349,27 @@ become right now:
 | sunny yellow | Bouldergrin |
 
 The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about a night.*
+
+<details>
+<summary>Show this form</summary>
+
+![Lunarock](images/pets/lunarock.png)
+
+**Lunarock**, a stone giant with a geode for a heart. Its chest has cracked open, and in a ring of amethyst sits a moonstone that waxes and wanes with the real moon. Big fists, and little stones circle it like moons. It hardly tires and rarely gets sick; at night the moonstone and the amethyst glow.
+For its bow the moonstone flashes and sends glints up into the sky; its special move is blades of moonlight.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It grows up at night under a full moon (a day and a half either side of it counts). This rule goes before the others of the line. While the child is on its way there, its hint color is moonlight.
 
 </details>
 
@@ -390,6 +432,27 @@ The values are in `core/src/life.ts`.
 
 </details>
 
+#### The secret form
+
+*It is about a place.*
+
+<details>
+<summary>Show this form</summary>
+
+![Foxfire](images/pets/foxfire.png)
+
+**Foxfire**, a white fox spirit with three tails, a blue fox fire burning at the tip of each, and red marks round its eyes. Calm and content, its mood drops more slowly, and it loves a game. At night its fox fires glow.
+Its spin sends fox fires whirling round it, and three fox fires are its special move.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+The child went on 4 trips to the mushroom forest. This rule goes before the others of the line. While the child is on its way there, its hint color is a blue fox fire.
+
+</details>
+
 ### The cloud line
 
 <details>
@@ -449,6 +512,27 @@ The values are in `core/src/life.ts`.
 
 </details>
 
+#### The secret form
+
+*It is about the weather.*
+
+<details>
+<summary>Show this form</summary>
+
+![Flurrbleat](images/pets/flurrbleat.png)
+
+**Flurrbleat**, a snow cloud that has become a sheep. Curly cloud wool, a dark sheep's face with curled horns, a knitted scarf, and under it it always snows a little. The snow keeps its wool clean, and petting it is worth more: there is no softer wool.
+It dances round and round in a flurry of snow, and a volley of snowballs is its special move.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It snows when it grows up. The **snow globe**, now and then found on the mountain, makes it snow around the house while it is set out, so that this form can be reached anywhere. This rule goes before the others of the line. While the child is on its way there, its hint color is snow white.
+
+</details>
+
 ### The leaf line
 
 <details>
@@ -502,6 +586,27 @@ From its second day on, Sproutlet's leaves show where it is heading:
 | pink, like a cactus flower | Needlenub |
 
 The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about its own plant.*
+
+<details>
+<summary>Show this form</summary>
+
+![Sakurin](images/pets/sakurin.png)
+
+**Sakurin**, a cherry tree in full bloom. A cloud of blossom for a crown, a painted fan in one hand and a red lacquer pot with a gold band, and petals drifting round it. It is always a little festive: its mood drops more slowly.
+Its dance is a fan dance with drifting blossom, and its special move is cherries that burst.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+The child picked 6 fruits off its own plant and ate them. This rule goes before the others of the line. While the child is on its way there, its hint color is cherry blossom pink.
 
 </details>
 
@@ -560,6 +665,27 @@ The values are in `core/src/life.ts`.
 
 </details>
 
+#### The secret form
+
+*It is about the weather on the way.*
+
+<details>
+<summary>Show this form</summary>
+
+![Bubblehelm](images/pets/bubblehelm.png)
+
+**Bubblehelm**, a deep-sea diver. A brass helmet with three portholes, the duck looking out of the front one, an air hose, a canvas suit, lead boots and a lantern; bubbles rise from its valve. The helmet keeps the muck out, it loves a game, and it needs no umbrella.
+For its flip it dives head first into the ground and pops out again in a burst of bubbles; for its special move it swings its anchor.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+The child went on 3 trips with rain on the way. This rule goes before the others of the line. While the child is on its way there, its hint color is brass.
+
+</details>
+
 ### The hippo line
 
 <details>
@@ -611,6 +737,27 @@ heading:
 | the green of a lily pad | Lillypot |
 
 The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about bedtime.*
+
+<details>
+<summary>Show this form</summary>
+
+![Hippula](images/pets/hippula.png)
+
+**Hippula**, an eloquent vampire count. A cape with a high collar and red lining, slicked-back hair, a monocle on a chain, two little fangs and a glass of berry juice (so it says); the line's towel hangs over its arm like a waiter's napkin. It looks at you from under heavy lids. Up all night, it tires sooner, but nothing ruffles a count.
+Its bow is a deep one with a sweep of the cape, and bats flutter up; a swarm of little bats is its special move.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+The child was tucked in by hand on 6 evenings. This rule goes before the others of the line. While the child is on its way there, its hint color is a red as dark as its cape's lining.
 
 </details>
 
@@ -666,6 +813,27 @@ From its second day on, Crestling's goggles show where it is heading:
 | orange, with a post-blue frame | Parcelbeak |
 
 The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the guardians.*
+
+<details>
+<summary>Show this form</summary>
+
+![Acewing](images/pets/acewing.png)
+
+**Acewing**, a swift who flies stunts: wings held out stiff like a little plane's, a leather flying cap with the goggles pushed up, an open flying jacket and a long white scarf. All those stunts tire it sooner, and it is always up for a game.
+Its flip is a loop with a trail of smoke, and its special move is a dive so fast that the air bangs.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+As a child it got past 2 guardians for the first time. This rule goes before the others of the line. While the child is on its way there, its hint color is the white of its scarf and the leather of its cap.
 
 </details>
 

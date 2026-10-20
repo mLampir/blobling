@@ -27,6 +27,8 @@ const BASE: SceneView = {
   species: "blob", stage: "child", ready: false, asleep: false, sick: false, poops: 0, activity: "idle",
   mood: "normal", needs: [], activity_until: 0, activity_item: "",
 };
+// The special forms, the secret third adult of a line
+const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -48,6 +50,7 @@ const PETS: Record<string, [string, string]> = {
   lillypot: ["adult", "lillypot"], steamo: ["adult", "steamo"],
   beak_egg: ["egg", "beak"], beak_baby: ["baby", "beak"], crestling: ["child", "beak"],
   parcelbeak: ["adult", "parcelbeak"], rapierre: ["adult", "rapierre"],
+  ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
 // The leaf, duck, hippo and beak lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
@@ -64,7 +67,8 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   angloop: "bow", gemperor: "flip", purrloop: "bow", lanternling: "spin", flarelet: "flip", roamtail: "spin",
   filchfox: "spin", rumblefluff: "bow", prismist: "spin", twiggle: "spin", needlenub: "bow", quill: "dance",
   drakwing: "flip", lillypot: "bow", steamo: "dance", parcelbeak: "bow", rapierre: "spin", glimmerock: "spin",
-  bouldergrin: "flip",
+  bouldergrin: "flip", salamber: "dance", lunarock: "bow", foxfire: "spin", flurrbleat: "dance", sakurin: "dance",
+  bubblehelm: "flip", hippula: "bow", acewing: "flip",
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
@@ -86,7 +90,8 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip", "prismist_rain",
   "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
   "angloop", "angloop_night", "angloop_hungry", "angloop_hint",
-  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", ...NEW_SCENES, ...OWN_SCENES];
+  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", ...NEW_SCENES, ...OWN_SCENES,
+  ...SPECIAL_FORMS.flatMap((adult) => [adult, `${adult}_night`]), "lunarock_new_moon", "snowglobe"];
 const PETS_DIR = "docs/images/pets";
 const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
@@ -480,6 +485,12 @@ const SCENES: Record<string, Scene> = {
       trip: trip("stream", { event: "battle", foe: "puddlin", outcome: "win", rounds: [["charge", "flip", "special"]] }),
     }, DAY, null]],
   ])),
+  ...Object.fromEntries(SPECIAL_FORMS.flatMap((adult) => [
+    [adult, [{ stage: "adult", species: adult }, DAY, null]],
+    [`${adult}_night`, [{ stage: "adult", species: adult }, NIGHT, null]],
+  ])),
+  lunarock_new_moon: [{ stage: "adult", species: "lunarock" }, new Date(2026, 9, 10, 23, 30), null],
+  snowglobe: [{ stage: "adult", species: "rumblefluff", deco: ["snowglobe"] }, DAY, null],
 };
 
 const assets = readAssets(BDF_FONT_DIR);

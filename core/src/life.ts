@@ -6,7 +6,7 @@
  * does that for a day, the pet evolves by itself (but only while awake and not at bedtime).
  *
  * Which adult form it becomes is decided by the care diary of the child stage (decideSpecies), and
- * for the cloud and the stone line by the world the moment it grows up (rain, night).
+ * for the cloud and the stone line by the world the moment it grows up (rain, snow, night, full moon).
  *
  * There are several lines of pets. The egg decides which line a pet belongs to: the usual egg is
  * a slime, and a rare egg from a trip (home.EGGS) is something else. Until a pet has grown up,
@@ -24,17 +24,17 @@ export const STAGE_SECONDS: Partial<Record<Stage, number>> = { egg: 3600, baby: 
 export const EGG_WARMTH = 15 * 60; // petting warms the egg: it hatches this much sooner
 export const AUTO_EVOLVE_AFTER = 24 * 3600; // due and nobody taps → it evolves by itself
 
-// Line: its adult forms
+// Line: its adult forms; the last one is the secret special form (docs/pets.md)
 export const LINES: Record<string, readonly string[]> = {
   blob: ["angloop", "gemperor", "purrloop"],
-  ember: ["lanternling", "flarelet"],
-  stone: ["glimmerock", "bouldergrin"],
-  fox: ["roamtail", "filchfox"],
-  cloud: ["prismist", "rumblefluff"],
-  leaf: ["twiggle", "needlenub"],
-  duck: ["quill", "drakwing"],
-  hippo: ["lillypot", "steamo"],
-  beak: ["parcelbeak", "rapierre"],
+  ember: ["lanternling", "flarelet", "salamber"],
+  stone: ["glimmerock", "bouldergrin", "lunarock"],
+  fox: ["roamtail", "filchfox", "foxfire"],
+  cloud: ["prismist", "rumblefluff", "flurrbleat"],
+  leaf: ["twiggle", "needlenub", "sakurin"],
+  duck: ["quill", "drakwing", "bubblehelm"],
+  hippo: ["lillypot", "steamo", "hippula"],
+  beak: ["parcelbeak", "rapierre", "acewing"],
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
@@ -65,6 +65,16 @@ export const NEEDLENUB_LOVE_PER_DAY = 5; // the leaf line: a cactus that gets cu
 export const DRAKWING_BATTLES_PER_DAY = 2; // the duck line: scuffles a day, won or not → drakwing, otherwise quill
 export const STEAMO_BATHS_PER_DAY = 2; // the hippo line: bathed this often → steamo, otherwise lillypot
 export const RAPIERRE_TRICKS_PER_DAY = 2; // the beak line: tricks practiced → rapierre, otherwise parcelbeak
+// The special forms: a rare deed during the child stage (totals, not per day), or a rare moment
+// when it grows up. Their rule goes first.
+export const SALAMBER_GLOWBERRIES = 3; // the ember line: glowberries eaten as a child → salamber
+// The stone line under a full moon at night → lunarock
+export const FOXFIRE_FOREST_TRIPS = 4; // the fox line: trips to the mushroom forest → foxfire
+// The cloud line in the snow (or with the snow globe set out at home) → flurrbleat
+export const SAKURIN_PLANT_FRUITS = 6; // the leaf line: fruits it picked off its own plant → sakurin
+export const BUBBLEHELM_RAIN_TRIPS = 3; // the duck line: trips with rain on the way → bubblehelm
+export const HIPPULA_TUCKED = 6; // the hippo line: evenings tucked in by hand → hippula
+export const ACEWING_GUARDIANS = 2; // the beak line: guardians it got past → acewing
 export const MISSING_AFTER = 30; // days with pets before a line whose egg never came gets the quiet safety net (Pet.longMissing)
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
@@ -91,6 +101,14 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   lillypot: { energy: 0.85 }, // half asleep in the pond anyway
   rapierre: { energy: 1.2, satiety: 1.15 }, // a hummingbird burns through everything
   parcelbeak: { mood: 0.85 }, // a letter for everyone: it is always in a good mood
+  salamber: { satiety: 1.15, hygiene: 0.8 }, // a fire needs feeding, and dirt burns off its crust
+  lunarock: { energy: 0.8 }, // a stone giant hardly tires
+  foxfire: { mood: 0.85 }, // a spirit: calm and content
+  flurrbleat: { hygiene: 0.8 }, // the snow keeps its wool clean
+  sakurin: { mood: 0.85 }, // in bloom: it is always a little festive
+  bubblehelm: { hygiene: 0.8 }, // the helmet keeps the muck out
+  hippula: { energy: 1.2, mood: 0.85 }, // up all night, but nothing ruffles a count
+  acewing: { energy: 1.15 }, // all those stunts
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -106,6 +124,14 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   needlenub: { pet: 1.5 }, // a cactus that wants to be petted: nothing makes it happier
   quill: { play: 1.25 }, // an old sailor loves a good game
   steamo: { sick: 0.5 }, // the sauna keeps it healthy
+  salamber: { sick: 0.6 }, // nothing catches on a fire
+  lunarock: { sick: 0.5 }, // a stone giant
+  foxfire: { play: 1.25 }, // a fox spirit loves a game
+  flurrbleat: { pet: 1.5 }, // the softest wool there is
+  sakurin: { heart: 1.25 },
+  bubblehelm: { play: 1.25 },
+  hippula: { pet: 1.25 }, // a count likes to be admired
+  acewing: { play: 1.25 }, // always up for a stunt
 };
 
 /**
@@ -225,6 +251,20 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   const minutes = diary.minutes ?? 0;
   const days = Math.min(Math.max(1.0, minutes / 1440), stageDays);
   const enough = (kind: string, perDay: number) => (diary[kind] ?? 0) >= perDay * days;
+  const done = (kind: string, total: number) => (diary[kind] ?? 0) >= total;
+  const special = ({
+    ember: done("food_glowberry", SALAMBER_GLOWBERRIES),
+    stone: Boolean(world.fullMoon && world.dark),
+    fox: done("trips_forest", FOXFIRE_FOREST_TRIPS),
+    cloud: Boolean(world.snowing),
+    leaf: done("plant_fruits", SAKURIN_PLANT_FRUITS),
+    duck: done("rain_trips", BUBBLEHELM_RAIN_TRIPS),
+    hippo: done("tucked", HIPPULA_TUCKED),
+    beak: done("guardians", ACEWING_GUARDIANS),
+  } as Record<string, boolean>)[line];
+  if (special) {
+    return LINES[line][2];
+  }
   if (line === "ember") {
     return enough("plays", FLARELET_PLAYS_PER_DAY) ? "flarelet" : "lanternling";
   }
