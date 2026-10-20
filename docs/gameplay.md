@@ -263,7 +263,9 @@ favorite can stay while new eggs are raised for the album.
   pictures.
 - **Neighbours get together** for a quarter of an hour once every four
   hours, like a friend's visit (which comes first), and play the same games.
-  With three or four pets, who meets whom is drawn anew each time. A pet that
+  With three or four pets, who meets whom is drawn anew each time, and each
+  night. A pet on a trip or at Grandma's is left out: the pairs at home stay,
+  and the ones whose partner is away pair up with each other. A pet that
   knows a trick shows it, and the other one copies it: a quarter point, from
   the same allowance as practicing alone, so it never learns a trick that
   way. A child counts the time together as half a playtime.

@@ -103,6 +103,20 @@ test("with three, two get together and the third is on its own", () => {
   assert.deepEqual(companion.pairs(ids, 0, false), companion.pairs([...ids].reverse(), 0, false));
 });
 
+test("one away: the pairs at home stay, and those left on their own pair up", () => {
+  const ids = ["a", "b", "c", "d"];
+  for (let night = 0; night < 20; night++) {
+    const t = night * 86400 + 80000;
+    const drawn = companion.pairs(ids, t, true);
+    const [[a, b], [c, d]] = drawn;
+    // a is on a trip: c and d stay together, b is alone (three at home)
+    assert.deepEqual(companion.pairs(ids, t, true, new Set([a])), [[c, d]]);
+    // a and c away: b and d, both left alone, sleep side by side
+    assert.deepEqual(companion.pairs(ids, t, true, new Set([a, c])), [[b, d]]);
+    assert.ok(b && d);
+  }
+});
+
 test("playing together, each copies a trick from the other, but never learns it that way", () => {
   const day = at("2026-10-12 08:00");
   const [start, end] = companion.outWindow(day + 4 * HOUR);
