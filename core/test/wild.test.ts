@@ -8,7 +8,7 @@ import * as home from "../src/home";
 import * as life from "../src/life";
 import * as model from "../src/model";
 import { Random } from "../src/random";
-import { fromDict, toDict, type PetState } from "../src/state";
+import { fromDict, toDict, type Friend, type PetState } from "../src/state";
 import * as trip from "../src/trip";
 import * as wild from "../src/wild";
 import { ALL_TRICKS, BEDTIME, act, at, grown, withRules } from "./helpers";
@@ -50,7 +50,10 @@ test("only an adult without a friend is looking", () => {
   assert.deepEqual(met(pet, "forest"), new Set([null, "filchfox", "roamtail", "twiggle", "needlenub"]));
   assert.deepEqual(met(pet, "mountain"), new Set([null, "prismist"])); // the cloud line; the thundercloud only in the rain
   assert.ok(met(pet, "mountain", 63).has("rumblefluff"));
-  const changes = [{ stage: "child" }, { friend: { species: "sneezle" } }, { nest: { line: "blob" } },
+  // a friend that hasn't built a nest yet, or as many friends as it can have
+  const old = { species: "sneezle", visits: 0, next: 0, nests: 1 };
+  const changes = [{ stage: "child" }, { friends: [{ species: "sneezle", visits: 0, next: 0 }] },
+    { friends: Array(wild.MAX_FRIENDS).fill(old) }, { nest: { line: "blob" } },
     { eggs: Array(home.MAX_EGGS).fill({ line: "blob" }) }];
   for (const change of changes) {
     const other = copy(change);
@@ -73,7 +76,7 @@ test("tricks that work make a friend", () => {
   let shown = wild.show(pet, "sneezle", rng, start); // it knows no trick at all
   assert.equal(shown.outcome, "shrug");
   assert.deepEqual(shown.rounds.map(([, worked]) => worked), Array(wild.SHOW).fill(false));
-  assert.equal(pet.friend, null);
+  assert.deepEqual(pet.friends, []);
   pet.tricks = { bow: care.TRICKS.bow, spin: 1.0 };
   const many = Array.from({ length: 200 }, (_, i) => wild.show(copy(), "sneezle", new Random(i), start));
   assert.deepEqual(new Set(many.flatMap((s) => s.rounds.map(([trick]) => trick))), new Set(["bow", "spin"]));
@@ -82,10 +85,10 @@ test("tricks that work make a friend", () => {
   pet.tricks = { ...ALL_TRICKS };
   shown = wild.show(pet, "sneezle", rng, start);
   assert.equal(shown.outcome, "friend");
-  const friend = pet.friend!;
+  const friend: Friend = pet.friends[0];
   assert.deepEqual([friend.species, friend.visits], ["sneezle", 0]);
   assert.ok(wild.FIRST_VISIT[0] <= friend.next - start && friend.next - start <= wild.FIRST_VISIT[1]);
-  pet.friend = null;
+  pet.friends = [];
   pet.stats.mood = wild.GLUM - 1; // glum: every trick is a coin toss
   const glum = Array.from({ length: 200 }, (_, i) => wild.show(copy(), "sneezle", new Random(i), start))
     .filter((s) => s.outcome === "friend").length;
@@ -99,7 +102,7 @@ test("meeting a wild pet on a trip", () => {
     runUntil(pet.trip!.stations[0] + 60);
     const last = pet.trip!.last!;
     assert.deepEqual([last.kind, last.outcome, last.rounds!.length], ["wild", "friend", wild.SHOW]);
-    assert.equal(pet.friend!.species, last.wild);
+    assert.equal(pet.friends[0].species, last.wild);
     assert.equal(pet.events.at(-1)!.item, `${last.wild}:friend`);
     runUntil(pet.trip!.stations[1] + 60);
     assert.notEqual(pet.trip!.last!.kind, "wild"); // it has a friend now
@@ -108,7 +111,7 @@ test("meeting a wild pet on a trip", () => {
 
 test("visits lead to a nest with an egg", () => {
   pet.skills = { strength: 80.0, speed: 41.0, smarts: 0.0 };
-  pet.friend = { species: "sneezle", visits: 0, next: start + 600 };
+  pet.friends = [{ species: "sneezle", visits: 0, next: start + 600 }];
   runUntil(start + 540);
   assert.equal(wild.visiting(pet, start + 540), false);
   runUntil(start + 660);
@@ -116,7 +119,7 @@ test("visits lead to a nest with an egg", () => {
   assert.deepEqual([pet.events.at(-1)!.action, pet.events.at(-1)!.item], ["visit", "sneezle"]);
   const mood = pet.stats.mood;
   runUntil(start + 660 + wild.VISIT_SECONDS);
-  const friend = pet.friend!;
+  const friend = pet.friends[0];
   assert.deepEqual([friend.visits, wild.visiting(pet, pet.updated_at)], [1, false]);
   assert.ok(pet.stats.mood > mood);
   const wait = friend.next - pet.updated_at;
@@ -125,18 +128,18 @@ test("visits lead to a nest with an egg", () => {
   friend.next = pet.updated_at;
   pet.stats.mood = 20;
   runUntil(pet.updated_at + wild.VISIT_SECONDS + 120);
-  assert.equal(pet.friend!.visits, 1);
+  assert.equal(pet.friends[0].visits, 1);
   Object.assign(pet.stats, { mood: 90, satiety: 90, energy: 90 });
-  pet.friend!.next = pet.updated_at;
+  pet.friends[0].next = pet.updated_at;
   pet.asleep = true;
   pet.sleep_since = pet.updated_at;
   runUntil(pet.updated_at + 300);
-  assert.ok(!("until" in pet.friend!)); // it doesn't come while the pet is asleep
-  // the last visit: a nest, the friend moves on
+  assert.ok(!("until" in pet.friends[0])); // it doesn't come while the pet is asleep
+  // the last visit: a nest, and the friend stays
   pet.asleep = false;
-  pet.friend!.visits = wild.VISITS_FOR_NEST - 1;
+  pet.friends[0].visits = wild.VISITS_FOR_NEST - 1;
   runUntil(pet.updated_at + wild.VISIT_SECONDS + 120);
-  assert.equal(pet.friend, null);
+  assert.deepEqual([pet.friends[0].species, pet.friends[0].visits, pet.friends[0].nests], ["sneezle", 0, 1]);
   assert.deepEqual(pet.nest, { line: "blob", from: "Puff", skills: { strength: 20.0, speed: 10.3, smarts: 0.0 } });
   assert.deepEqual([pet.events.at(-1)!.action, pet.events.at(-1)!.item], ["nest", "blob"]);
   assert.equal(wild.looking(pet), false); // not while the egg is still in the nest
@@ -148,12 +151,76 @@ test("visits lead to a nest with an egg", () => {
   assert.equal(wild.looking(pet), true);
 });
 
+test("after the nest the friend stays, comes less often, and after a rest there is another nest", () => {
+  const friend: Friend = { species: "sneezle", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start };
+  pet.friends = [friend];
+  assert.deepEqual(wild.step(pet, start, true), [["nest", pet.nest!.line]]);
+  assert.deepEqual([friend.visits, friend.nests, friend.rest_until], [0, 1, start + wild.NEST_REST]);
+  const wait = friend.next - start;
+  assert.ok(wild.OLD_VISIT_EVERY[0] <= wait && wait <= wild.OLD_VISIT_EVERY[1]);
+  act(pet, "collect", start + 60);
+  // it can make a new friend now, since the old one has built its nest
+  assert.equal(wild.looking(pet), true);
+  // while it rests, its visits cheer the pet up and may bring a gift, but don't count
+  const resting = start + wild.NEST_REST - 60;
+  Object.assign(friend, { visits: wild.VISITS_FOR_NEST - 1, until: resting });
+  const mood = pet.stats.mood;
+  wild.step(pet, resting, true);
+  assert.deepEqual([friend.visits, pet.nest], [wild.VISITS_FOR_NEST - 1, null]);
+  assert.ok(pet.stats.mood > mood);
+  // after it, they do again
+  const later = start + wild.NEST_REST;
+  friend.until = later;
+  assert.deepEqual(wild.step(pet, later, true), [["nest", pet.nest!.line]]);
+  assert.deepEqual([friend.visits, friend.nests, friend.rest_until], [0, 2, later + wild.NEST_REST]);
+});
+
+test("a nest waits while there is no room for the egg", () => {
+  const friend: Friend = { species: "sneezle", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start };
+  pet.friends = [friend];
+  pet.nest = { line: "ember" };
+  wild.step(pet, start, true);
+  assert.deepEqual([pet.nest.line, friend.visits, friend.nests], ["ember", wild.VISITS_FOR_NEST, undefined]);
+  pet.nest = null;
+  pet.eggs = Array(home.MAX_EGGS).fill({ line: "blob" });
+  friend.until = start + 60;
+  wild.step(pet, start + 60, true);
+  assert.deepEqual([pet.nest, friend.visits], [null, wild.VISITS_FOR_NEST]);
+  pet.eggs = [];
+  friend.until = start + 120;
+  wild.step(pet, start + 120, true);
+  assert.deepEqual([pet.nest!.from, friend.visits, friend.nests], ["Puff", 0, 1]);
+});
+
+test("several friends visit one at a time", () => {
+  pet.friends = [
+    { species: "sneezle", visits: 0, next: start, nests: 1 },
+    { species: "flicker", visits: 0, next: start },
+  ];
+  assert.deepEqual(wild.step(pet, start, true), [["visit", "sneezle"]]);
+  assert.deepEqual(wild.step(pet, start + 60, true), []); // the other one waits
+  assert.equal(wild.visitor(pet, start + 60)!.species, "sneezle");
+  wild.step(pet, start + wild.VISIT_SECONDS, true);
+  assert.equal(wild.visiting(pet, start + wild.VISIT_SECONDS), false);
+  // and comes a while after the first one has left
+  assert.equal(pet.friends[1].next, start + wild.VISIT_SECONDS + wild.BETWEEN_VISITS);
+  runUntil(start + wild.VISIT_SECONDS + wild.BETWEEN_VISITS + 60);
+  assert.equal(wild.visitor(pet, pet.updated_at)!.species, "flicker");
+});
+
+test("a pet saved with one friend keeps it", () => {
+  const friend = { species: "sneezle", visits: 2, next: start };
+  const { friends: _, ...saved } = toDict(pet) as unknown as Record<string, unknown>;
+  assert.deepEqual(fromDict({ ...saved, friend }).friends, [friend]);
+  assert.deepEqual(fromDict({ ...saved, friend: null }).friends, []);
+});
+
 test("the egg is of either line", () => {
   pet.species = "flarelet";
   const lines = new Set<string>();
   for (let i = 0; i < 40; i++) {
     const other = copy();
-    other.friend = { species: "sneezle", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 };
+    other.friends = [{ species: "sneezle", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
     wild.step(other, start + i * 60, true);
     lines.add(other.nest!.line);
   }
@@ -164,7 +231,7 @@ test("a friend of the stone line can bring its egg into the home", () => {
   const lines = new Set<string>();
   for (let i = 0; i < 40; i++) {
     const other = copy();
-    other.friend = { species: "bouldergrin", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 };
+    other.friends = [{ species: "bouldergrin", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
     wild.step(other, start + i * 60, true);
     lines.add(other.nest!.line);
     if (other.nest!.line === "stone") {
@@ -180,7 +247,7 @@ test("a friend of the fox line can bring its egg into the home", () => {
   const lines = new Set<string>();
   for (let i = 0; i < 40; i++) {
     const other = copy();
-    other.friend = { species: "filchfox", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 };
+    other.friends = [{ species: "filchfox", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
     wild.step(other, start + i * 60, true);
     lines.add(other.nest!.line);
   }
@@ -192,7 +259,7 @@ test("a friend of the cloud line can bring its egg into the home", () => {
   const lines = new Set<string>();
   for (let i = 0; i < 40; i++) {
     const other = copy();
-    other.friend = { species: "rumblefluff", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 };
+    other.friends = [{ species: "rumblefluff", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
     wild.step(other, start + i * 60, true);
     lines.add(other.nest!.line);
   }
@@ -204,7 +271,7 @@ test("some visits bring a gift, and only one lies there at a time", () => {
   const gifts = new Set<string | null>();
   for (let i = 0; i < 200; i++) {
     const other = copy();
-    other.friend = { species: "sneezle", visits: 0, next: 0, until: start + i * 60 };
+    other.friends = [{ species: "sneezle", visits: 0, next: 0, until: start + i * 60 }];
     const happened = wild.step(other, start + i * 60, true);
     gifts.add(other.gift);
     if (other.gift) {
@@ -212,7 +279,7 @@ test("some visits bring a gift, and only one lies there at a time", () => {
     }
     // with a gift still lying there, the next visit brings nothing new
     const lying = other.gift;
-    other.friend!.until = start + i * 60 + 1;
+    other.friends[0].until = start + i * 60 + 1;
     wild.step(other, start + i * 60 + 1, true);
     if (lying) {
       assert.equal(other.gift, lying);
@@ -224,10 +291,10 @@ test("some visits bring a gift, and only one lies there at a time", () => {
   // a visit that doesn't count brings nothing, and neither does the one that builds the nest
   for (let i = 0; i < 40; i++) {
     const glum = copy({ stats: { ...pet.stats, mood: 20 } });
-    glum.friend = { species: "sneezle", visits: 0, next: 0, until: start + i * 60 };
+    glum.friends = [{ species: "sneezle", visits: 0, next: 0, until: start + i * 60 }];
     wild.step(glum, start + i * 60, true);
     const last = copy();
-    last.friend = { species: "sneezle", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 };
+    last.friends = [{ species: "sneezle", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
     wild.step(last, start + i * 60, true);
     assert.deepEqual([glum.gift, last.gift], [null, null]);
   }

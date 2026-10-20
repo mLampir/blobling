@@ -1,5 +1,5 @@
 {
-  "api": 4,
+  "api": 5,
   "oldest": 4,
   "routes": [
     "GET /api/pet",
@@ -81,6 +81,7 @@
     "GET /api/pet favorite_food": "null",
     "GET /api/pet found": "null",
     "GET /api/pet friend": "null",
+    "GET /api/pet friends": "array",
     "GET /api/pet game": "null",
     "GET /api/pet gift": "boolean",
     "GET /api/pet grandma": "null",

@@ -155,7 +155,7 @@ test("a rare egg is kept until it is brooded", () => {
   assert.deepEqual(state.eggs, [
     { id: 0, line: "blob", label: "Slime egg", from: "Mum", skills: [{ id: "strength", label: "Strength", value: 20 }] },
     { id: 1, line: "ember", label: "Ember egg", from: null, skills: [] }]);
-  assert.deepEqual([state.friend, state.nest, state.actions.collect], [null, null, false]);
+  assert.deepEqual([state.friends, state.friend, state.nest, state.actions.collect], [[], null, null, false]);
   state = pet.newEgg(null, now + 60); // starting over with a usual egg leaves them where they are
   assert.deepEqual([state.species, state.eggs.length, state.items.map((i) => i.id)], ["blob", 2, ["daisy"]]);
   pet.state.stage = "child";
@@ -173,12 +173,12 @@ test("friend and nest in snapshot and view", () => {
   const pet = new Disk().pet();
   pet.state = grown(now);
   Object.assign(pet.state, { stage: "adult", species: "cyclopuff" });
-  pet.state.friend = { species: "sneezle", visits: 1, next: now + 9999, until: now + 200 };
+  pet.state.friends = [{ species: "sneezle", visits: 1, next: now + 9999, until: now + 200 }];
   pet.state.nest = { line: "ember", skills: {} };
   const state = pet.snapshot(now);
   const view = pet.view(now);
-  assert.deepEqual(state.friend,
-    { species: "sneezle", label: "Sneezle", visits: 1, needed: wild.VISITS_FOR_NEST, visiting: true });
+  const friend = { species: "sneezle", label: "Sneezle", visits: 1, needed: wild.VISITS_FOR_NEST, visiting: true, resting: false };
+  assert.deepEqual([state.friends, state.friend], [[friend], friend]);
   assert.deepEqual([state.nest, state.actions.collect], [{ line: "ember", label: "Ember egg" }, true]);
   assert.deepEqual([view.nest, view.visitor],
     ["ember", { species: "sneezle", left: 200, age: wild.VISIT_SECONDS - 200 }]);

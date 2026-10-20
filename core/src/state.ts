@@ -106,12 +106,18 @@ export interface Egg {
   skills?: Record<string, number>;
 }
 
-/** The wild pet it has made friends with; `until` is set while it is visiting. */
+/**
+ * A wild pet it has made friends with; `until` is set while it is visiting. `visits` count
+ * towards the next nest; `nests`: how many the two have built, `rest_until`: till when visits
+ * don't count yet after the last one (wild.ts).
+ */
 export interface Friend {
   species: string;
   visits: number;
   next: number;
   until?: number;
+  nests?: number;
+  rest_until?: number;
 }
 
 export interface Plant {
@@ -193,7 +199,8 @@ export interface PetState {
   /** Find -> count (home.ITEMS), except for eggs. */
   items: Record<string, number>;
   eggs: Egg[];
-  friend: Friend | null;
+  /** The wild pets it has made friends with, the first first. */
+  friends: Friend[];
   /** The egg the two have laid, until it is collected. */
   nest: Egg | null;
   /** What a friend has left behind (wild.giftFrom), until it is unwrapped. */
@@ -267,7 +274,7 @@ export function newState(): PetState {
     backpack: [],
     items: {},
     eggs: [],
-    friend: null,
+    friends: [],
     nest: null,
     gift: null,
     found: null,
@@ -305,6 +312,9 @@ export function fromDict(data: Record<string, unknown>): PetState {
   }
   if (!("house" in data) && state.guardians.includes("mountain")) {
     state.house = 1; // saved before there was a house, by a pet that has already earned the hut
+  }
+  if (!("friends" in data) && data.friend) {
+    state.friends = [data.friend as Friend]; // saved when a pet had at most one friend
   }
   if (!("guardian_eggs" in data)) {
     // saved before guardians kept track of their eggs: back then only the cave's guardian had one

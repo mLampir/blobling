@@ -107,7 +107,7 @@ test("now and then it comes out, and at night the two sleep side by side", () =>
   assert.deepEqual([night.asleep, night.age], [true, 60]);
   // a friend's visit comes first
   pet.state.asleep = false;
-  pet.state.friend = { species: "sneezle", visits: 0, next: end + 9999, until: start + 300 };
+  pet.state.friends = [{ species: "sneezle", visits: 0, next: end + 9999, until: start + 300 }];
   assert.equal(pet.view(start + 200).visitor!.species, "sneezle");
 });
 
