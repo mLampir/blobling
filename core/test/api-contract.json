@@ -1,5 +1,5 @@
 {
-  "api": 7,
+  "api": 6,
   "oldest": 5,
   "routes": [
     "GET /api/pet",
