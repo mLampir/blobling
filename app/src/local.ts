@@ -189,6 +189,23 @@ export class LocalPet {
     this.draw();
   }
 
+  /** While the home is empty: the ancestors that can come home again (Pet.bringBack), the latest first. */
+  restingAncestors(): { name: string; stage: string; species: string; born_at: number }[] {
+    return this.rest.ancestors.filter((a) => a.pet).reverse()
+      .map(({ name, stage, species, born_at }) => ({ name, stage, species, born_at }));
+  }
+
+  /** An ancestor comes home into the empty home (by way of a new egg, which makes room for it at once). */
+  bringHome(bornAt: number): void {
+    if (this.home || !this.rest.ancestors.some((a) => a.pet && a.born_at === bornAt)) {
+      throw new Error(this.i18n.t("error.no_ancestor"));
+    }
+    this.hatch();
+    this.pet.bringBack(bornAt, this.pet.current);
+    this.pet.save();
+    this.draw();
+  }
+
   /** After a pet left: with the last one gone, the home keeps its ancestors, album and store. */
   private emptied(store: PetState): void {
     if (this.home && !this.home.pets.length) {

@@ -108,6 +108,8 @@ export class Display {
   readonly height: number;
   /** What the panel is showing right now (for the live preview). */
   lastFrame: Image;
+  /** The camera's pet as its scene drew it last, before any pan along the street (frameOf). */
+  private unpanned: Image;
   /** Who waits for the next frame (the live preview of the app). */
   private frameWaiters: (() => void)[] = [];
   private readonly panel: FrameSink | null;
@@ -144,6 +146,7 @@ export class Display {
     this.scenes.set(this.pet.current, first);
     this.keepPinned();
     this.lastFrame = this.blank();
+    this.unpanned = this.lastFrame;
   }
 
   // ---------- State (called from the web interface) ----------
@@ -510,6 +513,7 @@ export class Display {
     }
     this.forgetGone();
     let [frame, delay] = this.sceneFor(this.camera).render(this.pet.view(undefined, this.camera), weather.current());
+    this.unpanned = frame;
     const panning = this.panning;
     if (panning) {
       const progress = (monotonic() - panning.start) / panning.seconds;
@@ -542,7 +546,10 @@ export class Display {
   async frameOf(id: unknown, next: boolean, seconds: number): Promise<Image> {
     const pet = id === null || id === undefined ? this.camera : this.pet.find(id).id;
     if (pet === this.camera) {
-      return next ? this.nextFrame(seconds) : this.lastFrame;
+      const frame = next ? await this.nextFrame(seconds) : this.lastFrame;
+      // a phone that asks for this pet pans over to it by itself: while the panel pans, it gets the
+      // pet's own picture, without the house the panel is leaving (that would show twice)
+      return this.panning && id !== null && id !== undefined ? this.unpanned : frame;
     }
     let preview = this.previews.get(pet);
     if (preview && !next) {

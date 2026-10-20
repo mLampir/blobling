@@ -444,7 +444,9 @@
     },
     "empty": {
       "title": "No pet lives on this phone right now",
-      "egg": "New egg"
+      "egg": "New egg",
+      "ancestor": "Bring one back from the ancestors",
+      "ancestor_which": "Who should come home?"
     },
     "stats": {
       "satiety": "Fullness",

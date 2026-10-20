@@ -467,6 +467,17 @@ const app = {
     location.reload();
   },
 
+  /** While no pet lives on the phone: the ancestors that can come home, latest first. */
+  async restingAncestors(): Promise<{ name: string; stage: string; species: string; born_at: number }[]> {
+    return (await local!).restingAncestors();
+  },
+
+  /** While no pet lives on the phone: this ancestor (its born_at) comes home. */
+  async bringHome(bornAt: number): Promise<void> {
+    (await local!).bringHome(bornAt);
+    showScene();
+  },
+
   /** A new egg on the phone, when no pet lives there (LocalPet.hatch). */
   async hatch(): Promise<void> {
     (await local!).hatch();

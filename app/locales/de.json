@@ -444,7 +444,9 @@
     },
     "empty": {
       "title": "Gerade wohnt kein Pet auf diesem Handy",
-      "egg": "Neues Ei"
+      "egg": "Neues Ei",
+      "ancestor": "Aus den Ahnen holen",
+      "ancestor_which": "Wer soll heimkommen?"
     },
     "stats": {
       "satiety": "Sättigung",

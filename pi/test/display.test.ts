@@ -190,6 +190,8 @@ test("the panel pans along the street, and a phone gets the frames of a pet the 
     assert.equal(own.width, 64);
     assert.equal(await display.frameOf(second, false, 1), own);
     assert.equal(await display.frameOf(null, false, 1), display.lastFrame);
+    // a phone looking at the panel's pet pans by itself: it gets the picture without the pan
+    assert.notEqual(await display.frameOf(first, false, 1), display.lastFrame);
   } finally {
     display.stop();
   }

@@ -242,7 +242,8 @@ favorite can stay while new eggs are raised for the album.
 - **Send to the ancestors** (under *More*) lets any pet of the home go to
   rest without a new egg taking its place, not only the one on screen. A special egg goes back to the finds, to be brooded
   later; a usual one is gone. The display always keeps one pet; a phone may
-  end up with none, keeps its finds and asks before a new egg comes.
+  end up with none, keeps its finds and offers a new egg or one of its
+  ancestors.
 - **The ancestors' gallery** keeps the pets that went to rest, frozen: they
   lose nothing, don't grow on and don't get older. **Bring home** next to one
   of them brings it back as it was when it left, into a free house or in

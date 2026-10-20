@@ -567,6 +567,7 @@
 <div class="offline" id="empty" hidden>
   <strong data-t="page.empty.title"></strong>
   <button class="wide primary" id="empty-egg" data-t="page.empty.egg"></button>
+  <button class="wide" id="empty-ancestor" data-t="page.empty.ancestor" hidden></button>
   <button class="link" id="empty-connect" data-t="page.app.connect" hidden></button>
 </div>
 
@@ -758,7 +759,7 @@ async function api(method, url, body) {
 }
 
 function fail(err) {
-  if (err.empty) $("empty").hidden = false; // the last pet left the phone: a new egg only when asked for
+  if (err.empty) showEmpty(); // the last pet left the phone: a new egg only when asked for
   else if (err.offline) setOffline(true);
   else say(err.message, true);
 }
@@ -2523,6 +2524,24 @@ $("connect").addEventListener("click", async () => {
 });
 
 // No pet on the phone (the last one went to the display): a new egg, or back to the display
+async function showEmpty() {
+  $("empty").hidden = false;
+  $("empty-ancestor").hidden = !(await app.restingAncestors()).length;
+}
+$("empty-ancestor").addEventListener("click", async () => {
+  const ancestors = await app.restingAncestors();
+  const bornAt = await chooseFrom(t("page.empty.ancestor_which"), ancestors.map((a) => [String(a.born_at),
+    app.icon(a.stage, a.species), a.name, ""]));
+  if (!bornAt) return;
+  try {
+    await app.bringHome(Number(bornAt));
+    $("empty").hidden = true;
+    feel("ok");
+  } catch (err) {
+    say(err.message, true);
+  }
+  refresh();
+});
 $("empty-egg").addEventListener("click", async () => {
   await app.hatch();
   $("empty").hidden = true;
