@@ -190,6 +190,8 @@ export interface PetState {
   /** A hot afternoon: it sweats until then; and the local day this last happened (home.ts). */
   hot_until: number;
   hot_day: number;
+  /** Lines the home has long been missing (set by the home, see Pet.longMissing): their wild pets come more often. */
+  missing_lines: string[];
   counters: Record<string, number>;
   weight: number;
   bond: number;
@@ -277,6 +279,7 @@ export function newState(): PetState {
     cold_until: 0.0,
     hot_until: 0.0,
     hot_day: 0,
+    missing_lines: [],
     counters: {},
     weight: care.IDEAL_WEIGHT.baby,
     bond: 20.0,
