@@ -280,6 +280,14 @@
   .choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
   .choices button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
   .choices button.on { border-color: var(--accent); color: var(--accent); }
+  /* the areas of a trip, each with what there is to discover there and its guardian */
+  #pack-areas { flex-direction: column; align-items: stretch; }
+  #pack-areas .area { display: flex; align-items: center; gap: 10px; text-align: left; }
+  #pack-areas .area > span:first-child { min-width: 5.5em; }
+  #pack-areas .finds { flex: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  #pack-areas img { height: 22px; image-rendering: pixelated; }
+  #pack-areas .area > img { height: 30px; }
+  #pack-areas .tracks.left { filter: grayscale(1); opacity: 0.45; }
   .steps button { width: 52px; height: 52px; border-radius: 12px; border: 2px dashed var(--line); font-size: 26px; }
   .steps button.on { border-style: solid; border-color: var(--accent); }
   .link { color: var(--muted); text-decoration: underline; padding: 10px; font-size: 14px; }
@@ -1115,7 +1123,33 @@ function renderPack() {
   $("pack-say").textContent = going && going.guardian ? t("page.pack.guardian") : "";
   $("pack-areas").replaceChildren(...s.areas.map((a) => {
     const b = document.createElement("button");
-    b.textContent = a.unlocked ? a.label : `🔒 ${a.label}`;
+    b.className = "area";
+    const name = document.createElement("span");
+    name.textContent = a.unlocked ? a.label : `🔒 ${a.label}`;
+    b.append(name);
+    // What there is to discover there once, and its guardian: colored once found or beaten, else
+    // an outline. Behind a guardian the pet hasn't got past yet, nothing shows.
+    if (a.unlocked) {
+      const picture = (id, found, label) => {
+        const img = document.createElement("img");
+        img.src = app.discovery(id, found);
+        img.alt = found ? label : "?";
+        return img;
+      };
+      const finds = document.createElement("span");
+      finds.className = "finds";
+      finds.append(...a.finds.map((f) => picture(f.id, f.found, s.item_labels[f.id] || f.id)));
+      b.append(finds);
+      // tracks: a wild pet of a line never had still lives there (gray), or none does any more
+      if (a.wild_left !== null) {
+        const tracks = document.createElement("span");
+        tracks.className = "tracks";
+        tracks.textContent = "🐾";
+        tracks.classList.toggle("left", a.wild_left);
+        b.append(tracks);
+      }
+      b.append(picture(`foe_${a.keeper}`, !a.guardian, T[`foes.${a.keeper}`] || a.keeper));
+    }
     b.classList.toggle("on", !!area && a.id === area[0]);
     b.addEventListener("click", () => {
       if (!a.unlocked) return void ($("pack-say").textContent = t("page.pack.locked", { area: a.blocked_by }));

@@ -622,8 +622,9 @@ export class Pet {
     }
     pet.items = this.state.items;
     pet.eggs = this.state.eggs;
+    // Its hat and decorations exist once here too: one this home has found meanwhile isn't doubled
     for (const [item, count] of Object.entries(moving.things ?? {})) {
-      pet.items[item] = (pet.items[item] ?? 0) + Math.max(0, Math.floor(Number(count) || 0));
+      pet.items[item] = Math.min(1, (pet.items[item] ?? 0) + Math.max(0, Math.floor(Number(count) || 0)));
     }
     pet.seen_at = now;
     this.moveIn(pet, old, now);
@@ -821,6 +822,16 @@ export class Pet {
       return [];
     }
     return Object.keys(life.LINES).filter((line) => !this.album.includes(`egg:${line}`));
+  }
+
+  /**
+   * Whether a wild pet lives in this area whose line the home has never had (null if none of its
+   * wild pets belongs to a line). Once that egg came home, the area has nothing new of that kind.
+   */
+  wildLeft(area: string): boolean | null {
+    const lines = (wild.WILD[area] ?? []).map(([form]) => form).filter((form) => !life.WILD_ONLY.includes(form))
+      .map((form) => life.lineOf(form));
+    return lines.length ? lines.some((line) => !this.album.includes(`egg:${line}`)) : null;
   }
 
   /** A new name for the pet with this id (without one: the camera's). */
@@ -1045,11 +1056,15 @@ export class Pet {
       packable: trip.PACKABLE.map((k) => ({ id: k, label: t(`pack.${k}`) })),
       max_pack: trip.MAX_PACK,
       backpack: s.backpack.length, // this many finds are waiting to be unpacked
-      // blocked_by: the area whose guardian is still in the way; guardian: one is waiting here
+      // blocked_by: the area whose guardian is still in the way; guardian: one is waiting here;
+      // keeper: who guards it; finds: what there is to discover there once, and whether it has been;
+      // wild_left: whether a wild pet lives there of a line the home has never had (null: none of a
+      // line lives there), without saying which
       areas: trip.AREAS.map((k) => ({
         id: k, label: t(`areas.${k}.name`), unlocked: trip.unlocked(s, k),
         blocked_by: trip.unlocked(s, k) ? null : t(`areas.${trip.blockedBy(k)}.name`),
-        guardian: trip.guardianWaiting(s, k) !== null,
+        guardian: trip.guardianWaiting(s, k) !== null, keeper: battle.GUARDIANS[k],
+        finds: trip.discoveries(s, k), wild_left: this.wildLeft(k),
       })),
       guardians: { passed: s.guardians.length, all: trip.AREAS.length },
       // Finds: what there is, which of them are being worn or are set out, and where they stand
