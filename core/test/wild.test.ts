@@ -95,6 +95,18 @@ test("tricks that work make a friend", () => {
   assert.ok(60 < glum && glum < 140, String(glum));
 });
 
+test("a strong bond gets one try more", () => {
+  pet.tricks = { bow: care.TRICKS.bow, spin: 1.0 };
+  const tries = (bond: number) => Array.from({ length: 200 },
+    (_, i) => wild.show(copy({ bond }), "sneezle", new Random(i), start));
+  const weak = tries(0);
+  const strong = tries(wild.BOND_SHOWS * 20);
+  assert.ok(weak.every((s) => s.rounds.length === wild.SHOW));
+  assert.ok(strong.every((s) => s.rounds.length === wild.SHOW + 1));
+  const friends = (shows: ReturnType<typeof tries>) => shows.filter((s) => s.outcome === "friend").length;
+  assert.ok(friends(strong) > friends(weak) + 20, `${friends(weak)} → ${friends(strong)}`);
+});
+
 test("meeting a wild pet on a trip", () => {
   pet.tricks = { ...ALL_TRICKS };
   withRules(wild.rules, { meetChance: 1.0 }, () => {

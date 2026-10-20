@@ -464,7 +464,9 @@ watches.
 
 - A trick works as often as it has been learned, as in a scuffle. A pet in a
   bad mood only manages half as often.
-- If two of the three work, the wild pet is impressed and the two are
+- A pet with three bond hearts or more is sure of itself and shows a fourth
+  trick.
+- If two of them work, the wild pet is impressed and the two are
   friends. Otherwise it hops on, and the pet may meet another one on a later
   trip.
 
