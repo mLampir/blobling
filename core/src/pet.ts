@@ -1045,11 +1045,13 @@ export class Pet {
       packable: trip.PACKABLE.map((k) => ({ id: k, label: t(`pack.${k}`) })),
       max_pack: trip.MAX_PACK,
       backpack: s.backpack.length, // this many finds are waiting to be unpacked
-      // blocked_by: the area whose guardian is still in the way; guardian: one is waiting here
+      // blocked_by: the area whose guardian is still in the way; guardian: one is waiting here;
+      // keeper: who guards it; finds: what there is to discover there once, and whether it has been
       areas: trip.AREAS.map((k) => ({
         id: k, label: t(`areas.${k}.name`), unlocked: trip.unlocked(s, k),
         blocked_by: trip.unlocked(s, k) ? null : t(`areas.${trip.blockedBy(k)}.name`),
-        guardian: trip.guardianWaiting(s, k) !== null,
+        guardian: trip.guardianWaiting(s, k) !== null, keeper: battle.GUARDIANS[k],
+        finds: trip.discoveries(s, k),
       })),
       guardians: { passed: s.guardians.length, all: trip.AREAS.length },
       // Finds: what there is, which of them are being worn or are set out, and where they stand

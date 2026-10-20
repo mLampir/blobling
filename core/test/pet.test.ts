@@ -30,7 +30,8 @@ test("trip in snapshot and view", () => {
   assert.deepEqual(state.areas.map((a) => [a.id, a.unlocked]),
     [["meadow", true], ["forest", false], ["stream", false], ["cave", false], ["mountain", false]]);
   assert.deepEqual(state.areas[1],
-    { id: "forest", label: "Mushroom forest", unlocked: false, blocked_by: "Meadow", guardian: true });
+    { id: "forest", label: "Mushroom forest", unlocked: false, blocked_by: "Meadow", guardian: true, keeper: "mosswart",
+      finds: ["glowshroom", "lantern", "cap", "snailshell"].map((id) => ({ id, found: false })) });
   assert.deepEqual(state.guardians, { passed: 0, all: 5 });
   assert.deepEqual(state.items[0], { id: "seed_berry", label: "Berry seed", kind: "seed", count: 2, active: false, place: null, effects: [] });
   assert.equal(view.area, "meadow");

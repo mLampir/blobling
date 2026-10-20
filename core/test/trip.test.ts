@@ -115,6 +115,17 @@ test("areas open one after the other", () => {
   assert.equal(pet.trip!.guardian, "ripplesprite");
 });
 
+test("each area shows what is still to discover there once", () => {
+  const found = () => trip.discoveries(pet, "meadow").filter((f) => f.found).map((f) => f.id);
+  assert.deepEqual(trip.discoveries(pet, "meadow").map((f) => f.id), ["egg_beak", "flag", "windmill", "daisy", "leaf", "bobble"]);
+  assert.deepEqual(found(), []);
+  home.addItem(pet, "windmill");
+  home.addItem(pet, "seed_berry"); // seeds come again and again, they don't count
+  pet.guardian_eggs.push("meadow");
+  assert.deepEqual(found(), ["egg_beak", "windmill"]);
+  assert.equal(trip.discoveries(pet, "forest")[0].id, "glowshroom"); // its guardian has no egg
+});
+
 test("healing herb cures", () => {
   pet.items.seed_herb = 1;
   assert.deepEqual(act(pet, "plant", start, { item: "herb" }), [true, null]);
