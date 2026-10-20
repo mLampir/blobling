@@ -263,7 +263,9 @@ with the display out of reach, the app shows only the phone's own pets.
   it into the phone, with its house: it lives there until it is brought back,
   also when the app is opened at home.
 - **Bring to the display** (for a pet of the phone) moves it into a house at
-  the display. Both ask where it should live, as a new egg does.
+  the display. Both ask where it should live, as a new egg does. A phone whose
+  last pet went to the display stays empty, also without the display; a new
+  egg comes only when you ask for one.
 - **A pet lives in one place only.** Every pet carries a move number, and the
   display remembers the last one of every pet that moved, so an old copy (an
   old save file, a phone's backup) is turned away. One pet always stays at the

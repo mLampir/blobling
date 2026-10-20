@@ -465,6 +465,12 @@ const app = {
     location.reload();
   },
 
+  /** A new egg on the phone, when no pet lives there (LocalPet.hatch). */
+  async hatch(): Promise<void> {
+    (await local!).hatch();
+    showScene();
+  },
+
   /** Back to the pets on the phone; the display keeps its own. */
   disconnect(): void {
     localStorage.removeItem(PI_KEY);

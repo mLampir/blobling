@@ -430,6 +430,10 @@
       "title": "Anzeige nicht erreichbar",
       "hint": "Bist du im WLAN zu Hause?"
     },
+    "empty": {
+      "title": "Gerade wohnt kein Pet auf diesem Handy",
+      "egg": "Neues Ei"
+    },
     "stats": {
       "satiety": "Sättigung",
       "mood": "Laune",

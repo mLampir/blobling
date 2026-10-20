@@ -430,6 +430,10 @@
       "title": "Can't reach the display",
       "hint": "Are you on your home Wi-Fi?"
     },
+    "empty": {
+      "title": "No pet lives on this phone right now",
+      "egg": "New egg"
+    },
     "stats": {
       "satiety": "Fullness",
       "mood": "Mood",

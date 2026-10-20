@@ -11,7 +11,8 @@
  *
  * Connected to a display, the phone keeps its own home next to the display's: its pets stay on the
  * phone, and pets move between the two only on purpose (release, adopt). That home can be empty
- * then; it keeps its ancestors and album until a pet moves in again.
+ * then; it keeps its ancestors and album until a pet moves in again, or a new egg is asked for
+ * (hatch). It stays empty when the app is disconnected, too: no egg turns up unasked.
  */
 
 import { NOT_A_PET_ROUTE, ownTarget, petRequest } from "../../core/src/api";
@@ -51,7 +52,7 @@ interface EmptyHome {
 }
 
 export class LocalPet {
-  /** The pets on the phone, or null while none lives here (only while connected to a display). */
+  /** The pets on the phone, or null while none lives here (after the last one left, or connected to a display). */
   private home: Pet | null = null;
   private rest: { ancestors: Ancestor[]; album: string[] } = { ancestors: [], album: [] };
   private readonly scenes = new Map<string, PetScene>();
@@ -69,7 +70,8 @@ export class LocalPet {
     const location = savedLocation();
     let restored: ReturnType<typeof readSave> | null = null;
     const empty = saved as Partial<EmptyHome> | undefined;
-    if (empty && typeof empty === "object" && empty.pet === null) {
+    const emptied = !!empty && typeof empty === "object" && empty.pet === null;
+    if (emptied) {
       this.rest = { ancestors: [...empty.ancestors ?? []], album: [...empty.album ?? []] };
     } else if (saved !== undefined) {
       try {
@@ -84,13 +86,10 @@ export class LocalPet {
     this.sceneLocation = location;
     if (restored) {
       this.home = this.newHome(restored);
-    } else if (create) {
-      // nothing saved yet, or an empty home: a new egg, which is there from now on (connected to
-      // a display, the home stays empty instead, so that no pet turns up unasked)
-      this.home = this.newHome(null);
-      this.home.ancestors.push(...this.rest.ancestors);
-      this.home.album.push(...this.rest.album);
-      this.home.save();
+    } else if (create && !emptied) {
+      // nothing saved yet: a new egg, which is there from now on (connected to a display, the home
+      // stays empty instead; a home whose last pet left stays empty until somebody asks, hatch)
+      this.hatch();
     }
     this.reminders = reminders(i18n);
     this.reminders?.clear(); // the pet is right here now
@@ -128,7 +127,7 @@ export class LocalPet {
     return this.home;
   }
 
-  /** Whether no pet lives on the phone (only while connected to a display). */
+  /** Whether no pet lives on the phone. */
   get empty(): boolean {
     return !this.home;
   }
@@ -166,6 +165,18 @@ export class LocalPet {
     this.draw();
   }
 
+  /** A new egg in an empty home, which keeps its ancestors and album. */
+  hatch(): void {
+    if (this.home) {
+      return;
+    }
+    this.home = this.newHome(null);
+    this.home.ancestors.push(...this.rest.ancestors);
+    this.home.album.push(...this.rest.album);
+    this.home.save();
+    this.draw();
+  }
+
   /** After a pet left: with the last one gone, the home keeps only its ancestors and album. */
   private emptied(): void {
     if (this.home && !this.home.pets.length) {
@@ -181,6 +192,9 @@ export class LocalPet {
 
   /** Answers a request of the page like the Pi would; throws an Error with the text for the page. */
   async request(method: string, path: string, body?: unknown): Promise<unknown> {
+    if (!this.home) {
+      throw Object.assign(new Error(this.i18n.t("error.no_pet")), { empty: true }); // the page offers a new egg
+    }
     let answer: unknown;
     try {
       answer = await petRequest(ownTarget(this.pet), method, new URL(path, "http://app"), async () => body ?? null);

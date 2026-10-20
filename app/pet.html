@@ -563,6 +563,12 @@
   <button class="link" id="mismatch-leave" data-t="page.app.disconnect" hidden></button>
 </div>
 
+<div class="offline" id="empty" hidden>
+  <strong data-t="page.empty.title"></strong>
+  <button class="wide primary" id="empty-egg" data-t="page.empty.egg"></button>
+  <button class="link" id="empty-connect" data-t="page.app.connect" hidden></button>
+</div>
+
 <div class="offline" id="offline" hidden>
   <strong data-t="page.offline.title"></strong>
   <span data-t="page.offline.hint"></span>
@@ -741,6 +747,7 @@ async function api(method, url, body) {
   try {
     const data = await app.request(method, url, body);
     setOffline(false);
+    $("empty").hidden = true;
     if (app.mode === "pi" && app.home() === "display") renderFit();
     return data;
   } catch (err) {
@@ -750,7 +757,8 @@ async function api(method, url, body) {
 }
 
 function fail(err) {
-  if (err.offline) setOffline(true);
+  if (err.empty) $("empty").hidden = false; // the last pet left the phone: a new egg only when asked for
+  else if (err.offline) setOffline(true);
   else say(err.message, true);
 }
 
@@ -2481,6 +2489,15 @@ $("connect").addEventListener("click", async () => {
     say(err.message, true);
   }
 });
+
+// No pet on the phone (the last one went to the display): a new egg, or back to the display
+$("empty-egg").addEventListener("click", async () => {
+  await app.hatch();
+  $("empty").hidden = true;
+  refresh();
+});
+$("empty-connect").hidden = !app.native;
+$("empty-connect").addEventListener("click", () => $("connect").click());
 
 // Back to the pets on the phone; the display keeps its own
 $("disconnect").addEventListener("click", () => app.disconnect());
