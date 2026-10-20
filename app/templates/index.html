@@ -72,6 +72,11 @@
     <p class="hint" id="night-hint" hidden></p>
   </section>
 
+  <section id="camera" hidden>
+    <h2>{{ t('settings.camera') }}</h2>
+    <select id="camera-pet" aria-label="{{ t('settings.camera') }}"></select>
+  </section>
+
   <section>
     <h2>{{ t('settings.brightness') }}</h2>
     <div class="row">
@@ -196,10 +201,21 @@ function render(s) {
     $("brightness").value = s.brightness;
     $("brightness-value").textContent = s.brightness;
   }
+  renderCamera(s);
   renderSettings(s);
   renderLocation(s);
   renderUpdate(s.update);
 }
+
+// With more than one pet: the panel follows the phones, or stays with one pet
+function renderCamera(s) {
+  $("camera").hidden = s.pets.length < 2;
+  const follow = new Option(t("settings.camera_follow"), "");
+  $("camera-pet").replaceChildren(follow, ...s.pets.map((p) => new Option(p.name, p.id)));
+  $("camera-pet").value = s.pinned ?? "";
+}
+$("camera-pet").addEventListener("change", (e) =>
+  api("POST", "/api/pin", { pet: e.target.value || null }).catch(() => render(state)));
 
 // Update: only on a Pi installed from a release. When the version changes, the update is done
 // (the service was restarted), so the page loads again in the new version.

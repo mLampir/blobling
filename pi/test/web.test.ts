@@ -86,6 +86,9 @@ test("the state of the panel is read and changed", async () => {
   const night = { enabled: false, start: "22:00", end: "06:30", action: "off", brightness: 3 };
   assert.deepEqual((await json(post("/api/night", night))).night, night);
   assert.deepEqual(app.display.state(), { mode: "off", brightness: 70, night, pinned: null });
+  assert.equal((await json(post("/api/pin", { pet: id }))).pinned, id);
+  assert.equal((await json(post("/api/pin", { pet: null }))).pinned, null);
+  assert.equal((await post("/api/pin", { pet: "nobody" })).status, 400);
 });
 
 test("language and location are set on the settings page", async () => {

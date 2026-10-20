@@ -141,3 +141,56 @@ test("the preview gets the next frame as soon as it is drawn, or the last one if
     display.stop();
   }
 });
+
+test("the camera follows a switch at once, and something done with another pet once its pet is left alone", () => {
+  const { display, pet } = parts(tempDir());
+  const first = pet.current;
+  const second = display.petNewEgg().id; // a new egg: the camera goes to it
+  assert.equal(display.camera, second);
+  display.look(first);
+  assert.equal(display.camera, first);
+  display.petAction("pet", { pet: first });
+  display.petAction("pet", { pet: second }); // somebody else, while the first one is being played with
+  assert.equal(display.camera, first);
+  refused(() => display.look("nobody"), "no_pet");
+});
+
+test("a pinned pet keeps the camera until it is unpinned or gone", () => {
+  const directory = tempDir();
+  const { display, pet } = parts(directory);
+  const first = pet.current;
+  const second = display.petNewEgg().id;
+  display.pin(first);
+  assert.equal(display.camera, first);
+  display.look(second);
+  display.petNewEgg();
+  assert.equal(display.camera, first);
+  assert.equal(parts(directory).display.state().pinned, first); // it is kept
+  display.petNewEgg(null, first); // a new egg in its place: nothing to pin any more
+  assert.equal(display.state().pinned, null);
+  display.pin(second);
+  display.pin(null);
+  display.look(pet.pets[0].id);
+  assert.equal(display.camera, pet.pets[0].id);
+});
+
+test("the panel pans along the street, and a phone gets the frames of a pet the panel doesn't show", async () => {
+  const panel = new FakePanel();
+  const { display, pet } = parts(tempDir(), panel);
+  const first = pet.current;
+  const second = display.petNewEgg().id;
+  try {
+    display.look(first);
+    let frame = panel.next();
+    display.start();
+    await frame;
+    frame = panel.next();
+    assert.ok(lit(await frame)); // still panning: drawn quickly, one frame after the other
+    const own = await display.frameOf(second, true, 1);
+    assert.equal(own.width, 64);
+    assert.equal(await display.frameOf(second, false, 1), own);
+    assert.equal(await display.frameOf(null, false, 1), display.lastFrame);
+  } finally {
+    display.stop();
+  }
+});

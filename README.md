@@ -34,9 +34,10 @@ a day and also tells you the time and the weather.
   The friend comes to visit and plays with it, brings a gift now and then, and
   in time the two lay an egg that passes a part of your pet's training on to
   the next one.
-- **Two can live at home.** A new egg doesn't take your favorite away: the
-  older pet stays at the back, comes out to play and to teach the young one a
-  trick, sleeps next to it at night, and swaps places with a tap.
+- **Up to four live at home.** A new egg doesn't take your favorite away:
+  each pet has a house of its own along a street, a tap switches between them,
+  and the neighbours get together to play, copy a trick from each other and
+  sleep side by side at night.
 - **It is forgiving.** The pet never dies. Neglect makes it hungry, sad or
   sick, and that can always be fixed. Away for longer, it stays at Grandma's
   until you fetch it.
@@ -147,7 +148,8 @@ On a phone or PC in the same network:
 - **<http://raspberrypi.local/pet>** is the same pet page in the browser,
   without installing anything.
 - **<http://raspberrypi.local/>** has the settings: pet or panel off,
-  brightness, night mode, your location and the language.
+  brightness, night mode, which pet the panel shows, your location and the
+  language.
 
 Enter your location on the settings page, as latitude and longitude in
 decimal degrees (for example from OpenStreetMap: right-click → *Show
@@ -161,8 +163,8 @@ end. It helps to tell the router to always give the Pi the same address.
 
 ## Configuration
 
-Brightness, night mode, whether the panel is on, the location and the
-language are set in the web interface and survive a restart; they are kept in
+Brightness, night mode, whether the panel is on, the pet it shows, the
+location and the language are set in the web interface and survive a restart; they are kept in
 `/var/lib/led-matrix/`.
 
 `/etc/led-matrix/config.ini` is only for the hardware and the network, and
@@ -282,7 +284,7 @@ Where things are on the Pi:
 | `/etc/apt/sources.list.d/nodesource.list` | Where Node.js comes from (with `/etc/apt/keyrings/nodesource.asc` and `/etc/apt/preferences.d/nodesource`) |
 | `/var/lib/led-matrix/pet.json` | The pet's save file |
 | `/var/lib/led-matrix/pet.before-load.json` | The pet a loaded save file replaced (settings page) |
-| `/var/lib/led-matrix/state.json` | Panel on or off, brightness, night mode |
+| `/var/lib/led-matrix/state.json` | Panel on or off, brightness, night mode, the pinned pet |
 | `/var/lib/led-matrix/settings.json` | Location and language from the settings page |
 
 ## Troubleshooting
@@ -486,7 +488,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `setup.sh` | Sets up the Pi completely (`--app`: update the app only) |
 | `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications |
 | `pi/src/main.ts` | Entry point on the Pi: panel driver, display loop, web server |
-| `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) |
+| `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) and its camera: which pet it shows, panning along the street |
 | `pi/src/web.ts`, `pi/src/network.ts` | Web interface and API, and the check that a request comes from the home network |
 | `pi/src/config.ts`, `pi/src/storage.ts` | `config.ini` and the paths; the pet's save file and the language files |
 | `pi/src/settings.ts` | Language and location as the settings page sets them (`settings.json`), over `config.ini` |
