@@ -325,6 +325,12 @@ function differIn(a: Image, b: Image, left: number, right: number, bottom: numbe
   return count;
 }
 
+test("after practicing it needs a break, and sits down and puffs now and then", () => {
+  const usual = frames({}, 60);
+  const resting = frames({ resting: true }, 60);
+  assert.ok(resting.some((image, i) => differing(image, usual[i]) > 20));
+});
+
 test("hide and seek: the pet hides, peeks out now and then, and jumps out when it is found", () => {
   const hide = (spots: string[], found: string[] = [], over = false) => ({ spots, found, peek: 3, over });
   // past either edge, nothing of it shows in the middle of the panel while it keeps still

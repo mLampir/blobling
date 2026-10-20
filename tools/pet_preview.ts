@@ -252,6 +252,8 @@ const SCENES: Record<string, Scene> = {
       rounds: [["pounce", "bow", "strong"]],
     }),
   }, DAY, null],
+  // after practicing a trick: it needs a break, sits down and puffs
+  resting: [{ resting: true }, DAY, null],
   // hide and seek: behind the house (it peeks over the roof now and then), found in the grass, and with a friend
   hide: [{
     activity: "game_wait", game: true, house: 2, plant: { kind: "cherry", stage: "grown", ripe: false },

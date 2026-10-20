@@ -19,7 +19,7 @@ import * as home from "./home";
 import * as life from "./life";
 import * as model from "./model";
 import * as notify from "./notify";
-import { hideX, houseArea, type SceneView, type TripView } from "./scene";
+import { hideX, houseArea, thingArea, type SceneView, type TripView } from "./scene";
 import * as sky from "./sky";
 import { fromDict, toDict, type Friend, type PetState } from "./state";
 import * as story from "./story";
@@ -369,6 +369,7 @@ export class Pet {
       plant: s.plant ? { kind: s.plant.kind, stage: home.plantStage(s), ripe: home.ripe(s) } : null,
       trace: s.trace ? { ...s.trace } : null,
       waiting: habits.waiting(s, now),
+      resting: !s.asleep && model.restLeft(s, ["trick", ...battle.SKILLS.map((k) => `train_${k}`)], now) > 0,
     };
   }
 
@@ -1105,6 +1106,9 @@ export class Pet {
       gift: !!s.gift,
       // what it found at home by itself ("fruit_<plant>" or "seed_<plant>"), until it is picked up
       found: s.found,
+      // where the egg, the gift and what it found lie, for a tap on them
+      lying: Object.fromEntries((["nest", "gift", "found"] as const).filter((k) => s[k])
+        .map((k) => [k, thingArea(k, s.house)])) as Record<string, number[]>,
       // what found food has left in it and is still waiting to be used (food.FOODS)
       boosts: [...s.boosts],
       item_labels: Object.fromEntries(Object.keys(home.ITEMS).map((k) => [k, t(`items.${k}`)])),

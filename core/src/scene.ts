@@ -180,6 +180,15 @@ export function hideX(spot: string, house: number): number {
   } as Record<string, number>)[spot] ?? GRASS_X;
 }
 const FOUND_X = [15, 28, 32, 38]; // per step: what the pet found at home by itself lies here, next to the plant, until it is picked up
+/**
+ * Where something waiting to be taken lies (the egg in the nest, a friend's gift, what the pet
+ * found), as parts of the scene [x, y, width, height], for a tap in the app.
+ */
+export function thingArea(kind: "nest" | "gift" | "found", house: number): [number, number, number, number] {
+  const middle = { nest: NEST_X, gift: GIFT_X, found: FOUND_X[house] }[kind];
+  const part = (n: number) => Number((n / 64).toFixed(3));
+  return [part(middle - 7), part(GROUND - 12), part(14), part(14)];
+}
 const VISIT_WALK = 3.0; // seconds it takes to hop in and out
 // While the friend is there, the two play now and then: a game, a rest standing together, the next
 // game. Only while the pet is in a decent mood, awake and has nothing else to do; otherwise the
@@ -566,6 +575,8 @@ export interface SceneView {
   trace?: { kind: string; spot: number; look: number } | null;
   /** It is about the time it is usually fed or played with: it waits at the edge (habits.ts). */
   waiting?: boolean;
+  /** It needs a break after practicing a trick or training (model.restLeft): it sits down and puffs now and then. */
+  resting?: boolean;
 }
 
 /** The weather as the weather service reports it: temperature in °C and a WMO code. */
@@ -1101,7 +1112,7 @@ export class PetScene {
       this.hideAndSeek(pose, view, t, now);
     } else if (activity === "idle") {
       const play = this.play = this.playing(view, now);
-      const show = view.waiting || play ? null : this.showOff(view, t);
+      const show = view.waiting || play || view.resting ? null : this.showOff(view, t);
       if (play) {
         this.playAlong(pose, play, t);
       } else if (view.waiting) {
@@ -1116,6 +1127,11 @@ export class PetScene {
       }
       if (mood === "tired" && Math.trunc(t) % 9 === 0) {
         pose.face = "yawn";
+      }
+      if (view.resting && !play && !view.waiting && Math.sin(t * 0.8) > 0.3) {
+        // out of breath after practicing: it sits down and puffs
+        Object.assign(pose, { body: "squash", jump: 0, face: Math.trunc(t * 1.5) % 3 ? "tired" : "yawn" });
+        this.targetX = this.x;
       }
       pose.umbrella = !show && !play && sky.precipitation(sky.codeOf(weather)) !== null;
       if (view.cold && !show && !play) {

@@ -363,11 +363,7 @@
       <div class="actions">
         <button class="soft" id="recall" hidden data-t="page.recall"></button>
         <button class="soft" id="grandma" hidden data-t="page.grandma.fetch"></button>
-        <button class="soft" id="unpack" hidden data-t="page.unpack"></button>
         <button class="soft" id="watch" hidden></button>
-        <button class="soft" id="collect" hidden data-t="page.collect"></button>
-        <button class="soft" id="unwrap" hidden data-t="page.unwrap"></button>
-        <button class="soft" id="pickup" hidden></button>
       </div>
     </div>
     <div class="tray" id="tray">
@@ -901,6 +897,14 @@ function onHouse(x, y) {
   const [u, v] = inScene(x, y), [ax, ay, aw, ah] = current.house.area;
   return u >= ax && u <= ax + aw && v >= ay && v <= ay + ah;
 }
+// What is lying in the scene at a point: "nest", "gift", "found" or null
+function lyingAt(x, y) {
+  if (!current || !current.lying || current.trip) return null;
+  const [u, v] = inScene(x, y), m = 0.02;
+  const hit = Object.entries(current.lying).find(([, [ax, ay, aw, ah]]) =>
+    u >= ax - m && u <= ax + aw + m && v >= ay - m && v <= ay + ah + m);
+  return hit ? hit[0] : null;
+}
 function overHero(x, y) {
   const r = $("hero").getBoundingClientRect();
   return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
@@ -983,22 +987,10 @@ function render(s) {
     $("trip-info").textContent = t("page.grandma.info", { name: s.name });
   }
   $("grandma").hidden = !s.grandma;
-  $("unpack").hidden = !s.backpack;
-  $("unpack").disabled = !s.actions.unpack;
   // the scuffles of the last trip, until they have been watched or the next trip sets off
   const fights = s.trip ? [] : lastFights(s);
   $("watch").hidden = !fights.length || stored("watched") === String(s.last_trip);
   $("watch").textContent = tn("page.replay.watch", fights.length);
-  // an egg is lying in the nest
-  $("collect").hidden = !s.nest;
-  $("collect").disabled = !s.actions.collect;
-  // a friend has left a gift
-  $("unwrap").hidden = !s.gift;
-  $("unwrap").disabled = !s.actions.unwrap;
-  // it found something at home by itself
-  $("pickup").hidden = !s.found;
-  $("pickup").disabled = !s.actions.pickup;
-  if (s.found) $("pickup").textContent = t("page.pickup", { thing: giftLabel(s.found) });
 
   // The tray: an egg can only be kept warm (by stroking it)
   $("tray").hidden = egg;
@@ -1101,6 +1093,7 @@ $("adventures").addEventListener("click", (e) => {
   if (id === "trip") {
     if (current.stage === "baby") return say(t("pet.rejected.too_young", { name: current.name }));
     if (current.trip) return say($("trip-info").textContent);
+    if (current.backpack) return unpack().then(() => showView("home"));
     return openPack();
   }
   if (id === "game") return act("game", "start").then((r) => { if (r && r.accepted) showView("home"); });
@@ -1812,6 +1805,13 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
       seekAt(e.clientX, e.clientY);
       return;
     }
+    // a tap on the egg, a gift or what it found takes it; on the pet with its backpack, unpacks it
+    const lying = stroke.way < 8 && lyingAt(e.clientX, e.clientY);
+    if (lying || (stroke.way < 8 && current.backpack && !current.trip && onPet(e.clientX, e.clientY))) {
+      stroke = null;
+      (lying ? TAKE[lying] : unpack)();
+      return;
+    }
     // a tap on the house looks inside for a moment
     if (stroke.way < 8 && onHouse(e.clientX, e.clientY) && !(area && onPet(e.clientX, e.clientY))) {
       stroke = null;
@@ -2152,7 +2152,8 @@ async function askTwins() {
   refresh();
 }
 
-$("unpack").addEventListener("click", async () => {
+// What is lying in the scene is taken with a tap on it (the backpack with a tap on the pet)
+async function unpack() {
   const before = current ? current.items.map((x) => x.id + x.count) : [];
   const eggs = current ? current.eggs.length : 0;
   const r = await act("unpack");
@@ -2160,12 +2161,12 @@ $("unpack").addEventListener("click", async () => {
   const got = [...r.state.items.filter((x) => !before.includes(x.id + x.count)), ...r.state.eggs.slice(eggs)]
     .map((x) => x.label);
   say(got.length ? t("page.trip.brought", { items: got.join(", ") }) : "");
-});
-$("collect").addEventListener("click", async () => {
+}
+async function collect() {
   const egg = current && current.nest;
   const r = await act("collect");
   if (r && r.accepted && egg) say(t("page.collected", { egg: egg.label }));
-});
+}
 // A gift or something found at home goes into the bag; a fruit that doesn't fit any more is eaten
 function intoBag(r, bagged, eaten) {
   const thing = r && r.accepted ? r.state.activity_item : "";
@@ -2175,14 +2176,15 @@ function intoBag(r, bagged, eaten) {
   else say(t(eaten, { fruit: giftLabel(thing), name: r.state.name }));
 }
 let before = null;
-$("unwrap").addEventListener("click", async () => {
+async function unwrap() {
   before = current;
   intoBag(await act("unwrap"), "page.unwrapped_bag", "page.unwrapped_fruit");
-});
-$("pickup").addEventListener("click", async () => {
+}
+async function pickup() {
   before = current;
   intoBag(await act("pickup"), "page.picked_bag", "page.picked_fruit");
-});
+}
+const TAKE = { nest: collect, gift: unwrap, found: pickup };
 $("grandma").addEventListener("click", () => act("grandma"));
 $("recall").addEventListener("click", async () => {
   const r = await act("trip", "recall");

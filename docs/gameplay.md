@@ -327,11 +327,12 @@ the same one over and over just cheers it up less each time.
 | Dance | back and forth, flat, at least twice | 7 points |
 | Flip | swipe up | 10 points |
 
-One practice is worth a point (up to one and a half with a strong bond), and
-several in a row are worth less, for the bond too, so learning takes a few
-days. After each practice the pet needs a break before the next one: a minute,
-then three, ten and twenty minutes if you keep going (counted over two
-hours). At first the pet mostly flops over halfway; the further along it is,
+One practice is worth a point (up to one and a half with a strong bond).
+After each practice the pet needs a break before the next one, and that break
+is the only brake: two minutes, then ten, thirty, an hour and two hours if you
+keep going (counted over six hours), so learning takes a few days. You can see
+it: while it needs the break it sits down now and then, puffing and yawning,
+and doesn't show off. At first the pet mostly flops over halfway; the further along it is,
 the more often it works. Once it knows a trick, it shows it off by itself now
 and then when it is in a good mood. While nobody is there, it practices a
 little on its own (see [While nobody is there](#while-nobody-is-there)).
@@ -371,10 +372,9 @@ watching the panel:
 | Smarts | The pet hops a sequence of directions (three at first, up to six). Swipe them back in the same order. | picks the right trick more often |
 
 A perfect exercise is worth 4 points. Training counts as playing in the care
-diary, costs energy and a little satiety, and the same exercise again within
-two hours is worth less. Between two exercises, whichever they are, the pet
-needs the same growing break as between tricks (one, three, ten, twenty
-minutes). A tap before the signal, or a sequence that is all wrong, brings
+diary, costs energy and a little satiety. Between two exercises, whichever they are,
+the pet needs the same growing break as between tricks (two, ten, thirty
+minutes, an hour, two hours); after it, an exercise counts in full again. A tap before the signal, or a sequence that is all wrong, brings
 nothing and costs nothing, not even a break.
 
 ## Trips and finds
@@ -410,7 +410,7 @@ how that went, a wild pet it met, and whether it ate something from the backpack
 It keeps the last 30 trips of this pet; a trip it was called straight back
 from doesn't count.
 
-Back home, it keeps the backpack on until you tap **Unpack** – so you are
+Back home, it keeps the backpack on until you tap the pet (or **Unpack** on the trip card) – so you are
 there to see what it brought:
 
 - **Seeds** go into the bag and are dragged from there into the scene like food. One plant grows at a time
@@ -557,7 +557,7 @@ to watch; what counts for the visit is still the pet's mood when the friend
 leaves.
 
 Now and then a visit that counts brings a **gift**. The friend leaves it on
-the ground, wrapped, and it stays there until you tap **Unwrap the gift**; no
+the ground, wrapped, and it stays there until you tap it; no
 new one comes while it is lying there. Mostly there is a fruit in it, of the
 same kinds as the plant's, and it goes into the bag (if there are three of it
 already, the pet eats it straight away). Rarely it is a seed, as long as there are fewer than nine of that
@@ -567,7 +567,7 @@ then.
 After five visits that counted, the two build a **nest**, and an egg lies in
 it. The egg is of the pet's own line or of the friend's, and it carries the
 pet's heirloom (see [Growing up](#growing-up)). The egg waits in the nest until
-you tap **Collect the egg**; then it is among the finds, to be brooded whenever
+you tap it; then it is among the finds, to be brooded whenever
 you like. While the nest is full, or there are nine eggs already, the next nest
 waits.
 
@@ -650,7 +650,7 @@ the pet did is the same whether or not anybody was looking at the panel.
 small at home by itself: mostly a fruit of the plant's kinds, rarely a seed
 (as long as there are fewer than nine of that kind). It works like a friend's
 gift, but it isn't wrapped: it lies next to the plant, in front of everything
-else, until you tap **Pick up**, and nothing new turns up while it is there.
+else, until you tap it, and nothing new turns up while it is there.
 Like a gift, it goes into the bag. Unlike what it builds, it stays when somebody does
 something with the pet, and it is kept for the next pet. A baby finds things
 too.

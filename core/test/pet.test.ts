@@ -66,7 +66,7 @@ test("training in the snapshot", () => {
   assert.ok(!JSON.stringify(state.training).includes("sequence")); // the sequence only shows in the scene
   const answer = pet.action("train", { item: "answer", value: pet.state.training!.sequence, now: now + 5 });
   assert.deepEqual([answer.accepted, answer.state.skills[2].value], [true, 4.0]);
-  assert.deepEqual(pet.action("train", { item: "speed", now: now + 65 }).state.training, { kind: "speed" });
+  assert.deepEqual(pet.action("train", { item: "speed", now: now + 125 }).state.training, { kind: "speed" });
   assert.equal(pet.action("train", { item: "tap", now: now + 3600 }).reason, "no_training");
 });
 

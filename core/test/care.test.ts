@@ -180,11 +180,11 @@ test("a trick it knows can be shown any time, for free", () => {
   assert.equal(model.restLeft(pet, ["trick"], start + 3), 0);
 });
 
-test("trick practice in a row brings less and bond helps", () => {
-  for (const when of [0, 60, 240, 840]) { // each time right after the break
+test("every practice after the break counts in full, and bond helps", () => {
+  for (const when of [0, 120, 720, 2520]) { // each time right after the break
     assert.equal(act(pet, "trick", start + when, { item: "flip" })[0], true);
   }
-  near(pet.tricks.flip, (1 + 0.6 + 0.3 + 0.15) * 1.1, 0.03);
+  near(pet.tricks.flip, 4 * 1.1, 0.05); // the bond grows a little on the way
   const loved = grown(start);
   loved.bond = 100;
   act(loved, "trick", start, { item: "flip" });
@@ -194,16 +194,16 @@ test("trick practice in a row brings less and bond helps", () => {
 test("tricks need a break, longer each time", () => {
   pet.bond = 0;
   act(pet, "trick", start, { item: "bow" });
-  assert.equal(model.restLeft(pet, ["trick"], start + 20), 40);
+  assert.equal(model.restLeft(pet, ["trick"], start + 20), 100);
   assert.deepEqual(act(pet, "trick", start + 30, { item: "spin" }), [false, "rest_trick"]); // any trick
   const energy = pet.stats.energy;
-  act(pet, "trick", start + 60, { item: "bow" });
+  act(pet, "trick", start + 120, { item: "bow" });
   assert.equal(pet.stats.energy, energy - 5);
-  assert.deepEqual(act(pet, "trick", start + 200, { item: "bow" }), [false, "rest_trick"]);
-  assert.equal(act(pet, "trick", start + 240, { item: "bow" })[0], true);
-  assert.equal(model.restLeft(pet, ["trick"], start + 240), 600);
-  near(pet.bond, 1 + 0.6 + 0.3); // the bond grows less with each one, too
-  assert.equal(model.restLeft(pet, ["trick"], start + 240 + model.REPEAT_WINDOW), 0); // a new day, a fresh start
+  assert.deepEqual(act(pet, "trick", start + 700, { item: "bow" }), [false, "rest_trick"]);
+  assert.equal(act(pet, "trick", start + 720, { item: "bow" })[0], true);
+  assert.equal(model.restLeft(pet, ["trick"], start + 720), 1800);
+  near(pet.bond, 3); // the break is the only brake: the bond grows in full each time
+  assert.equal(model.restLeft(pet, ["trick"], start + 720 + model.REST_WINDOW), 0); // later, a fresh start
 });
 
 test("trick refused", () => {

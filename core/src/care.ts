@@ -175,8 +175,8 @@ export function seek(state: PetState, spot: string, now: number): [string | null
 // ---------- Tricks ----------
 
 // Name: practice needed. One practice is worth 1 point, up to 1.5 with a strong
-// bond; several in a row are worth less (as with playing), so learning takes a
-// few days.
+// bond; after each one the pet needs a break, longer the more it has practiced
+// lately (model.REST_SECONDS), so learning takes a few days.
 export const TRICKS: Record<string, number> = { bow: 3, spin: 5, dance: 7, flip: 10 };
 export const TRICK_ENERGY = 15; // minimum energy, same as playing
 export const TRICK_LUCK = 0.25; // how often it already works on the very first try

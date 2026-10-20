@@ -23,9 +23,9 @@ test("throwing the ball builds strength", () => {
   assert.deepEqual([pet.activity, pet.activity_item], ["train_strength", "1.00"]);
   assert.deepEqual([pet.stats.energy, pet.stats.satiety], [72, 77]);
   assert.deepEqual([pet.diary.plays, pet.counters.trainings], [1, 1]); // counts as playing
-  // a weaker throw brings less, and so does training again straight away
-  act(pet, "train", start + 60, { item: "strength", value: 0.5 });
-  near(pet.skills.strength, 4 + 4 * 0.5 * 0.6);
+  // a weaker throw brings less; after the break, training again counts in full
+  act(pet, "train", start + 120, { item: "strength", value: 0.5 });
+  near(pet.skills.strength, 4 + 4 * 0.5);
   for (const bad of [null, undefined, 1.5, -0.1, "1", true]) {
     refused(() => act(pet, "train", start + 120, { item: "strength", value: bad }), "invalid_value");
   }
@@ -87,14 +87,14 @@ test("training needs a break, whatever the exercise", () => {
   assert.deepEqual(act(pet, "train", start + 30, { item: "speed" }), [false, "rest_train"]);
   assert.deepEqual(act(pet, "train", start + 30, { item: "strength", value: 1 }), [false, "rest_train"]);
   assert.equal(pet.training, null);
-  act(pet, "train", start + 60, { item: "smarts" });
-  act(pet, "train", start + 70, { item: "answer", value: pet.training!.sequence });
-  assert.deepEqual(act(pet, "train", start + 200, { item: "speed" }), [false, "rest_train"]); // 3 minutes now
-  assert.deepEqual(act(pet, "train", start + 250, { item: "speed" }), [true, null]);
+  act(pet, "train", start + 120, { item: "smarts" });
+  act(pet, "train", start + 130, { item: "answer", value: pet.training!.sequence });
+  assert.deepEqual(act(pet, "train", start + 700, { item: "speed" }), [false, "rest_train"]); // 10 minutes now
+  assert.deepEqual(act(pet, "train", start + 730, { item: "speed" }), [true, null]);
   // an exercise that went completely wrong costs nothing, not even a break
-  act(pet, "train", start + 250.5, { item: "tap" });
+  act(pet, "train", start + 730.5, { item: "tap" });
   assert.equal(pet.activity_item, "early");
-  assert.equal(model.restLeft(pet, ["train_strength", "train_speed", "train_smarts"], start + 250.5), 0);
+  assert.equal(model.restLeft(pet, ["train_strength", "train_speed", "train_smarts"], start + 730.5), 0);
 });
 
 test("training refused", () => {

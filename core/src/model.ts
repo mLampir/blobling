@@ -51,8 +51,11 @@ export const HEART_EVERY = 5; // every fifth counted petting, a heart falls from
 export const HEART_MOOD = 10;
 export const REPEAT_WINDOW = 2 * 3600;
 export const REPEAT_FACTORS = [1.0, 0.6, 0.3, 0.15]; // the same action several times in a row is worth less
-// After a trick or an exercise the pet needs a break, longer each time within REPEAT_WINDOW (seconds)
-export const REST_SECONDS = [60, 180, 600, 1200];
+// Tricks and training have one rule instead: every practice is worth all it is, but afterwards the
+// pet needs a break, the longer the more it has practiced within REST_WINDOW (seconds). It shows:
+// while it rests it sits and puffs (SceneView.resting).
+export const REST_WINDOW = 6 * 3600;
+export const REST_SECONDS = [120, 600, 1800, 3600, 7200];
 const TRAIN_KEYS = battle.SKILLS.map((skill) => `train_${skill}`);
 export const EVENT_LIMIT = 100;
 
@@ -582,9 +585,14 @@ function repeatFactor(state: PetState, key: string, now: number): number {
   return REPEAT_FACTORS[Math.min(times.length, REPEAT_FACTORS.length - 1)];
 }
 
+/** A trick or an exercise was practiced now: it counts towards the next break (restLeft). */
+function practiced(state: PetState, key: string, now: number): void {
+  state.recent[key] = [...(state.recent[key] ?? []).filter((t) => now - t < REST_WINDOW), now];
+}
+
 /** Seconds until the pet is up for another trick or exercise (keys: where `recent` keeps them); 0 = now. */
 export function restLeft(state: PetState, keys: string[], now: number): number {
-  const times = keys.flatMap((key) => state.recent[key] ?? []).filter((t) => now - t < REPEAT_WINDOW);
+  const times = keys.flatMap((key) => state.recent[key] ?? []).filter((t) => now - t < REST_WINDOW);
   if (!times.length) {
     return 0;
   }
@@ -942,8 +950,8 @@ function train(state: PetState, now: number, move: string, value: unknown): stri
 }
 
 /**
- * An exercise is over. It counts as playing, costs energy and is worth less when repeated; one
- * that went completely wrong costs nothing and brings nothing.
+ * An exercise is over. It counts as playing, costs energy and is followed by a break (restLeft);
+ * one that went completely wrong costs nothing and brings nothing.
  */
 function trained(state: PetState, now: number, skill: battle.Skill, score: number, shown: string): null {
   setActivity(state, `train_${skill}`, now, shown);
@@ -951,13 +959,13 @@ function trained(state: PetState, now: number, skill: battle.Skill, score: numbe
     return null;
   }
   const s = state.stats;
-  const factor = repeatFactor(state, `train_${skill}`, now);
-  battle.train(state, skill, score * factor * (food.use(state, "train") ? 2 : 1));
-  s.mood += 10 * factor * life.bonusFactor(state, "play");
+  practiced(state, `train_${skill}`, now);
+  battle.train(state, skill, score * (food.use(state, "train") ? 2 : 1));
+  s.mood += 10 * life.bonusFactor(state, "play");
   s.energy -= battle.TRAIN_COST.energy;
   s.satiety -= battle.TRAIN_COST.satiety;
   care.addWeight(state, care.PLAY_WEIGHT);
-  care.addBond(state, "play", factor);
+  care.addBond(state, "play");
   count(state, "trainings");
   life.record(state, "plays");
   return null;
@@ -1225,16 +1233,16 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     if (restLeft(state, ["trick"], now) > 0) {
       return "rest_trick";
     }
-    const factor = repeatFactor(state, "trick", now);
-    const result = care.practice(state, trick, factor * (food.use(state, "trick") ? 2 : 1), now);
+    practiced(state, "trick", now);
+    const result = care.practice(state, trick, food.use(state, "trick") ? 2 : 1, now);
     idle.practicedTogether(state, trick);
-    s.mood += (result === "fail" ? 3 : 6) * factor;
+    s.mood += result === "fail" ? 3 : 6;
     if (result === "learned") {
       s.mood += 10; // proud
       logEvent(state, now, "learned", by, { item: trick });
     }
     s.energy -= 5;
-    care.addBond(state, "trick", factor);
+    care.addBond(state, "trick");
     life.record(state, "tricks"); // practiced, in a child's care diary (the beak line)
     state.game = null; // this ends a mini-game in progress
     setActivity(state, "trick", now, `${trick}:${result}`);
