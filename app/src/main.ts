@@ -80,6 +80,8 @@ const app = {
   mode,
   /** The page is the app from the stores. */
   native,
+  /** The app's version in a build for the stores, "" otherwise. */
+  version: __APP_VERSION__,
   /** The Pi's address, if the app is connected to one. */
   connectedTo,
   /** All texts in the page's language, {key: text}. */

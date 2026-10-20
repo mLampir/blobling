@@ -497,6 +497,7 @@
         <button class="wide" id="update-start" data-t="page.app.update" hidden></button>
         <button class="wide quiet" id="disconnect" data-t="page.app.disconnect"></button>
       </div>
+      <p class="note" id="legal" hidden><a id="privacy-link" target="_blank" rel="noopener" data-t="page.app.privacy"></a> · <a id="support-link" target="_blank" rel="noopener" data-t="page.app.support"></a> · <a id="licenses-link" target="_blank" rel="noopener" data-t="page.app.licenses"></a><span id="version"></span></p>
     </div>
   </section>
 
@@ -2218,6 +2219,16 @@ if (app.native) {
     : t("page.app.connect_note");
   $("build-link").hidden = $("connect").hidden = !!app.connectedTo;
   $("disconnect").hidden = $("offline-leave").hidden = !app.connectedTo;
+}
+// The app from the stores links its privacy policy and help (docs/ on GitHub Pages), as the stores ask
+if (app.native) {
+  const docs = "https://mlampir.github.io/blobling/";
+  const de = LANG.startsWith("de") ? ".de" : "";
+  $("privacy-link").href = `${docs}privacy${de}`;
+  $("support-link").href = `${docs}support${de}`;
+  $("licenses-link").href = `${docs}licenses`;
+  if (app.version) $("version").textContent = ` · ${t("page.app.version", { version: app.version })}`;
+  $("legal").hidden = false;
 }
 // The Pi's own page shows the display part only for its update
 if (!app.native) $("display-note").hidden = $("connect").hidden = $("disconnect").hidden = true;

@@ -21,6 +21,30 @@ Meet Blobling, a little pixel pet that lives on your phone. Hatch it, look after
 
 virtual pet,pixel,cute,slime,egg,hatch,raise,care,adventure,retro,cozy,chiptune,led,offline
 
+## App Store: notes for App Review
+
+(App Store Connect, the version's *App Review Information → Notes*; the same
+text fits Google Play's *App access*, with "All functionality is available
+without special access".) Reviewers write in English, so this exists in
+English only.
+
+Blobling needs no account, no login and no hardware: the whole game runs on
+the phone. A new pet starts as an egg that hatches within about an hour
+(stroking it keeps it warm and makes it sooner). Then drag food from the
+tray onto the pet and stroke it. The "More" tab has the name, a new egg,
+sound and the optional weather.
+
+The section "Own LED display" in "More" is optional. It connects the app to
+a self-built LED panel (a Raspberry Pi on the home network, instructions at
+https://github.com/mLampir/blobling). That is why the app asks for local
+network access and talks plain HTTP to private addresses only. Without such
+a display, the search finds nothing, asks for an address, and the pet stays
+on the phone.
+
+Location is optional and only used for the weather in the pet's world: the
+app rounds it to about 1 km and sends it to Open-Meteo. Notifications are
+local only (the pet asks for you when it needs you); there is no server.
+
 ## Description (Google Play full description and App Store description)
 
 Blobling is a little pixel pet that lives on your phone. It hatches from an egg, wants your attention a few times a day, and grows up depending on how you raise it.
