@@ -77,6 +77,12 @@
     <select id="camera-pet" aria-label="{{ t('settings.camera') }}"></select>
   </section>
 
+  <section id="away" hidden>
+    <h2>{{ t('settings.away') }}</h2>
+    <div id="away-list"></div>
+    <p class="hint">{{ t('settings.away_hint') }}</p>
+  </section>
+
   <section>
     <h2>{{ t('settings.brightness') }}</h2>
     <div class="row">
@@ -202,6 +208,7 @@ function render(s) {
     $("brightness-value").textContent = s.brightness;
   }
   renderCamera(s);
+  renderAway(s);
   renderSettings(s);
   renderLocation(s);
   renderUpdate(s.update);
@@ -216,6 +223,24 @@ function renderCamera(s) {
 }
 $("camera-pet").addEventListener("change", (e) =>
   api("POST", "/api/pin", { pet: e.target.value || null }).catch(() => render(state)));
+
+// Pets a phone took along: one comes back from here if its phone is lost
+function renderAway(s) {
+  $("away").hidden = !s.away.length;
+  $("away-list").replaceChildren(...s.away.map((p) => {
+    const row = document.createElement("div"), label = document.createElement("span"), b = document.createElement("button");
+    row.className = "row";
+    label.textContent = `${p.name} (${p.form})`;
+    b.textContent = t("settings.fetch_back");
+    b.addEventListener("click", () => {
+      if (confirm(t("settings.fetch_back_confirm", { name: p.name }))) {
+        api("POST", "/api/fetch_back", { pet: p.id, confirm: true }).catch(() => {});
+      }
+    });
+    row.append(label, b);
+    return row;
+  }));
+}
 
 // Update: only on a Pi installed from a release. When the version changes, the update is done
 // (the service was restarted), so the page loads again in the new version.

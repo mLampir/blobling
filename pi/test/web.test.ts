@@ -78,7 +78,7 @@ test("the state of the panel is read and changed", async () => {
     mode: "pet", brightness: 50, night_active: false, weather_configured: false, language: "de", location: null,
     update: { current: null, latest: null, available: false, running: false, failed: false },
     night: { enabled: false, start: "23:00", end: "07:00", action: "dim", brightness: 5 },
-    pets: [{ id, name: "Blobby", stage: "egg", species: "blob" }], camera: id, pinned: null,
+    pets: [{ id, name: "Blobby", stage: "egg", species: "blob" }], camera: id, pinned: null, away: [],
   });
   assert.equal((await json(post("/api/mode", { mode: "off" }))).mode, "off");
   assert.equal((await json(post("/api/brightness", { value: 30 }))).brightness, 30);
@@ -126,9 +126,29 @@ test("an invalid request gets 400 and a text in the configured language", async 
   for (const [path, body, key] of cases) {
     const response = await post(path, body);
     assert.equal(response.status, 400, path);
-    assert.deepEqual(await json(response), { error: app.settings.t(key, { max: 16 }) }, path);
+    assert.deepEqual(await json(response), { error: app.settings.t(key, { max: 16 }), key: key.slice("error.".length) }, path);
   }
   assert.equal(app.settings.t("error.name_length", { max: 16 }), "Name: 1 bis 16 Zeichen.");
+});
+
+test("a phone takes a pet along and brings it back; a lost phone's pet is fetched back", async () => {
+  const first = app.pet.current;
+  const second = (await json(post("/api/pet/new_egg", { confirm: true }))).id;
+  const { moving } = await json(post("/api/pet/hand_over", { pet: second }));
+  assert.equal(moving.pet.id, second);
+  assert.deepEqual(app.pet.pets.map((p) => p.id), [first]);
+  assert.equal(app.display.camera, first); // it showed the one that left
+  assert.deepEqual((await json(post("/api/pet/handed_over", { pet: second, moves: moving.pet.moves }))).ok, true);
+  assert.deepEqual((await json(get("/api/state"))).away.map((p: { id: string }) => p.id), [second]);
+  const back = await json(post("/api/pet/take_in", { moving, place: null }));
+  assert.deepEqual([back.accepted, back.state.id], [true, second]);
+  const stale = await post("/api/pet/take_in", { moving: { ...moving, pet: { ...moving.pet, moves: 0 } } });
+  assert.equal((await json(stale)).key, "stale");
+  // once more along, and the phone is lost
+  await json(post("/api/pet/hand_over", { pet: second }));
+  assert.equal((await post("/api/fetch_back", { pet: second })).status, 400);
+  const state = await json(post("/api/fetch_back", { pet: second, confirm: true }));
+  assert.deepEqual([state.away, state.pets.map((p: { id: string }) => p.id)], [[], [first, second]]);
 });
 
 test("a change needs the header that other websites cannot send", async () => {

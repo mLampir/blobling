@@ -1,5 +1,5 @@
 {
-  "api": 5,
+  "api": 6,
   "oldest": 5,
   "routes": [
     "GET /api/pet",
@@ -8,9 +8,12 @@
     "GET /api/pet/travels",
     "POST /api/pet/action",
     "POST /api/pet/bring_back",
+    "POST /api/pet/hand_over",
+    "POST /api/pet/handed_over",
     "POST /api/pet/look",
     "POST /api/pet/new_egg",
-    "POST /api/pet/settings"
+    "POST /api/pet/settings",
+    "POST /api/pet/take_in"
   ],
   "actions": [
     "clean",

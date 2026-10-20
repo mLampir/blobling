@@ -147,6 +147,11 @@ export interface PetEvent {
 export interface PetState {
   /** Stays the same for the whole life of the pet, wherever it goes (Pet.select, the app's camera). */
   id: string;
+  /**
+   * How often it has moved between a phone and a display (Pet.handOver, Pet.moveIn on the Pi). The
+   * display keeps the highest number of every pet that moved, and turns away an older copy.
+   */
+  moves: number;
   name: string;
   /** The adult form; until then the name of its line (life.LINES). */
   species: string;
@@ -236,6 +241,7 @@ export interface PetState {
 export function newState(): PetState {
   return {
     id: "",
+    moves: 0,
     name: "",
     species: "blob",
     stage: "egg",

@@ -160,6 +160,8 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
       // the pets at home, for pinning the camera to one of them; pinned: its id, or null
       pets: pet.pets.map((p) => ({ id: p.id, name: p.name, stage: p.stage, species: p.species })),
       camera: display.camera, pinned: s.pinned,
+      // the pets phones took along, to fetch one back if its phone is lost
+      away: pet.awayList(),
     };
   };
 
@@ -193,6 +195,16 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         // the camera stays with one pet (its id), or follows the phones again (null)
         display.pin(fields(await readJson(request)).pet ?? null);
         return json(stateJson());
+
+      case "POST /api/fetch_back": {
+        // a pet a phone took along comes back without it; the phone's copy no longer counts
+        const asked = fields(await readJson(request));
+        if (asked.confirm !== true) {
+          throw new RequestError("confirm");
+        }
+        display.petFetchBack(asked.pet);
+        return json(stateJson());
+      }
 
       case "POST /api/night":
         display.setNight(await readJson(request));
@@ -283,6 +295,7 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
           {
             pet, action: display.petAction.bind(display), newEgg: display.petNewEgg.bind(display),
             bringBack: display.petBringBack.bind(display), look: display.look.bind(display),
+            handOver: display.petHandOver.bind(display), takeIn: display.petTakeIn.bind(display),
           },
           request.method ?? "GET", url, () => readJson(request));
         if (answer === NOT_A_PET_ROUTE) {
@@ -321,7 +334,7 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         response.destroy();
       } else if (error instanceof RequestError) {
         // 400 with the text for a key from the "error" texts (that is what a RequestError carries)
-        send(400, JSON.stringify({ error: t(`error.${error.message}`, { max: MAX_NAME }) }),
+        send(400, JSON.stringify({ error: t(`error.${error.message}`, { max: MAX_NAME }), key: error.message }),
           { "Content-Type": "application/json" });
       } else if (error instanceof Refusal) {
         refuse(error.status);

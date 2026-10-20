@@ -77,6 +77,7 @@
   .pill.neighbour { position: relative; padding: 0 6px; }
   .pill.neighbour img { width: 28px; height: 28px; image-rendering: pixelated; }
   .pill.neighbour.away img { opacity: .45; }
+  .pill.neighbour.phone::before { content: ""; position: absolute; bottom: 3px; left: 3px; width: 6px; height: 9px; border: 1.5px solid var(--muted); border-radius: 2px; }
   .pill.neighbour.needs::after { content: ""; position: absolute; top: 3px; right: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
   .pill.wanted:not(:disabled) { box-shadow: 0 0 0 2px var(--energy); }
   .fx { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
@@ -472,6 +473,8 @@
       <ul class="list">
         <li><button class="row" id="rename"><span><span data-t="page.rename"></span><small class="pet-name"></small></span><span class="chev">›</span></button></li>
         <li id="new-egg-row"><button class="row" id="new-egg"><span><span data-t="page.new_egg"></span><small data-t="page.more.new_egg_note"></small></span><span class="chev">›</span></button></li>
+        <li id="take-row" hidden><button class="row" id="take-along"><span><span data-t="page.take_along"></span><small data-t="page.more.take_along_note"></small></span><span class="chev">›</span></button></li>
+        <li id="bring-row" hidden><button class="row" id="bring-display"><span><span data-t="page.bring_display"></span><small data-t="page.more.bring_display_note"></small></span><span class="chev">›</span></button></li>
       </ul>
       <div style="display: grid; gap: 8px">
         <div class="label" data-t="page.more.sound"></div>
@@ -675,14 +678,12 @@ function ask(text, { value, ok, danger = false, address = false }) {
 }
 $("ask-cancel").addEventListener("click", () => $("ask").close());
 
-// Where a new pet lives: a house of its own while there is room, or the place of one of the pets
-// at home (which then moves to the ancestors). Returns { place: null | the pet's id }, or null if
-// the player changed their mind.
-function choosePlace(text, icon) {
+// One of a few choices in a dialog: `choices` are [value, picture, name, note]. Returns the value,
+// or null if the player changed their mind.
+function chooseFrom(text, choices) {
   const dialog = $("place");
   $("place-text").textContent = text;
-  const pets = current.pets, free = current.places - pets.length;
-  const choice = (value, icon, name, note) => {
+  $("place-list").replaceChildren(...choices.map(([value, icon, name, note]) => {
     const li = document.createElement("li"), b = document.createElement("button");
     b.className = "choice";
     b.value = value;
@@ -696,17 +697,23 @@ function choosePlace(text, icon) {
     b.append(img, label);
     li.append(b);
     return li;
-  };
-  $("place-list").replaceChildren(
-    ...(free > 0 ? [choice("new", icon, t("page.place_new"), t("page.place_free", { free, all: current.places }))] : []),
-    ...pets.map((p) => choice(p.id, app.icon(p.stage, p.species), p.name,
-      t(p.stage === "egg" ? "page.place_replace_egg" : "page.place_replace"))));
+  }));
   dialog.returnValue = "";
   dialog.showModal();
-  return new Promise((resolve) => dialog.addEventListener("close", () => {
-    const value = dialog.returnValue;
-    resolve(!value ? null : { place: value === "new" ? null : value });
-  }, { once: true }));
+  return new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue || null), { once: true }));
+}
+
+// Where a new pet lives: a house of its own while there is room, or the place of one of the pets
+// of `home` (which then moves to the ancestors). Returns { place: null | the pet's id }, or null if
+// the player changed their mind.
+async function choosePlace(text, icon, home = app.homes()[app.home()]) {
+  const free = home.places - home.pets.length;
+  const value = await chooseFrom(text, [
+    ...(free > 0 ? [["new", icon, t("page.place_new"), t("page.place_free", { free, all: home.places })]] : []),
+    ...home.pets.map((p) => [p.id, app.icon(p.stage, p.species), p.name,
+      t(p.stage === "egg" ? "page.place_replace_egg" : "page.place_replace")]),
+  ]);
+  return !value ? null : { place: value === "new" ? null : value };
 }
 $("place-cancel").addEventListener("click", () => $("place").close());
 
@@ -734,7 +741,7 @@ async function api(method, url, body) {
   try {
     const data = await app.request(method, url, body);
     setOffline(false);
-    if (app.mode === "pi") renderFit();
+    if (app.mode === "pi" && app.home() === "display") renderFit();
     return data;
   } catch (err) {
     if (!err.offline) setOffline(false);
@@ -774,9 +781,8 @@ async function act(name, item, extra) {
 
 // The scene goes on this canvas: drawn on the phone, or with a Pi the panel's frames, one after the other
 const scene = $("scene");
-$("hero").classList.toggle("whole", app.mode !== "local");
 scene.hidden = false;
-if (app.mode === "local") app.showScene(scene);
+app.showScene(scene);
 
 // The sky goes on above the scene in the color of its top row
 const sample = document.createElement("canvas");
@@ -799,7 +805,7 @@ setInterval(() => { if (!document.hidden && view === "home") matchSky(); }, 2000
 // of their houses, before the switch.
 let panning = null, panFrame = null, previewGen = 0;
 function panTo(before, id) {
-  if (app.mode === "local" || !current || id === current.id) return;
+  if (app.home() === "phone" || !current || id === current.id) return;
   const from = before.indexOf(current.id), to = before.indexOf(id);
   const steps = from >= 0 && to >= 0 ? to - from : 1;
   const copy = document.createElement("canvas");
@@ -833,7 +839,7 @@ function drawPan(now) {
 const PREVIEW_RETRY_MS = 1000;
 let previewBusy = false, previewFailed = 0;
 function nextPreview() {
-  if (app.mode === "local" || previewBusy || document.hidden || view !== "home") return;
+  if (app.home() === "phone" || previewBusy || document.hidden || view !== "home") return;
   if (Date.now() - previewFailed < PREVIEW_RETRY_MS) return;
   previewBusy = true;
   const img = new Image(), gen = previewGen;
@@ -896,6 +902,8 @@ document.querySelectorAll(".thing").forEach((b) => { b.firstElementChild.src = a
 
 function render(s) {
   current = s;
+  $("hero").classList.toggle("whole", app.home() !== "phone");
+  renderMoving(s);
   $("name").textContent = s.name;
   $("nav-name").textContent = s.name;
   renderNeighbours(s);
@@ -1302,9 +1310,10 @@ function renderSkills(s) {
 async function refresh() {
   try {
     render(await api("GET", "/api/pet"));
+    askTwins();
     if (view === "diary") renderEvents((await api("GET", "/api/pet/events?limit=30")).events);
     // the update: while "More" is open or it runs, otherwise now and then
-    if (app.mode === "pi" && (view === "more" || update?.running || app.fit() !== "ok"
+    if (app.mode === "pi" && app.home() === "display" && (view === "more" || update?.running || app.fit() !== "ok"
       || Date.now() - updateChecked > 600_000)) checkUpdate();
   } catch (err) {
     fail(err);
@@ -1928,7 +1937,8 @@ function renderNeighbours(s) {
     const b = row.querySelector(`[data-id="${p.id}"]`);
     b.classList.toggle("needs", p.needs);
     b.classList.toggle("away", p.away || p.grandma);
-    b.setAttribute("aria-label", t("page.look", { name: p.name }));
+    b.classList.toggle("phone", !!p.phone);
+    b.setAttribute("aria-label", t(p.phone ? "page.look_phone" : "page.look", { name: p.name }));
   }
 }
 
@@ -1943,6 +1953,73 @@ async function look(id) {
   } catch (err) {
     fail(err);
   }
+}
+
+// Moving between the phone and a display (connected in the app from the stores): a pet of the
+// display goes along with the phone, and one of the phone's moves to the display
+function renderMoving(s) {
+  const homes = app.homes();
+  $("take-row").hidden = !(app.native && app.connectedTo && app.home() === "display" && homes.phone);
+  $("bring-row").hidden = !(app.connectedTo && app.home() === "phone" && homes.display);
+}
+
+$("take-along").addEventListener("click", async () => {
+  if (!current) return;
+  const s = current, where = await choosePlace(t("page.place_take", { name: s.name }),
+    app.icon(s.stage, s.species), app.homes().phone);
+  if (!where) return;
+  try {
+    render(await app.takeAlong(s.id, where.place));
+    showView("home");
+    say(t("page.taken", { name: s.name }));
+    feel("ok");
+  } catch (err) {
+    fail(err);
+  }
+});
+
+$("bring-display").addEventListener("click", async () => {
+  const display = app.homes().display;
+  if (!current || !display) return;
+  const s = current, where = await choosePlace(t("page.place_bring", { name: s.name }),
+    app.icon(s.stage, s.species), display);
+  if (!where) return;
+  try {
+    const r = await app.bringToDisplay(s.id, where.place);
+    render(r.state);
+    if (!r.accepted) return say(r.message);
+    showView("home");
+    say(t("page.brought", { name: s.name }));
+    feel("ok");
+  } catch (err) {
+    fail(err);
+    refresh();
+  }
+});
+
+// Copies from before pets moved: a pet that lives on the phone and at the display. Asked once
+// for each, which one is the real one; the other rests among the ancestors.
+let twinsAsked = false;
+async function askTwins() {
+  if (twinsAsked || !app.connectedTo) return;
+  const twins = app.twins();
+  if (!twins.length) return;
+  twinsAsked = true;
+  for (const twin of twins) {
+    const [own, there] = twin;
+    const note = (p) => `${p.stage === "adult" ? p.species_label : p.stage_label} · ${tn("page.age", p.age_days)}`;
+    const keep = await chooseFrom(t("page.twins", { name: own.name }), [
+      ["phone", app.icon(own.stage, own.species), t("page.twin_phone"), note(own)],
+      ["display", app.icon(there.stage, there.species), t("page.twin_display"), note(there)],
+    ]);
+    if (!keep) continue;
+    try {
+      await app.keepTwin(twin, keep);
+    } catch (err) {
+      fail(err);
+    }
+  }
+  refresh();
 }
 
 $("unpack").addEventListener("click", async () => {

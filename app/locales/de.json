@@ -33,7 +33,11 @@
     "not_a_save": "Das ist kein Spielstand eines Pets.",
     "no_pet": "Dieses Pet wohnt nicht hier.",
     "no_place": "Für ein weiteres Pet ist kein Platz. Wähle, wessen Platz es bekommt.",
-    "no_ancestor": "Dieses Pet kann nicht mehr zurückkommen."
+    "no_ancestor": "Dieses Pet kann nicht mehr zurückkommen.",
+    "stale": "Dieses Pet lebt inzwischen woanders, das hier ist eine alte Kopie davon.",
+    "on_trip": "Nicht, während es auf Reisen ist.",
+    "last_pet": "Ein Pet bleibt immer am Display.",
+    "already_here": "Dieses Pet wohnt schon hier."
   },
   "stages": {
     "egg": "Ei",
@@ -729,7 +733,9 @@
       "sound_on": "An",
       "sound_off": "Aus",
       "pet": "Pet",
-      "new_egg_note": "Deine Funde bleiben."
+      "new_egg_note": "Deine Funde bleiben.",
+      "take_along_note": "Es zieht vom Display ins Handy, mit seinem Haus.",
+      "bring_display_note": "Es zieht vom Handy in ein Haus am Display."
     },
     "gestures": {
       "bow": "nach unten",
@@ -747,7 +753,17 @@
       "favorite": "{name} strahlt: Das ist das Lieblingsessen!"
     },
     "unwrapped_bag": "Drin war: {thing} – es liegt jetzt in deiner Tasche",
-    "picked_bag": "Aufgehoben: {thing} – es liegt jetzt in deiner Tasche"
+    "picked_bag": "Aufgehoben: {thing} – es liegt jetzt in deiner Tasche",
+    "take_along": "Aufs Handy mitnehmen",
+    "bring_display": "Aufs Display bringen",
+    "place_take": "Wo soll {name} am Handy wohnen?",
+    "place_bring": "Wo soll {name} am Display wohnen?",
+    "taken": "{name} ist jetzt auf deinem Handy",
+    "brought": "{name} wohnt jetzt am Display",
+    "twins": "{name} gibt es zweimal, am Handy und am Display, noch aus der Zeit, bevor Pets umziehen konnten. Welches ist das echte? Das andere ruht sich in der Ahnengalerie aus.",
+    "twin_phone": "Am Handy",
+    "twin_display": "Am Display",
+    "look_phone": "Zu {name} schauen (am Handy)"
   },
   "settings": {
     "title": "LED-Matrix",
@@ -791,6 +807,10 @@
     "pet_save_download": "Herunterladen",
     "pet_save_load": "Laden",
     "pet_save_confirm": "Das Pet aus {file} laden? {name} wird ersetzt (und einmal auf dem Pi als pet.before-load.json aufgehoben).",
-    "pet_save_loaded": "{name} ist wieder da."
+    "pet_save_loaded": "{name} ist wieder da.",
+    "away": "Mitgenommen",
+    "away_hint": "Pets, die ein Handy mitgenommen hat. Ist das Handy verloren, holst du eines hier zurück; die Kopie auf dem Handy gilt dann nicht mehr.",
+    "fetch_back": "Zurückholen",
+    "fetch_back_confirm": "{name} ohne das Handy zurückholen? Die Kopie auf dem Handy gilt dann nicht mehr."
   }
 }
