@@ -20,7 +20,9 @@ language = de
 
 Times and dates on the pet page follow the phone's own settings, not this
 option. The app on the phone takes the phone's language, if there is a file
-for it; the pet page the Pi serves comes in the Pi's language.
+for it, until a language is chosen under *More*; the pet page the Pi serves
+comes in the Pi's language. A new file shows up under *More* by itself, with
+the name from its `language.name`.
 
 ## Adding a language
 

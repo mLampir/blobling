@@ -727,7 +727,8 @@
       "sound_on": "On",
       "sound_off": "Off",
       "pet": "Pet",
-      "new_egg_note": "Your finds stay."
+      "new_egg_note": "Your finds stay.",
+      "language": "Language"
     },
     "gestures": {
       "bow": "down",

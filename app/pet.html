@@ -479,6 +479,10 @@
           <button data-sound="off" data-t="page.more.sound_off"></button>
         </div>
       </div>
+      <div id="language-choice" hidden style="display: grid; gap: 8px">
+        <div class="label" data-t="page.more.language"></div>
+        <div class="segments" role="group" id="languages" data-t-aria="page.more.language"></div>
+      </div>
       <div id="on-phone" hidden style="display: grid; gap: 8px">
         <div class="label" data-t="page.headings.weather"></div>
         <div class="segments" role="group" data-t-aria="page.headings.weather">
@@ -2198,6 +2202,20 @@ document.querySelectorAll("[data-sound]").forEach((b) => b.addEventListener("cli
   if (app.soundOn()) setTimeout(() => app.sound("ok"), 50);  // the audio may need a moment to start
 }));
 showSound();
+
+// The language of the page (the Pi's own page has it on the settings page instead)
+const languages = app.languages();
+if (languages) {
+  for (const [code, name] of Object.entries(languages)) {
+    const button = document.createElement("button");
+    button.textContent = name;  // each in its own language, so it can be found in any
+    button.lang = code;
+    button.setAttribute("aria-pressed", code === app.language);
+    button.addEventListener("click", () => { if (code !== app.language) app.setLanguage(code); });
+    $("languages").append(button);
+  }
+  $("language-choice").hidden = false;
+}
 
 if (app.mode === "local") {
   // The pet lives on the phone: "More" has where it lives (for the weather and the sun)
