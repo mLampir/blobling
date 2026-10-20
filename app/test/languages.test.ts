@@ -20,3 +20,13 @@ test("iOS's CFBundleLocalizations names every language file", () => {
   const names = [...list.matchAll(/<string>([\w-]+)<\/string>/g)].map((match) => match[1]).sort();
   assert.deepEqual(names, files);
 });
+
+test("every iOS permission text in Info.plist is translated", () => {
+  const plist = readFileSync("app/ios/App/App/Info.plist", "utf-8");
+  const keys = [...plist.matchAll(/<key>(NS\w+UsageDescription)<\/key>/g)].map((match) => match[1]).sort();
+  for (const language of files.filter((name) => name !== "en")) {
+    const strings = readFileSync(`app/ios/App/App/${language}.lproj/InfoPlist.strings`, "utf-8");
+    const translated = [...strings.matchAll(/^(NS\w+UsageDescription) = /gm)].map((match) => match[1]).sort();
+    assert.deepEqual(translated, keys, `${language}.lproj/InfoPlist.strings`);
+  }
+});

@@ -1,3 +1,4 @@
 /* What iOS shows when it asks for a permission; the English texts are in Info.plist. */
 NSLocalNetworkUsageDescription = "Damit die App dein LED-Display im WLAN zu Hause findet.";
+NSLocationAlwaysAndWhenInUseUsageDescription = "Damit dein Pet das Wetter dort bekommt, wo du bist.";
 NSLocationWhenInUseUsageDescription = "Damit dein Pet das Wetter dort bekommt, wo du bist.";
