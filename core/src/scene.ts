@@ -434,6 +434,8 @@ export interface SceneView {
   game?: boolean;
   tricks?: readonly string[];
   trip?: TripView | null;
+  /** It is staying at Grandma's (nobody was there for a long time): the scene shows home without it. */
+  grandma?: boolean;
   hat?: string | null;
   /** The decorations outside. */
   deco?: readonly string[];
@@ -908,6 +910,14 @@ export class PetScene {
       activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false, bud: null, rainbow: false,
     };
     this.play = null;
+    if (view.grandma) {
+      if (activity === "grandma_go" && view.stage !== "egg") {
+        return this.leave(pose, view, t, dt, now, false); // off to Grandma's
+      }
+      this.x = this.targetX = (this.width - SPRITE) / 2; // where it will be if nobody sees it come back
+      pose.hidden = true;
+      return pose;
+    }
     if (activity === "hatch") {
       return this.hatch(pose, view, t, now);
     }
@@ -927,8 +937,8 @@ export class PetScene {
     if (activity === "trip_start") {
       return this.leave(pose, view, t, dt, now);
     }
-    if (activity === "trip_home") {
-      return this.arrive(pose, view, t, dt);
+    if (activity === "trip_home" || activity === "grandma_home") {
+      return this.arrive(pose, view, t, dt, activity === "trip_home");
     }
     if (activity === "go_in" && view.house) {
       return this.goIn(pose, view, t, dt, now);
@@ -2155,30 +2165,30 @@ export class PetScene {
     return pose;
   }
 
-  /** The backpack drops in, the pet grabs it and hops out to the right. */
-  private leave(pose: Pose, view: SceneView, t: number, dt: number, now: number): Pose {
+  /** The backpack drops in, the pet grabs it and hops out to the right; without one, it just hops off. */
+  private leave(pose: Pose, view: SceneView, t: number, dt: number, now: number, pack = true): Pose {
     const e = this.elapsed(view, now);
     pose.face = "happy";
-    if (e < THROW_FALL + THROW_BOUNCE) {
+    if (pack && e < THROW_FALL + THROW_BOUNCE) {
       pose.thrown = ["backpack", Math.round(this.x) + SPRITE - 6, Math.round(dropLift(e))];
     } else {
       this.facing = 1;
       this.x += THROW_SPEED * dt;
       this.targetX = this.x;
       this.hop(pose, t, 3.5);
-      pose.pack = true;
+      pose.pack = pack;
     }
     return pose;
   }
 
-  /** Comes hopping home from the left; it keeps the backpack on until it is unpacked. */
-  private arrive(pose: Pose, view: SceneView, t: number, dt: number): Pose {
+  /** Comes hopping home from the left; from a trip, it keeps the backpack on until it is unpacked. */
+  private arrive(pose: Pose, view: SceneView, t: number, dt: number, pack = true): Pose {
     if (this.arriveFor !== view.activity_until) {
       this.arriveFor = view.activity_until;
       this.x = -SPRITE;
     }
     const home = (this.width - SPRITE) / 2;
-    pose.pack = true;
+    pose.pack = pack;
     if (this.x < home - 0.5) {
       this.facing = 1;
       this.x = Math.min(home, this.x + THROW_SPEED * dt);

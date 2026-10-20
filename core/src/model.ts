@@ -22,7 +22,16 @@ import * as trip from "./trip";
 import * as wild from "./wild";
 
 export const TICK = 60;
-export const MAX_CATCH_UP = 24 * 3600; // off for longer → the pet was "at Grandma's"
+// After a break the simulation catches up at most this far; by then a pet that somebody had
+// looked after has long gone to Grandma's (GRANDMA_AFTER), and one that nobody ever did goes there
+export const MAX_CATCH_UP = 3 * 86400;
+// Nobody has done anything with it for this long: it goes to Grandma's and waits there, frozen,
+// until somebody fetches it (action "grandma"), so that a week away doesn't leave it sick for days.
+// Longer than a day, so that an owner who comes once a day keeps looking after it themselves;
+// shorter than it takes to get sick without care.
+export const GRANDMA_AFTER = 36 * 3600;
+// Grandma looks after it: it comes home with at least this much of every stat
+export const GRANDMA_STATS = 50.0;
 export const CRITICAL = 25;
 
 // Change per hour: [awake, asleep]
@@ -48,7 +57,7 @@ const TRAIN_KEYS = battle.SKILLS.map((skill) => `train_${skill}`);
 export const EVENT_LIMIT = 100;
 
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
-  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in"];
+  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in", "grandma"];
 export const FOODS = ["meal", ...food.EDIBLE];
 export const GAME_MOVES = ["start", "left", "right"];
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
@@ -64,7 +73,7 @@ export const ACTIVITY_SECONDS: Record<string, number> = {
   egg_wobble: 2, hatch: 6, evolve: 8, game_wait: care.GAME_TIMEOUT, game_turn: 2.5,
   trick: 4, build: 10, throw_meal: THROW_SECONDS + 6, throw_snack: THROW_SECONDS + 4,
   trip_start: 4, trip_home: 4, unpack: 6, plant: 3, pick: 4, collect: 4, unwrap: 4,
-  discover: 4, pickup: 4,
+  discover: 4, pickup: 4, grandma_go: 5, grandma_home: 4,
   train_strength: 5, train_speed: 3, train_smarts: 3,
   // waiting for the signal, and showing the sequence: as long as the longest one can take
   train_ready: battle.SIGNAL_DELAY[1] + battle.SIGNAL_WINDOW,
@@ -235,6 +244,12 @@ export function wakeUp(state: PetState, t: number, temp: number | null = null): 
  */
 export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.WeatherCode = null,
     temp: number | null = null, location: Location = null): void {
+  if (!state.grandma && leavesForGrandma(state, t)) {
+    goToGrandma(state, t);
+  }
+  if (state.grandma) {
+    return; // at Grandma's nothing happens to it: no needs, no growing (see stayAtGrandmas)
+  }
   const rng = new Random(Math.trunc(t));
   const s = state.stats;
   const h = TICK / 3600;
@@ -361,28 +376,82 @@ export function advance(state: PetState, now: number, bedtime: Bedtime, weather:
     state.updated_at = now;
     return true;
   }
-  if (now - state.updated_at > MAX_CATCH_UP) {
-    const days = Math.max(1, Math.round((now - state.updated_at) / 86400));
-    for (const k of STATS) {
-      state.stats[k] = Math.max(state.stats[k], 50.0);
-    }
-    state.poops = 0;
-    state.next_poop_at = null;
-    state.sick = false;
-    state.asleep = false;
-    state.trip = null;
-    state.updated_at = now;
-    // item: about how many days it was off, for Grandma's postcard
-    logEvent(state, now, "away", "system", { item: String(days) });
-    return true;
-  }
   let changed = false;
-  while (state.updated_at + TICK <= now) {
+  const until = Math.min(now, state.updated_at + MAX_CATCH_UP);
+  while (!state.grandma && state.updated_at + TICK <= until) {
     state.updated_at += TICK;
     tick(state, state.updated_at, bedtime, weather, temp, location);
     changed = true;
   }
+  if (!state.grandma && now > until) {
+    // caught up as far as it goes, and still nobody there: Grandma takes it in
+    state.trip = null;
+    goToGrandma(state, state.updated_at);
+  }
+  if (state.grandma) {
+    stayAtGrandmas(state, now);
+    return true;
+  }
   return changed;
+}
+
+// ---------- At Grandma's ----------
+
+/**
+ * Does it go to Grandma's at the time t? When nobody has done anything with it for GRANDMA_AFTER
+ * (and it hasn't just come back from her), as soon as it is awake and at home.
+ */
+export function leavesForGrandma(state: PetState, t: number): boolean {
+  const since = Math.max(state.seen_at, state.recent.grandma?.at(-1) ?? 0.0);
+  return since > 0 && t - since >= GRANDMA_AFTER && !state.asleep && !state.trip;
+}
+
+/** Grandma takes it in at the time t; she also clears away what was lying around. */
+export function goToGrandma(state: PetState, t: number): void {
+  state.grandma = t;
+  state.game = state.training = null;
+  state.poops = 0;
+  state.next_poop_at = null;
+  setActivity(state, "grandma_go", t);
+}
+
+/**
+ * At Grandma's, time stands still for it, as among the ancestors: it doesn't get older or grow on,
+ * and what it waits for (the next visit of its friend) waits too. The pet at the back goes with it
+ * (Pet.advance).
+ */
+export function stayAtGrandmas(state: PetState, now: number): void {
+  const gap = Math.max(0, now - state.updated_at);
+  state.stage_since += gap;
+  state.born_at += gap;
+  if (state.friend) {
+    state.friend.next += gap;
+    if (state.friend.until !== undefined) {
+      state.friend.until += gap;
+    }
+  }
+  state.updated_at = Math.max(state.updated_at, now);
+}
+
+/**
+ * Fetched from Grandma's: it comes home looked after, and Grandma writes a postcard about it
+ * (story.ts). `seen_at` stays, so the story tells what happened since somebody was last there.
+ */
+export function comeBack(state: PetState, now: number): void {
+  const days = Math.max(1, Math.round((now - state.grandma) / 86400));
+  for (const k of STATS) {
+    state.stats[k] = Math.max(state.stats[k], GRANDMA_STATS);
+  }
+  state.sick = false;
+  state.asleep = false;
+  state.cold_until = 0.0;
+  state.grandma = 0.0;
+  state.recent.grandma = [now];
+  state.idle_next = 0.0;
+  idle.noticed(state);
+  setActivity(state, "grandma_home", now);
+  // item: about how many days it was there, for Grandma's postcard
+  logEvent(state, now, "away", "system", { item: String(days) });
 }
 
 // ---------- Derived values ----------
@@ -420,7 +489,7 @@ export function activityOf(state: PetState, now: number): string {
 
 /** Stats that need looking after (for the icons and the app). */
 export function needs(state: PetState): string[] {
-  if (state.stage === "egg") {
+  if (state.stage === "egg" || state.grandma) {
     return [];
   }
   const result: string[] = NEEDS.filter((k) => state.stats[k] < CRITICAL);
@@ -439,6 +508,10 @@ export function availableActions(state: PetState, now: number): Record<string, b
   const away = !!state.trip;
   const ready = life.isDue(state, now) && !asleep && !away;
   const nothing = Object.fromEntries([...ACTIONS, "recall"].map((action) => [action, false]));
+  if (state.grandma) {
+    // at Grandma's it can only be fetched – and things at home can be arranged
+    return { ...nothing, grandma: true, plant: true, wear: true, deco: true, look_in: state.house > 0 };
+  }
   if (state.stage === "egg") {
     return { ...nothing, pet: true, evolve: ready };
   }
@@ -650,7 +723,22 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
     throw new RequestError(check[1]);
   }
   const value = checkValue(action, item, options.value);
-  state.seen_at = now; // somebody is there (for idle.welcome)
+  if (action === "grandma") {
+    // fetched from Grandma's; somebody is there, but what happened since they were last is still to be told
+    const reason = state.grandma ? null : "at_home";
+    if (reason === null) {
+      comeBack(state, now);
+    } else {
+      logEvent(state, now, action, by, { accepted: false, reason });
+    }
+    return { accepted: reason === null, reason };
+  }
+  if (state.grandma && !["plant", "wear", "deco", "look_in"].includes(action)) {
+    comeBack(state, now); // an app from before Grandma: anything it does with the pet fetches it
+  }
+  if (!state.grandma) {
+    state.seen_at = now; // somebody is there (for idle.welcome)
+  }
   if (action === "look_in") {
     // only a look: it doesn't do anything with the pet, so it isn't in the history either
     const reason = !state.house ? "no_house" : state.asleep ? "inside" : null;
