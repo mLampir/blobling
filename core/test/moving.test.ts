@@ -118,6 +118,12 @@ test("sent to the ancestors by hand: a pet rests there, an egg just goes, and a 
   const ancestors = pi.ancestorList().length;
   pi.retire(pi.current, now);
   assert.equal(pi.ancestorList().length, ancestors);
+  assert.equal(pi.state.eggs.length, 0); // a usual egg just goes
+  pi.newEgg(null, now);
+  pi.state.species = "ember"; // a special one goes back among the kept eggs
+  pi.retire(pi.current, now);
+  assert.deepEqual(pi.state.eggs.map((e) => e.line), ["ember"]);
+  assert.equal(pi.ancestorList().length, ancestors);
   phone.retire(phone.current, now);
   assert.deepEqual([phone.pets.length, phone.ancestorList()[0].name], [0, "Pip"]);
 });

@@ -313,6 +313,10 @@
     "retire_egg_ok": "Weglegen",
     "retired": "{name} ruht jetzt bei den Ahnen.",
     "retired_egg": "Das Ei ist weg.",
+    "retire_kept": "🥚 Ei zu den Funden legen",
+    "retire_kept_confirm": "Das Ei zu deinen Funden legen? Du kannst es später ausbrüten.",
+    "retire_kept_ok": "Weglegen",
+    "retired_kept": "Das Ei liegt jetzt bei deinen Funden.",
     "things": {
       "meal": "Mahlzeit",
       "ball": "Ball",
@@ -749,6 +753,7 @@
       "new_egg_note": "Deine Funde bleiben.",
       "retire_note": "Es ruht im Album und kann wieder heimkommen.",
       "retire_egg_note": "Es ist dann weg.",
+      "retire_kept_note": "Du kannst es später ausbrüten.",
       "take_along_note": "Es zieht vom Display ins Handy, mit seinem Haus.",
       "bring_display_note": "Es zieht vom Handy in ein Haus am Display."
     },

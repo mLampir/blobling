@@ -21,7 +21,7 @@ import type { I18n } from "../../core/src/i18n";
 import { RequestError } from "../../core/src/model";
 import { MAX_NAME, PLACES, Pet, VERSION, readSave, type Ancestor, type Moving } from "../../core/src/pet";
 import { PetScene } from "../../core/src/scene";
-import { fromDict } from "../../core/src/state";
+import { fromDict, type Egg, type PetState } from "../../core/src/state";
 import { pan, panSeconds } from "../../core/src/street";
 import { checkLocation, type Location } from "../../core/src/sun";
 import { Weather } from "../../core/src/weather";
@@ -43,18 +43,20 @@ function savedLocation(): Location {
   }
 }
 
-/** What an empty home keeps: its ancestors and its album. */
+/** What an empty home keeps: its ancestors and its album, and the store (finds and eggs) for the next pet. */
 interface EmptyHome {
   version: number;
   pet: null;
   ancestors: Ancestor[];
   album: string[];
+  items?: Record<string, number>;
+  eggs?: Egg[];
 }
 
 export class LocalPet {
   /** The pets on the phone, or null while none lives here (after the last one left, or connected to a display). */
   private home: Pet | null = null;
-  private rest: { ancestors: Ancestor[]; album: string[] } = { ancestors: [], album: [] };
+  private rest: Omit<EmptyHome, "version" | "pet"> = { ancestors: [], album: [] };
   private readonly scenes = new Map<string, PetScene>();
   private sceneLocation: Location;
   /** The pet the scene showed last, and its last frame: where a switch pans from. */
@@ -72,7 +74,9 @@ export class LocalPet {
     const empty = saved as Partial<EmptyHome> | undefined;
     const emptied = !!empty && typeof empty === "object" && empty.pet === null;
     if (emptied) {
-      this.rest = { ancestors: [...empty.ancestors ?? []], album: [...empty.album ?? []] };
+      this.rest = {
+        ancestors: [...empty.ancestors ?? []], album: [...empty.album ?? []], items: { ...empty.items }, eggs: [...empty.eggs ?? []],
+      };
     } else if (saved !== undefined) {
       try {
         restored = readSave(saved);
@@ -141,15 +145,17 @@ export class LocalPet {
 
   /** The pet with this id leaves the phone (Pet.release), for a display. */
   release(id: string): Moving {
+    const store = this.pet.state;
     const moving = this.pet.release(id);
-    this.emptied();
+    this.emptied(store);
     return moving;
   }
 
   /** The pet with this id goes to rest among the ancestors (Pet.retire). */
   retire(id: string): void {
+    const store = this.pet.state;
     this.pet.retire(id);
-    this.emptied();
+    this.emptied(store);
   }
 
   /** A pet from a display moves in, into a new house or in the place of `place` (Pet.adopt). */
@@ -157,7 +163,11 @@ export class LocalPet {
     if (this.home) {
       this.home.adopt(moving, place);
     } else {
-      const pet = fromDict({ ...moving.pet, items: { ...moving.things }, eggs: [] } as unknown as Record<string, unknown>);
+      const items = { ...this.rest.items };
+      for (const [item, count] of Object.entries(moving.things)) {
+        items[item] = (items[item] ?? 0) + count;
+      }
+      const pet = fromDict({ ...moving.pet, items, eggs: [...this.rest.eggs ?? []] } as unknown as Record<string, unknown>);
       pet.seen_at = Date.now() / 1000;
       this.home = this.newHome({ state: pet, ancestors: this.rest.ancestors, album: this.rest.album });
       this.home.save();
@@ -173,14 +183,18 @@ export class LocalPet {
     this.home = this.newHome(null);
     this.home.ancestors.push(...this.rest.ancestors);
     this.home.album.push(...this.rest.album);
+    Object.assign(this.home.state.items, this.rest.items);
+    this.home.state.eggs.push(...this.rest.eggs ?? []);
     this.home.save();
     this.draw();
   }
 
-  /** After a pet left: with the last one gone, the home keeps only its ancestors and album. */
-  private emptied(): void {
+  /** After a pet left: with the last one gone, the home keeps its ancestors, album and store. */
+  private emptied(store: PetState): void {
     if (this.home && !this.home.pets.length) {
-      this.rest = { ancestors: this.home.ancestors, album: this.home.album };
+      // with the last one gone, the pet that comes next finds the store as it was
+      const { items, eggs } = store;
+      this.rest = { ancestors: this.home.ancestors, album: this.home.album, items, eggs };
       this.home = null;
       const file: EmptyHome = { version: VERSION, pet: null, ...this.rest };
       void this.store.put(PET_KEY, file).catch((error) => console.error("Could not save the pet", error));
@@ -195,6 +209,7 @@ export class LocalPet {
     if (!this.home) {
       throw Object.assign(new Error(this.i18n.t("error.no_pet")), { empty: true }); // the page offers a new egg
     }
+    const store = this.home.state; // finds and eggs, shared by all pets here
     let answer: unknown;
     try {
       answer = await petRequest(ownTarget(this.pet), method, new URL(path, "http://app"), async () => body ?? null);
@@ -209,7 +224,7 @@ export class LocalPet {
     }
     if (method === "POST") {
       if (!this.pet.pets.length) {
-        this.emptied(); // the last one went to the ancestors
+        this.emptied(store); // the last one went to the ancestors
         return answer;
       }
       this.draw(); // the scene shows the answer at once

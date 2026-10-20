@@ -313,6 +313,10 @@
     "retire_egg_ok": "Put away",
     "retired": "{name} rests among the ancestors now.",
     "retired_egg": "The egg is gone.",
+    "retire_kept": "🥚 Put the egg with the finds",
+    "retire_kept_confirm": "Put the egg with your finds? You can brood it later.",
+    "retire_kept_ok": "Put away",
+    "retired_kept": "The egg is with your finds now.",
     "things": {
       "meal": "Meal",
       "ball": "Ball",
@@ -749,6 +753,7 @@
       "new_egg_note": "Your finds stay.",
       "retire_note": "It rests in the album and can come home again.",
       "retire_egg_note": "It is gone then.",
+      "retire_kept_note": "You can brood it later.",
       "take_along_note": "It moves from the display into the phone, with its house.",
       "bring_display_note": "It moves from this phone into a house at the display."
     },

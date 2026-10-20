@@ -1021,10 +1021,11 @@ function render(s) {
   renderFinds(s);
   renderAdventures(s);
   $("new-egg-row").hidden = egg;
-  // the display keeps its last pet; an egg that hasn't hatched just goes
+  // the display keeps its last pet; a special egg goes back to the finds, a usual one just goes
   $("retire-row").hidden = app.home() === "display" && s.pets.filter((p) => !p.phone).length <= 1;
-  $("retire-label").textContent = t(egg ? "page.retire_egg" : "page.retire");
-  $("retire-note").textContent = t(egg ? "page.more.retire_egg_note" : "page.more.retire_note");
+  const kind = retireKind(s);
+  $("retire-label").textContent = t(`page.retire${kind}`);
+  $("retire-note").textContent = t(`page.more.retire${kind}_note`);
 }
 
 // The meters: a tap says how it is and what would help
@@ -2014,16 +2015,21 @@ $("bring-display").addEventListener("click", async () => {
 });
 
 // A pet goes to rest among the ancestors, in the album, from where it can come home again
+// "" for a pet, "_egg" for a usual egg (it goes), "_kept" for a special one (back to the finds, as in model.keptEgg)
+function retireKind(s) {
+  if (s.stage !== "egg") return "";
+  return s.species !== "blob" || s.skills.some((x) => x.value) ? "_kept" : "_egg";
+}
 $("retire").addEventListener("click", async () => {
   if (!current) return;
-  const s = current, egg = s.stage === "egg";
-  const yes = await ask(t(egg ? "page.retire_egg_confirm" : "page.retire_confirm", { name: s.name }),
-    { ok: t(egg ? "page.retire_egg_ok" : "page.retire_ok"), danger: egg });
+  const s = current, kind = retireKind(s);
+  const yes = await ask(t(`page.retire${kind}_confirm`, { name: s.name }),
+    { ok: t(`page.retire${kind}_ok`), danger: kind === "_egg" });
   if (!yes) return;
   try {
     await api("POST", "/api/pet/retire", { confirm: true, pet: s.id });
     showView("home");
-    say(t(egg ? "page.retired_egg" : "page.retired", { name: s.name }));
+    say(t(`page.retired${kind}`, { name: s.name }));
     feel("ok");
   } catch (err) {
     fail(err);
