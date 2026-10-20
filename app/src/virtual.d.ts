@@ -17,3 +17,6 @@ declare module "blobling:sounds" {
   const sounds: Record<string, string>;
   export default sounds;
 }
+
+/** The app's version ("1.2.0") in a build for the stores, "" otherwise (tools/build.mjs). */
+declare const __APP_VERSION__: string;

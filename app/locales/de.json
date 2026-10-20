@@ -631,6 +631,8 @@
       "connect_note": "Blobling gibt es auch als LED-Display zum Selberbauen.",
       "privacy": "Datenschutz",
       "support": "Hilfe",
+      "licenses": "Lizenzen",
+      "version": "Version {version}",
       "connect": "Mit dem Display verbinden",
       "connect_prompt": "Adresse des Displays, z. B. raspberrypi.local oder blobling.local",
       "connect_ok": "Verbinden",
@@ -727,8 +729,7 @@
       "sound_on": "An",
       "sound_off": "Aus",
       "pet": "Pet",
-      "new_egg_note": "Deine Funde bleiben.",
-      "language": "Sprache"
+      "new_egg_note": "Deine Funde bleiben."
     },
     "gestures": {
       "bow": "nach unten",

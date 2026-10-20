@@ -479,10 +479,6 @@
           <button data-sound="off" data-t="page.more.sound_off"></button>
         </div>
       </div>
-      <div id="language-choice" hidden style="display: grid; gap: 8px">
-        <div class="label" data-t="page.more.language"></div>
-        <div class="segments" role="group" id="languages" data-t-aria="page.more.language"></div>
-      </div>
       <div id="on-phone" hidden style="display: grid; gap: 8px">
         <div class="label" data-t="page.headings.weather"></div>
         <div class="segments" role="group" data-t-aria="page.headings.weather">
@@ -500,7 +496,7 @@
         <button class="wide" id="update-start" data-t="page.app.update" hidden></button>
         <button class="wide quiet" id="disconnect" data-t="page.app.disconnect"></button>
       </div>
-      <p class="note" id="legal" hidden><a id="privacy-link" target="_blank" rel="noopener" data-t="page.app.privacy"></a> · <a id="support-link" target="_blank" rel="noopener" data-t="page.app.support"></a></p>
+      <p class="note" id="legal" hidden><a id="privacy-link" target="_blank" rel="noopener" data-t="page.app.privacy"></a> · <a id="support-link" target="_blank" rel="noopener" data-t="page.app.support"></a> · <a id="licenses-link" target="_blank" rel="noopener" data-t="page.app.licenses"></a><span id="version"></span></p>
     </div>
   </section>
 
@@ -2203,20 +2199,6 @@ document.querySelectorAll("[data-sound]").forEach((b) => b.addEventListener("cli
 }));
 showSound();
 
-// The language of the page (the Pi's own page has it on the settings page instead)
-const languages = app.languages();
-if (languages) {
-  for (const [code, name] of Object.entries(languages)) {
-    const button = document.createElement("button");
-    button.textContent = name;  // each in its own language, so it can be found in any
-    button.lang = code;
-    button.setAttribute("aria-pressed", code === app.language);
-    button.addEventListener("click", () => { if (code !== app.language) app.setLanguage(code); });
-    $("languages").append(button);
-  }
-  $("language-choice").hidden = false;
-}
-
 if (app.mode === "local") {
   // The pet lives on the phone: "More" has where it lives (for the weather and the sun)
   $("on-phone").hidden = false;
@@ -2236,6 +2218,8 @@ if (app.native) {
   const de = LANG.startsWith("de") ? ".de" : "";
   $("privacy-link").href = `${docs}privacy${de}`;
   $("support-link").href = `${docs}support${de}`;
+  $("licenses-link").href = `${docs}licenses`;
+  if (app.version) $("version").textContent = ` · ${t("page.app.version", { version: app.version })}`;
   $("legal").hidden = false;
 }
 // The Pi's own page shows the display part only for its update

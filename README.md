@@ -496,7 +496,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `app/android/`, `app/ios/`, `capacitor.config.json` | The app's projects for the stores (Capacitor); `tools/app_icons.ts` draws their icons |
 | `app/templates/` | The web interface (settings page) |
 | `app/locales/` | All texts of the interface, one file per language |
-| `docs/privacy.md`, `docs/support.md` (each with a `.de.md`), `docs/_config.yml` | The app's privacy policy and support page for the stores, and the settings of the GitHub Pages site that serves them |
+| `docs/privacy.md`, `docs/support.md` (each with a `.de.md`), `docs/licenses.md`, `docs/_config.yml` | The app's privacy policy, support page and the licenses of the parts it is built with, linked from *More* in the app, and the settings of the GitHub Pages site that serves them |
 | `app/pet/assets/` | The sprite sheets |
 | `app/pet/sounds/` | The app's sounds (WAV), written by `npm run sounds` from the recipes in `tools/sfx.ts`; don't edit them by hand |
 | `systemd/` | The service, and the update unit the button starts |

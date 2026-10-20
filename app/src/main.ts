@@ -29,7 +29,6 @@ import { pageSounds, type SoundName } from "./sound";
 
 const PI_KEY = "pi"; // the address of the Pi the app is connected to
 const LIVE_KEY = "location.live"; // "1": the pet lives wherever the phone is
-const LANGUAGE_KEY = "language"; // the language chosen under "More"; without one, the phone's
 const LIVE_EVERY_MS = 30 * 60_000; // how often the live location is looked up again, at most
 
 function stored(key: string): string | null {
@@ -47,11 +46,8 @@ const servedByPi = root.dataset.host === "pi";
 const connectedTo = !servedByPi && native ? stored(PI_KEY) : null;
 const mode = servedByPi || connectedTo ? "pi" : "local";
 
-// The Pi's page comes in the Pi's language (its answers are in that one too); otherwise the one
-// chosen under "More", or the phone's
-const chosenLanguage = stored(LANGUAGE_KEY);
+// The Pi's page comes in the Pi's language (its answers are in that one too); otherwise the phone's
 const language = servedByPi ? root.lang
-  : chosenLanguage && chosenLanguage in locales ? chosenLanguage
   : preferredLanguage(navigator.languages?.join(",") || navigator.language, Object.keys(locales)) ?? DEFAULT_LANGUAGE;
 const i18n = new I18n(locales, language);
 
@@ -84,6 +80,8 @@ const app = {
   mode,
   /** The page is the app from the stores. */
   native,
+  /** The app's version in a build for the stores, "" otherwise. */
+  version: __APP_VERSION__,
   /** The Pi's address, if the app is connected to one. */
   connectedTo,
   /** All texts in the page's language, {key: text}. */
@@ -104,28 +102,6 @@ const app = {
   /** Plays one of the app's sounds (app/src/sound.ts), unless they are off. */
   sound(name: SoundName): void {
     sounds.play(name);
-  },
-
-  /** The languages the page can be in, as {code: the language's own name}; null on the Pi's page, which has its own. */
-  languages(): Record<string, string> | null {
-    if (servedByPi) {
-      return null;
-    }
-    return Object.fromEntries(Object.entries(locales).map(([code, texts]) =>
-      [code, (texts as { language?: { name?: string } }).language?.name ?? code]));
-  },
-
-  /** The page's language. */
-  language: i18n.language,
-
-  /** Keeps `code` as the page's language from now on and shows the page in it. */
-  setLanguage(code: string): void {
-    try {
-      localStorage.setItem(LANGUAGE_KEY, code);
-    } catch {
-      return; // it would not last: stay as it is
-    }
-    location.reload();
   },
 
   /** Whether the sounds are on. */
