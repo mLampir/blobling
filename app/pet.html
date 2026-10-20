@@ -348,6 +348,7 @@
       <p class="next" id="trip-info" hidden></p>
       <div class="actions">
         <button class="soft" id="recall" hidden data-t="page.recall"></button>
+        <button class="soft" id="grandma" hidden data-t="page.grandma.fetch"></button>
         <button class="soft" id="unpack" hidden data-t="page.unpack"></button>
         <button class="soft" id="watch" hidden></button>
         <button class="soft" id="collect" hidden data-t="page.collect"></button>
@@ -910,6 +911,12 @@ function render(s) {
     $("trip-info").hidden = false;
     $("trip-info").textContent = s.asleep ? t("page.trip.full_asleep") : t("page.trip.back", { name: s.name });
   }
+  // at Grandma's (nobody was there for a long time): it waits there to be fetched
+  if (s.grandma) {
+    $("trip-info").hidden = false;
+    $("trip-info").textContent = t("page.grandma.info", { name: s.name });
+  }
+  $("grandma").hidden = !s.grandma;
   $("unpack").hidden = !s.backpack;
   $("unpack").disabled = !s.actions.unpack;
   // the scuffles of the last trip, until they have been watched or the next trip sets off
@@ -949,7 +956,7 @@ function render(s) {
 
   // Sleeping: what the button does is what it says
   const sleep = $("sleep");
-  sleep.hidden = egg || !!s.trip;
+  sleep.hidden = egg || !!s.trip || !!s.grandma;
   sleep.innerHTML = s.asleep ? svg("sun") + `<span>${t("page.wake")}</span>` : svg("moon") + `<span>${t("page.sleep")}</span>`;
   sleep.disabled = !(s.asleep ? s.actions.wake : s.actions.sleep);
   sleep.classList.toggle("wanted", !s.asleep && s.needs.includes("energy"));
@@ -1915,6 +1922,7 @@ $("pickup").addEventListener("click", async () => {
   before = current;
   intoBag(await act("pickup"), "page.picked_bag", "page.picked_fruit");
 });
+$("grandma").addEventListener("click", () => act("grandma"));
 $("recall").addEventListener("click", async () => {
   const r = await act("trip", "recall");
   if (r && r.accepted) say(t("page.trip.heading_home", { name: r.state.name }));

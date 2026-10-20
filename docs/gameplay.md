@@ -40,14 +40,13 @@ it gets bored and loses a little mood, so playing stays worthwhile.
 Three meals, two play sessions and one cleanup a day keep the pet happy. A
 day alone leaves it with about two thirds of its energy in the evening, enough
 to play and go on a trip. With
-no care at all it is hungry after about half a day, grumpy after a day and
-sick after roughly two and a half.
+no care at all it is hungry after about half a day and grumpy after a day.
+After a day and a half Grandma takes it in (see
+[At Grandma's](#at-grandmas)), before it gets sick.
 
 The simulation runs in fixed one-minute steps with seeded randomness. After a
 restart the Pi simply catches up, with the same result as if it had never
-been off. If it was off for more than a day, the pet "stayed at Grandma's"
-and comes back with middling stats; Grandma sends a postcard about it (see
-[While nobody is there](#while-nobody-is-there)).
+been off, so a pet nobody looked after meanwhile is at Grandma's.
 
 ## Looking after it
 
@@ -150,7 +149,8 @@ can be seen in the daytime too.
 
 When a stage is over, the pet sparkles and the app offers **Hatch** or
 **Evolve**. You hold the button while standing in front of the panel and watch
-it happen. If nobody does that for a day, the pet evolves by itself.
+it happen. If nobody does that for a day, the pet evolves by itself, unless
+it has gone to Grandma's by then (see [At Grandma's](#at-grandmas)).
 
 Growing up can be sped up. A later pet may bring home the **ember stone**, a
 decoration that glows from inside. While it is set out, an egg, a baby and a
@@ -567,8 +567,8 @@ day (the last three at most): up to three sentences, the things that matter
 most (growing up, a nest, a new way, a friend, a scuffle) before the small
 ones (a fruit, the ball), told in the order they happened. Rain or snow while
 it was alone opens the day ("It rained in the morning, so I sat under my
-umbrella"). If the Pi was off for more than a day, a postcard from Grandma
-says how long the pet stayed with her and what they did together.
+umbrella"). If it was at Grandma's, her postcard says how long it stayed
+with her and what they did together.
 
 **It calls you.** In the app from the stores, with the pet on the phone, it
 calls with a notification when it needs you: once it is really hungry, dirty
@@ -580,6 +580,31 @@ bedtime waits until it is up in the morning. Opening the app takes the call
 back. The app asks whether the pet may call the first time you feed it.
 Connected to a Pi, the app doesn't call: it can't know what happens there in
 the meantime, and somebody else may already have seen to it.
+
+### At Grandma's
+
+When nobody has done anything with the pet for a day and a half (from any
+phone), it goes to Grandma's, so that a week away doesn't leave it hungry and
+sick for days. Somebody who comes once a day keeps looking after it
+themselves. It hops off to the right as soon as it is awake and at home: in
+the morning if it is asleep, after the trip if it is on one. An egg goes too,
+and so does the pet at the back. With the Pi off, or the app closed with the
+pet on the phone, it is the same as if it had been running.
+
+- The panel shows its home without it: the plant, the house and whatever it
+  left lying around stay; the poops are gone, Grandma cleaned up.
+- At Grandma's time stands still for it, as in the ancestors' gallery:
+  nothing runs low, it doesn't grow on and doesn't get older, and a child's
+  care diary waits. So a child doesn't grow up while you are away, and you
+  are there when it does.
+- The app says it is at Grandma's and offers **Fetch from Grandma's**. A tap
+  brings it home: it hops in from the left, looked after (every stat at least
+  50, not sick), and the app tells what it did before it went, with Grandma's
+  postcard at the end. The plant, the hat and the decorations can be changed
+  while it is away; anything else that would need the pet waits until it is
+  fetched.
+- After that it stays at least a day and a half again, even if nobody does
+  anything with it.
 
 ## The app
 
@@ -656,6 +681,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | A scuffle watched again in the app | `app/src/replay.ts` |
 | Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), the house and its spots | `core/src/home.ts` |
 | What it does by itself, what it leaves behind or finds at home, and what it tells when you come back | `core/src/idle.ts` |
+| Going to Grandma's, staying there frozen, and being fetched | `core/src/model.ts` (`GRANDMA_AFTER`, `comeBack`) |
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |

@@ -64,6 +64,10 @@ test("a child at the back grows up, decently cared for but not specially", () =>
   assert.equal(pet.second!.stats.satiety, companion.STAT_FLOOR); // the one at the front looks after it
   const due = life.dueAt(pet.second!)!;
   const back = pet.second!;
+  for (let t = now + HOUR; t < due - 60; t += 6 * HOUR) {
+    pet.state.seen_at = t; // somebody is there, so the two stay at home
+    pet.update(t);
+  }
   pet.update(due - 60);
   assert.equal(back.stage, "child");
   const care = back.diary.good_minutes / back.diary.minutes;
@@ -73,6 +77,20 @@ test("a child at the back grows up, decently cared for but not specially", () =>
   assert.deepEqual(back.events.at(-1), { at: Math.round(due), action: "evolve", by: "system", accepted: true,
     item: "adult:angloop" });
   assert.ok(pet.albumList().some((form) => form?.species === "angloop"));
+});
+
+test("at Grandma's, the pet at the back is there too and doesn't grow on either", () => {
+  const now = at("2026-10-12 12:00");
+  const [, pet] = two(now);
+  const back = pet.second!;
+  for (let t = now; t <= now + 5 * 86400; t += HOUR) {
+    pet.update(t);
+  }
+  assert.ok(pet.state.grandma > 0);
+  const [due, minutes] = [life.dueAt(back)!, back.diary.minutes];
+  pet.update(now + 6 * 86400);
+  assert.equal(pet.view(now + 6 * 86400).visitor, null);
+  assert.deepEqual([life.dueAt(back)! - due, back.diary.minutes], [86400, minutes]);
 });
 
 test("now and then it comes out, and at night the two sleep side by side", () => {

@@ -220,6 +220,7 @@
       "no_game": "Gerade läuft kein Spiel.",
       "away": "{name} ist unterwegs.",
       "not_away": "{name} ist doch daheim.",
+      "at_home": "{name} ist doch hier und nicht bei Oma.",
       "too_young": "{name} ist noch zu klein für Ausflüge.",
       "sick_trip": "{name} ist krank und bleibt lieber daheim.",
       "hungry_trip": "{name} ist zu hungrig für einen Ausflug.",
@@ -259,6 +260,10 @@
     "evolve_hold": "Gedrückt halten, bis der Knopf gefüllt ist",
     "evolved": "{name} {what}",
     "recall": "🏠 Heimrufen",
+    "grandma": {
+      "fetch": "🏡 Bei Oma abholen",
+      "info": "{name} ist bei Oma."
+    },
     "unpack": "🎒 Auspacken",
     "replay": {
       "watch": {
@@ -340,7 +345,7 @@
       "save": "Speichern"
     },
     "welcome": {
-      "text": "{name} war {time} allein und hat etwas zu erzählen:",
+      "text": "Nach {time} allein hat {name} etwas zu erzählen:",
       "ok": "Schön"
     },
     "story": {
@@ -397,8 +402,8 @@
         "adult": "Ich bin groß geworden – jetzt bin ich ein {species}!"
       },
       "postcard": {
-        "one": "Hallo!\n{name} war einen Tag bei mir, während das Display aus war. {did} Jetzt ist es wieder zu Hause – es hat dich vermisst!\nLiebe Grüße, deine Oma",
-        "other": "Hallo!\n{name} war {n} Tage bei mir, während das Display aus war. {did} Jetzt ist es wieder zu Hause – es hat dich vermisst!\nLiebe Grüße, deine Oma"
+        "one": "Hallo!\n{name} war einen Tag bei mir. {did} Jetzt ist es wieder zu Hause – es hat dich vermisst!\nLiebe Grüße, deine Oma",
+        "other": "Hallo!\n{name} war {n} Tage bei mir. {did} Jetzt ist es wieder zu Hause – es hat dich vermisst!\nLiebe Grüße, deine Oma"
       },
       "grandma": {
         "bake": "Wir haben zusammen Kekse gebacken.",
@@ -532,7 +537,8 @@
       "pet": "gestreichelt",
       "medicine": "Medizin",
       "heart": "Herz aufgefangen ❤",
-      "away": "war bei Oma (Pi war lange aus)",
+      "away": "war bei Oma",
+      "grandma": "von Oma abgeholt",
       "new_egg": "ein neues Ei ist da",
       "start": "Links oder rechts? gespielt",
       "unpack": "Rucksack ausgepackt",

@@ -43,7 +43,7 @@ export function outWindow(t: number): [number, number] {
  * comes first. Returns "awake", "asleep" (the two sleep side by side) or null.
  */
 export function out(front: PetState, t: number, friend: boolean): "awake" | "asleep" | null {
-  if (friend || front.trip || front.stage === "egg") {
+  if (friend || front.trip || front.grandma || front.stage === "egg") {
     return null;
   }
   if (front.asleep) {

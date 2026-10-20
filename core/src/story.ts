@@ -1,8 +1,8 @@
 /**
  * What the pet tells when somebody comes back after a while: each day becomes a few sentences in
  * its own voice ("It rained in the morning, and I sat under my umbrella. Then I ate a berry."),
- * put together from pieces in the language files (`page.story.*`). When the Pi was off for more
- * than a day, Grandma, who looked after it, writes a postcard instead.
+ * put together from pieces in the language files (`page.story.*`). When it has been at Grandma's
+ * (model.GRANDMA_AFTER), she writes a postcard about it.
  *
  * Which things are told, and since when, is decided by idle.welcome; this only puts them into
  * words. Which variant a sentence takes is seeded from the time, so it reads the same every time.
@@ -45,6 +45,9 @@ interface Piece {
  * idle.welcome). `t` gives the texts in the chosen language.
  */
 export function tell(state: PetState, now: number, t: Translate): { since: number; pages: Page[] } | null {
+  if (state.grandma) {
+    return null; // it tells once it has been fetched from Grandma's, together with her postcard
+  }
   const welcome = idle.welcome(state, now);
   if (!welcome) {
     return null;

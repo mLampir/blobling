@@ -225,6 +225,8 @@ export interface PetState {
   trace: Trace | null;
   /** When somebody fed it or played with it, over the last few days (habits.ts). */
   habits: number[];
+  /** Since when it has been staying at Grandma's, because nobody was there (model.GRANDMA_AFTER); 0 = at home. */
+  grandma: number;
 }
 
 /** A state with every field at its starting value. */
@@ -283,6 +285,7 @@ export function newState(): PetState {
     weather_seen: [],
     trace: null,
     habits: [],
+    grandma: 0.0,
   };
 }
 

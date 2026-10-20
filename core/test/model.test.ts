@@ -6,7 +6,7 @@ import { beforeEach, test } from "node:test";
 import * as home from "../src/home";
 import * as life from "../src/life";
 import * as model from "../src/model";
-import { toDict, type PetState } from "../src/state";
+import { STATS, toDict, type PetState } from "../src/state";
 import { BEDTIME, HOUR, act, at, grown, near, refused } from "./helpers";
 
 let start: number;
@@ -60,11 +60,72 @@ test("catch-up equals continuous run", () => {
   assert.deepEqual(toDict(pet), toDict(other));
 });
 
-test("long absence is capped", () => {
-  pet.stats.satiety = 30;
+test("with the Pi off for a long time, it went to Grandma's as if it had been on", () => {
+  act(pet, "pet", start);
+  const due = life.dueAt(pet)!;
   runUntil("2026-10-20 08:00");
-  assert.equal(pet.stats.satiety, 50);
-  assert.equal(pet.events.at(-1)!.action, "away");
+  const went = start + model.GRANDMA_AFTER;
+  assert.equal(pet.grandma, went);
+  assert.equal(life.dueAt(pet)! - at("2026-10-20 08:00"), due - went); // it didn't grow on from then
+  assert.deepEqual(act(pet, "grandma", at("2026-10-20 08:00")), [true, null]);
+  assert.deepEqual([pet.grandma, pet.stats.satiety, pet.activity], [0, 50, "grandma_home"]);
+  assert.deepEqual([pet.events.at(-1)!.action, pet.events.at(-1)!.item], ["away", "7"]);
+});
+
+test("a pet nobody has ever looked after goes to Grandma's once the simulation has caught up", () => {
+  runUntil("2026-10-20 08:00");
+  assert.equal(pet.grandma, start + model.MAX_CATCH_UP);
+});
+
+/** Runs the simulation hour by hour, as a Pi that keeps running does. */
+function hourly(until: number): void {
+  for (let t = pet.updated_at + HOUR; t < until; t += HOUR) {
+    model.advance(pet, t, BEDTIME);
+  }
+  model.advance(pet, until, BEDTIME);
+}
+
+test("a while after somebody was last there, it goes to Grandma's and waits there, frozen", () => {
+  act(pet, "pet", start);
+  hourly(start + model.GRANDMA_AFTER - HOUR);
+  assert.equal(pet.grandma, 0);
+  hourly(start + model.GRANDMA_AFTER + 60);
+  assert.equal(pet.grandma, start + model.GRANDMA_AFTER);
+  assert.equal(model.activityOf(pet, pet.grandma + 1), "grandma_go");
+  const [stats, due, born, then] = [{ ...pet.stats }, life.dueAt(pet)!, pet.born_at, pet.updated_at];
+  hourly(start + 7 * 86400);
+  assert.deepEqual(pet.stats, stats); // nothing runs low there
+  assert.deepEqual([model.needs(pet), pet.poops, pet.sick], [[], 0, false]);
+  const away = start + 7 * 86400 - then;
+  assert.deepEqual([life.dueAt(pet)! - due, pet.born_at - born], [away, away]); // nor does it grow on or get older
+  const actions = model.availableActions(pet, pet.updated_at);
+  assert.deepEqual(Object.keys(actions).filter((k) => actions[k]), ["plant", "wear", "deco", "grandma"]);
+  // fetched: it comes home looked after, and stays at least as long again
+  assert.deepEqual(act(pet, "grandma", start + 7 * 86400), [true, null]);
+  assert.equal(pet.grandma, 0);
+  assert.ok(STATS.every((k) => pet.stats[k] >= model.GRANDMA_STATS));
+  assert.deepEqual([pet.events.at(-1)!.action, pet.events.at(-1)!.item], ["away", "6"]);
+  assert.equal(pet.seen_at, start); // what happened before it went is still to be told
+  hourly(start + 8 * 86400 - HOUR);
+  assert.equal(pet.grandma, 0);
+  assert.deepEqual(act(pet, "grandma", pet.updated_at), [false, "at_home"]);
+});
+
+test("asleep, it waits for the morning before it goes to Grandma's", () => {
+  act(pet, "pet", at("2026-10-12 13:00")); // a day and a half later it is the middle of the night
+  hourly(at("2026-10-14 06:00"));
+  assert.deepEqual([pet.asleep, pet.grandma], [true, 0]);
+  hourly(at("2026-10-14 12:00"));
+  assert.ok(pet.grandma > at("2026-10-14 06:00"));
+});
+
+test("an app from before Grandma fetches it with whatever it does", () => {
+  act(pet, "pet", start);
+  hourly(start + 3 * 86400);
+  assert.ok(pet.grandma > 0);
+  assert.deepEqual(act(pet, "feed", start + 3 * 86400, { item: "meal" }), [true, null]);
+  assert.equal(pet.grandma, 0);
+  assert.ok(pet.events.some((e) => e.action === "away"));
 });
 
 test("clock jump backwards", () => {
@@ -215,6 +276,7 @@ test("the ember stone makes whatever is still growing grow faster", () => {
     for (const state of [pet, other]) {
       for (let t = state.updated_at; t < until; t += HOUR) {
         state.stats.satiety = state.stats.hygiene = state.stats.mood = 80; // looked after all along
+        state.seen_at = t;
         model.advance(state, Math.min(until, t + HOUR), BEDTIME);
       }
     }

@@ -220,6 +220,7 @@
       "no_game": "There's no game going on.",
       "away": "{name} is out and about.",
       "not_away": "{name} is right here at home.",
+      "at_home": "{name} is right here, not at Grandma's.",
       "too_young": "{name} is still too little for trips.",
       "sick_trip": "{name} is sick and would rather stay home.",
       "hungry_trip": "{name} is too hungry for a trip.",
@@ -259,6 +260,10 @@
     "evolve_hold": "Keep holding until the button fills up",
     "evolved": "{name} {what}",
     "recall": "🏠 Call home",
+    "grandma": {
+      "fetch": "🏡 Fetch from Grandma's",
+      "info": "{name} is staying at Grandma's."
+    },
     "unpack": "🎒 Unpack",
     "replay": {
       "watch": {
@@ -397,8 +402,8 @@
         "adult": "I've grown up – I'm a {species} now!"
       },
       "postcard": {
-        "one": "Hello!\n{name} stayed with me for a day while the display was off. {did} Now it's back home – it missed you!\nLove, Grandma",
-        "other": "Hello!\n{name} stayed with me for {n} days while the display was off. {did} Now it's back home – it missed you!\nLove, Grandma"
+        "one": "Hello!\n{name} stayed with me for a day. {did} Now it's back home – it missed you!\nLove, Grandma",
+        "other": "Hello!\n{name} stayed with me for {n} days. {did} Now it's back home – it missed you!\nLove, Grandma"
       },
       "grandma": {
         "bake": "We baked cookies together.",
@@ -532,7 +537,8 @@
       "pet": "petted",
       "medicine": "Medicine",
       "heart": "caught a heart ❤",
-      "away": "stayed at Grandma's (the Pi was off for a long time)",
+      "away": "stayed at Grandma's",
+      "grandma": "fetched from Grandma's",
       "new_egg": "a new egg arrived",
       "start": "played Left or right?",
       "unpack": "unpacked the backpack",
