@@ -977,7 +977,8 @@ export class Pet {
   /** A time together has just ended (at `end`): the pairs that could play, did. */
   private playedTogether(end: number): void {
     const at = end - 1;
-    for (const [a, b] of companion.pairs(this.pets.filter((s) => s.stage !== "egg").map((s) => s.id), at, false)) {
+    const hatched = this.pets.filter((s) => s.stage !== "egg");
+    for (const [a, b] of companion.pairs(hatched.map((s) => s.id), at, false, companion.awayFrom(hatched))) {
       const [first, second] = [this.find(a), this.find(b)];
       if (companion.out(first, second, at, this.friendThere(first, at) || this.friendThere(second, at)) !== "awake"
           || !companion.canPlay(first, model.moodOf(first)) || !companion.canPlay(second, model.moodOf(second))) {

@@ -42,8 +42,10 @@ export function nextOutEnd(t: number): number {
 /**
  * Who keeps whom company at the time `t`: the pets (by their ids) drawn into pairs, a new draw for
  * every block of OUT_EVERY by day and one for each night. With an odd number, one is on its own.
+ * Those in `away` (on a trip, at Grandma's) are left out: the pairs at home stay as drawn, and the
+ * ones whose partner is away pair up among themselves, so nobody sleeps alone for nothing.
  */
-export function pairs(ids: readonly string[], t: number, night: boolean): [string, string][] {
+export function pairs(ids: readonly string[], t: number, night: boolean, away: ReadonlySet<string> = new Set()): [string, string][] {
   const key = night ? `night:${Math.floor(t / 86400 - 0.5)}` : `pairs:${Math.floor(t / OUT_EVERY)}`;
   const rng = new Random(key);
   const order = [...ids].sort();
@@ -52,8 +54,17 @@ export function pairs(ids: readonly string[], t: number, night: boolean): [strin
     [order[i], order[j]] = [order[j], order[i]];
   }
   const result: [string, string][] = [];
-  for (let i = 0; i + 1 < order.length; i += 2) {
-    result.push([order[i], order[i + 1]]);
+  const left: string[] = [];
+  for (let i = 0; i < order.length; i += 2) {
+    const pair = order.slice(i, i + 2).filter((id) => !away.has(id));
+    if (pair.length === 2) {
+      result.push([pair[0], pair[1]]);
+    } else {
+      left.push(...pair);
+    }
+  }
+  for (let i = 0; i + 1 < left.length; i += 2) {
+    result.push([left[i], left[i + 1]]);
   }
   return result;
 }
@@ -61,12 +72,17 @@ export function pairs(ids: readonly string[], t: number, night: boolean): [strin
 /** The one `id` keeps company with at the time `t`, among `pets`, or null. */
 export function partner(pets: readonly PetState[], id: string, t: number, night: boolean): PetState | null {
   const hatched = pets.filter((pet) => pet.stage !== "egg");
-  const pair = pairs(hatched.map((pet) => pet.id), t, night).find((p) => p.includes(id));
+  const pair = pairs(hatched.map((pet) => pet.id), t, night, awayFrom(hatched)).find((p) => p.includes(id));
   if (!pair) {
     return null;
   }
   const other = pair[0] === id ? pair[1] : pair[0];
   return hatched.find((pet) => pet.id === other) ?? null;
+}
+
+/** The ids of those not at home: on a trip or at Grandma's (pairs). */
+export function awayFrom(pets: readonly PetState[]): Set<string> {
+  return new Set(pets.filter((pet) => pet.trip || pet.grandma).map((pet) => pet.id));
 }
 
 /** Can it be with a neighbour at all: at home, hatched, not at Grandma's, no friend of its own visiting? */
