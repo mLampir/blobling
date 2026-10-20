@@ -8,14 +8,19 @@
  *
  * While the app is in the background, the pet calls with a notification when it needs somebody
  * (notify.ts).
+ *
+ * Connected to a display, the phone keeps its own home next to the display's: its pets stay on the
+ * phone, and pets move between the two only on purpose (release, adopt). That home can be empty
+ * then; it keeps its ancestors and album until a pet moves in again.
  */
 
 import { NOT_A_PET_ROUTE, ownTarget, petRequest } from "../../core/src/api";
 import type { Image } from "../../core/src/image";
 import type { I18n } from "../../core/src/i18n";
 import { RequestError } from "../../core/src/model";
-import { MAX_NAME, Pet, readSave } from "../../core/src/pet";
+import { MAX_NAME, PLACES, Pet, VERSION, readSave, type Ancestor, type Moving } from "../../core/src/pet";
 import { PetScene } from "../../core/src/scene";
+import { fromDict } from "../../core/src/state";
 import { pan, panSeconds } from "../../core/src/street";
 import { checkLocation, type Location } from "../../core/src/sun";
 import { Weather } from "../../core/src/weather";
@@ -37,8 +42,18 @@ function savedLocation(): Location {
   }
 }
 
+/** What an empty home keeps: its ancestors and its album. */
+interface EmptyHome {
+  version: number;
+  pet: null;
+  ancestors: Ancestor[];
+  album: string[];
+}
+
 export class LocalPet {
-  readonly pet: Pet;
+  /** The pets on the phone, or null while none lives here (only while connected to a display). */
+  private home: Pet | null = null;
+  private rest: { ancestors: Ancestor[]; album: string[] } = { ancestors: [], album: [] };
   private readonly scenes = new Map<string, PetScene>();
   private sceneLocation: Location;
   /** The pet the scene showed last, and its last frame: where a switch pans from. */
@@ -47,12 +62,16 @@ export class LocalPet {
   private readonly weather: Weather;
   private timer: ReturnType<typeof setTimeout> | undefined;
   private canvas: HTMLCanvasElement | null = null;
+  private listening = false;
   private readonly reminders: Reminders | null;
 
-  private constructor(store: Store, private readonly i18n: I18n, saved: unknown) {
+  private constructor(private readonly store: Store, private readonly i18n: I18n, saved: unknown, create: boolean) {
     const location = savedLocation();
     let restored: ReturnType<typeof readSave> | null = null;
-    if (saved !== undefined) {
+    const empty = saved as Partial<EmptyHome> | undefined;
+    if (empty && typeof empty === "object" && empty.pet === null) {
+      this.rest = { ancestors: [...empty.ancestors ?? []], album: [...empty.album ?? []] };
+    } else if (saved !== undefined) {
       try {
         restored = readSave(saved);
       } catch (error) {
@@ -62,28 +81,100 @@ export class LocalPet {
       }
     }
     this.weather = new Weather(location?.[0] ?? null, location?.[1] ?? null, WEATHER_MINUTES);
-    this.pet = new Pet({
-      t: i18n.t, saved: restored, location, weather: () => this.weather.current(),
-      save: (file) => store.put(PET_KEY, file).catch((error) => console.error("Could not save the pet", error)),
-    });
     this.sceneLocation = location;
-    if (!restored) {
-      this.pet.save(); // the new egg is there from now on
+    if (restored) {
+      this.home = this.newHome(restored);
+    } else if (create) {
+      // nothing saved yet, or an empty home: a new egg, which is there from now on (connected to
+      // a display, the home stays empty instead, so that no pet turns up unasked)
+      this.home = this.newHome(null);
+      this.home.ancestors.push(...this.rest.ancestors);
+      this.home.album.push(...this.rest.album);
+      this.home.save();
     }
     this.reminders = reminders(i18n);
     this.reminders?.clear(); // the pet is right here now
     document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        this.reminders?.leave(this.pet);
+      if (document.hidden && this.home) {
+        this.reminders?.leave(this.home);
       } else {
         this.reminders?.clear();
       }
     });
   }
 
-  static async open(i18n: I18n): Promise<LocalPet> {
+  /**
+   * The pets on the phone. `create`: start with a new egg if there are none (on its own); connected
+   * to a display, a phone that never kept pets has an empty home.
+   */
+  static async open(i18n: I18n, create = true): Promise<LocalPet> {
     const store = await openStore();
-    return new LocalPet(store, i18n, await store.get(PET_KEY));
+    const saved = await store.get(PET_KEY);
+    return new LocalPet(store, i18n, saved, create);
+  }
+
+  private newHome(saved: ReturnType<typeof readSave> | null): Pet {
+    return new Pet({
+      t: this.i18n.t, saved, location: this.sceneLocation, weather: () => this.weather.current(),
+      save: (file) => this.store.put(PET_KEY, file).catch((error) => console.error("Could not save the pet", error)),
+    });
+  }
+
+  /** The pets on the phone; throws while none lives here. */
+  get pet(): Pet {
+    if (!this.home) {
+      throw new Error(this.i18n.t("error.no_pet"));
+    }
+    return this.home;
+  }
+
+  /** Whether no pet lives on the phone (only while connected to a display). */
+  get empty(): boolean {
+    return !this.home;
+  }
+
+  /** The pets on the phone, for the pictures to switch between (Pet.street); none while it is empty. */
+  street(): ReturnType<Pet["street"]> {
+    return this.home ? this.home.street() : { pets: [], places: PLACES };
+  }
+
+  // ---------- Pets moving between the phone and a display ----------
+
+  /** The pet with this id leaves the phone (Pet.release), for a display. */
+  release(id: string): Moving {
+    const moving = this.pet.release(id);
+    this.emptied();
+    return moving;
+  }
+
+  /** The pet with this id goes to rest among the ancestors (Pet.retire). */
+  retire(id: string): void {
+    this.pet.retire(id);
+    this.emptied();
+  }
+
+  /** A pet from a display moves in, into a new house or in the place of `place` (Pet.adopt). */
+  adopt(moving: Moving, place: string | null): void {
+    if (this.home) {
+      this.home.adopt(moving, place);
+    } else {
+      const pet = fromDict({ ...moving.pet, items: { ...moving.things }, eggs: [] } as unknown as Record<string, unknown>);
+      pet.seen_at = Date.now() / 1000;
+      this.home = this.newHome({ state: pet, ancestors: this.rest.ancestors, album: this.rest.album });
+      this.home.save();
+    }
+    this.draw();
+  }
+
+  /** After a pet left: with the last one gone, the home keeps only its ancestors and album. */
+  private emptied(): void {
+    if (this.home && !this.home.pets.length) {
+      this.rest = { ancestors: this.home.ancestors, album: this.home.album };
+      this.home = null;
+      const file: EmptyHome = { version: VERSION, pet: null, ...this.rest };
+      void this.store.put(PET_KEY, file).catch((error) => console.error("Could not save the pet", error));
+    }
+    this.draw();
   }
 
   // ---------- The requests of the page ----------
@@ -116,25 +207,39 @@ export class LocalPet {
 
   /** Draws the scene on `canvas` from now on, as long as the page is visible. */
   show(canvas: HTMLCanvasElement): void {
+    const first = !this.listening;
+    this.listening = true;
     this.canvas = canvas;
     canvas.width = SIZE;
     canvas.height = SIZE;
+    if (!first) {
+      this.draw();
+      return;
+    }
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         clearTimeout(this.timer);
-        this.pet.save(); // the app may be closed from here without another word
+        this.home?.save(); // the app may be closed from here without another word
       } else {
         this.draw();
       }
     });
-    addEventListener("pagehide", () => this.pet.save());
+    addEventListener("pagehide", () => this.home?.save());
     this.draw();
+  }
+
+  /** Stops drawing: the page shows a pet of the display meanwhile. */
+  hide(): void {
+    clearTimeout(this.timer);
+    this.canvas = null;
+    this.shown = null;
+    this.panning = null;
   }
 
   /** One frame now, and the next one when the scene asks for it. */
   private draw(): void {
     clearTimeout(this.timer);
-    if (!this.canvas || document.hidden) {
+    if (!this.canvas || document.hidden || !this.home) {
       return;
     }
     let delay = 1;
@@ -190,7 +295,10 @@ export class LocalPet {
 
   /** Where the pet is in the scene: [x, y, width, height] as parts (0–1) of the picture. */
   petArea(): [number, number, number, number] {
-    const [x, y, width, height] = this.sceneFor(this.pet.current).petArea();
+    if (!this.home) {
+      return [0, 0, 1, 1];
+    }
+    const [x, y, width, height] = this.sceneFor(this.home.current).petArea();
     return [x / SIZE, y / SIZE, width / SIZE, height / SIZE];
   }
 
@@ -213,7 +321,7 @@ export class LocalPet {
       // without storage it holds until the app is closed
     }
     this.weather.setLocation(rounded);
-    this.pet.setLocation(rounded);
+    this.home?.setLocation(rounded);
     this.sceneLocation = rounded;
     for (const scene of this.scenes.values()) {
       scene.location = rounded;

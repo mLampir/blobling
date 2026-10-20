@@ -204,12 +204,13 @@ pet on the panel instead. A pet on the phone calls with a notification when
 it needs you (see *While nobody is there* in
 [docs/gameplay.md](docs/gameplay.md)). To connect it, tap *Connect to the display* under
 *More*: the app looks for the Pi as `blobling.local` and `raspberrypi.local`
-and only asks for its address (or IP address) if neither answers. When both
-the phone and the display have a pet, it asks which of them lives on the
-display; the other one is kept (on the phone, or set aside on the Pi like a
-loaded save). The way back works the same: *Back to the pet on this phone*
-asks which pet lives on the phone from now on, and can bring the display's
-pet along (the phone keeps its old one aside, the display keeps its copy). The app
+and only asks for its address (or IP address) if neither answers. Connecting
+moves no pet: the phone and the display each keep their own pets, and the app
+switches between all of them. Under *More*, a pet of the display can be taken
+along on the phone, and one of the phone's brought to the display; a pet only
+ever lives in one place (see *Several pets at home* in
+[docs/gameplay.md](docs/gameplay.md)). If a phone with a pet on it is lost,
+the display's settings page fetches that pet back. The app
 talks to the Pi over plain HTTP on the home network, so nothing has to be
 installed on the Pi or the phone for it. Sound comes from the phone (it can be
 turned off under *More*); the Pi stays silent.
@@ -364,8 +365,8 @@ The pet page is also the app for the phone (`app/pet.html`, its script in
 the game runs in the page, the scene is drawn above the needs and the pet is
 kept in the app's storage, or on a Pi, which shows it on the panel. The Pi
 serves the page at `/pet` and is its pet there; the app from the stores keeps
-its own pet, saved where the phone's backup takes it along, and can be
-connected to a Pi under *More*. A pet on the phone leaves a local
+its own pets, saved where the phone's backup takes them along, and can be
+connected to a Pi under *More*, where it shows the pets of both. A pet on the phone leaves a local
 notification for its next need when the app goes into the background
 (`app/src/notify.ts`, with the moment from `core/src/notify.ts`; Capacitor's
 Local Notifications plugin), so no server or push service is involved.

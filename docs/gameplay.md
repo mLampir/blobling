@@ -254,8 +254,26 @@ stays with a pet until that one has been left alone for half a minute. On the
 display's settings page a pet can be pinned, so the panel always shows that
 one. A switch pans along the street there too.
 
-Connecting a phone to a display moves no pet: the display has its own home,
-and the pets the phone kept wait on the phone until it is disconnected again.
+**The phone and the display** each have a home of their own, with their own
+places. Connecting the app to a display moves no pet; the pictures at the top
+show the pets of both, the phone's with a small phone sign. Away from home,
+with the display out of reach, the app shows only the phone's own pets.
+
+- **Take along on this phone** (under *More*, for a pet of the display) moves
+  it into the phone, with its house: it lives there until it is brought back,
+  also when the app is opened at home.
+- **Bring to the display** (for a pet of the phone) moves it into a house at
+  the display. Both ask where it should live, as a new egg does.
+- **A pet lives in one place only.** Every pet carries a move number, and the
+  display remembers the last one of every pet that moved, so an old copy (an
+  old save file, a phone's backup) is turned away. One pet always stays at the
+  display.
+- **A lost phone:** the display keeps the pets phones took along, sealed, and
+  its settings page can fetch one back. The copy on that phone no longer counts
+  then.
+- **Copies from before pets could move** (the same pet on the phone and at the
+  display) are asked about once: you pick the real one, and the other rests
+  among the ancestors.
 
 ## Tricks
 
@@ -584,8 +602,9 @@ tiredness (it goes to sleep by itself) or a single poop. Only one call is ever
 waiting, and never at night: a need that comes up while it sleeps or at
 bedtime waits until it is up in the morning. Opening the app takes the call
 back. The app asks whether the pet may call the first time you feed it.
-Connected to a Pi, the app doesn't call: it can't know what happens there in
-the meantime, and somebody else may already have seen to it.
+The pets at a display don't call: the app can't know what happens there in
+the meantime, and somebody else may already have seen to them. The phone's own
+pets call also while it is connected.
 
 ### At Grandma's
 
@@ -667,9 +686,9 @@ played by `app/src/sound.ts`; like the sprites they are generated, by
 `npm run sounds` from the recipes in `tools/sfx.ts`. They can be turned off
 under *More*. With a Pi they come from the phone too; the Pi stays silent.
 
-Connected to a Pi, the screen is the same; the scene is then the panel's own
-picture. The pet lives on the Pi either way: it goes on with its day and can
-be looked after there while the phone is off.
+Connected to a Pi, the screen is the same; for a pet of the display, the
+scene is then the panel's own picture. Those pets live on the Pi: they go on
+with their day and can be looked after there while the phone is off.
 
 On the phone the same page is the Blobling app from the stores, which can
 keep its own pet or connect to a Pi; the README explains how.
@@ -695,6 +714,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Catching up, the state for the app, what is saved, ancestors (resting, and coming home again) and album | `core/src/pet.ts`, `core/src/state.ts` |
 | Several pets at home: the houses, the shared store, places for a new egg | `core/src/pet.ts` (`PLACES`, `newEgg`, `bringBack`) |
 | Neighbours getting together, sleeping side by side, copying tricks | `core/src/companion.ts` |
+| Moving between a phone and a display: move numbers, the sealed copy, fetching back | `core/src/pet.ts` (`release`, `adopt`, `handOver`, `takeIn`, `fetchBack`), `app/src/main.ts` |
 | The camera panning along the street (panel and app), and which pet the panel shows | `core/src/street.ts`, `pi/src/display.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |

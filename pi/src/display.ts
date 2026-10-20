@@ -249,6 +249,32 @@ export class Display {
     return result;
   }
 
+  /** A phone takes the pet with this id along: the camera goes on to another house. */
+  petHandOver(id: unknown): ReturnType<Pet["handOver"]> {
+    const before = this.camera;
+    const moving = this.pet.handOver(id);
+    this.cameraMoved(before);
+    this.showPet();
+    return moving;
+  }
+
+  /** A pet from a phone moves in: the camera goes to it, as for a new egg. */
+  petTakeIn(moving: unknown, place: unknown = null): ReturnType<Pet["takeIn"]> {
+    const before = this.camera;
+    const result = this.pet.takeIn(moving, place);
+    this.cameraMoved(before);
+    this.showPet();
+    return result;
+  }
+
+  /** A pet a phone took along comes back without it (the settings page, for a lost phone). */
+  petFetchBack(id: unknown): void {
+    const before = this.camera;
+    this.pet.fetchBack(id);
+    this.cameraMoved(before);
+    this.showPet();
+  }
+
   petAction(action: string, request: ActionRequest = {}): ReturnType<Pet["action"]> {
     const id = this.pet.find(request.pet).id;
     const result = this.pet.action(action, request);

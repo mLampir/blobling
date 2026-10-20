@@ -69,12 +69,84 @@ function translate(): void {
 translate();
 
 const remote = mode === "pi" ? new RemotePet(connectedTo ?? "", i18n) : null;
-const local = remote ? null : LocalPet.open(i18n);
+// The phone's own pets: on its own, all of them. Connected to a display (in the app from the
+// stores), the phone keeps its home next to the display's; no egg turns up there unasked.
+const local = remote && !connectedTo ? null : LocalPet.open(i18n, !remote);
+let phone: LocalPet | null = null;
+void local?.then((pet) => { phone = pet; });
+const TWINS_KEY = "twins.done"; // the copies from before pets moved that have been sorted out (their born_at)
 const sounds = pageSounds(soundFiles);
 // The pet on the phone calls when it needs somebody (notify.ts); one on a Pi doesn't, the app
 // can't know what happens there. A call the phone's pet left before the app was connected goes.
 if (remote) {
   reminders(i18n)?.clear();
+}
+
+/** With a Pi: the pets of the display, as its last answer had them, and whether it was out of reach. */
+let display: { pets: any[]; places: number } | null = null;
+let displayAway = false;
+let displayAsked = 0;
+let sceneCanvas: HTMLCanvasElement | null = null;
+
+/** With a Pi: whether the camera is on one of the phone's own pets. */
+function onPhone(): boolean {
+  return !!phone && !!camera && phone.street().pets.some((pet) => pet.id === camera);
+}
+
+/** The phone draws the scene of its own pet; for one of the display, the page shows the panel's. */
+function showScene(): void {
+  if (!phone || !sceneCanvas) {
+    return;
+  }
+  if (!remote || onPhone()) {
+    phone.show(sceneCanvas);
+  } else {
+    phone.hide();
+  }
+}
+
+/**
+ * The pictures to switch between show the pets of both homes: the display's, and the phone's own
+ * (marked `phone`); while the display is out of reach, only the phone's.
+ */
+function bothHomes(answer: any): void {
+  const state = answer?.state ?? answer;
+  if (!Array.isArray(state?.pets)) {
+    return;
+  }
+  if (!onPhone()) {
+    display = { pets: state.pets, places: state.places };
+  }
+  const own = phone ? phone.street().pets.map((pet) => ({ ...pet, phone: true })) : [];
+  const shown = displayAway || !display ? [] : display.pets;
+  state.pets = [...shown, ...own];
+  state.home = onPhone() ? "phone" : "display";
+}
+
+/** While the camera is on a phone's pet: the display's pets now and then, for the pictures. */
+function askDisplay(): void {
+  if (!remote || Date.now() - displayAsked < 20_000) {
+    return;
+  }
+  displayAsked = Date.now();
+  remote.request("GET", "/api/pet").then((answer: any) => {
+    display = { pets: answer.pets, places: answer.places };
+    displayAway = false;
+  }, () => { displayAway = true; });
+}
+
+/** A request for the pet with this id: `?pet=` for GET, "pet" in the JSON for the others (core/src/api.ts). */
+function forPet(method: string, path: string, body: unknown, id: string | null): [string, unknown] {
+  if (!id || !path.startsWith("/api/pet")) {
+    return [path, body];
+  }
+  if (method === "GET") {
+    return [`${path}${path.includes("?") ? "&" : "?"}pet=${encodeURIComponent(id)}`, body];
+  }
+  if (body !== null && typeof body === "object" && !("pet" in body)) {
+    return [path, { ...body, pet: id }];
+  }
+  return [path, body];
 }
 
 /** With a Pi: the pet this phone looks at, or null for the one the panel shows. */
@@ -96,13 +168,7 @@ function setCamera(id: string | null): void {
 /** A request to a Pi, for the pet this phone looks at (core/src/api.ts: "pet"). */
 async function askPi(method: string, path: string, body?: unknown): Promise<any> {
   const forCamera = camera && path.startsWith("/api/pet");
-  let url = path;
-  let sent = body;
-  if (forCamera && method === "GET") {
-    url += `${path.includes("?") ? "&" : "?"}pet=${encodeURIComponent(camera!)}`;
-  } else if (forCamera && body !== null && typeof body === "object" && !("pet" in body)) {
-    sent = { ...body, pet: camera };
-  }
+  const [url, sent] = forPet(method, path, body, camera);
   try {
     return await remote!.request(method, url, sent);
   } catch (error) {
@@ -141,12 +207,123 @@ const app = {
    * with the text for the page.
    */
   async request(method: string, path: string, body?: unknown): Promise<any> {
-    const answer = remote ? await askPi(method, path, body) : await (await local!).request(method, path, body);
+    if (!remote) {
+      return (await local!).request(method, path, body);
+    }
+    if (local) {
+      await local; // the phone's own pets are known from here on
+    }
+    let answer: any;
+    if (onPhone()) {
+      answer = await phone!.request(method, ...forPet(method, path, body, camera));
+      askDisplay();
+    } else {
+      try {
+        answer = await askPi(method, path, body);
+        displayAway = false;
+      } catch (error) {
+        // the display is out of reach (away from home): the phone's own pets, if it has any
+        if (!(error as { offline?: boolean }).offline || !phone || phone.empty) {
+          throw error;
+        }
+        displayAway = true;
+        setCamera(phone.street().pets[0].id);
+        answer = await phone.request(method, ...forPet(method, path, body, camera));
+      }
+    }
     const id = answer?.state?.id ?? answer?.id;
-    if (remote && MOVES_CAMERA.includes(path) && typeof id === "string") {
+    if (MOVES_CAMERA.includes(path) && typeof id === "string") {
       setCamera(id);
     }
+    if (path.startsWith("/api/pet")) {
+      bothHomes(answer);
+    }
+    showScene();
     return answer;
+  },
+
+  /** Where the pet the phone looks at lives: "phone" (drawn on the phone) or "display" (the panel's picture). */
+  home(): "phone" | "display" {
+    return !remote || onPhone() ? "phone" : "display";
+  },
+
+  /** The pets of each home and how many fit, for choosing a place; null for a home that isn't there. */
+  homes(): { display: { pets: any[]; places: number } | null; phone: { pets: any[]; places: number } | null } {
+    return { display: remote && !displayAway ? display : null, phone: phone ? phone.street() : null };
+  },
+
+  /**
+   * Connected to a display: the pet with this id goes along with the phone, into a new house or in
+   * the place of the phone's pet `place`. It answers like GET /api/pet, for the pet on the phone.
+   */
+  async takeAlong(id: string, place: string | null): Promise<any> {
+    const pet = await local!;
+    const { moving } = await remote!.request("POST", "/api/pet/hand_over", { pet: id }) as { moving: any };
+    pet.adopt(moving, place);
+    if (display) {
+      display.pets = display.pets.filter((there) => there.id !== id);
+    }
+    // the display keeps it sealed until the phone confirms; asked again, it hands over the same
+    await remote!.request("POST", "/api/pet/handed_over", { pet: id, moves: moving.pet.moves }).catch(() => {});
+    setCamera(id);
+    return app.request("GET", "/api/pet");
+  },
+
+  /**
+   * Connected to a display: the phone's pet with this id moves to the display, into a new house or
+   * in the place of the display's pet `place`. An old copy of a pet that lives elsewhere by now is
+   * turned away; it rests among the phone's ancestors then. Answers like POST /api/pet/take_in.
+   */
+  async bringToDisplay(id: string, place: string | null): Promise<any> {
+    const pet = await local!;
+    const moving = pet.release(id);
+    let answer: any;
+    try {
+      answer = await remote!.request("POST", "/api/pet/take_in", { moving, place });
+    } catch (error) {
+      pet.adopt(moving, null); // back where it was
+      if ((error as { key?: string }).key === "stale") {
+        pet.retire(id);
+      }
+      throw error;
+    }
+    if (!answer.accepted) {
+      pet.adopt(moving, null);
+      return answer;
+    }
+    setCamera(id);
+    bothHomes(answer);
+    showScene();
+    return answer;
+  },
+
+  /**
+   * Connected to a display: pets that live on both, copied there before pets moved (the same
+   * born_at), as [the phone's, the display's], until one of each pair is chosen (keepTwin).
+   */
+  twins(): [any, any][] {
+    if (!phone || !display || displayAway) {
+      return [];
+    }
+    const done = (stored(TWINS_KEY) ?? "").split(",");
+    return phone.street().pets.flatMap((own) => display!.pets
+      .filter((there) => there.id !== own.id && there.born_at === own.born_at && !done.includes(String(own.born_at)))
+      .map((there) => [own, there] as [any, any]));
+  },
+
+  /** Of two copies (twins), `keep` is the real one: "phone" or "display". The other rests among the ancestors. */
+  async keepTwin(twin: [any, any], keep: "phone" | "display"): Promise<void> {
+    const [own, there] = twin;
+    if (keep === "display") {
+      (await local!).retire(own.id);
+    } else {
+      await app.bringToDisplay(own.id, there.id);
+    }
+    try {
+      localStorage.setItem(TWINS_KEY, [stored(TWINS_KEY), own.born_at].filter(Boolean).join(","));
+    } catch {
+      // then it asks again next time
+    }
   },
 
   /**
@@ -154,6 +331,10 @@ const app = {
    * unless a pet is pinned there). Returns its state, like GET /api/pet.
    */
   async look(id: string): Promise<any> {
+    if (remote) {
+      // on the phone's own pet, the display goes on showing what it shows
+      setCamera(id);
+    }
     return app.request("POST", "/api/pet/look", { pet: id });
   },
 
@@ -186,7 +367,11 @@ const app = {
 
   /** On the phone: the scene goes on this canvas. */
   async showScene(canvas: HTMLCanvasElement): Promise<void> {
-    (await local!).show(canvas);
+    sceneCanvas = canvas;
+    if (local) {
+      await local;
+      showScene();
+    }
   },
 
   /**
@@ -194,7 +379,7 @@ const app = {
    * knows where it can be touched. Only on the phone; with a Pi, null (the whole picture counts).
    */
   async petArea(): Promise<[number, number, number, number] | null> {
-    return local ? (await local).petArea() : null;
+    return local && app.home() === "phone" ? (await local).petArea() : null;
   },
 
   /** With a Pi: whether it and this app understand each other ("ok", "display_old", "app_old"). */

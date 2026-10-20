@@ -60,6 +60,26 @@ export interface Ancestor {
   pet?: PetState;
 }
 
+/**
+ * A pet on its way between a phone and a display (Pet.release): the pet, and what of its house
+ * leaves the store with it.
+ */
+export interface Moving {
+  pet: PetState;
+  /** Its hat and decorations, {item: count}: they leave the store of one home for the other's. */
+  things: Record<string, number>;
+}
+
+/**
+ * On a display: a pet a phone took along (Pet.handOver), as it was when it left. The display
+ * keeps it sealed, to fetch the pet back if the phone is lost (Pet.fetchBack).
+ */
+export interface AwayPet extends Moving {
+  left_at: number;
+  /** The phone said it has the pet (Pet.handedOver); until then, asking again hands over the same. */
+  confirmed: boolean;
+}
+
 /** What is saved. */
 export interface SaveFile {
   version: number;
@@ -74,6 +94,10 @@ export interface SaveFile {
   album?: string[];
   /** Files from before the neighbours had their pet at the back here; it becomes one of `others`. */
   second?: PetState | null;
+  /** On a display: the highest move number of every pet that moved, {id: moves}. */
+  moved?: Record<string, number>;
+  /** On a display: the pets phones took along. */
+  away?: AwayPet[];
 }
 
 /** The pets as they were saved: the one the camera was on, the others, the ancestors and the album. */
@@ -83,6 +107,8 @@ export interface Saved {
   place?: number;
   ancestors: Ancestor[];
   album?: string[];
+  moved?: Record<string, number>;
+  away?: AwayPet[];
 }
 
 /** The pets, their ancestors and the album from what was saved. Throws if it cannot be read. */
@@ -102,9 +128,17 @@ export function readSave(data: unknown): Saved {
     .filter((pet) => pet !== null && typeof pet === "object")
     .map((pet) => fromDict(pet as unknown as Record<string, unknown>));
   const place = Number.isInteger(file.place) ? Math.max(0, Math.min(others.length, file.place!)) : 0;
+  const moved = file.moved !== null && typeof file.moved === "object" ? Object.fromEntries(
+    Object.entries(file.moved).filter(([, moves]) => Number.isInteger(moves))) : {};
+  const away = (Array.isArray(file.away) ? file.away : [])
+    .filter((a) => a !== null && typeof a === "object" && a.pet !== null && typeof a.pet === "object")
+    .map((a) => ({
+      pet: fromDict(a.pet as unknown as Record<string, unknown>), things: { ...a.things },
+      left_at: Number(a.left_at) || 0, confirmed: !!a.confirmed,
+    }));
   return {
     state: fromDict(file.pet as unknown as Record<string, unknown>), others, place,
-    ancestors: [...(file.ancestors ?? [])], album,
+    ancestors: [...(file.ancestors ?? [])], album, moved, away,
   };
 }
 
@@ -162,6 +196,10 @@ export class Pet {
   ancestors: Ancestor[];
   /** The forms met so far (see albumList); the pets' own are added on every save. */
   album: string[] = [];
+  /** On a display: the highest move number of every pet that moved (handOver, takeIn), {id: moves}. */
+  moved: Record<string, number> = {};
+  /** On a display: the pets phones took along, sealed (handOver). */
+  away: AwayPet[] = [];
   private currentId = "";
   private readonly t: PetOptions["t"];
   private readonly saveFile: (file: SaveFile) => void;
@@ -184,6 +222,8 @@ export class Pet {
     if (options.saved) {
       this.ancestors = options.saved.ancestors;
       this.album = startAlbum(options.saved);
+      this.moved = { ...options.saved.moved };
+      this.away = [...options.saved.away ?? []];
       this.take(options.saved);
     } else {
       this.ancestors = [];
@@ -503,6 +543,198 @@ export class Pet {
     return !!pet.friend && wild.visiting(pet, t);
   }
 
+  // ---------- Moving between a phone and a display ----------
+
+  /**
+   * The pet with this id leaves this home for another one (adopt there): with its house, and its
+   * hat and decorations out of the store. Not while it is on a trip; from Grandma's it comes home
+   * first. With the last one gone, `pets` is empty, and this Pet is done (the phone's home keeps
+   * only its ancestors then; a display never gives its last pet away, see handOver).
+   */
+  release(id: unknown, now = this.clock()): Moving {
+    const pet = this.find(id);
+    this.advance(now);
+    if (pet.trip) {
+      throw new model.RequestError("on_trip");
+    }
+    if (pet.grandma) {
+      model.comeBack(pet, now);
+    }
+    this.collect();
+    const things: Record<string, number> = {};
+    for (const item of [pet.hat, ...pet.deco]) {
+      if (item && (pet.items[item] ?? 0) > 0) {
+        pet.items[item] -= 1; // the store of all of them
+        if (!pet.items[item]) {
+          delete pet.items[item];
+        }
+        things[item] = (things[item] ?? 0) + 1;
+      }
+    }
+    const moving = { pet: { ...toDict(pet), items: {}, eggs: [] }, things };
+    this.pets = this.pets.filter((p) => p !== pet);
+    if (this.pets.length) {
+      this.currentId = this.state.id;
+      this.write(now);
+    }
+    return moving;
+  }
+
+  /**
+   * A pet from another home (release there) moves in: into a new house, or in the place of `place`
+   * (as in newEgg). It brings its house; its hat and decorations go into the store. The camera
+   * goes to it. Returns like action(); throws a RequestError if there is no room, or it already lives here.
+   */
+  adopt(moving: Moving, place: unknown = null, now = this.clock()) {
+    const pet = fromDict(moving.pet as unknown as Record<string, unknown>);
+    pet.id ||= newId();
+    this.advance(now);
+    const old = this.placeFor(place);
+    if (this.pets.some((p) => p.id === pet.id && p !== old)) {
+      throw new model.RequestError("already_here");
+    }
+    if (old?.trip) {
+      return { accepted: false, reason: "away", message: this.t("pet.rejected.away", { name: old.name }),
+        state: this.describe(old, now) };
+    }
+    pet.items = this.state.items;
+    pet.eggs = this.state.eggs;
+    for (const [item, count] of Object.entries(moving.things ?? {})) {
+      pet.items[item] = (pet.items[item] ?? 0) + Math.max(0, Math.floor(Number(count) || 0));
+    }
+    pet.seen_at = now;
+    this.moveIn(pet, old, now);
+    this.write(now);
+    return { accepted: true, reason: null, message: null, state: this.describe(pet, now) };
+  }
+
+  /**
+   * On a display: the pet with this id goes along with a phone. Its move number goes up, and the
+   * display keeps it sealed (fetchBack). Asked again before the phone confirmed (handedOver), it
+   * hands over the same pet, so a phone that missed the answer can ask again.
+   */
+  handOver(id: unknown, now = this.clock()): Moving {
+    const waiting = this.away.find((a) => a.pet.id === id && !a.confirmed);
+    if (waiting) {
+      return structuredClone({ pet: waiting.pet, things: waiting.things });
+    }
+    const pet = this.find(id);
+    if (this.pets.length <= 1) {
+      throw new model.RequestError("last_pet"); // the panel always has a pet to show
+    }
+    const moving = this.release(pet.id, now);
+    moving.pet.moves += 1;
+    this.moved[pet.id] = moving.pet.moves;
+    this.away.push({ ...structuredClone(moving), left_at: Math.round(now), confirmed: false });
+    this.write(now);
+    return moving;
+  }
+
+  /** On a display: the phone has the pet that was handed over with this move number. */
+  handedOver(id: unknown, moves: unknown): void {
+    const entry = this.away.find((a) => a.pet.id === id && a.pet.moves === moves);
+    if (!entry) {
+      throw new model.RequestError("no_pet");
+    }
+    entry.confirmed = true;
+    this.write(this.clock());
+  }
+
+  /**
+   * On a display: a pet from a phone moves in (adopt), and its move number goes up. A copy older
+   * than the display knows of this pet is turned away ("stale"): it lives elsewhere by now. The
+   * same pet sent again (the phone missed the answer) is taken as already there.
+   */
+  takeIn(moving: unknown, place: unknown = null, now = this.clock()) {
+    const { pet, things } = (moving ?? {}) as Partial<Moving>;
+    if (pet === null || typeof pet !== "object" || typeof pet.id !== "string" || !pet.id) {
+      throw new model.RequestError("invalid_value");
+    }
+    const moves = Number.isInteger(pet.moves) ? pet.moves : 0;
+    const here = this.pets.find((p) => p.id === pet.id);
+    if (here && here.moves === moves + 1) {
+      return { accepted: true, reason: null, message: null, state: this.describe(here, now) };
+    }
+    if (here || moves < (this.moved[pet.id] ?? 0)) {
+      throw new model.RequestError("stale");
+    }
+    const result = this.adopt({ pet: { ...pet, moves: moves + 1 }, things: things ?? {} }, place, now);
+    if (result.accepted) {
+      this.moved[pet.id] = moves + 1;
+      this.away = this.away.filter((a) => a.pet.id !== pet.id);
+      this.write(now);
+    }
+    return result;
+  }
+
+  /**
+   * On a display: a pet a phone took along comes back as it left, for when the phone is lost. The
+   * phone's copy is stale from then on. It moves into a free house, or rests among the ancestors
+   * while there is none. Returns its id.
+   */
+  fetchBack(id: unknown, now = this.clock()): string {
+    const index = this.away.findIndex((a) => a.pet.id === id);
+    if (index < 0) {
+      throw new model.RequestError("no_pet");
+    }
+    const [entry] = this.away.splice(index, 1);
+    // two up: one up would make the phone's copy look like the same pet sent twice (takeIn)
+    const moves = Math.max(entry.pet.moves, this.moved[entry.pet.id] ?? 0) + 2;
+    this.moved[entry.pet.id] = moves;
+    const pet = { ...entry.pet, moves };
+    if (this.pets.length < PLACES) {
+      this.adopt({ pet, things: entry.things }, null, now);
+    } else {
+      for (const [item, count] of Object.entries(entry.things)) {
+        this.state.items[item] = (this.state.items[item] ?? 0) + count;
+      }
+      this.archive(fromDict(pet as unknown as Record<string, unknown>), now);
+      this.write(now);
+    }
+    return pet.id;
+  }
+
+  /**
+   * The pet with this id goes to rest among the ancestors, by hand (the app uses it for the second
+   * of two copies from before pets moved). With the last one gone, `pets` is empty, as after release.
+   */
+  retire(id: unknown, now = this.clock()): void {
+    const pet = this.find(id);
+    this.advance(now);
+    if (pet.trip) {
+      throw new model.RequestError("on_trip");
+    }
+    this.archive(pet, now);
+    this.pets = this.pets.filter((p) => p !== pet);
+    if (this.pets.length) {
+      this.currentId = this.state.id;
+      this.write(now);
+    }
+  }
+
+  /** The pets at home, in the order of their houses (for the pictures to switch between), and how many fit. */
+  street(now = this.clock()) {
+    return {
+      pets: this.pets.map((pet) => ({
+        id: pet.id, name: pet.name, species: pet.species, stage: pet.stage,
+        species_label: this.t(`species.${pet.species}`), stage_label: this.t(life.formKey(pet.stage, pet.species)),
+        age_days: pet.stage === "egg" ? 0 : Math.max(0, Math.floor((now - pet.born_at) / 86400)),
+        grandma: !!pet.grandma, away: !!pet.trip, needs: model.needs(pet).length > 0,
+        born_at: Math.round(pet.born_at),
+      })),
+      // how many pets can live at home (one house each)
+      places: PLACES,
+    };
+  }
+
+  /** On a display: the pets phones took along, for the settings page. */
+  awayList() {
+    return this.away.map(({ pet, left_at, confirmed }) => ({
+      id: pet.id, name: pet.name, species: pet.species, stage: pet.stage, left_at, confirmed,
+      form: this.t(pet.stage === "adult" ? `species.${pet.species}` : life.formKey(pet.stage, pet.species)),
+    }));
+  }
+
   /** The ancestors, the last one first; `home`: it can come home again (bringBack). */
   ancestorList() {
     return [...this.ancestors].reverse().map(({ pet, ...a }) => ({
@@ -550,11 +782,20 @@ export class Pet {
       others: this.pets.filter((pet) => pet !== current).map((pet) => ({ ...toDict(pet), items: {}, eggs: [] })),
       place: this.pets.indexOf(current),
       ancestors: structuredClone(this.ancestors), album: [...this.album],
+      ...Object.keys(this.moved).length ? { moved: { ...this.moved } } : {},
+      ...this.away.length ? { away: structuredClone(this.away) } : {},
     };
   }
 
   /** Takes pets that were saved (see readSave) in place of these, ancestors and all. */
   replace(saved: Saved): void {
+    // a pet that has moved since the file was saved lives elsewhere now: the file is an old copy
+    if ([saved.state, ...saved.others ?? []].some((pet) => pet.id && pet.moves < (this.moved[pet.id] ?? 0))) {
+      throw new model.RequestError("stale");
+    }
+    for (const [id, moves] of Object.entries(saved.moved ?? {})) {
+      this.moved[id] = Math.max(moves, this.moved[id] ?? 0);
+    }
     this.ancestors = saved.ancestors;
     this.album = startAlbum(saved);
     this.take(saved);
@@ -756,16 +997,9 @@ export class Pet {
       grandma: s.grandma ? { since: Math.round(s.grandma) } : null,
       // What happened while nobody was there, told as a little story (story.tell), or null
       welcome: story.tell(s, now, t),
-      // All the pets at home, in the order of their houses: for switching the camera between them.
-      // grandma: it is at Grandma's; away: on a trip; needs: something it needs is running low
-      pets: this.pets.map((pet) => ({
-        id: pet.id, name: pet.name, species: pet.species, stage: pet.stage,
-        species_label: t(`species.${pet.species}`), stage_label: t(life.formKey(pet.stage, pet.species)),
-        age_days: pet.stage === "egg" ? 0 : Math.max(0, Math.floor((now - pet.born_at) / 86400)),
-        grandma: !!pet.grandma, away: !!pet.trip, needs: model.needs(pet).length > 0,
-      })),
-      // How many pets can live at home (one house each)
-      places: PLACES,
+      // All the pets at home, in the order of their houses: for switching the camera between them
+      // (grandma: it is at Grandma's; away: on a trip; needs: something it needs is running low)
+      ...this.street(now),
     };
   }
 

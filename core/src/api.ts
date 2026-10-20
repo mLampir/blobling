@@ -24,7 +24,7 @@ import type { Pet } from "./pet";
  * core/test/api.test.ts compares the API with core/test/api-contract.json and says which number
  * a change needs (CLAUDE.md, "The API between app and Pi").
  */
-export const API_VERSION = 5;
+export const API_VERSION = 6;
 export const API_OLDEST = 5;
 
 /**
@@ -38,6 +38,10 @@ export interface PetTarget {
   bringBack: (bornAt: unknown, place: unknown) => ReturnType<Pet["bringBack"]>;
   /** Somebody switched to the pet with this id: on the phone, the camera goes there. */
   look: (id: unknown) => void;
+  /** A phone takes the pet with this id along (Pet.handOver). */
+  handOver: (id: unknown) => ReturnType<Pet["handOver"]>;
+  /** A pet from a phone moves in (Pet.takeIn). */
+  takeIn: (moving: unknown, place: unknown) => ReturnType<Pet["takeIn"]>;
 }
 
 /** The pet's own handlers, for a pet that nothing else shows (the app's, or one in a test). */
@@ -45,6 +49,7 @@ export function ownTarget(pet: Pet): PetTarget {
   return {
     pet, action: pet.action.bind(pet), newEgg: (egg, place) => pet.newEgg(egg, undefined, place),
     bringBack: (bornAt, place) => pet.bringBack(bornAt, place), look: (id) => pet.select(id),
+    handOver: (id) => pet.handOver(id), takeIn: (moving, place) => pet.takeIn(moving, place),
   };
 }
 
@@ -55,10 +60,6 @@ function fields(body: unknown): Record<string, unknown> {
   return body !== null && typeof body === "object" && !Array.isArray(body) ? body as Record<string, unknown> : {};
 }
 
-/**
- * Answers a request to /api/pet…; `body` reads the JSON the request carries (only POST asks for
- * it). Throws a RequestError (a key from the "error" texts) for an invalid request.
- */
 /**
  * Answers a request to /api/pet…; `body` reads the JSON the request carries (only POST asks for
  * it). A request is for the pet whose id it carries (`?pet=` or "pet" in the JSON), without one
@@ -110,6 +111,24 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
     case "POST /api/pet/bring_back": {
       const request = fields(await body());
       return { api: API_VERSION, ...target.bringBack(request.born_at, request.place ?? null) };
+    }
+
+    case "POST /api/pet/hand_over": {
+      // a phone takes this pet along; it confirms with handed_over once it has it
+      const request = fields(await body());
+      return { api: API_VERSION, moving: target.handOver(request.pet) };
+    }
+
+    case "POST /api/pet/handed_over": {
+      const request = fields(await body());
+      pet.handedOver(request.pet, request.moves);
+      return { api: API_VERSION, ok: true };
+    }
+
+    case "POST /api/pet/take_in": {
+      // a pet from a phone moves in
+      const request = fields(await body());
+      return { api: API_VERSION, ...target.takeIn(request.moving, request.place ?? null) };
     }
 
     case "GET /api/pet/travels":
