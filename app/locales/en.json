@@ -201,7 +201,6 @@
     "egg_beak": "Beak egg"
   },
   "pack": {
-    "snack": "Snack",
     "ball": "Ball"
   },
   "plants": {
@@ -255,7 +254,9 @@
       "inside": "{name} is asleep in the house.",
       "boost_waiting": "{name} still has the last one in its tummy.",
       "nothing_found": "There's nothing lying there.",
-      "dislikes": "{name} turns its head away – not that one!"
+      "dislikes": "{name} turns its head away – not that one!",
+      "not_in_bag": "That isn't in the bag any more.",
+      "pack_full": "Only two things fit into the backpack."
     },
     "notify": {
       "channel": "When your pet needs you",
@@ -295,11 +296,8 @@
     "pickup": "👐 Pick up: {thing}",
     "picked_fruit": "Picked up: {fruit}. The bag was full, so {name} ate it straight away",
     "boost": {
-      "heart": "Yum! {name} gets one extra heart on its next trip.",
       "trick": "{name} feels clever: the next trick practice counts double.",
-      "train": "{name} feels strong: the next exercise counts double.",
-      "finder": "{name}'s eyes are shining: on its next trip it finds something at every stop.",
-      "fresh": "{name} is full of beans: the next trip won't tire it out."
+      "train": "{name} feels strong: the next exercise counts double."
     },
     "rename": "✎ Rename",
     "rename_prompt": "New name",
@@ -417,7 +415,7 @@
       "trip_home": "I came back home with a full backpack.",
       "trip_tired": "I got tired and turned back.",
       "trip_beaten": "I'd had enough and turned back.",
-      "trip_snack": "I ate my snack on the way and felt better.",
+      "trip_snack": "I had a bite from my backpack on the way and felt better.",
       "evolve": {
         "hatched": "I hatched! Hello, world!",
         "child": "I've grown – now I'm a {species}!",
@@ -536,11 +534,11 @@
       "effects": {
         "growth": "eggs, babies and children grow faster",
         "snow": "it snows around the house",
-        "heart": "one more heart on the next trip",
+        "heart": "packed for a trip: one more heart",
         "trick": "the next trick practice counts double",
         "train": "the next exercise counts double",
-        "finder": "finds something at every stop of the next trip",
-        "fresh": "the next trip won't tire it out and brings home as much as the day's first"
+        "finder": "packed for a trip: finds something at every stop",
+        "fresh": "packed for a trip: won't tire it out, and brings home as much as the day's first"
       },
       "house": "🏠 {house}",
       "house_spots": {
@@ -615,7 +613,7 @@
       "battle_lose": "Scuffle ({foe}): lost",
       "battle_draw": "Scuffle ({foe}): nobody gave in",
       "battle_ball": "{foe} ran after the ball",
-      "trip_snack": "ate its snack and felt better",
+      "trip_snack": "had a bite from the backpack and felt better",
       "trip_beaten": "had enough and turned back",
       "guardian": "got past the guardian: {foe} 🏆",
       "unlock": "knows a new way now: {area} 🗺",

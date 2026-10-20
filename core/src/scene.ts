@@ -2114,6 +2114,23 @@ export class PetScene {
       x = this.comingIn(x, age);
       lift = Math.abs(Math.sin(t * 6)) * 3;
       pose.face = "happy";
+    } else if (index < rounds.length && rounds[index][0].startsWith("gift:")) {
+      // a present from the backpack: it holds it up, and the wild pet is delighted
+      this.cheer(pose, t);
+      if (q < 0.5) {
+        pose.found = rounds[index][0].slice("gift:".length);
+      } else {
+        face = "laugh";
+        lift = Math.abs(Math.sin(t * 6)) * 3;
+      }
+    } else if (index < rounds.length && rounds[index][0] === "ball") {
+      // a game of ball: over to the wild pet and back
+      const from = this.x + SPRITE - 4, to = WILD_X + 4;
+      const half = q < 0.5 ? q * 2 : (q - 0.5) * 2;
+      const [a, b] = q < 0.5 ? [from, to] : [to, from];
+      pose.thrown = ["ball", Math.round(a + (b - a) * half), Math.round(6 + Math.sin(half * Math.PI) * 28)]; // over their heads
+      pose.face = "laugh";
+      face = "laugh";
     } else if (index < rounds.length) {
       const [trick, worked] = rounds[index];
       this.trick(pose, trick, q * BATTLE_ROUND, worked, t);

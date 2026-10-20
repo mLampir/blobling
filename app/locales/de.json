@@ -201,7 +201,6 @@
     "egg_beak": "Schnabel-Ei"
   },
   "pack": {
-    "snack": "Snack",
     "ball": "Ball"
   },
   "plants": {
@@ -255,7 +254,9 @@
       "inside": "{name} schläft im Haus.",
       "boost_waiting": "{name} hat das letzte noch im Bauch.",
       "nothing_found": "Da liegt nichts.",
-      "dislikes": "{name} dreht den Kopf weg – das bitte nicht!"
+      "dislikes": "{name} dreht den Kopf weg – das bitte nicht!",
+      "not_in_bag": "Das ist nicht mehr in der Tasche.",
+      "pack_full": "In den Rucksack passen nur zwei Sachen."
     },
     "notify": {
       "channel": "Wenn dein Pet dich braucht",
@@ -295,11 +296,8 @@
     "pickup": "👐 Aufheben: {thing}",
     "picked_fruit": "Aufgehoben: {fruit}. Die Tasche war voll, also hat {name} gleich hineingebissen",
     "boost": {
-      "heart": "Mmh, süß! {name} hat auf dem nächsten Ausflug ein Herz mehr.",
       "trick": "{name} fühlt sich schlau: Das nächste Trick-Üben zählt doppelt.",
-      "train": "{name} fühlt sich stark: Die nächste Trainingsübung zählt doppelt.",
-      "finder": "{name} hat leuchtende Augen: Auf dem nächsten Ausflug findet es bei jeder Rast etwas.",
-      "fresh": "{name} steckt voller Tatendrang: Der nächste Ausflug macht es nicht müde."
+      "train": "{name} fühlt sich stark: Die nächste Trainingsübung zählt doppelt."
     },
     "rename": "✎ Umbenennen",
     "rename_prompt": "Neuer Name",
@@ -536,11 +534,11 @@
       "effects": {
         "growth": "Ei, Baby und Kind wachsen schneller",
         "snow": "es schneit ums Haus",
-        "heart": "ein Herz mehr auf dem nächsten Ausflug",
+        "heart": "im Rucksack: ein Herz mehr auf dem Ausflug",
         "trick": "das nächste Trick-Üben zählt doppelt",
         "train": "die nächste Trainingsübung zählt doppelt",
-        "finder": "findet auf dem nächsten Ausflug bei jeder Rast etwas",
-        "fresh": "der nächste Ausflug macht nicht müde und bringt so viel wie der erste des Tages"
+        "finder": "im Rucksack: findet bei jeder Rast etwas",
+        "fresh": "im Rucksack: macht nicht müde und bringt so viel wie der erste Ausflug des Tages"
       },
       "house": "🏠 {house}",
       "house_spots": {
@@ -615,7 +613,7 @@
       "battle_lose": "Rauferei ({foe}): verloren",
       "battle_draw": "Rauferei ({foe}): keiner hat nachgegeben",
       "battle_ball": "{foe} ist dem Ball nachgelaufen",
-      "trip_snack": "hat den Snack gegessen, schon geht's besser",
+      "trip_snack": "hat unterwegs etwas aus dem Rucksack gegessen, schon geht's besser",
       "trip_beaten": "hatte genug und ist umgekehrt",
       "guardian": "ist am Wächter vorbeigekommen: {foe} 🏆",
       "unlock": "kennt jetzt einen neuen Weg: {area} 🗺",

@@ -118,8 +118,10 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
   const kept = newState();
   kept.items = { ...old.items };
   kept.eggs = [...old.eggs];
-  for (const found of [...old.backpack, ...(old.trip ? old.trip.found : [])]) {
-    home.addItem(kept, found);
+  for (const found of [...old.backpack, ...(old.trip ? [...old.trip.found, ...old.trip.pack] : [])]) {
+    if (found !== trip.BALL) {
+      home.addItem(kept, found);
+    }
   }
   if (old.nest) {
     kept.eggs.push(old.nest);
@@ -157,8 +159,10 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
 export function moveHome(from: PetState, to: PetState): void {
   to.items = from.items;
   to.eggs = from.eggs;
-  for (const found of [...from.backpack, ...(from.trip ? from.trip.found : [])]) {
-    home.addItem(to, found);
+  for (const found of [...from.backpack, ...(from.trip ? [...from.trip.found, ...from.trip.pack] : [])]) {
+    if (found !== trip.BALL) {
+      home.addItem(to, found);
+    }
   }
   Object.assign(to, {
     deco: from.deco, house: from.house, plant: from.plant, gift: from.gift, found: from.found, nest: from.nest,
@@ -646,6 +650,7 @@ function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCo
 /** Back from the trip. The finds stay in the backpack until someone is watching (action "unpack"). */
 function comeHome(state: PetState, now: number, done: Trip): void {
   state.backpack = [...done.found];
+  trip.putBack(state, done); // what it took along and didn't need
   state.stats.mood += 10 * done.factor;
   care.addBond(state, "trip");
   trip.remember(state, done, now);
@@ -669,7 +674,9 @@ function checkValue(action: string, item: string | null, value: unknown): unknow
   } else if (action === "train" && item === "answer") {
     ok = isList(value, battle.DIRECTIONS, battle.SEQUENCE[1]); // the directions that were swiped back
   } else if (action === "trip" && item !== "recall" && value != null) {
-    ok = isList(value, trip.PACKABLE, trip.MAX_PACK); // what goes into the backpack
+    // what goes into the backpack (checked in startTrip); "snack" comes from an app of API 7 or
+    // older, from before nothing to eat came out of thin air, and is left out
+    ok = isList(value, [trip.BALL, "snack", ...food.EDIBLE], trip.MAX_PACK);
   } else {
     return null;
   }
@@ -988,6 +995,10 @@ function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string,
   if (sky.isThunder(weather)) {
     return "thunder";
   }
+  const packing = trip.checkPack(state, pack);
+  if (packing) {
+    return packing;
+  }
   const planned = trip.plan(state, area, now, pack);
   if (isLateEvening(now, bedtime)
       || minutesUntilBed(now, bedtime) * 60 < planned.end - now + trip.HOME_BEFORE_BED) {
@@ -1005,7 +1016,7 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
   const s = state.stats;
 
   if (action === "trip") {
-    return startTrip(state, now, bedtime, item!, weather, (value as string[] | null) ?? []);
+    return startTrip(state, now, bedtime, item!, weather, ((value as string[] | null) ?? []).filter((x) => x !== "snack"));
   }
   if (action === "plant") {
     const reason = home.plantSeed(state, item!);

@@ -370,8 +370,20 @@ backpack and send it off. It needs to be awake, healthy, reasonably fed and rest
 before bedtime, and it won't leave in a thunderstorm. Woken early in the morning, before
 bedtime is over, it may already set off.
 
-Packing, you pick the destination and up to two things to take along. A snack heals a heart on the way, and a ball distracts
-one opponent (but not a guardian).
+Packing, you pick the destination and up to two things to take along: the
+pet's ball, or something to eat from the bag. Nothing comes out of thin air,
+so what goes into the backpack is taken from the bag, and what isn't used goes
+back into it when the pet comes home. Packing also shows the hearts it would
+set off with.
+
+- **Something to eat:** after a lost scuffle the pet eats it and has the heart
+  back. It won't eat what it doesn't like, on the way either.
+- **A wild pet's favorite:** the pet gives it as a present (see
+  [Friends](#friends)).
+- **The ball:** the pet plays a game of ball with a wild pet. It doesn't get
+  the pet out of a scuffle; that takes training and tricks.
+- **Honeycomb, glow berry and pine cone** work on the trip they are packed
+  for (see the food below), and are used up when the pet sets off.
 
 A trip takes one to one and a half hours. The panel shows the pet hopping
 through the landscape, stopping now and then to rest or to hold up something
@@ -380,7 +392,7 @@ home. A second trip on the same day finds less.
 
 Every trip goes into the **travel diary** (*Diary* → *Trips*): where the pet
 went, on which day and for how long, what it found, whom it scuffled with and
-how that went, a wild pet it met, and whether it ate its snack or turned back.
+how that went, a wild pet it met, and whether it ate something from the backpack or turned back.
 It keeps the last 30 trips of this pet; a trip it was called straight back
 from doesn't count.
 
@@ -395,18 +407,20 @@ there to see what it brought:
   sickness without medicine.
 - **Food** – every area has one kind, and up to three of each are kept in the
   bag. It fills the pet up a little; what it is worth carrying home for is
-  what it leaves in the pet until it is used:
+  what it does. Three of them work from the backpack, on the trip they are
+  packed for; eaten at home, they only fill it up. The other two are eaten at
+  home and wait in the pet until they are used:
 
   | Area | Food | What it does |
   |---|---|---|
-  | Meadow | Honeycomb | one more heart on the next trip |
+  | Meadow | Honeycomb | packed: one more heart on the trip |
   | Mushroom forest | Hazelnut | the next trick practice counts double |
   | Stream | Watercress | the next training exercise counts double |
-  | Cave | Glow berry | on the next trip it finds something at every stop where nothing else happens |
-  | Mountain | Pine cone | the next trip doesn't tire it or make it hungry, and brings as much as the first trip of the day |
+  | Cave | Glow berry | packed: it finds something at every stop where nothing else happens |
+  | Mountain | Pine cone | packed: the trip doesn't tire it or make it hungry, and brings as much as the first trip of the day |
 
-  These don't add up: while one is still waiting, the pet won't eat the same
-  food again. Nothing is combined or cooked, and the plant stays the one that
+  Hazelnut and watercress don't add up: while one is still waiting, the pet
+  won't eat the same food again. Nothing is combined or cooked, and the plant stays the one that
   feeds the pet by itself.
 - **Decorations** stand in the scene, two at a time, and more in the house
   (see [The house](#the-house)). Some glow at night. Two
@@ -501,6 +515,9 @@ watches.
   bad mood only manages half as often.
 - A pet with three bond hearts or more is sure of itself and shows a fourth
   trick.
+- What it brought along comes first, and each counts as a trick that worked:
+  the wild pet's favorite food as a present (every form likes one thing
+  most, the same as when it is your pet), and a game with the ball.
 - If two of them work, the wild pet is impressed and the two are
   friends. Otherwise it hops on, and the pet may meet another one on a later
   trip.

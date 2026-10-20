@@ -281,6 +281,7 @@
   .choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
   .choices button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
   .choices button.on { border-color: var(--accent); color: var(--accent); }
+  .choices img, .steps img { width: 24px; height: 24px; image-rendering: pixelated; vertical-align: middle; }
   .steps button { width: 52px; height: 52px; border-radius: 12px; border: 2px dashed var(--line); font-size: 26px; }
   .steps button.on { border-style: solid; border-color: var(--accent); }
   .link { color: var(--muted); text-decoration: underline; padding: 10px; font-size: 14px; }
@@ -378,11 +379,11 @@
       <button class="thing" data-thing="fruit_sunflower" data-action="feed" data-item="fruit_sunflower" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="fruit_cherry" data-action="feed" data-item="fruit_cherry" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="fruit_herb" data-action="feed" data-item="fruit_herb" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="honeycomb" data-action="feed" data-item="honeycomb" data-boost="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="honeycomb" data-action="feed" data-item="honeycomb" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="hazelnut" data-action="feed" data-item="hazelnut" data-boost="1" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="watercress" data-action="feed" data-item="watercress" data-boost="1" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="glowberry" data-action="feed" data-item="glowberry" data-boost="1" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="pinenut" data-action="feed" data-item="pinenut" data-boost="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="glowberry" data-action="feed" data-item="glowberry" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="pinenut" data-action="feed" data-item="pinenut" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="seed" data-action="plant" data-item="berry" data-seed="seed_berry" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="seed" data-action="plant" data-item="sunflower" data-seed="seed_sunflower" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="seed" data-action="plant" data-item="cherry" data-seed="seed_cherry" hidden><img alt=""><small></small></button>
@@ -622,7 +623,13 @@ const PLANT_ICONS = { berry: "🫐", sunflower: "🌻", cherry: "🍒", herb: "�
 // Seeds: a tap switches the kind. The trip: where to and what comes along
 const choice = { trip: null };
 const packed = [];
-const PACK_ICONS = { snack: "🍪", ball: "⚽" };
+// The picture of something in the backpack: the ball, or a thing to eat from the bag
+function packPicture(id) {
+  const img = document.createElement("img");
+  img.alt = "";
+  img.src = app.thing(id);
+  return img;
+}
 // Battle stats: symbol and color of the bar
 const SKILL_ICONS = { strength: ["💪", "#ff8a5a"], speed: ["⚡", "#ffdc3c"], smarts: ["🧠", "#b48cff"] };
 const ARROWS = { left: "←", right: "→", up: "↑", down: "↓" };
@@ -957,7 +964,8 @@ function render(s) {
     const found = s.trip.found.map((id) => s.item_labels[id] || id).join(", ");
     // hearts: a lost scuffle costs one; next to them, what is still in the backpack from home
     $("trip-info").textContent = t(s.trip.returning ? "page.trip.returning" : "page.trip.out", { time: inTime(s.trip.end - s.now) })
-      + ` · ${"♥".repeat(s.trip.hearts)}${s.trip.pack.map((id) => PACK_ICONS[id]).join("")}`
+      + ` · ${"♥".repeat(s.trip.hearts)}`
+      + (s.trip.pack.length ? ` · ${s.trip.pack.map((id) => s.item_labels[id] || t("pack.ball")).join(", ")}` : "")
       + (found ? ` · ${t("page.trip.backpack", { items: found })}` : "");
     $("recall").disabled = s.trip.end - s.now <= 300;
   } else if (s.backpack) {
@@ -1106,7 +1114,10 @@ function openSheet(id) {
 }
 
 // The hearts it would set off with now, out of the usual three
-function tripHearts(s) { return "♥".repeat(s.trip_hearts) + "♡".repeat(Math.max(0, 3 - s.trip_hearts)); }
+function tripHearts(s, more = 0) {
+  const n = s.trip_hearts + more;
+  return "♥".repeat(n) + "♡".repeat(Math.max(0, 3 - n));
+}
 
 // Packing: the destination, and up to max_pack things that help on the way
 function openPack() {
@@ -1116,6 +1127,10 @@ function openPack() {
 
 function renderPack() {
   const s = current, area = picked(s, "trip");
+  for (let i = packed.length - 1; i >= 0; i--) {
+    const thing = s.packable.find((x) => x.id === packed[i]);
+    if (!thing || packed.filter((id) => id === packed[i]).length > thing.count) packed.splice(i, 1);
+  }
   // An area opens up once the pet has got past the guardian of the one before
   const going = area && s.areas.find((a) => a.id === area[0]);
   $("pack-say").textContent = going && going.guardian ? t("page.pack.guardian") : "";
@@ -1133,7 +1148,7 @@ function renderPack() {
   // Slots: a tap takes the thing out again
   $("pack-slots").replaceChildren(...Array.from({ length: s.max_pack }, (_, i) => {
     const b = document.createElement("button");
-    b.textContent = PACK_ICONS[packed[i]] || "";
+    b.replaceChildren(...(packed[i] ? [packPicture(packed[i])] : []));
     b.classList.toggle("on", i < packed.length);
     b.disabled = i >= packed.length;
     b.addEventListener("click", () => {
@@ -1144,8 +1159,9 @@ function renderPack() {
   }));
   $("pack-things").replaceChildren(...s.packable.map((thing) => {
     const b = document.createElement("button");
-    b.textContent = `${PACK_ICONS[thing.id] || ""} ${thing.label}`;
-    b.disabled = packed.length >= s.max_pack;
+    b.replaceChildren(packPicture(thing.id), ` ${thing.label}`);
+    if (thing.id === s.disliked_food) b.append(" ✕"); // it won't eat that on the way either
+    b.disabled = packed.length >= s.max_pack || packed.filter((id) => id === thing.id).length >= thing.count;
     b.addEventListener("click", () => {
       packed.push(thing.id);
       renderPack();
@@ -1153,7 +1169,8 @@ function renderPack() {
     return b;
   }));
   // the hearts it would set off with: feeding it first can make one more
-  $("pack-hearts").textContent = tripHearts(s);
+  // a honeycomb packed is one heart more right away
+  $("pack-hearts").textContent = tripHearts(s, packed.includes("honeycomb") ? 1 : 0);
   $("pack-go").disabled = !s.actions.trip;
 }
 $("pack-close").addEventListener("click", () => openSheet(null));

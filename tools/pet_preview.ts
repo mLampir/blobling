@@ -260,6 +260,14 @@ const SCENES: Record<string, Scene> = {
       rounds: [["spin", true], ["flip", false], ["bow", true]],
     }),
   }, DAY, null],
+  // from the backpack: a present it likes, then a game of ball
+  wild_present: [{
+    stage: "adult", species: "angloop",
+    trip: trip("meadow", {
+      event: "wild", event_age: 0.5, wild: "sneezle", outcome: "friend",
+      rounds: [["gift:fruit_herb", true], ["ball", true], ["bow", true]],
+    }),
+  }, DAY, null],
   wild_friend: [{
     stage: "adult", species: "angloop", hat: "daisy",
     trip: trip("meadow", {

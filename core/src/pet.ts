@@ -1041,8 +1041,9 @@ export class Pet {
       // The latest scuffles, to be watched again; last_trip: when the latest trip set off
       replays: s.replays.map((r) => ({ ...r, rounds: r.rounds.map((round) => [...round]) })),
       last_trip: s.recent.trip?.at(-1) ?? null,
-      // What can go into the backpack before a trip
-      packable: trip.PACKABLE.map((k) => ({ id: k, label: t(`pack.${k}`) })),
+      // What can go into the backpack before a trip: the ball, and what is in the bag to eat
+      packable: trip.packable(s).map(([k, count]) => ({
+        id: k, count, label: k === trip.BALL ? t("pack.ball") : t(`items.${k}`) })),
       max_pack: trip.MAX_PACK,
       trip_hearts: trip.heartsNow(s), // the hearts it would set off with now
       backpack: s.backpack.length, // this many finds are waiting to be unpacked

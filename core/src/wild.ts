@@ -93,15 +93,16 @@ export function meet(state: PetState, area: string, at: number, weather: sky.Wea
 /**
  * The pet shows the wild pet its tricks. The outcome is "friend" or "shrug". A trick works as
  * often as it has been learned. A pet with a strong bond to its owner is sure of itself and gets
- * one try more.
+ * one try more. What it offers first from its backpack (trip.ts: "gift:<item>" for the wild pet's
+ * favorite, "ball" for a game) comes before the tricks and counts as one that worked.
  */
-export function show(state: PetState, species: string, rng: Random, now: number):
+export function show(state: PetState, species: string, rng: Random, now: number, offered: readonly string[] = []):
     { rounds: Shown[]; outcome: "friend" | "shrug" } {
   const tricks = Object.keys(care.TRICKS);
   const practiced = tricks.filter((trick) => care.trickProgress(state, trick) > 0);
   const known = practiced.length ? practiced : tricks;
   const factor = state.stats.mood < GLUM ? 0.5 : 1.0;
-  const rounds: Shown[] = [];
+  const rounds: Shown[] = offered.map((thing): Shown => [thing, true]);
   const shows = SHOW + (care.bondLevel(state) >= BOND_SHOWS ? 1 : 0);
   for (let i = 0; i < shows; i++) {
     const trick = rng.choice(known);

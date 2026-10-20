@@ -242,8 +242,10 @@ test("the next pet keeps what is at home", () => {
     refused(() => model.nextPet(ember, start + 180, "", missing), "no_egg");
   }
   // what it has found on a trip it never came back from isn't lost either
-  old.trip = { found: ["windmill"] } as Trip;
-  assert.equal(model.nextPet(old, start + 60).items.windmill, 1);
+  // and what it took along to eat goes back into the bag (the ball is its own)
+  old.trip = { found: ["windmill"], pack: ["fruit_berry", "ball"] } as Trip;
+  const after = model.nextPet(old, start + 60).items;
+  assert.deepEqual([after.windmill, after.fruit_berry, after.ball], [1, 1, undefined]);
 });
 
 test("an egg passes on what it was given", () => {
@@ -302,25 +304,45 @@ test("lost scuffles cost hearts until it goes home", () => {
   assert.equal(pet.counters.trips, 1);
 });
 
-test("ball distracts and snack heals", () => {
+test("what it eats from the backpack heals a heart, and the ball doesn't get it out of a scuffle", () => {
   const lost = fixedFight(["charge", "bow", "ouch"], 3, "lose");
   Object.assign(pet.stats, { satiety: 60, energy: 60, health: 60 });
+  pet.items = { fruit_berry: 2 };
   withRules(trip.rules, { encounterChance: 1.0, fight: lost }, () => {
-    assert.deepEqual(act(pet, "trip", start, { item: "meadow", value: ["snack", "ball"] }), [true, null]);
+    assert.deepEqual(act(pet, "trip", start, { item: "meadow", value: ["fruit_berry", "ball"] }), [true, null]);
+    assert.equal(pet.items.fruit_berry, 1); // taken from the bag
     const stations = [...pet.trip!.stations];
     runUntil(stations[0] + 60);
-    assert.deepEqual([pet.trip!.last!.kind, pet.trip!.pack], ["ball", ["snack"]]);
-    assert.match(pet.events.at(-1)!.item!, /:ball$/);
-    assert.ok(!("battles" in pet.counters));
-    runUntil(stations[1] + 60);
-    assert.deepEqual([pet.trip!.hearts, pet.trip!.pack], [2, []]); // lost a heart, ate the snack
+    assert.equal(pet.trip!.last!.kind, "battle");
+    assert.deepEqual([pet.trip!.hearts, pet.trip!.pack], [2, ["ball"]]); // lost a heart, ate the berry
     assert.equal(pet.events.at(-1)!.item, "snack");
-    runUntil(stations[2] + 60);
+    assert.equal(pet.trip!.log!.at(-1)!.item, "fruit_berry");
+    runUntil(stations[1] + 60);
     assert.equal(pet.trip!.hearts, 1);
   });
-  for (const bad of [["rocket"], ["snack", "snack", "snack"], "snack"]) {
+  for (const bad of [["rocket"], ["ball", "ball", "ball"], "ball"]) {
     refused(() => act(grown(start), "trip", start, { item: "meadow", value: bad }), "invalid_value");
   }
+  // an app from before packing from the bag still sends its snack: it is left out
+  assert.deepEqual(act(grown(start), "trip", start, { item: "meadow", value: ["snack", "ball"] }), [true, null]);
+  // only what is in the bag, and two things at most
+  const other = grown(start);
+  other.items = { fruit_berry: 1 };
+  assert.deepEqual(act(other, "trip", start, { item: "meadow", value: ["fruit_berry", "fruit_berry"] }),
+    [false, "not_in_bag"]);
+  assert.deepEqual(act(other, "trip", start, { item: "meadow", value: ["ball", "ball"] }), [false, "not_in_bag"]);
+});
+
+test("what it took along and didn't need goes back into the bag", () => {
+  pet.items = { hazelnut: 1 };
+  pet.guardians = ["meadow"]; // nobody in the way, so it needs nothing to eat
+  withRules(trip.rules, { encounterChance: 0 }, () => {
+    act(pet, "trip", start, { item: "meadow", value: ["hazelnut", "ball"] });
+    assert.equal(pet.items.hazelnut, undefined);
+    runUntil(start + 3 * HOUR);
+  });
+  assert.equal(pet.trip, null);
+  assert.deepEqual([pet.items.hazelnut, pet.items.ball], [1, undefined]);
 });
 
 test("an opponent it chased off leaves a find", () => {
@@ -341,9 +363,9 @@ test("scuffles are kept to be watched again", () => {
   pet.hat = "cap";
   withRules(trip.rules, { encounterChance: 1.0, fight: won }, () => {
     act(pet, "trip", start, { item: "meadow", value: ["ball"] });
-    runUntil(pet.trip!.stations[1] + 60, 61);
+    runUntil(pet.trip!.stations[0] + 60, 61);
   });
-  // the ball distracted the first one: nothing to watch there
+  // the ball doesn't get it out of a scuffle
   assert.equal(pet.replays.length, 1);
   const [replay] = pet.replays;
   const event = pet.events.find((e) => e.action === "battle" && e.item!.endsWith(":win"))!;
@@ -365,7 +387,8 @@ test("trips with opponents are the same after catching up", () => {
     for (const p of [pet, other]) {
       p.tricks = { bow: 3.0 };
       p.weight = 35.0;
-      act(p, "trip", start, { item: "meadow", value: ["snack"] });
+      p.items = { fruit_cherry: 1 };
+      act(p, "trip", start, { item: "meadow", value: ["fruit_cherry", "ball"] });
     }
     runUntil(start + 3 * HOUR);
     let t = start;
@@ -382,12 +405,13 @@ test("the travel diary tells the scuffles", () => {
   const lost = fixedFight(["charge", "bow", "ouch"], 3, "lose");
   Object.assign(pet.stats, { satiety: 60, energy: 60, health: 60 });
   withRules(trip.rules, { encounterChance: 1.0, fight: lost }, () => {
-    act(pet, "trip", start, { item: "meadow", value: ["snack", "ball"] });
+    pet.items = { fruit_berry: 1 };
+    act(pet, "trip", start, { item: "meadow", value: ["fruit_berry"] });
     runUntil(start + 3 * HOUR);
   });
   const stops = pet.travels.at(-1)!.stops;
-  // distracted with the ball, lost and ate the snack, lost twice more and had enough
-  assert.deepEqual(stops.map((stop) => stop.kind), ["ball", "battle", "snack", "battle", "battle", "beaten"]);
+  // lost and ate the berry, lost twice more and had enough
+  assert.deepEqual(stops.map((stop) => stop.kind), ["battle", "snack", "battle", "battle", "beaten"]);
   assert.deepEqual(stops.filter((stop) => stop.kind === "battle").map((stop) => stop.outcome), ["lose", "lose", "lose"]);
   assert.ok(stops.every((stop) => stop.kind === "snack" || stop.kind === "beaten" || stop.foe));
 });

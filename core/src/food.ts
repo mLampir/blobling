@@ -17,12 +17,14 @@ import * as home from "./home";
 import * as life from "./life";
 import type { PetState } from "./state";
 
-// Food from trips: the boost it leaves until it is used
-// - heart: the next trip starts with one more heart (trip.begin)
+// Food from trips: what it does
 // - trick: the next trick practiced together counts double (model)
 // - train: the next exercise counts double (model)
-// - finder: on the next trip it finds something at every stop where nothing else happens
-// - fresh: the next trip doesn't tire it or make it hungry, and finds as much as the first of the day
+// - heart: packed for a trip, it sets off with one more heart (trip.begin)
+// - finder: packed for a trip, it finds something at every stop where nothing else happens
+// - fresh: packed for a trip, it doesn't get tired or hungry, and finds as much as on the first of the day
+// The first two are eaten at home and leave a boost until it is used; the others work from the
+// backpack (PACKED) and are plain food at home.
 export const FOODS: Record<string, string> = {
   honeycomb: "heart",
   hazelnut: "trick",
@@ -30,6 +32,7 @@ export const FOODS: Record<string, string> = {
   glowberry: "finder",
   pinenut: "fresh",
 };
+export const PACKED: Record<string, string> = { honeycomb: "heart", glowberry: "finder", pinenut: "fresh" };
 export const FRUITS = Object.keys(home.PLANTS).map((kind) => `fruit_${kind}`);
 export const EDIBLE = [...FRUITS, ...Object.keys(FOODS)];
 export const SATIETY = 10; // food from trips
@@ -128,19 +131,21 @@ export function give(state: PetState, item: string): string | null {
     state.counters[`disliked_${state.species}`] = 1; // from now on the app shows it
     return "dislikes";
   }
-  const boost = FOODS[item];
+  const boost = PACKED[item] ? null : FOODS[item];
   if (boost && state.boosts.includes(boost)) {
     return "boost_waiting";
   }
   home.takeItem(state, item);
   if (boost) {
     state.boosts.push(boost);
+  }
+  if (isFood(item)) {
     state.stats.satiety += SATIETY;
   } else {
     home.eat(state, item.slice("fruit_".length));
     state.stats.mood += FRUIT_MOOD;
   }
-  care.addWeight(state, WEIGHT[item] ?? (boost ? 0 : FRUIT_WEIGHT));
+  care.addWeight(state, WEIGHT[item] ?? (isFood(item) ? 0 : FRUIT_WEIGHT));
   if (item === favorite(state)) {
     state.stats.mood += FAVORITE_MOOD;
     state.counters[`favorite_${state.species}`] = 1;

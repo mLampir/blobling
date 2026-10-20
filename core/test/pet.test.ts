@@ -15,14 +15,15 @@ test("trip in snapshot and view", () => {
   const disk = new Disk();
   const pet = disk.pet();
   pet.state = grown(now);
-  pet.state.items = { seed_berry: 2, daisy: 1 };
+  pet.state.items = { seed_berry: 2, daisy: 1, fruit_berry: 1 };
   pet.setWeatherSource(() => ({ temp: 20.0, code: 95 }));
   assert.equal(pet.action("trip", { item: "meadow", now }).reason, "thunder");
   pet.setWeatherSource(() => null);
-  const state = pet.action("trip", { item: "meadow", now, value: ["snack"] }).state;
+  assert.deepEqual(pet.snapshot(now).packable, [{ id: "ball", count: 1, label: "Ball" }, { id: "fruit_berry", count: 1, label: "Berry" }]);
+  const state = pet.action("trip", { item: "meadow", now, value: ["fruit_berry"] }).state;
   assert.deepEqual([state.trip!.label, state.trip!.where], ["Meadow", "out in the meadow"]);
-  assert.deepEqual([state.trip!.hearts, state.trip!.pack], [3, ["snack"]]);
-  assert.deepEqual([state.packable.map((p) => p.id), state.max_pack], [["snack", "ball"], 2]);
+  assert.deepEqual([state.trip!.hearts, state.trip!.pack], [3, ["fruit_berry"]]);
+  assert.deepEqual([state.packable.map((p) => p.id), state.max_pack], [["ball"], 2]); // the berry is in the backpack
   assert.deepEqual(state.skills[0], { id: "strength", label: "Strength", value: 0.0 });
   assert.equal(state.training, null);
   const view = pet.view(now + 1).trip!;
