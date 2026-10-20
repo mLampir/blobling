@@ -251,6 +251,11 @@ favorite can stay while new eggs are raised for the album.
   new house while there is a free place, or in the place of one of the pets.
   A pet that makes room goes to rest in the ancestors' gallery; an egg that
   hasn't hatched is given up. Pets only leave by your choice.
+- **Send to the ancestors** (under *More*) lets any pet of the home go to
+  rest without a new egg taking its place, not only the one on screen. A special egg goes back to the finds, to be brooded
+  later; a usual one is gone. The display always keeps one pet; a phone may
+  end up with none, keeps its finds and offers a new egg or one of its
+  ancestors.
 - **The ancestors' gallery** keeps the pets that went to rest, frozen: they
   lose nothing, don't grow on and don't get older. **Bring home** next to one
   of them brings it back as it was when it left, into a free house or in
@@ -283,7 +288,9 @@ with the display out of reach, the app shows only the phone's own pets.
   it into the phone, with its house: it lives there until it is brought back,
   also when the app is opened at home.
 - **Bring to the display** (for a pet of the phone) moves it into a house at
-  the display. Both ask where it should live, as a new egg does.
+  the display. Both ask where it should live, as a new egg does. A phone whose
+  last pet went to the display stays empty, also without the display; a new
+  egg comes only when you ask for one.
 - **A pet lives in one place only.** Every pet carries a move number, and the
   display remembers the last one of every pet that moved, so an old copy (an
   old save file, a phone's backup) is turned away. One pet always stays at the

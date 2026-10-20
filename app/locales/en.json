@@ -305,6 +305,17 @@
     "place_replace_egg": "The egg makes room",
     "look": "Look at {name}",
     "new_egg_done": "A new egg is waiting 🥚",
+    "retire": "🕊️ Send to the ancestors",
+    "retire_which": "Who should go to the ancestors?",
+    "retire_confirm": "Send {name} to the ancestors? It rests in the album and can come home again.",
+    "retire_egg_confirm": "Put the egg away? It is gone then.",
+    "retire_ok": "To the ancestors",
+    "retire_egg_ok": "Put away",
+    "retired": "{name} rests among the ancestors now.",
+    "retired_egg": "The egg is gone.",
+    "retire_kept_confirm": "Put the egg with your finds? You can brood it later.",
+    "retire_kept_ok": "Put away",
+    "retired_kept": "The egg is with your finds now.",
     "things": {
       "meal": "Meal",
       "ball": "Ball",
@@ -430,6 +441,12 @@
     "offline": {
       "title": "Can't reach the display",
       "hint": "Are you on your home Wi-Fi?"
+    },
+    "empty": {
+      "title": "No pet lives on this phone right now",
+      "egg": "New egg",
+      "ancestor": "Bring one back from the ancestors",
+      "ancestor_which": "Who should come home?"
     },
     "stats": {
       "satiety": "Fullness",
@@ -742,6 +759,9 @@
       "sound_off": "Off",
       "pet": "Pet",
       "new_egg_note": "Your finds stay.",
+      "retire_note": "It rests in the album and can come home again.",
+      "retire_egg_note": "It is gone then.",
+      "retire_kept_note": "Goes to your finds.",
       "take_along_note": "It moves from the display into the phone, with its house.",
       "bring_display_note": "It moves from this phone into a house at the display."
     },

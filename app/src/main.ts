@@ -234,6 +234,8 @@ const app = {
     const id = answer?.state?.id ?? answer?.id;
     if (MOVES_CAMERA.includes(path) && typeof id === "string") {
       setCamera(id);
+    } else if (path === "/api/pet/retire" && (body as { pet?: unknown })?.pet === camera) {
+      setCamera(null); // it rests among the ancestors now: back to the pet the panel shows
     }
     if (path.startsWith("/api/pet")) {
       bothHomes(answer);
@@ -465,6 +467,23 @@ const app = {
     localStorage.setItem(PI_KEY, base!);
     setCamera(null);
     location.reload();
+  },
+
+  /** While no pet lives on the phone: the ancestors that can come home, latest first. */
+  async restingAncestors(): Promise<{ name: string; stage: string; species: string; born_at: number }[]> {
+    return (await local!).restingAncestors();
+  },
+
+  /** While no pet lives on the phone: this ancestor (its born_at) comes home. */
+  async bringHome(bornAt: number): Promise<void> {
+    (await local!).bringHome(bornAt);
+    showScene();
+  },
+
+  /** A new egg on the phone, when no pet lives there (LocalPet.hatch). */
+  async hatch(): Promise<void> {
+    (await local!).hatch();
+    showScene();
   },
 
   /** Back to the pets on the phone; the display keeps its own. */

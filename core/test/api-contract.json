@@ -12,6 +12,7 @@
     "POST /api/pet/handed_over",
     "POST /api/pet/look",
     "POST /api/pet/new_egg",
+    "POST /api/pet/retire",
     "POST /api/pet/settings",
     "POST /api/pet/take_in"
   ],

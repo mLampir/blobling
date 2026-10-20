@@ -151,6 +151,22 @@ test("a phone takes a pet along and brings it back; a lost phone's pet is fetche
   assert.deepEqual([state.away, state.pets.map((p: { id: string }) => p.id)], [[], [first, second]]);
 });
 
+test("a pet is sent to the ancestors, but the display keeps its last one", async () => {
+  const egg = (await json(post("/api/pet/new_egg", { confirm: true }))).id;
+  const ancestors = app.pet.ancestorList().length;
+  assert.equal((await post("/api/pet/retire", { pet: egg })).status, 400); // only when confirmed
+  assert.equal((await json(post("/api/pet/retire", { pet: egg, confirm: true }))).ok, true);
+  assert.equal(app.pet.pets.some((p) => p.id === egg), false);
+  assert.equal(app.pet.ancestorList().length, ancestors); // an egg just goes
+  assert.notEqual(app.display.camera, egg);
+  while (app.pet.pets.length > 1) {
+    await json(post("/api/pet/retire", { pet: app.pet.pets[0].id, confirm: true }));
+  }
+  const last = await post("/api/pet/retire", { pet: app.pet.current, confirm: true });
+  assert.equal((await json(last)).key, "last_pet");
+  assert.equal(app.pet.pets.length, 1);
+});
+
 test("a change needs the header that other websites cannot send", async () => {
   assert.equal((await post("/api/mode", { mode: "off" }, {})).status, 403);
   assert.equal((await post("/api/pet/action", { action: "pet" }, { "X-Requested-With": "other" })).status, 403);

@@ -718,8 +718,10 @@ export class Pet {
   }
 
   /**
-   * The pet with this id goes to rest among the ancestors, by hand (the app uses it for the second
-   * of two copies from before pets moved). With the last one gone, `pets` is empty, as after release.
+   * The pet with this id goes to rest among the ancestors, by hand ("send to the ancestors" in the
+   * app, and the second of two copies from before pets moved). An egg that hasn't hatched goes
+   * back among the eggs that are kept, as when a new egg takes its place; a usual one just goes. With the last one gone, `pets` is empty, as after
+   * release (a display keeps its last one, see Display.petRetire).
    */
   retire(id: unknown, now = this.clock()): void {
     const pet = this.find(id);
@@ -727,7 +729,14 @@ export class Pet {
     if (pet.trip) {
       throw new model.RequestError("on_trip");
     }
-    this.archive(pet, now);
+    if (pet.stage !== "egg") {
+      this.archive(pet, now);
+    } else {
+      const egg = model.keptEgg(pet);
+      if (egg) {
+        pet.eggs.push(egg); // the store all of them share
+      }
+    }
     this.pets = this.pets.filter((p) => p !== pet);
     if (this.pets.length) {
       this.currentId = this.state.id;
@@ -744,6 +753,8 @@ export class Pet {
         age_days: pet.stage === "egg" ? 0 : Math.max(0, Math.floor((now - pet.born_at) / 86400)),
         grandma: !!pet.grandma, away: !!pet.trip, needs: model.needs(pet).length > 0,
         born_at: Math.round(pet.born_at),
+        // an egg that would go back among the kept eggs if it went (retire)
+        kept_egg: !!model.keptEgg(pet),
       })),
       // how many pets can live at home (one house each)
       places: PLACES,

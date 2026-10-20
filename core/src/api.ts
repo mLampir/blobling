@@ -42,6 +42,8 @@ export interface PetTarget {
   handOver: (id: unknown) => ReturnType<Pet["handOver"]>;
   /** A pet from a phone moves in (Pet.takeIn). */
   takeIn: (moving: unknown, place: unknown) => ReturnType<Pet["takeIn"]>;
+  /** The pet with this id goes to rest among the ancestors (Pet.retire). */
+  retire: (id: unknown) => void;
 }
 
 /** The pet's own handlers, for a pet that nothing else shows (the app's, or one in a test). */
@@ -50,6 +52,7 @@ export function ownTarget(pet: Pet): PetTarget {
     pet, action: pet.action.bind(pet), newEgg: (egg, place) => pet.newEgg(egg, undefined, place),
     bringBack: (bornAt, place) => pet.bringBack(bornAt, place), look: (id) => pet.select(id),
     handOver: (id) => pet.handOver(id), takeIn: (moving, place) => pet.takeIn(moving, place),
+    retire: (id) => pet.retire(id),
   };
 }
 
@@ -129,6 +132,16 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
       // a pet from a phone moves in
       const request = fields(await body());
       return { api: API_VERSION, ...target.takeIn(request.moving, request.place ?? null) };
+    }
+
+    case "POST /api/pet/retire": {
+      // somebody sends this pet to rest among the ancestors
+      const request = fields(await body());
+      if (request.confirm !== true) {
+        throw new RequestError("confirm");
+      }
+      target.retire(request.pet);
+      return { api: API_VERSION, ok: true };
     }
 
     case "GET /api/pet/travels":

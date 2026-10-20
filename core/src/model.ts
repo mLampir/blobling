@@ -16,7 +16,7 @@ import * as idle from "./idle";
 import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
-import { STATS, newState, type PetState, type Trip } from "./state";
+import { STATS, newState, type Egg, type PetState, type Trip } from "./state";
 import { isDark, isFullMoon, sunTimes, type Location } from "./sun";
 import * as trip from "./trip";
 import * as wild from "./wild";
@@ -106,6 +106,14 @@ export function newPet(now: number, name = "", species = "blob"): PetState {
  * The new pet starts from zero, apart from the battle stats its egg has been given.
  * Throws a RequestError if there is no such egg.
  */
+/** An egg that hasn't hatched, as one of the eggs that are kept; null for a usual one, which isn't worth keeping. */
+export function keptEgg(state: PetState): Egg | null {
+  if (state.stage !== "egg" || (state.species === "blob" && !Object.values(state.skills).some(Boolean))) {
+    return null;
+  }
+  return { line: state.species, skills: { ...state.skills } };
+}
+
 export function nextPet(old: PetState, now: number, name = "", egg: unknown = null): PetState {
   const kept = newState();
   kept.items = { ...old.items };
@@ -116,9 +124,9 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
   if (old.nest) {
     kept.eggs.push(old.nest);
   }
-  if (old.stage === "egg" && (old.species !== "blob" || Object.values(old.skills).some(Boolean))) {
-    // an egg that hasn't hatched goes back (a usual one isn't worth keeping)
-    kept.eggs.push({ line: old.species, skills: { ...old.skills } });
+  const back = keptEgg(old);
+  if (back) {
+    kept.eggs.push(back); // an egg that hasn't hatched goes back
   }
   let chosen;
   if (egg === null || egg === undefined) {

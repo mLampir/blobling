@@ -476,6 +476,7 @@
       <ul class="list">
         <li><button class="row" id="rename"><span><span data-t="page.rename"></span><small class="pet-name"></small></span><span class="chev">›</span></button></li>
         <li id="new-egg-row"><button class="row" id="new-egg"><span><span data-t="page.new_egg"></span><small data-t="page.more.new_egg_note"></small></span><span class="chev">›</span></button></li>
+        <li id="retire-row"><button class="row" id="retire"><span><span data-t="page.retire"></span><small data-t="page.more.retire_note"></small></span><span class="chev">›</span></button></li>
         <li id="take-row" hidden><button class="row" id="take-along"><span><span data-t="page.take_along"></span><small data-t="page.more.take_along_note"></small></span><span class="chev">›</span></button></li>
         <li id="bring-row" hidden><button class="row" id="bring-display"><span><span data-t="page.bring_display"></span><small data-t="page.more.bring_display_note"></small></span><span class="chev">›</span></button></li>
       </ul>
@@ -564,6 +565,13 @@
   <span id="mismatch-update-text"></span>
   <button class="wide" id="mismatch-update" data-t="page.app.update" hidden></button>
   <button class="link" id="mismatch-leave" data-t="page.app.disconnect" hidden></button>
+</div>
+
+<div class="offline" id="empty" hidden>
+  <strong data-t="page.empty.title"></strong>
+  <button class="wide primary" id="empty-egg" data-t="page.empty.egg"></button>
+  <button class="wide" id="empty-ancestor" data-t="page.empty.ancestor" hidden></button>
+  <button class="link" id="empty-connect" data-t="page.app.connect" hidden></button>
 </div>
 
 <div class="offline" id="offline" hidden>
@@ -744,6 +752,7 @@ async function api(method, url, body) {
   try {
     const data = await app.request(method, url, body);
     setOffline(false);
+    $("empty").hidden = true;
     if (app.mode === "pi" && app.home() === "display") renderFit();
     return data;
   } catch (err) {
@@ -753,7 +762,8 @@ async function api(method, url, body) {
 }
 
 function fail(err) {
-  if (err.offline) setOffline(true);
+  if (err.empty) showEmpty(); // the last pet left the phone: a new egg only when asked for
+  else if (err.offline) setOffline(true);
   else say(err.message, true);
 }
 
@@ -1015,6 +1025,8 @@ function render(s) {
   renderFinds(s);
   renderAdventures(s);
   $("new-egg-row").hidden = egg;
+  // the display keeps its last pet
+  $("retire-row").hidden = app.home() === "display" && s.pets.filter((p) => !p.phone).length <= 1;
 }
 
 // The meters: a tap says how it is and what would help
@@ -2029,6 +2041,32 @@ $("bring-display").addEventListener("click", async () => {
   }
 });
 
+// A pet goes to rest among the ancestors, in the album, from where it can come home again
+// any pet of the home the phone looks at, not only the one on screen.
+// "" for a pet, "_egg" for a usual egg (it goes), "_kept" for a special one (back to the finds)
+const retireKind = (p) => p.stage !== "egg" ? "" : p.kept_egg ? "_kept" : "_egg";
+$("retire").addEventListener("click", async () => {
+  const home = app.homes()[app.home()];
+  if (!current || !home) return;
+  const id = await chooseFrom(t("page.retire_which"), home.pets.map((p) => [p.id, app.icon(p.stage, p.species), p.name,
+    retireKind(p) ? t(`page.more.retire${retireKind(p)}_note`) : p.stage_label]));
+  const s = home.pets.find((p) => p.id === id);
+  if (!s) return;
+  const kind = retireKind(s);
+  const yes = await ask(t(`page.retire${kind}_confirm`, { name: s.name }),
+    { ok: t(`page.retire${kind}_ok`), danger: kind === "_egg" });
+  if (!yes) return;
+  try {
+    await api("POST", "/api/pet/retire", { confirm: true, pet: s.id });
+    showView("home");
+    say(t(`page.retired${kind}`, { name: s.name }));
+    feel("ok");
+  } catch (err) {
+    fail(err);
+  }
+  refresh();
+});
+
 // Copies from before pets moved: a pet that lives on the phone and at the display. Asked once
 // for each, which one is the real one; the other rests among the ancestors.
 let twinsAsked = false;
@@ -2510,6 +2548,33 @@ $("connect").addEventListener("click", async () => {
     say(err.message, true);
   }
 });
+
+// No pet on the phone (the last one went to the display): a new egg, or back to the display
+async function showEmpty() {
+  $("empty").hidden = false;
+  $("empty-ancestor").hidden = !(await app.restingAncestors()).length;
+}
+$("empty-ancestor").addEventListener("click", async () => {
+  const ancestors = await app.restingAncestors();
+  const bornAt = await chooseFrom(t("page.empty.ancestor_which"), ancestors.map((a) => [String(a.born_at),
+    app.icon(a.stage, a.species), a.name, ""]));
+  if (!bornAt) return;
+  try {
+    await app.bringHome(Number(bornAt));
+    $("empty").hidden = true;
+    feel("ok");
+  } catch (err) {
+    say(err.message, true);
+  }
+  refresh();
+});
+$("empty-egg").addEventListener("click", async () => {
+  await app.hatch();
+  $("empty").hidden = true;
+  refresh();
+});
+$("empty-connect").hidden = !app.native;
+$("empty-connect").addEventListener("click", () => $("connect").click());
 
 // Back to the pets on the phone; the display keeps its own
 $("disconnect").addEventListener("click", () => app.disconnect());

@@ -305,6 +305,17 @@
     "place_replace_egg": "Das Ei macht Platz",
     "look": "Zu {name} schauen",
     "new_egg_done": "Ein neues Ei liegt bereit 🥚",
+    "retire": "🕊️ Zu den Ahnen schicken",
+    "retire_which": "Wer soll zu den Ahnen gehen?",
+    "retire_confirm": "{name} zu den Ahnen schicken? Es ruht im Album und kann wieder heimkommen.",
+    "retire_egg_confirm": "Das Ei weglegen? Es ist dann weg.",
+    "retire_ok": "Zu den Ahnen",
+    "retire_egg_ok": "Weglegen",
+    "retired": "{name} ruht jetzt bei den Ahnen.",
+    "retired_egg": "Das Ei ist weg.",
+    "retire_kept_confirm": "Das Ei zu deinen Funden legen? Du kannst es später ausbrüten.",
+    "retire_kept_ok": "Weglegen",
+    "retired_kept": "Das Ei liegt jetzt bei deinen Funden.",
     "things": {
       "meal": "Mahlzeit",
       "ball": "Ball",
@@ -430,6 +441,12 @@
     "offline": {
       "title": "Anzeige nicht erreichbar",
       "hint": "Bist du im WLAN zu Hause?"
+    },
+    "empty": {
+      "title": "Gerade wohnt kein Pet auf diesem Handy",
+      "egg": "Neues Ei",
+      "ancestor": "Aus den Ahnen holen",
+      "ancestor_which": "Wer soll heimkommen?"
     },
     "stats": {
       "satiety": "Sättigung",
@@ -742,6 +759,9 @@
       "sound_off": "Aus",
       "pet": "Pet",
       "new_egg_note": "Deine Funde bleiben.",
+      "retire_note": "Es ruht im Album und kann wieder heimkommen.",
+      "retire_egg_note": "Ist dann weg.",
+      "retire_kept_note": "Kommt zu deinen Funden.",
       "take_along_note": "Es zieht vom Display ins Handy, mit seinem Haus.",
       "bring_display_note": "Es zieht vom Handy in ein Haus am Display."
     },
