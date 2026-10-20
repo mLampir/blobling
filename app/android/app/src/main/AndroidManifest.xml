@@ -7,11 +7,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:localeConfig="@xml/locales_config">
         <!-- usesCleartextTraffic: a Pi on the home network answers over plain HTTP (app/src/remote.ts) -->
+        <!-- localeConfig: the app's language can be chosen in Android's settings (13 and later), like
+             any app's. No "locale" in configChanges below: choosing one restarts the app, and the
+             page comes back in the new language. -->
 
         <activity
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|uiMode|navigation|density"
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBarLaunch"
@@ -36,9 +40,10 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- "Use my location" for the weather; the app keeps it to two decimals (about a kilometre) -->
+    <!-- "Use my location" for the weather; the app keeps it to two decimals (about a kilometre).
+         Approximate only (app/src/native.ts): no ACCESS_FINE_LOCATION, so the dialog never offers
+         or asks again for the precise one. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- The short buzz with the pet's answers (app/src/haptics.ts); granted at install, no dialog -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- The pet calls when it needs somebody (app/src/notify.ts); asked for after its first meal -->

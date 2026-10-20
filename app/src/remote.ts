@@ -76,7 +76,7 @@ export class RemotePet {
   /** `base`: the Pi's address, "" for the Pi the page came from. */
   constructor(readonly base: string, private readonly i18n: I18n) {}
 
-  /** Throws an Error with the text for the page; `offline` is set if the Pi cannot be reached. */
+  /** Throws an Error with the text for the page (and its `key`); `offline` is set if the Pi cannot be reached. */
   async request(method: string, path: string, body?: unknown): Promise<unknown> {
     let response: Response;
     try {
@@ -92,7 +92,8 @@ export class RemotePet {
     }
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error(data.error || this.i18n.t("error.http", { status: response.status }));
+      // `key`: which of the "error" texts it is, whatever language the Pi speaks
+      throw Object.assign(new Error(data.error || this.i18n.t("error.http", { status: response.status })), { key: data.key });
     }
     this.fit = apiFit(data) ?? this.fit;
     return data;

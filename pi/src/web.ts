@@ -157,6 +157,11 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
       mode: s.mode, brightness: s.brightness, night: s.night,
       night_active: display.nightActive(), weather_configured: weather.configured,
       language: settings.i18n.language, location: settings.location, update: updates.state(),
+      // the pets at home, for pinning the camera to one of them; pinned: its id, or null
+      pets: pet.pets.map((p) => ({ id: p.id, name: p.name, stage: p.stage, species: p.species })),
+      camera: display.camera, pinned: s.pinned,
+      // the pets phones took along, to fetch one back if its phone is lost
+      away: pet.awayList(),
     };
   };
 
@@ -183,6 +188,21 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
           throw new RequestError("invalid_value");
         }
         display.setBrightness(value);
+        return json(stateJson());
+      }
+
+      case "POST /api/pin":
+        // the camera stays with one pet (its id), or follows the phones again (null)
+        display.pin(fields(await readJson(request)).pet ?? null);
+        return json(stateJson());
+
+      case "POST /api/fetch_back": {
+        // a pet a phone took along comes back without it; the phone's copy no longer counts
+        const asked = fields(await readJson(request));
+        if (asked.confirm !== true) {
+          throw new RequestError("confirm");
+        }
+        display.petFetchBack(asked.pet);
         return json(stateJson());
       }
 
@@ -236,7 +256,8 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
       case "GET /preview.png": {
         // What the matrix is showing right now (for the live preview); with ?next, the frame after
         // that one, as soon as it is drawn (the app's scene, one frame after the other).
-        const frame = url.searchParams.has("next") ? await display.nextFrame(PREVIEW_WAIT) : display.lastFrame;
+        // ?pet=: the frames of that pet, which the panel may not be showing
+        const frame = await display.frameOf(url.searchParams.get("pet"), url.searchParams.has("next"), PREVIEW_WAIT);
         if (png?.[0] !== frame) {
           png = [frame, encodePng(frame)]; // encoded once, however many are watching
         }
@@ -273,7 +294,8 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         const answer = await petRequest(
           {
             pet, action: display.petAction.bind(display), newEgg: display.petNewEgg.bind(display),
-            swap: display.petSwap.bind(display), bringBack: display.petBringBack.bind(display),
+            bringBack: display.petBringBack.bind(display), look: display.look.bind(display),
+            handOver: display.petHandOver.bind(display), takeIn: display.petTakeIn.bind(display),
           },
           request.method ?? "GET", url, () => readJson(request));
         if (answer === NOT_A_PET_ROUTE) {
@@ -312,7 +334,7 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         response.destroy();
       } else if (error instanceof RequestError) {
         // 400 with the text for a key from the "error" texts (that is what a RequestError carries)
-        send(400, JSON.stringify({ error: t(`error.${error.message}`, { max: MAX_NAME }) }),
+        send(400, JSON.stringify({ error: t(`error.${error.message}`, { max: MAX_NAME }), key: error.message }),
           { "Content-Type": "application/json" });
       } else if (error instanceof Refusal) {
         refuse(error.status);

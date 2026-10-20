@@ -34,9 +34,10 @@ a day and also tells you the time and the weather.
   The friend comes to visit and plays with it, brings a gift now and then, and
   in time the two lay an egg that passes a part of your pet's training on to
   the next one.
-- **Two can live at home.** A new egg doesn't take your favorite away: the
-  older pet stays at the back, comes out to play and to teach the young one a
-  trick, sleeps next to it at night, and swaps places with a tap.
+- **Up to four live at home.** A new egg doesn't take your favorite away:
+  each pet has a house of its own along a street, a tap switches between them,
+  and the neighbours get together to play, copy a trick from each other and
+  sleep side by side at night.
 - **It is forgiving.** The pet never dies. Neglect makes it hungry, sad or
   sick, and that can always be fixed. Away for longer, it stays at Grandma's
   until you fetch it.
@@ -147,7 +148,8 @@ On a phone or PC in the same network:
 - **<http://raspberrypi.local/pet>** is the same pet page in the browser,
   without installing anything.
 - **<http://raspberrypi.local/>** has the settings: pet or panel off,
-  brightness, night mode, your location and the language.
+  brightness, night mode, which pet the panel shows, your location and the
+  language.
 
 Enter your location on the settings page, as latitude and longitude in
 decimal degrees (for example from OpenStreetMap: right-click → *Show
@@ -161,8 +163,8 @@ end. It helps to tell the router to always give the Pi the same address.
 
 ## Configuration
 
-Brightness, night mode, whether the panel is on, the location and the
-language are set in the web interface and survive a restart; they are kept in
+Brightness, night mode, whether the panel is on, the pet it shows, the
+location and the language are set in the web interface and survive a restart; they are kept in
 `/var/lib/led-matrix/`.
 
 `/etc/led-matrix/config.ini` is only for the hardware and the network, and
@@ -202,12 +204,13 @@ pet on the panel instead. A pet on the phone calls with a notification when
 it needs you (see *While nobody is there* in
 [docs/gameplay.md](docs/gameplay.md)). To connect it, tap *Connect to the display* under
 *More*: the app looks for the Pi as `blobling.local` and `raspberrypi.local`
-and only asks for its address (or IP address) if neither answers. When both
-the phone and the display have a pet, it asks which of them lives on the
-display; the other one is kept (on the phone, or set aside on the Pi like a
-loaded save). The way back works the same: *Back to the pet on this phone*
-asks which pet lives on the phone from now on, and can bring the display's
-pet along (the phone keeps its old one aside, the display keeps its copy). The app
+and only asks for its address (or IP address) if neither answers. Connecting
+moves no pet: the phone and the display each keep their own pets, and the app
+switches between all of them. Under *More*, a pet of the display can be taken
+along on the phone, and one of the phone's brought to the display; a pet only
+ever lives in one place (see *Several pets at home* in
+[docs/gameplay.md](docs/gameplay.md)). If a phone with a pet on it is lost,
+the display's settings page fetches that pet back. The app
 talks to the Pi over plain HTTP on the home network, so nothing has to be
 installed on the Pi or the phone for it. Sound comes from the phone (it can be
 turned off under *More*); the Pi stays silent.
@@ -282,7 +285,7 @@ Where things are on the Pi:
 | `/etc/apt/sources.list.d/nodesource.list` | Where Node.js comes from (with `/etc/apt/keyrings/nodesource.asc` and `/etc/apt/preferences.d/nodesource`) |
 | `/var/lib/led-matrix/pet.json` | The pet's save file |
 | `/var/lib/led-matrix/pet.before-load.json` | The pet a loaded save file replaced (settings page) |
-| `/var/lib/led-matrix/state.json` | Panel on or off, brightness, night mode |
+| `/var/lib/led-matrix/state.json` | Panel on or off, brightness, night mode, the pinned pet |
 | `/var/lib/led-matrix/settings.json` | Location and language from the settings page |
 
 ## Troubleshooting
@@ -362,8 +365,8 @@ The pet page is also the app for the phone (`app/pet.html`, its script in
 the game runs in the page, the scene is drawn above the needs and the pet is
 kept in the app's storage, or on a Pi, which shows it on the panel. The Pi
 serves the page at `/pet` and is its pet there; the app from the stores keeps
-its own pet, saved where the phone's backup takes it along, and can be
-connected to a Pi under *More*. A pet on the phone leaves a local
+its own pets, saved where the phone's backup takes them along, and can be
+connected to a Pi under *More*, where it shows the pets of both. A pet on the phone leaves a local
 notification for its next need when the app goes into the background
 (`app/src/notify.ts`, with the moment from `core/src/notify.ts`; Capacitor's
 Local Notifications plugin), so no server or push service is involved.
@@ -484,9 +487,10 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | Path | Purpose |
 |---|---|
 | `setup.sh` | Sets up the Pi completely (`--app`: update the app only) |
+| `CONTRIBUTING.md` | How to contribute, and the license (with the app store permission) a contribution comes under |
 | `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications |
 | `pi/src/main.ts` | Entry point on the Pi: panel driver, display loop, web server |
-| `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) |
+| `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) and its camera: which pet it shows, panning along the street |
 | `pi/src/web.ts`, `pi/src/network.ts` | Web interface and API, and the check that a request comes from the home network |
 | `pi/src/config.ts`, `pi/src/storage.ts` | `config.ini` and the paths; the pet's save file and the language files |
 | `pi/src/settings.ts` | Language and location as the settings page sets them (`settings.json`), over `config.ini` |
@@ -496,7 +500,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `app/android/`, `app/ios/`, `capacitor.config.json` | The app's projects for the stores (Capacitor); `tools/app_icons.ts` draws their icons |
 | `app/templates/` | The web interface (settings page) |
 | `app/locales/` | All texts of the interface, one file per language |
-| `docs/privacy.md`, `docs/support.md` (each with a `.de.md`), `docs/_config.yml` | The app's privacy policy and support page for the stores, and the settings of the GitHub Pages site that serves them |
+| `docs/privacy.md`, `docs/support.md` (each with a `.de.md`), `docs/licenses.md`, `docs/_config.yml` | The app's privacy policy, support page and the licenses of the parts it is built with, linked from *More* in the app, and the settings of the GitHub Pages site that serves them |
 | `app/pet/assets/` | The sprite sheets |
 | `app/pet/sounds/` | The app's sounds (WAV), written by `npm run sounds` from the recipes in `tools/sfx.ts`; don't edit them by hand |
 | `systemd/` | The service, and the update unit the button starts |
@@ -520,7 +524,8 @@ Copyright (C) 2026 Lampir (<https://lampir.at>)
 
 - **Code:** GNU General Public License, version 2 or (at your option) any
   later version, see [LICENSE](LICENSE). The project comes without any
-  warranty.
+  warranty. Contributions come with an additional permission that lets the
+  app be offered in the app stores, see [CONTRIBUTING.md](CONTRIBUTING.md).
 - **Sprites** in `app/pet/assets/`:
   [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), see
   [app/pet/assets/LICENSE.txt](app/pet/assets/LICENSE.txt). Use, change and

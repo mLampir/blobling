@@ -20,7 +20,10 @@ language = de
 
 Times and dates on the pet page follow the phone's own settings, not this
 option. The app on the phone takes the phone's language, if there is a file
-for it; the pet page the Pi serves comes in the Pi's language.
+for it, or the language chosen for the app in the phone's settings (Android
+13 and later: *Settings → Apps → Blobling → Language*; iOS: *Settings →
+Blobling → Language*, shown once the phone has more than one language in its
+list). The pet page the Pi serves comes in the Pi's language.
 
 ## Adding a language
 
@@ -32,7 +35,10 @@ for it; the pet page the Pi serves comes in the Pi's language.
 3. Restart the app (`sudo systemctl restart led-matrix`), then choose the
    language on the settings page.
 
-No code changes are needed. A few things to know while translating:
+For the app from the stores, also add the code to the two lists the phones'
+settings take the app's languages from: `app/android/app/src/main/res/xml/locales_config.xml`
+and `CFBundleLocalizations` in `app/ios/App/App/Info.plist` (a test checks
+both). No other code changes are needed. A few things to know while translating:
 
 - **Placeholders** in curly braces, such as `{name}` or `{time}`, are filled
   in by the app. Keep them, but move them wherever your language needs them.

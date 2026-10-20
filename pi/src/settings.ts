@@ -13,9 +13,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
 import { RequestError } from "../../core/src/model";
 import type { Pet } from "../../core/src/pet";
-import type { PetScene } from "../../core/src/scene";
 import { checkLocation, type Location } from "../../core/src/sun";
 import type { Config } from "./config";
+import type { Display } from "./display";
 import { getLog, reason } from "./log";
 import { writeAtomic } from "./storage";
 import type { Weather } from "../../core/src/weather";
@@ -141,10 +141,10 @@ export class Settings {
 
 /** A new location from the settings page reaches the weather and the sun times at once. */
 export function followLocation(settings: Settings,
-    { weather, pet, scene }: { weather: Weather; pet: Pet; scene: PetScene }): void {
+    { weather, pet, display }: { weather: Weather; pet: Pet; display: Display }): void {
   settings.onLocation((location) => {
     weather.setLocation(location);
     pet.setLocation(location);
-    scene.location = location;
+    display.setLocation(location);
   });
 }

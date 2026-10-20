@@ -37,12 +37,12 @@ export function parts(directory: string, panel: FrameSink | null = null, languag
   const weather = new Weather(null, null, 15);
   const petFile = join(directory, "pet.json");
   const pet = new Pet({ t: settings.t, saved: loadPet(petFile), save: petSaver(petFile) });
-  const scene = new PetScene(64, 64, sceneAssets());
+  const scene = (): PetScene => new PetScene(64, 64, sceneAssets());
   const display = new Display({
     panel, pet, weather, scene, defaultBrightness: 50, stateFile: join(directory, "state.json"),
   });
   pet.setBedtimeSource(display.bedtime);
-  followLocation(settings, { weather, pet, scene });
+  followLocation(settings, { weather, pet, display });
   // no VERSION in the folder: like a Pi set up from a checkout, it never looks for updates
   const updates = new Updates(directory, () => assert.fail("no request"), async () => "inactive");
   return { settings, weather, pet, display, petFile, updates };

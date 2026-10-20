@@ -170,9 +170,9 @@ The forms, their characters and the rules for getting them are in
 [pets.md](pets.md). That page keeps everything folded shut that would spoil
 finding it out by yourself.
 
-An adult stays forever. When a new egg comes, the pet goes to the back and
-stays at home (see [Two pets at home](#two-pets-at-home)); only when there are
-two already, one of them goes to rest in the ancestors' gallery, from where
+An adult stays forever. A new egg moves into a house of its own next to it
+(see [Several pets at home](#several-pets-at-home)); only when the home is
+full, you pick a pet that goes to rest in the ancestors' gallery, from where
 it can come home again.
 
 The **album** is the long-term goal: to have had every form once. It has one
@@ -211,45 +211,69 @@ egg in the nest and a gift that hasn't been unwrapped. The new pet itself starts
 friend and the areas it knows the way to; and its training too, apart from
 the heirloom of its egg.
 
-### Two pets at home
+### Several pets at home
 
-Two pets fit in the home: one at the front and one at the back. So a favorite
-can stay while new eggs are raised for the album.
+Up to four pets live at home, each in a house of its own along a street. So a
+favorite can stay while new eggs are raised for the album.
 
-- **A new egg** comes to the front, and the pet that was there goes to the
-  back. If there are two already, the app shows both and you tap the one that
-  stays; the other one goes to rest in the ancestors' gallery. An egg that
-  hasn't hatched goes nowhere.
-- **Swapping.** A small picture of the pet at the back sits at the top, next
-  to the name. A tap on it brings that pet to the front, and the other one
-  goes to the back, with nothing lost; it stays that way until the next tap.
-  Not while the pet at the front is away on a trip, or still an egg. The home
-  is the front pet's: the finds, the decorations, the plant and the eggs go
-  with it, and a pet going to the back takes its hat off.
+- **All of them live the game.** Each has its needs, goes on trips, scuffles,
+  makes friends, grows up and calls you, whichever one you look at. One that
+  nobody does anything with for a day and a half goes to Grandma's, like a
+  single pet (see [At Grandma's](#at-grandmas)).
+- **Switching only moves the camera.** Small pictures of the other pets sit
+  at the top, next to the name; a tap on one looks at it, and the picture pans along
+  the street to its house. Nobody moves: each pet keeps its own house, plant
+  and decorations. A small dot on a picture says that pet needs something.
+- **One store for all.** The finds, the food and the eggs belong to the whole
+  home. A hat or a decoration exists once: put it on one pet, and it comes off
+  the other.
+- **A new egg** (or an ancestor brought home) asks where it should live: in a
+  new house while there is a free place, or in the place of one of the pets.
+  A pet that makes room goes to rest in the ancestors' gallery; an egg that
+  hasn't hatched is given up. Pets only leave by your choice.
 - **The ancestors' gallery** keeps the pets that went to rest, frozen: they
-  lose nothing, don't grow on and don't get older.
-  **Bring home** next to one of them brings it back to the front, as it was
-  when it left; the pet at the front goes to the back, and if there are two
-  already, you pick again which one stays. Not while the pet at the front is
-  away on a trip, or still an egg. Ancestors from before the gallery kept the
-  pets are only pictures.
-- **Only the pet at the front lives the game:** it has needs, goes on trips,
-  scuffles, makes friends, lays eggs and calls you.
-- **The pet at the back keeps growing.** The one at the front looks after it:
-  nothing it needs drops below 60, and it never gets sick. A child at the back
-  counts as decently cared for (70 % of the time), never as specially, and
-  what only you can give (petting, trips, training) doesn't happen there. So
-  a child that grows up at the back becomes the plain form of its line; for
-  the others it has to be at the front. It evolves by itself when it is due.
-- **It comes out** for a quarter of an hour once every four hours, like a
-  friend's visit (which comes first), and the two play the same games. A pet
-  that knows a trick shows it, and the other one copies it: a quarter point,
-  from the same allowance as practicing alone, so it never learns a trick that
-  way. A child at the back counts the time out as half a playtime.
-- **At night** it comes out too, and the two sleep side by side. Once there is a house, both sleep inside.
+  lose nothing, don't grow on and don't get older. **Bring home** next to one
+  of them brings it back as it was when it left, into a free house or in
+  someone's place. Ancestors from before the gallery kept the pets are only
+  pictures.
+- **Neighbours get together** for a quarter of an hour once every four
+  hours, like a friend's visit (which comes first), and play the same games.
+  With three or four pets, who meets whom is drawn anew each time. A pet that
+  knows a trick shows it, and the other one copies it: a quarter point, from
+  the same allowance as practicing alone, so it never learns a trick that
+  way. A child counts the time together as half a playtime.
+- **At night** two of them sleep side by side. Once there is a house, both
+  sleep inside.
 
-Coming out follows the clock only, so it is the same whether anybody is
+Getting together follows the clock only, so it is the same whether anybody is
 looking or not.
+
+**On the display** the panel shows one pet at a time. It follows the pet last
+picked on a phone, and when two people play with different pets at once, it
+stays with a pet until that one has been left alone for half a minute. On the
+display's settings page a pet can be pinned, so the panel always shows that
+one. A switch pans along the street there too.
+
+**The phone and the display** each have a home of their own, with their own
+places. Connecting the app to a display moves no pet; the pictures at the top
+show the pets of both, the phone's with a small phone sign. Away from home,
+with the display out of reach, the app shows only the phone's own pets.
+
+- **Take along on this phone** (under *More*, for a pet of the display) moves
+  it into the phone, with its house: it lives there until it is brought back,
+  also when the app is opened at home.
+- **Bring to the display** (for a pet of the phone) moves it into a house at
+  the display. Both ask where it should live, as a new egg does.
+- **A pet lives in one place only.** Every pet carries a move number, and the
+  display remembers the last one of every pet that moved, so an old copy (an
+  old save file, a phone's backup) is turned away. One pet always stays at the
+  display.
+- **A lost phone:** the display keeps the pets phones took along, sealed, and
+  its settings page can fetch one back. The copy on that phone no longer counts
+  then.
+- **Copies from before pets could move** (the same pet on the phone and at the
+  display) are asked about once: you pick the real one, and the other rests
+  among the ancestors.
 
 ## Tricks
 
@@ -588,8 +612,9 @@ tiredness (it goes to sleep by itself) or a single poop. Only one call is ever
 waiting, and never at night: a need that comes up while it sleeps or at
 bedtime waits until it is up in the morning. Opening the app takes the call
 back. The app asks whether the pet may call the first time you feed it.
-Connected to a Pi, the app doesn't call: it can't know what happens there in
-the meantime, and somebody else may already have seen to it.
+The pets at a display don't call: the app can't know what happens there in
+the meantime, and somebody else may already have seen to them. The phone's own
+pets call also while it is connected.
 
 ### At Grandma's
 
@@ -597,8 +622,9 @@ When nobody has done anything with the pet for a day and a half (from any
 phone), it goes to Grandma's, so that a week away doesn't leave it hungry and
 sick for days. Somebody who comes once a day keeps looking after it
 themselves. It hops off to the right as soon as it is awake and at home: in
-the morning if it is asleep, after the trip if it is on one. An egg goes too,
-and so does the pet at the back. With the Pi off, or the app closed with the
+the morning if it is asleep, after the trip if it is on one. An egg goes too.
+With several pets at home, each one goes by itself, when nobody has done
+anything with it. With the Pi off, or the app closed with the
 pet on the phone, it is the same as if it had been running.
 
 - The panel shows its home without it: the plant, the house and whatever it
@@ -623,8 +649,8 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
 
 - **The pet** fills the screen: the scene, with the sky going on above it, the
   pet's name, form, age and mood at the top, and the **Sleep** / **Wake up**
-  button next to them; with a second pet at home, its picture too, to bring it
-  to the front. Stroke the pet itself to pet it (an egg
+  button next to them; with several pets at home, the pictures of the others
+  too, to switch to them. Stroke the pet itself to pet it (an egg
   or a shivering pet is rubbed warm); the rest of the scene doesn't count,
   apart from the house: a tap on it looks inside.
 - Below it, the **needs** as five small meters. A tap on one says what helps.
@@ -670,9 +696,9 @@ played by `app/src/sound.ts`; like the sprites they are generated, by
 `npm run sounds` from the recipes in `tools/sfx.ts`. They can be turned off
 under *More*. With a Pi they come from the phone too; the Pi stays silent.
 
-Connected to a Pi, the screen is the same; the scene is then the panel's own
-picture. The pet lives on the Pi either way: it goes on with its day and can
-be looked after there while the phone is off.
+Connected to a Pi, the screen is the same; for a pet of the display, the
+scene is then the panel's own picture. Those pets live on the Pi: they go on
+with their day and can be looked after there while the phone is off.
 
 On the phone the same page is the Blobling app from the stores, which can
 keep its own pet or connect to a Pi; the README explains how.
@@ -696,7 +722,10 @@ keep its own pet or connect to a Pi; the README explains how.
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
 | Catching up, the state for the app, what is saved, ancestors (resting, and coming home again) and album | `core/src/pet.ts`, `core/src/state.ts` |
-| The pet at the back: swapping, growing there, coming out, copying tricks | `core/src/companion.ts`, `Pet.swap` in `core/src/pet.ts` |
+| Several pets at home: the houses, the shared store, places for a new egg | `core/src/pet.ts` (`PLACES`, `newEgg`, `bringBack`) |
+| Neighbours getting together, sleeping side by side, copying tricks | `core/src/companion.ts` |
+| Moving between a phone and a display: move numbers, the sealed copy, fetching back | `core/src/pet.ts` (`release`, `adopt`, `handOver`, `takeIn`, `fetchBack`), `app/src/main.ts` |
+| The camera panning along the street (panel and app), and which pet the panel shows | `core/src/street.ts`, `pi/src/display.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
 | Preview of the scene on a PC, pictures for [pets.md](pets.md) | `tools/pet_preview.ts` (`npm run preview`) |

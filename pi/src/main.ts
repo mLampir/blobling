@@ -40,9 +40,9 @@ async function main(): Promise<void> {
     log: (message, error) => log.error(message, error),
   });
   const panel = await startPanel(PYTHON, DRIVER_FILE, cfg);
-  const scene = new PetScene(cfg.cols, cfg.rows, assets, { location });
+  const scene = (): PetScene => new PetScene(cfg.cols, cfg.rows, assets, { location: settings.location });
   const display = new Display({ panel, pet, weather, scene, defaultBrightness: cfg.brightness, stateFile: STATE_FILE });
-  followLocation(settings, { weather, pet, scene });
+  followLocation(settings, { weather, pet, display });
   pet.setBedtimeSource(display.bedtime);
   display.start();
 
