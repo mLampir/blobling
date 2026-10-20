@@ -322,6 +322,7 @@
     "petting": {
       "warmed": "{name} ist wieder warm"
     },
+    "cooled": "{name} hat sich abgekühlt",
     "trick": {
       "note": "Ob es klappt, zeigt die Anzeige. Üben wirkt am besten über mehrere Tage verteilt.",
       "learned": "{name} kann jetzt {trick}! 🎉",
@@ -450,7 +451,8 @@
       "egg": "Ein Ei – Wärme lässt es früher schlüpfen",
       "line": "{form} · {age} · {doing}",
       "asleep": "schläft",
-      "cold": "friert"
+      "cold": "friert",
+      "hot": "schwitzt"
     },
     "age": {
       "one": "1 Tag alt",

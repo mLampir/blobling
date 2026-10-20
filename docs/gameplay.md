@@ -59,7 +59,7 @@ and the app says why.
 | Something from the bag | see below | it isn't there, the pet won't eat it, or it is asleep |
 | Play (ball) | mood +20, energy −10, satiety −5 | energy is below 15, or it is asleep |
 | Sleep / wake up | puts it to bed or wakes it | it isn't tired yet (daytime, energy above 80) |
-| Clean | removes the poops, hygiene back to 100 | everything is already clean |
+| Clean | removes the poops, hygiene back to 100; on a hot afternoon it cools the pet down | everything is already clean, and it isn't hot |
 | Pet | mood +5, bond +2 (counts once every two minutes); rubs a shivering pet warm | – |
 | Medicine | cures sickness | it isn't sick (and it sulks a little) |
 
@@ -102,14 +102,22 @@ half an hour and goes back to sleep. If it runs out of energy during the day,
 it takes a nap.
 
 The sky follows the real time of day, with sunrise and sunset for your
-location, a moon and stars at night. Clouds, rain and snow come from the real
-weather; in rain or snow the pet holds an umbrella.
+location, and stars at night with the moon as it really is that night, from
+new to full. Clouds, rain and snow come from the real weather; in rain or snow
+the pet holds an umbrella.
 
 **Cold mornings.** When it is below 5 °C outside, the pet wakes up shivering,
 and its breath shows. Rub it warm with the petting gesture: that is worth a
 little extra mood and bond. It costs nothing if you don't; after an hour the
 pet has warmed up by itself. Some pets never shiver, and some things a pet
 can find keep the cold away. Which ones is for you to find out.
+
+**Hot afternoons.** When it is 28 °C or more outside in the afternoon (13:00
+to 18:00), the heat gets to the pet once that day: it sweats and droops now
+and then. A bath with the sponge cools it down, even when it is clean, and
+that is worth a little extra mood. It costs nothing if you don't; after an hour
+it has got over it by itself. Some pets don't mind the heat, and something a
+pet can find keeps it off.
 
 ## The house
 
@@ -464,7 +472,9 @@ watches.
 
 - A trick works as often as it has been learned, as in a scuffle. A pet in a
   bad mood only manages half as often.
-- If two of the three work, the wild pet is impressed and the two are
+- A pet with three bond hearts or more is sure of itself and shows a fourth
+  trick.
+- If two of them work, the wild pet is impressed and the two are
   friends. Otherwise it hops on, and the pet may meet another one on a later
   trip.
 
@@ -715,7 +725,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | A scuffle watched again in the app | `app/src/replay.ts` |
-| Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), the house and its spots | `core/src/home.ts` |
+| Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), hot afternoons, the house and its spots | `core/src/home.ts` |
 | What it does by itself, what it leaves behind or finds at home, and what it tells when you come back | `core/src/idle.ts` |
 | Going to Grandma's, staying there frozen, and being fetched | `core/src/model.ts` (`GRANDMA_AFTER`, `comeBack`) |
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |

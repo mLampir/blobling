@@ -72,6 +72,13 @@ test("a frame fills the panel, and the same chance draws the same pictures", () 
   assert.deepEqual(color(first[0], 0, 63), [70, 40, 15]);
 });
 
+test("on a hot afternoon it sweats and droops", () => {
+  const heat = { temp: 32, code: 0 };
+  const usual = frames({}, 40, DAY, heat);
+  const hot = frames({ hot: true }, 40, DAY, heat);
+  assert.ok(hot.some((image, i) => differing(image, usual[i]) > 0));
+});
+
 test("it shivers, and the ember stone glows at night", () => {
   const frost = { temp: -4, code: 0 };
   const usual = frames({}, 40, DAY, frost);
@@ -438,4 +445,22 @@ test("the house: outside on the left, inside while the pet sleeps, and the way i
   const look = frames({ house: 2, look_in: true }, 1)[0];
   const room = frames({ house: 2, asleep: true }, 1)[0];
   assert.ok(differing(look, room) > 0);
+});
+
+test("the moon in the sky is the real one", () => {
+  const moonPixels = (date: Date) => {
+    const [image] = frames({ asleep: true }, 1, date, { temp: 10, code: 0 });
+    let lit = 0;
+    for (let y = 8; y < 17; y++) {
+      for (let x = 48; x < 60; x++) {
+        lit += color(image, x, y)[0] > 150 ? 1 : 0;
+      }
+    }
+    return lit;
+  };
+  const full = moonPixels(new Date(2026, 9, 25, 23, 30));
+  const half = moonPixels(new Date(2026, 9, 18, 23, 30));
+  const none = moonPixels(new Date(2026, 9, 10, 23, 30));
+  assert.ok(full > half && half > none, `${full} ${half} ${none}`);
+  assert.ok(none <= 2, String(none)); // at new moon there is hardly anything to see (a star, maybe)
 });

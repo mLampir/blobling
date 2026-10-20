@@ -303,6 +303,46 @@ test("the ember stone makes whatever is still growing grow faster", () => {
   assert.equal(adult.egg_warmth, 0);
 });
 
+test("on a hot afternoon it sweats, until a bath cools it down", () => {
+  const other = grown(start);
+  for (const [state, temp] of [[pet, home.HOT_FROM + 2], [other, home.HOT_FROM - 1]] as const) {
+    for (let t = start; t < at("2026-10-12 13:30"); t += HOUR / 2) {
+      Object.assign(state.stats, { satiety: 80, energy: 80 }); // fed and rested all along
+      model.advance(state, t + HOUR / 2, BEDTIME, null, temp);
+      // not in the morning, however hot it is
+      assert.ok(t + HOUR / 2 >= at("2026-10-12 13:00") || !home.hot(state, state.updated_at));
+    }
+  }
+  assert.ok(home.hot(pet, pet.updated_at) && other.hot_until === 0);
+  assert.ok(at("2026-10-12 13:00") + home.HOT_SECONDS <= pet.hot_until);
+  // it costs nothing: the heat changes nothing else
+  assert.deepEqual({ ...toDict(pet), hot_until: 0, hot_day: 0 }, toDict(other));
+  // a bath cools it down, even when it is clean, and that is worth a little extra
+  const t = pet.updated_at;
+  pet.poops = 0;
+  pet.stats.hygiene = 100;
+  assert.equal(model.availableActions(pet, t).clean, true);
+  const mood = pet.stats.mood;
+  act(pet, "clean", t);
+  near(pet.stats.mood, mood + 5 + home.COOL_MOOD, 0.005);
+  assert.deepEqual([pet.counters.cooled, home.hot(pet, t)], [1, false]);
+  assert.deepEqual(act(pet, "clean", t + 10), [false, "already_clean"]);
+  // once a day only
+  model.advance(pet, t + HOUR, BEDTIME, null, home.HOT_FROM + 2);
+  assert.equal(home.hot(pet, pet.updated_at), false);
+  // left alone, it stops by itself
+  pet.hot_until = t + home.HOT_SECONDS;
+  assert.deepEqual([home.hot(pet, t + home.HOT_SECONDS - 1), home.hot(pet, t + home.HOT_SECONDS)], [true, false]);
+  // a leaf for a sunshade and a fire of its own keep the heat off
+  pet.items = { leaf: 1 };
+  act(pet, "wear", t, { item: "leaf" });
+  assert.equal(home.hot(pet, t), false);
+  act(pet, "wear", t, { item: "none" });
+  assert.equal(home.hot(pet, t), true);
+  pet.species = "ember";
+  assert.equal(home.hot(pet, t), false);
+});
+
 test("in the cold it wakes up shivering, until it is rubbed warm", () => {
   const night = at("2026-10-13 03:00");
   const other = grown(start);

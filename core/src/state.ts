@@ -97,6 +97,8 @@ export interface Trip {
   boosts?: string[];
   /** What has happened so far, for the travel diary (missing in trips saved before it). */
   log?: TravelStop[];
+  /** It rained at one of the stations so far. */
+  rained?: boolean;
 }
 
 /** An egg that is kept: its line, and what a pet has passed on to it (wild.ts). */
@@ -185,6 +187,9 @@ export interface PetState {
   last_pet: number;
   /** It woke up in the cold and shivers until then (home.ts). */
   cold_until: number;
+  /** A hot afternoon: it sweats until then; and the local day this last happened (home.ts). */
+  hot_until: number;
+  hot_day: number;
   counters: Record<string, number>;
   weight: number;
   bond: number;
@@ -270,6 +275,8 @@ export function newState(): PetState {
     recent: {},
     last_pet: 0.0,
     cold_until: 0.0,
+    hot_until: 0.0,
+    hot_day: 0,
     counters: {},
     weight: care.IDEAL_WEIGHT.baby,
     bond: 20.0,

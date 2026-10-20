@@ -124,6 +124,7 @@ const SCENES: Record<string, Scene> = {
   snow: [{ mood: "tired", needs: ["energy"] }, DAY, { temp: -2, code: 73 }],
   cloudy: [{ mood: "happy" }, DAY, { temp: 15, code: 2 }],
   cold: [{ cold: true }, DAY, { temp: -4, code: 1 }],
+  hot: [{ hot: true }, DAY, { temp: 31, code: 0 }],
   emberstone: [{ deco: ["emberstone"] }, NIGHT, { temp: -4, code: 0 }],
   waiting: [{ waiting: true }, DAY, null],
   waiting_rain: [{ waiting: true, stage: "adult", species: "cyclopuff" }, DUSK, RAIN],

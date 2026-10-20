@@ -912,7 +912,7 @@ function render(s) {
   const egg = s.stage === "egg";
   const evo = s.evolution;
   const doing = s.trip ? s.trip.where : s.asleep ? t("page.status.asleep")
-    : s.cold ? t("page.status.cold") : t(`page.moods.${s.mood}`);
+    : s.cold ? t("page.status.cold") : s.hot ? t("page.status.hot") : t(`page.moods.${s.mood}`);
   const form = s.stage === "adult" ? s.species_label : s.stage_label;
   $("sub").textContent = egg ? t("page.status.egg")
     : t("page.status.line", { form, age: tn("page.age", s.age_days), doing });
@@ -1772,7 +1772,10 @@ document.querySelectorAll(".thing").forEach((b) => {
       }
       if (!drag.rubbed && drag.rub > RUB_PX) {
         drag.rubbed = true;
-        act("clean");
+        const hot = current.hot;
+        act("clean").then((r) => {
+          if (r?.accepted && hot && !r.state.hot) say(t("page.cooled", { name: r.state.name }));
+        });
       }
     }
   });

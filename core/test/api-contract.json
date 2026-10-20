@@ -90,6 +90,7 @@
     "GET /api/pet grandma": "null",
     "GET /api/pet guardians.all": "number",
     "GET /api/pet guardians.passed": "number",
+    "GET /api/pet hot": "boolean",
     "GET /api/pet house": "null",
     "GET /api/pet id": "string",
     "GET /api/pet ideal_weight": "number",

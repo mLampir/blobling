@@ -224,12 +224,14 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
   events.push(["battle", `${foe}:${outcome}`]);
   count.battles = (count.battles ?? 0) + 1;
   life.record(state, "battles"); // in a child's care diary too, however it ends (the duck line)
+  life.record(state, "clean_battles", fight.rounds.some(([, , result]) => result === "ouch") ? 0 : 1);
   if (outcome === "win") {
     let egg: string | null = null;
     count.battles_won = (count.battles_won ?? 0) + 1;
     state.stats.mood += guardian ? GUARDIAN_MOOD : WIN_MOOD;
     if (guardian && !state.guardians.includes(trip.area)) {
       state.guardians.push(trip.area);
+      life.record(state, "guardians");
       events.push(["guardian", foe]);
       for (const area of AREAS.filter((area) => blockedBy(area) === trip.area)) {
         events.push(["unlock", area]);
@@ -280,6 +282,9 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
   while (!returning(trip) && t >= trip.stations[trip.next]) {
     const at = trip.stations[trip.next];
     trip.next += 1;
+    if (sky.precipitation(weather) === "rain") {
+      trip.rained = true;
+    }
     if (!trip.boosts?.includes("fresh")) {
       s.energy -= STATION_COST.energy;
       s.satiety -= STATION_COST.satiety;
@@ -330,6 +335,8 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
   if (trip.next) { // called straight back home doesn't count
     state.counters.trips = (state.counters.trips ?? 0) + 1;
     life.record(state, "trips"); // in a child's care diary too (the fox line)
+    life.record(state, `trips_${trip.area}`);
+    life.record(state, "rain_trips", trip.rained ? 1 : 0);
   }
   state.trip = null;
   return [events, trip];

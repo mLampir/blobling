@@ -226,7 +226,8 @@ The values are in `core/src/wild.ts`.
 | ![Cindlet](images/pets/cindlet.png) | **Child: Cindlet** – an ember slime with glowing cracks and eyes, and a flame for a curl |
 
 The stages last as long as the slime's. What the adults keep is the flame.
-With a fire of its own, nothing of this line ever shivers on a cold morning.
+With a fire of its own, nothing of this line ever shivers on a cold morning
+or minds a hot afternoon.
 
 ![Lanternling](images/pets/lanternling.png)
 

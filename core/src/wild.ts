@@ -35,6 +35,7 @@ export const WILD: Record<string, readonly (readonly [string, number, sky.Precip
 export const MEET_CHANCE = 0.2; // how often a wild pet is at a station, while the pet is looking for a friend
 export const SHOW = 3; // tricks the pet shows
 export const IMPRESS = 2; // this many have to work
+export const BOND_SHOWS = 3; // from this many bond hearts on, it shows one trick more (the same IMPRESS still has to work)
 export const GLUM = 40; // with its mood below this, a trick works only half as often
 export const FIRST_VISIT = [1 * 3600, 3 * 3600] as const; // seconds from making friends to the first visit
 export const VISIT_EVERY = [5 * 3600, 10 * 3600] as const; // from one visit to the next
@@ -87,7 +88,8 @@ export function meet(state: PetState, area: string, at: number, weather: sky.Wea
 
 /**
  * The pet shows the wild pet its tricks. The outcome is "friend" or "shrug". A trick works as
- * often as it has been learned.
+ * often as it has been learned. A pet with a strong bond to its owner is sure of itself and gets
+ * one try more.
  */
 export function show(state: PetState, species: string, rng: Random, now: number):
     { rounds: Shown[]; outcome: "friend" | "shrug" } {
@@ -96,7 +98,8 @@ export function show(state: PetState, species: string, rng: Random, now: number)
   const known = practiced.length ? practiced : tricks;
   const factor = state.stats.mood < GLUM ? 0.5 : 1.0;
   const rounds: Shown[] = [];
-  for (let i = 0; i < SHOW; i++) {
+  const shows = SHOW + (care.bondLevel(state) >= BOND_SHOWS ? 1 : 0);
+  for (let i = 0; i < shows; i++) {
     const trick = rng.choice(known);
     rounds.push([trick, rng.random() < care.trickProgress(state, trick) * factor]);
   }

@@ -23,7 +23,7 @@ import { ACTIVITY_SECONDS, THROW_SECONDS } from "./model";
 import { Random } from "./random";
 import * as sky from "./sky";
 import { faceAnchor, outline, recolor, swapColors, tint, wideRow, type Sheet } from "./sprites";
-import { sunTimes } from "./sun";
+import { moonPhase, sunTimes } from "./sun";
 
 export const FPS = 10;
 export const SLEEP_FPS = 4;
@@ -38,6 +38,9 @@ const SKY_NIGHT: [Color, Color] = [[0, 0, 10], [8, 8, 35]];
 // The pet stands out from the sky thanks to its black outline (see outline).
 const SKY_DAY: [Color, Color] = [[10, 45, 110], [60, 130, 190]];
 const SKY_GLOW: Color = [200, 80, 40];
+const MOON: Color = [220, 220, 170];
+const MOON_DARK: Color = [22, 22, 40]; // the unlit part: just a hint of the disc
+const MOON_RADIUS = 3;
 const SKY_OVERCAST: [Color, Color] = [[40, 45, 55], [90, 95, 105]];
 const GRASS: Color = [40, 140, 50];
 const SOIL: Color = [70, 40, 15];
@@ -393,6 +396,7 @@ const DIRT: Bitmap = [[60, 60, 60], ["X"]];
 const SICK_TINT: readonly [Color, number] = [[185, 195, 90], 0.28]; // sickly pale, for everything that isn't the teal slime
 const STEAM: Bitmap = [[215, 235, 245], [".X.", "XXX"]];
 const BREATH: Bitmap = [[190, 215, 240], ["XX"]]; // it shows in the cold
+const SWEAT: Bitmap = [[170, 225, 255], [".X", "XX"]]; // on a hot afternoon
 const LOVE: Bitmap = [[255, 130, 170], ["X.X", "XXX", ".X."]];
 const SHELL: Bitmap = [[240, 232, 205], ["X"]];
 
@@ -425,6 +429,8 @@ export interface SceneView {
   mood: string;
   /** It woke up in the cold and nothing keeps it warm: it shivers. */
   cold?: boolean;
+  /** A hot afternoon, and nothing keeps the heat off: it sweats and droops. */
+  hot?: boolean;
   needs: readonly string[];
   activity_until: number;
   activity_item: string;
@@ -999,6 +1005,15 @@ export class PetScene {
       if (view.cold && !show && !play) {
         // it shivers
         pose.dx = Math.trunc(t * 8) % 2;
+      }
+      if (view.hot && !show && !play) {
+        // the heat gets to it: a limp face, and now and then it droops and pants
+        if (isOneOf(pose.face, "normal", "smile", "sad")) {
+          pose.face = "tired";
+        }
+        if (Math.sin(t * 0.7) > 0.4) {
+          Object.assign(pose, { body: "squash", jump: 0, face: "yawn" });
+        }
       }
     } else if (activity === "trick") {
       // Practice: "fail" = doesn't work yet, "learned" = it knows the trick from now on
@@ -2375,11 +2390,30 @@ export class PetScene {
       img.ellipse(Math.trunc(sx), Math.trunc(sy), Math.trunc(sx + 4), Math.trunc(sy + 4),
         lerp([255, 140, 40], [255, 230, 120], day));
     } else if (day < 0.5) {
-      img.ellipse(this.width - 14, 10, this.width - 9, 15, [220, 220, 170]);
-      img.ellipse(this.width - 12, 9, this.width - 7, 14, top); // crescent
+      this.drawMoon(img, this.width - 12, 12, moonPhase(now.getTime() / 1000));
     }
     this.night = 1 - day;
     return img;
+  }
+
+  /**
+   * The moon as it really is tonight, centered at (cx, cy): lit from the right while it waxes, from
+   * the left while it wanes, and only a faint disc at new moon.
+   */
+  private drawMoon(img: Image, cx: number, cy: number, phase: number): void {
+    const k = Math.cos(2 * Math.PI * phase); // 1 at new moon, -1 at full moon
+    for (let dy = -MOON_RADIUS; dy <= MOON_RADIUS; dy++) {
+      for (let dx = -MOON_RADIUS; dx <= MOON_RADIUS; dx++) {
+        const r = Math.hypot(dx + 0.5, dy + 0.5);
+        if (r > MOON_RADIUS + 0.3) {
+          continue;
+        }
+        const half = Math.sqrt(Math.max(0, (MOON_RADIUS + 0.3) ** 2 - (dy + 0.5) ** 2)); // half the width of this row
+        const x = dx + 0.5;
+        const lit = phase < 0.5 ? x > k * half : x < -k * half;
+        img.point(cx + dx, cy + dy, lit ? MOON : MOON_DARK);
+      }
+    }
   }
 
   private drawGround(img: Image, grass: Color = GRASS, soil: Color = SOIL): void {
@@ -2850,6 +2884,11 @@ export class PetScene {
       } else if (view.cold && activity === "idle") {
         spawn = { sprite: BREATH, x: cx + 9 * this.facing, y: top + 9, vx: 3 * this.facing, vy: -3, life: 1.0 };
         every = 2.2;
+      } else if (view.hot && activity === "idle") {
+        // sweat drips off its brow, to one side or the other
+        const side = rng.random() < 0.5 ? -1 : 1;
+        spawn = { sprite: SWEAT, x: cx + side * rng.uniform(10, 13) - 1, y: top + rng.uniform(6, 10), vx: side * 5, vy: 3, life: 1.4 };
+        every = 0.6;
       } else if (mood === "sick" || (mood === "tired" && activity === "idle")) {
         spawn = { sprite: DROP, x: cx + 8 * this.facing, y: top + 3, vx: 0, vy: 6, life: 1.0 };
         every = 2.5;

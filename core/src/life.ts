@@ -107,9 +107,19 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   steamo: { sick: 0.5 }, // the sauna keeps it healthy
 };
 
+/**
+ * The care diary of a child. Besides these, it counts what a rule for an adult form may look at
+ * one day (record): each food from the bag (`food_<name>`), fruits it picked off the plant itself
+ * (`plant_fruits`), trips to each area (`trips_<area>`) and trips with rain on the way
+ * (`rain_trips`), scuffles in which it was never knocked over (`clean_battles`), guardians it got
+ * past for the first time (`guardians`), guessing games played and won (`games`, `games_won`),
+ * evenings it was tucked in by hand (`tucked`) and minutes with its health below WEAK_HEALTH
+ * (`weak_minutes`).
+ */
 export function newDiary(): Record<string, number> {
   return { minutes: 0, good_minutes: 0, meals: 0, snacks: 0, plays: 0, love: 0, trips: 0, battles: 0, baths: 0, tricks: 0 };
 }
+export const WEAK_HEALTH = 80;
 
 /** The line a species belongs to. */
 export function lineOf(species: string): string {
@@ -159,6 +169,9 @@ export function recordMinute(state: PetState, good: boolean): void {
   if (state.stage === "child") {
     state.diary.minutes += 1;
     state.diary.good_minutes += good ? 1 : 0;
+    if (state.stats.health < WEAK_HEALTH) {
+      record(state, "weak_minutes");
+    }
   }
 }
 
@@ -169,14 +182,28 @@ export function record(state: PetState, kind: string, amount = 1): void {
 }
 
 /**
- * The world where the pet lives at the moment it grows up: two lines go by it instead of the care
- * diary (the cloud by the rain, the stone by the night).
+ * The world where the pet lives at the moment it grows up: some lines go by it instead of the care
+ * diary (the cloud by the rain, the stone by the night). Everything in it is real: the weather,
+ * the clock, the sun and the moon where the pet lives.
  */
 export interface World {
   /** It rains (or storms) right now. */
   raining?: boolean;
+  /** It snows right now. */
+  snowing?: boolean;
+  /** A thunderstorm right now. */
+  storm?: boolean;
+  /** The temperature in °C, or null without weather data. */
+  temp?: number | null;
   /** The sun is down. */
   dark?: boolean;
+  /** The time of day, in minutes after midnight (local time). */
+  minute?: number;
+  /** Sunrise and sunset today, in minutes after midnight (local time). */
+  sunrise?: number;
+  sunset?: number;
+  /** The moon is full (sun.isFullMoon). */
+  fullMoon?: boolean;
 }
 
 /** How many days the child stage of this pet lasts: less what the ember stone took off it. */
