@@ -223,6 +223,9 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
   state.replays = [...state.replays, replay].slice(-REPLAYS);
   events.push(["battle", `${foe}:${outcome}`]);
   count.battles = (count.battles ?? 0) + 1;
+  if (fight.rounds.some(([, , result]) => result === "special")) {
+    count.specials = (count.specials ?? 0) + 1; // scuffles it showed its special move in (the album's star)
+  }
   life.record(state, "battles"); // in a child's care diary too, however it ends (the duck line)
   life.record(state, "clean_battles", fight.rounds.some(([, , result]) => result === "ouch") ? 0 : 1);
   if (outcome === "win") {

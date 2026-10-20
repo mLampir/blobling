@@ -335,3 +335,13 @@ test("unwrapping: it goes into the bag", () => {
   pet.gift = "fruit_berry";
   assert.equal(model.nextPet(pet, now + 180).gift, "fruit_berry");
 });
+
+test("a line the home has long been missing comes more often", () => {
+  const leaves = (who: PetState) => Array.from({ length: 4000 }, (_, i) => wild.meet(who, "forest", start + i, null))
+    .filter((species) => species === "twiggle" || species === "needlenub").length;
+  const usual = leaves(pet);
+  const missing = leaves(copy({ missing_lines: ["leaf"] }));
+  assert.ok(missing > usual * 1.4, `${usual} → ${missing}`);
+  // the slime's old forms are wild pets only: no line to look for
+  assert.ok(leaves(copy({ missing_lines: ["blob"] })) === usual);
+});

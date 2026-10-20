@@ -1,7 +1,7 @@
 /** Pictures for the page, drawn by the core: the pet in a given form, and the things the player hands it. */
 
 import { Image } from "../../core/src/image";
-import { PetScene } from "../../core/src/scene";
+import { APP_BACKGROUND, PetScene } from "../../core/src/scene";
 import { sceneAssets } from "./assets";
 import { imageData } from "./canvas";
 
@@ -14,6 +14,30 @@ export function iconUrl(stage: string, species: string): string {
   if (!url) {
     scene ??= new PetScene(64, 64, sceneAssets());
     url = dataUrl(scene.icon(40, stage, species)); // its own size: the page scales it up without blurring
+    urls.set(key, url);
+  }
+  return url;
+}
+
+const OUTLINE = [128, 132, 150]; // a form only seen: its outline in one color
+
+/** The outline of the pet in a given form, in one color on nothing: a form the album has only seen. */
+export function outlineUrl(stage: string, species: string): string {
+  const key = `outline|${stage}|${species}`;
+  let url = urls.get(key);
+  if (!url) {
+    scene ??= new PetScene(64, 64, sceneAssets());
+    const data = imageData(scene.icon(40, stage, species));
+    const [r, g, b] = APP_BACKGROUND;
+    for (let i = 0; i < data.data.length; i += 4) {
+      const background = data.data[i] === r && data.data[i + 1] === g && data.data[i + 2] === b;
+      data.data.set(background ? [0, 0, 0, 0] : [...OUTLINE, 255], i);
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = data.width;
+    canvas.height = data.height;
+    canvas.getContext("2d")!.putImageData(data, 0, 0);
+    url = canvas.toDataURL();
     urls.set(key, url);
   }
   return url;

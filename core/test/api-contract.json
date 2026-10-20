@@ -1,5 +1,5 @@
 {
-  "api": 6,
+  "api": 7,
   "oldest": 5,
   "routes": [
     "GET /api/pet",
@@ -129,6 +129,7 @@
     "GET /api/pet/ancestors album": "array",
     "GET /api/pet/ancestors ancestors": "array",
     "GET /api/pet/ancestors api": "number",
+    "GET /api/pet/ancestors lines": "array",
     "GET /api/pet/events api": "number",
     "GET /api/pet/events events": "array",
     "GET /api/pet/travels api": "number",

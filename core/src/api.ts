@@ -24,7 +24,7 @@ import type { Pet } from "./pet";
  * core/test/api.test.ts compares the API with core/test/api-contract.json and says which number
  * a change needs (CLAUDE.md, "The API between app and Pi").
  */
-export const API_VERSION = 6;
+export const API_VERSION = 7;
 export const API_OLDEST = 5;
 
 /**
@@ -135,7 +135,7 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
       return { api: API_VERSION, travels: pet.travels(which) };
 
     case "GET /api/pet/ancestors":
-      return { api: API_VERSION, ancestors: pet.ancestorList(), album: pet.albumList() };
+      return { api: API_VERSION, ancestors: pet.ancestorList(), album: pet.albumList(), lines: pet.albumLines() };
 
     case "POST /api/pet/settings": {
       const request = fields(await body());

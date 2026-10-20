@@ -630,6 +630,11 @@
       "bring_back": "Heimholen",
       "album": "{met} von {all} Formen",
       "missing": "Noch nicht getroffen",
+      "seen": {
+        "day": "{where}, am Tag",
+        "night": "{where}, als die Sterne da waren"
+      },
+      "mastered": "{form}, gemeistert",
       "ancestors": "Ahnen"
     },
     "travels": {

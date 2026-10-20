@@ -32,6 +32,7 @@ export const WILD: Record<string, readonly (readonly [string, number, sky.Precip
   stream: [["bouldergrin", 3, null], ["glimmerock", 1, null], ["lillypot", 2, null], ["steamo", 1, null]],
   mountain: [["rumblefluff", 3, "rain"], ["prismist", 1, null]], // the thundercloud only comes out in the rain
 };
+export const MISSING_WEIGHT = 3; // a line the home has long been missing (state.missing_lines): its wild pets come this much more often
 export const MEET_CHANCE = 0.2; // how often a wild pet is at a station, while the pet is looking for a friend
 export const SHOW = 3; // tricks the pet shows
 export const IMPRESS = 2; // this many have to work
@@ -83,7 +84,10 @@ export function meet(state: PetState, area: string, at: number, weather: sky.Wea
   if (rng.random() >= rules.meetChance) {
     return null;
   }
-  return rng.weighted(options.map(([species]) => species), options.map(([, weight]) => weight));
+  // the quiet safety net: a line the home has long been missing comes more often
+  const weights = options.map(([species, weight]) =>
+    weight * (state.missing_lines.includes(life.lineOf(species)) && !life.WILD_ONLY.includes(species) ? MISSING_WEIGHT : 1));
+  return rng.weighted(options.map(([species]) => species), weights);
 }
 
 /**

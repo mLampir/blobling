@@ -18,7 +18,7 @@ import { NOT_A_PET_ROUTE, ownTarget, petRequest } from "../../core/src/api";
 import type { Image } from "../../core/src/image";
 import type { I18n } from "../../core/src/i18n";
 import { RequestError } from "../../core/src/model";
-import { MAX_NAME, PLACES, Pet, VERSION, readSave, type Ancestor, type Moving } from "../../core/src/pet";
+import { MAX_NAME, PLACES, Pet, VERSION, readSave, type Ancestor, type Moving, type Sighting } from "../../core/src/pet";
 import { PetScene } from "../../core/src/scene";
 import { fromDict } from "../../core/src/state";
 import { pan, panSeconds } from "../../core/src/street";
@@ -42,18 +42,28 @@ function savedLocation(): Location {
   }
 }
 
+/** The ancestors and the album, which a home keeps even while it is empty. */
+interface Album {
+  ancestors: Ancestor[];
+  album: string[];
+  seen: Record<string, Sighting>;
+  mastered: string[];
+}
+
 /** What an empty home keeps: its ancestors and its album. */
 interface EmptyHome {
   version: number;
   pet: null;
   ancestors: Ancestor[];
   album: string[];
+  seen?: Record<string, Sighting>;
+  mastered?: string[];
 }
 
 export class LocalPet {
   /** The pets on the phone, or null while none lives here (only while connected to a display). */
   private home: Pet | null = null;
-  private rest: { ancestors: Ancestor[]; album: string[] } = { ancestors: [], album: [] };
+  private rest: Album = { ancestors: [], album: [], seen: {}, mastered: [] };
   private readonly scenes = new Map<string, PetScene>();
   private sceneLocation: Location;
   /** The pet the scene showed last, and its last frame: where a switch pans from. */
@@ -70,7 +80,10 @@ export class LocalPet {
     let restored: ReturnType<typeof readSave> | null = null;
     const empty = saved as Partial<EmptyHome> | undefined;
     if (empty && typeof empty === "object" && empty.pet === null) {
-      this.rest = { ancestors: [...empty.ancestors ?? []], album: [...empty.album ?? []] };
+      this.rest = {
+        ancestors: [...empty.ancestors ?? []], album: [...empty.album ?? []], seen: { ...empty.seen },
+        mastered: [...empty.mastered ?? []],
+      };
     } else if (saved !== undefined) {
       try {
         restored = readSave(saved);
@@ -90,6 +103,8 @@ export class LocalPet {
       this.home = this.newHome(null);
       this.home.ancestors.push(...this.rest.ancestors);
       this.home.album.push(...this.rest.album);
+      Object.assign(this.home.seen, this.rest.seen);
+      this.home.mastered.push(...this.rest.mastered);
       this.home.save();
     }
     this.reminders = reminders(i18n);
@@ -160,7 +175,7 @@ export class LocalPet {
     } else {
       const pet = fromDict({ ...moving.pet, items: { ...moving.things }, eggs: [] } as unknown as Record<string, unknown>);
       pet.seen_at = Date.now() / 1000;
-      this.home = this.newHome({ state: pet, ancestors: this.rest.ancestors, album: this.rest.album });
+      this.home = this.newHome({ state: pet, ...this.rest });
       this.home.save();
     }
     this.draw();
@@ -169,7 +184,8 @@ export class LocalPet {
   /** After a pet left: with the last one gone, the home keeps only its ancestors and album. */
   private emptied(): void {
     if (this.home && !this.home.pets.length) {
-      this.rest = { ancestors: this.home.ancestors, album: this.home.album };
+      const { ancestors, album, seen, mastered } = this.home;
+      this.rest = { ancestors, album, seen, mastered };
       this.home = null;
       const file: EmptyHome = { version: VERSION, pet: null, ...this.rest };
       void this.store.put(PET_KEY, file).catch((error) => console.error("Could not save the pet", error));

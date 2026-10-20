@@ -23,7 +23,7 @@ import { houseArea, type SceneView, type TripView } from "./scene";
 import * as sky from "./sky";
 import { fromDict, toDict, type Friend, type PetState } from "./state";
 import * as story from "./story";
-import type { Location } from "./sun";
+import { isDark, type Location } from "./sun";
 import * as trip from "./trip";
 import * as wild from "./wild";
 
@@ -92,12 +92,22 @@ export interface SaveFile {
   ancestors: Ancestor[];
   /** The album: every form (life.FORMS) one of the pets has been. Older files have none. */
   album?: string[];
+  /** Forms one of the pets has seen, {form: where and when}. Older files have none. */
+  seen?: Record<string, Sighting>;
+  /** Forms one of the pets has mastered (see Pet.collect). Older files have none. */
+  mastered?: string[];
   /** Files from before the neighbours had their pet at the back here; it becomes one of `others`. */
   second?: PetState | null;
   /** On a display: the highest move number of every pet that moved, {id: moves}. */
   moved?: Record<string, number>;
   /** On a display: the pets phones took along. */
   away?: AwayPet[];
+}
+
+/** Where and when a pet saw a form: the area of the trip, and whether the sun was down. */
+export interface Sighting {
+  area: string;
+  night: boolean;
 }
 
 /** The pets as they were saved: the one the camera was on, the others, the ancestors and the album. */
@@ -107,6 +117,8 @@ export interface Saved {
   place?: number;
   ancestors: Ancestor[];
   album?: string[];
+  seen?: Record<string, Sighting>;
+  mastered?: string[];
   moved?: Record<string, number>;
   away?: AwayPet[];
 }
@@ -124,6 +136,10 @@ export function readSave(data: unknown): Saved {
     throw new Error("no pet in the save file");
   }
   const album = Array.isArray(file.album) ? file.album.filter((form) => life.FORMS.includes(form)) : [];
+  const seen = file.seen !== null && typeof file.seen === "object" ? Object.fromEntries(Object.entries(file.seen)
+    .filter(([form, s]) => life.FORMS.includes(form) && s !== null && typeof s === "object")
+    .map(([form, s]) => [form, { area: String(s.area), night: !!s.night }])) : {};
+  const mastered = Array.isArray(file.mastered) ? file.mastered.filter((form) => life.FORMS.includes(form)) : [];
   const others = (Array.isArray(file.others) ? file.others : file.second ? [file.second] : [])
     .filter((pet) => pet !== null && typeof pet === "object")
     .map((pet) => fromDict(pet as unknown as Record<string, unknown>));
@@ -138,7 +154,7 @@ export function readSave(data: unknown): Saved {
     }));
   return {
     state: fromDict(file.pet as unknown as Record<string, unknown>), others, place,
-    ancestors: [...(file.ancestors ?? [])], album, moved, away,
+    ancestors: [...(file.ancestors ?? [])], album, seen, mastered, moved, away,
   };
 }
 
@@ -196,6 +212,10 @@ export class Pet {
   ancestors: Ancestor[];
   /** The forms met so far (see albumList); the pets' own are added on every save. */
   album: string[] = [];
+  /** Forms seen on trips but maybe never had, {form: where and when} (see albumLines). */
+  seen: Record<string, Sighting> = {};
+  /** Forms that learned every trick and showed their special move in a scuffle (see albumLines). */
+  mastered: string[] = [];
   /** On a display: the highest move number of every pet that moved (handOver, takeIn), {id: moves}. */
   moved: Record<string, number> = {};
   /** On a display: the pets phones took along, sealed (handOver). */
@@ -222,6 +242,8 @@ export class Pet {
     if (options.saved) {
       this.ancestors = options.saved.ancestors;
       this.album = startAlbum(options.saved);
+      this.seen = { ...options.saved.seen };
+      this.mastered = [...options.saved.mastered ?? []];
       this.moved = { ...options.saved.moved };
       this.away = [...options.saved.away ?? []];
       this.take(options.saved);
@@ -758,6 +780,38 @@ export class Pet {
     });
   }
 
+  /**
+   * The album by lines, one page each with its egg, baby, child and adult forms. A slot is null
+   * for a form not met yet; a form only seen has its picture for an outline and where it was seen
+   * (no name); one that one of the pets has been has its name, and a star once it was mastered.
+   */
+  albumLines() {
+    this.collect();
+    return Object.keys(life.LINES).map((line) => ({
+      forms: life.FORMS.filter((form) => life.lineOf(form.split(":")[1]) === line).map((form) => {
+        const [stage, species] = form.split(":");
+        if (this.album.includes(form)) {
+          return { stage, species, label: this.t(life.formKey(stage, species)), mastered: this.mastered.includes(form) };
+        }
+        const seen = this.seen[form];
+        return seen ? { stage, species, seen: { ...seen } } : null;
+      }),
+    }));
+  }
+
+  /**
+   * The quiet safety net: the lines whose egg the home has never had, once it has kept pets for
+   * life.MISSING_AFTER days. Their wild pets come more often (wild.MISSING_WEIGHT); nobody sees it.
+   */
+  longMissing(now: number): string[] {
+    this.collect();
+    const born = [...this.pets, ...this.ancestors].map((p) => p.born_at).filter((t) => t > 0);
+    if (!born.length || now - Math.min(...born) < life.MISSING_AFTER * 86400) {
+      return [];
+    }
+    return Object.keys(life.LINES).filter((line) => !this.album.includes(`egg:${line}`));
+  }
+
   /** A new name for the pet with this id (without one: the camera's). */
   rename(name: unknown, id?: unknown): void {
     const pet = this.find(id);
@@ -783,6 +837,7 @@ export class Pet {
       others: this.pets.filter((pet) => pet !== current).map((pet) => ({ ...toDict(pet), items: {}, eggs: [] })),
       place: this.pets.indexOf(current),
       ancestors: structuredClone(this.ancestors), album: [...this.album],
+      seen: structuredClone(this.seen), mastered: [...this.mastered],
       ...Object.keys(this.moved).length ? { moved: { ...this.moved } } : {},
       ...this.away.length ? { away: structuredClone(this.away) } : {},
     };
@@ -799,6 +854,8 @@ export class Pet {
     }
     this.ancestors = saved.ancestors;
     this.album = startAlbum(saved);
+    this.seen = { ...saved.seen };
+    this.mastered = [...saved.mastered ?? []];
     this.take(saved);
     this.requestIds.clear();
     this.write(this.clock());
@@ -845,13 +902,29 @@ export class Pet {
     }
   }
 
-  /** Adds the forms the pets have been to the album. */
+  /**
+   * Adds the forms the pets have been to the album, the wild pets they met on their trips to the
+   * forms seen, and a pet that knows every trick and has shown its special move to the mastered.
+   */
   private collect(): void {
     for (const pet of this.pets) {
       for (const form of life.formsOf(pet.stage, pet.species)) {
         if (!this.album.includes(form)) {
           this.album.push(form);
         }
+      }
+      for (const travel of pet.travels ?? []) {
+        for (const stop of travel.stops.filter((s) => s.kind === "wild" && s.wild)) {
+          const form = `adult:${stop.wild}`;
+          if (life.FORMS.includes(form) && !this.seen[form]) {
+            this.seen[form] = { area: travel.area, night: isDark(stop.at, this.location) };
+          }
+        }
+      }
+      const form = `adult:${pet.species}`;
+      if (pet.stage === "adult" && (pet.counters.specials ?? 0) > 0 && !this.mastered.includes(form)
+          && care.learned(pet).length === Object.keys(care.TRICKS).length) {
+        this.mastered.push(form);
       }
     }
   }
@@ -883,7 +956,9 @@ export class Pet {
   }
 
   private advanceAll(now: number): void {
+    const missing = this.longMissing(now);
     for (const s of this.pets) {
+      s.missing_lines = [...missing];
       model.advance(s, now, this.bedtime(), this.weather(), this.temperature(), this.location);
     }
   }
