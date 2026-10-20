@@ -483,6 +483,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | Path | Purpose |
 |---|---|
 | `setup.sh` | Sets up the Pi completely (`--app`: update the app only) |
+| `CONTRIBUTING.md` | How to contribute, and the license (with the app store permission) a contribution comes under |
 | `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications |
 | `pi/src/main.ts` | Entry point on the Pi: panel driver, display loop, web server |
 | `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) |
@@ -519,7 +520,8 @@ Copyright (C) 2026 Lampir (<https://lampir.at>)
 
 - **Code:** GNU General Public License, version 2 or (at your option) any
   later version, see [LICENSE](LICENSE). The project comes without any
-  warranty.
+  warranty. Contributions come with an additional permission that lets the
+  app be offered in the app stores, see [CONTRIBUTING.md](CONTRIBUTING.md).
 - **Sprites** in `app/pet/assets/`:
   [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), see
   [app/pet/assets/LICENSE.txt](app/pet/assets/LICENSE.txt). Use, change and
