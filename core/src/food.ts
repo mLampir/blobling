@@ -70,6 +70,15 @@ export const TASTES: Record<string, readonly [string, string]> = {
   beak: ["fruit_sunflower", "fruit_berry"],
   rapierre: ["honeycomb", "hazelnut"], // nectar
   parcelbeak: ["hazelnut", "glowberry"],
+  // the special forms
+  salamber: ["glowberry", "watercress"], // where it all started
+  lunarock: ["hazelnut", "honeycomb"],
+  foxfire: ["fruit_cherry", "hazelnut"],
+  flurrbleat: ["pinenut", "fruit_sunflower"], // a mountain food
+  sakurin: ["watercress", "fruit_cherry"], // it won't eat its own kind
+  bubblehelm: ["watercress", "honeycomb"],
+  hippula: ["fruit_berry", "fruit_herb"], // berry juice, and no garlicky herbs
+  acewing: ["pinenut", "honeycomb"],
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],

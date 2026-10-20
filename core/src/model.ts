@@ -611,12 +611,17 @@ function count(state: PetState, key: string): void {
   state.counters[key] = (state.counters[key] ?? 0) + 1;
 }
 
-/** The weather, the time of day and the moon at the time t, as far as they may decide an adult form. */
-export function worldAt(t: number, weather: sky.WeatherCode, location: Location, temp: number | null = null): life.World {
+/**
+ * The weather, the time of day and the moon at the time t, as far as they may decide an adult form.
+ * With `state`: what is set out at its home too (the snow globe makes it snow).
+ */
+export function worldAt(t: number, weather: sky.WeatherCode, location: Location, temp: number | null = null,
+    state: PetState | null = null): life.World {
   const date = new Date(t * 1000);
   const [sunrise, sunset] = sunTimes(date, location);
   return {
-    raining: sky.precipitation(weather) === "rain", snowing: sky.precipitation(weather) === "snow",
+    raining: sky.precipitation(weather) === "rain",
+    snowing: sky.precipitation(weather) === "snow" || (state !== null && home.snowDeco(state)),
     storm: sky.isThunder(weather), temp, dark: isDark(t, location),
     minute: date.getHours() * 60 + date.getMinutes(), sunrise: Math.round(sunrise), sunset: Math.round(sunset),
     fullMoon: isFullMoon(t),
@@ -626,7 +631,7 @@ export function worldAt(t: number, weather: sky.WeatherCode, location: Location,
 function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCode = null,
     location: Location = null, temp: number | null = null): void {
   const oldStage = state.stage;
-  const old = life.evolve(state, now, worldAt(now, weather, location, temp));
+  const old = life.evolve(state, now, worldAt(now, weather, location, temp, state));
   care.rescaleWeight(state, oldStage);
   state.game = null;
   const hatched = old.startsWith("egg");

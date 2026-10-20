@@ -83,13 +83,21 @@ const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:steamo": { dance: "sauna" }, // a bath dance that makes it steam
   "adult:parcelbeak": { bow: "deliver" }, // a bow, and a letter flies out of its pouch
   "adult:rapierre": { spin: "fence" }, // a fencer's lunge, forward and back, twice, with a flash
+  "adult:salamber": { dance: "ember_ring" }, // it dances round, and a ring of embers glows up round it
+  "adult:lunarock": { bow: "moonrise" }, // a bow, and its moonstone lights up and sends glints up into the sky
+  "adult:foxfire": { spin: "fox_fire" }, // it turns, and blue fox fires whirl round it
+  "adult:flurrbleat": { dance: "flurry" }, // it turns round and round in a flurry of snow
+  "adult:sakurin": { dance: "fan" }, // a fan dance: it sways to and fro, and blossom drifts off its crown
+  "adult:bubblehelm": { flip: "dive" }, // dives head first into the ground and pops out again in a burst of bubbles
+  "adult:hippula": { bow: "count" }, // a count's deep bow with a sweep of the cape, and bats flutter up
+  "adult:acewing": { flip: "loop" }, // a stunt flyer's loop with a trail of smoke
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
 // Forms whose special move in a scuffle is a move of its own (`special`), not the trick it used
 const SPECIAL_MOVES = ["angloop", "gemperor", "purrloop", "lanternling", "flarelet", "roamtail", "filchfox", "rumblefluff",
   "prismist", "twiggle", "needlenub", "quill", "drakwing", "lillypot", "steamo", "parcelbeak", "rapierre", "glimmerock",
-  "bouldergrin"];
+  "bouldergrin", "salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing"];
 // The skipping stone: [start, length, height] of each hop, over the time in the air (0..1)
 const SKIPS: readonly (readonly [number, number, number])[] = [[0, 0.45, 12], [0.45, 0.3, 6], [0.75, 0.25, 3]];
 const SPIN_PAD = 8;
@@ -265,6 +273,8 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
   lillypot: ["lillypot_body", "lillypot_faces", 0],
   rapierre: ["rapierre_body", "rapierre_faces", 0],
   parcelbeak: ["parcelbeak_body", "parcelbeak_faces", 0],
+  ...Object.fromEntries(["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing"]
+    .map((species) => [species, [`${species}_body`, `${species}_faces`, 0] as const])),
 };
 // What grows on a child's head hints at the adult form it is heading for. Per line, the three
 // colors the code replaces: the bulb of the slime's lure (glow, shadow, highlight), the flame
@@ -309,13 +319,21 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   lillypot: [[110, 200, 140]], // a lily pad
   rapierre: [[80, 220, 150], [30, 120, 90]], // its shimmering green
   parcelbeak: [[245, 160, 60], [45, 70, 120]], // its bill, and the post's blue
+  salamber: [[255, 140, 40], [190, 55, 30], [255, 225, 100]], // glowing lava
+  lunarock: [[235, 238, 255], [180, 190, 230], [255, 255, 255]], // moonlight
+  foxfire: [[140, 210, 255], [80, 140, 230]], // a blue fox fire
+  flurrbleat: [[240, 248, 255], [185, 205, 235]], // snow
+  sakurin: [[255, 180, 205], [220, 120, 160]], // cherry blossom
+  bubblehelm: [[230, 170, 60], [165, 110, 40]], // brass
+  hippula: [[175, 30, 55]], // a red as dark as its cape's lining
+  acewing: [[250, 248, 240], [150, 90, 50]], // its scarf, and the leather of its cap
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
 // the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
 // duck like it too, and a pond hippo is wet anyway
 export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist", "leaf", "twiggle",
-  "needlenub", "duck", "drakwing", "quill", "lillypot"];
+  "needlenub", "duck", "drakwing", "quill", "lillypot", "flurrbleat", "sakurin", "bubblehelm"];
 // Needlenub's flower opens only when it is happy; otherwise it is a bud (the colors as in the
 // palette of tools/build_blob_sprites.py)
 const BUD: readonly (readonly [Color, Color])[] = [
@@ -336,7 +354,15 @@ const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   glimmerock: [
     [[175, 160, 215], [200, 165, 255]], [[130, 115, 180], [150, 100, 255]], [[220, 212, 245], [255, 245, 255]],
   ],
+  salamber: [[[255, 200, 60], [255, 240, 140]], [[255, 210, 90], [255, 245, 170]]], // its glowing spots
+  lunarock: [[[248, 246, 215], [255, 255, 245]], [[150, 110, 210], [185, 140, 255]], [[205, 175, 245], [235, 215, 255]]],
+  foxfire: [[[110, 200, 255], [160, 230, 255]], [[220, 245, 255], [255, 255, 255]]], // its fox fires
 };
+// Lunarock's moonstone waxes and wanes with the real moon: the unlit part in this color (the lit one
+// as in the palette of tools/build_blob_sprites.py)
+const MOONSTONE: Color = [248, 246, 215];
+const MOONSTONE_GLOW: Color = [255, 255, 245];
+const MOONSTONE_DARK: Color = [105, 110, 150];
 // The cloud adults follow the weather (the colors as in the palettes of tools/build_blob_sprites.py):
 // in a thunderstorm Rumblefluff's horns of lightning flash now and then; in the rain Prismist's
 // rainbow fades, and when the sun comes out after it, its colors run along the arch for a while.
@@ -363,6 +389,38 @@ export function skyColors(species: string, look: SkyLook, t: number): [string, (
   }
   return null;
 }
+/**
+ * Lunarock's moonstone as the moon is tonight: lit from the right while it waxes, from the left while
+ * it wanes (as PetScene.drawMoon). Before GLOWS turns it into its night color.
+ */
+function moonstone(img: Image, phase: number, glow: boolean): Image {
+  const lit = glow ? MOONSTONE_GLOW : MOONSTONE;
+  const out = img.copy();
+  const data = out.data;
+  const at = (x: number, y: number) => (y * img.width + x) * 4;
+  const isLit = (i: number) => data[i + 3] > 0 && data[i] === lit[0] && data[i + 1] === lit[1] && data[i + 2] === lit[2];
+  let left = img.width;
+  let right = -1;
+  for (let y = 0; y < img.height; y++) {
+    for (let x = 0; x < img.width; x++) {
+      if (isLit(at(x, y))) {
+        left = Math.min(left, x);
+        right = Math.max(right, x);
+      }
+    }
+  }
+  const k = Math.cos(2 * Math.PI * phase); // 1 at new moon, -1 at full moon
+  for (let y = 0; y < img.height; y++) {
+    for (let x = left; x <= right; x++) {
+      const u = (x - left + 0.5) / (right - left + 1) * 2 - 1; // -1 at the left edge, 1 at the right one
+      if (isLit(at(x, y)) && (phase < 0.5 ? u : -u) <= k) {
+        data.set(MOONSTONE_DARK, at(x, y));
+      }
+    }
+  }
+  return out;
+}
+
 // Flicker's flame shows the mood: shift the hue of the flame (red–yellow)
 const FLICKER_FLAME: Record<string, number> = { blue: 140, gold: 8 };
 const EMBER: Bitmap = [[255, 170, 60], ["X"]];
@@ -399,6 +457,19 @@ const BREATH: Bitmap = [[190, 215, 240], ["XX"]]; // it shows in the cold
 const SWEAT: Bitmap = [[170, 225, 255], [".X", "XX"]]; // on a hot afternoon
 const LOVE: Bitmap = [[255, 130, 170], ["X.X", "XXX", ".X."]];
 const SHELL: Bitmap = [[240, 232, 205], ["X"]];
+// The special forms' tricks and special moves
+const FIRE_WHEEL: Bitmap = [[255, 130, 40], [".XX.", "X..X", "X..X", ".XX."]]; // Salamber, rolled up into a wheel of fire
+const MOON_SICKLE: Bitmap = [[240, 240, 205], [".XX", "X..", "X..", ".XX"]]; // Lunarock's blades of moonlight
+const MOON_GLINT: Bitmap = [[220, 230, 255], ["X"]];
+const FOX_FLAME: Bitmap = [[110, 200, 255], [".X.", "XX.", "XXX", ".X."]]; // Foxfire's blue fox fire
+const SNOWFLAKE: Bitmap = [[235, 245, 255], ["X.X", ".X.", "X.X"]];
+const SNOWBALL: Bitmap = [[245, 250, 255], [".XX.", "XXXX", ".XX."]]; // Flurrbleat's volley
+const BLOSSOM: Bitmap = [[255, 190, 215], ["X.", "XX"]]; // off Sakurin's crown
+const CHERRY: Bitmap = [[225, 40, 60], ["..X..", ".X.X.", "XX.XX", "XX.XX"]]; // Sakurin's cherries, they burst
+const ANCHOR: Bitmap = [[165, 175, 195], ["..X..", ".XXX.", "..X..", "X.X.X", ".XXX."]]; // Bubblehelm's anchor
+const BAT: Bitmap = [[160, 85, 180], ["X...X", "XX.XX", ".XXX."]]; // Hippula's little bats
+const CONTRAIL: Bitmap = [[240, 242, 248], ["XX", "XX"]]; // Acewing's trail of smoke
+const SONIC_RING: Bitmap = [[200, 230, 255], [".XXX.", "X...X", "X...X", ".XXX."]]; // Acewing's dive breaks the sound barrier
 
 export const APP_BACKGROUND: Color = [17, 19, 24]; // background of the app (pet.html), also for the app icon
 
@@ -691,6 +762,8 @@ interface PetLook {
   lookLeft?: boolean;
   /** The weather as it shows on a form that follows it (skyColors). */
   sky?: SkyLook;
+  /** The phase of the moon, for Lunarock's moonstone (0 = new moon, 0.5 = full). */
+  moon?: number | null;
 }
 
 export class PetScene {
@@ -728,6 +801,7 @@ export class PetScene {
   private scroll = 0.0; // how far the landscape has scrolled past on the trip so far
   private arriveFor: number | null = null;
   private readonly foeCache = new Map<string, Image>();
+  private moon = 0.5; // the phase of the moon right now (Lunarock's moonstone)
   private roundFor: string | null = null; // effects of a round in a scuffle only once
   private play: Play | null = null; // the game with the visiting friend in this frame
   private noteAt = 0; // the beat the last note of a game went up on
@@ -767,6 +841,7 @@ export class PetScene {
     const dt = clamp(t - this.last, 0.0, 0.5);
     this.last = t;
     const seconds = now.getTime() / 1000;
+    this.moon = moonPhase(seconds);
 
     const img = this.skyImage(now, sky.clouds(sky.codeOf(weather))[0] >= 2).copy();
     const items = this.sheet("items");
@@ -776,7 +851,8 @@ export class PetScene {
       this.weatherDrops = [];
       this.skyLook = null;
     } else {
-      this.drawWeather(img, weather, t, dt);
+      this.drawWeather(img, weather, t, dt, [...view.deco ?? [], ...view.house_deco ?? []]
+        .some((item) => home.SNOW_DECO.includes(item)));
       const code = sky.codeOf(weather);
       const raining = sky.precipitation(code) === "rain";
       if (raining) {
@@ -829,6 +905,7 @@ export class PetScene {
         flame: species === "flicker" ? flickerFlame(view.mood) : species === "needlenub" && (pose.bud ?? view.mood !== "happy") ? "bud" : null,
         heavy: view.weight_status === "heavy", hat: view.hat, hint: view.hint || view.species,
         glow: this.night > 0.5, lookLeft: this.facing < 0, sky: pose.rainbow ? "after_rain" : this.skyLook,
+        moon: species === "lunarock" ? Math.round(this.moon * 16) / 16 : null,
       });
       let px = x - Math.floor((pet.width - SPRITE) / 2);
       let py = y - 1; // -1 because of the outline
@@ -1335,6 +1412,76 @@ export class PetScene {
       if (out) {
         this.trickFx(t, "fence", 0.5, TOUCHE, 1, SPRITE / 2 + 10, 20, [0, 0], [0, 0], 0.5); // a flash at the tip of its beak
       }
+    } else if (animation === "ember_ring") {
+      // a slow dance round on the spot, and the embers it scatters glow up in a ring round it
+      Object.assign(pose, { turn: Math.cos(p * 2 * Math.PI), body: Math.sin(p * 4 * (2 * Math.PI)) > 0 ? "stretch" : "idle",
+        face: "laugh" });
+      if (p > 0.1 && p < 0.85) {
+        const side = Math.trunc(t * 8) % 2 ? 1 : -1;
+        this.trickFx(t, "ember_ring", 0.06, EMBER, 2, side * this.rng.uniform(10, 20), 1, [-3, 3], [-14, -6], 0.9);
+      }
+    } else if (animation === "moonrise") {
+      // the bow, and at its lowest the moonstone flashes and glints rise up out of it
+      pose.body = p < 0.1 || p > 0.85 ? "idle" : p < 0.3 || p > 0.7 ? "squash" : "flat";
+      pose.face = p >= 0.3 && p <= 0.7 ? "blink" : "smile";
+      pose.white = p > 0.45 && p < 0.52;
+      if (p > 0.45 && p < 0.8) {
+        this.trickFx(t, "moonrise", 0.08, MOON_GLINT, 2, 0, 12, [-10, 10], [-30, -16], 1.2);
+      }
+    } else if (animation === "fox_fire") {
+      // the spin, and its fox fires fly off the tips of its tails and whirl round it
+      Object.assign(pose, { turn: Math.cos(p * 2 * (2 * Math.PI)), jump: Math.sin(p * Math.PI) * 4, face: "smile" });
+      if (p > 0.15 && p < 0.85) {
+        this.trickFx(t, "fox_fire", 0.15, FOX_FLAME, 2, 0, 26, [-22, 22], [-12, 2], 1.0);
+      }
+    } else if (animation === "flurry") {
+      // turns round and round, faster and faster, in a flurry of snow
+      Object.assign(pose, { turn: Math.cos(p * p * 6 * (2 * Math.PI)), jump: Math.abs(Math.sin(p * 3 * Math.PI)) * 2,
+        face: "laugh" });
+      this.trickFx(t, "flurry", 0.08, SNOWFLAKE, 2, this.rng.uniform(-18, 18), 30, [-6, 6], [4, 10], 1.4);
+    } else if (animation === "fan") {
+      // sways to the one side and the other with its fan, slowly, and blossom drifts off its crown
+      const sway = Math.sin(p * 2 * (2 * Math.PI));
+      Object.assign(pose, { dx: Math.round(sway * 4), rotate: Math.round(sway * 8), face: "blink" });
+      if (p > 0.1 && p < 0.9) {
+        this.trickFx(t, "fan", 0.12, BLOSSOM, 1, this.rng.uniform(-14, 14), 28, [6, 16], [-4, 4], 1.6);
+      }
+    } else if (animation === "dive") {
+      // up, head first down into the ground (gone but for the bubbles), and out again with a pop
+      if (p < 0.15) {
+        pose.body = "squash";
+      } else if (p < 0.4) {
+        const q = (p - 0.15) / 0.25;
+        Object.assign(pose, { body: "stretch", jump: Math.sin(q * Math.PI) * 10, rotate: q > 0.5 ? 180 : 0 });
+      } else if (p < 0.7) {
+        pose.hidden = true;
+        this.trickFx(t, "dive", 0.1, BUBBLE, 1, this.rng.uniform(-6, 6), 2, [-2, 2], [-14, -8], 1.0);
+      } else {
+        const q = (p - 0.7) / 0.3;
+        Object.assign(pose, { body: q < 0.5 ? "stretch" : "idle", jump: Math.sin(q * Math.PI) * 8, face: "laugh" });
+        this.trickFx(t, "dive_out", TRICK_SHOW, BUBBLE, 6, 0, 4, [-14, 14], [-20, -8], 1.0);
+      }
+      pose.face = pose.face === "normal" ? "happy" : pose.face;
+    } else if (animation === "count") {
+      // a deep bow with a sweep of the cape, and a few little bats flutter up out of it
+      pose.body = p < 0.1 || p > 0.85 ? "idle" : p < 0.25 || p > 0.7 ? "squash" : "flat";
+      pose.rotate = p > 0.25 && p < 0.7 ? 10 * this.facing : 0;
+      pose.face = p >= 0.25 && p <= 0.7 ? "blink" : "smile";
+      if (p > 0.3) {
+        this.trickFx(t, "count", TRICK_SHOW, BAT, 3, 0, 16, [-16, 16], [-26, -14], 1.4);
+      }
+    } else if (animation === "loop") {
+      // up, a whole loop in the air with a trail of smoke behind, and down again
+      const q = (p - 0.1) / 0.8;
+      if (q > 0 && q < 1) {
+        const a = q * 2 * Math.PI;
+        Object.assign(pose, { body: "stretch", jump: 12 + Math.sin(a - Math.PI / 2) * 10 + Math.sin(q * Math.PI) * 4,
+          dx: Math.round(Math.sin(a) * 10) * this.facing, rotate: -360 * q * this.facing });
+        this.trickFx(t, "loop", 0.05, CONTRAIL, 1, 0, 18 + pose.jump, [-2, 2], [-2, 2], 0.9);
+      } else {
+        pose.body = "squash";
+      }
+      pose.face = "happy";
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
       if (p < 0.1 || p > 0.9) {
@@ -1550,6 +1697,69 @@ export class PetScene {
         }
         if (q > 0.4 && q < 0.5) {
           this.trickFx(t, "sp_glimmerock", once, TOUCHE, 3, 4, 22, [16, 36], [-12, 8], 0.6);
+        }
+        break;
+      case "salamber": // rolls itself up into a wheel of fire and rolls into the opponent
+        if (q < 0.25) {
+          Object.assign(pose, { body: "squash", face: "normal" });
+        } else if (q < 0.65) {
+          Object.assign(pose, { body: "squash", rotate: -720 * (q - 0.25) / 0.4 * this.facing, dx: towards(out * 18) });
+          this.trickFx(t, "sp_salamber", 0.05, EMBER, 2, 0, 4, [-12, -4], [-12, -4], 0.6);
+        }
+        break;
+      case "lunarock": // its moonstone flares, and it throws blades of moonlight
+        if (q < 0.42) {
+          Object.assign(pose, { body: "stretch", face: "smile", white: q > 0.3 && Math.trunc(t * 12) % 2 === 0 });
+        } else if (q < 0.6) {
+          pose.body = "squash";
+          this.trickFx(t, "sp_lunarock", once, MOON_SICKLE, 3, 6, 16, [26, 36], [-8, 8], 0.8);
+        }
+        break;
+      case "foxfire": // three fox fires circle it, then fly at the opponent
+        if (q < 0.42) {
+          Object.assign(pose, { turn: Math.cos(q * 3 * (2 * Math.PI)), face: "smile" });
+          this.trickFx(t, "sp_foxfire_ring", 0.15, FOX_FLAME, 1, this.rng.uniform(-14, 14), 30, [-4, 4], [-6, 6], 0.5);
+        } else if (q < 0.6) {
+          pose.body = "stretch";
+          this.trickFx(t, "sp_foxfire", once, FOX_FLAME, 3, 6, 22, [28, 36], [-6, 6], 0.8);
+        }
+        break;
+      case "flurrbleat": // a volley of snowballs, one after the other
+        if (q > 0.1 && q < 0.6) {
+          pose.body = Math.trunc(q * 16) % 2 ? "squash" : "stretch";
+          this.trickFx(t, "sp_flurrbleat", 0.1, SNOWBALL, 1, 6, 14, [28, 36], [-14, -6], 0.8);
+        }
+        break;
+      case "sakurin": // swings its branches, and cherries rain on the opponent and burst
+        if (q < 0.5) {
+          Object.assign(pose, { rotate: Math.round(Math.sin(q * 6 * Math.PI) * 10), face: "smile" });
+          this.trickFx(t, "sp_sakurin", 0.1, CHERRY, 1, 4, 26, [24, 34], [-16, -8], 0.9);
+        }
+        break;
+      case "bubblehelm": // swings its anchor round on its chain and lets it fly
+        if (q < 0.45) {
+          Object.assign(pose, { rotate: Math.round(Math.sin(q * 8 * Math.PI) * 12), face: "normal" });
+        } else if (q < 0.6) {
+          pose.body = "stretch";
+          this.trickFx(t, "sp_bubblehelm", once, ANCHOR, 1, 6, 16, [30, 30], [-10, -10], 0.8);
+        }
+        break;
+      case "hippula": // throws open its cape, and a swarm of little bats flies at the opponent
+        if (q < 0.35) {
+          Object.assign(pose, { body: "squash", face: "blink" });
+        } else if (q < 0.6) {
+          Object.assign(pose, { body: "stretch", face: "laugh" });
+          this.trickFx(t, "sp_hippula", 0.06, BAT, 1, 4, 16 + this.rng.uniform(-4, 6), [24, 36], [-8, 8], 0.8);
+        }
+        break;
+      case "acewing": // climbs high and dives at the opponent so fast that the air bangs
+        if (q < 0.4) {
+          Object.assign(pose, { body: "stretch", jump: Math.sin(q / 0.4 * Math.PI / 2) * 16 });
+        } else if (q < 0.6) {
+          const f = (q - 0.4) / 0.2;
+          Object.assign(pose, { body: "stretch", jump: 16 * (1 - f), dx: towards(f * 16), rotate: 40 * this.facing });
+          this.trickFx(t, "sp_acewing", once, SONIC_RING, 1, 10, 12, [6, 6], [0, 0], 0.5);
+          this.trickFx(t, "sp_acewing_trail", 0.04, CONTRAIL, 1, 0, 16 + pose.jump, [-4, 0], [-2, 2], 0.6);
         }
         break;
       case "bouldergrin": // throws its top stone at the opponent; a new one grows back
@@ -2117,6 +2327,8 @@ export class PetScene {
         glimmerock: GLINT, bouldergrin: PEBBLE, gemperor: CRYSTAL, angloop: LURE_GLOW, purrloop: PAW,
         roamtail: DUST, filchfox: LOOT, rumblefluff: BOLT, prismist: SHIMMER, twiggle: LEAFLET, needlenub: LOVE,
         drakwing: FIRE, quill: CANNONBALL, steamo: STEAM_CLOUD, lillypot: BUBBLE, rapierre: SLASH, parcelbeak: LETTER,
+        salamber: FIRE_WHEEL, lunarock: MOON_SICKLE, foxfire: FOX_FLAME, flurrbleat: SNOWBALL, sakurin: CHERRY,
+        bubblehelm: ANCHOR, hippula: BAT, acewing: SONIC_RING,
       } as Record<string, Bitmap>)[view.species] ?? SPARK;
       for (let i = 0; i < 10; i++) {
         this.particles.push({
@@ -2756,7 +2968,8 @@ export class PetScene {
     }
   }
 
-  private drawWeather(img: Image, weather: Weather, t: number, dt: number): void {
+  /** The sky's weather; `snowGlobe`: a snow globe is set out at home, and it snows a little when nothing else falls. */
+  private drawWeather(img: Image, weather: Weather, t: number, dt: number, snowGlobe = false): void {
     const night = this.night;
     const code = sky.codeOf(weather);
     const [big, small] = sky.clouds(code);
@@ -2777,13 +2990,14 @@ export class PetScene {
       }
       img.paste(image, Math.round(cloud[0]), Math.round(cloud[1]));
     }
-    const kind = sky.precipitation(code);
+    const kind = sky.precipitation(code) ?? (snowGlobe ? "snow" : null);
     if (kind === null) {
       this.weatherDrops = [];
       return;
     }
     const speed = kind === "rain" ? 45 : 6;
-    while (this.weatherDrops.length < (kind === "rain" ? 24 : 18)) {
+    this.weatherDrops.splice(kind === "rain" ? 24 : sky.precipitation(code) ? 18 : 8);
+    while (this.weatherDrops.length < (kind === "rain" ? 24 : sky.precipitation(code) ? 18 : 8)) {
       this.weatherDrops.push([this.rng.uniform(0, this.width), this.rng.uniform(STATUS_HEIGHT, GROUND)]);
     }
     for (const drop of this.weatherDrops) {
@@ -3013,7 +3227,7 @@ export class PetScene {
     const glow = Boolean(look.glow) && ownArt && species in GLOWS;
     const weathered = ownArt ? skyColors(species, look.sky ?? null, t) : null;
     const key = [stage, species, bodyTag, index, faceName, sick, whiteOut, flame, heavy, hat, hint, glow,
-      lookLeft, weathered?.[0]].join("|");
+      lookLeft, weathered?.[0], look.moon].join("|");
     let cached = this.petCache.get(key);
     if (!cached) {
       let img = hint ? swapColors(body, LURES[line].map((from, i) => [from, LURE_HINT[hint][i]] as const)) : body.copy();
@@ -3022,6 +3236,9 @@ export class PetScene {
       }
       if (weathered) {
         img = swapColors(img, weathered[1]);
+      }
+      if (ownArt && look.moon !== undefined && look.moon !== null) {
+        img = moonstone(img, look.moon, glow);
       }
       if (ownArt && flame === "bud") {
         img = swapColors(img, BUD);

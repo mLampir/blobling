@@ -32,6 +32,7 @@ export const ITEMS: Record<string, ItemKind> = {
   cairn: "deco",
   snowman: "deco",
   emberstone: "deco",
+  snowglobe: "deco",
   daisy: "hat",
   leaf: "hat",
   cap: "hat",
@@ -100,6 +101,9 @@ export const COOL_MOOD = 5; // what cooling it down is worth
 export const HOUSE_STEPS = 3;
 export const HOUSE_SPOTS = [0, 1, 2, 3]; // per step: spots for decorations inside
 export const OUTDOOR_DECO = ["snowman"]; // would melt inside
+// The snow globe: set out at home, outside or in the house, it snows around the pet, and a pet of
+// the cloud line that grows up then counts it as snow (life.decideSpecies).
+export const SNOW_DECO = ["snowglobe"];
 
 export function kindOf(item: string): ItemKind {
   return ITEMS[item];
@@ -291,9 +295,14 @@ export function coolDown(state: PetState): void {
   state.hot_until = 0.0;
 }
 
+/** Is something set out that makes it snow? */
+export function snowDeco(state: PetState): boolean {
+  return state.deco.some((item) => SNOW_DECO.includes(item));
+}
+
 /** What a find does besides looking nice (for the app). */
 export function effects(item: string): string[] {
-  return WARM_DECO.includes(item) ? ["growth"] : [];
+  return WARM_DECO.includes(item) ? ["growth"] : SNOW_DECO.includes(item) ? ["snow"] : [];
 }
 
 /** Rub it warm. */

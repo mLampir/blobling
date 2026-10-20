@@ -38,7 +38,7 @@ export const FINDS: Record<string, readonly (readonly [string, number, sky.Preci
   cave: [["seed_cherry", 4, null], ["seed_berry", 3, null], ["seed_herb", 1, null], ["crystal", 2, null],
     ["batears", 2, null], ["emberstone", 2, null], ["glowberry", 3, null]],
   mountain: [["seed_sunflower", 4, null], ["seed_berry", 3, null], ["seed_herb", 1, null], ["cairn", 2, null],
-    ["edelweiss", 2, null], ["pinenut", 3, null], ["snowman", 4, "snow"]],
+    ["edelweiss", 2, null], ["pinenut", 3, null], ["snowglobe", 1, null], ["snowman", 4, "snow"]],
 };
 export const STATIONS = [4, 6] as const;
 export const STEP = [10 * 60, 16 * 60] as const; // seconds from one station to the next

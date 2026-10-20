@@ -29,6 +29,8 @@ frameTags):
   (sproutlet), duck (paddlet), hippo (soakling) and beak (crestling) lines
 - twiggle, needlenub, drakwing, quill, steamo, lillypot, rapierre, parcelbeak (_body / _faces) –
   their adults (faces of their own)
+- salamber, lunarock, foxfire, flurrbleat, sakurin, bubblehelm, hippula, acewing (_body / _faces) –
+  the special forms of the lines (faces of their own)
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine
 - trip                             – backpack, plants, decorations, hats, things along the path,
                                      opponents and guardians
@@ -3260,6 +3262,374 @@ RAPIERRE_FACE_PALETTE = {"w": (240, 255, 250), "p": (20, 40, 40), "g": (255, 255
 parcelbeak_face_grid = kit_face(6, mouth_row=0)
 PARCELBEAK_FACE_PALETTE = {"w": (255, 255, 255), "p": (35, 30, 45), "g": (255, 255, 255), "d": (190, 200, 210),
                            "k": (255, 160, 160)}
+# ---------------------------------------------------------------- Special forms
+
+# The secret third adult of a line (docs/pets.md): the most impressive of the three. Drawn from shapes
+# with an outline and a light from the top left, the faces from kit_face.
+
+# Salamber (ember): a fire salamander of glowing crust. A crest of flames runs over its head, its
+# tail curls up into a torch, glowing spots dot its back, and it sits on a lump of cooling lava.
+SALAMBER_PALETTE = {
+    "o": (70, 22, 18), "b": (125, 48, 38), "d": (255, 120, 30), "l": (120, 78, 60), "h": (92, 32, 28),
+    "m": (255, 150, 50), "e": (255, 220, 90), "y": (255, 200, 60), "r": (255, 210, 90), "t": (165, 75, 52),
+    "w": (255, 200, 90), "s": (255, 250, 220), "g": (255, 140, 40),
+}
+SALAMBER = [
+    "..........d...dded....d.........",
+    "..........d..dddedd...d.........",
+    "...w.....deddddeeddd.ded........",
+    ".........dedddeeeedd.ded....d...",
+    "........deedoooooooddeed....d.w.",
+    ".......deoootbbbbbboooeed..ddd..",
+    ".......dotbyybbbbbbbyyoed..ded..",
+    "......ootbbyybbbbbbbyyboo.dded..",
+    ".w...otbbbbbbbbbbbbbbbbbbodeedd.",
+    "....otyybbbbbbbbbbbbbbbbyyoeeedd",
+    "....obyybbbbbbbbbbbbbbbbyyoeeedd",
+    "...otbbbbbbbbbbbbbbbbbbbbbhosedd",
+    "...obbbbbbbbbbbbbbbbbbbbbbhoeddd",
+    "...obbbbbbbbbbbbbbbbbbbbbbhoddd.",
+    "...obbbbbbbbbbbbbbbbbbbbbhhoddho",
+    "...obbbbbbbbbbbbbbbbbbbbbhhobhho",
+    "....oyybbbbbbbbbbbbbbbbbhyybhhho",
+    "....oyybbbbbbbbbbbbbbbbbbyyhhho.",
+    ".....obbbbbbbmmmmmbbbbbbbobhho..",
+    "....otbbbbbbmmmmmmmbbbbbbboho...",
+    "...otbbbbbbmmmrrrmmmbbbbbbboo...",
+    "..otbbbbbbmmmrrrrrmmmbbbbbbbo...",
+    ".otbbbbbbbmmrrrrrrrmmbbbbbbbho..",
+    ".obbyybbbbmmrrrrrrrmmbbbbbyyho..",
+    ".obbyybbbbbmmrrrrrmmbbbbbbyyho..",
+    "..obbhhbbbbbmmrrrmmbhhbbbhhholo.",
+    ".olohhhoohbbbmmmmmhhhhoohhholllo",
+    ".ollooolgooohhhhhhhooohhooollllo",
+    "..ollllllllloooooooloooollllllo.",
+    "...oollllllllllllllllllllllloo..",
+]
+SALAMBER_FACE_TOP, SALAMBER_FACE_SHIFT = face_place(SALAMBER, 10, 7, 16)
+SALAMBER_TAGS = species_tags([SALAMBER, drop_rows(SALAMBER, 12)], 12, 15)
+
+# Lunarock (stone): a stone giant with a geode for a heart. Its chest has cracked open, and in a ring
+# of amethyst sits a moonstone that waxes and wanes with the real moon (the code darkens it, MOON_PHASE
+# in core/src/scene.ts). Big fists, and little stones circling it like moons.
+LUNAROCK_PALETTE = {
+    "o": (62, 64, 95), "b": (150, 156, 172), "d": (108, 114, 132), "l": (196, 200, 214), "h": (150, 110, 210),
+    "m": (248, 246, 215), "e": (180, 205, 255), "y": (205, 175, 245), "r": (100, 70, 160),
+}
+LUNAROCK = [
+    "....e...........................",
+    ".............ooooooo............",
+    "...........oollllllloo.......ll.",
+    "..........olllbbbbbbblo......ll.",
+    "..ll.....ollbbbbbbbbbbbo........",
+    "..ll....ollbbbbbbbbbbbbbo.......",
+    ".......ollbbbbbbbbbbbbbbbo......",
+    "......ollbbbbbbbbbbbbbbbddo.....",
+    ".....ollbbbbbbbbbbbbbbbdbddo....",
+    ".....olbbbbbbbbbbbbbbbbbbbde....",
+    "...oooldbbbbbbbbobbbbbbbbbbooo..",
+    "..ollllbdbbbbbbohobbbbbbbbbbllo.",
+    ".ollbbbbbbboooohyhoooobbbbbbbbdo",
+    "ollbbbbbbbbohhheeehrhobbbbbbbbdd",
+    "llbbbbbbbbboyhemmmmhyobbbbbbbddd",
+    "lbdbbbbbbbbohemmmmmehobbbbbbbbdd",
+    "lbbbbbbbbbohhemmmmmehhobbbbbbbdd",
+    "lbbbbbbbbohyhemmmmmehyhobbbbbddd",
+    "obbbdbbbbbboohemmmmhrobbdbbbdddd",
+    ".oddddbbbbbborheeehhobbddddddddo",
+    "..odddobbbbbooyhohyoobbdddodddo.",
+    "...ooo.obbbbbohbbbhobbbddo.ooo..",
+    ".......olbbbbobbbbbobbbddd......",
+    ".......olbbbbbbbbbbbbbbddo......",
+    ".......olbbbdddddbbbbbbddo....dd",
+    ".e.....olbbbddddddbbbbbddo....dd",
+    ".......oddddddoooooddddddo......",
+    ".......oddddddo...oddddddo......",
+]
+LUNAROCK_FACE_TOP, LUNAROCK_FACE_SHIFT = face_place(LUNAROCK, 5, 9, 15)
+LUNAROCK_TAGS = species_tags([LUNAROCK, drop_rows(LUNAROCK, 22)], 22, 16)
+
+# Foxfire (fox): a white fox spirit with three tails, a blue fox fire burning at the tip of each, and
+# red marks round its eyes.
+FOXFIRE_PALETTE = {
+    "o": (95, 85, 140), "b": (250, 246, 240), "d": (228, 224, 240), "l": (110, 200, 255), "h": (255, 236, 214),
+    "m": (205, 200, 215), "e": (180, 175, 200), "y": (220, 245, 255), "r": (255, 255, 255), "t": (225, 60, 70),
+    "w": (225, 205, 190),
+}
+FOXFIRE = [
+    "....l..........lll.........l....",
+    "....l.......yolllllo.......l....",
+    "...lll......olllylldo.....lll...",
+    "...lll......ollyyyldo.....lll...",
+    ".ollllloo..ordllyldddoo.olllllo.",
+    "olllylloro.odddllddddomolllylleo",
+    "ollyyylobbooddddddddormollyyyleo",
+    "rdllyldobbbodddddddorbmodllyldee",
+    "rddllddobtbbooooooorbtboddllddee",
+    "rddddddobttbbbbbbbbbttboddddddee",
+    "odddddorbttbbbbbbbbbttbmoddddeeo",
+    "odddddobbbbbbbbbbbbbbbbmoddeeeeo",
+    ".oodddobbbbbbbbbbbbbbbbbodeeeoo.",
+    "...oddobbbbbbbbbbbbbbbbboeeeo...",
+    "....oorbbbbbbbbbbbbbbbbbmoeo....",
+    ".....obbbbbbbbbbbbbbbbbbboo.....",
+    ".y...obbbbbbbbbbbbbbbbbbbo......",
+    "....orbbbbbbbbbbbbbbbbbbbmo.....",
+    "....obbbbbbbbbbbbbbbbbbbbmo...y.",
+    "....obbbbbbbbbbbbbbbbbbbbmo.....",
+    "....obbbbhhhhhhhhhhhhbbbbmo.....",
+    "....obbbhhhhhhhhhhhhhhbbmmo.....",
+    "....obbhhhhhwhhhhwhhhhhmmmo.....",
+    ".....obbhhhhhhhhhhhhhhbmmo......",
+    "......obbhhhhhhhhhhhhbmmo.......",
+    "......ommmbbbbbbbbbbmmmmo.......",
+    ".......mmmmbbbbbbbbmmmmo........",
+    "........oobbbbbbbmmmmoo.........",
+    "..........oommmmmmmoo...........",
+    "............ooooooo.............",
+]
+FOXFIRE = dots(FOXFIRE, {(7, 14): "t", (7, 15): "t", (22, 14): "t", (22, 15): "t"})
+FOXFIRE_FACE_TOP, FOXFIRE_FACE_SHIFT = face_place(FOXFIRE, 14, 7, 16)
+FOXFIRE_TAGS = species_tags([FOXFIRE, drop_rows(FOXFIRE, 18)], 18, 15)
+
+# Flurrbleat (cloud): a snow cloud that has become a sheep. Curly cloud wool, a dark sheep's face with
+# curled horns like Rumblefluff's, a knitted scarf, and under it it always snows a little: its legs are
+# falling snow, as the cloud line's are rain.
+FLURRBLEAT_PALETTE = {
+    "o": (40, 45, 72), "b": (246, 249, 255), "d": (88, 92, 120), "l": (255, 255, 255), "h": (222, 64, 74),
+    "m": (206, 216, 236), "e": (160, 36, 52), "y": (240, 200, 160), "r": (165, 182, 215), "t": (200, 150, 110),
+    "w": (250, 236, 220), "s": (62, 66, 92),
+}
+FLURRBLEAT = [
+    "..........oooo...oooo...........",
+    "........oobbbboooobbbboo........",
+    "......oobbbbmbbbbbbmbbbboo......",
+    ".....obbbmbbbbbbbbbbbbbmbbo.....",
+    "....obbbbbbbbbbbbbbbbbbbbbbo....",
+    "...obbmbbbooooooooooobbbmbbbo...",
+    "..oytobbbodddddddddddobbbboyto..",
+    ".oyttyobodddddddddddddobboyytto.",
+    ".oytoyomodddddddddddddomoyoytto.",
+    ".oyyoobbodddddddddddddobbooyyyo.",
+    "..oo.obbodddddddddddddobbo.ooo..",
+    "....obbboddddddddddddobbmbo.....",
+    "...obbbbmosddddddddsombbbbbo....",
+    "..ombbbboohhhhhhhhhhhhobbbbmo...",
+    "..obbbbbohwhhwhhwhhwhhhobbbbbo..",
+    "..ombbbbboeeeeeeeeeeehhhobbbmo..",
+    "...ombbbbbbbbbbbbbbboehehobmo...",
+    "....oormrrrmrrrrrmrroeheoroo....",
+    "......oooooooooooooooeho.oo.....",
+    "........l....l....l..oo.l.......",
+    ".......lll..l.l..lll...lll......",
+    "........l....l....l.....l.......",
+    "...........l....l....l..........",
+    "..........lll..lll..lll.........",
+    "...........l....l....l..........",
+]
+FLURRBLEAT_FACE_TOP, FLURRBLEAT_FACE_SHIFT = face_place(FLURRBLEAT, 7, 10, 12)
+FLURRBLEAT_TAGS = species_tags([FLURRBLEAT, drop_rows(FLURRBLEAT, 11)], 11, 15)
+
+# Sakurin (leaf): a cherry tree in full bloom. A cloud of blossom for a crown, a painted fan in one
+# hand, a red lacquer pot with a gold band (the line's seed shell), and petals drifting round it.
+SAKURIN_PALETTE = {
+    "o": (105, 38, 70), "b": (245, 165, 195), "d": (125, 80, 55), "l": (165, 40, 55), "h": (250, 240, 230),
+    "m": (240, 200, 80), "e": (255, 215, 230), "y": (85, 52, 38), "r": (205, 110, 155), "t": (190, 35, 45),
+    "w": (255, 255, 255), "s": (160, 110, 75),
+}
+SAKURIN = [
+    "...........ooeeeeeeeoo..........",
+    "..........oebbbbbbbbbbo.........",
+    ".....oooooebbbbbbbbbbbbooooo....",
+    "...ooebbbbbbbbwrbbbbbbbbbbbboo..",
+    "..oebbbbbbbbbbbbbbbbbbbbbbbbbbo.",
+    ".oebbbbbbbbbbbbbbbbbbbwrbbbbbbro",
+    ".obbbbwrbbbbbbbbbbbbbbbbbbbbbbro",
+    "oebbbbbbbbbbbbbbbbbbbbbbbbbbbbrr",
+    "obbbbbbbbbbbbbbbbbbbbbbbbbbbbbrr",
+    "obbbbbbbbbbbbbbbbbbwrbbbbbbwrbrr",
+    ".obbbbbbbbbbbbbbbbbbbbbbbbbbooro",
+    ".obbbbbbbbwooooooooooobbbbbobboo",
+    "..obooobboosddddddddddoobbobbbbo",
+    "..oohhhoosddddddddddddddoobbbbbb",
+    ".ohhhhhthoddddddddddddddoobbbbbb",
+    "ohthbhhthhoddddddddddddddodbbbbo",
+    "ohhthhthhodddddddddddddddddybbo.",
+    "hhhthhthoddddddddddddddddyyyyo..",
+    "hhbetthoddddddddddddddddyyyoo...",
+    "hhhhhtodddddddddddddddddyyo.....",
+    "ooooooddddddddddddddddddyo......",
+    "....oyoodddddddddddddddyyo...be.",
+    ".....o.odddddddddddddddyyo......",
+    ".be..ooooooooooooooooooooooo....",
+    "....olllllllllllllllllllllllo...",
+    ".....ommmmmmmmmmmmmmmmmmmmmo....",
+    ".....olllllllllllllllllllllo..be",
+    "...be.olllblllllblllllblllo.....",
+    "......olllllllllllllllllllo.....",
+    ".......olllllllllllllllllo......",
+]
+SAKURIN_FACE_TOP, SAKURIN_FACE_SHIFT = face_place(SAKURIN, 15, 8, 16)
+SAKURIN_TAGS = species_tags([SAKURIN, drop_rows(SAKURIN, 17)], 17, 15)
+
+# Bubblehelm (duck): a deep-sea diver. A brass helmet with three portholes (the duck looks out of the
+# front one), an air hose, a canvas suit, lead boots and a lantern; bubbles rise from its valve.
+BUBBLEHELM_PALETTE = {
+    "o": (75, 55, 30), "b": (215, 160, 60), "d": (110, 125, 150), "l": (255, 215, 70), "h": (95, 105, 140),
+    "m": (150, 100, 35), "e": (150, 210, 235), "y": (220, 245, 255), "r": (245, 140, 40), "t": (255, 240, 150),
+    "w": (250, 210, 110), "s": (120, 105, 85), "g": (75, 85, 110), "n": (200, 100, 30), "p": (255, 255, 255),
+    "k": (150, 165, 190),
+}
+BUBBLEHELM = [
+    ".............oommmoo.y.....y.y..",
+    "...........oowbmmmbbyoy.yy..y...",
+    ".........oowbbbbbbbbbyoy..y.....",
+    "........owbbbbbbbbbbbbbyo.y.....",
+    ".......owbbbbbbbbbbbbbbbyy......",
+    "......owbbbbbbooooobbbbbbbo.....",
+    "......obbbbbooeeeeeoobbbbbo.....",
+    ".....owbbbboppllllleeobbbbbo....",
+    "...s.obbbboeellllllleeobbbbo....",
+    "...soooobboellllllllleobboooo...",
+    "...sooeoooellllllllllleoooeoo...",
+    "...soeeeooellllllllllleooeeeo...",
+    "..s.ooeoooellrrrrrrllleoooeoo...",
+    "..s.ooooboelrrrrrrrrlleoboooo...",
+    "..s.obbbbbollnnnnnnlllobbbmmo...",
+    "...soobbbboellllllllleobbmmooo..",
+    "..osdobbbbboellllllleobbbmmoddo.",
+    ".okdsdobbbbboollllloobbbmmodddgo",
+    "okdddsobbbbbbbooooobbbbbmmodddgg",
+    "oddddddobbbbbbbbbbbbbbbbmoooooog",
+    "oddddddobwbbwbbwbbwbbwbbwobbbbbo",
+    "oddddddobbbbbbbbbbbbbbbmmobtttbo",
+    ".odddddommmmmmmmmmmmmmmmmobtttbo",
+    "..ogddddoooooooooooooooooobtptbo",
+    "...ooodddddddddddddddddddobtttbo",
+    "......oddddddddddddddddddobtttbo",
+    "......oddddddddddddddddddobbbbbo",
+    "......ohhhhhhhdddddhhhhhhhooooo.",
+    "......ohhhhhhhggggghhhhhhho.....",
+    "......ohhhhhhhooooohhhhhhho.....",
+]
+BUBBLEHELM_FACE_TOP, BUBBLEHELM_FACE_SHIFT = face_place(BUBBLEHELM, 9, 10, 12)
+BUBBLEHELM_TAGS = species_tags([BUBBLEHELM, drop_rows(BUBBLEHELM, 24)], 24, 16)
+
+# Hippula (hippo): an eloquent vampire count. A cape with a high collar and red lining, slicked-back
+# hair, a monocle on a chain, a waistcoat with a bow, two little fangs and a glass of berry juice. The
+# line's towel hangs over its arm like a waiter's napkin.
+HIPPULA_PALETTE = {
+    "o": (55, 20, 60), "b": (190, 160, 205), "d": (95, 45, 105), "l": (225, 185, 205), "h": (146, 116, 165),
+    "m": (70, 35, 85), "e": (190, 30, 50), "y": (250, 248, 240), "r": (222, 200, 232), "t": (240, 200, 80),
+    "w": (250, 240, 235), "s": (210, 230, 245), "g": (150, 20, 50), "n": (110, 15, 40), "p": (230, 120, 140),
+}
+HIPPULA = [
+    "......o...................o.....",
+    ".....odo.oo...........oo.odo....",
+    ".....oddorro..ooooo..orhoddo....",
+    "....odeorrmmmmmmmmmmmmmhhoedo...",
+    "....odeorbmmmmmmmmmmmmmhhoedo...",
+    "....odeeobbbmmmmmmmmmbhhoeedo...",
+    "....oddeorbbbbmmmmmbttbhoeddo...",
+    "...odddeorbbbbbbmbbtbbthoedddo..",
+    "...ododorrbbbbbbbbtbbbbthododo..",
+    "....oodorbbbbbbbbbtbbbbthodoo...",
+    ".....odorbbbblllllltbbtthodo....",
+    "....oddorbbllllllllltththoddo...",
+    "....oddorblllllllllllllhosssso..",
+    "....odddolllllllllllllllosggso..",
+    "....odddollllllllllllllloggggo..",
+    "....odddollllllllllllllloonno...",
+    "...odddorrlllllllllllllbhooodo..",
+    "...oddbbbbblllllllllllbbbboodo..",
+    "...odbbbbbbbbleeleelbbbbbbbooo..",
+    "...odbbbbbbbbyyeeeyybbbbbbbddo..",
+    "..odwwwwbbbbbbeeyeebbbbbbbbdddo.",
+    "..odwppwbbbbbbyyyyybbbbbbbodddo.",
+    "..odwwwwbbbbbbbyyybbbbhhhoddddo.",
+    "..oddwworbbbbbbyyybbbhhhhoddddo.",
+    "..odddddobbbbbbbybbbhhhhodddddo.",
+    ".odddddddohbbbbbybhhhhhodddddddo",
+    ".oddddddddohhhhhhhhhhhoddddddddo",
+    ".odddddddddoohhhhhhhoodddddddddo",
+]
+HIPPULA = dots(HIPPULA, {(14, 14): "y", (17, 14): "y"})
+HIPPULA_FACE_TOP, HIPPULA_FACE_SHIFT = face_place(HIPPULA, 7, 9, 14)
+HIPPULA_TAGS = species_tags([HIPPULA, drop_rows(HIPPULA, 14)], 14, 16)
+
+# Acewing (beak): a swift who flies stunts. Its wings held out stiff like a little plane's, a leather
+# flying cap with the goggles pushed up, an open flying jacket, and a long white scarf streaming behind.
+# The red crest of the line sticks out of the cap.
+ACEWING_PALETTE = {
+    "o": (35, 45, 100), "b": (140, 85, 45), "d": (60, 80, 140), "l": (245, 242, 235), "h": (55, 70, 125),
+    "m": (250, 248, 240), "e": (210, 210, 220), "y": (225, 50, 60), "r": (150, 220, 240), "t": (250, 190, 60),
+    "w": (100, 125, 185), "s": (245, 150, 40), "g": (215, 140, 40),
+}
+ACEWING = [
+    "..............y.y.y.............",
+    "...............yyy..............",
+    "................y...............",
+    ".............bbbbbbb............",
+    "...........bbbbbbbbbbb..........",
+    "..........ooooobbooooob.........",
+    ".........borrrooorrrrobb........",
+    ".........booooobbooooobb........",
+    "........bbbbbbbbbbbbbbbbb.......",
+    "........bbbbbbbbbbbbbbbbb.......",
+    ".......obbbdddddddddddbbbo......",
+    ".......obbbdddddddddddbbbo......",
+    ".......obbbdddddddddddbbbo......",
+    ".......obbbdddddddddddbbbo......",
+    ".......obbbdddttttddddbbbo......",
+    "....ooowbbbddddggdddddbbbdooo...",
+    ".ooowdddodddddddddddddhhoddddooo",
+    "owdddddddommmmmmmmmmmmdoddddddhh",
+    ".odddddddomeeeeeeeeeemmmmddddhho",
+    ".oddddddowbbbblllllbmeemmmddhhho",
+    "..ohhhhhodbbbblllllbbbmmmmhhhho.",
+    "...oooooodbbbblllllbbbbhoooooo..",
+    "........odbbbblllllbbbbho.......",
+    "........oddbbblllllbbbhho.......",
+    "........oddbbblllllbbbhho.......",
+    ".........odbbblllllbbbho........",
+    ".........odbbblllllbbbho........",
+    "..........oddblllllbhho.........",
+    "...........ohhhlllhhho..........",
+    "............osshsshoo...........",
+]
+ACEWING_FACE_TOP, ACEWING_FACE_SHIFT = face_place(ACEWING, 10, 9, 14)
+ACEWING_TAGS = species_tags([ACEWING, drop_rows(ACEWING, 22)], 22, 16)
+
+# Their faces
+salamber_face_grid = kit_face(10)
+SALAMBER_FACE_PALETTE = {"w": (255, 250, 235), "p": (60, 20, 15), "g": (255, 255, 255), "d": (125, 48, 38),
+                         "m": (255, 170, 60), "r": (200, 60, 40), "k": (255, 140, 90)}
+lunarock_face_grid = kit_face(9)
+LUNAROCK_FACE_PALETTE = {"w": (240, 245, 255), "p": (40, 42, 70), "g": (255, 255, 255), "d": (108, 114, 132),
+                         "m": (55, 58, 85), "r": (190, 80, 100), "k": (255, 170, 190)}
+foxfire_face_grid = kit_face(10)
+FOXFIRE_FACE_PALETTE = {"w": (255, 255, 255), "p": (40, 30, 60), "g": (255, 255, 255), "d": (205, 200, 215),
+                        "m": (60, 40, 70), "r": (220, 80, 100), "k": (255, 170, 190)}
+flurrbleat_face_grid = kit_face(6, mouth_row=4)
+FLURRBLEAT_FACE_PALETTE = {"w": (240, 245, 255), "p": (25, 25, 45), "g": (255, 255, 255), "d": (88, 92, 120),
+                           "m": (230, 200, 210), "r": (200, 70, 90), "k": (240, 140, 170)}
+sakurin_face_grid = kit_face(10)
+SAKURIN_FACE_PALETTE = {"w": (255, 250, 240), "p": (55, 30, 20), "g": (255, 255, 255), "d": (125, 80, 55),
+                        "m": (60, 35, 22), "r": (190, 60, 70), "k": (255, 160, 190)}
+bubblehelm_face_grid = kit_face(6, mouth_row=0)
+BUBBLEHELM_FACE_PALETTE = {"w": (255, 255, 255), "p": (40, 40, 70), "g": (255, 255, 255), "d": (225, 175, 35),
+                           "k": (255, 150, 150)}
+hippula_face_grid = kit_face(8, mouth_row=5)
+HIPPULA_FACES = kit_faces(normal=("half", "small", False))  # a count looks at you from under heavy lids
+HIPPULA_FACE_PALETTE = {"w": (255, 250, 255), "p": (60, 25, 60), "g": (255, 255, 255), "d": (146, 116, 165),
+                        "m": (90, 30, 60), "r": (190, 30, 50), "k": (240, 150, 190)}
+acewing_face_grid = kit_face(8, mouth_row=0)
+ACEWING_FACE_PALETTE = {"w": (255, 255, 255), "p": (25, 30, 60), "g": (255, 255, 255), "d": (60, 80, 140),
+                        "k": (255, 140, 150)}
+SPECIAL_FORMS = (("salamber", FACES), ("lunarock", FACES), ("foxfire", FACES), ("flurrbleat", FACES),
+                 ("sakurin", FACES), ("bubblehelm", BEAKED_FACES), ("hippula", HIPPULA_FACES),
+                 ("acewing", BEAKED_FACES))
+
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
     "food_full": ["...fffff...", "..fffffFf..", ".fffffffFf."],
@@ -3429,6 +3799,9 @@ TRIP_TAGS = {
                 ".SSSSSS."], 1000)],
     "snowman": [(["..TTT..", "..TTT..", ".TTTTT.", "..fff..", ".fBfBf.", ".ffoof.", "..fff..", ".fffff.", "tffSfft",
                   "fffSfff", "fffffff", ".iiiii."], 1000)],
+    # the snow globe: a fir in the snow under glass, on a wooden foot; the flakes drift inside
+    "snowglobe": [(['...IIIII...', '..IiifiiI..', '.IfiiyiifI.', '.IiiigiiiI.', 'IiifgggfiiI', 'IiiggGggiiI', '.IfiiGiifI.', '.IIwwwwwII.', '..TTTTTTT..', '.TtttttttT.', '..TTTTTTT..'], 900),
+                  (['...IIIII...', '..IifiiiI..', '.IiiiyfiiI.', '.IfiigiiiI.', 'IiiigggifiI', 'IifggGggiiI', '.IiiiGfiiI.', '.IIwwwwwII.', '..TTTTTTT..', '.TtttttttT.', '..TTTTTTT..'], 900)],
     # Hats: the bottom two rows sit on the head
     "hat_daisy": [([".w...p...w.", "wywgpypgwyw"], 1000)],
     "hat_leaf": [(["....lg.", "..lggg.", ".lgGgg.", "...G..."], 1000)],
@@ -4343,6 +4716,12 @@ def main():
                                  ("parcelbeak", BEAK_ADULT_PALETTE, BEAKED_FACES)):
         upper = name.upper()
         write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], palette),
+                    faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])
+        write_sheet(f"{name}_faces", face_sheet(globals()[f"{name}_face_grid"], globals()[f"{upper}_FACE_PALETTE"],
+                                                faces))
+    for name, faces in SPECIAL_FORMS:
+        upper = name.upper()
+        write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
                     faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])
         write_sheet(f"{name}_faces", face_sheet(globals()[f"{name}_face_grid"], globals()[f"{upper}_FACE_PALETTE"],
                                                 faces))

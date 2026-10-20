@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 
 import * as food from "../src/food";
+import * as home from "../src/home";
 import * as life from "../src/life";
 import * as model from "../src/model";
 import { type PetState } from "../src/state";
@@ -191,7 +192,7 @@ test("the leaf, duck, hippo and beak lines grow up by what the child did most", 
     ["hippo", "baths", "steamo", "lillypot"], ["beak", "tricks", "rapierre", "parcelbeak"],
   ];
   for (const [line, kind, often, otherwise] of cases) {
-    assert.deepEqual(life.LINES[line].map(life.lineOf), [line, line]);
+    assert.deepEqual(life.LINES[line].map(life.lineOf), [line, line, line]);
     assert.equal(life.decideSpecies({ ...week, [kind]: 7 * 6 }, line), often);
     assert.equal(life.decideSpecies({ ...week, [kind]: 2 }, line), otherwise);
   }
@@ -202,6 +203,40 @@ test("the leaf, duck, hippo and beak lines grow up by what the child did most", 
   assert.equal(hippo.diary.baths, 1);
   assert.equal(act(hippo, "trick", start + 700, { item: "bow" })[0], true);
   assert.equal(hippo.diary.tricks, 1);
+});
+
+test("a rare deed or moment makes the special form, and its rule goes first", () => {
+  const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080, plays: 100, trips: 100, love: 100, battles: 100,
+    baths: 100, tricks: 100 };
+  const cases: [string, Record<string, number>, life.World, string][] = [
+    ["ember", { food_glowberry: life.SALAMBER_GLOWBERRIES }, {}, "salamber"],
+    ["stone", {}, { dark: true, fullMoon: true }, "lunarock"],
+    ["fox", { trips_forest: life.FOXFIRE_FOREST_TRIPS }, {}, "foxfire"],
+    ["cloud", {}, { snowing: true, raining: true }, "flurrbleat"],
+    ["leaf", { plant_fruits: life.SAKURIN_PLANT_FRUITS }, {}, "sakurin"],
+    ["duck", { rain_trips: life.BUBBLEHELM_RAIN_TRIPS }, {}, "bubblehelm"],
+    ["hippo", { tucked: life.HIPPULA_TUCKED }, {}, "hippula"],
+    ["beak", { guardians: life.ACEWING_GUARDIANS }, {}, "acewing"],
+  ];
+  for (const [line, deed, world, special] of cases) {
+    assert.equal(life.LINES[line][2], special);
+    assert.equal(life.decideSpecies({ ...week, ...deed }, line, world), special);
+    // one short of it, or the moment not quite right: one of the other two
+    const short = Object.fromEntries(Object.entries(deed).map(([kind, n]) => [kind, n - 1]));
+    const almost = { ...world, fullMoon: false, snowing: false };
+    assert.notEqual(life.decideSpecies({ ...week, ...short }, line, almost), special);
+  }
+  // under a full moon by day, the stone stays a stone
+  assert.equal(life.decideSpecies(week, "stone", { fullMoon: true }), "bouldergrin");
+});
+
+test("the snow globe makes it snow for the cloud line", () => {
+  const cloud = model.newPet(start, "", "cloud");
+  assert.equal(model.worldAt(start, null, null, null, cloud).snowing, false);
+  cloud.items.snowglobe = 1;
+  cloud.deco.push("snowglobe");
+  assert.equal(model.worldAt(start, null, null, null, cloud).snowing, true);
+  assert.deepEqual(home.effects("snowglobe"), ["snow"]);
 });
 
 test("child keeps a diary and grows up", () => {
