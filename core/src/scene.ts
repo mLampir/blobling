@@ -1006,9 +1006,14 @@ export class PetScene {
         // it shivers
         pose.dx = Math.trunc(t * 8) % 2;
       }
-      if (view.hot && !show && !play && Math.sin(t * 0.7) > 0.4) {
-        // the heat gets to it: it droops now and then
-        Object.assign(pose, { body: "squash", jump: 0 });
+      if (view.hot && !show && !play) {
+        // the heat gets to it: a limp face, and now and then it droops and pants
+        if (isOneOf(pose.face, "normal", "smile", "sad")) {
+          pose.face = "tired";
+        }
+        if (Math.sin(t * 0.7) > 0.4) {
+          Object.assign(pose, { body: "squash", jump: 0, face: "yawn" });
+        }
       }
     } else if (activity === "trick") {
       // Practice: "fail" = doesn't work yet, "learned" = it knows the trick from now on
