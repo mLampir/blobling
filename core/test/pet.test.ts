@@ -245,31 +245,31 @@ test("the album keeps every form met, across new eggs and restarts", () => {
   const pet = disk.pet();
   const met = (p: Pet) => p.albumList().filter((form) => form !== null).map((form) => `${form.stage}:${form.species}`);
   const slots = pet.albumList();
-  assert.equal(slots.length, life.FORMS.length - Object.keys(life.REFORMED).length); // no slots for forms that no longer grow
+  assert.equal(slots.length, life.FORMS.length);
   assert.deepEqual(slots[0], { stage: "egg", species: "blob", label: "Egg" });
   assert.ok(slots.slice(1).every((form) => form === null)); // a form not met yet gives nothing away
   pet.state = grown(now);
-  Object.assign(pet.state, { stage: "adult", species: "grumpcap" });
+  Object.assign(pet.state, { stage: "adult", species: "gemperor" });
   pet.state.eggs = [{ line: "ember" }];
   pet.newEgg(0, now + 60);
-  const forms = ["egg:blob", "baby:blob", "child:blob", "adult:grumpcap", "egg:ember"];
+  const forms = ["egg:blob", "baby:blob", "child:blob", "adult:gemperor", "egg:ember"];
   assert.deepEqual(met(disk.pet()), forms);
   const again = disk.pet();
   again.newEgg(null, now + 120); // the ember egg goes back to the eggs, the album stays
-  assert.equal(again.albumList().find((form) => form?.species === "grumpcap")!.label, "Grumpcap"); // met: it keeps its slot
-  assert.equal(again.albumList().length, slots.length + 1);
+  assert.equal(again.albumList().find((form) => form?.species === "gemperor")!.label, "Gemperor");
+  assert.equal(again.albumList().length, slots.length);
   assert.deepEqual(met(disk.pet()), forms);
 });
 
 test("a save from before the album fills it in from the ancestors", () => {
   const now = at("2026-10-12 12:00");
-  const ancestor = { name: "Old", species: "lumoth", stage: "adult", born_at: now, until: now, age_days: 0,
+  const ancestor = { name: "Old", species: "purrloop", stage: "adult", born_at: now, until: now, age_days: 0,
     counters: {}, tricks: [], hat: "" };
   const file = { version: VERSION, pet: toDict(grown(now)), ancestors: [ancestor] };
   const pet = new Pet({ t: new I18n(readLocales()).t, saved: readSave(file) });
-  const forms = ["adult:lumoth", "egg:blob", "baby:blob", "child:blob"];
+  const forms = ["adult:purrloop", "egg:blob", "baby:blob", "child:blob"];
   assert.deepEqual([...pet.toSave().album!].sort(), [...forms].sort());
-  assert.deepEqual(readSave({ ...file, album: ["adult:lumoth", "adult:nobody"] }).album, ["adult:lumoth"]);
+  assert.deepEqual(readSave({ ...file, album: ["adult:purrloop", "adult:nobody"] }).album, ["adult:purrloop"]);
 });
 
 test("every child shows the name of its line", () => {

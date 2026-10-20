@@ -139,19 +139,17 @@ The values are in `core/src/life.ts`.
 
 Until the slime was redrawn, it had five adult forms of its own. They don't
 grow out of a slime any more, but they still live in the wild and may come to
-visit as friends. A pet that grew into one of them before the change turns
-into its new form the first time it is loaded after it:
+visit as friends:
 
-| Before | Now |
+| Form | |
 |---|---|
-| ![Sneezle](images/pets/sneezle.png) Sneezle, a teapot dragon | Gemperor |
-| ![Lumoth](images/pets/lumoth.png) Lumoth, a cuddly moth | Purrloop |
-| ![Cyclopuff](images/pets/cyclopuff.png) Cyclopuff, a one-eyed ram calf | Angloop |
-| ![Grumpcap](images/pets/grumpcap.png) Grumpcap, a grumpy toad under a toadstool | Angloop |
-| ![Flicker](images/pets/flicker.png) Flicker, a candle of melted slime | Angloop |
+| ![Sneezle](images/pets/sneezle.png) | Sneezle, a teapot dragon |
+| ![Lumoth](images/pets/lumoth.png) | Lumoth, a cuddly moth |
+| ![Cyclopuff](images/pets/cyclopuff.png) | Cyclopuff, a one-eyed ram calf |
+| ![Grumpcap](images/pets/grumpcap.png) | Grumpcap, a grumpy toad under a toadstool |
+| ![Flicker](images/pets/flicker.png) | Flicker, a candle of melted slime |
 
-The album has no slot for them, unless one of the pets has been one: then it
-keeps its place there.
+They have no slot in the album.
 
 </details>
 
