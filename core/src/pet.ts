@@ -416,7 +416,6 @@ export class Pet {
     const [entry] = this.ancestors.splice(index, 1);
     const back = fromDict(entry.pet as unknown as Record<string, unknown>);
     back.id ||= newId();
-    model.reform(back, now);
     const rested = Math.max(0, now - back.updated_at); // the time among the ancestors doesn't count
     back.stage_since += rested;
     back.born_at += rested;
@@ -517,10 +516,7 @@ export class Pet {
    */
   albumList() {
     this.collect();
-    // A form that no longer grows (life.REFORMED) only has a slot once one of the pets has been it
-    const forms = life.FORMS.filter((form) => this.album.includes(form)
-      || !(form.startsWith("adult:") && form.slice("adult:".length) in life.REFORMED));
-    return forms.map((form) => {
+    return life.FORMS.map((form) => {
       if (!this.album.includes(form)) {
         return null;
       }
@@ -579,7 +575,6 @@ export class Pet {
         pet.id = newId();
       }
       seen.add(pet.id);
-      model.reform(pet, this.clock());
     }
     this.currentId = saved.state.id;
     this.share(saved.state);

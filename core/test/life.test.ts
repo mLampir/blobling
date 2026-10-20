@@ -6,7 +6,7 @@ import { beforeEach, test } from "node:test";
 import * as food from "../src/food";
 import * as life from "../src/life";
 import * as model from "../src/model";
-import { fromDict, toDict, type PetState } from "../src/state";
+import { type PetState } from "../src/state";
 import { BEDTIME, act, at, near } from "./helpers";
 
 let start: number;
@@ -222,32 +222,6 @@ test("child keeps a diary and grows up", () => {
   assert.deepEqual([pet.stage, pet.species], ["adult", "angloop"]); // played with, but hungry at night
   assert.equal(life.dueAt(pet), null);
   assert.deepEqual(act(pet, "evolve", start + 8 * 86400), [false, "not_ready"]);
-});
-
-test("an adult of the slime's first forms turns into its new form", () => {
-  pet.stage = "adult";
-  for (const [old, next] of [["sneezle", "gemperor"], ["lumoth", "purrloop"], ["cyclopuff", "angloop"],
-    ["grumpcap", "angloop"], ["flicker", "angloop"]]) {
-    pet.species = old;
-    pet.activity = "idle";
-    pet.form_rules = 1;
-    assert.equal(model.reform(pet, start), true);
-    assert.deepEqual([pet.species, pet.activity, pet.activity_item], [next, "evolve", `adult:${old}`]);
-  }
-  assert.equal(model.reform(pet, start), false); // only once
-  pet.species = "sneezle";
-  assert.equal(model.reform(pet, start), false); // saved under the new rules: a Sneezle of a line of its own
-  pet.form_rules = 1;
-  pet.asleep = true;
-  pet.activity = "idle";
-  assert.equal(model.reform(pet, start), true);
-  assert.deepEqual([pet.species, pet.activity], ["gemperor", "idle"]); // changed in its sleep, without a show
-  pet.species = "lumoth";
-  pet.stage = "child"; // only adults have a form
-  pet.form_rules = 1;
-  assert.equal(model.reform(pet, start), false);
-  assert.equal(fromDict({ species: "sneezle" }).form_rules, 1); // a save from before
-  assert.equal(fromDict(toDict(pet) as unknown as Record<string, unknown>).form_rules, life.FORM_RULES);
 });
 
 test("every form is in the album once, and a pet has been the ones on its way", () => {
