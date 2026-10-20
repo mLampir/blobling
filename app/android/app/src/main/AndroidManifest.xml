@@ -36,12 +36,10 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- "Use my location" for the weather; the app keeps it to two decimals (about a kilometre) -->
+    <!-- "Use my location" for the weather; the app keeps it to two decimals (about a kilometre).
+         Approximate only (app/src/native.ts): no ACCESS_FINE_LOCATION, so the dialog never offers
+         or asks again for the precise one. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Precise only up to Android 11, where Capacitor's WebView counts the location as allowed only
-         with both. From 12 on approximate is enough there, so the dialog offers only approximate
-         and never asks again to make it precise. -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
     <!-- The short buzz with the pet's answers (app/src/haptics.ts); granted at install, no dialog -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- The pet calls when it needs somebody (app/src/notify.ts); asked for after its first meal -->
