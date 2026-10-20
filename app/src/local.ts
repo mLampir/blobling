@@ -3,23 +3,26 @@
  * draws the scene on a canvas, the way the Pi draws it on the panel.
  *
  * The page talks to it with the same requests it sends to the Pi (core/src/api.ts), so it does
- * not need to know which of the two keeps its pet.
+ * not need to know which of the two keeps its pet. With several pets, each has a scene of its
+ * own, and switching pans along the street to it (core/src/street.ts), as on the panel.
  *
  * While the app is in the background, the pet calls with a notification when it needs somebody
  * (notify.ts).
  */
 
 import { NOT_A_PET_ROUTE, ownTarget, petRequest } from "../../core/src/api";
+import type { Image } from "../../core/src/image";
 import type { I18n } from "../../core/src/i18n";
 import { RequestError } from "../../core/src/model";
 import { MAX_NAME, Pet, readSave } from "../../core/src/pet";
 import { PetScene } from "../../core/src/scene";
+import { pan, panSeconds } from "../../core/src/street";
 import { checkLocation, type Location } from "../../core/src/sun";
 import { Weather } from "../../core/src/weather";
 import { sceneAssets } from "./assets";
 import { imageData } from "./canvas";
 import { reminders, type Reminders } from "./notify";
-import { BROKEN_KEY, PET_KEY, openStore, takeInSave, type Store } from "./store";
+import { BROKEN_KEY, PET_KEY, openStore, type Store } from "./store";
 
 const SIZE = 64; // the panel's resolution: the scene looks exactly as it does there
 const WEATHER_MINUTES = 15;
@@ -36,7 +39,11 @@ function savedLocation(): Location {
 
 export class LocalPet {
   readonly pet: Pet;
-  private readonly scene: PetScene;
+  private readonly scenes = new Map<string, PetScene>();
+  private sceneLocation: Location;
+  /** The pet the scene showed last, and its last frame: where a switch pans from. */
+  private shown: { id: string; frame: Image } | null = null;
+  private panning: { from: Image; steps: number; start: number; seconds: number } | null = null;
   private readonly weather: Weather;
   private timer: ReturnType<typeof setTimeout> | undefined;
   private canvas: HTMLCanvasElement | null = null;
@@ -59,7 +66,7 @@ export class LocalPet {
       t: i18n.t, saved: restored, location, weather: () => this.weather.current(),
       save: (file) => store.put(PET_KEY, file).catch((error) => console.error("Could not save the pet", error)),
     });
-    this.scene = new PetScene(SIZE, SIZE, sceneAssets(), { location });
+    this.sceneLocation = location;
     if (!restored) {
       this.pet.save(); // the new egg is there from now on
     }
@@ -77,27 +84,6 @@ export class LocalPet {
   static async open(i18n: I18n): Promise<LocalPet> {
     const store = await openStore();
     return new LocalPet(store, i18n, await store.get(PET_KEY));
-  }
-
-  /**
-   * The pet the phone keeps while the app shows a display's, as GET /api/pet describes it: for
-   * choosing between the two. Nothing is saved; a save that cannot be read counts as an egg.
-   */
-  static async describeKept(i18n: I18n): Promise<unknown> {
-    let saved: ReturnType<typeof readSave> | null = null;
-    try {
-      const file = await (await openStore()).get(PET_KEY);
-      saved = file === undefined ? null : readSave(file);
-    } catch {
-      // then a new egg, as LocalPet.open would start with
-    }
-    const pet = new Pet({ t: i18n.t, saved, location: savedLocation() });
-    return petRequest(ownTarget(pet), "GET", new URL("/api/pet", "http://app"), async () => null);
-  }
-
-  /** While the app shows a display's pet: the save `file` becomes the pet the phone keeps (store.ts, takeInSave). */
-  static async takeIn(file: unknown): Promise<void> {
-    await takeInSave(await openStore(), file);
   }
 
   // ---------- The requests of the page ----------
@@ -157,7 +143,26 @@ export class LocalPet {
       if (this.weather.configured && this.weather.needsRefresh()) {
         void this.weather.refresh();
       }
-      const [frame, next] = this.scene.render(this.pet.view(), this.weather.current());
+      const id = this.pet.current;
+      let [frame, next] = this.sceneFor(id).render(this.pet.view(), this.weather.current());
+      if (this.shown && this.shown.id !== id) {
+        // switched: the camera pans along the street from the house it showed
+        const ids = this.pet.pets.map((pet) => pet.id);
+        const from = ids.indexOf(this.shown.id);
+        const steps = from >= 0 ? ids.indexOf(id) - from : 1;
+        this.panning = { from: this.shown.frame, steps, start: performance.now() / 1000, seconds: panSeconds(steps) };
+      }
+      this.shown = { id, frame };
+      const panning = this.panning;
+      if (panning) {
+        const progress = (performance.now() / 1000 - panning.start) / panning.seconds;
+        if (progress < 1) {
+          frame = pan(panning.from, frame, progress, panning.steps);
+          next = Math.min(next, 1 / 30);
+        } else {
+          this.panning = null;
+        }
+      }
       this.canvas.getContext("2d")!.putImageData(imageData(frame), 0, 0);
       delay = next;
     } catch (error) {
@@ -167,9 +172,25 @@ export class LocalPet {
     this.timer = setTimeout(() => this.draw(), delay * 1000);
   }
 
+  /** The scene of the pet with this id; the ones of pets that no longer live here go. */
+  private sceneFor(id: string): PetScene {
+    let scene = this.scenes.get(id);
+    if (!scene) {
+      const ids = new Set(this.pet.pets.map((pet) => pet.id));
+      for (const old of this.scenes.keys()) {
+        if (!ids.has(old)) {
+          this.scenes.delete(old);
+        }
+      }
+      scene = new PetScene(SIZE, SIZE, sceneAssets(), { location: this.sceneLocation });
+      this.scenes.set(id, scene);
+    }
+    return scene;
+  }
+
   /** Where the pet is in the scene: [x, y, width, height] as parts (0–1) of the picture. */
   petArea(): [number, number, number, number] {
-    const [x, y, width, height] = this.scene.petArea();
+    const [x, y, width, height] = this.sceneFor(this.pet.current).petArea();
     return [x / SIZE, y / SIZE, width / SIZE, height / SIZE];
   }
 
@@ -193,7 +214,10 @@ export class LocalPet {
     }
     this.weather.setLocation(rounded);
     this.pet.setLocation(rounded);
-    this.scene.location = rounded;
+    this.sceneLocation = rounded;
+    for (const scene of this.scenes.values()) {
+      scene.location = rounded;
+    }
     this.draw();
   }
 }

@@ -73,8 +73,11 @@
   }
   .pill svg { width: 20px; height: 20px; color: var(--energy); }
   .hero-buttons { flex: none; display: flex; gap: 8px; }
-  .pill.second { padding: 0 6px; }
-  .pill.second img { width: 28px; height: 28px; image-rendering: pixelated; }
+  .neighbours { display: flex; gap: 6px; }
+  .pill.neighbour { position: relative; padding: 0 6px; }
+  .pill.neighbour img { width: 28px; height: 28px; image-rendering: pixelated; }
+  .pill.neighbour.away img { opacity: .45; }
+  .pill.neighbour.needs::after { content: ""; position: absolute; top: 3px; right: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
   .pill.wanted:not(:disabled) { box-shadow: 0 0 0 2px var(--energy); }
   .fx { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
   .fx span { position: absolute; font-size: 22px; color: var(--mood); animation: float 1s ease-out forwards; }
@@ -297,9 +300,6 @@
   dialog input:focus { outline: none; border-color: var(--accent); }
   dialog .buttons { display: flex; gap: 8px; }
   dialog .buttons .wide { flex: 1 1 0; min-width: 0; }
-  dialog .buttons.keep { margin-bottom: 8px; }
-  dialog .buttons.keep .wide { height: auto; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  dialog .buttons.keep img { width: 48px; height: 48px; image-rendering: pixelated; }
   dialog ul { margin: 0 0 16px; padding: 0; list-style: none; }
   dialog li { display: flex; padding: 6px 0; border-top: 1px solid var(--line); }
   .choice { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 4px 0; }
@@ -335,7 +335,7 @@
       <div class="hero-top">
         <div><h1 id="name">…</h1><p class="sub" id="sub"></p></div>
         <div class="hero-buttons">
-          <button class="pill second" id="second" hidden><img alt=""></button>
+          <div class="neighbours" id="neighbours"></div>
           <button class="pill" id="sleep" hidden></button>
         </div>
       </div>
@@ -531,28 +531,12 @@
   </form>
 </dialog>
 
-<dialog id="choose">
+<dialog id="place">
   <form method="dialog">
-    <p id="choose-text"></p>
-    <ul>
-      <li><button class="choice" value="phone"><img id="choose-phone-icon" alt=""><span><strong id="choose-phone-name"></strong><small id="choose-phone-note"></small></span></button></li>
-      <li><button class="choice" value="display"><img id="choose-display-icon" alt=""><span><strong id="choose-display-name"></strong><small id="choose-display-note"></small></span></button></li>
-    </ul>
+    <p id="place-text"></p>
+    <ul id="place-list"></ul>
     <div class="buttons">
-      <button type="button" class="wide quiet" id="choose-cancel" data-t="page.dialog.cancel"></button>
-    </div>
-  </form>
-</dialog>
-
-<dialog id="keep">
-  <form method="dialog">
-    <p id="keep-text"></p>
-    <div class="buttons keep">
-      <button class="wide quiet" id="keep-front" value="front"><img alt=""><span></span></button>
-      <button class="wide quiet" id="keep-back" value="back"><img alt=""><span></span></button>
-    </div>
-    <div class="buttons">
-      <button type="button" class="wide quiet" id="keep-cancel" data-t="page.dialog.cancel"></button>
+      <button type="button" class="wide quiet" id="place-cancel" data-t="page.dialog.cancel"></button>
     </div>
   </form>
 </dialog>
@@ -691,19 +675,40 @@ function ask(text, { value, ok, danger = false, address = false }) {
 }
 $("ask-cancel").addEventListener("click", () => $("ask").close());
 
-// Which of the two pets stays when a new egg comes: "front", "back", or null if nobody was picked
-function chooseKeep(text) {
-  const dialog = $("keep");
-  $("keep-text").textContent = text;
-  for (const [id, pet] of [["keep-front", current], ["keep-back", current.second]]) {
-    $(id).querySelector("img").src = app.icon(pet.stage, pet.species);
-    $(id).querySelector("span").textContent = pet.name;
-  }
+// Where a new pet lives: a house of its own while there is room, or the place of one of the pets
+// at home (which then moves to the ancestors). Returns { place: null | the pet's id }, or null if
+// the player changed their mind.
+function choosePlace(text, icon) {
+  const dialog = $("place");
+  $("place-text").textContent = text;
+  const pets = current.pets, free = current.places - pets.length;
+  const choice = (value, icon, name, note) => {
+    const li = document.createElement("li"), b = document.createElement("button");
+    b.className = "choice";
+    b.value = value;
+    const img = document.createElement("img");
+    img.alt = "";
+    if (icon) img.src = icon;
+    const label = document.createElement("span"), strong = document.createElement("strong"), small = document.createElement("small");
+    strong.textContent = name;
+    small.textContent = note;
+    label.append(strong, small);
+    b.append(img, label);
+    li.append(b);
+    return li;
+  };
+  $("place-list").replaceChildren(
+    ...(free > 0 ? [choice("new", icon, t("page.place_new"), t("page.place_free", { free, all: current.places }))] : []),
+    ...pets.map((p) => choice(p.id, app.icon(p.stage, p.species), p.name,
+      t(p.stage === "egg" ? "page.place_replace_egg" : "page.place_replace"))));
   dialog.returnValue = "";
   dialog.showModal();
-  return new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue || null), { once: true }));
+  return new Promise((resolve) => dialog.addEventListener("close", () => {
+    const value = dialog.returnValue;
+    resolve(!value ? null : { place: value === "new" ? null : value });
+  }, { once: true }));
 }
-$("keep-cancel").addEventListener("click", () => $("keep").close());
+$("place-cancel").addEventListener("click", () => $("place").close());
 
 // What the phone does for a moment: a short buzz (app/src/haptics.ts) and a sound (app/src/sound.ts).
 // Each kind names its buzz ("touch", "done", "no", "joy" or "evolve"; "" for none) and its sound.
@@ -789,6 +794,40 @@ function matchSky() {
 }
 setInterval(() => { if (!document.hidden && view === "home") matchSky(); }, 2000);
 
+// Switching to another pet with a Pi: the camera pans along the street from the house it showed
+// (on the phone, its own scene does that by itself). `before`: the ids of the pets, in the order
+// of their houses, before the switch.
+let panning = null, panFrame = null, previewGen = 0;
+function panTo(before, id) {
+  if (app.mode === "local" || !current || id === current.id) return;
+  const from = before.indexOf(current.id), to = before.indexOf(id);
+  const steps = from >= 0 && to >= 0 ? to - from : 1;
+  const copy = document.createElement("canvas");
+  copy.width = scene.width;
+  copy.height = scene.height;
+  copy.getContext("2d").drawImage(scene, 0, 0);
+  panning = { from: copy, steps, start: performance.now(), seconds: app.panSeconds(steps) };
+  panFrame = null;
+  previewGen++;
+  requestAnimationFrame(drawPan);
+}
+function drawPan(now) {
+  if (!panning) return;
+  const c = scene.getContext("2d"), w = scene.width;
+  const progress = (now - panning.start) / 1000 / panning.seconds;
+  if (progress >= 1) {
+    panning = null;
+    if (panFrame) c.drawImage(panFrame, 0, 0, w, scene.height);
+    return;
+  }
+  const shift = Math.round(app.eased(progress) * w), dir = panning.steps < 0 ? -1 : 1;
+  c.fillStyle = "#000";
+  c.fillRect(0, 0, w, scene.height);
+  c.drawImage(panning.from, -dir * shift, 0);
+  if (panFrame) c.drawImage(panFrame, dir * (w - shift), 0, w, scene.height);
+  requestAnimationFrame(drawPan);
+}
+
 // With a Pi: each frame the panel draws, while the pet is in sight. The Pi answers as soon as it
 // has drawn the next one, so the next request goes out right away; after a failure, a little later.
 const PREVIEW_RETRY_MS = 1000;
@@ -797,9 +836,11 @@ function nextPreview() {
   if (app.mode === "local" || previewBusy || document.hidden || view !== "home") return;
   if (Date.now() - previewFailed < PREVIEW_RETRY_MS) return;
   previewBusy = true;
-  const img = new Image();
+  const img = new Image(), gen = previewGen;
   img.onload = () => {
-    scene.getContext("2d").drawImage(img, 0, 0, scene.width, scene.height);
+    // a frame of the pet looked at before the switch doesn't count any more
+    if (gen === previewGen && panning) panFrame = img;
+    else if (gen === previewGen) scene.getContext("2d").drawImage(img, 0, 0, scene.width, scene.height);
     if (!matchSky.done) { matchSky.done = true; matchSky(); }
     previewBusy = false;
     nextPreview();
@@ -857,14 +898,7 @@ function render(s) {
   current = s;
   $("name").textContent = s.name;
   $("nav-name").textContent = s.name;
-  // the pet at the back: a tap brings it to the front
-  $("second").hidden = !s.second;
-  if (s.second) {
-    const icon = app.icon(s.second.stage, s.second.species);
-    const img = $("second").querySelector("img");
-    if (img.getAttribute("src") !== icon) img.src = icon;
-    $("second").setAttribute("aria-label", t("page.swap", { name: s.second.name }));
-  }
+  renderNeighbours(s);
   document.querySelectorAll(".pet-name").forEach((e) => { e.textContent = s.name; });
   document.title = s.name;
   const egg = s.stage === "egg";
@@ -1105,25 +1139,20 @@ $("pack-go").addEventListener("click", async () => {
   }
 });
 
-// A new egg: one of those that are kept (an entry of "eggs" in the state), or a usual one to start over with.
-// The pet at the front goes to the back; if there is one there already, one of the two has to be picked to stay.
+// A new egg: one of those that are kept (an entry of "eggs" in the state), or a usual one. It gets a
+// house of its own, or the place of one of the pets at home.
 async function newEgg(egg) {
   if (!current) return;
-  const hatched = current.stage !== "egg";
-  let keep = null;
-  if (hatched && current.second) {
-    keep = await chooseKeep(egg ? t("page.keep_brood", { egg: egg.label }) : t("page.keep_new_egg"));
-    if (!keep) return;
-  } else {
-    const key = egg ? "page.brood_confirm" : "page.new_egg_confirm";
-    const sure = t(hatched ? key : key + "_egg", { name: current.name, egg: egg && egg.label });
-    if (!await ask(sure, { ok: t(egg ? "page.brood_ok" : "page.new_egg_ok") })) return;
-  }
+  const where = await choosePlace(egg ? t("page.place_brood", { egg: egg.label }) : t("page.place_new_egg"),
+    app.icon("egg", egg ? egg.line : "blob"));
+  if (!where) return;
   try {
-    const request = { confirm: true };
+    const request = { confirm: true, place: where.place };
     if (egg) request.egg = egg.id;
-    if (keep) request.keep = keep;
-    render(await api("POST", "/api/pet/new_egg", request));
+    const before = current.pets.map((p) => p.id);
+    const state = await api("POST", "/api/pet/new_egg", request);
+    panTo(before, state.id);
+    render(state);
     showView("home");
     say(t("page.new_egg_done"));
   } catch (err) {
@@ -1582,18 +1611,15 @@ async function loadGallery() {
   }
 }
 
-// An ancestor comes home to the front; the pet at the front goes to the back, and with two at home one of them is picked to stay
+// An ancestor comes home: to a house of its own, or in the place of one of the pets at home
 async function bringBack(a) {
   if (!current) return;
-  let keep = null;
-  if (current.second) {
-    keep = await chooseKeep(t("page.keep_bring_back", { name: a.name }));
-    if (!keep) return;
-  }
+  const where = await choosePlace(t("page.place_bring_back", { name: a.name }), app.icon(a.stage, a.species));
+  if (!where) return;
   try {
-    const request = { born_at: a.born_at };
-    if (keep) request.keep = keep;
-    const r = await api("POST", "/api/pet/bring_back", request);
+    const before = current.pets.map((p) => p.id);
+    const r = await api("POST", "/api/pet/bring_back", { born_at: a.born_at, place: where.place });
+    if (r.accepted) panTo(before, r.state.id);
     render(r.state);
     feel(r.accepted ? "ok" : "no");
     if (r.accepted) showView("home");
@@ -1879,18 +1905,45 @@ $("sleep").addEventListener("click", () => {
   if (current) act(current.asleep ? "wake" : "sleep");
 });
 
-// The pet at the back comes to the front, and the other one goes to the back
-$("second").addEventListener("click", async () => {
-  if (!current || !current.second) return;
+// The other pets at home, next to the name: a tap switches to one of them. A dot: it needs
+// something; faded: it is away (on a trip, or at Grandma's).
+function renderNeighbours(s) {
+  const others = s.pets.filter((p) => p.id !== s.id);
+  const row = $("neighbours");
+  if (row.dataset.ids !== others.map((p) => p.id + p.stage + p.species).join()) {
+    row.dataset.ids = others.map((p) => p.id + p.stage + p.species).join();
+    row.replaceChildren(...others.map((p) => {
+      const b = document.createElement("button");
+      b.className = "pill neighbour";
+      b.dataset.id = p.id;
+      const img = document.createElement("img");
+      img.alt = "";
+      img.src = app.icon(p.stage, p.species);
+      b.append(img);
+      b.addEventListener("click", () => look(p.id));
+      return b;
+    }));
+  }
+  for (const p of others) {
+    const b = row.querySelector(`[data-id="${p.id}"]`);
+    b.classList.toggle("needs", p.needs);
+    b.classList.toggle("away", p.away || p.grandma);
+    b.setAttribute("aria-label", t("page.look", { name: p.name }));
+  }
+}
+
+async function look(id) {
+  if (!current) return;
+  const before = current.pets.map((p) => p.id);
   try {
-    const r = await api("POST", "/api/pet/swap");
-    render(r.state);
-    say(r.accepted ? "" : r.message);
-    feel(r.accepted ? "ok" : "no");
+    const state = await app.look(id);
+    panTo(before, state.id);
+    render(state);
+    feel("tap");
   } catch (err) {
     fail(err);
   }
-});
+}
 
 $("unpack").addEventListener("click", async () => {
   const before = current ? current.items.map((x) => x.id + x.count) : [];
@@ -2328,7 +2381,7 @@ document.querySelectorAll("[data-place]").forEach((b) => b.addEventListener("cli
 }));
 
 // Connecting: the display is looked for under its usual names first, and only asked for if none
-// answers. When both have a pet, the player picks the one that lives on the display.
+// answers. No pet moves: the phone's own stay on the phone.
 $("connect").addEventListener("click", async () => {
   const button = $("connect");
   button.disabled = true;
@@ -2343,43 +2396,14 @@ $("connect").addEventListener("click", async () => {
   address ??= await ask(t("page.app.connect_prompt"), { value: "", ok: t("page.app.connect_ok"), address: true });
   if (!address) return;
   try {
-    const pets = await app.petsToChoose(address).catch(() => null);  // connect() says if it is gone
-    const keep = pets ? await choosePet(pets) : "display";
-    if (!keep) return;
-    await app.connect(address, keep === "phone");
+    await app.connect(address);
   } catch (err) {
     say(err.message, true);
   }
 });
 
-// Which pet lives on the display (or, with `home`, on the phone): "phone", "display", or null if
-// the player changed their mind
-function choosePet({ phone, display }, home = false) {
-  $("choose-text").textContent = t(home ? "page.app.choose_home" : "page.app.choose_pet");
-  for (const [key, pet] of [["phone", phone], ["display", display]]) {
-    $(`choose-${key}-icon`).src = app.icon(pet.stage, pet.species);
-    $(`choose-${key}-name`).textContent = pet.name;
-    const note = key === "display" && home ? "choose_display_home" : `choose_${key}`;
-    $(`choose-${key}-note`).textContent = t(`page.app.${note}`, { form: pet.stage === "egg" ? pet.stage_label : pet.species_label });
-  }
-  const dialog = $("choose");
-  dialog.returnValue = "";
-  dialog.showModal();
-  return new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue || null), { once: true }));
-}
-$("choose-cancel").addEventListener("click", () => $("choose").close());
-// Going back to the phone: when the display has more than an egg, the player picks the pet that
-// lives on the phone from now on. A display that is gone (or does not fit) keeps its pet.
-$("disconnect").addEventListener("click", async () => {
-  try {
-    const pets = await app.petsToTakeHome().catch(() => null);
-    const keep = pets ? await choosePet(pets, true) : "phone";
-    if (!keep) return;
-    await app.disconnect(keep === "display");
-  } catch (err) {
-    say(err.message, true);
-  }
-});
+// Back to the pets on the phone; the display keeps its own
+$("disconnect").addEventListener("click", () => app.disconnect());
 $("offline-leave").addEventListener("click", () => app.disconnect());
 
 // Only poll while the page is visible

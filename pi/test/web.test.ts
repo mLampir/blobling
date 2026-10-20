@@ -73,17 +73,22 @@ test("both pages come in the configured language, with nothing left to fill in",
 });
 
 test("the state of the panel is read and changed", async () => {
+  const id = app.pet.current;
   assert.deepEqual(await json(get("/api/state")), {
     mode: "pet", brightness: 50, night_active: false, weather_configured: false, language: "de", location: null,
     update: { current: null, latest: null, available: false, running: false, failed: false },
     night: { enabled: false, start: "23:00", end: "07:00", action: "dim", brightness: 5 },
+    pets: [{ id, name: "Blobby", stage: "egg", species: "blob" }], camera: id, pinned: null,
   });
   assert.equal((await json(post("/api/mode", { mode: "off" }))).mode, "off");
   assert.equal((await json(post("/api/brightness", { value: 30 }))).brightness, 30);
   assert.equal((await json(post("/api/brightness", { value: 70.9 }))).brightness, 70);
   const night = { enabled: false, start: "22:00", end: "06:30", action: "off", brightness: 3 };
   assert.deepEqual((await json(post("/api/night", night))).night, night);
-  assert.deepEqual(app.display.state(), { mode: "off", brightness: 70, night });
+  assert.deepEqual(app.display.state(), { mode: "off", brightness: 70, night, pinned: null });
+  assert.equal((await json(post("/api/pin", { pet: id }))).pinned, id);
+  assert.equal((await json(post("/api/pin", { pet: null }))).pinned, null);
+  assert.equal((await post("/api/pin", { pet: "nobody" })).status, 400);
 });
 
 test("language and location are set on the settings page", async () => {

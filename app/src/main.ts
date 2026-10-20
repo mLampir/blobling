@@ -15,7 +15,8 @@
  */
 
 import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
-import { MAX_NAME, readSave } from "../../core/src/pet";
+import { MAX_NAME } from "../../core/src/pet";
+import { eased, panSeconds } from "../../core/src/street";
 import type { Location } from "../../core/src/sun";
 import { locales, soundFiles } from "./assets";
 import { haptic } from "./haptics";
@@ -28,6 +29,7 @@ import { playReplays, type Replay } from "./replay";
 import { pageSounds, type SoundName } from "./sound";
 
 const PI_KEY = "pi"; // the address of the Pi the app is connected to
+const CAMERA_KEY = "camera"; // with a Pi: the pet this phone looks at (its id); each phone has its own
 const LIVE_KEY = "location.live"; // "1": the pet lives wherever the phone is
 const LIVE_EVERY_MS = 30 * 60_000; // how often the live location is looked up again, at most
 
@@ -75,6 +77,52 @@ if (remote) {
   reminders(i18n)?.clear();
 }
 
+/** With a Pi: the pet this phone looks at, or null for the one the panel shows. */
+let camera = remote ? stored(CAMERA_KEY) : null;
+
+function setCamera(id: string | null): void {
+  camera = id;
+  try {
+    if (id) {
+      localStorage.setItem(CAMERA_KEY, id);
+    } else {
+      localStorage.removeItem(CAMERA_KEY);
+    }
+  } catch {
+    // then only for as long as the app is open
+  }
+}
+
+/** A request to a Pi, for the pet this phone looks at (core/src/api.ts: "pet"). */
+async function askPi(method: string, path: string, body?: unknown): Promise<any> {
+  const forCamera = camera && path.startsWith("/api/pet");
+  let url = path;
+  let sent = body;
+  if (forCamera && method === "GET") {
+    url += `${path.includes("?") ? "&" : "?"}pet=${encodeURIComponent(camera!)}`;
+  } else if (forCamera && body !== null && typeof body === "object" && !("pet" in body)) {
+    sent = { ...body, pet: camera };
+  }
+  try {
+    return await remote!.request(method, url, sent);
+  } catch (error) {
+    if (!forCamera || (error as { offline?: boolean }).offline) {
+      throw error;
+    }
+    // the pet may no longer live there (a new egg took its place on another phone): look at the
+    // one the panel shows; if that fails too, it was something else
+    const answer = await remote!.request("GET", "/api/pet") as { pets?: { id: string }[] };
+    if (answer.pets?.some((pet) => pet.id === camera)) {
+      throw error;
+    }
+    setCamera(null);
+    return remote!.request(method, path, body);
+  }
+}
+
+// Answers that bring the camera to a pet: a new egg, an ancestor brought back, a switch
+const MOVES_CAMERA = ["/api/pet/new_egg", "/api/pet/bring_back", "/api/pet/look"];
+
 const app = {
   /** Where the pet lives: "local" (on the phone) or "pi". */
   mode,
@@ -88,10 +136,30 @@ const app = {
   strings: i18n.catalog,
   maxName: MAX_NAME,
 
-  /** A request to the pet's API (core/src/api.ts); throws an Error with the text for the page. */
+  /**
+   * A request to the pet's API (core/src/api.ts), for the pet the phone looks at; throws an Error
+   * with the text for the page.
+   */
   async request(method: string, path: string, body?: unknown): Promise<any> {
-    return remote ? remote.request(method, path, body) : (await local!).request(method, path, body);
+    const answer = remote ? await askPi(method, path, body) : await (await local!).request(method, path, body);
+    const id = answer?.state?.id ?? answer?.id;
+    if (remote && MOVES_CAMERA.includes(path) && typeof id === "string") {
+      setCamera(id);
+    }
+    return answer;
   },
+
+  /**
+   * Switches to the pet with this id: the phone looks at it from now on (and a display follows,
+   * unless a pet is pinned there). Returns its state, like GET /api/pet.
+   */
+  async look(id: string): Promise<any> {
+    return app.request("POST", "/api/pet/look", { pet: id });
+  },
+
+  /** How long the camera takes along the street, and how far it has come (core/src/street.ts). */
+  panSeconds,
+  eased,
 
   /** A picture of the pet in a form, as a URL for an <img>. */
   icon: iconUrl,
@@ -136,7 +204,8 @@ const app = {
 
   /** With a Pi: the next frame the panel shows, as a URL for an <img> (the Pi answers once it is drawn). */
   previewUrl(): string {
-    return `${remote?.base ?? ""}/preview.png?next&t=${Date.now()}`;
+    const pet = camera ? `&pet=${encodeURIComponent(camera)}` : "";
+    return `${remote?.base ?? ""}/preview.png?next${pet}&t=${Date.now()}`;
   },
 
   /**
@@ -197,66 +266,24 @@ const app = {
   },
 
   /**
-   * Before connecting to a display: the pet on the phone and the one on the display (as /api/pet
-   * describes them), to choose which of them lives on. null when there is nothing to choose,
-   * because the phone only has an egg. Throws with the text for the page if the display is gone.
+   * In the app from the stores: the pets of a Pi from now on. No pet moves: the phone's own stay on
+   * the phone, for when it is disconnected again. Throws with the text for the page if none answers.
    */
-  async petsToChoose(address: string): Promise<{ phone: any; display: any } | null> {
-    const phone = await (await local!).request("GET", "/api/pet") as { stage: string };
-    if (phone.stage === "egg") {
-      return null;
-    }
-    return { phone, display: await new RemotePet(piAddress(address) ?? "", i18n).request("GET", "/api/pet") };
-  },
-
-  /**
-   * In the app from the stores: the pet of a Pi from now on. With `bringPet`, the pet on the phone
-   * moves there first (the display keeps its own one aside, like loading a save on its settings
-   * page); the phone keeps its copy for when it is disconnected again. Throws with the text for the
-   * page if none answers.
-   */
-  async connect(address: string, bringPet = false): Promise<void> {
+  async connect(address: string): Promise<void> {
     const base = piAddress(address);
     const pi = base ? new RemotePet(base, i18n) : null;
     if (!pi || !await pi.reachable()) {
       throw new Error(i18n.t("page.app.connect_failed", { address: base ?? address }));
     }
-    if (bringPet) {
-      await pi.request("POST", "/api/pet/save", (await local!).pet.toSave());
-    }
     localStorage.setItem(PI_KEY, base!);
+    setCamera(null);
     location.reload();
   },
 
-  /**
-   * Before going back to the pet on the phone: the one on the display and the one the phone kept,
-   * to choose which of them lives on the phone. null when there is nothing to choose, because the
-   * display only has an egg. Throws with the text for the page if the display is gone.
-   */
-  async petsToTakeHome(): Promise<{ phone: any; display: any } | null> {
-    const display = await remote!.request("GET", "/api/pet") as { stage: string };
-    if (display.stage === "egg") {
-      return null;
-    }
-    return { phone: await LocalPet.describeKept(i18n), display };
-  },
-
-  /**
-   * Back to the pet on the phone. With `takePet`, the display's pet comes along and lives on the
-   * phone from now on (the phone keeps its old one aside); the display keeps its copy, as the
-   * phone does when its pet moves to the display. Throws with the text for the page.
-   */
-  async disconnect(takePet = false): Promise<void> {
-    if (takePet) {
-      const file = await remote!.request("GET", "/api/pet/save");
-      try {
-        readSave(file);
-      } catch {
-        throw new Error(i18n.t("error.not_a_save"));
-      }
-      await LocalPet.takeIn(file);
-    }
+  /** Back to the pets on the phone; the display keeps its own. */
+  disconnect(): void {
     localStorage.removeItem(PI_KEY);
+    setCamera(null);
     location.reload();
   },
 };

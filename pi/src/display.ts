@@ -7,6 +7,13 @@
  *
  * What gets rendered, in order of priority: the pet reacting to a command > night mode "off" >
  * the selected mode (pet or off).
+ *
+ * The panel shows one house of the street (core/src/street.ts) at a time: its camera follows the
+ * phones. Switching to another pet moves it there at once; doing something with another pet moves
+ * it only once the pet it shows has been left alone for CAMERA_HOLD, so that two people playing at
+ * the same time don't make it jump back and forth. On the settings page a pet can be pinned, and
+ * the camera stays with it. Each pet has a scene of its own, which also draws the frames for a
+ * phone that looks at a pet the panel doesn't show.
  */
 
 import { readFileSync } from "node:fs";
@@ -15,6 +22,7 @@ import { Image } from "../../core/src/image";
 import { RequestError, inWindow, type Bedtime } from "../../core/src/model";
 import { DEFAULT_BEDTIME, type ActionRequest, type Pet } from "../../core/src/pet";
 import type { PetScene } from "../../core/src/scene";
+import { pan, panSeconds } from "../../core/src/street";
 import { getLog, reason } from "./log";
 import { writeAtomic } from "./storage";
 import type { Weather } from "../../core/src/weather";
@@ -37,12 +45,17 @@ export interface DisplayState {
   mode: Mode;
   brightness: number;
   night: Night;
+  /** The pet the camera stays with (its id), or null: it follows the phones. */
+  pinned: string | null;
 }
 
 export const DEFAULT_NIGHT: Night = { enabled: false, start: "23:00", end: "07:00", action: "dim", brightness: 5 };
 
 // How long the panel shows the pet when a command arrives while it is off
 const PET_REACTION_SECONDS = 10;
+// Something done with another pet moves the camera only once the one it shows has been left alone this long
+export const CAMERA_HOLD = 30;
+const PAN_FRAME = 1 / 30;
 
 const isBrightness = (value: unknown): value is number =>
   typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 100;
@@ -78,7 +91,8 @@ export interface FrameSink {
 export interface DisplayOptions {
   /** Null: no panel, the frames only show in the web interface's preview. */
   panel: FrameSink | null;
-  scene: PetScene;
+  /** Makes a scene, one for each pet. */
+  scene: () => PetScene;
   weather: Weather;
   pet: Pet;
   /** The brightness until one is chosen in the web interface. */
@@ -97,7 +111,15 @@ export class Display {
   /** Who waits for the next frame (the live preview of the app). */
   private frameWaiters: (() => void)[] = [];
   private readonly panel: FrameSink | null;
-  private readonly scene: PetScene;
+  private readonly newScene: () => PetScene;
+  private readonly scenes = new Map<string, PetScene>();
+  private location: readonly [number, number] | null;
+  /** When somebody last did something with the pet the camera is on (monotonic). */
+  private lastHere = -Infinity;
+  /** The camera is on its way from the picture `from`, `steps` houses along the street. */
+  private panning: { from: Image; steps: number; start: number; seconds: number } | null = null;
+  /** The next frame of a pet the panel doesn't show, for a phone that looks at it. */
+  private previews = new Map<string, { frame: Image; due: number; next?: Promise<Image> }>();
   private readonly weather: Weather;
   private readonly pet: Pet;
   private readonly stateFile: string;
@@ -109,14 +131,18 @@ export class Display {
 
   constructor(options: DisplayOptions) {
     this.panel = options.panel;
-    this.scene = options.scene;
+    this.newScene = options.scene;
     this.weather = options.weather;
     this.pet = options.pet;
     this.stateFile = options.stateFile;
-    this.width = this.scene.width;
-    this.height = this.scene.height;
-    this.current = { mode: "pet", brightness: options.defaultBrightness, night: { ...DEFAULT_NIGHT } };
+    const first = this.newScene();
+    this.location = first.location;
+    this.width = first.width;
+    this.height = first.height;
+    this.current = { mode: "pet", brightness: options.defaultBrightness, night: { ...DEFAULT_NIGHT }, pinned: null };
     this.loadState();
+    this.scenes.set(this.pet.current, first);
+    this.keepPinned();
     this.lastFrame = this.blank();
   }
 
@@ -138,6 +164,42 @@ export class Display {
 
   state(): DisplayState {
     return { ...this.current, night: { ...this.current.night } };
+  }
+
+  /** The pet the camera is on (its id). */
+  get camera(): string {
+    return this.pet.current;
+  }
+
+  /** Where the pets live, for the sun times of every scene. */
+  setLocation(location: readonly [number, number] | null): void {
+    this.location = location;
+    for (const scene of this.scenes.values()) {
+      scene.location = location;
+    }
+    this.wake();
+  }
+
+  /** The camera stays with this pet (its id), or follows the phones again (null). */
+  pin(id: unknown): void {
+    if (id === null || id === undefined || id === "") {
+      this.current.pinned = null;
+    } else {
+      this.current.pinned = this.pet.find(id).id;
+      this.moveCamera(this.current.pinned);
+    }
+    this.saveState();
+    this.showPet();
+  }
+
+  /** A phone switched to the pet with this id: the camera follows, unless it is pinned. */
+  look(id: unknown): void {
+    const pet = this.pet.find(id);
+    if (!this.current.pinned) {
+      this.moveCamera(pet.id);
+      this.lastHere = monotonic();
+    }
+    this.showPet();
   }
 
   nightActive(): boolean {
@@ -171,34 +233,96 @@ export class Display {
     return night.enabled ? [night.start, night.end] : DEFAULT_BEDTIME;
   };
 
-  petNewEgg(egg: unknown = null, keep: unknown = null): ReturnType<Pet["newEgg"]> {
-    const state = this.pet.newEgg(egg, undefined, keep);
+  petNewEgg(egg: unknown = null, place: unknown = null): ReturnType<Pet["newEgg"]> {
+    const before = this.camera;
+    const state = this.pet.newEgg(egg, undefined, place);
+    this.cameraMoved(before);
     this.showPet();
     return state;
   }
 
-  petSwap(): ReturnType<Pet["swap"]> {
-    const result = this.pet.swap();
-    this.showPet();
-    return result;
-  }
-
-  petBringBack(bornAt: unknown, keep: unknown = null): ReturnType<Pet["bringBack"]> {
-    const result = this.pet.bringBack(bornAt, keep);
+  petBringBack(bornAt: unknown, place: unknown = null): ReturnType<Pet["bringBack"]> {
+    const before = this.camera;
+    const result = this.pet.bringBack(bornAt, place);
+    this.cameraMoved(before);
     this.showPet();
     return result;
   }
 
   petAction(action: string, request: ActionRequest = {}): ReturnType<Pet["action"]> {
+    const id = this.pet.find(request.pet).id;
     const result = this.pet.action(action, request);
+    if (id === this.camera) {
+      this.lastHere = monotonic();
+    } else if (!this.current.pinned && monotonic() - this.lastHere >= CAMERA_HOLD) {
+      this.moveCamera(id);
+      this.lastHere = monotonic();
+    }
     this.showPet();
     return result;
   }
 
-  /** Another pet in place of this one (a save file loaded on the settings page). */
+  /** Other pets in place of these (a save file loaded on the settings page). */
   petReplace(saved: Parameters<Pet["replace"]>[0]): void {
     this.pet.replace(saved);
+    this.panning = null;
+    this.keepPinned();
     this.showPet();
+  }
+
+  /** The camera goes to the pet with this id, panning along the street from where it was. */
+  private moveCamera(id: string): void {
+    const before = this.camera;
+    if (id === before) {
+      return;
+    }
+    this.pet.select(id);
+    this.cameraMoved(before);
+  }
+
+  /**
+   * The pet has moved the camera (a new egg, a pet brought back) or it was moved here, from the
+   * pet `before`: a pinned pet keeps it, otherwise it pans over.
+   */
+  private cameraMoved(before: string): void {
+    if (this.keepPinned()) {
+      return;
+    }
+    const ids = this.pet.pets.map((pet) => pet.id);
+    const [from, to] = [ids.indexOf(before), ids.indexOf(this.camera)];
+    if (from === to) {
+      return;
+    }
+    // the house it leaves as it looks now (one that just got a new pet: as it was last shown)
+    const frame = from >= 0 ? this.sceneFor(before).render(this.pet.view(undefined, before), this.weather.current())[0]
+      : this.lastFrame;
+    const steps = from >= 0 ? to - from : 1;
+    this.panning = { from: frame, steps, start: monotonic(), seconds: panSeconds(steps) };
+  }
+
+  /** A pinned pet that is still there keeps the camera (true); one that is gone is unpinned. */
+  private keepPinned(): boolean {
+    const pinned = this.current.pinned;
+    if (pinned && this.pet.pets.some((pet) => pet.id === pinned)) {
+      this.pet.select(pinned);
+      return true;
+    }
+    if (pinned) {
+      this.current.pinned = null;
+      this.saveState();
+    }
+    return false;
+  }
+
+  /** The scene of the pet with this id. */
+  private sceneFor(id: string): PetScene {
+    let scene = this.scenes.get(id);
+    if (!scene) {
+      scene = this.newScene();
+      scene.location = this.location;
+      this.scenes.set(id, scene);
+    }
+    return scene;
   }
 
   private showPet(): void {
@@ -223,6 +347,9 @@ export class Display {
     }
     if (saved === null || typeof saved !== "object") {
       return;
+    }
+    if (typeof saved.pinned === "string") {
+      this.current.pinned = saved.pinned;
     }
     if (MODES.includes(saved.mode as Mode)) {
       this.current.mode = saved.mode as Mode;
@@ -343,6 +470,58 @@ export class Display {
       // In the background, so the animation doesn't stutter
       void weather.refresh();
     }
-    return this.scene.render(this.pet.view(), weather.current());
+    this.forgetGone();
+    let [frame, delay] = this.sceneFor(this.camera).render(this.pet.view(undefined, this.camera), weather.current());
+    const panning = this.panning;
+    if (panning) {
+      const progress = (monotonic() - panning.start) / panning.seconds;
+      if (progress < 1) {
+        frame = pan(panning.from, frame, progress, panning.steps);
+        delay = Math.min(delay, PAN_FRAME);
+      } else {
+        this.panning = null;
+      }
+    }
+    return [frame, delay];
+  }
+
+  /** The scenes of pets that no longer live here go. */
+  private forgetGone(): void {
+    const ids = new Set(this.pet.pets.map((pet) => pet.id));
+    for (const id of [...this.scenes.keys(), ...this.previews.keys()]) {
+      if (!ids.has(id)) {
+        this.scenes.delete(id);
+        this.previews.delete(id);
+      }
+    }
+  }
+
+  /**
+   * A frame of the pet with this id for a phone (the live preview): of the one the panel shows,
+   * what nextFrame gives; of another one, its own scene's next frame, when the scene asks for it
+   * (at most `seconds` later). Throws a RequestError if there is no such pet.
+   */
+  async frameOf(id: unknown, next: boolean, seconds: number): Promise<Image> {
+    const pet = id === null || id === undefined ? this.camera : this.pet.find(id).id;
+    if (pet === this.camera) {
+      return next ? this.nextFrame(seconds) : this.lastFrame;
+    }
+    let preview = this.previews.get(pet);
+    if (preview && !next) {
+      return preview.frame;
+    }
+    if (preview?.next) {
+      return preview.next; // somebody else is waiting for the same frame
+    }
+    const wait = preview ? Math.min(seconds, Math.max(0, preview.due - monotonic())) : 0;
+    const promise = new Promise<void>((resolve) => setTimeout(resolve, wait * 1000)).then(() => {
+      this.pet.update();
+      const [frame, delay] = this.sceneFor(pet).render(this.pet.view(undefined, pet), this.weather.current());
+      this.previews.set(pet, { frame, due: monotonic() + delay });
+      return frame;
+    });
+    preview ??= { frame: this.lastFrame, due: 0 };
+    this.previews.set(pet, { ...preview, next: promise });
+    return promise;
   }
 }

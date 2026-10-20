@@ -72,14 +72,14 @@ test("the night runs from its start to its end, over midnight too", () => {
 test("mode, brightness and night mode survive a restart", () => {
   const directory = tempDir();
   const { display } = parts(directory);
-  assert.deepEqual(display.state(), { mode: "pet", brightness: 50, night: DEFAULT_NIGHT });
+  assert.deepEqual(display.state(), { mode: "pet", brightness: 50, night: DEFAULT_NIGHT, pinned: null });
   assert.deepEqual(display.bedtime(), DEFAULT_BEDTIME);
 
   display.setMode("off");
   display.setBrightness(250);
   display.setNight(NIGHT);
   refused(() => display.setMode("disco"), "unknown_mode");
-  const expected = { mode: "off", brightness: 100, night: NIGHT };
+  const expected = { mode: "off", brightness: 100, night: NIGHT, pinned: null };
   assert.deepEqual(JSON.parse(readFileSync(join(directory, "state.json"), "utf-8")), expected);
 
   const restarted = parts(directory).display;
@@ -90,9 +90,9 @@ test("mode, brightness and night mode survive a restart", () => {
 test("a saved state that is broken falls back to the defaults, part by part", () => {
   const directory = tempDir();
   writeFileSync(join(directory, "state.json"), JSON.stringify({ mode: "off", brightness: "bright", night: 5 }));
-  assert.deepEqual(parts(directory).display.state(), { mode: "off", brightness: 50, night: DEFAULT_NIGHT });
+  assert.deepEqual(parts(directory).display.state(), { mode: "off", brightness: 50, night: DEFAULT_NIGHT, pinned: null });
   writeFileSync(join(directory, "state.json"), "not json");
-  assert.deepEqual(parts(directory).display.state(), { mode: "pet", brightness: 50, night: DEFAULT_NIGHT });
+  assert.deepEqual(parts(directory).display.state(), { mode: "pet", brightness: 50, night: DEFAULT_NIGHT, pinned: null });
 });
 
 test("the loop draws the pet, goes dark when switched off and shows the pet when it is given something", async () => {
@@ -137,6 +137,59 @@ test("the preview gets the next frame as soon as it is drawn, or the last one if
     display.start();
     assert.equal(await next, await drawn);
     assert.notEqual(await next, shown);
+  } finally {
+    display.stop();
+  }
+});
+
+test("the camera follows a switch at once, and something done with another pet once its pet is left alone", () => {
+  const { display, pet } = parts(tempDir());
+  const first = pet.current;
+  const second = display.petNewEgg().id; // a new egg: the camera goes to it
+  assert.equal(display.camera, second);
+  display.look(first);
+  assert.equal(display.camera, first);
+  display.petAction("pet", { pet: first });
+  display.petAction("pet", { pet: second }); // somebody else, while the first one is being played with
+  assert.equal(display.camera, first);
+  refused(() => display.look("nobody"), "no_pet");
+});
+
+test("a pinned pet keeps the camera until it is unpinned or gone", () => {
+  const directory = tempDir();
+  const { display, pet } = parts(directory);
+  const first = pet.current;
+  const second = display.petNewEgg().id;
+  display.pin(first);
+  assert.equal(display.camera, first);
+  display.look(second);
+  display.petNewEgg();
+  assert.equal(display.camera, first);
+  assert.equal(parts(directory).display.state().pinned, first); // it is kept
+  display.petNewEgg(null, first); // a new egg in its place: nothing to pin any more
+  assert.equal(display.state().pinned, null);
+  display.pin(second);
+  display.pin(null);
+  display.look(pet.pets[0].id);
+  assert.equal(display.camera, pet.pets[0].id);
+});
+
+test("the panel pans along the street, and a phone gets the frames of a pet the panel doesn't show", async () => {
+  const panel = new FakePanel();
+  const { display, pet } = parts(tempDir(), panel);
+  const first = pet.current;
+  const second = display.petNewEgg().id;
+  try {
+    display.look(first);
+    let frame = panel.next();
+    display.start();
+    await frame;
+    frame = panel.next();
+    assert.ok(lit(await frame)); // still panning: drawn quickly, one frame after the other
+    const own = await display.frameOf(second, true, 1);
+    assert.equal(own.width, 64);
+    assert.equal(await display.frameOf(second, false, 1), own);
+    assert.equal(await display.frameOf(null, false, 1), display.lastFrame);
   } finally {
     display.stop();
   }
