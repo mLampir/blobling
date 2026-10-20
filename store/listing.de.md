@@ -23,23 +23,23 @@ virtuelles haustier,pixel,süß,schleim,ei,ausbrüten,großziehen,pflegen,abente
 
 Blobling ist ein kleines Pixel-Pet, das auf deinem Handy lebt. Es schlüpft aus einem Ei, will ein paar Mal am Tag Aufmerksamkeit und wird groß, je nachdem, wie du dich um es kümmerst.
 
-UMSORGEN MIT DEM FINGER
+ALLES MIT DEM FINGER
 Zieh eine Mahlzeit, einen Snack oder den Ball auf dein Pet, schrubb es mit dem Schwamm sauber, streichle es und bring es abends ins Bett. Es antwortet direkt in seiner kleinen Welt, mit einem fröhlichen Gesicht, einem sanften Vibrieren und einem Chiptune-Sound.
 
 ES LEBT SEINEN EIGENEN TAG
-Der Himmel folgt der echten Tageszeit, mit Sonnenauf- und -untergang dort, wo du wohnst. Schalte das Wetter ein, und Regen, Schnee und Wolken von draußen gibt es auch in seiner Welt. An einem kalten Morgen wacht es zitternd auf, bis du es warm reibst. Während du weg bist, spielt und übt es allein, und wenn du zurückkommst, erzählt es dir, was es erlebt hat.
+Der Himmel folgt der echten Tageszeit, mit Sonnenauf- und -untergang dort, wo du wohnst. Schaltest du das Wetter ein, regnet, schneit und bewölkt es sich in seiner Welt wie draußen. An einem kalten Morgen wacht es zitternd auf, bis du es warm reibst. Während du weg bist, spielt und übt es allein, und wenn du zurückkommst, erzählt es dir, was es erlebt hat.
 
 VOM EI BIS GROSS
-Halt das Ei warm, dann schlüpft es früher. In etwa zehn Tagen wird aus deinem Baby ein Kind und dann eine von mehreren erwachsenen Formen. Welche, hängt davon ab, wie du dich um es gekümmert hast, und das herauszufinden gehört zum Spaß.
+Halt das Ei warm, dann schlüpft es früher. In etwa zehn Tagen wird aus deinem Baby ein Kind und schließlich eine von mehreren erwachsenen Formen. Welche, hängt davon ab, wie du dich um es gekümmert hast, und das herauszufinden gehört zum Spaß.
 
-KUNSTSTÜCKE, TRAINING UND ABENTEUER
-Bring ihm Kunststücke bei, trainiere Kraft, Tempo und Köpfchen und schick es auf Ausflüge. Es kommt mit Fundstücken heim, von Samen für den Garten bis zu Hüten und Deko, und mit Geschichten von den Raufereien unterwegs. Im Tagebuch kannst du sie noch einmal ansehen. Neue Gebiete öffnen sich eins nach dem anderen, jedes hinter einem Wächter.
+TRICKS, TRAINING UND ABENTEUER
+Bring ihm Tricks bei, trainiere Kraft, Tempo und Köpfchen und schick es auf Ausflüge. Es kommt mit Fundstücken heim, von Samen für den Garten bis zu Hüten und Deko, und mit Geschichten von den Raufereien unterwegs. Im Tagebuch kannst du sie dir noch einmal ansehen. Nach und nach öffnen sich neue Gebiete, jedes hinter einem Wächter.
 
 FREUNDE UND EINE NEUE GENERATION
-Ein erwachsenes Pet kann mit seinen Kunststücken ein wildes Pet für sich gewinnen. Der Freund kommt zu Besuch, lässt ab und zu ein Geschenk da, und mit der Zeit legen die beiden ein Ei, das einen Teil von dem, was dein Pet gelernt hat, an das nächste weitergibt.
+Ein erwachsenes Pet kann mit seinen Tricks ein wildes Pet für sich gewinnen. Der Freund kommt zu Besuch, lässt ab und zu ein Geschenk da, und mit der Zeit legen die beiden ein Ei. Was daraus schlüpft, hat einiges von deinem Pet mitbekommen.
 
-SANFT GEMACHT
-Dein Pet stirbt nie. Vergisst du es, wird es hungrig, schmutzig oder traurig, und das lässt sich immer wieder gutmachen. Keine Strafen, kein Druck.
+GANZ OHNE STRESS
+Dein Pet stirbt nie. Vergisst du es einmal, wird es hungrig, schmutzig oder traurig, aber das lässt sich immer wieder gutmachen. Keine Strafen, kein Druck.
 
 EIN TAGEBUCH SEINES LEBENS
 Alles, was es erlebt, steht in seinem Tagebuch: der Verlauf, seine Werte, jeder Ausflug, jedes Fundstück und ein Album der Formen, die deine Pets schon hatten.

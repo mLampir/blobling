@@ -30,7 +30,7 @@ English only.
 
 Blobling needs no account, no login and no hardware: the whole game runs on
 the phone. A new pet starts as an egg that hatches within about an hour
-(stroking it keeps it warm and makes it sooner). Then drag food from the
+(stroking it keeps it warm and makes it hatch sooner). Then drag food from the
 tray onto the pet and stroke it. The "More" tab has the name, a new egg,
 sound and the optional weather.
 
@@ -49,7 +49,7 @@ local only (the pet asks for you when it needs you); there is no server.
 
 Blobling is a little pixel pet that lives on your phone. It hatches from an egg, wants your attention a few times a day, and grows up depending on how you raise it.
 
-LOOK AFTER IT WITH YOUR FINGER
+CARE AT YOUR FINGERTIPS
 Drag a meal, a snack or the ball onto your pet, rub it clean with the sponge, stroke it and put it to bed at night. It answers right there in its little world, with a happy face, a soft buzz and a chiptune sound.
 
 IT LIVES ITS OWN DAY
@@ -59,13 +59,13 @@ FROM EGG TO GROWN-UP
 Keep the egg warm and it hatches sooner. Over about ten days your baby grows into a child and then into one of several adult forms. Which one depends on how you cared for it, and finding out is part of the fun.
 
 TRICKS, TRAINING AND ADVENTURES
-Teach it tricks, train its strength, speed and smarts, and send it off on trips. It comes home with finds, from seeds for the garden to hats and decorations, and with stories of the scuffles it had on the way. Watch them again in the diary. New areas open up one after another, each one past a guardian.
+Teach it tricks, train its strength, speed and smarts, and send it off on trips. It comes home with finds, from seeds for the garden to hats and decorations, and with stories of the scuffles it had on the way. You can watch them again in the diary. New areas open up one by one, each behind a guardian.
 
 FRIENDS AND A NEW GENERATION
-A grown-up pet can win over a wild pet with its tricks. The friend comes to visit, leaves a gift now and then, and in time the two lay an egg that passes part of what your pet learned on to the next one.
+A grown-up pet can win over a wild pet with its tricks. The friend comes to visit, leaves a gift now and then, and in time the two lay an egg. Whatever hatches from it takes after your pet a little.
 
 GENTLE BY DESIGN
-Your pet never dies. If you forget it, it gets hungry, grubby or sad, and that can always be put right. No timers that punish you, no pressure.
+Your pet never dies. If you forget about it, it gets hungry, grubby or sad, but that can always be put right. No timers that punish you, no pressure.
 
 A DIARY OF ITS LIFE
 Everything it did is kept in its diary: the history, its stats, every trip, every find and an album of the forms your pets have been.
@@ -76,6 +76,6 @@ Blobling can also live on a small LED panel at home, driven by a Raspberry Pi. T
 PRIVATE
 No account, no ads, no tracking, no in-app purchases. Your pet lives on your phone. The only thing that ever leaves it is a rounded location for the weather, and only if you turn the weather on.
 
-Blobling is open source: the app and the LED display, with the building instructions, are on GitHub (mLampir/blobling).
+Blobling is open source: the app and the LED display, with build instructions, are on GitHub (mLampir/blobling).
 
 In English and German.

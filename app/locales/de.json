@@ -9,7 +9,7 @@
     "unknown_action": "Unbekannte Aktion.",
     "unknown_food": "Unbekanntes Essen.",
     "unknown_move": "Unbekannter Spielzug.",
-    "unknown_trick": "Unbekanntes Kunststück.",
+    "unknown_trick": "Unbekannter Trick.",
     "unknown_area": "Unbekanntes Ziel.",
     "unknown_seed": "Unbekannter Samen.",
     "unknown_hat": "Unbekannter Hut.",
@@ -17,26 +17,26 @@
     "no_egg": "Dieses Ei hast du nicht.",
     "invalid_throw": "Ungültiger Wurf.",
     "invalid_id": "Ungültige Anfrage-ID.",
-    "confirm": "Bitte bestätigen.",
-    "name_length": "Name: 1 bis {max} Zeichen.",
+    "confirm": "Bitte erst bestätigen.",
+    "name_length": "Ein Name hat 1 bis {max} Zeichen.",
     "unknown_mode": "Unbekannter Modus.",
     "invalid_value": "Ungültiger Wert.",
     "invalid_settings": "Ungültige Einstellungen.",
-    "invalid_time": "Uhrzeit bitte als HH:MM.",
+    "invalid_time": "Bitte Uhrzeiten als HH:MM eingeben.",
     "invalid_night_action": "Ungültige Einstellung für den Nachtmodus.",
-    "invalid_brightness": "Helligkeit: 1 bis 100.",
+    "invalid_brightness": "Die Helligkeit muss zwischen 1 und 100 liegen.",
     "http": "Fehler {status}",
     "unknown_exercise": "Unbekannte Übung.",
     "unknown_language": "Unbekannte Sprache.",
     "invalid_location": "Bitte einen Breitengrad von -90 bis 90 und einen Längengrad von -180 bis 180 eingeben.",
-    "no_update": "Gerade gibt es kein Update zu installieren.",
-    "not_a_save": "Das ist kein Spielstand eines Pets.",
+    "no_update": "Gerade gibt es kein Update.",
+    "not_a_save": "Das ist kein Blobling-Spielstand.",
     "no_pet": "Dieses Pet wohnt nicht hier.",
     "no_place": "Für ein weiteres Pet ist kein Platz. Wähle, wessen Platz es bekommt.",
     "no_ancestor": "Dieses Pet kann nicht mehr zurückkommen.",
-    "stale": "Dieses Pet lebt inzwischen woanders, das hier ist eine alte Kopie davon.",
-    "on_trip": "Nicht, während es auf Reisen ist.",
-    "last_pet": "Ein Pet bleibt immer am Display.",
+    "stale": "Dieses Pet lebt inzwischen woanders. Das hier ist nur eine alte Kopie.",
+    "on_trip": "Nicht, solange es unterwegs ist.",
+    "last_pet": "Ein Pet bleibt immer auf dem Display.",
     "already_here": "Dieses Pet wohnt schon hier."
   },
   "stages": {
@@ -198,7 +198,7 @@
   "plants": {
     "berry": "Beerenstrauch",
     "sunflower": "Sonnenblume",
-    "cherry": "Kicherkirsche",
+    "cherry": "Kicherkirschbaum",
     "herb": "Heilkraut"
   },
   "fruits": {
@@ -221,13 +221,13 @@
       "already_clean": "Alles sauber.",
       "not_sick": "{name} ist gar nicht krank – bäh!",
       "egg": "Das Ei muss erst schlüpfen.",
-      "not_ready": "{name} ist noch nicht so weit.",
+      "not_ready": "So weit ist {name} noch nicht.",
       "no_game": "Gerade läuft kein Spiel.",
       "away": "{name} ist unterwegs.",
-      "not_away": "{name} ist doch daheim.",
-      "at_home": "{name} ist doch hier und nicht bei Oma.",
+      "not_away": "{name} ist doch zu Hause.",
+      "at_home": "{name} ist doch hier, nicht bei Oma.",
       "too_young": "{name} ist noch zu klein für Ausflüge.",
-      "sick_trip": "{name} ist krank und bleibt lieber daheim.",
+      "sick_trip": "{name} ist krank und bleibt lieber zu Hause.",
       "hungry_trip": "{name} ist zu hungrig für einen Ausflug.",
       "tired_trip": "{name} ist zu müde für einen Ausflug.",
       "too_late": "Dafür ist es heute zu spät.",
@@ -235,18 +235,18 @@
       "locked": "Den Weg dorthin kennt {name} noch nicht.",
       "plant_busy": "Da wächst schon etwas.",
       "no_item": "Das hast du nicht.",
-      "unpack_first": "Erst den Rucksack auspacken.",
+      "unpack_first": "Pack erst den Rucksack aus.",
       "nothing_packed": "Der Rucksack ist leer.",
       "tired_train": "{name} ist zu müde zum Trainieren.",
       "rest_train": "{name} braucht eine kurze Pause vor der nächsten Übung.",
       "no_training": "Zu spät – die Übung ist vorbei.",
-      "no_nest": "Da liegt kein Ei in einem Nest.",
+      "no_nest": "In keinem Nest liegt ein Ei.",
       "no_gift": "Da liegt kein Geschenk.",
       "no_house": "Es gibt noch kein Haus.",
       "inside": "{name} schläft im Haus.",
       "boost_waiting": "{name} hat das letzte noch im Bauch.",
       "nothing_found": "Da liegt nichts.",
-      "dislikes": "{name} dreht den Kopf weg: das nicht."
+      "dislikes": "{name} dreht den Kopf weg – das bitte nicht!"
     },
     "notify": {
       "channel": "Wenn dein Pet dich braucht",
@@ -264,7 +264,7 @@
     "evolve": "✨ Entwickeln",
     "evolve_hold": "Gedrückt halten, bis der Knopf gefüllt ist",
     "evolved": "{name} {what}",
-    "recall": "🏠 Heimrufen",
+    "recall": "🏠 Nach Hause rufen",
     "grandma": {
       "fetch": "🏡 Bei Oma abholen",
       "info": "{name} ist bei Oma."
@@ -275,22 +275,22 @@
         "one": "▶ Rauferei ansehen",
         "other": "▶ Die {n} Raufereien ansehen"
       },
-      "again": "Nochmal",
-      "play": "Nochmal ansehen",
+      "again": "Noch mal",
+      "play": "Noch mal ansehen",
       "against": "Rauferei mit {foe} …"
     },
     "collect": "🥚 Ei einsammeln",
-    "collected": "{egg} eingesammelt – es liegt jetzt bei deinen Funden",
+    "collected": "{egg} eingesammelt – es liegt jetzt bei deinen Fundstücken",
     "unwrap": "🎁 Geschenk auspacken",
-    "unwrapped_fruit": "Drin war: {fruit} – die Tasche war voll, also hat {name} es gleich gegessen",
+    "unwrapped_fruit": "Drin war: {fruit}. Die Tasche war voll, also hat {name} gleich hineingebissen",
     "pickup": "👐 Aufheben: {thing}",
-    "picked_fruit": "Aufgehoben: {fruit} – die Tasche war voll, also hat {name} es gleich gegessen",
+    "picked_fruit": "Aufgehoben: {fruit}. Die Tasche war voll, also hat {name} gleich hineingebissen",
     "boost": {
-      "heart": "Süß! {name} startet mit einem Herz mehr in die nächste Reise.",
-      "trick": "{name} fühlt sich schlau: Die nächste Trick-Übung zählt doppelt.",
-      "train": "{name} fühlt sich stark: Die nächste Übung zählt doppelt.",
-      "finder": "Die Augen leuchten: {name} entdeckt auf der nächsten Reise bei jeder Rast etwas.",
-      "fresh": "{name} ist voller Tatendrang: Die nächste Reise macht nicht müde."
+      "heart": "Mmh, süß! {name} hat auf dem nächsten Ausflug ein Herz mehr.",
+      "trick": "{name} fühlt sich schlau: Das nächste Trick-Üben zählt doppelt.",
+      "train": "{name} fühlt sich stark: Die nächste Trainingsübung zählt doppelt.",
+      "finder": "{name} hat leuchtende Augen: Auf dem nächsten Ausflug findet es bei jeder Rast etwas.",
+      "fresh": "{name} steckt voller Tatendrang: Der nächste Ausflug macht es nicht müde."
     },
     "rename": "✎ Umbenennen",
     "rename_prompt": "Neuer Name",
@@ -298,24 +298,24 @@
     "new_egg": "🥚 Mit einem normalen Ei neu anfangen",
     "place_new_egg": "Mit einem normalen Ei neu anfangen? Wo soll es wohnen?",
     "place_brood": "{egg} ausbrüten? Wo soll es wohnen?",
-    "place_bring_back": "{name} heimholen? Wo soll es wohnen?",
+    "place_bring_back": "{name} nach Hause holen? Wo soll es wohnen?",
     "place_new": "Ein neues Haus",
     "place_free": "{free} von {all} Plätzen frei",
-    "place_replace": "Zieht in die Ahnengalerie",
+    "place_replace": "Kommt in die Box",
     "place_replace_egg": "Das Ei macht Platz",
-    "look": "Zu {name} schauen",
+    "look": "Zu {name} wechseln",
     "new_egg_done": "Ein neues Ei liegt bereit 🥚",
-    "retire": "🕊️ Zu den Ahnen schicken",
-    "retire_which": "Wer soll zu den Ahnen gehen?",
-    "retire_confirm": "{name} zu den Ahnen schicken? Es ruht im Album und kann wieder heimkommen.",
-    "retire_egg_confirm": "Das Ei weglegen? Es ist dann weg.",
-    "retire_ok": "Zu den Ahnen",
-    "retire_egg_ok": "Weglegen",
-    "retired": "{name} ruht jetzt bei den Ahnen.",
+    "retire": "📦 In die Box",
+    "retire_which": "Wer soll in die Box?",
+    "retire_confirm": "{name} in die Box? Du kannst es jederzeit wieder nach Hause holen.",
+    "retire_egg_confirm": "Das Ei aufgeben? Dann ist es weg.",
+    "retire_ok": "In die Box",
+    "retire_egg_ok": "Aufgeben",
+    "retired": "{name} ist jetzt in der Box.",
     "retired_egg": "Das Ei ist weg.",
-    "retire_kept_confirm": "Das Ei zu deinen Funden legen? Du kannst es später ausbrüten.",
-    "retire_kept_ok": "Weglegen",
-    "retired_kept": "Das Ei liegt jetzt bei deinen Funden.",
+    "retire_kept_confirm": "Das Ei zurück zu deinen Fundstücken legen? Du kannst es später ausbrüten.",
+    "retire_kept_ok": "Zurücklegen",
+    "retired_kept": "Das Ei liegt jetzt bei deinen Fundstücken.",
     "things": {
       "meal": "Mahlzeit",
       "ball": "Ball",
@@ -335,11 +335,11 @@
     },
     "cooled": "{name} hat sich abgekühlt",
     "trick": {
-      "note": "Ob es klappt, zeigt die Anzeige. Üben wirkt am besten über mehrere Tage verteilt.",
+      "note": "Ob es klappt, siehst du auf dem Display. Am besten übst du verteilt über mehrere Tage.",
       "learned": "{name} kann jetzt {trick}! 🎉",
       "known": "{trick}! ⭐",
       "fail": "{trick}: klappt noch nicht ganz",
-      "ok": "{trick}: das war schon gut!",
+      "ok": "{trick}: schon ziemlich gut!",
       "unknown": "Diese Bewegung kennt {name} nicht.",
       "hint": "Nimm den Taktstock aus der Leiste und zeichne die Bewegung über das Pet."
     },
@@ -347,20 +347,20 @@
       "left": "links",
       "right": "rechts",
       "ask": "Wohin springt es?",
-      "jumped": "Gesprungen: {side} – {result}",
+      "jumped": "Nach {side} gesprungen – {result}",
       "hit": "richtig! ✓",
       "miss": "daneben ✗",
       "round": "Runde {round} von {rounds} · {wins} richtig",
       "result": "{result} von {rounds} richtig –\n{verdict}",
       "won": "gewonnen! 🎉",
-      "lost": "nächstes Mal!"
+      "lost": "vielleicht nächstes Mal!"
     },
     "dialog": {
       "cancel": "Abbrechen",
       "save": "Speichern"
     },
     "welcome": {
-      "text": "Nach {time} allein hat {name} etwas zu erzählen:",
+      "text": "Nach {time} allein hat {name} dir einiges zu erzählen:",
       "ok": "Schön"
     },
     "story": {
@@ -372,7 +372,7 @@
       },
       "weather": {
         "rain": "Es hat {when} geregnet, da habe ich mich unter meinen Schirm gesetzt und den Tropfen zugehört.",
-        "rain_bare": "Es hat {when} geregnet, aber das hat mir gar nichts ausgemacht.",
+        "rain_bare": "Es hat {when} geregnet, aber das hat mich überhaupt nicht gestört.",
         "rain_night": "In der Nacht hat es geregnet – ich habe einfach weitergeschlafen.",
         "snow": "Es hat {when} geschneit, und alles wurde weiß.",
         "snow_night": "In der Nacht hat es geschneit, und danach war alles weiß."
@@ -382,11 +382,11 @@
       "solo_tower": "Ich habe einen kleinen Turm aus Steinen gebaut.",
       "solo_drawing": "Ich habe ein Bild in die Erde gemalt.",
       "solo_snowman": "Es hat geschneit, da habe ich einen winzigen Schneemann gebaut.",
-      "solo_trick": "Ich habe ganz allein geübt: {trick}.",
+      "solo_trick": "Ich habe ganz allein {trick} geübt.",
       "fruit": {
-        "berry": "Ich habe mir eine reife Beere gepflückt und gleich aufgegessen.",
+        "berry": "Ich habe mir eine reife Beere gepflückt und gleich verputzt.",
         "sunflower": "Ich habe an einem Sonnenblumenkern geknabbert.",
-        "cherry": "Ich habe eine Kicherkirsche gegessen und musste die ganze Zeit kichern.",
+        "cherry": "Ich habe eine Kicherkirsche gegessen und konnte gar nicht mehr aufhören zu kichern.",
         "herb": "Ich habe eine Heilblüte gegessen, und danach ging es mir viel besser."
       },
       "visit": "{pet} hat mich besucht.",
@@ -394,10 +394,10 @@
       "found": "Ich habe im Gras etwas gefunden und für dich aufgehoben: {thing}.",
       "nest": "Wir haben zu zweit ein Nest gebaut – und jetzt liegt ein Ei darin!",
       "wild_friend": "Ich habe {pet} meine Tricks gezeigt, und jetzt sind wir Freunde.",
-      "wild_shrug": "Ich habe {pet} meine Tricks gezeigt, aber {pet} fand sie nicht so toll.",
+      "wild_shrug": "Ich habe {pet} meine Tricks gezeigt, aber {pet} war nicht beeindruckt.",
       "battle_win": "{foe} wollte mit mir raufen, aber ich war stärker!",
-      "battle_lose": "{foe} hat mit mir gerauft, und diesmal habe ich verloren.",
-      "battle_draw": "{foe} und ich haben gerauft, aber keiner hat nachgegeben.",
+      "battle_lose": "{foe} wollte mit mir raufen, und diesmal habe ich verloren.",
+      "battle_draw": "{foe} und ich haben gerauft, aber keiner von uns hat nachgegeben.",
       "battle_ball": "{foe} ist lieber meinem Ball hinterhergelaufen, statt mit mir zu raufen.",
       "guardian": "Ich bin an {foe} vorbeigekommen, dem Wächter des Weges!",
       "unlock": "Jetzt kenne ich einen neuen Weg: {area}!",
@@ -407,29 +407,29 @@
         "3": "Mein Häuschen ist jetzt ein richtiges Haus!"
       },
       "find": "Unterwegs habe ich etwas gefunden: {item}.",
-      "trip_home": "Mit meinem Rucksack bin ich wieder heimgekommen.",
+      "trip_home": "Mit vollem Rucksack bin ich wieder heimgekommen.",
       "trip_tired": "Ich wurde müde und bin umgekehrt.",
       "trip_beaten": "Ich hatte genug und bin umgekehrt.",
-      "trip_snack": "Unterwegs habe ich meinen Proviant gegessen, und dann ging es mir besser.",
+      "trip_snack": "Unterwegs habe ich meinen Proviant gegessen, danach ging es mir besser.",
       "evolve": {
         "hatched": "Ich bin geschlüpft! Hallo, Welt!",
         "child": "Ich bin gewachsen – jetzt bin ich ein {species}!",
         "adult": "Ich bin groß geworden – jetzt bin ich ein {species}!"
       },
       "postcard": {
-        "one": "Hallo!\n{name} war einen Tag bei mir. {did} Jetzt ist es wieder zu Hause – es hat dich vermisst!\nLiebe Grüße, deine Oma",
-        "other": "Hallo!\n{name} war {n} Tage bei mir. {did} Jetzt ist es wieder zu Hause – es hat dich vermisst!\nLiebe Grüße, deine Oma"
+        "one": "Hallo!\n{name} war einen Tag bei mir. {did} Jetzt ist es wieder bei dir – es hat dich vermisst!\nLiebe Grüße, deine Oma",
+        "other": "Hallo!\n{name} war {n} Tage bei mir. {did} Jetzt ist es wieder bei dir – es hat dich vermisst!\nLiebe Grüße, deine Oma"
       },
       "grandma": {
         "bake": "Wir haben zusammen Kekse gebacken.",
         "knit": "Ich habe {name} einen kleinen Schal gestrickt.",
-        "garden": "Wir haben in meinem Garten Unkraut gezupft und Erdbeeren genascht.",
+        "garden": "Wir haben in meinem Garten Unkraut gejätet und Erdbeeren genascht.",
         "tea": "Wir haben Tee getrunken und alte Fotos angeschaut."
       }
     },
     "tabs": {
       "history": "Verlauf",
-      "statistics": "Statistik",
+      "statistics": "Werte",
       "travels": "Ausflüge",
       "finds": "Fundstücke",
       "gallery": "Album",
@@ -439,14 +439,14 @@
       "weather": "Wetter"
     },
     "offline": {
-      "title": "Anzeige nicht erreichbar",
-      "hint": "Bist du im WLAN zu Hause?"
+      "title": "Display nicht erreichbar",
+      "hint": "Bist du zu Hause im WLAN?"
     },
     "empty": {
       "title": "Gerade wohnt kein Pet auf diesem Handy",
       "egg": "Neues Ei",
-      "ancestor": "Aus den Ahnen holen",
-      "ancestor_which": "Wer soll heimkommen?"
+      "ancestor": "Eines aus der Box holen",
+      "ancestor_which": "Wer soll nach Hause kommen?"
     },
     "stats": {
       "satiety": "Sättigung",
@@ -461,11 +461,11 @@
       "sad": "traurig",
       "hungry": "hungrig",
       "tired": "müde",
-      "dirty": "fühlt sich schmutzig",
+      "dirty": "schmutzig",
       "sick": "krank"
     },
     "status": {
-      "egg": "Ein Ei – Wärme lässt es früher schlüpfen",
+      "egg": "Ein Ei – warm gehalten schlüpft es früher",
       "line": "{form} · {age} · {doing}",
       "asleep": "schläft",
       "cold": "friert",
@@ -494,15 +494,15 @@
     },
     "next": {
       "baby": "Schlüpft in ca. {time}",
-      "ready_asleep": "Bereit zum Entwickeln – erst, wenn es wach ist.",
-      "ready": "Bereit! Halte den Knopf gedrückt, wenn du vor der Anzeige stehst – sonst passiert es in {time} von selbst."
+      "ready_asleep": "Bereit zur Entwicklung – sobald es aufwacht.",
+      "ready": "Bereit! Halte den Knopf gedrückt, während du vor dem Display stehst – sonst passiert es in {time} von selbst."
     },
     "trip": {
       "out": "Zurück in ca. {time}",
-      "returning": "Am Heimweg – zurück in ca. {time}",
+      "returning": "Auf dem Heimweg – zurück in ca. {time}",
       "backpack": "im Rucksack: {items}",
-      "full_asleep": "Der Rucksack ist noch voll – auspacken, wenn es wach ist.",
-      "back": "{name} ist zurück und hat etwas mitgebracht. Auspacken, wenn du vor der Anzeige stehst.",
+      "full_asleep": "Der Rucksack ist noch voll – auspacken, sobald es wach ist.",
+      "back": "{name} ist zurück und hat etwas mitgebracht. Pack aus, wenn du vor dem Display stehst.",
       "heading_home": "{name} macht sich auf den Heimweg",
       "brought": "Mitgebracht: {items}"
     },
@@ -514,12 +514,12 @@
         "one": "noch 1 Frucht",
         "other": "noch {n} Früchte"
       },
-      "in_bag": "×{n} · liegt in der Tasche",
+      "in_bag": "×{n} · in der Tasche",
       "hat_on": "aufsetzen",
       "hat_off": "abnehmen",
       "deco_on": "aufstellen",
       "deco_off": "wegräumen",
-      "egg": "bleibt, bis du es ausbrütest",
+      "egg": "wartet aufs Ausbrüten",
       "egg_from": "gelegt von {name}",
       "friend": "💛 {pet}",
       "friend_visits": "Freundschaft · Besuche: {n} von {needed}",
@@ -528,11 +528,11 @@
       "egg_brood": "ausbrüten",
       "effects": {
         "growth": "Ei, Baby und Kind wachsen schneller",
-        "heart": "ein Herz mehr auf der nächsten Reise",
-        "trick": "die nächste Trick-Übung zählt doppelt",
-        "train": "die nächste Übung zählt doppelt",
-        "finder": "findet auf der nächsten Reise bei jeder Rast etwas",
-        "fresh": "die nächste Reise macht nicht müde und bringt so viel wie die erste des Tages"
+        "heart": "ein Herz mehr auf dem nächsten Ausflug",
+        "trick": "das nächste Trick-Üben zählt doppelt",
+        "train": "die nächste Trainingsübung zählt doppelt",
+        "finder": "findet auf dem nächsten Ausflug bei jeder Rast etwas",
+        "fresh": "der nächste Ausflug macht nicht müde und bringt so viel wie der erste des Tages"
       },
       "house": "🏠 {house}",
       "house_spots": {
@@ -563,10 +563,10 @@
       "away": "war bei Oma",
       "grandma": "von Oma abgeholt",
       "new_egg": "ein neues Ei ist da",
-      "start": "Links oder rechts? gespielt",
+      "start": "„Links oder rechts?“ gespielt",
       "unpack": "Rucksack ausgepackt",
-      "wild_friend": "hat {pet} seine Kunststücke gezeigt und sich angefreundet 💛",
-      "wild_shrug": "hat {pet} seine Kunststücke gezeigt – nicht beeindruckt",
+      "wild_friend": "hat {pet} seine Tricks gezeigt und sich angefreundet 💛",
+      "wild_shrug": "hat {pet} seine Tricks gezeigt – {pet} war nicht beeindruckt",
       "visit": "{pet} kam zu Besuch",
       "nest": "hat mit seinem Freund ein Nest gebaut – darin liegt ein Ei 🥚",
       "collect": "Ei eingesammelt",
@@ -599,15 +599,15 @@
       "trip": "Ausflug",
       "trip_recall": "heimgerufen",
       "trip_home": "ist wieder daheim 🏠",
-      "trip_tired": "ist müde umgekehrt",
+      "trip_tired": "war müde und ist umgekehrt",
       "refused": "{text} (wollte nicht)",
       "failed": "{text} (ging nicht)",
       "trained": "{skill} trainiert",
       "battle_win": "Rauferei ({foe}): verjagt 💪",
       "battle_lose": "Rauferei ({foe}): verloren",
-      "battle_draw": "Rauferei ({foe}): keiner gab nach",
+      "battle_draw": "Rauferei ({foe}): keiner hat nachgegeben",
       "battle_ball": "{foe} ist dem Ball nachgelaufen",
-      "trip_snack": "hat den Snack gegessen, schon besser",
+      "trip_snack": "hat den Snack gegessen, schon geht's besser",
       "trip_beaten": "hatte genug und ist umgekehrt",
       "guardian": "ist am Wächter vorbeigekommen: {foe} 🏆",
       "unlock": "kennt jetzt einen neuen Weg: {area} 🗺",
@@ -625,13 +625,13 @@
       "plays": "Gespielt",
       "game": "Links oder rechts?",
       "game_value": "{games} Spiele, {won} gewonnen",
-      "tricks": "Kunststücke",
+      "tricks": "Tricks",
       "tricks_value": "{tricks} ({n}× geübt)",
-      "tricks_none": "noch keines",
+      "tricks_none": "noch keiner",
       "cleanups": "Geputzt",
       "pets": "Gestreichelt",
       "trips": "Ausflüge",
-      "fruits": "Früchte gefressen",
+      "fruits": "Früchte gegessen",
       "hearts": "Herzen",
       "favorite": "Lieblingsessen",
       "disliked": "Mag nicht",
@@ -643,25 +643,25 @@
       "guardians_value": "an {passed} von {all} vorbei"
     },
     "gallery": {
-      "entry": "{form} · {age} · seit {date}",
-      "bring_back": "Heimholen",
+      "entry": "{form} · {age} · geboren am {date}",
+      "bring_back": "Nach Hause holen",
       "album": "{met} von {all} Formen",
       "missing": "Noch nicht getroffen",
       "seen": {
         "day": "{where}, am Tag",
-        "night": "{where}, als die Sterne da waren"
+        "night": "{where}, unterm Sternenhimmel"
       },
       "mastered": "{form}, gemeistert",
-      "ancestors": "Ahnen"
+      "ancestors": "Box"
     },
     "travels": {
       "heading": "{area} · {day} · {time}",
-      "quiet": "ein ruhiger Spaziergang, nichts passiert"
+      "quiet": "ein ruhiger Spaziergang ohne Zwischenfälle"
     },
     "app": {
       "location_none": "Noch kein Ort: Dein Pet hat kein Wetter, und die Sonne richtet sich nach deiner Zeitzone.",
       "location_set": "Wetter für {latitude}, {longitude}.",
-      "locate_failed": "Dein Ort ließ sich nicht herausfinden.",
+      "locate_failed": "Dein Standort ließ sich nicht ermitteln.",
       "connect_note": "Blobling gibt es auch als LED-Display zum Selberbauen.",
       "privacy": "Datenschutz",
       "support": "Hilfe",
@@ -672,7 +672,7 @@
       "connect_ok": "Verbinden",
       "connect_failed": "Unter {address} antwortet kein Display.",
       "connected": "Verbunden mit dem Display unter {address}.",
-      "disconnect": "Zurück zum Pet auf dem Handy",
+      "disconnect": "Zurück zum Pet auf diesem Handy",
       "build_link": "So baust du eines",
       "place_off": "Aus",
       "place_fixed": "Fester Ort",
@@ -689,23 +689,23 @@
       "display_old_hint": "Diese App ist neuer als die Software auf deinem Display.",
       "app_old_title": "Die App braucht ein Update",
       "app_old_hint": "Dein Display ist neuer als diese App. Aktualisiere sie im App Store oder bei Google Play.",
-      "searching": "Suche das Display …"
+      "searching": "Display wird gesucht …"
     },
     "train": {
       "hint": "Such eine Übung aus",
-      "note": "Schau beim Training auf die Anzeige. Training wirkt am besten über mehrere Tage verteilt.",
+      "note": "Schau beim Training aufs Display. Am besten trainierst du verteilt über mehrere Tage.",
       "how": {
         "strength": "den Ball werfen",
         "speed": "aufs Signal reagieren",
         "smarts": "die Hüpfer merken"
       },
       "strength": "Wisch den Ball so fest du kannst nach oben",
-      "speed": "Schau auf die Anzeige – tippe, sobald das Signal aufleuchtet!",
+      "speed": "Schau aufs Display – tipp, sobald das Signal aufleuchtet!",
       "tap": "Tippen!",
-      "smarts_watch": "Schau auf die Anzeige und merk dir, wohin es hüpft",
-      "smarts_go": "Jetzt die gleichen Richtungen wischen",
+      "smarts_watch": "Schau aufs Display und merk dir, wohin es hüpft",
+      "smarts_go": "Jetzt wisch in dieselben Richtungen",
       "gained": "{skill} +{points}",
-      "nothing": "{skill}: genug davon für jetzt – später nochmal",
+      "nothing": "{skill}: fürs Erste genug – später noch mal",
       "early": "Zu früh – warte aufs Signal",
       "smarts_result": "{right} von {steps} richtig",
       "back": "Zurück"
@@ -713,7 +713,7 @@
     "pack": {
       "where": "Wohin?",
       "what": "Was kommt in den Rucksack?",
-      "note": "Ein Snack heilt unterwegs ein Herz, ein Ball lenkt einen Gegner ab (aber keinen Wächter).",
+      "note": "Ein Snack heilt unterwegs ein Herz, ein Ball lenkt Gegner ab (Wächter aber nicht).",
       "locked": "Der Weg dorthin führt am Wächter vorbei: {area}.",
       "guardian": "Am Ende dieses Wegs wartet ein Wächter.",
       "go": "Losschicken"
@@ -729,21 +729,21 @@
     "needs": {
       "satiety": "Zieh Futter auf {name}.",
       "mood": "Spiel mit {name}, streichle es oder wirf ihm den Ball.",
-      "energy": "Schick {name} mit dem Knopf oben schlafen.",
+      "energy": "Bring {name} mit dem Knopf oben ins Bett.",
       "hygiene": "Reib mit dem Schwamm über {name}.",
-      "health": "Medizin hilft, wenn {name} krank ist; satt, sauber und ausgeschlafen hält gesund."
+      "health": "Medizin hilft, wenn {name} krank ist. Satt, sauber und ausgeschlafen bleibt es gesund."
     },
     "adventure": {
       "egg": "Abenteuer gibt es, sobald das Ei geschlüpft ist.",
       "lead": "Was macht {name} heute?",
       "away": "Unterwegs",
       "tired": "Zu müde",
-      "too_young": "Noch zu jung",
+      "too_young": "Noch zu klein",
       "go": "Los",
-      "trip": "Rucksack packen und auf Erkundung schicken.",
+      "trip": "Rucksack packen und los auf Entdeckungstour.",
       "tricks": "{n} von {all} gelernt",
       "train": "Kraft, Tempo und Köpfchen für die Ausflüge.",
-      "game": "Rate die Hand – ein kleines Spiel zu zweit."
+      "game": "Rate, wohin es springt – ein kleines Spiel zu zweit."
     },
     "values": {
       "weight": "Gewicht",
@@ -754,20 +754,20 @@
       "adventure": "Abenteuer"
     },
     "more": {
-      "sound": "Töne",
+      "sound": "Ton",
       "sound_on": "An",
       "sound_off": "Aus",
       "pet": "Pet",
-      "new_egg_note": "Deine Funde bleiben.",
-      "retire_note": "Es ruht im Album und kann wieder heimkommen.",
-      "retire_egg_note": "Ist dann weg.",
-      "retire_kept_note": "Kommt zu deinen Funden.",
-      "take_along_note": "Es zieht vom Display ins Handy, mit seinem Haus.",
-      "bring_display_note": "Es zieht vom Handy in ein Haus am Display."
+      "new_egg_note": "Deine Fundstücke bleiben.",
+      "retire_note": "Du kannst es jederzeit wieder nach Hause holen.",
+      "retire_egg_note": "Dann ist es weg.",
+      "retire_kept_note": "Kommt zurück zu deinen Fundstücken.",
+      "take_along_note": "Es zieht mitsamt seinem Haus vom Display aufs Handy.",
+      "bring_display_note": "Es zieht vom Handy in ein Haus auf dem Display."
     },
     "gestures": {
       "bow": "nach unten",
-      "spin": "ein runder Kreis",
+      "spin": "im Kreis",
       "dance": "flach hin und her",
       "flip": "nach oben"
     },
@@ -780,30 +780,30 @@
       "empty": "Die Tasche ist leer.",
       "favorite": "{name} strahlt: Das ist das Lieblingsessen!"
     },
-    "unwrapped_bag": "Drin war: {thing} – es liegt jetzt in deiner Tasche",
-    "picked_bag": "Aufgehoben: {thing} – es liegt jetzt in deiner Tasche",
+    "unwrapped_bag": "Drin war: {thing}. Liegt jetzt in deiner Tasche",
+    "picked_bag": "Aufgehoben: {thing}. Liegt jetzt in deiner Tasche",
     "take_along": "Aufs Handy mitnehmen",
     "bring_display": "Aufs Display bringen",
-    "place_take": "Wo soll {name} am Handy wohnen?",
-    "place_bring": "Wo soll {name} am Display wohnen?",
+    "place_take": "Wo soll {name} auf dem Handy wohnen?",
+    "place_bring": "Wo soll {name} auf dem Display wohnen?",
     "taken": "{name} ist jetzt auf deinem Handy",
-    "brought": "{name} wohnt jetzt am Display",
-    "twins": "{name} gibt es zweimal, am Handy und am Display, noch aus der Zeit, bevor Pets umziehen konnten. Welches ist das echte? Das andere ruht sich in der Ahnengalerie aus.",
-    "twin_phone": "Am Handy",
-    "twin_display": "Am Display",
-    "look_phone": "Zu {name} schauen (am Handy)"
+    "brought": "{name} wohnt jetzt auf dem Display",
+    "twins": "{name} gibt es zweimal, auf dem Handy und auf dem Display – noch aus der Zeit, bevor Pets umziehen konnten. Welches ist das echte? Das andere kommt in die Box.",
+    "twin_phone": "Auf dem Handy",
+    "twin_display": "Auf dem Display",
+    "look_phone": "Zu {name} wechseln (auf dem Handy)"
   },
   "settings": {
     "title": "LED-Matrix",
     "preview": "Aktuelle Anzeige",
     "mode": "Modus",
     "mode_pet": "Pet",
-    "camera": "Pet am Display",
-    "camera_follow": "Das am Handy gewählte",
+    "camera": "Pet auf dem Display",
+    "camera_follow": "Das gerade am Handy gewählte",
     "mode_off": "Aus",
-    "pet_hint": "Pet füttern und spielen:",
+    "pet_hint": "Füttern und spielen:",
     "pet_link": "Pet-Seite",
-    "no_location": "Wetter: noch kein Ort eingetragen (siehe Ort weiter unten).",
+    "no_location": "Wetter: noch kein Ort eingetragen (siehe „Ort“ weiter unten).",
     "brightness": "Helligkeit",
     "night": "Nachtmodus",
     "night_auto": "Nachts automatisch",
@@ -812,12 +812,12 @@
     "night_dim": "gedimmt",
     "night_off": "aus",
     "night_brightness": "Helligkeit nachts",
-    "night_active_off": "Nachtmodus aktiv bis {end} – Anzeige aus",
-    "night_active_dim": "Nachtmodus aktiv bis {end} – gedimmt auf {brightness}",
+    "night_active_off": "Nachtmodus bis {end} – Anzeige aus",
+    "night_active_dim": "Nachtmodus bis {end} – gedimmt auf {brightness}",
     "location": "Ort",
     "latitude": "Breitengrad",
     "longitude": "Längengrad",
-    "location_hint": "Für das Wetter sowie Sonnenauf- und -untergang, in Dezimalgrad, etwa 52.52 und 13.40. Eine Karten-App oder OpenStreetMap zeigt sie für einen Ort an. Süden und Westen sind negativ.",
+    "location_hint": "Für das Wetter und für Sonnenauf- und -untergang, in Dezimalgrad, etwa 52.52 und 13.40. Eine Karten-App oder OpenStreetMap zeigt die Werte für jeden Ort an. Süden und Westen sind negativ.",
     "location_save": "Speichern",
     "location_clear": "Entfernen",
     "location_saved": "Ort gespeichert.",
@@ -829,15 +829,15 @@
     "update_available": "Version {latest} ist verfügbar.",
     "update_button": "Jetzt aktualisieren",
     "update_running": "Wird aktualisiert … Das Panel ist kurz dunkel, und diese Seite lädt sich danach von selbst neu.",
-    "update_failed": "Das letzte Update ist fehlgeschlagen. Das Log zeigt warum: journalctl -u led-matrix-update",
+    "update_failed": "Das letzte Update ist fehlgeschlagen. Warum, steht im Log: journalctl -u led-matrix-update",
     "pet_save": "Spielstand",
-    "pet_save_hint": "Das Pet und seine Ahnen als Datei, zum Aufheben oder um sie auf ein anderes Display mitzunehmen.",
+    "pet_save_hint": "Das Pet und alle aus der Box als Datei, zum Aufheben oder um sie auf ein anderes Display mitzunehmen.",
     "pet_save_download": "Herunterladen",
     "pet_save_load": "Laden",
     "pet_save_confirm": "Das Pet aus {file} laden? {name} wird ersetzt (und einmal auf dem Pi als pet.before-load.json aufgehoben).",
     "pet_save_loaded": "{name} ist wieder da.",
     "away": "Mitgenommen",
-    "away_hint": "Pets, die ein Handy mitgenommen hat. Ist das Handy verloren, holst du eines hier zurück; die Kopie auf dem Handy gilt dann nicht mehr.",
+    "away_hint": "Pets, die gerade auf einem Handy wohnen. Ist das Handy verloren, holst du ein Pet hier zurück; die Kopie auf dem Handy gilt dann nicht mehr.",
     "fetch_back": "Zurückholen",
     "fetch_back_confirm": "{name} ohne das Handy zurückholen? Die Kopie auf dem Handy gilt dann nicht mehr."
   }

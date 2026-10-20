@@ -128,7 +128,7 @@ test("an invalid request gets 400 and a text in the configured language", async 
     assert.equal(response.status, 400, path);
     assert.deepEqual(await json(response), { error: app.settings.t(key, { max: 16 }), key: key.slice("error.".length) }, path);
   }
-  assert.equal(app.settings.t("error.name_length", { max: 16 }), "Name: 1 bis 16 Zeichen.");
+  assert.equal(app.settings.t("error.name_length", { max: 16 }), "Ein Name hat 1 bis 16 Zeichen.");
 });
 
 test("a phone takes a pet along and brings it back; a lost phone's pet is fetched back", async () => {
