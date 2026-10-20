@@ -23,7 +23,7 @@ import { ACTIVITY_SECONDS, THROW_SECONDS } from "./model";
 import { Random } from "./random";
 import * as sky from "./sky";
 import { faceAnchor, outline, recolor, swapColors, tint, wideRow, type Sheet } from "./sprites";
-import { sunTimes } from "./sun";
+import { moonPhase, sunTimes } from "./sun";
 
 export const FPS = 10;
 export const SLEEP_FPS = 4;
@@ -38,6 +38,9 @@ const SKY_NIGHT: [Color, Color] = [[0, 0, 10], [8, 8, 35]];
 // The pet stands out from the sky thanks to its black outline (see outline).
 const SKY_DAY: [Color, Color] = [[10, 45, 110], [60, 130, 190]];
 const SKY_GLOW: Color = [200, 80, 40];
+const MOON: Color = [220, 220, 170];
+const MOON_DARK: Color = [22, 22, 40]; // the unlit part: just a hint of the disc
+const MOON_RADIUS = 3;
 const SKY_OVERCAST: [Color, Color] = [[40, 45, 55], [90, 95, 105]];
 const GRASS: Color = [40, 140, 50];
 const SOIL: Color = [70, 40, 15];
@@ -2382,11 +2385,30 @@ export class PetScene {
       img.ellipse(Math.trunc(sx), Math.trunc(sy), Math.trunc(sx + 4), Math.trunc(sy + 4),
         lerp([255, 140, 40], [255, 230, 120], day));
     } else if (day < 0.5) {
-      img.ellipse(this.width - 14, 10, this.width - 9, 15, [220, 220, 170]);
-      img.ellipse(this.width - 12, 9, this.width - 7, 14, top); // crescent
+      this.drawMoon(img, this.width - 12, 12, moonPhase(now.getTime() / 1000));
     }
     this.night = 1 - day;
     return img;
+  }
+
+  /**
+   * The moon as it really is tonight, centered at (cx, cy): lit from the right while it waxes, from
+   * the left while it wanes, and only a faint disc at new moon.
+   */
+  private drawMoon(img: Image, cx: number, cy: number, phase: number): void {
+    const k = Math.cos(2 * Math.PI * phase); // 1 at new moon, -1 at full moon
+    for (let dy = -MOON_RADIUS; dy <= MOON_RADIUS; dy++) {
+      for (let dx = -MOON_RADIUS; dx <= MOON_RADIUS; dx++) {
+        const r = Math.hypot(dx + 0.5, dy + 0.5);
+        if (r > MOON_RADIUS + 0.3) {
+          continue;
+        }
+        const half = Math.sqrt(Math.max(0, (MOON_RADIUS + 0.3) ** 2 - (dy + 0.5) ** 2)); // half the width of this row
+        const x = dx + 0.5;
+        const lit = phase < 0.5 ? x > k * half : x < -k * half;
+        img.point(cx + dx, cy + dy, lit ? MOON : MOON_DARK);
+      }
+    }
   }
 
   private drawGround(img: Image, grass: Color = GRASS, soil: Color = SOIL): void {

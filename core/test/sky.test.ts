@@ -38,3 +38,17 @@ test("sun: dusk is the time around sunset", () => {
     .map((t) => sun.isDusk(t, berlin)), [false, true, true, true, false, false]);
   assert.equal(sun.isDusk(at(22, 10)), false); // without a location the estimate applies: sunset is earlier there
 });
+
+test("moon: its phase and the nights of the full moon", () => {
+  const utc = (text: string) => Date.parse(`${text}Z`) / 1000;
+  // real new and full moons, to within a day (the mean month drifts by up to about 14 hours)
+  for (const [text, phase] of [["2026-10-10T15:50", 0], ["2026-10-26T04:12", 0.5], ["2027-01-22T12:17", 0.5]] as const) {
+    const off = Math.min(Math.abs(sun.moonPhase(utc(text)) - phase), 1 - Math.abs(sun.moonPhase(utc(text)) - phase));
+    assert.ok(off * sun.SYNODIC_DAYS < 1, `${text}: ${sun.moonPhase(utc(text))}`);
+  }
+  // full for three nights or so, once a month
+  const full = Array.from({ length: 60 }, (_, day) => sun.isFullMoon(utc("2026-10-01T22:00") + day * 86400));
+  const nights = full.filter(Boolean).length;
+  assert.ok(nights >= 5 && nights <= 7, String(nights));
+  assert.deepEqual([full[25], full[18], full[10]], [true, false, false]);
+});

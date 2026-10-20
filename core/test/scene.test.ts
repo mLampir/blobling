@@ -446,3 +446,21 @@ test("the house: outside on the left, inside while the pet sleeps, and the way i
   const room = frames({ house: 2, asleep: true }, 1)[0];
   assert.ok(differing(look, room) > 0);
 });
+
+test("the moon in the sky is the real one", () => {
+  const moonPixels = (date: Date) => {
+    const [image] = frames({ asleep: true }, 1, date, { temp: 10, code: 0 });
+    let lit = 0;
+    for (let y = 8; y < 17; y++) {
+      for (let x = 48; x < 60; x++) {
+        lit += color(image, x, y)[0] > 150 ? 1 : 0;
+      }
+    }
+    return lit;
+  };
+  const full = moonPixels(new Date(2026, 9, 25, 23, 30));
+  const half = moonPixels(new Date(2026, 9, 18, 23, 30));
+  const none = moonPixels(new Date(2026, 9, 10, 23, 30));
+  assert.ok(full > half && half > none, `${full} ${half} ${none}`);
+  assert.ok(none <= 2, String(none)); // at new moon there is hardly anything to see (a star, maybe)
+});

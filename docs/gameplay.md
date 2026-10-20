@@ -102,8 +102,9 @@ half an hour and goes back to sleep. If it runs out of energy during the day,
 it takes a nap.
 
 The sky follows the real time of day, with sunrise and sunset for your
-location, a moon and stars at night. Clouds, rain and snow come from the real
-weather; in rain or snow the pet holds an umbrella.
+location, and stars at night with the moon as it really is that night, from
+new to full. Clouds, rain and snow come from the real weather; in rain or snow
+the pet holds an umbrella.
 
 **Cold mornings.** When it is below 5 °C outside, the pet wakes up shivering,
 and its breath shows. Rub it warm with the petting gesture: that is worth a

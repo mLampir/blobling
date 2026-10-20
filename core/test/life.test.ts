@@ -232,3 +232,21 @@ test("every form is in the album once, and a pet has been the ones on its way", 
   assert.deepEqual(life.formsOf("adult", "flarelet"), ["egg:ember", "baby:ember", "child:ember", "adult:flarelet"]);
   assert.deepEqual(life.formsOf("ghost", "blob"), []);
 });
+
+test("the diary and the world have what later rules may look at", () => {
+  pet.stage = "child";
+  pet.stage_since = start;
+  pet.stats.health = 50;
+  model.advance(pet, start + 600, BEDTIME);
+  assert.ok(pet.diary.weak_minutes >= 9); // minutes with its health low
+  assert.equal(act(pet, "sleep", at("2026-10-12 23:10"))[0], true);
+  assert.equal(pet.diary.tucked, 1); // tucked in at bedtime
+
+  const vienna = [48.21, 16.37] as const;
+  const night = model.worldAt(at("2026-10-26 01:30"), 95, vienna, 12);
+  assert.deepEqual([night.raining, night.storm, night.snowing, night.dark, night.fullMoon, night.temp, night.minute],
+    [true, true, false, true, true, 12, 90]);
+  assert.ok(night.sunrise! > 5 * 60 && night.sunset! < 18 * 60);
+  const day = model.worldAt(at("2026-10-18 12:00"), 71, vienna);
+  assert.deepEqual([day.raining, day.snowing, day.dark, day.fullMoon, day.temp], [false, true, false, false, null]);
+});

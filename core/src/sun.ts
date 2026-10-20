@@ -1,4 +1,4 @@
-/** Sunrise and sunset (NOAA approximation, accurate to a few minutes). */
+/** Sunrise and sunset (NOAA approximation, accurate to a few minutes), and the phase of the moon. */
 
 // Without a location in the configuration: a mid latitude, longitude from the time zone (see sunTimes)
 export const FALLBACK_LATITUDE = 45.0;
@@ -48,6 +48,23 @@ export function isDusk(t: number, location: Location = null): boolean {
   const date = new Date(t * 1000);
   const minute = date.getHours() * 60 + date.getMinutes();
   return Math.abs(minute - sunTimes(date, location)[1]) <= DUSK_MINUTES;
+}
+
+// The moon: a mean synodic month from a known new moon (6 January 2000, 18:14 UTC). Off by up to
+// half a day against the real one, which is plenty for a pet.
+export const SYNODIC_DAYS = 29.530588853;
+const NEW_MOON = Date.UTC(2000, 0, 6, 18, 14) / 1000;
+export const FULL_MOON_DAYS = 1.5; // this long before and after the full moon, it counts as full
+
+/** The phase of the moon at the time t (Unix seconds): 0 = new moon, 0.5 = full moon, back to 1. */
+export function moonPhase(t: number): number {
+  const days = (t - NEW_MOON) / 86400;
+  return ((days / SYNODIC_DAYS) % 1 + 1) % 1;
+}
+
+/** Is it full moon at the time t (Unix seconds), give or take FULL_MOON_DAYS? */
+export function isFullMoon(t: number): boolean {
+  return Math.abs(moonPhase(t) - 0.5) * SYNODIC_DAYS <= FULL_MOON_DAYS;
 }
 
 /** Is the sun down at the time t (Unix seconds), between sunset and sunrise? */

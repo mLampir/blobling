@@ -97,6 +97,8 @@ export interface Trip {
   boosts?: string[];
   /** What has happened so far, for the travel diary (missing in trips saved before it). */
   log?: TravelStop[];
+  /** It rained at one of the stations so far. */
+  rained?: boolean;
 }
 
 /** An egg that is kept: its line, and what a pet has passed on to it (wild.ts). */

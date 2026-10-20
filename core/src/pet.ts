@@ -327,7 +327,7 @@ export class Pet {
     const s = this.find(id);
     const guest = wild.visitor(s, now);
     return {
-      species: s.species, stage: s.stage, hint: life.hint(s, model.worldAt(now, this.weather(), this.location)),
+      species: s.species, stage: s.stage, hint: life.hint(s, model.worldAt(now, this.weather(), this.location, this.temperature())),
       asleep: s.asleep, sick: s.sick, poops: s.poops,
       activity: model.activityOf(s, now), mood: model.moodOf(s), cold: home.cold(s, now), hot: home.hot(s, now),
       needs: model.needs(s), activity_until: s.activity_until,
