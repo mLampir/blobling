@@ -301,17 +301,17 @@
     "place_bring_back": "Bring {name} home? Where should it live?",
     "place_new": "A new house",
     "place_free": "{free} of {all} places free",
-    "place_replace": "Goes into the box",
+    "place_replace": "Goes into the album",
     "place_replace_egg": "The egg makes room",
     "look": "Switch to {name}",
     "new_egg_done": "A new egg is waiting 🥚",
-    "retire": "📦 Put in the box",
-    "retire_which": "Who goes into the box?",
-    "retire_confirm": "Put {name} in the box? You can bring it home again any time.",
+    "retire": "📖 Move to the album",
+    "retire_which": "Who goes into the album?",
+    "retire_confirm": "Move {name} to the album? You can bring it home again any time.",
     "retire_egg_confirm": "Give up the egg? It'll be gone for good.",
-    "retire_ok": "Put in the box",
+    "retire_ok": "Move to album",
     "retire_egg_ok": "Give up",
-    "retired": "{name} is in the box now.",
+    "retired": "{name} is in the album now.",
     "retired_egg": "The egg is gone.",
     "retire_kept_confirm": "Put the egg back with your finds? You can hatch it later.",
     "retire_kept_ok": "Put back",
@@ -445,7 +445,7 @@
     "empty": {
       "title": "No pet lives on this phone right now",
       "egg": "New egg",
-      "ancestor": "Take one out of the box",
+      "ancestor": "Take one from the album",
       "ancestor_which": "Who should come home?"
     },
     "stats": {
@@ -652,7 +652,7 @@
         "night": "{where}, when the stars were out"
       },
       "mastered": "{form}, mastered",
-      "ancestors": "Box"
+      "ancestors": "Pets in the album"
     },
     "travels": {
       "heading": "{area} · {day} · {time}",
@@ -788,7 +788,7 @@
     "place_bring": "Where should {name} live on the display?",
     "taken": "{name} is on your phone now",
     "brought": "{name} lives on the display now",
-    "twins": "{name} is here twice, on the phone and on the display, from before pets could move. Which one is the real one? The other one goes into the box.",
+    "twins": "{name} is here twice, on the phone and on the display, from before pets could move. Which one is the real one? The other one goes into the album.",
     "twin_phone": "On this phone",
     "twin_display": "On the display",
     "look_phone": "Look at {name} (on this phone)"
@@ -831,7 +831,7 @@
     "update_running": "Updating … the panel goes dark for a moment, and this page reloads by itself when it's done.",
     "update_failed": "The last update failed. The log says why: journalctl -u led-matrix-update",
     "pet_save": "Save file",
-    "pet_save_hint": "The pet and everyone in the box as a file, to keep them safe or to move them to another display.",
+    "pet_save_hint": "The pet and everyone in the album as a file, to keep them safe or to move them to another display.",
     "pet_save_download": "Download",
     "pet_save_load": "Load",
     "pet_save_confirm": "Load the pet from {file}? {name} is replaced (and kept once on the Pi as pet.before-load.json).",

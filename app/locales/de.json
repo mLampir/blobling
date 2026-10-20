@@ -301,17 +301,17 @@
     "place_bring_back": "{name} nach Hause holen? Wo soll es wohnen?",
     "place_new": "Ein neues Haus",
     "place_free": "{free} von {all} Plätzen frei",
-    "place_replace": "Kommt in die Box",
+    "place_replace": "Kommt ins Album",
     "place_replace_egg": "Das Ei macht Platz",
     "look": "Zu {name} wechseln",
     "new_egg_done": "Ein neues Ei liegt bereit 🥚",
-    "retire": "📦 In die Box",
-    "retire_which": "Wer soll in die Box?",
-    "retire_confirm": "{name} in die Box? Du kannst es jederzeit wieder nach Hause holen.",
+    "retire": "📖 Ins Album",
+    "retire_which": "Wer soll ins Album?",
+    "retire_confirm": "{name} ins Album? Du kannst es jederzeit wieder nach Hause holen.",
     "retire_egg_confirm": "Das Ei aufgeben? Dann ist es weg.",
-    "retire_ok": "In die Box",
+    "retire_ok": "Ins Album",
     "retire_egg_ok": "Aufgeben",
-    "retired": "{name} ist jetzt in der Box.",
+    "retired": "{name} ist jetzt im Album.",
     "retired_egg": "Das Ei ist weg.",
     "retire_kept_confirm": "Das Ei zurück zu deinen Fundstücken legen? Du kannst es später ausbrüten.",
     "retire_kept_ok": "Zurücklegen",
@@ -445,7 +445,7 @@
     "empty": {
       "title": "Gerade wohnt kein Pet auf diesem Handy",
       "egg": "Neues Ei",
-      "ancestor": "Eines aus der Box holen",
+      "ancestor": "Eines aus dem Album holen",
       "ancestor_which": "Wer soll nach Hause kommen?"
     },
     "stats": {
@@ -652,7 +652,7 @@
         "night": "{where}, unterm Sternenhimmel"
       },
       "mastered": "{form}, gemeistert",
-      "ancestors": "Box"
+      "ancestors": "Pets im Album"
     },
     "travels": {
       "heading": "{area} · {day} · {time}",
@@ -788,7 +788,7 @@
     "place_bring": "Wo soll {name} auf dem Display wohnen?",
     "taken": "{name} ist jetzt auf deinem Handy",
     "brought": "{name} wohnt jetzt auf dem Display",
-    "twins": "{name} gibt es zweimal, auf dem Handy und auf dem Display – noch aus der Zeit, bevor Pets umziehen konnten. Welches ist das echte? Das andere kommt in die Box.",
+    "twins": "{name} gibt es zweimal, auf dem Handy und auf dem Display – noch aus der Zeit, bevor Pets umziehen konnten. Welches ist das echte? Das andere kommt ins Album.",
     "twin_phone": "Auf dem Handy",
     "twin_display": "Auf dem Display",
     "look_phone": "Zu {name} wechseln (auf dem Handy)"
@@ -831,7 +831,7 @@
     "update_running": "Wird aktualisiert … Das Panel ist kurz dunkel, und diese Seite lädt sich danach von selbst neu.",
     "update_failed": "Das letzte Update ist fehlgeschlagen. Warum, steht im Log: journalctl -u led-matrix-update",
     "pet_save": "Spielstand",
-    "pet_save_hint": "Das Pet und alle aus der Box als Datei, zum Aufheben oder um sie auf ein anderes Display mitzunehmen.",
+    "pet_save_hint": "Das Pet und alle aus dem Album als Datei, zum Aufheben oder um sie auf ein anderes Display mitzunehmen.",
     "pet_save_download": "Herunterladen",
     "pet_save_load": "Laden",
     "pet_save_confirm": "Das Pet aus {file} laden? {name} wird ersetzt (und einmal auf dem Pi als pet.before-load.json aufgehoben).",

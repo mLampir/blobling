@@ -180,7 +180,7 @@ finding it out by yourself.
 
 An adult stays forever. A new egg moves into a house of its own next to it
 (see [Several pets at home](#several-pets-at-home)); only when the home is
-full, you pick a pet that goes to rest in the ancestors' gallery, from where
+full, you pick a pet that moves into the album, from where
 it can come home again.
 
 The **album** is the long-term goal: to have had every form once. It has a
@@ -198,7 +198,7 @@ missing but not what they are or how to get them. A slot has three steps:
 
 The album belongs to you, not to one pet: it stays when a new egg starts, and
 it travels with the pet's file. A file from before the album fills it in from
-the ancestors.
+the pets kept in it.
 
 A quiet safety net keeps no line out of reach for long: once you have kept
 pets for a month, the wild pets of lines whose egg never came meet your pet
@@ -247,19 +247,19 @@ favorite can stay while new eggs are raised for the album.
 - **One store for all.** The finds, the food and the eggs belong to the whole
   home. A hat or a decoration exists once: put it on one pet, and it comes off
   the other.
-- **A new egg** (or an ancestor brought home) asks where it should live: in a
+- **A new egg** (or a pet brought home from the album) asks where it should live: in a
   new house while there is a free place, or in the place of one of the pets.
-  A pet that makes room goes to rest in the ancestors' gallery; an egg that
+  A pet that makes room moves into the album; an egg that
   hasn't hatched is given up. Pets only leave by your choice.
-- **Send to the ancestors** (under *More*) lets any pet of the home go to
-  rest without a new egg taking its place, not only the one on screen. A special egg goes back to the finds, to be brooded
+- **Move to the album** (under *More*) lets any pet of the home move
+  there without a new egg taking its place, not only the one on screen. A special egg goes back to the finds, to be brooded
   later; a usual one is gone. The display always keeps one pet; a phone may
-  end up with none, keeps its finds and offers a new egg or one of its
-  ancestors.
-- **The ancestors' gallery** keeps the pets that went to rest, frozen: they
+  end up with none, keeps its finds and offers a new egg or one of the pets
+  in the album.
+- **The album** keeps the pets moved into it, frozen: they
   lose nothing, don't grow on and don't get older. **Bring home** next to one
   of them brings it back as it was when it left, into a free house or in
-  someone's place. Ancestors from before the gallery kept the pets are only
+  someone's place. Pets from before the album kept whole pets are only
   pictures.
 - **Neighbours get together** for a quarter of an hour once every four
   hours, like a friend's visit (which comes first), and play the same games.
@@ -299,8 +299,8 @@ with the display out of reach, the app shows only the phone's own pets.
   its settings page can fetch one back. The copy on that phone no longer counts
   then.
 - **Copies from before pets could move** (the same pet on the phone and at the
-  display) are asked about once: you pick the real one, and the other rests
-  among the ancestors.
+  display) are asked about once: you pick the real one, and the other moves
+  into the album.
 
 ## Tricks
 
@@ -658,7 +658,7 @@ pet on the phone, it is the same as if it had been running.
 
 - The panel shows its home without it: the plant, the house and whatever it
   left lying around stay; the poops are gone, Grandma cleaned up.
-- At Grandma's time stands still for it, as in the ancestors' gallery:
+- At Grandma's time stands still for it, as in the album:
   nothing runs low, it doesn't grow on and doesn't get older, and a child's
   care diary waits. So a child doesn't grow up while you are away, and you
   are there when it does.
@@ -700,7 +700,7 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   scrolling, with the button to set off at the bottom.
 - **Diary** has one tab each for the history (where a scuffle can be watched
   again), the stats (with weight and bond), the trips, the finds and the
-  album, with the ancestors below it, each one that can come home with a
+  album, with the pets kept in it below, each one that can come home with a
   button for it. Trips and finds show up once there are
   any, the album once the first egg has hatched.
 - **More**: renaming and starting over with a usual egg, sound on or off, the
@@ -750,7 +750,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
-| Catching up, the state for the app, what is saved, ancestors (resting, and coming home again), the album (seen, had, mastered) and its safety net (`longMissing`) | `core/src/pet.ts`, `core/src/state.ts` |
+| Catching up, the state for the app, what is saved, pets in the album (kept frozen, and coming home again), the album (seen, had, mastered) and its safety net (`longMissing`) | `core/src/pet.ts`, `core/src/state.ts` |
 | Several pets at home: the houses, the shared store, places for a new egg | `core/src/pet.ts` (`PLACES`, `newEgg`, `bringBack`) |
 | Neighbours getting together, sleeping side by side, copying tricks | `core/src/companion.ts` |
 | Moving between a phone and a display: move numbers, the sealed copy, fetching back | `core/src/pet.ts` (`release`, `adopt`, `handOver`, `takeIn`, `fetchBack`), `app/src/main.ts` |
