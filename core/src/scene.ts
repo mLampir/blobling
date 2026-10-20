@@ -1744,12 +1744,23 @@ export class PetScene {
           this.trickFx(t, "sp_bubblehelm", once, ANCHOR, 1, 6, 16, [30, 30], [-10, -10], 0.8);
         }
         break;
-      case "hippula": // throws open its cape, and a swarm of little bats flies at the opponent
-        if (q < 0.35) {
+      case "hippula": // wraps itself in its cape, turns into a swarm of bats that flies at the opponent, and back
+        if (q < 0.2) {
           Object.assign(pose, { body: "squash", face: "blink" });
-        } else if (q < 0.6) {
-          Object.assign(pose, { body: "stretch", face: "laugh" });
-          this.trickFx(t, "sp_hippula", 0.06, BAT, 1, 4, 16 + this.rng.uniform(-4, 6), [24, 36], [-8, 8], 0.8);
+        } else if (q < 0.24) {
+          Object.assign(pose, { body: "squash", white: true });
+          this.trickFx(t, "sp_hippula_burst", once, BAT, 8, 0, 14, [-6, 14], [-14, 8], 0.5);
+        } else if (q < 0.78) { // it is the swarm now: there and back
+          pose.hidden = true;
+          if (q < 0.5) {
+            this.trickFx(t, "sp_hippula", 0.04, BAT, 1, 0, 14 + this.rng.uniform(-6, 6), [34, 46], [-8, 8], 0.7);
+          } else if (q > 0.56) {
+            this.trickFx(t, "sp_hippula_back", 0.04, BAT, 1, 30, 14 + this.rng.uniform(-6, 6), [-46, -34], [-8, 8], 0.7);
+          }
+        } else if (q < 0.82) {
+          Object.assign(pose, { body: "stretch", white: true });
+        } else {
+          Object.assign(pose, { body: "idle", face: "smile" });
         }
         break;
       case "acewing": // climbs high and dives at the opponent so fast that the air bangs
