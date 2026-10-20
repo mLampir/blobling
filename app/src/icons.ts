@@ -82,6 +82,22 @@ export function thingUrl(id: string): string {
   return url;
 }
 
+/**
+ * Something to discover on a trip (an egg, a hat, a decoration) or an area's guardian ("foe_<id>"),
+ * in its colors once found, otherwise as its outline: there is something, but not what.
+ */
+export function discoveryUrl(id: string, found: boolean): string {
+  const key = `discovery|${id}|${found}`;
+  let url = urls.get(key);
+  if (url === undefined) {
+    const trip = sceneAssets().sheets.trip;
+    const tag = trip.has(`hat_${id}`) ? `hat_${id}` : id;
+    url = trip.has(tag) ? dataUrl(stack([trip.image(tag)]), !found) : "";
+    urls.set(key, url);
+  }
+  return url;
+}
+
 /** Pictures on top of each other, centered, on a square with a pixel of room around them. */
 function stack(parts: Image[]): Image {
   const width = Math.max(...parts.map((part) => part.width));
@@ -96,10 +112,17 @@ function stack(parts: Image[]): Image {
   return out;
 }
 
-function dataUrl(image: Image): string {
+/** `outline`: every pixel that isn't clear in one color. */
+function dataUrl(image: Image, outline = false): string {
+  const data = imageData(image);
+  if (outline) {
+    for (let i = 0; i < data.data.length; i += 4) {
+      if (data.data[i + 3]) data.data.set([...OUTLINE, 255], i);
+    }
+  }
   const canvas = document.createElement("canvas");
   canvas.width = image.width;
   canvas.height = image.height;
-  canvas.getContext("2d")!.putImageData(imageData(image), 0, 0);
+  canvas.getContext("2d")!.putImageData(data, 0, 0);
   return canvas.toDataURL();
 }
