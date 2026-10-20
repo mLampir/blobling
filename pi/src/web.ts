@@ -157,6 +157,9 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
       mode: s.mode, brightness: s.brightness, night: s.night,
       night_active: display.nightActive(), weather_configured: weather.configured,
       language: settings.i18n.language, location: settings.location, update: updates.state(),
+      // the pets at home, for pinning the camera to one of them; pinned: its id, or null
+      pets: pet.pets.map((p) => ({ id: p.id, name: p.name, stage: p.stage, species: p.species })),
+      camera: display.camera, pinned: s.pinned,
     };
   };
 
@@ -185,6 +188,11 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         display.setBrightness(value);
         return json(stateJson());
       }
+
+      case "POST /api/pin":
+        // the camera stays with one pet (its id), or follows the phones again (null)
+        display.pin(fields(await readJson(request)).pet ?? null);
+        return json(stateJson());
 
       case "POST /api/night":
         display.setNight(await readJson(request));
@@ -236,7 +244,8 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
       case "GET /preview.png": {
         // What the matrix is showing right now (for the live preview); with ?next, the frame after
         // that one, as soon as it is drawn (the app's scene, one frame after the other).
-        const frame = url.searchParams.has("next") ? await display.nextFrame(PREVIEW_WAIT) : display.lastFrame;
+        // ?pet=: the frames of that pet, which the panel may not be showing
+        const frame = await display.frameOf(url.searchParams.get("pet"), url.searchParams.has("next"), PREVIEW_WAIT);
         if (png?.[0] !== frame) {
           png = [frame, encodePng(frame)]; // encoded once, however many are watching
         }
@@ -273,7 +282,7 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         const answer = await petRequest(
           {
             pet, action: display.petAction.bind(display), newEgg: display.petNewEgg.bind(display),
-            swap: display.petSwap.bind(display), bringBack: display.petBringBack.bind(display),
+            bringBack: display.petBringBack.bind(display), look: display.look.bind(display),
           },
           request.method ?? "GET", url, () => readJson(request));
         if (answer === NOT_A_PET_ROUTE) {

@@ -145,6 +145,8 @@ export interface PetEvent {
 }
 
 export interface PetState {
+  /** Stays the same for the whole life of the pet, wherever it goes (Pet.select, the app's camera). */
+  id: string;
   name: string;
   /** The adult form; until then the name of its line (life.LINES). */
   species: string;
@@ -190,8 +192,9 @@ export interface PetState {
   travels: Travel[];
   /** Brought home but not unpacked yet. */
   backpack: string[];
-  /** Find -> count (home.ITEMS), except for eggs. */
+  /** Find -> count (home.ITEMS), except for eggs; shared by all pets at home (Pet keeps one store). */
   items: Record<string, number>;
+  /** The eggs that are kept, shared like the finds. */
   eggs: Egg[];
   friend: Friend | null;
   /** The egg the two have laid, until it is collected. */
@@ -205,7 +208,7 @@ export interface PetState {
   hat: string;
   /** Decorations set out, the oldest first, at most home.decoSpots (home.placeDeco says where they stand). */
   deco: string[];
-  /** How far the house has grown (home.HOUSE_STEPS), 0 = none yet; it stays from one pet to the next. */
+  /** How far its house has grown (home.HOUSE_STEPS), 0 = none yet; it stays with the place when a new pet moves in. */
   house: number;
   /** Until when somebody is looking into the house (the scene shows the inside). */
   look_in_until: number;
@@ -234,6 +237,7 @@ export interface PetState {
 /** A state with every field at its starting value. */
 export function newState(): PetState {
   return {
+    id: "",
     name: "",
     species: "blob",
     stage: "egg",

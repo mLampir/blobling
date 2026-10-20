@@ -72,14 +72,14 @@ test("the night runs from its start to its end, over midnight too", () => {
 test("mode, brightness and night mode survive a restart", () => {
   const directory = tempDir();
   const { display } = parts(directory);
-  assert.deepEqual(display.state(), { mode: "pet", brightness: 50, night: DEFAULT_NIGHT });
+  assert.deepEqual(display.state(), { mode: "pet", brightness: 50, night: DEFAULT_NIGHT, pinned: null });
   assert.deepEqual(display.bedtime(), DEFAULT_BEDTIME);
 
   display.setMode("off");
   display.setBrightness(250);
   display.setNight(NIGHT);
   refused(() => display.setMode("disco"), "unknown_mode");
-  const expected = { mode: "off", brightness: 100, night: NIGHT };
+  const expected = { mode: "off", brightness: 100, night: NIGHT, pinned: null };
   assert.deepEqual(JSON.parse(readFileSync(join(directory, "state.json"), "utf-8")), expected);
 
   const restarted = parts(directory).display;
@@ -90,9 +90,9 @@ test("mode, brightness and night mode survive a restart", () => {
 test("a saved state that is broken falls back to the defaults, part by part", () => {
   const directory = tempDir();
   writeFileSync(join(directory, "state.json"), JSON.stringify({ mode: "off", brightness: "bright", night: 5 }));
-  assert.deepEqual(parts(directory).display.state(), { mode: "off", brightness: 50, night: DEFAULT_NIGHT });
+  assert.deepEqual(parts(directory).display.state(), { mode: "off", brightness: 50, night: DEFAULT_NIGHT, pinned: null });
   writeFileSync(join(directory, "state.json"), "not json");
-  assert.deepEqual(parts(directory).display.state(), { mode: "pet", brightness: 50, night: DEFAULT_NIGHT });
+  assert.deepEqual(parts(directory).display.state(), { mode: "pet", brightness: 50, night: DEFAULT_NIGHT, pinned: null });
 });
 
 test("the loop draws the pet, goes dark when switched off and shows the pet when it is given something", async () => {

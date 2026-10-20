@@ -31,7 +31,8 @@
     "invalid_location": "Bitte einen Breitengrad von -90 bis 90 und einen Längengrad von -180 bis 180 eingeben.",
     "no_update": "Gerade gibt es kein Update zu installieren.",
     "not_a_save": "Das ist kein Spielstand eines Pets.",
-    "no_second": "Es gibt kein zweites Pet.",
+    "no_pet": "Dieses Pet wohnt nicht hier.",
+    "no_place": "Für ein weiteres Pet ist kein Platz. Wähle, wessen Platz es bekommt.",
     "no_ancestor": "Dieses Pet kann nicht mehr zurückkommen."
   },
   "stages": {

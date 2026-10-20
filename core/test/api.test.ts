@@ -33,7 +33,16 @@ test("the pet is described, acted on, renamed and started over", async () => {
   assert.deepEqual(ancestors, []);
   assert.equal(album.filter(Boolean).length, 1); // the egg it starts with
   assert.deepEqual(await ask(pet, "GET", "/api/pet/travels"), { api: API_VERSION, travels: [] });
-  assert.equal((await ask(pet, "POST", "/api/pet/new_egg", { confirm: true })).stage, "egg");
+  const egg = await ask(pet, "POST", "/api/pet/new_egg", { confirm: true });
+  assert.deepEqual([egg.stage, egg.pets.length], ["egg", 2]);
+
+  // every request can name the pet it is for; switching moves the camera
+  const [mimi] = egg.pets;
+  assert.equal((await ask(pet, "GET", `/api/pet?pet=${mimi.id}`)).name, "Mimi Mau");
+  assert.equal((await ask(pet, "POST", "/api/pet/look", { pet: mimi.id })).id, mimi.id);
+  assert.equal((await ask(pet, "GET", "/api/pet")).id, mimi.id);
+  assert.equal((await ask(pet, "POST", "/api/pet/settings", { name: "Egg", pet: egg.id })).name, "Egg");
+  assert.equal((await ask(pet, "GET", `/api/pet/events?pet=${egg.id}`)).events[0].action, "new_egg");
 });
 
 test("an invalid request throws the key of its text, and other paths are not the pet's", async () => {
@@ -43,8 +52,9 @@ test("an invalid request throws the key of its text, and other paths are not the
     ["/api/pet/action", { action: "pet", id: 5 }, "invalid_id"],
     ["/api/pet/new_egg", {}, "confirm"],
     ["/api/pet/new_egg", null, "confirm"],
-    ["/api/pet/new_egg", { confirm: true, keep: "both" }, "invalid_value"],
-    ["/api/pet/swap", {}, "no_second"],
+    ["/api/pet/new_egg", { confirm: true, place: "nobody" }, "no_pet"],
+    ["/api/pet/look", { pet: "nobody" }, "no_pet"],
+    ["/api/pet/action", { action: "pet", pet: "nobody" }, "no_pet"],
     ["/api/pet/settings", { name: "  " }, "name_length"],
   ];
   for (const [path, body, key] of cases) {
