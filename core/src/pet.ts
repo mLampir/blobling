@@ -731,6 +731,8 @@ export class Pet {
         age_days: pet.stage === "egg" ? 0 : Math.max(0, Math.floor((now - pet.born_at) / 86400)),
         grandma: !!pet.grandma, away: !!pet.trip, needs: model.needs(pet).length > 0,
         born_at: Math.round(pet.born_at),
+        // an egg that would go back among the kept eggs if it went (retire)
+        kept_egg: !!model.keptEgg(pet),
       })),
       // how many pets can live at home (one house each)
       places: PLACES,

@@ -473,7 +473,7 @@
       <ul class="list">
         <li><button class="row" id="rename"><span><span data-t="page.rename"></span><small class="pet-name"></small></span><span class="chev">›</span></button></li>
         <li id="new-egg-row"><button class="row" id="new-egg"><span><span data-t="page.new_egg"></span><small data-t="page.more.new_egg_note"></small></span><span class="chev">›</span></button></li>
-        <li id="retire-row"><button class="row" id="retire"><span><span id="retire-label"></span><small id="retire-note"></small></span><span class="chev">›</span></button></li>
+        <li id="retire-row"><button class="row" id="retire"><span><span data-t="page.retire"></span><small data-t="page.more.retire_note"></small></span><span class="chev">›</span></button></li>
         <li id="take-row" hidden><button class="row" id="take-along"><span><span data-t="page.take_along"></span><small data-t="page.more.take_along_note"></small></span><span class="chev">›</span></button></li>
         <li id="bring-row" hidden><button class="row" id="bring-display"><span><span data-t="page.bring_display"></span><small data-t="page.more.bring_display_note"></small></span><span class="chev">›</span></button></li>
       </ul>
@@ -1021,11 +1021,8 @@ function render(s) {
   renderFinds(s);
   renderAdventures(s);
   $("new-egg-row").hidden = egg;
-  // the display keeps its last pet; a special egg goes back to the finds, a usual one just goes
+  // the display keeps its last pet
   $("retire-row").hidden = app.home() === "display" && s.pets.filter((p) => !p.phone).length <= 1;
-  const kind = retireKind(s);
-  $("retire-label").textContent = t(`page.retire${kind}`);
-  $("retire-note").textContent = t(`page.more.retire${kind}_note`);
 }
 
 // The meters: a tap says how it is and what would help
@@ -2018,14 +2015,17 @@ $("bring-display").addEventListener("click", async () => {
 });
 
 // A pet goes to rest among the ancestors, in the album, from where it can come home again
-// "" for a pet, "_egg" for a usual egg (it goes), "_kept" for a special one (back to the finds, as in model.keptEgg)
-function retireKind(s) {
-  if (s.stage !== "egg") return "";
-  return s.species !== "blob" || s.skills.some((x) => x.value) ? "_kept" : "_egg";
-}
+// any pet of the home the phone looks at, not only the one on screen.
+// "" for a pet, "_egg" for a usual egg (it goes), "_kept" for a special one (back to the finds)
+const retireKind = (p) => p.stage !== "egg" ? "" : p.kept_egg ? "_kept" : "_egg";
 $("retire").addEventListener("click", async () => {
-  if (!current) return;
-  const s = current, kind = retireKind(s);
+  const home = app.homes()[app.home()];
+  if (!current || !home) return;
+  const id = await chooseFrom(t("page.retire_which"), home.pets.map((p) => [p.id, app.icon(p.stage, p.species), p.name,
+    retireKind(p) ? t(`page.more.retire${retireKind(p)}_note`) : p.stage_label]));
+  const s = home.pets.find((p) => p.id === id);
+  if (!s) return;
+  const kind = retireKind(s);
   const yes = await ask(t(`page.retire${kind}_confirm`, { name: s.name }),
     { ok: t(`page.retire${kind}_ok`), danger: kind === "_egg" });
   if (!yes) return;

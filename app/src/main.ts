@@ -234,7 +234,7 @@ const app = {
     const id = answer?.state?.id ?? answer?.id;
     if (MOVES_CAMERA.includes(path) && typeof id === "string") {
       setCamera(id);
-    } else if (path === "/api/pet/retire") {
+    } else if (path === "/api/pet/retire" && (body as { pet?: unknown })?.pet === camera) {
       setCamera(null); // it rests among the ancestors now: back to the pet the panel shows
     }
     if (path.startsWith("/api/pet")) {
