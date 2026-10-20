@@ -99,6 +99,20 @@ export function guardianWaiting(state: PetState, area: string): string | null {
   return state.guardians.includes(area) ? null : battle.GUARDIANS[area];
 }
 
+/**
+ * What there is to discover in this area once and for all: the guardian's egg, and the hats and
+ * decorations along the path (seeds and food come again and again). `found`: it is at home, so the
+ * area won't bring it any more; a thing that moved away with a pet can be found again.
+ */
+export function discoveries(state: PetState, area: string): { id: string; found: boolean }[] {
+  const egg = GUARDIAN_EGGS[area];
+  const once = FINDS[area].map(([item]) => item).filter((item) => ["hat", "deco"].includes(home.kindOf(item)));
+  return [
+    ...(egg ? [{ id: egg, found: state.guardian_eggs.includes(area) }] : []),
+    ...once.map((item) => ({ id: item, found: (state.items[item] ?? 0) > 0 })),
+  ];
+}
+
 export function dayFactor(state: PetState, now: number): number {
   const recent = (state.recent.trip ?? []).filter((t) => now - t < DAY_WINDOW);
   return DAY_FACTORS[Math.min(recent.length, DAY_FACTORS.length - 1)];

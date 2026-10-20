@@ -20,7 +20,7 @@ import { eased, panSeconds } from "../../core/src/street";
 import type { Location } from "../../core/src/sun";
 import { locales, soundFiles } from "./assets";
 import { haptic } from "./haptics";
-import { iconUrl, outlineUrl, thingUrl } from "./icons";
+import { discoveryUrl, iconUrl, outlineUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
 import { reminders } from "./notify";
@@ -351,6 +351,8 @@ const app = {
 
   /** A thing the player hands the pet ("meal", "ball", "sponge", …) as a URL for an <img>; "" if there is no picture. */
   thing: thingUrl,
+  /** Something to discover on a trip, or an area's guardian ("foe_<id>"): colored once found, else its outline. */
+  discovery: discoveryUrl,
 
   /** Plays one of the app's sounds (app/src/sound.ts), unless they are off. */
   sound(name: SoundName): void {

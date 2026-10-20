@@ -45,6 +45,14 @@ test("a pet goes along with a phone, its house too, and the display keeps a seal
   refused(() => pi.handOver(pi.current, now + 100), "last_pet"); // the panel always has a pet
 });
 
+test("a hat that moves in where one has been found meanwhile isn't doubled", () => {
+  const now = at("2026-10-20 12:00");
+  const { pi, gulp, phone } = homes(now);
+  phone.state.items.bobble = 1; // the phone's pet has found one of its own
+  phone.adopt(pi.handOver(gulp, now), null, now);
+  assert.deepEqual(phone.state.items, { bobble: 1, daisy: 1 });
+});
+
 test("it comes home, and an old copy of it is turned away", () => {
   const now = at("2026-10-20 12:00");
   const { pi, gulp, phone } = homes(now);
