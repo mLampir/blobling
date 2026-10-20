@@ -84,6 +84,16 @@ export const COLD_BELOW = 5; // °C: below this it wakes up shivering (a first g
 export const COLD_SECONDS = 3600; // it shivers this long, unless somebody rubs it warm
 export const RUB_MOOD = 5; // what rubbing it warm is worth
 
+// Heat: on a hot afternoon the pet sweats and droops for a while, once a day. A moment, like the
+// cold mornings: it costs nothing, a bath cools it down, and it passes by itself. A leaf for a
+// sunshade and a fire of its own keep it from minding the heat.
+export const COOL_HATS = ["leaf"];
+export const COOL_LINES = ["ember"];
+export const HOT_FROM = 28; // °C: from this on an afternoon is hot (a first guess)
+export const HOT_HOURS = [13, 18] as const; // the afternoon, local time
+export const HOT_SECONDS = 3600; // it sweats this long, unless somebody gives it a bath
+export const COOL_MOOD = 5; // what cooling it down is worth
+
 // The house: a hut, then a cabin, then the whole house (state.house, 0 = none yet). Every pet that
 // gets past the last guardian adds a step, so it grows from one pet to the next. The pet sleeps
 // inside, and each step has room for more decorations.
@@ -248,6 +258,37 @@ export function wakeInCold(state: PetState, temp: number | null, now: number): v
 export function cold(state: PetState, now: number): boolean {
   return now < state.cold_until && state.stage !== "egg" && !state.asleep && !state.trip
     && !warmDeco(state) && !WARM_HATS.includes(state.hat) && !WARM_LINES.includes(life.lineOf(state.species));
+}
+
+/** The local day of the time t, as a number (for "once a day"). */
+function dayOf(t: number): number {
+  const date = new Date(t * 1000);
+  return date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+}
+
+/**
+ * One minute ending at t: on a hot afternoon, the heat gets to it once a day, as soon as it is
+ * awake and at home. `temp`: °C, or null without weather data.
+ */
+export function noteHeat(state: PetState, temp: number | null, t: number): void {
+  const hour = new Date(t * 1000).getHours();
+  if (temp === null || temp < HOT_FROM || hour < HOT_HOURS[0] || hour >= HOT_HOURS[1]
+      || state.stage === "egg" || state.asleep || state.trip || state.hot_day === dayOf(t)) {
+    return;
+  }
+  state.hot_day = dayOf(t);
+  state.hot_until = t + HOT_SECONDS;
+}
+
+/** Does it sweat? Only at home and awake, and never with something that keeps the heat off. */
+export function hot(state: PetState, now: number): boolean {
+  return now < state.hot_until && state.stage !== "egg" && !state.asleep && !state.trip
+    && !COOL_HATS.includes(state.hat) && !COOL_LINES.includes(life.lineOf(state.species));
+}
+
+/** A bath cools it down. */
+export function coolDown(state: PetState): void {
+  state.hot_until = 0.0;
 }
 
 /** What a find does besides looking nice (for the app). */

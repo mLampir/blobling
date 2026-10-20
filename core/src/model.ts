@@ -284,6 +284,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   home.grow(state, TICK / 60, sky.precipitation(weather) === "rain");
   idle.noteWeather(state, t, sky.precipitation(weather));
   idle.melt(state, temp);
+  home.noteHeat(state, temp, t);
   if (state.trip) {
     const [events, done] = trip.step(state, t, weather, location);
     for (const [action, item] of events) {
@@ -532,7 +533,7 @@ export function availableActions(state: PetState, now: number): Record<string, b
     play: !asleep,
     sleep: !asleep,
     wake: asleep,
-    clean: state.poops > 0 || state.stats.hygiene < 90,
+    clean: state.poops > 0 || state.stats.hygiene < 90 || home.hot(state, now),
     pet: true,
     medicine: state.sick,
     trip: !asleep && state.stage !== "baby" && !packed,
@@ -1108,8 +1109,15 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
   }
 
   if (action === "clean") {
-    if (!state.poops && s.hygiene >= 90) {
+    const hot = home.hot(state, now);
+    if (!state.poops && s.hygiene >= 90 && !hot) {
       return "already_clean";
+    }
+    if (hot) {
+      // a bath on a hot afternoon cools it down
+      home.coolDown(state);
+      s.mood += home.COOL_MOOD;
+      count(state, "cooled");
     }
     state.poops = 0;
     s.hygiene = 100.0;

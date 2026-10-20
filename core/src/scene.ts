@@ -393,6 +393,7 @@ const DIRT: Bitmap = [[60, 60, 60], ["X"]];
 const SICK_TINT: readonly [Color, number] = [[185, 195, 90], 0.28]; // sickly pale, for everything that isn't the teal slime
 const STEAM: Bitmap = [[215, 235, 245], [".X.", "XXX"]];
 const BREATH: Bitmap = [[190, 215, 240], ["XX"]]; // it shows in the cold
+const SWEAT: Bitmap = [[170, 225, 255], [".X", "XX"]]; // on a hot afternoon
 const LOVE: Bitmap = [[255, 130, 170], ["X.X", "XXX", ".X."]];
 const SHELL: Bitmap = [[240, 232, 205], ["X"]];
 
@@ -425,6 +426,8 @@ export interface SceneView {
   mood: string;
   /** It woke up in the cold and nothing keeps it warm: it shivers. */
   cold?: boolean;
+  /** A hot afternoon, and nothing keeps the heat off: it sweats and droops. */
+  hot?: boolean;
   needs: readonly string[];
   activity_until: number;
   activity_item: string;
@@ -999,6 +1002,10 @@ export class PetScene {
       if (view.cold && !show && !play) {
         // it shivers
         pose.dx = Math.trunc(t * 8) % 2;
+      }
+      if (view.hot && !show && !play && Math.sin(t * 0.7) > 0.4) {
+        // the heat gets to it: it droops now and then
+        Object.assign(pose, { body: "squash", jump: 0 });
       }
     } else if (activity === "trick") {
       // Practice: "fail" = doesn't work yet, "learned" = it knows the trick from now on
@@ -2850,6 +2857,11 @@ export class PetScene {
       } else if (view.cold && activity === "idle") {
         spawn = { sprite: BREATH, x: cx + 9 * this.facing, y: top + 9, vx: 3 * this.facing, vy: -3, life: 1.0 };
         every = 2.2;
+      } else if (view.hot && activity === "idle") {
+        // sweat drips off its brow, to one side or the other
+        const side = rng.random() < 0.5 ? -1 : 1;
+        spawn = { sprite: SWEAT, x: cx + side * rng.uniform(10, 13) - 1, y: top + rng.uniform(6, 10), vx: side * 5, vy: 3, life: 1.4 };
+        every = 0.6;
       } else if (mood === "sick" || (mood === "tired" && activity === "idle")) {
         spawn = { sprite: DROP, x: cx + 8 * this.facing, y: top + 3, vx: 0, vy: 6, life: 1.0 };
         every = 2.5;

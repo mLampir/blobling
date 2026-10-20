@@ -322,6 +322,7 @@
     "petting": {
       "warmed": "{name} is warm again"
     },
+    "cooled": "{name} has cooled down",
     "trick": {
       "note": "Watch the display to see how it goes. Practice works best spread over several days.",
       "learned": "{name} learned a new trick: {trick}! 🎉",
@@ -450,7 +451,8 @@
       "egg": "An egg – keep it warm and it hatches sooner",
       "line": "{form} · {age} · {doing}",
       "asleep": "asleep",
-      "cold": "shivering"
+      "cold": "shivering",
+      "hot": "sweating"
     },
     "age": {
       "one": "1 day old",

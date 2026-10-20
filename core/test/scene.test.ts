@@ -72,6 +72,13 @@ test("a frame fills the panel, and the same chance draws the same pictures", () 
   assert.deepEqual(color(first[0], 0, 63), [70, 40, 15]);
 });
 
+test("on a hot afternoon it sweats and droops", () => {
+  const heat = { temp: 32, code: 0 };
+  const usual = frames({}, 40, DAY, heat);
+  const hot = frames({ hot: true }, 40, DAY, heat);
+  assert.ok(hot.some((image, i) => differing(image, usual[i]) > 0));
+});
+
 test("it shivers, and the ember stone glows at night", () => {
   const frost = { temp: -4, code: 0 };
   const usual = frames({}, 40, DAY, frost);

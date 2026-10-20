@@ -329,7 +329,7 @@ export class Pet {
     return {
       species: s.species, stage: s.stage, hint: life.hint(s, model.worldAt(now, this.weather(), this.location)),
       asleep: s.asleep, sick: s.sick, poops: s.poops,
-      activity: model.activityOf(s, now), mood: model.moodOf(s), cold: home.cold(s, now),
+      activity: model.activityOf(s, now), mood: model.moodOf(s), cold: home.cold(s, now), hot: home.hot(s, now),
       needs: model.needs(s), activity_until: s.activity_until,
       activity_item: s.activity_item, ready: life.isDue(s, now),
       weight_status: care.weightStatus(s), game: care.gameActive(s, now),
@@ -929,6 +929,7 @@ export class Pet {
       activity_item: now < s.activity_until ? s.activity_item : "",
       mood: model.moodOf(s),
       cold: home.cold(s, now), // it shivers: petting rubs it warm
+      hot: home.hot(s, now), // it sweats: a bath cools it down
       asleep: s.asleep, sick: s.sick, poops: s.poops,
       needs: model.needs(s),
       actions: model.availableActions(s, now),
