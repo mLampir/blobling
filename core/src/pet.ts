@@ -622,8 +622,9 @@ export class Pet {
     }
     pet.items = this.state.items;
     pet.eggs = this.state.eggs;
+    // Its hat and decorations exist once here too: one this home has found meanwhile isn't doubled
     for (const [item, count] of Object.entries(moving.things ?? {})) {
-      pet.items[item] = (pet.items[item] ?? 0) + Math.max(0, Math.floor(Number(count) || 0));
+      pet.items[item] = Math.min(1, (pet.items[item] ?? 0) + Math.max(0, Math.floor(Number(count) || 0)));
     }
     pet.seen_at = now;
     this.moveIn(pet, old, now);

@@ -249,7 +249,8 @@ favorite can stay while new eggs are raised for the album.
   and decorations. A small dot on a picture says that pet needs something.
 - **One store for all.** The finds, the food and the eggs belong to the whole
   home. A hat or a decoration exists once: put it on one pet, and it comes off
-  the other.
+  the other. A pet that moves to another home takes its hat and the
+  decorations it has set out along; one that home already has isn't doubled.
 - **A new egg** (or a pet brought home from the album) asks where it should live: in a
   new house while there is a free place, or in the place of one of the pets.
   A pet that makes room moves into the album; an egg that
