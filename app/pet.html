@@ -473,6 +473,7 @@
       <ul class="list">
         <li><button class="row" id="rename"><span><span data-t="page.rename"></span><small class="pet-name"></small></span><span class="chev">›</span></button></li>
         <li id="new-egg-row"><button class="row" id="new-egg"><span><span data-t="page.new_egg"></span><small data-t="page.more.new_egg_note"></small></span><span class="chev">›</span></button></li>
+        <li id="retire-row"><button class="row" id="retire"><span><span id="retire-label"></span><small id="retire-note"></small></span><span class="chev">›</span></button></li>
         <li id="take-row" hidden><button class="row" id="take-along"><span><span data-t="page.take_along"></span><small data-t="page.more.take_along_note"></small></span><span class="chev">›</span></button></li>
         <li id="bring-row" hidden><button class="row" id="bring-display"><span><span data-t="page.bring_display"></span><small data-t="page.more.bring_display_note"></small></span><span class="chev">›</span></button></li>
       </ul>
@@ -1020,6 +1021,10 @@ function render(s) {
   renderFinds(s);
   renderAdventures(s);
   $("new-egg-row").hidden = egg;
+  // the display keeps its last pet; an egg that hasn't hatched just goes
+  $("retire-row").hidden = app.home() === "display" && s.pets.filter((p) => !p.phone).length <= 1;
+  $("retire-label").textContent = t(egg ? "page.retire_egg" : "page.retire");
+  $("retire-note").textContent = t(egg ? "page.more.retire_egg_note" : "page.more.retire_note");
 }
 
 // The meters: a tap says how it is and what would help
@@ -2006,6 +2011,24 @@ $("bring-display").addEventListener("click", async () => {
     fail(err);
     refresh();
   }
+});
+
+// A pet goes to rest among the ancestors, in the album, from where it can come home again
+$("retire").addEventListener("click", async () => {
+  if (!current) return;
+  const s = current, egg = s.stage === "egg";
+  const yes = await ask(t(egg ? "page.retire_egg_confirm" : "page.retire_confirm", { name: s.name }),
+    { ok: t(egg ? "page.retire_egg_ok" : "page.retire_ok"), danger: egg });
+  if (!yes) return;
+  try {
+    await api("POST", "/api/pet/retire", { confirm: true, pet: s.id });
+    showView("home");
+    say(t(egg ? "page.retired_egg" : "page.retired", { name: s.name }));
+    feel("ok");
+  } catch (err) {
+    fail(err);
+  }
+  refresh();
 });
 
 // Copies from before pets moved: a pet that lives on the phone and at the display. Asked once

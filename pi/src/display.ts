@@ -267,6 +267,18 @@ export class Display {
     return result;
   }
 
+  /** The pet with this id goes to rest among the ancestors; the panel always keeps one to show. */
+  petRetire(id: unknown): void {
+    this.pet.find(id); // an unknown one is "no_pet", also as the last one
+    if (this.pet.pets.length <= 1) {
+      throw new RequestError("last_pet");
+    }
+    const before = this.camera;
+    this.pet.retire(id);
+    this.cameraMoved(before);
+    this.showPet();
+  }
+
   /** A pet a phone took along comes back without it (the settings page, for a lost phone). */
   petFetchBack(id: unknown): void {
     const before = this.camera;

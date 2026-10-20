@@ -296,6 +296,7 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
             pet, action: display.petAction.bind(display), newEgg: display.petNewEgg.bind(display),
             bringBack: display.petBringBack.bind(display), look: display.look.bind(display),
             handOver: display.petHandOver.bind(display), takeIn: display.petTakeIn.bind(display),
+            retire: display.petRetire.bind(display),
           },
           request.method ?? "GET", url, () => readJson(request));
         if (answer === NOT_A_PET_ROUTE) {

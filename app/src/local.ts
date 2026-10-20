@@ -208,6 +208,10 @@ export class LocalPet {
       throw new Error(this.i18n.t("error.http", { status: 404 }));
     }
     if (method === "POST") {
+      if (!this.pet.pets.length) {
+        this.emptied(); // the last one went to the ancestors
+        return answer;
+      }
       this.draw(); // the scene shows the answer at once
       const sent = body as { action?: unknown } | undefined;
       if (path === "/api/pet/action" && sent?.action === "feed" && (answer as { accepted?: boolean }).accepted) {

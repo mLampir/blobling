@@ -305,6 +305,14 @@
     "place_replace_egg": "Das Ei macht Platz",
     "look": "Zu {name} schauen",
     "new_egg_done": "Ein neues Ei liegt bereit 🥚",
+    "retire": "🕊️ Zu den Ahnen schicken",
+    "retire_egg": "🥚 Ei weglegen",
+    "retire_confirm": "{name} zu den Ahnen schicken? Es ruht im Album und kann wieder heimkommen.",
+    "retire_egg_confirm": "Das Ei weglegen? Es ist dann weg.",
+    "retire_ok": "Zu den Ahnen",
+    "retire_egg_ok": "Weglegen",
+    "retired": "{name} ruht jetzt bei den Ahnen.",
+    "retired_egg": "Das Ei ist weg.",
     "things": {
       "meal": "Mahlzeit",
       "ball": "Ball",
@@ -739,6 +747,8 @@
       "sound_off": "Aus",
       "pet": "Pet",
       "new_egg_note": "Deine Funde bleiben.",
+      "retire_note": "Es ruht im Album und kann wieder heimkommen.",
+      "retire_egg_note": "Es ist dann weg.",
       "take_along_note": "Es zieht vom Display ins Handy, mit seinem Haus.",
       "bring_display_note": "Es zieht vom Handy in ein Haus am Display."
     },

@@ -107,6 +107,21 @@ test("not on a trip; the last one leaves the home empty", () => {
   assert.equal(phone.pets.length, 0);
 });
 
+test("sent to the ancestors by hand: a pet rests there, an egg just goes, and a phone may end up empty", () => {
+  const now = at("2026-10-20 12:00");
+  const { pi, gulp, phone } = homes(now);
+  const kid = pi.pets[1].id;
+  pi.retire(gulp, now);
+  assert.deepEqual([pi.ancestorList()[0].name, pi.pets.map((p) => p.name)], ["Gulp", ["Kid"]]);
+  assert.equal(pi.current, kid);
+  pi.newEgg(null, now);
+  const ancestors = pi.ancestorList().length;
+  pi.retire(pi.current, now);
+  assert.equal(pi.ancestorList().length, ancestors);
+  phone.retire(phone.current, now);
+  assert.deepEqual([phone.pets.length, phone.ancestorList()[0].name], [0, "Pip"]);
+});
+
 test("a save file from before a pet moved is an old copy", () => {
   const now = at("2026-10-20 12:00");
   const { display, pi, gulp } = homes(now);

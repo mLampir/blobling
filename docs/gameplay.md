@@ -231,6 +231,9 @@ favorite can stay while new eggs are raised for the album.
   new house while there is a free place, or in the place of one of the pets.
   A pet that makes room goes to rest in the ancestors' gallery; an egg that
   hasn't hatched is given up. Pets only leave by your choice.
+- **Send to the ancestors** (under *More*) lets a pet go to rest without a new
+  egg taking its place; an egg is put away and is gone. The display always
+  keeps one pet; a phone may end up with none and asks before a new egg comes.
 - **The ancestors' gallery** keeps the pets that went to rest, frozen: they
   lose nothing, don't grow on and don't get older. **Bring home** next to one
   of them brings it back as it was when it left, into a free house or in

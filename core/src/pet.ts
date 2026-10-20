@@ -696,8 +696,10 @@ export class Pet {
   }
 
   /**
-   * The pet with this id goes to rest among the ancestors, by hand (the app uses it for the second
-   * of two copies from before pets moved). With the last one gone, `pets` is empty, as after release.
+   * The pet with this id goes to rest among the ancestors, by hand ("send to the ancestors" in the
+   * app, and the second of two copies from before pets moved); an egg that hasn't hatched just
+   * goes, as when a new egg takes its place. With the last one gone, `pets` is empty, as after
+   * release (a display keeps its last one, see Display.petRetire).
    */
   retire(id: unknown, now = this.clock()): void {
     const pet = this.find(id);
@@ -705,7 +707,9 @@ export class Pet {
     if (pet.trip) {
       throw new model.RequestError("on_trip");
     }
-    this.archive(pet, now);
+    if (pet.stage !== "egg") {
+      this.archive(pet, now);
+    }
     this.pets = this.pets.filter((p) => p !== pet);
     if (this.pets.length) {
       this.currentId = this.state.id;
