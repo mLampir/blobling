@@ -647,6 +647,11 @@
       "bring_back": "Bring home",
       "album": "{met} of {all} forms",
       "missing": "Not met yet",
+      "seen": {
+        "day": "{where}, by day",
+        "night": "{where}, when the stars were out"
+      },
+      "mastered": "{form}, mastered",
       "ancestors": "Ancestors"
     },
     "travels": {

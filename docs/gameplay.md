@@ -183,14 +183,26 @@ An adult stays forever. A new egg moves into a house of its own next to it
 full, you pick a pet that goes to rest in the ancestors' gallery, from where
 it can come home again.
 
-The **album** is the long-term goal: to have had every form once. It has one
-slot for each form there is (every egg, baby, child and adult of every line),
-and a form fills its slot as soon as one of your pets has been it. A form not
-met yet stays an empty slot, with no picture and no name, so the album shows
-how many are still missing but not what they are or how to get them. The album
-belongs to you, not to one pet: it stays when a new egg starts, and it travels
-with the pet's file. A file from before the album fills it in from the
-ancestors.
+The **album** is the long-term goal: to have had every form once. It has a
+page for each line, with a slot for each of its forms (egg, baby, child and
+adults), and a form fills its slot as soon as one of your pets has been it. A
+form not met yet stays an empty slot, with no picture and no name, and a line
+nothing is known of yet is an empty page: the album shows how many are still
+missing but not what they are or how to get them. A slot has three steps:
+
+- **Seen:** a wild pet met on a trip shows as an outline in one color, with
+  where and when the pet saw it ("Mushroom forest, by day"), but no name.
+- **Had:** one of your pets has been the form: its picture and name.
+- **Mastered:** a pet of this adult form has learned all four tricks and shown
+  its special move in a scuffle: a star next to the name.
+
+The album belongs to you, not to one pet: it stays when a new egg starts, and
+it travels with the pet's file. A file from before the album fills it in from
+the ancestors.
+
+A quiet safety net keeps no line out of reach for long: once you have kept
+pets for a month, the wild pets of lines whose egg never came meet your pet
+more often. Nothing shows it.
 
 Not every egg is the same. A pet can bring a **rare egg** home from a trip
 (see [Guardians](#guardians)). What hatches from it is not a slime: it is a
@@ -738,7 +750,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |
-| Catching up, the state for the app, what is saved, ancestors (resting, and coming home again) and album | `core/src/pet.ts`, `core/src/state.ts` |
+| Catching up, the state for the app, what is saved, ancestors (resting, and coming home again), the album (seen, had, mastered) and its safety net (`longMissing`) | `core/src/pet.ts`, `core/src/state.ts` |
 | Several pets at home: the houses, the shared store, places for a new egg | `core/src/pet.ts` (`PLACES`, `newEgg`, `bringBack`) |
 | Neighbours getting together, sleeping side by side, copying tricks | `core/src/companion.ts` |
 | Moving between a phone and a display: move numbers, the sealed copy, fetching back | `core/src/pet.ts` (`release`, `adopt`, `handOver`, `takeIn`, `fetchBack`), `app/src/main.ts` |

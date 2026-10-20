@@ -19,7 +19,7 @@ import { NOT_A_PET_ROUTE, ownTarget, petRequest } from "../../core/src/api";
 import type { Image } from "../../core/src/image";
 import type { I18n } from "../../core/src/i18n";
 import { RequestError } from "../../core/src/model";
-import { MAX_NAME, PLACES, Pet, VERSION, readSave, type Ancestor, type Moving } from "../../core/src/pet";
+import { MAX_NAME, PLACES, Pet, VERSION, readSave, type Ancestor, type Moving, type Sighting } from "../../core/src/pet";
 import { PetScene } from "../../core/src/scene";
 import { fromDict, type Egg, type PetState } from "../../core/src/state";
 import { pan, panSeconds } from "../../core/src/street";
@@ -43,7 +43,17 @@ function savedLocation(): Location {
   }
 }
 
-/** What an empty home keeps: its ancestors and its album, and the store (finds and eggs) for the next pet. */
+/** The ancestors and the album, which a home keeps even while it is empty, and the store (finds and eggs) for the next pet. */
+interface Album {
+  ancestors: Ancestor[];
+  album: string[];
+  seen: Record<string, Sighting>;
+  mastered: string[];
+  items?: Record<string, number>;
+  eggs?: Egg[];
+}
+
+/** What an empty home keeps (Album). */
 interface EmptyHome {
   version: number;
   pet: null;
@@ -51,12 +61,14 @@ interface EmptyHome {
   album: string[];
   items?: Record<string, number>;
   eggs?: Egg[];
+  seen?: Record<string, Sighting>;
+  mastered?: string[];
 }
 
 export class LocalPet {
   /** The pets on the phone, or null while none lives here (after the last one left, or connected to a display). */
   private home: Pet | null = null;
-  private rest: Omit<EmptyHome, "version" | "pet"> = { ancestors: [], album: [] };
+  private rest: Album = { ancestors: [], album: [], seen: {}, mastered: [] };
   private readonly scenes = new Map<string, PetScene>();
   private sceneLocation: Location;
   /** The pet the scene showed last, and its last frame: where a switch pans from. */
@@ -75,7 +87,8 @@ export class LocalPet {
     const emptied = !!empty && typeof empty === "object" && empty.pet === null;
     if (emptied) {
       this.rest = {
-        ancestors: [...empty.ancestors ?? []], album: [...empty.album ?? []], items: { ...empty.items }, eggs: [...empty.eggs ?? []],
+        ancestors: [...empty.ancestors ?? []], album: [...empty.album ?? []], seen: { ...empty.seen },
+        mastered: [...empty.mastered ?? []], items: { ...empty.items }, eggs: [...empty.eggs ?? []],
       };
     } else if (saved !== undefined) {
       try {
@@ -169,7 +182,8 @@ export class LocalPet {
       }
       const pet = fromDict({ ...moving.pet, items, eggs: [...this.rest.eggs ?? []] } as unknown as Record<string, unknown>);
       pet.seen_at = Date.now() / 1000;
-      this.home = this.newHome({ state: pet, ancestors: this.rest.ancestors, album: this.rest.album });
+      const { ancestors, album, seen, mastered } = this.rest;
+      this.home = this.newHome({ state: pet, ancestors, album, seen, mastered });
       this.home.save();
     }
     this.draw();
@@ -183,6 +197,8 @@ export class LocalPet {
     this.home = this.newHome(null);
     this.home.ancestors.push(...this.rest.ancestors);
     this.home.album.push(...this.rest.album);
+    Object.assign(this.home.seen, this.rest.seen);
+    this.home.mastered.push(...this.rest.mastered);
     Object.assign(this.home.state.items, this.rest.items);
     this.home.state.eggs.push(...this.rest.eggs ?? []);
     this.home.save();
@@ -210,8 +226,8 @@ export class LocalPet {
   private emptied(store: PetState): void {
     if (this.home && !this.home.pets.length) {
       // with the last one gone, the pet that comes next finds the store as it was
-      const { items, eggs } = store;
-      this.rest = { ancestors: this.home.ancestors, album: this.home.album, items, eggs };
+      const { ancestors, album, seen, mastered } = this.home;
+      this.rest = { ancestors, album, seen, mastered, items: store.items, eggs: store.eggs };
       this.home = null;
       const file: EmptyHome = { version: VERSION, pet: null, ...this.rest };
       void this.store.put(PET_KEY, file).catch((error) => console.error("Could not save the pet", error));

@@ -148,7 +148,7 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
       return { api: API_VERSION, travels: pet.travels(which) };
 
     case "GET /api/pet/ancestors":
-      return { api: API_VERSION, ancestors: pet.ancestorList(), album: pet.albumList() };
+      return { api: API_VERSION, ancestors: pet.ancestorList(), album: pet.albumList(), lines: pet.albumLines() };
 
     case "POST /api/pet/settings": {
       const request = fields(await body());

@@ -291,3 +291,43 @@ test("every child shows the name of its line", () => {
   const texts = readLocales().en as Record<string, Record<string, string>>;
   assert.deepEqual(Object.keys(texts.children).sort(), Object.keys(life.LINES).sort());
 });
+
+test("the album has a page per line, with forms seen on trips and forms mastered", () => {
+  const now = at("2026-10-12 12:00");
+  const disk = new Disk();
+  const pet = disk.pet();
+  pet.state = grown(now);
+  Object.assign(pet.state, { stage: "adult", species: "gemperor" });
+  pet.state.travels = [{ area: "forest", start: now - 7200, end: now - 3600, stops: [
+    { kind: "wild", wild: "roamtail", outcome: "shrug", at: now - 5000 },
+    { kind: "wild", wild: "sneezle", outcome: "shrug", at: now - 4000 }, // a wild pet only: no slot for it
+  ] }];
+  pet.save();
+  const lines = disk.pet().albumLines();
+  assert.equal(lines.length, Object.keys(life.LINES).length);
+  const [blob, , , fox, cloud] = lines;
+  assert.deepEqual(blob.forms.filter(Boolean).map((form) => form!.species), ["blob", "blob", "blob", "gemperor"]);
+  assert.equal(blob.forms.find((form) => form?.species === "gemperor")!.mastered, false);
+  // a form seen is an outline with where it was seen, and no name
+  assert.deepEqual(fox.forms.filter(Boolean), [{ stage: "adult", species: "roamtail", seen: { area: "forest", night: false } }]);
+  assert.ok(cloud.forms.every((form) => form === null)); // a line nothing is known of: an empty page
+
+  // mastered: every trick, and the special move shown in a scuffle
+  pet.state.tricks = { bow: 3, spin: 5, dance: 7, flip: 10 };
+  pet.save();
+  assert.equal(disk.pet().albumLines()[0].forms.find((form) => form?.species === "gemperor")!.mastered, false);
+  pet.state.counters.specials = 1;
+  pet.save();
+  assert.equal(disk.pet().albumLines()[0].forms.find((form) => form?.species === "gemperor")!.mastered, true);
+  assert.deepEqual(readSave({ ...pet.toSave(), seen: { "adult:nobody": { area: "x", night: true } } }).seen, {});
+});
+
+test("after a month, the lines whose egg never came are long missing", () => {
+  const now = at("2026-10-12 12:00");
+  const pet = new Disk().pet();
+  pet.state = grown(now);
+  pet.state.born_at = now;
+  assert.deepEqual(pet.longMissing(now + 29 * 86400), []);
+  const missing = pet.longMissing(now + 31 * 86400);
+  assert.ok(!missing.includes("blob") && missing.includes("leaf") && missing.length === Object.keys(life.LINES).length - 1);
+});
