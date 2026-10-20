@@ -245,7 +245,7 @@ test("the album keeps every form met, across new eggs and restarts", () => {
   const pet = disk.pet();
   const met = (p: Pet) => p.albumList().filter((form) => form !== null).map((form) => `${form.stage}:${form.species}`);
   const slots = pet.albumList();
-  assert.equal(slots.length, life.FORMS.length - Object.keys(life.REFORMED).length); // no slots for forms that no longer grow
+  assert.equal(slots.length, life.FORMS.length - life.RETIRED.length); // no slots for forms that no longer grow
   assert.deepEqual(slots[0], { stage: "egg", species: "blob", label: "Egg" });
   assert.ok(slots.slice(1).every((form) => form === null)); // a form not met yet gives nothing away
   pet.state = grown(now);

@@ -24,7 +24,7 @@ export const STAGE_SECONDS: Partial<Record<Stage, number>> = { egg: 3600, baby: 
 export const EGG_WARMTH = 15 * 60; // petting warms the egg: it hatches this much sooner
 export const AUTO_EVOLVE_AFTER = 24 * 3600; // due and nobody taps → it evolves by itself
 
-// Line: its adult forms. The slime's first five forms grow no more (REFORMED); they stay here
+// Line: its adult forms. The slime's first five forms grow no more (RETIRED); they stay here
 // because they still live in the wild and in the ancestors' gallery.
 export const LINES: Record<string, readonly string[]> = {
   blob: ["angloop", "gemperor", "purrloop", "sneezle", "flicker", "cyclopuff", "grumpcap", "lumoth"],
@@ -226,13 +226,9 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   return care >= GEMPEROR_CARE ? "gemperor" : "angloop";
 }
 
-// The slime's first adult forms and what a pet of that form turns into when a save from before
-// FORM_RULES 2 is loaded: the slime line was redrawn with fewer forms that look more like the
-// slime. Only those saves: the old forms may come back as lines of their own.
-export const FORM_RULES = 2;
-export const REFORMED: Record<string, string> = {
-  sneezle: "gemperor", lumoth: "purrloop", cyclopuff: "angloop", grumpcap: "angloop", flicker: "angloop",
-};
+// The slime's first adult forms: the slime line was redrawn with fewer forms that look more like
+// the slime, and these grow no more. They may come back as lines of their own.
+export const RETIRED: readonly string[] = ["sneezle", "lumoth", "cyclopuff", "grumpcap", "flicker"];
 
 /**
  * The adult form a child is heading for right now (null in its first day and at other stages).

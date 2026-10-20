@@ -160,10 +160,6 @@ export class Pet {
       this.state = options.saved.state;
       this.ancestors = options.saved.ancestors;
       this.second = options.saved.second ?? null;
-      model.reform(this.state, this.clock());
-      if (this.second) {
-        model.reform(this.second, this.clock());
-      }
       this.album = startAlbum(options.saved);
     } else {
       this.state = model.newPet(this.clock(), this.t("pet.default_name"));
@@ -364,7 +360,6 @@ export class Pet {
     }
     const [entry] = this.ancestors.splice(index, 1);
     const back = fromDict(entry.pet as unknown as Record<string, unknown>);
-    model.reform(back, now);
     const rested = Math.max(0, now - back.updated_at); // the time among the ancestors doesn't count
     back.stage_since += rested;
     back.born_at += rested;
@@ -465,9 +460,9 @@ export class Pet {
    */
   albumList() {
     this.collect();
-    // A form that no longer grows (life.REFORMED) only has a slot once one of the pets has been it
+    // A form that no longer grows (life.RETIRED) only has a slot once one of the pets has been it
     const forms = life.FORMS.filter((form) => this.album.includes(form)
-      || !(form.startsWith("adult:") && form.slice("adult:".length) in life.REFORMED));
+      || !(form.startsWith("adult:") && life.RETIRED.includes(form.slice("adult:".length))));
     return forms.map((form) => {
       if (!this.album.includes(form)) {
         return null;
