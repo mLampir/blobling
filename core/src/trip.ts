@@ -102,6 +102,11 @@ export function startHearts(state: PetState): number {
   return 1 + HEARTS.filter((limit) => condition >= limit).length;
 }
 
+/** The hearts it would set off with now: its condition, and one more from a honeycomb it has eaten. */
+export function heartsNow(state: PetState): number {
+  return startHearts(state) + (food.waiting(state, "heart") ? 1 : 0);
+}
+
 /** Plan a trip (without setting off yet). `pack`: what goes into the backpack (PACKABLE). */
 export function plan(state: PetState, area: string, now: number, pack: readonly string[] = []): Trip {
   const rng = new Random(`trip:${Math.trunc(now)}`);

@@ -1044,6 +1044,7 @@ export class Pet {
       // What can go into the backpack before a trip
       packable: trip.PACKABLE.map((k) => ({ id: k, label: t(`pack.${k}`) })),
       max_pack: trip.MAX_PACK,
+      trip_hearts: trip.heartsNow(s), // the hearts it would set off with now
       backpack: s.backpack.length, // this many finds are waiting to be unpacked
       // blocked_by: the area whose guardian is still in the way; guardian: one is waiting here
       areas: trip.AREAS.map((k) => ({

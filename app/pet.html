@@ -250,6 +250,7 @@
   .sheet small { color: var(--muted); font-size: 13px; }
   .close { position: absolute; right: 6px; top: 4px; width: 44px; height: 44px; font-size: 20px; color: var(--muted); }
   .say { min-height: 1.4em; font-weight: 700; }
+  .hearts { margin: 0; color: var(--mood); font-size: 1.2em; letter-spacing: .1em; }
   .tricks { list-style: none; margin: 0; padding: 0; width: 100%; max-width: 360px; text-align: left; }
   .tricks li { display: flex; gap: 12px; align-items: center; padding: 7px 4px; border-bottom: 1px solid var(--line); }
   .tricks li > span:first-child { font-size: 24px; width: 32px; text-align: center; }
@@ -393,9 +394,7 @@
     <div class="sheet" id="trick-mode" hidden>
       <button class="close" id="trick-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.tools.tricks"></h3>
-      <p data-t="page.trick.hint"></p>
       <ul class="tricks" id="tricks"></ul>
-      <small data-t="page.trick.note"></small>
     </div>
 
     <div class="sheet" id="train-mode" hidden>
@@ -407,19 +406,18 @@
       <button class="tap" id="train-tap" hidden data-t="page.train.tap"></button>
       <div class="steps" id="train-steps" hidden></div>
       <p class="say" id="train-say" aria-live="polite"></p>
-      <small id="train-note" data-t="page.train.note"></small>
       <button class="link" id="train-back" hidden data-t="page.train.back"></button>
     </div>
 
     <div class="sheet cover" id="pack-mode" hidden>
       <button class="close" id="pack-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.things.trip"></h3>
+      <p class="hearts" id="pack-hearts"></p>
       <p data-t="page.pack.where"></p>
       <div class="choices" id="pack-areas"></div>
       <p data-t="page.pack.what"></p>
       <div class="steps" id="pack-slots"></div>
       <div class="choices" id="pack-things"></div>
-      <small data-t="page.pack.note"></small>
       <p class="say" id="pack-say" aria-live="polite"></p>
       <button class="wide primary" id="pack-go" data-t="page.pack.go"></button>
     </div>
@@ -1056,15 +1054,19 @@ function renderAdventures(s) {
   const why = (a, energy) => s.trip ? t("page.adventure.away") : s.asleep ? t("page.status.asleep")
     : energy && !s.actions[a] ? t("page.adventure.tired") : "";
   const cards = egg ? [] : [
-    { id: "trip", color: "var(--hygiene)", title: t("page.things.trip"), text: t("page.adventure.trip"),
+    { id: "trip", color: "var(--hygiene)", title: t("page.things.trip"),
+      text: `${tripHearts(s)} · ${t("page.adventure.areas",
+        { n: s.areas.filter((a) => a.unlocked).length, all: s.areas.length })}`,
       ok: s.actions.trip, tag: s.trip ? t("page.adventure.away") : s.stage === "baby" ? t("page.adventure.too_young")
         : s.backpack ? t("page.unpack") : why("trip") || t("page.adventure.go") },
     { id: "trick", color: "var(--energy)", title: t("page.tools.tricks"),
       text: t("page.adventure.tricks", { n: s.tricks.filter((x) => x.learned).length, all: s.tricks.length }),
       ok: s.actions.trick, tag: why("trick", true) || t("page.adventure.go") },
-    { id: "train", color: "var(--satiety)", title: t("page.tools.train"), text: t("page.adventure.train"),
+    { id: "train", color: "var(--satiety)", title: t("page.tools.train"),
+      text: s.skills.map((skill) => `${SKILL_ICONS[skill.id][0]} ${Math.floor(skill.value)}`).join(" · "),
       ok: s.actions.train, tag: why("train", true) || t("page.adventure.go") },
-    { id: "game", color: "var(--mood)", title: t("page.tools.game"), text: t("page.adventure.game"),
+    { id: "game", color: "var(--mood)", title: t("page.tools.game"), text: t("page.statistics.game_value",
+      { games: s.counters?.games || 0, won: s.counters?.games_won || 0 }),
       ok: s.actions.game, tag: why("game", true) || t("page.adventure.go") },
   ];
   $("adventures").replaceChildren(...cards.map((c) => {
@@ -1096,11 +1098,15 @@ $("adventures").addEventListener("click", (e) => {
 
 // Sheets: one at a time, over the lower part, with the scene in sight (packing: the whole screen)
 function openSheet(id) {
+  if (id !== "trick-mode" && !$("trick-mode").hidden) holdBaton(false); // the tricks list hands the baton back
   document.querySelectorAll(".sheet").forEach((sheet) => { sheet.hidden = sheet.id !== id; });
   $("view-home").classList.toggle("busy", !!id);
   $("view-home").classList.toggle("cover", !!id && $(id).classList.contains("cover"));
   if (id) showView("home");
 }
+
+// The hearts it would set off with now, out of the usual three
+function tripHearts(s) { return "♥".repeat(s.trip_hearts) + "♡".repeat(Math.max(0, 3 - s.trip_hearts)); }
 
 // Packing: the destination, and up to max_pack things that help on the way
 function openPack() {
@@ -1146,6 +1152,8 @@ function renderPack() {
     });
     return b;
   }));
+  // the hearts it would set off with: feeding it first can make one more
+  $("pack-hearts").textContent = tripHearts(s);
   $("pack-go").disabled = !s.actions.trip;
 }
 $("pack-close").addEventListener("click", () => openSheet(null));
@@ -1891,11 +1899,11 @@ function tapThing(b) {
 // shown if the pet knows it), and stroking waits until it is put back.
 
 let baton = false;
-function holdBaton(on) {
+function holdBaton(on, quiet = false) {
   baton = on && !!current;
   document.querySelector(".thing[data-wand]").classList.toggle("on", baton);
   $("hero").classList.toggle("wand", baton);
-  if (baton) say(t("page.hint.baton", { name: current.name }));
+  if (baton && !quiet) say(t("page.hint.baton", { name: current.name }));
 }
 {
   const hero = $("hero");
@@ -2161,9 +2169,11 @@ function gesture(trail) {
   return null;
 }
 
-// What it knows and how far it has got; tricks are shown with the baton from the tray
+// What it knows and how far it has got. While the list is open the baton is in the hand, so a
+// move drawn over the pet is tried at once.
 function openTricks() {
   openSheet("trick-mode");
+  if (!document.querySelector(".thing[data-wand]").disabled) holdBaton(true, true);
 }
 $("trick-close").addEventListener("click", () => openSheet(null));
 
@@ -2181,7 +2191,7 @@ let openTraining;
     stage = next;
     clearTimeout(goTimer);
     $("train-hint").textContent = hint || t("page.train.hint");
-    $("skills").hidden = $("train-note").hidden = next !== "menu";
+    $("skills").hidden = next !== "menu";
     $("train-back").hidden = next === "menu";
     ball.hidden = next !== "strength";
     $("train-tap").hidden = next !== "speed";

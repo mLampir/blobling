@@ -344,13 +344,11 @@
     },
     "cooled": "{name} has cooled down",
     "trick": {
-      "note": "Watch the display to see how it goes. Practice works best spread over several days.",
       "learned": "{name} learned a new trick: {trick}! 🎉",
       "known": "{trick}! ⭐",
       "fail": "{trick}: not quite yet",
       "ok": "{trick}: that looked pretty good!",
-      "unknown": "{name} doesn't know that move.",
-      "hint": "Take the baton from the tray and draw the move over the pet."
+      "unknown": "{name} doesn't know that move."
     },
     "game": {
       "left": "left",
@@ -703,7 +701,6 @@
     },
     "train": {
       "hint": "Pick an exercise",
-      "note": "Watch the display while you train. Training works best spread over several days.",
       "how": {
         "strength": "throw the ball",
         "speed": "react to the signal",
@@ -723,7 +720,6 @@
     "pack": {
       "where": "Where to?",
       "what": "What goes into the backpack?",
-      "note": "A snack heals a heart on the way, and a ball distracts an opponent (but not a guardian).",
       "locked": "The way there leads past the guardian: {area}.",
       "guardian": "A guardian is waiting at the end of this path.",
       "go": "Send it off"
@@ -750,10 +746,8 @@
       "tired": "Too tired",
       "too_young": "Still too little",
       "go": "Go",
-      "trip": "Pack the backpack and send it off to explore.",
-      "tricks": "{n} of {all} learned",
-      "train": "Strength, speed and smarts for the trips.",
-      "game": "Guess which way it jumps – a little game for two."
+      "areas": "{n} of {all} areas known",
+      "tricks": "{n} of {all} learned"
     },
     "values": {
       "weight": "Weight",

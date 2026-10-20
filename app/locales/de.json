@@ -344,13 +344,11 @@
     },
     "cooled": "{name} hat sich abgekühlt",
     "trick": {
-      "note": "Ob es klappt, siehst du auf dem Display. Am besten übst du verteilt über mehrere Tage.",
       "learned": "{name} kann jetzt {trick}! 🎉",
       "known": "{trick}! ⭐",
       "fail": "{trick}: klappt noch nicht ganz",
       "ok": "{trick}: schon ziemlich gut!",
-      "unknown": "Diese Bewegung kennt {name} nicht.",
-      "hint": "Nimm den Taktstock aus der Leiste und zeichne die Bewegung über das Pet."
+      "unknown": "Diese Bewegung kennt {name} nicht."
     },
     "game": {
       "left": "links",
@@ -703,7 +701,6 @@
     },
     "train": {
       "hint": "Such eine Übung aus",
-      "note": "Schau beim Training aufs Display. Am besten trainierst du verteilt über mehrere Tage.",
       "how": {
         "strength": "den Ball werfen",
         "speed": "aufs Signal reagieren",
@@ -723,7 +720,6 @@
     "pack": {
       "where": "Wohin?",
       "what": "Was kommt in den Rucksack?",
-      "note": "Ein Snack heilt unterwegs ein Herz, ein Ball lenkt Gegner ab (Wächter aber nicht).",
       "locked": "Der Weg dorthin führt am Wächter vorbei: {area}.",
       "guardian": "Am Ende dieses Wegs wartet ein Wächter.",
       "go": "Losschicken"
@@ -750,10 +746,8 @@
       "tired": "Zu müde",
       "too_young": "Noch zu klein",
       "go": "Los",
-      "trip": "Rucksack packen und los auf Entdeckungstour.",
-      "tricks": "{n} von {all} gelernt",
-      "train": "Kraft, Tempo und Köpfchen für die Ausflüge.",
-      "game": "Rate, wohin es springt – ein kleines Spiel zu zweit."
+      "areas": "{n} von {all} Gebieten bekannt",
+      "tricks": "{n} von {all} gelernt"
     },
     "values": {
       "weight": "Gewicht",

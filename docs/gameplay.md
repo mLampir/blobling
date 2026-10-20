@@ -312,7 +312,8 @@ with the display out of reach, the app shows only the phone's own pets.
 The pet can learn four tricks. Take the baton from the app's tray and draw
 the move from the table over the pet; it tries the trick on the panel. While
 the baton is in your hand, stroking waits; a tap on it puts it back. *Adventure*
-→ *Tricks* lists the moves and how far each trick has got.
+→ *Tricks* lists the moves and how far each trick has got, and while that list
+is open, the baton is in your hand.
 
 Practicing costs energy and needs a break afterwards (below). A trick it
 already knows can be shown any time, for free and without a break; showing
@@ -575,7 +576,8 @@ past the last one, on the mountain, adds a step to the house (see
 
 **Hearts.** The pet sets off with one to three hearts, depending on its
 condition that day (the average of satiety, energy and health: two hearts from
-45, three from 75). A lost scuffle costs one. At zero it heads home – merely
+45, three from 75), and a honeycomb eaten before adds one. Packing shows them,
+so a pet can be fed first to set off with more. A lost scuffle costs one. At zero it heads home – merely
 tired, and it keeps what it has already found.
 
 ## While nobody is there
