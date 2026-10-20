@@ -209,7 +209,7 @@
   .wide.danger { border-color: var(--danger); color: var(--danger); }
   .wide.quiet { color: var(--muted); }
 
-  /* ---------- Panels: packing for a trip, tricks, training, the guessing game ----------
+  /* ---------- Panels: packing for a trip, tricks, training, hide and seek ----------
      They take the place of the needs and the tray, below the scene: the pet stays where it is,
      big and bright, and answers there. */
   .home.busy > .needs, .home.busy > .status, .home.busy > .tray { display: none; }
@@ -378,7 +378,7 @@
       <button class="thing" data-thing="baton" data-action="trick" data-wand="1"><img alt=""><small data-t="page.things.baton"></small></button>
       <button class="thing" data-thing="medicine" data-action="medicine" data-helps="health" hidden><img alt=""><small data-t="page.things.medicine"></small></button>
     </div>
-    <!-- What goes on instead of the tray: the bag, tricks, training, the guessing game, packing -->
+    <!-- What goes on instead of the tray: the bag, tricks, training, hide and seek, packing -->
     <div class="sheet" id="bag-mode" hidden>
       <button class="close" id="bag-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.things.bag"></h3>
@@ -434,11 +434,7 @@
     <div class="sheet" id="game" hidden>
       <button class="close" id="game-close" data-t-aria="page.close_game">✕</button>
       <h3 data-t="page.tools.game"></h3>
-      <p id="game-info"></p>
-      <div class="halves">
-        <button data-move="left">◀<small data-t="page.game.left"></small></button>
-        <button data-move="right">▶<small data-t="page.game.right"></small></button>
-      </div>
+      <p id="game-info" aria-live="polite"></p>
     </div>
   </section>
 
@@ -1325,11 +1321,10 @@ function renderGame(s) {
   const active = !!(game && game.active);
   if (!active) gameDismissed = false;
   if (active && !gameDismissed) {
-    const last = game.last ? game.last.split(":") : null;
-    $("game-info").textContent = (last
-      ? t("page.game.jumped", { side: t(`page.game.${last[0]}`), result: t(`page.game.${last[1]}`) }) : t("page.game.ask"))
-      + "\n" + t("page.game.round", { round: game.round + 1, rounds: game.rounds, wins: game.wins });
-    document.querySelectorAll("[data-move]").forEach((b) => { b.disabled = false; });
+    const last = game.last ? game.last.split(":")[1] : null;
+    const left = "🔍".repeat(Math.max(0, game.rounds - game.round));
+    $("game-info").textContent = (last ? t(`page.game.${last}`) + "\n" : "")
+      + (game.hiding > 1 ? t("page.game.found", { found: game.found.length, hiding: game.hiding }) + " · " : "") + left;
     if ($("game").hidden) openSheet("game");
   } else if (!$("game").hidden && Date.now() >= gameHold) {
     openSheet(null);
@@ -1502,7 +1497,7 @@ function welcome(s) {
 
 function renderEvents(events) {
   let day, last;
-  // Single guesses in the mini-game stay out of the history (only the start counts),
+  // Single looks in hide and seek stay out of the history (only the start counts),
   // and so do the tap and the answer that belong to an exercise
   events = events.filter((e) => !(e.action === "game" && e.item !== "start")
     && !(e.action === "train" && !(e.item in SKILL_ICONS)));
@@ -1811,6 +1806,12 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
   });
   const end = (e) => {
     if (!stroke || e.pointerId !== stroke.id) return;
+    // hide and seek: a tap looks behind the spot nearest to it
+    if (stroke.way < 8 && current.game && current.game.active && current.game.spots) {
+      stroke = null;
+      seekAt(e.clientX, e.clientY);
+      return;
+    }
     // a tap on the house looks inside for a moment
     if (stroke.way < 8 && onHouse(e.clientX, e.clientY) && !(area && onPet(e.clientX, e.clientY))) {
       stroke = null;
@@ -2415,17 +2416,23 @@ let openTraining;
   b.addEventListener("pointercancel", release);
 }
 
-// ---------- Mini-game ----------
+// ---------- Hide and seek ----------
 
-document.querySelectorAll("[data-move]").forEach((b) => b.addEventListener("click", async () => {
-  document.querySelectorAll("[data-move]").forEach((x) => { x.disabled = true; });
+let seeking = false;
+async function seekAt(x, y) {
+  if (seeking) return;
+  const u = inScene(x, y)[0];
+  const spot = current.game.spots.reduce((a, b) => Math.abs(b.x - u) < Math.abs(a.x - u) ? b : a);
+  seeking = true;
   try {
-    const r = await action("game", b.dataset.move);
+    const r = await action("game", spot.id);
     const g = r.state.game;
+    const who = g && g.last ? g.last.split(":")[1] : null;
+    feel(who === "miss" ? "no" : "tap");
     if (g && !g.active && "result" in g) {
       // Leave the result up for a moment, then go back
       gameHold = Date.now() + 3500;
-      $("game-info").textContent = t("page.game.result", { result: g.result, rounds: g.rounds, verdict: t(g.won ? "page.game.won" : "page.game.lost") });
+      $("game-info").textContent = t(g.won ? "page.game.won" : "page.game.lost");
       feel(g.won ? "great" : "lost");
       setTimeout(() => current && renderGame(current), 3600);
     }
@@ -2433,9 +2440,10 @@ document.querySelectorAll("[data-move]").forEach((b) => b.addEventListener("clic
     if (!r.accepted) { say(r.message); feel("no"); }
   } catch (err) {
     fail(err);
-    document.querySelectorAll("[data-move]").forEach((x) => { x.disabled = false; });
+  } finally {
+    seeking = false;
   }
-}));
+}
 
 $("game-close").addEventListener("click", () => {
   gameDismissed = true;  // the game runs out by itself

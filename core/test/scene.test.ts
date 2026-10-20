@@ -184,7 +184,7 @@ test("some forms do a trick in their own way", () => {
 test("every activity can be drawn from its start to its end", () => {
   const items: Record<string, string> = {
     throw_meal: "meal@0.90", throw_snack: "cookie@0.05", throw_play: "ball@0.50", throw_medicine: "medicine@0.50",
-    snack: "icecream", trick: "flip:learned", game_turn: "left:hit", hatch: "egg:blob", evolve: "child:blob",
+    snack: "icecream", trick: "flip:learned", game_turn: "grass:pet", hatch: "egg:blob", evolve: "child:blob",
     plant: "cherry", pick: "cherry", trip_start: "meadow", unpack: "seed_berry,cap,egg_ember", collect: "egg_blob",
     train_strength: "0.80", train_ready: "2.00", train_speed: "0.90", train_show: "left,up,down,right",
     train_smarts: "4/4",
@@ -314,6 +314,42 @@ test("the cloud adults follow the weather", () => {
     pixels(stage.render(view, null, DAY, t)[0], red))).size, 1);
 });
 
+/** Pixels that differ between two frames, within the columns [left, right) and above the row `bottom`. */
+function differIn(a: Image, b: Image, left: number, right: number, bottom: number): number {
+  let count = 0;
+  for (let y = STATUS_HEIGHT; y < bottom; y++) {
+    for (let x = left; x < right; x++) {
+      count += [0, 1, 2].some((c) => color(a, x, y)[c] !== color(b, x, y)[c]) ? 1 : 0;
+    }
+  }
+  return count;
+}
+
+test("hide and seek: the pet hides, peeks out now and then, and jumps out when it is found", () => {
+  const hide = (spots: string[], found: string[] = [], over = false) => ({ spots, found, peek: 3, over });
+  // past either edge, nothing of it shows in the middle of the panel while it keeps still
+  const left = frames({ activity: "game_wait", game: true, hide: hide(["left"]) }, 11)[10];
+  const right = frames({ activity: "game_wait", game: true, hide: hide(["right"]) }, 11)[10];
+  assert.equal(differIn(left, right, 8, 56, GROUND + 1), 0);
+  // behind the house: now and then its head comes up over the roof
+  const house = frames({ activity: "game_wait", game: true, house: 2, hide: hide(["house"]) }, 40);
+  const away = frames({ activity: "game_wait", game: true, house: 2, hide: hide(["right"]) }, 40);
+  const above = house.map((image, i) => differIn(image, away[i], 0, 24, GROUND + 1));
+  assert.ok(above.some((count) => count > 0), `${above}`);
+  assert.ok(above.some((count) => count === 0), `${above}`);
+  // found in the grass: it stands there
+  const [found] = frames({ activity: "game_turn", activity_item: "grass:pet", game: false,
+    hide: hide(["grass"], ["grass"], true) }, 1);
+  assert.ok(differIn(found, left, 20, 52, GROUND - 8) > 20);
+  // a friend hides too
+  const visitor = { species: "cyclopuff", age: 120, left: 400 };
+  const both = frames({ activity: "game_wait", game: true, visitor, hide: hide(["left", "right"]) }, 11)[10];
+  assert.equal(differIn(both, left, 8, 56, GROUND + 1), 0);
+  const [guest] = frames({ activity: "game_turn", activity_item: "grass:guest", game: true, visitor,
+    hide: hide(["left", "grass"], ["grass"]) }, 1);
+  assert.ok(differIn(guest, left, 20, 52, GROUND - 8) > 20);
+});
+
 /**
  * A whole visit, ten frames per second, with the pet already by the friend's side. Returns the
  * game of each frame (null: none) and the frames themselves, every `keep`th.
@@ -338,12 +374,12 @@ function visit(changes: Partial<SceneView>, from = 0, seconds = 600, keep = 0,
   return [games, images];
 }
 
-test("while a friend visits, the two play now and then: catch, copying a trick, hopping in step", () => {
+test("while a friend visits, the two play now and then: catch, copying a trick, hopping in step, hide and seek", () => {
   const [games] = visit({ tricks: ["flip"] });
   const played = games.filter((game) => game).length;
   // a game, then a rest two thirds as long: they play for more than half of the visit
   assert.ok(played > 0.5 * games.length && played < 0.62 * games.length, `${played}`);
-  assert.deepEqual(new Set(games), new Set([null, "catch", "copy", "bounce"]));
+  assert.deepEqual(new Set(games), new Set([null, "catch", "copy", "bounce", "hide"]));
   assert.ok(games.slice(0, 190).every((game) => game === null)); // hopping in, then a rest first
   assert.ok(games.slice(-30).every((game) => game === null)); // nothing it couldn't finish before leaving
   // without a trick to show there is nothing to copy

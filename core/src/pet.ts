@@ -19,7 +19,7 @@ import * as home from "./home";
 import * as life from "./life";
 import * as model from "./model";
 import * as notify from "./notify";
-import { houseArea, type SceneView, type TripView } from "./scene";
+import { hideX, houseArea, type SceneView, type TripView } from "./scene";
 import * as sky from "./sky";
 import { fromDict, toDict, type Friend, type PetState } from "./state";
 import * as story from "./story";
@@ -354,7 +354,7 @@ export class Pet {
       activity: model.activityOf(s, now), mood: model.moodOf(s), cold: home.cold(s, now), hot: home.hot(s, now),
       needs: model.needs(s), activity_until: s.activity_until,
       activity_item: s.activity_item, ready: life.isDue(s, now),
-      weight_status: care.weightStatus(s), game: care.gameActive(s, now),
+      weight_status: care.weightStatus(s), game: care.gameActive(s, now), hide: hideView(s, now),
       tricks: care.learned(s),
       trip: tripView(s, now), grandma: !!s.grandma, hat: s.hat, ...decoView(s),
       look_in: s.house > 0 && now < s.look_in_until && !s.asleep,
@@ -418,7 +418,7 @@ export class Pet {
       this.advance(now);
       result = model.applyAction(s, action, now, this.bedtime(),
         { item: request.item, by, throw: request.throw, weather: this.weather(), temp: this.temperature(),
-          location: this.location, value: request.value });
+          location: this.location, value: request.value, guest: action === "game" && this.guestThere(s, now) });
       this.share(s);
       if (result.accepted && (action === "wear" || action === "deco")) {
         this.onlyHere(s, String(request.item));
@@ -559,6 +559,15 @@ export class Pet {
       species: other.species, stage: other.stage, asleep: how === "asleep", tricks: care.learned(other),
       left: end - now, age: now - start,
     };
+  }
+
+  /** Is another pet there and awake to play along: a visiting friend, or the neighbour? */
+  private guestThere(s: PetState, now: number): boolean {
+    if (wild.visitor(s, now) && !s.trip && !s.grandma) {
+      return true;
+    }
+    const neighbour = this.neighbourView(s, now);
+    return !!neighbour && !neighbour.asleep;
   }
 
   /** Is a friend of its own visiting `pet` at the time t? Then it has no time for its neighbour. */
@@ -1153,16 +1162,33 @@ function tripView(s: PetState, now: number): TripView | null {
   };
 }
 
+/** Hide and seek for the scene: while a game goes on, and while the last look shows what it found. */
+function hideView(s: PetState, now: number): SceneView["hide"] {
+  const game = s.game;
+  const active = care.gameActive(s, now);
+  if (!game?.spots || !(active || (s.activity === "game_turn" && now < s.activity_until))) {
+    return null;
+  }
+  return { spots: [...game.spots], found: [...game.found ?? []], peek: care.peekEvery(s), over: !active };
+}
+
+/**
+ * Hide and seek: tries used and how many there are, how many hide and which spots have been found,
+ * and where the spots are (`x`: their middle, as a part of the scene's width) for a tap to find.
+ */
 function gameInfo(s: PetState, now: number) {
   const game = s.game;
   if (game && care.gameActive(s, now)) {
+    const spots = care.hidingSpots(s, home.placeDeco(s).outside);
     return {
-      active: true, round: game.round, rounds: care.GAME_ROUNDS,
-      wins: game.wins, last: s.activity === "game_turn" ? s.activity_item : null,
+      active: true, round: game.round, rounds: care.tries(game), wins: game.wins,
+      hiding: game.spots?.length ?? 1, found: [...game.found ?? []],
+      spots: spots.map((id) => ({ id, x: Number((hideX(id, s.house) / 64).toFixed(3)) })),
+      last: s.activity === "game_turn" ? s.activity_item : null,
     };
   }
   if (game && game.result !== undefined && now - game.last < 30) {
-    return { active: false, result: game.result, rounds: care.GAME_ROUNDS, won: game.result >= care.GAME_WIN };
+    return { active: false, result: game.result, rounds: care.tries(game), won: !!game.won };
   }
   return null;
 }

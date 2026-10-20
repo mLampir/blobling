@@ -59,7 +59,7 @@ export const EVENT_LIMIT = 100;
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
   "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in", "grandma"];
 export const FOODS = ["meal", ...food.EDIBLE];
-export const GAME_MOVES = ["start", "left", "right"];
+export const GAME_MOVES = ["start", ...care.SPOTS]; // start, or look behind a spot
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
 export const TRAIN_MOVES = [...battle.SKILLS, "tap", "answer"]; // an exercise, or the answer to one that is waiting
 export const THROW_ACTIONS = ["feed", "play", "medicine", "trip", "plant"];
@@ -698,6 +698,8 @@ export interface ActionOptions {
   temp?: number | null;
   /** Where the sun rises and sets (the night decides a form). */
   location?: Location;
+  /** Another pet is there (a visiting friend, or the neighbour): it hides too. */
+  guest?: boolean;
   /** What else belongs to the action (see checkValue). */
   value?: unknown;
 }
@@ -785,7 +787,7 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
 
   const reason = state.stage === "egg"
     ? applyToEgg(state, action, now)
-    : apply(state, action, now, bedtime, item, thrown, by, weather, value, options.temp ?? null);
+    : apply(state, action, now, bedtime, item, thrown, by, weather, value, options.temp ?? null, !!options.guest);
   if (reason && state.activity_until <= now && state.stage !== "egg" && !state.trip) {
     setActivity(state, "no", now);
   }
@@ -834,8 +836,11 @@ function feed(state: PetState, now: number, name: string, thrown: number | null)
   return null;
 }
 
-/** Mini-game "Left or right?": five rounds of guessing which way the pet jumps. */
-function game(state: PetState, now: number, move: string): string | null {
+/**
+ * Hide and seek: the pet hides (and a guest with it), and every move looks behind one spot. It ends
+ * when everybody has been found or the tries are used up.
+ */
+function game(state: PetState, now: number, move: string, guest: boolean): string | null {
   const s = state.stats;
   if (move === "start") {
     if (state.asleep) {
@@ -844,7 +849,8 @@ function game(state: PetState, now: number, move: string): string | null {
     if (s.energy < care.GAME_ENERGY) {
       return "tired";
     }
-    care.startGame(state, now);
+    care.startGame(state, now, care.hidingSpots(state, home.placeDeco(state).outside), life.lineOf(state.species),
+      guest);
     setActivity(state, "game_wait", now);
     return null;
   }
@@ -852,14 +858,14 @@ function game(state: PetState, now: number, move: string): string | null {
     state.game = null;
     return "no_game";
   }
-  const [jump, hit, done] = care.guess(state, move, now);
-  setActivity(state, "game_turn", now, `${jump}:${hit ? "hit" : "miss"}`);
+  const [who, done] = care.seek(state, move, now);
+  setActivity(state, "game_turn", now, `${move}:${who ?? "miss"}`);
   if (!done) {
     return null;
   }
-  // Game over: counts as playing, and winning makes it happier
-  const wins = state.game!.wins!;
-  const won = wins >= care.GAME_WIN;
+  // Game over: counts as playing, and finding everybody makes it happier
+  const { found = [], spots = [] } = state.game!;
+  const won = found.length >= spots.length;
   s.mood += (won ? 25 : 10) * repeatFactor(state, "play", now) * life.bonusFactor(state, "play");
   s.energy -= 10;
   s.satiety -= 5;
@@ -873,7 +879,7 @@ function game(state: PetState, now: number, move: string): string | null {
     count(state, "games_won");
   }
   life.record(state, "plays");
-  state.game = { result: wins, last: now }; // result for the app
+  state.game = { result: found.length, last: now, spots, found, won }; // result for the app
   return null;
 }
 
@@ -1012,7 +1018,7 @@ function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string,
 
 function apply(state: PetState, action: string, now: number, bedtime: Bedtime, item: string | null,
     thrown: number | null, by: string, weather: sky.WeatherCode, value: unknown,
-    temp: number | null): string | null {
+    temp: number | null, guest: boolean): string | null {
   const s = state.stats;
 
   if (action === "trip") {
@@ -1192,7 +1198,7 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
   }
 
   if (action === "game") {
-    return game(state, now, item!);
+    return game(state, now, item!, guest);
   }
 
   if (action === "train") {

@@ -12,12 +12,19 @@ import * as life from "./life";
 export const STATS = ["satiety", "mood", "energy", "hygiene", "health"] as const;
 export type Stat = (typeof STATS)[number];
 
-/** Mini-game in progress (round, wins), or the result of the last one for the app. */
+/**
+ * Hide and seek in progress (tries used, how many were found), or the result of the last one for
+ * the app. `spots`: where the pet hides, then where its guest does; `found`: the spots found.
+ */
 export interface Game {
   round?: number;
   wins?: number;
   result?: number;
   last: number;
+  spots?: string[];
+  found?: string[];
+  /** The last game: whether everybody was found. */
+  won?: boolean;
 }
 
 /** An exercise waiting for its tap or answer (battle.start). */

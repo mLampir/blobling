@@ -333,7 +333,7 @@
       "bag": "Tasche"
     },
     "tools": {
-      "game": "Raten",
+      "game": "Verstecken",
       "tricks": "Tricks",
       "train": "Training"
     },
@@ -349,16 +349,12 @@
       "unknown": "Diese Bewegung kennt {name} nicht."
     },
     "game": {
-      "left": "links",
-      "right": "rechts",
-      "ask": "Wohin springt es?",
-      "jumped": "Nach {side} gesprungen – {result}",
-      "hit": "richtig! ✓",
-      "miss": "daneben ✗",
-      "round": "Runde {round} von {rounds} · {wins} richtig",
-      "result": "{result} von {rounds} richtig –\n{verdict}",
-      "won": "gewonnen! 🎉",
-      "lost": "vielleicht nächstes Mal!"
+      "miss": "Nicht da ✗",
+      "pet": "Gefunden! ✓",
+      "guest": "Einen gefunden! ✓",
+      "found": "{found} von {hiding} gefunden",
+      "won": "Alle gefunden! 🎉",
+      "lost": "Gut versteckt – diesmal gewinnt es!"
     },
     "dialog": {
       "cancel": "Abbrechen",
@@ -569,7 +565,7 @@
       "away": "war bei Oma",
       "grandma": "von Oma abgeholt",
       "new_egg": "ein neues Ei ist da",
-      "start": "„Links oder rechts?“ gespielt",
+      "start": "Verstecken gespielt",
       "unpack": "Rucksack ausgepackt",
       "wild_friend": "hat {pet} seine Tricks gezeigt und sich angefreundet 💛",
       "wild_shrug": "hat {pet} seine Tricks gezeigt – {pet} war nicht beeindruckt",
@@ -629,7 +625,7 @@
       "meals": "Mahlzeiten",
       "snacks": "Aus der Tasche",
       "plays": "Gespielt",
-      "game": "Links oder rechts?",
+      "game": "Verstecken",
       "game_value": "{games} Spiele, {won} gewonnen",
       "tricks": "Tricks",
       "tricks_value": "{tricks} ({n}× geübt)",

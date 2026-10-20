@@ -252,6 +252,19 @@ const SCENES: Record<string, Scene> = {
       rounds: [["pounce", "bow", "strong"]],
     }),
   }, DAY, null],
+  // hide and seek: behind the house (it peeks over the roof now and then), found in the grass, and with a friend
+  hide: [{
+    activity: "game_wait", game: true, house: 2, plant: { kind: "cherry", stage: "grown", ripe: false },
+    deco: ["flag", "windmill"], hide: { spots: ["house"], found: [], peek: 3, over: false },
+  }, DAY, null],
+  hide_found: [{
+    activity: "game_turn", activity_item: "grass:pet", hide: { spots: ["grass"], found: ["grass"], peek: 3, over: true },
+  }, DAY, null],
+  hide_guest: [{
+    stage: "adult", species: "angloop", activity: "game_turn", activity_item: "deco0:guest", game: true, house: 1,
+    deco: ["flag"], visitor: { species: "angloop", age: 60, left: 300 },
+    hide: { spots: ["right", "deco0"], found: ["deco0"], peek: 3, over: false },
+  }, DAY, null],
   // a wild pet: meeting it on a trip, its visits at home, and the nest with the egg
   wild_meet: [{
     stage: "adult", species: "angloop",

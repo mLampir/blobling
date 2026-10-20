@@ -80,7 +80,7 @@ the thing stays in the bag. The app marks both (❤ and ✕) once they have been
 tried with this form; a new form has tastes of its own. Since there is never
 much of anything, finding out what a pet likes takes trying what there is.
 
-**Weight.** Meals and food add weight; playing, the guessing game,
+**Weight.** Meals and food add weight; playing, hide and seek,
 training and trips take it off, and by itself the weight drifts back to the
 ideal. A meal adds 1 g, a fruit half a gram and a honeycomb 2.5 g; a round of play
 burns 2 g and every stop on a trip half a gram. A pet that is too heavy tires
@@ -339,11 +339,24 @@ little on its own (see [While nobody is there](#while-nobody-is-there)).
 Every adult form, and some children, do one trick in their own way. It looks
 different on the panel, but the gesture and what it does are the same.
 
-## The guessing game
+## Hide and seek
 
-"Left or right?" has five rounds: you guess which way the pet will jump. Three
-hits win. It costs energy like playing does and cheers the pet up – more so
-if you win.
+The pet hides, and you tap where you think it is. There are always three
+places to hide: past the left and the right edge of the panel, and in the tall
+grass. The house takes the place of the left edge, and so does the plant while
+there is no house; a plant, and the decorations outside, are places of their
+own, and with decorations out the right edge is taken by them.
+
+You have three tries. A miss shows a cross over the spot. Now and then the
+pet can't help peeking out: its head comes up over the roof or the grass, or it
+leans in from the edge. The smarter it is, the longer it keeps still (every 3
+seconds at first, every 7 with full smarts). Each line has a favorite spot it
+goes for more often, and it never hides twice in a row at the same spot.
+
+While a friend visits, or the neighbour is out with it, the two hide together
+and you have a try more; you win when you have found both. Found or not, the
+game counts as playing: it costs energy, cheers the pet up – more if you found
+everybody – and strengthens the bond.
 
 ## Training
 
@@ -535,7 +548,9 @@ or more); it cheers the pet up a little, too.
 
 While the friend is there, the two **play**: a game, a little rest side by
 side, the next game. They throw a ball to and fro, the friend copies a trick
-the pet shows it (each in its own way), or they hop in step and then by turns.
+the pet shows it (each in its own way), they hop in step and then by turns, or
+they play hide and seek: one ducks into the tall grass, the other counts with
+its eyes shut, looks around, and the one hiding jumps out.
 The pet only joins in when it is in a decent mood, awake and not busy with
 something else; otherwise the friend waits by its side. Playing is something
 to watch; what counts for the visit is still the pet's mood when the friend
@@ -642,7 +657,7 @@ too.
 
 **Habits.** The pet notices when it is usually fed or played with. A time
 of day becomes a habit when somebody fed it, played with it or started the
-guessing game at about that time (within half an hour) on at least three of
+hide and seek at about that time (within half an hour) on at least three of
 the last seven days. About twenty minutes before such a time it goes to the
 nearer edge of the panel and waits there, leaning out and now and then on
 tiptoe, until its meal or game comes, or the time has passed. Once it has
@@ -724,7 +739,7 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   the scene, it lands there and the pet goes to get it. The sponge is rubbed
   over the pet to clean it. Connected to a Pi, things can also be flicked up,
   as before.
-- **Adventure** has the trip, the tricks, the training and the guessing game.
+- **Adventure** has the trip, the tricks, the training and hide and seek.
   The tricks, the training and the game take the place of the needs and the
   tray, below the scene, so the pet stays where it is and answers there. On a
   tall phone the scene grows into the sky above it. Packing for a trip needs
@@ -770,7 +785,7 @@ keep its own pet or connect to a Pi; the README explains how.
 |---|---|
 | Stats, decay, actions, sleep | `core/src/model.ts` |
 | Life cycle, lines and adult forms, the album's forms (`FORMS`) | `core/src/life.ts` |
-| Weight, bond, guessing game, tricks | `core/src/care.ts` |
+| Weight, bond, hide and seek, tricks | `core/src/care.ts` |
 | Trips, areas, what is found where | `core/src/trip.ts` |
 | What is eaten from the bag, each form's favorite and dislike, and what food from trips leaves in the pet | `core/src/food.ts` |
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
