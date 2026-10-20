@@ -287,6 +287,7 @@
   #pack-areas .finds { flex: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
   #pack-areas img { height: 22px; image-rendering: pixelated; }
   #pack-areas .area > img { height: 30px; }
+  #pack-areas .tracks.left { filter: grayscale(1); opacity: 0.45; }
   .steps button { width: 52px; height: 52px; border-radius: 12px; border: 2px dashed var(--line); font-size: 26px; }
   .steps button.on { border-style: solid; border-color: var(--accent); }
   .link { color: var(--muted); text-decoration: underline; padding: 10px; font-size: 14px; }
@@ -1138,7 +1139,16 @@ function renderPack() {
       const finds = document.createElement("span");
       finds.className = "finds";
       finds.append(...a.finds.map((f) => picture(f.id, f.found, s.item_labels[f.id] || f.id)));
-      b.append(finds, picture(`foe_${a.keeper}`, !a.guardian, T[`foes.${a.keeper}`] || a.keeper));
+      b.append(finds);
+      // tracks: a wild pet of a line never had still lives there (gray), or none does any more
+      if (a.wild_left !== null) {
+        const tracks = document.createElement("span");
+        tracks.className = "tracks";
+        tracks.textContent = "🐾";
+        tracks.classList.toggle("left", a.wild_left);
+        b.append(tracks);
+      }
+      b.append(picture(`foe_${a.keeper}`, !a.guardian, T[`foes.${a.keeper}`] || a.keeper));
     }
     b.classList.toggle("on", !!area && a.id === area[0]);
     b.addEventListener("click", () => {

@@ -425,6 +425,8 @@ is still missing. When packing for a trip, each open area shows what there is
 to discover there once (its guardian's egg, its decorations and hats) and its
 guardian: in color what has been found or beaten, as a gray outline what is
 still waiting. Seeds and food come again and again and don't show there.
+Where wild pets of a line live, pawprints show whether one of a line the home
+has never had is still out there (gray) or not any more (in color).
 
 **Areas.** There are five, and they open up one after the other: the meadow,
 the mushroom forest, the stream, the cave and the mountain. Only the meadow is

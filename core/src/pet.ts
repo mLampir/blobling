@@ -824,6 +824,16 @@ export class Pet {
     return Object.keys(life.LINES).filter((line) => !this.album.includes(`egg:${line}`));
   }
 
+  /**
+   * Whether a wild pet lives in this area whose line the home has never had (null if none of its
+   * wild pets belongs to a line). Once that egg came home, the area has nothing new of that kind.
+   */
+  wildLeft(area: string): boolean | null {
+    const lines = (wild.WILD[area] ?? []).map(([form]) => form).filter((form) => !life.WILD_ONLY.includes(form))
+      .map((form) => life.lineOf(form));
+    return lines.length ? lines.some((line) => !this.album.includes(`egg:${line}`)) : null;
+  }
+
   /** A new name for the pet with this id (without one: the camera's). */
   rename(name: unknown, id?: unknown): void {
     const pet = this.find(id);
@@ -1047,12 +1057,14 @@ export class Pet {
       max_pack: trip.MAX_PACK,
       backpack: s.backpack.length, // this many finds are waiting to be unpacked
       // blocked_by: the area whose guardian is still in the way; guardian: one is waiting here;
-      // keeper: who guards it; finds: what there is to discover there once, and whether it has been
+      // keeper: who guards it; finds: what there is to discover there once, and whether it has been;
+      // wild_left: whether a wild pet lives there of a line the home has never had (null: none of a
+      // line lives there), without saying which
       areas: trip.AREAS.map((k) => ({
         id: k, label: t(`areas.${k}.name`), unlocked: trip.unlocked(s, k),
         blocked_by: trip.unlocked(s, k) ? null : t(`areas.${trip.blockedBy(k)}.name`),
         guardian: trip.guardianWaiting(s, k) !== null, keeper: battle.GUARDIANS[k],
-        finds: trip.discoveries(s, k),
+        finds: trip.discoveries(s, k), wild_left: this.wildLeft(k),
       })),
       guardians: { passed: s.guardians.length, all: trip.AREAS.length },
       // Finds: what there is, which of them are being worn or are set out, and where they stand
