@@ -583,6 +583,21 @@ other.
 Which wild pets live where is in [pets.md](pets.md), folded shut. A line
 whose egg a guardian gives is never among them.
 
+### Guests in the garden
+
+Some lines live nowhere on a trip. Their pets come to the garden by
+themselves, when something there draws them: a decoration that is set out,
+the plant, the weather at home, or how the pet spends its days with you.
+Which guest comes for what is in [pets.md](pets.md), folded shut.
+
+Once something draws a guest, it first **peeks over the fence** for a few
+hours, at the right edge of the garden. Then it comes in, and from then on it
+is a friend like one from a trip: it visits, plays, brings gifts and, after
+five visits that count, builds a nest. Its egg is always of its own line;
+that is what it came for. A guest comes to a pet only once, one at a time, and
+doesn't take the place of a friend from a trip. A pet that is still a baby or
+a child gets guests too.
+
 ### Guardians
 
 Every area has a guardian. It is twice the size of the others and waits at the
@@ -789,6 +804,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Trips, areas, what is found where | `core/src/trip.ts` |
 | What is eaten from the bag, each form's favorite and dislike, and what food from trips leaves in the pet | `core/src/food.ts` |
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
+| Guests in the garden: what draws them, peeking over the fence | `core/src/garden.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | A scuffle watched again in the app | `app/src/replay.ts` |
 | Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), hot afternoons, the house and its spots | `core/src/home.ts` |

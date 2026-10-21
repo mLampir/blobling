@@ -134,7 +134,7 @@ test("the status line: clock, temperature and what the pet needs", () => {
 test("every form of the pet can be drawn, in every state", () => {
   const forms = [...Object.keys(life.LINES).flatMap((line) => life.STAGES.map((stage) => [stage, line])),
     ...[...Object.values(life.LINES).flat(), ...life.WILD_ONLY].map((name) => ["adult", name])];
-  assert.equal(forms.length, 9 * 4 + 32);
+  assert.equal(forms.length, 13 * 4 + 44);
   const moods = ["normal", "happy", "sad", "hungry", "dirty", "sick", "tired"];
   for (const [stage, species] of forms) {
     for (const mood of moods) {
@@ -282,6 +282,71 @@ test("Flicker and Lumoth hop, Cyclopuff and Sneezle walk, Grumpcap walks and hop
   assert.equal(lifted("cyclopuff"), 0);
   assert.equal(lifted("sneezle"), 0);
   assert.ok(lifted("grumpcap") > 0 && lifted("grumpcap") < 8); // one hop in 2.5 seconds
+  // the garden's fliers fly all the way, Pawdini rolls on its ball, the dogs walk, Archibeaver hops with its tower
+  const flying = (species: string) => lowest(species).slice(0, 15).every((row) => row < GROUND - 1); // while it comes in
+  assert.ok(flying("rotorfly"));
+  assert.ok(flying("mothmuff"));
+  assert.equal(lifted("pawdini"), 0);
+  assert.equal(lifted("digby"), 0);
+  assert.ok(lifted("archibeaver") > 0);
+});
+
+test("the garden's adults have a trick and a special move of their own", () => {
+  const own = { mothmuff: "spin", sunflutter: "dance", jesterwing: "flip", digby: "spin", barrelbard: "bow",
+    pawdini: "dance", rotorfly: "spin", jewelwing: "bow", prismfly: "dance", dambert: "flip", timberjack: "spin",
+    archibeaver: "bow" };
+  const animations = new Set<string>();
+  for (const [species, trick] of Object.entries(own)) {
+    const animation = trickAnimation("adult", species, trick);
+    assert.notEqual(animation, trick, species);
+    animations.add(animation);
+    const shown = frames({ stage: "adult", species, activity: "trick", activity_item: `${trick}:ok` }, 30);
+    assert.ok(shown.some((image) => differing(image, shown[0]) > 20), species);
+  }
+  assert.equal(animations.size, Object.keys(own).length); // each one its own
+  // in a scuffle: the special move strikes at the middle of the round (BATTLE_ROUND = 3 s, after a 2 s intro)
+  const trip = { area: "meadow", returning: false, event: "battle", item: null, event_age: 0, foe: "bumblebop",
+    rounds: [["charge", "flip", "special"]], outcome: "win" };
+  for (const species of Object.keys(own)) {
+    const fight = frames({ stage: "adult", species, trip }, 50);
+    const plain = frames({ stage: "adult", species,
+      trip: { ...trip, rounds: [["charge", "flip", "hit"]] } }, 50);
+    assert.ok(fight.slice(20).some((image, i) => differing(image, plain[20 + i]) > 10), species);
+  }
+});
+
+test("a guest from the garden peeks over the fence at the right edge, only at home and outside", () => {
+  const right = 36; // nothing changes left of this column
+  const alone = frames({}, 100);
+  const peeking = frames({ peeking: "digby" }, 100);
+  const left = (a: Image, b: Image) => {
+    let count = 0;
+    for (let y = 0; y < a.height; y++) {
+      for (let x = 0; x < right; x++) {
+        const at = (y * a.width + x) * 4;
+        count += [0, 1, 2].some((c) => a.data[at + c] !== b.data[at + c]) ? 1 : 0;
+      }
+    }
+    return count;
+  };
+  const above = peeking.map((image, i) => differing(alone[i], image, 0, GROUND - 9));
+  assert.ok(Math.max(...above) > 20); // its head above the fence
+  assert.ok(peeking.every((image, i) => left(alone[i], image) === 0));
+  // now and then it ducks down behind the fence for a moment
+  assert.ok(Math.min(...above) < Math.max(...above) / 2);
+  // not while the pet is on a trip, nor inside the house
+  const trip = { area: "meadow", returning: false, event: null, item: null, event_age: 0 };
+  assert.equal(differing(frames({ trip }, 1)[0], frames({ trip, peeking: "digby" }, 1)[0]), 0);
+  const inside = { asleep: true, house: 2 };
+  assert.equal(differing(frames(inside, 1, NIGHT)[0], frames({ ...inside, peeking: "digby" }, 1, NIGHT)[0]), 0);
+});
+
+test("the garden lines' children show where they are heading", () => {
+  for (const [line, adults] of Object.entries(life.LINES).slice(-4)) {
+    const looks = adults.map((hint) => frames({ species: line, hint }, 1)[0]);
+    assert.ok(differing(looks[0], looks[1]) > 0 && differing(looks[1], looks[2]) > 0
+      && differing(looks[0], looks[2]) > 0, line);
+  }
 });
 
 test("the cloud adults follow the weather", () => {

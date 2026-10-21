@@ -91,13 +91,29 @@ const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:bubblehelm": { flip: "dive" }, // dives head first into the ground and pops out again in a burst of bubbles
   "adult:hippula": { bow: "count" }, // a count's deep bow with a sweep of the cape, and bats flutter up
   "adult:acewing": { flip: "loop" }, // a stunt flyer's loop with a trail of smoke
+  "adult:mothmuff": { spin: "lamp" }, // flutters round and round a light, as moths do round a lamp, and dust falls off its wings
+  "adult:sunflutter": { dance: "blossom" }, // sways, closes up, and its petals open like a blossom in the sun
+  "adult:jesterwing": { flip: "jest" }, // a fool's somersault high in the air, its bells jingling
+  "adult:digby": { spin: "settle" }, // goes round and round three times, as a dog does, and lies down
+  "adult:barrelbard": { bow: "shake_off" }, // a bow, and it shakes the snow out of its coat
+  "adult:pawdini": { dance: "ball_roll" }, // rolls to and fro on its big ball, the little one balanced on its nose
+  "adult:rotorfly": { spin: "lift_off" }, // lifts off, turns on the spot in the air and sets down again
+  "adult:jewelwing": { bow: "kneel" }, // a knight's bow: down on one knee with the lance lowered
+  "adult:prismfly": { dance: "light_dance" }, // spots of light in every color dance round it
+  "adult:dambert": { flip: "hurdle" }, // trowel up, and a jump over a little stack of logs
+  "adult:timberjack": { spin: "chop" }, // spins with its axe tail swinging, and wood chips fly
+  "adult:archibeaver": { bow: "blueprint" }, // a bow, it unrolls its plan, and its compass sparks
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
 // Forms whose special move in a scuffle is a move of its own (`special`), not the trick it used
 const SPECIAL_MOVES = ["angloop", "gemperor", "purrloop", "lanternling", "flarelet", "roamtail", "filchfox", "rumblefluff",
   "prismist", "twiggle", "needlenub", "quill", "drakwing", "lillypot", "steamo", "parcelbeak", "rapierre", "glimmerock",
-  "bouldergrin", "salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing"];
+  "bouldergrin", "salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
+  "mothmuff", "sunflutter", "jesterwing", "digby", "barrelbard", "pawdini", "rotorfly", "jewelwing", "prismfly", "dambert",
+  "timberjack", "archibeaver"];
+// Special moves that knock the opponent further back than others: by this many pixels more
+const SPECIAL_PUSH: Record<string, number> = { rotorfly: 10 }; // its downwash blows it away
 // The skipping stone: [start, length, height] of each hop, over the time in the air (0..1)
 const SKIPS: readonly (readonly [number, number, number])[] = [[0, 0.45, 12], [0.45, 0.3, 6], [0.75, 0.25, 3]];
 const SPIN_PAD = 8;
@@ -190,6 +206,15 @@ export function thingArea(kind: "nest" | "gift" | "found", house: number): [numb
   return [part(middle - 7), part(GROUND - 12), part(14), part(14)];
 }
 const VISIT_WALK = 3.0; // seconds it takes to hop in and out
+// A guest from the garden peeks over the fence at the right edge before it comes in: the fence
+// (pickets, rail) from FENCE_X on; it looks out over it as far as its eyes, and every how many
+// seconds it ducks down for a moment
+const FENCE_X = 52;
+const FENCE_TOP = GROUND - 9;
+const FENCE: readonly [Color, Color] = [[205, 170, 120], [150, 115, 75]];
+const PEEK_EYES = 5; // rows from the top of its face down to below its eyes
+const PEEK_EVERY = 9;
+const PEEK_DUCK = 1.6;
 // While the friend is there, the two play now and then: a game, a rest standing together, the next
 // game. Only while the pet is in a decent mood, awake and has nothing else to do; otherwise the
 // friend just waits by its side. Which game comes when follows from when the friend came.
@@ -268,10 +293,15 @@ const STAGE_SHEETS: Record<string, Record<string, readonly [string, string]>> = 
   duck: { baby: ["duck_baby_body", "duck_baby_faces"], child: ["paddlet_body", "duck_faces"] },
   hippo: { baby: ["hippo_baby_body", "hippo_baby_faces"], child: ["soakling_body", "hippo_faces"] },
   beak: { baby: ["beak_baby_body", "beak_baby_faces"], child: ["crestling_body", "beak_faces"] },
+  caterpillar: { baby: ["caterpillar_baby_body", "caterpillar_baby_faces"], child: ["munchlet_body", "caterpillar_faces"] },
+  dog: { baby: ["dog_baby_body", "dog_baby_faces"], child: ["pupplet_body", "dog_faces"] },
+  dragonfly: { baby: ["dragonfly_baby_body", "dragonfly_baby_faces"], child: ["nymphlet_body", "dragonfly_faces"] },
+  beaver: { baby: ["beaver_baby_body", "beaver_baby_faces"], child: ["gnawlet_body", "beaver_faces"] },
 };
 // The egg of a line: the tags in the items sheet start with this
 const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg", cloud: "cloud_egg",
-  leaf: "leaf_egg", duck: "duck_egg", hippo: "hippo_egg", beak: "beak_egg" };
+  leaf: "leaf_egg", duck: "duck_egg", hippo: "hippo_egg", beak: "beak_egg", caterpillar: "caterpillar_egg", dog: "dog_egg",
+  dragonfly: "dragonfly_egg", beaver: "beaver_egg" };
 // Color per adult species: hue shift (0–255) starting from teal.
 // Fallback for a species without pixel art of its own.
 const SPECIES_HUE: Record<string, number> = {
@@ -304,7 +334,9 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
   lillypot: ["lillypot_body", "lillypot_faces", 0],
   rapierre: ["rapierre_body", "rapierre_faces", 0],
   parcelbeak: ["parcelbeak_body", "parcelbeak_faces", 0],
-  ...Object.fromEntries(["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing"]
+  ...Object.fromEntries(["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
+    "mothmuff", "sunflutter", "jesterwing", "digby", "barrelbard", "pawdini", "rotorfly", "jewelwing", "prismfly", "dambert",
+    "timberjack", "archibeaver"]
     .map((species) => [species, [`${species}_body`, `${species}_faces`, 0] as const])),
 };
 // What grows on a child's head hints at the adult form it is heading for. Per line, the three
@@ -312,7 +344,9 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
 // of the ember slime (edge, middle, heart), the pebble's quartz band (band, shadow, sparkle), the
 // white tip of the fox cub's tail (tip, shadow), the bell of the cloud lamb (bell, shadow), the
 // seedling's leaves (light, dark), the duckling's curl (curl, shadow), the stripe of the young
-// hippo's towel and the young bird's goggles (lenses, frame) – as in the palettes of
+// hippo's towel, the young bird's goggles (lenses, frame), the pompoms on the caterpillar's feelers
+// (light, dark), the puppy's ears and tail (fur, shadow), the lenses of the larva's dew goggles
+// (lens, shadow) and the young beaver's pencil (wood, shadow) – as in the palettes of
 // tools/build_blob_sprites.py.
 const LURES: Record<string, readonly Color[]> = {
   blob: [[255, 235, 150], [240, 190, 90], [255, 255, 255]],
@@ -324,6 +358,10 @@ const LURES: Record<string, readonly Color[]> = {
   duck: [[245, 185, 40], [210, 140, 30]],
   hippo: [[240, 130, 160]],
   beak: [[150, 220, 240], [95, 70, 50]],
+  caterpillar: [[245, 110, 170], [200, 70, 130]],
+  dog: [[130, 85, 45], [95, 60, 30]],
+  dragonfly: [[235, 252, 255], [170, 230, 250]],
+  beaver: [[245, 200, 60], [200, 150, 40]],
 };
 const LURE_HINT: Record<string, readonly Color[]> = {
   sneezle: [[125, 220, 105], [60, 170, 70], [235, 255, 205]],
@@ -358,13 +396,33 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   bubblehelm: [[230, 170, 60], [165, 110, 40]], // brass
   hippula: [[175, 30, 55]], // a red as dark as its cape's lining
   acewing: [[250, 248, 240], [150, 90, 50]], // its scarf, and the leather of its cap
+  mothmuff: [[185, 170, 200], [135, 120, 155]], // a soft moth gray
+  sunflutter: [[255, 210, 50], [215, 160, 30]], // a sunflower's yellow
+  jesterwing: [[225, 50, 75], [130, 75, 200]], // a harlequin's red and violet
+  digby: [[110, 200, 80], [60, 140, 50]], // the green of a sprout
+  barrelbard: [[245, 248, 255], [200, 210, 225]], // snow
+  pawdini: [[230, 45, 60], [165, 25, 45]], // circus red
+  rotorfly: [[175, 235, 245], [120, 195, 220]], // the glass of its cockpit
+  jewelwing: [[60, 210, 140], [30, 140, 90]], // a jewel's green
+  prismfly: [[255, 150, 200], [215, 95, 160]], // the pink of a rainbow
+  dambert: [[205, 140, 70], [140, 85, 40]], // a log's fresh wood
+  timberjack: [[210, 50, 50], [150, 30, 35]], // its plaid
+  archibeaver: [[80, 170, 255], [40, 100, 210]], // its blueprint
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
+// Forms that neither hop nor walk but get about at a height of their own (rows above the ground):
+// the fliers fly (with their "flutter" frames, if they have any), and Pawdini rolls on its ball
+const GLIDES: Record<string, number> = { mothmuff: 4, sunflutter: 4, jesterwing: 5, rotorfly: 5, prismfly: 5, pawdini: 0 };
+const HOVERS = ["rotorfly"]; // flies steadily instead of fluttering up and down
+// Forms that hop all of a piece, without squashing and stretching: Archibeaver, tower and all, like a rook
+const STIFF_HOPS = ["archibeaver"];
 // the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
-// duck like it too, and a pond hippo is wet anyway
+// duck like it too, and a pond hippo is wet anyway; so is a beaver, a dragonfly grew up in a pond,
+// and a sunflower is a plant
 export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist", "leaf", "twiggle",
-  "needlenub", "duck", "drakwing", "quill", "lillypot", "flurrbleat", "sakurin", "bubblehelm"];
+  "needlenub", "duck", "drakwing", "quill", "lillypot", "flurrbleat", "sakurin", "bubblehelm", "sunflutter", "dragonfly",
+  "rotorfly", "jewelwing", "prismfly", "beaver", "dambert", "timberjack", "archibeaver"];
 // Needlenub's flower opens only when it is happy; otherwise it is a bud (the colors as in the
 // palette of tools/build_blob_sprites.py)
 const BUD: readonly (readonly [Color, Color])[] = [
@@ -372,7 +430,7 @@ const BUD: readonly (readonly [Color, Color])[] = [
 ];
 // Species that glow at night ([day color, night color], the day colors as in the palettes of
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals,
-// Gemperor's crystals and core, the bulb of Angloop's lure
+// Gemperor's crystals and core, the bulb of Angloop's lure, Prismfly's glass and wings, Archibeaver's blueprint
 const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   lumoth: [
     [[250, 160, 215], [150, 255, 235]], [[255, 215, 110], [255, 255, 200]], [[240, 200, 120], [190, 255, 240]],
@@ -388,6 +446,12 @@ const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   salamber: [[[255, 200, 60], [255, 240, 140]], [[255, 210, 90], [255, 245, 170]]], // its glowing spots
   lunarock: [[[248, 246, 215], [255, 255, 245]], [[150, 110, 210], [185, 140, 255]], [[205, 175, 245], [235, 215, 255]]],
   foxfire: [[[110, 200, 255], [160, 230, 255]], [[220, 245, 255], [255, 255, 255]]], // its fox fires
+  prismfly: [ // its glass, and the light in its wings
+    [[225, 250, 255], [240, 255, 255]], [[170, 225, 245], [205, 245, 255]], [[250, 230, 90], [255, 245, 160]],
+    [[90, 160, 245], [140, 200, 255]], [[175, 110, 240], [210, 160, 255]], [[255, 180, 220], [255, 215, 240]],
+    [[170, 250, 240], [215, 255, 250]],
+  ],
+  archibeaver: [[[80, 170, 255], [130, 210, 255]], [[200, 240, 255], [235, 252, 255]]], // its blueprint
 };
 // Lunarock's moonstone waxes and wanes with the real moon: the unlit part in this color (the lit one
 // as in the palette of tools/build_blob_sprites.py)
@@ -501,6 +565,38 @@ const ANCHOR: Bitmap = [[165, 175, 195], ["..X..", ".XXX.", "..X..", "X.X.X", ".
 const BAT: Bitmap = [[160, 85, 180], ["X...X", "XX.XX", ".XXX."]]; // Hippula's little bats
 const CONTRAIL: Bitmap = [[240, 242, 248], ["XX", "XX"]]; // Acewing's trail of smoke
 const SONIC_RING: Bitmap = [[200, 230, 255], [".XXX.", "X...X", "X...X", ".XXX."]]; // Acewing's dive breaks the sound barrier
+// The garden's adults
+const WING_DUST: Bitmap = [[205, 190, 215], ["X"]]; // off Mothmuff's wings
+const DUST_PUFF: Bitmap = [[190, 175, 205], [".X.", "XXX", ".X."]]; // its cloud of wing dust
+const LAMP: Bitmap = [[255, 235, 150], [".X.", "XXX", ".X."]]; // the light it circles
+const SUN_PETAL: Bitmap = [[255, 225, 90], ["XX"]]; // Sunflutter's petals
+const POLLEN: Bitmap = [[255, 240, 130], ["X"]];
+const BELL: Bitmap = [[255, 215, 60], [".X.", "XXX", "X.X"]]; // the bells on Jesterwing's cap
+const CONFETTI: Bitmap[] = ([[225, 50, 75], [130, 75, 200], [255, 215, 60], [90, 200, 120], [80, 150, 240]] as Color[])
+  .map((color) => [color, ["X"]]);
+const SPROUT: Bitmap = [[110, 200, 80], ["X.X", ".X."]]; // off the bed on Digby's back
+const SNOW_CHUNK: Bitmap = [[240, 245, 255], [".XXX.", "XXXXX", "XXXXX"]]; // Barrelbard's avalanche
+const STAR: Bitmap = [[255, 235, 120], [".X.", "XXX", ".X."]]; // Pawdini's stars
+const CIRCUS_BALL: Bitmap[] = ([[225, 45, 60], [70, 120, 230], [255, 215, 60]] as Color[])
+  .map((color) => [color, [".XX.", "XXXX", "XXXX", ".XX."]]); // what Pawdini juggles
+const GUST: Bitmap = [[215, 232, 245], ["XXX"]]; // Rotorfly's downwash
+const JEWEL: Bitmap = [[110, 235, 170], [".X.", "X.X", ".X."]]; // the sparkle on Jewelwing's lance
+// Prismfly's light: the rainbow's six colors and a seventh, as light through a prism breaks into
+const PRISM: readonly Color[] = [...RAINBOW.slice(0, 5), [90, 100, 220], RAINBOW[5]];
+const LIGHT_SPOT: Bitmap[] = PRISM.map((color) => [color, ["X"]]);
+// How Prismfly's seven rays fan out (radians): how wide, and how far down (at an opponent on the ground);
+// how far from its middle they start, and how long they are
+const RAY_FAN = 0.7;
+const RAY_TILT = 0.45;
+const RAY_FROM = 8;
+const RAY_LENGTH = 32;
+const LIGHT_DOT: Bitmap[] = PRISM.map((color) => [color, ["XX", "XX"]]);
+const LOG: Bitmap = [[150, 100, 55], ["XXXXXX", "XXXXXX"]]; // a log of Dambert's, the stack it jumps over
+const WOOD_CHIP: Bitmap = [[225, 190, 130], ["XX"]]; // off Timberjack's axe
+const TRUNK: Bitmap = [[150, 100, 60], ["XXXXXXXXXXXX", "XXXXXXXXXXXX", "XXXXXXXXXXXX"]]; // the tree it fells
+const BRANCH: Bitmap = [[160, 110, 60], ["X.XXXX.X", ".XXXXXX."]]; // what Archibeaver builds with
+const BLUEPRINT: Bitmap = [[90, 160, 235], ["XXXXXX", "X....X", "X.XX.X", "X....X", "XXXXXX"]]; // its plan
+const COMPASS_SPARK: Bitmap = [[255, 240, 140], ["X"]];
 
 export const APP_BACKGROUND: Color = [17, 19, 24]; // background of the app (pet.html), also for the app icon
 
@@ -567,6 +663,8 @@ export interface SceneView {
     species: string; left: number; age: number; stage?: string; asleep?: boolean; tricks?: readonly string[];
   } | null;
   nest?: string | null;
+  /** A guest from the garden (garden.ts) peeking over the fence, before it comes in: its species. */
+  peeking?: string | null;
   gift?: boolean;
   /** What it found at home by itself (state.found), until it is picked up. */
   found?: string | null;
@@ -735,6 +833,8 @@ interface Particle {
   vx: number;
   vy: number;
   life: number;
+  /** It falls (pixels per second, per second): thrown things fly in an arc. */
+  ay?: number;
 }
 
 /** An opponent: name, left edge, lift, turned away, hearts left, how often the pet can still be knocked over, look. */
@@ -788,6 +888,8 @@ interface Pose {
   hidden: boolean;
   /** It hides (hide and seek). */
   cover: Cover | null;
+  /** Prismfly sends out its light, broken into seven rays. */
+  rays: boolean;
 }
 
 interface PetLook {
@@ -1009,6 +1111,9 @@ export class PetScene {
     if (pose.foe) {
       this.drawFoe(img, pose.foe, t);
     }
+    if (pose.rays) {
+      this.drawRays(img, x + SPRITE / 2, y + top + 8);
+    }
     const guest = pose.wild || (!trip && !indoors && this.visitor(view, t));
     if (guest) {
       this.drawGuest(img, guest, t);
@@ -1044,7 +1149,7 @@ export class PetScene {
       heart: null, form: [view.stage, view.species], white: false,
       egg: null, eggT: t, item: view.activity_item, propAt: null, thrown: null,
       activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false, bud: null, rainbow: false,
-      cover: null,
+      cover: null, rays: false,
     };
     this.play = this.hiding = null;
     this.tallGrass = [];
@@ -1527,6 +1632,134 @@ export class PetScene {
         pose.body = "squash";
       }
       pose.face = "happy";
+    } else if (animation === "lamp") {
+      // flutters up and round and round under a light, as a moth does round a lamp; dust falls off its wings
+      const turn = p * 3 * (2 * Math.PI);
+      const up = Math.sin(p * Math.PI);
+      Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter"), dx: Math.round(Math.sin(turn) * 8 * up),
+        jump: up * (8 + Math.cos(turn) * 3), face: "happy" });
+      this.facing = Math.cos(turn) > 0 ? 1 : -1;
+      if (p > 0.15 && p < 0.85) {
+        this.trickFx(t, "lamp", 0.1, LAMP, 1, -1, 32 + up * 6, [0, 0], [0, 0], 0.6); // the light above it, where a lamp would hang
+        this.trickFx(t, "lamp_dust", 0.12, WING_DUST, 2, 0, 16 + pose.jump, [-8, 8], [4, 10], 1.2);
+      }
+    } else if (animation === "blossom") {
+      // sways in the sun, closes up small, and opens wide like a blossom: its petals spread out
+      if (p < 0.35) {
+        const sway = Math.sin(p / 0.35 * 2 * (2 * Math.PI));
+        Object.assign(pose, { dx: Math.round(sway * 3), body: sway > 0 ? "stretch" : "idle", face: "smile" });
+      } else if (p < 0.5) {
+        Object.assign(pose, { body: "squash", face: "blink" });
+      } else {
+        Object.assign(pose, { body: p < 0.6 ? "stretch" : "idle", jump: p < 0.6 ? 2 : 0, face: "laugh" });
+        this.ringFx(t, "blossom", TRICK_SHOW, [SUN_PETAL], 12, -1, 17, 28, 0.7);
+        this.trickFx(t, "blossom_pollen", 0.2, POLLEN, 1, this.rng.uniform(-10, 10), 22, [-3, 3], [-6, -3], 1.2);
+      }
+    } else if (animation === "jest") {
+      // a fool's somersault high up in the air, with the bells on its cap jingling
+      const q = (p - 0.1) / 0.8;
+      if (q > 0 && q < 1) {
+        Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter", "stretch"), jump: Math.sin(q * Math.PI) * 16,
+          rotate: -360 * clamp((q - 0.2) / 0.6, 0, 1) * this.facing });
+        this.trickFx(t, "jest", 0.15, BELL, 1, this.rng.uniform(-8, 8), 26 + pose.jump, [-10, 10], [-10, -4], 0.6);
+        this.trickFx(t, "jest_note", 0.5, NOTE, 1, 10, 30 + pose.jump, [-4, 4], [-12, -8], 0.9);
+      } else {
+        pose.body = "squash";
+      }
+      pose.face = "laugh";
+    } else if (animation === "settle") {
+      // three times round on the spot, after its own tail as a dog does before it lies down, and down it lies
+      if (p < 0.7) {
+        const turn = p / 0.7 * 3 * (2 * Math.PI);
+        Object.assign(pose, { dx: Math.round(Math.sin(turn) * 5), turn: Math.cos(turn),
+          jump: Math.abs(Math.sin(turn)) * 2, face: "happy" });
+      } else {
+        Object.assign(pose, { body: p < 0.76 ? "squash" : "flat", face: p < 0.76 ? "smile" : "blink" });
+      }
+    } else if (animation === "shake_off") {
+      // a slow bow, then it shakes itself, and the snow flies out of its coat
+      if (p < 0.5) {
+        pose.body = p < 0.1 ? "idle" : p < 0.2 || p > 0.42 ? "squash" : "flat";
+        pose.face = p >= 0.1 ? "blink" : "smile";
+      } else if (p < 0.85) {
+        Object.assign(pose, { dx: Math.trunc(p * 40) % 2 ? 2 : -2, face: "laugh" });
+        this.trickFx(t, "shake_off", 0.06, SNOWFLAKE, 2, this.rng.uniform(-10, 10), 16, [-24, 24], [-16, -6], 0.9, 30);
+      } else {
+        pose.face = "smile";
+      }
+    } else if (animation === "ball_roll") {
+      // rolls to and fro on its big ball, and keeps the little one on its nose balanced; stars twinkle
+      const sway = Math.sin(p * 2 * (2 * Math.PI));
+      Object.assign(pose, { dx: Math.round(sway * 7), jump: Math.abs(Math.cos(p * 2 * (2 * Math.PI))) > 0.95 ? 1 : 0,
+        face: "laugh" });
+      if (p > 0.1 && p < 0.9) {
+        this.trickFx(t, "ball_roll", 0.3, STAR, 1, this.rng.uniform(-16, 16), this.rng.uniform(14, 30), [0, 0], [-2, 0], 0.6);
+      }
+    } else if (animation === "lift_off") {
+      // lifts off, turns on the spot in the air, and sets down again; its rotor blows up dust
+      const up = Math.sin(clamp(Math.min(p / 0.25, (1 - p) / 0.2), 0, 1) * Math.PI / 2);
+      const q = (p - 0.25) / 0.55;
+      Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter"), jump: up * 12,
+        turn: q > 0 && q < 1 ? Math.cos(q * 2 * (2 * Math.PI)) : null, face: "happy" });
+      if (up > 0.2) {
+        this.trickFx(t, "lift_off", 0.1, DUST, 2, 0, 1, [-22, 22], [-4, -1], 0.5);
+      }
+    } else if (animation === "kneel") {
+      // a knight's bow: down on one knee with the lance lowered, and a glint runs along the lance
+      if (p < 0.1 || p > 0.85) {
+        Object.assign(pose, { body: "idle", face: "smile" });
+      } else if (p < 0.25 || p > 0.75) {
+        Object.assign(pose, { body: "squash", face: "smile" });
+      } else {
+        Object.assign(pose, { body: "flat", rotate: 8 * this.facing, face: "blink" });
+        this.trickFx(t, "kneel", 0.35, JEWEL, 1, 13, 20, [-2, 2], [-6, -2], 0.6);
+      }
+    } else if (animation === "light_dance") {
+      // dances, and spots of light in every color dance round it
+      Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter", Math.sin(p * 6 * (2 * Math.PI)) > 0 ? "stretch" : "idle"),
+        dx: Math.round(Math.sin(p * 2 * (2 * Math.PI)) * 3), jump: Math.sin(p * Math.PI) * 4, face: "laugh" });
+      if (p > 0.1 && p < 0.9 && t - (this.trickFxAt.get("light_dance") ?? -Infinity) >= 0.05) {
+        this.trickFxAt.set("light_dance", t);
+        const k = Math.trunc(t * 17) % PRISM.length;
+        const a = t * 5 + k * 0.9;
+        this.particles.push({
+          sprite: LIGHT_DOT[k], x: this.x + SPRITE / 2 - 1 + Math.cos(a) * 18, y: GROUND - 15 - pose.jump + Math.sin(a) * 9,
+          vx: -Math.sin(a) * 20, vy: Math.cos(a) * 10, life: 0.9,
+        });
+      }
+    } else if (animation === "hurdle") {
+      // trowel up, a stack of logs in front of it, a jump right over it, and back once the logs are gone
+      const log = this.facing > 0 ? 13 : 19; // the stack's left edge from its middle
+      if (p < 0.15) {
+        Object.assign(pose, { body: "squash", face: "normal" });
+        this.trickFx(t, "hurdle", TRICK_SHOW, LOG, 1, log, 2, [0, 0], [0, 0], 1.5);
+        this.trickFx(t, "hurdle_top", TRICK_SHOW, LOG, 1, log, 4, [0, 0], [0, 0], 1.5);
+      } else if (p < 0.5) {
+        const q = (p - 0.15) / 0.35;
+        Object.assign(pose, { body: "stretch", jump: Math.sin(q * Math.PI) * 12, dx: Math.round(q * 28) * this.facing,
+          face: "happy" });
+      } else if (p < 0.72) {
+        Object.assign(pose, { body: p < 0.56 ? "squash" : "idle", dx: 28 * this.facing, face: "laugh" });
+      } else {
+        const f = (p - 0.72) / 0.28;
+        Object.assign(pose, { dx: Math.round(28 * (1 - f)) * this.facing, jump: Math.abs(Math.sin(f * 2 * Math.PI)) * 3,
+          face: "smile" });
+      }
+    } else if (animation === "chop") {
+      // turns round and round with its axe tail swinging out, and wood chips fly
+      Object.assign(pose, { turn: Math.cos(p * 3 * (2 * Math.PI)), jump: Math.sin(p * Math.PI) * 3, face: "laugh" });
+      if (p > 0.15 && p < 0.85) {
+        this.trickFx(t, "chop", 0.12, WOOD_CHIP, 2, this.rng.uniform(-12, 12), 6, [-22, 22], [-22, -10], 0.9, 40);
+      }
+    } else if (animation === "blueprint") {
+      // a bow, and it unrolls its plan in front of it while its compass sparks
+      pose.body = p < 0.1 || p > 0.85 ? "idle" : p < 0.25 || p > 0.75 ? "squash" : "flat";
+      pose.face = p >= 0.25 && p <= 0.75 ? "smile" : "happy";
+      if (p > 0.25 && p < 0.7) {
+        // its body isn't drawn mirrored: the plan unrolls further out on the left, the compass is on the right
+        this.trickFx(t, "blueprint", TRICK_SHOW, BLUEPRINT, 1, -23 * this.facing, 15, [0, 0], [0, 0], 1.1);
+        this.trickFx(t, "blueprint_spark", 0.08, COMPASS_SPARK, 3, 11 * this.facing, 19, [-8, 8], [-12, -3], 0.5);
+      }
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
       if (p < 0.1 || p > 0.9) {
@@ -1818,6 +2051,139 @@ export class PetScene {
           this.trickFx(t, "sp_acewing_trail", 0.04, CONTRAIL, 1, 0, 16 + pose.jump, [-4, 0], [-2, 2], 0.6);
         }
         break;
+      case "mothmuff": // flutters up beating its wings, and a cloud of wing dust drifts over the opponent
+        if (q < 0.6) {
+          Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter"), jump: Math.sin(clamp(q / 0.3, 0, 1) * Math.PI / 2) * 6,
+            face: "smile" });
+          if (q > 0.2) {
+            this.trickFx(t, "sp_mothmuff", 0.05, DUST_PUFF, 1, 6, 14 + pose.jump, [22, 32], [-4, 4], 1.0);
+            this.trickFx(t, "sp_mothmuff_dust", 0.05, WING_DUST, 2, 6, 16 + pose.jump, [18, 34], [-6, 6], 1.0);
+          }
+        }
+        break;
+      case "sunflutter": // whirls round, and a whirl of pollen blows at the opponent
+        if (q < 0.6) {
+          Object.assign(pose, { turn: Math.cos(q * 4 * (2 * Math.PI)), face: "laugh" });
+          if (q > 0.15) {
+            this.trickFx(t, "sp_sunflutter", 0.04, POLLEN, 3, 4, 18 + Math.sin(t * 20) * 6, [22, 40], [-10, 10], 0.9);
+            this.trickFx(t, "sp_sunflutter_petal", 0.15, SUN_PETAL, 1, 4, 18, [20, 30], [-8, 8], 0.9);
+          }
+        }
+        break;
+      case "jesterwing": // a jingle of its bells, and confetti showers the opponent until it can't help laughing
+        if (q < 0.4) {
+          Object.assign(pose, { body: Math.trunc(q * 12) % 2 ? "stretch" : "squash", face: "laugh" });
+          this.trickFx(t, "sp_jesterwing_bell", 0.15, BELL, 1, this.rng.uniform(-8, 8), 28, [-8, 8], [-10, -4], 0.6);
+        } else if (q < 0.6) {
+          pose.body = "stretch";
+          CONFETTI.forEach((sprite, i) => {
+            this.trickFx(t, `sp_jesterwing${i}`, once, sprite, 3, 6, 22, [22, 40], [-20, 4], 1.2, 25);
+          });
+        }
+        break;
+      case "digby": // digs itself in, tunnels over, and comes up right under the opponent
+        if (q < 0.25) {
+          Object.assign(pose, { body: Math.trunc(t * 10) % 2 ? "squash" : "flat", face: "normal" });
+          this.trickFx(t, "sp_digby", 0.08, CLOD, 2, 0, 2, [-16, 16], [-20, -8], 0.6, 40);
+        } else if (q < 0.45) {
+          pose.hidden = true; // a ridge of earth runs over to the opponent
+          this.trickFx(t, "sp_digby_tunnel", 0.05, CLOD, 1, (q - 0.25) / 0.2 * 30, 1, [-4, 4], [-8, -4], 0.4, 40);
+        } else if (q < 0.7) {
+          const f = (q - 0.45) / 0.25;
+          Object.assign(pose, { dx: towards(30), body: "stretch", jump: Math.sin(f * Math.PI) * 10 });
+          this.trickFx(t, "sp_digby_up", once, CLOD, 6, 30, 2, [-14, 14], [-26, -12], 0.7, 40);
+          this.trickFx(t, "sp_digby_sprout", once, SPROUT, 2, 30, 4, [-8, 8], [-22, -14], 0.7, 40);
+        } else {
+          const f = (q - 0.7) / 0.3;
+          Object.assign(pose, { dx: towards(30 * (1 - f)), jump: Math.abs(Math.sin(f * 2 * Math.PI)) * 3, face: "smile" });
+        }
+        break;
+      case "barrelbard": // rears up and comes down so hard that an avalanche of snow rolls over the opponent
+        if (q < 0.3) {
+          Object.assign(pose, { body: "stretch", jump: q / 0.3 * 4, face: "normal" });
+        } else if (q < 0.6) {
+          Object.assign(pose, { body: q < 0.4 ? "flat" : "squash", face: "laugh" });
+          this.trickFx(t, "sp_barrelbard", 0.05, SNOW_CHUNK, 1, 8, this.rng.uniform(2, 12), [30, 44], [-4, 2], 0.8);
+          this.trickFx(t, "sp_barrelbard_flake", 0.05, SNOWFLAKE, 2, 8, 14, [20, 40], [-14, 0], 0.8);
+        }
+        break;
+      case "pawdini": // juggles, and one ball after the other flies over at the opponent in an arc
+        if (q < 0.6) {
+          Object.assign(pose, { dx: Math.round(Math.sin(q * 4 * Math.PI) * 3), face: "laugh" });
+          if (q > 0.1) {
+            this.trickFx(t, "sp_pawdini", 0.12, CIRCUS_BALL[Math.trunc(q * 20) % CIRCUS_BALL.length], 1, 4, 26,
+              [26, 32], [-34, -28], 1.0, 60);
+          }
+          this.trickFx(t, "sp_pawdini_star", 0.25, STAR, 1, this.rng.uniform(-14, 14), this.rng.uniform(16, 30), [0, 0],
+            [-2, 0], 0.5);
+        }
+        break;
+      case "rotorfly": // lifts off, tilts at the opponent, and its downwash blows it away
+        if (q < 0.25) {
+          Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter"), jump: q / 0.25 * 8, face: "normal" });
+        } else if (q < 0.7) {
+          Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter"), jump: 8 + Math.sin(t * 6), rotate: 10 * this.facing });
+          this.trickFx(t, "sp_rotorfly", 0.04, GUST, 2, 10, 6 + this.rng.uniform(0, 12), [32, 48], [-2, 4], 0.7);
+        } else {
+          Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter"), jump: (1 - q) / 0.3 * 8, face: "smile" });
+        }
+        break;
+      case "jewelwing": // draws back, then a thrust with its lance, and the tip flashes
+        if (q < 0.35) {
+          Object.assign(pose, { body: "squash", dx: towards(-2), face: "normal" });
+        } else {
+          Object.assign(pose, { body: out > 0.2 ? "stretch" : "idle", dx: towards(out * 18) });
+          if (q > 0.45 && q < 0.55) {
+            this.trickFx(t, "sp_jewelwing", once, TOUCHE, 1, SPRITE / 2 + 14, 18, [0, 0], [0, 0], 0.4);
+            this.trickFx(t, "sp_jewelwing_jewel", once, JEWEL, 6, SPRITE / 2 + 14, 18, [-10, 16], [-16, 8], 0.7);
+          }
+        }
+        break;
+      case "prismfly": // gathers the light, and sends it out again broken into seven rays
+        if (q < 0.4) {
+          Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter"), jump: q / 0.4 * 6, face: "smile",
+            white: q > 0.3 && Math.trunc(t * 12) % 2 === 0 });
+        } else if (q < 0.62) {
+          Object.assign(pose, { body: "stretch", jump: 6, rays: true });
+        }
+        break;
+      case "dambert": // busy, busy: logs fly over, and in one go a dam stands in front of the opponent
+        if (q < 0.4) {
+          Object.assign(pose, { body: Math.trunc(t * 10) % 2 ? "squash" : "stretch", face: "normal" });
+          this.trickFx(t, "sp_dambert", 0.1, LOG, 1, 4, 18, [24, 30], [-24, -18], 0.7, 50);
+        } else if (q < 0.6) {
+          pose.face = "laugh";
+          for (let i = 0; i < 4; i++) {
+            this.trickFx(t, `sp_dambert_dam${i}`, once, LOG, 1, this.facing > 0 ? 16 + (i % 2) : 22 - (i % 2), 2 + i * 2,
+              [0, 0], [0, 0], 1.4);
+          }
+        }
+        break;
+      case "timberjack": // swings its axe tail into a tree, and the trunk comes down on the opponent
+        if (q < 0.32) {
+          Object.assign(pose, { body: Math.trunc(q * 10) % 2 ? "squash" : "idle", turn: Math.cos(q * 2 * (2 * Math.PI)),
+            face: "normal" });
+          this.trickFx(t, "sp_timberjack_chips", 0.1, WOOD_CHIP, 2, -8, 8, [-20, 4], [-20, -10], 0.6, 40);
+        } else if (q < 0.6) { // it falls from the top of the panel and lands on the opponent as the move strikes
+          pose.face = "laugh";
+          this.trickFx(t, "sp_timberjack", once, TRUNK, 1, this.facing > 0 ? 14 : 26, 58, [0, 0], [56, 56], 0.6, 90);
+        }
+        break;
+      case "archibeaver": // unrolls its plan, its compass sparks, and a tower of branches grows up under the opponent
+        if (q < 0.4) {
+          Object.assign(pose, { body: "squash", face: "smile" });
+          this.trickFx(t, "sp_archibeaver_plan", once, BLUEPRINT, 1, this.facing > 0 ? 16 : 22, 26, [0, 0], [0, 0], 1.0);
+          this.trickFx(t, "sp_archibeaver_spark", 0.08, COMPASS_SPARK, 3, 11 * this.facing, 19, [-8, 8], [-12, -3], 0.5);
+        } else if (q < 0.7) {
+          pose.face = "laugh";
+          for (let i = 0; i < 6; i++) {
+            if (q > 0.4 + i * 0.03) {
+              this.trickFx(t, `sp_archibeaver${i}`, once, BRANCH, 1, this.facing > 0 ? 31 : 39, 2 + i * 2, [0, 0], [0, 0],
+                (0.95 - q) * BATTLE_ROUND);
+            }
+          }
+        }
+        break;
       case "bouldergrin": // throws its top stone at the opponent; a new one grows back
         if (q < 0.15) {
           Object.assign(pose, { body: "squash", face: "normal" });
@@ -1836,10 +2202,10 @@ export class PetScene {
   /**
    * Particles of a trick of its own: `count` of them, at most once in `every` seconds per `key`
    * (once per trick: every = TRICK_SHOW). `dx` from the pet's middle (towards where it looks),
-   * `dy` up from the ground; speeds as [from, to], vx towards where it looks.
+   * `dy` up from the ground; speeds as [from, to], vx towards where it looks; `ay`: they fall.
    */
   private trickFx(t: number, key: string, every: number, sprite: Bitmap, count: number, dx: number, dy: number,
-    vx: [number, number], vy: [number, number], life = 0.8): void {
+    vx: [number, number], vy: [number, number], life = 0.8, ay = 0): void {
     if (t - (this.trickFxAt.get(key) ?? -Infinity) < every) {
       return;
     }
@@ -1847,7 +2213,27 @@ export class PetScene {
     for (let i = 0; i < count; i++) {
       this.particles.push({
         sprite, x: this.x + SPRITE / 2 + dx * this.facing, y: GROUND - dy,
-        vx: this.rng.uniform(...vx) * this.facing, vy: this.rng.uniform(...vy), life,
+        vx: this.rng.uniform(...vx) * this.facing, vy: this.rng.uniform(...vy), life, ay,
+      });
+    }
+  }
+
+  /**
+   * Like trickFx, but the particles fly out evenly in a ring (or the part of one from angle `from`
+   * to `to`, 0 = where it looks, upwards negative), the i-th one as `sprites[i % length]`.
+   */
+  private ringFx(t: number, key: string, every: number, sprites: readonly Bitmap[], count: number, dx: number,
+    dy: number, speed: number, life = 0.8, from = 0, to = 2 * Math.PI): void {
+    if (t - (this.trickFxAt.get(key) ?? -Infinity) < every) {
+      return;
+    }
+    this.trickFxAt.set(key, t);
+    const whole = Math.abs(to - from) >= 2 * Math.PI;
+    for (let i = 0; i < count; i++) {
+      const angle = from + (to - from) * (whole ? i / count : count > 1 ? i / (count - 1) : 0.5);
+      this.particles.push({
+        sprite: sprites[i % sprites.length], x: this.x + SPRITE / 2 + dx * this.facing, y: GROUND - dy,
+        vx: Math.cos(angle) * speed * this.facing, vy: Math.sin(angle) * speed, life,
       });
     }
   }
@@ -1949,7 +2335,7 @@ export class PetScene {
     }
   }
 
-  /** Slimes hop instead of walking; a form with feet of its own walks. */
+  /** Slimes hop instead of walking; a form with feet of its own walks, a flier flies. */
   private hop(pose: Pose, t: number, speed = 2.2): void {
     const stride = this.stride(...pose.form, t, speed);
     if (stride) {
@@ -1958,11 +2344,20 @@ export class PetScene {
   }
 
   /**
-   * Body and lift while getting somewhere: a slime hops, a form with a walk of its own walks, and a
-   * form in WALK_HOPS walks and hops once in between. Null: it has just landed and stands.
+   * Body and lift while getting somewhere: a slime hops, a form with a walk of its own walks, a
+   * form in WALK_HOPS walks and hops once in between, and one in GLIDES flies or rolls. Null: it has
+   * just landed and stands.
    */
   private stride(stage: string, species: string, t: number, speed = 2.2): [string, number] | null {
+    const glide = stage === "adult" ? GLIDES[species] : undefined;
+    if (glide !== undefined) {
+      const bob = !glide ? 0 : HOVERS.includes(species) ? Math.sin(t * 3) * 0.6 : Math.sin(t * 6);
+      return [this.bodyOf(stage, species, "flutter"), glide + bob];
+    }
     let phase = (t * speed) % 1.0; // of one hop
+    if (STIFF_HOPS.includes(species)) {
+      return phase < 0.15 ? ["idle", 0] : phase < 0.75 ? ["idle", Math.sin((phase - 0.15) / 0.6 * Math.PI) * 2] : null;
+    }
     if (this.walks(stage, species)) {
       const round = WALK_HOPS[species];
       const hopping = round ? t % round - (round - 1 / speed) : -1; // the hop comes at the end of the round
@@ -1975,6 +2370,12 @@ export class PetScene {
       return ["squash", 0];
     }
     return phase < 0.75 ? ["stretch", Math.sin((phase - 0.15) / 0.6 * Math.PI) * 3] : null;
+  }
+
+  /** The body frames `tag` if this form has them (an adult with pixel art of its own), otherwise `fallback`. */
+  private bodyOf(stage: string, species: string, tag: string, fallback = "idle"): string {
+    const own = stage === "adult" && species in SPECIES_SHEETS && this.sheet(SPECIES_SHEETS[species][0]).has(tag);
+    return own ? tag : fallback;
   }
 
   /** Whether the body sheet of this form has a walk of its own (Cyclopuff, Grumpcap, Sneezle and most adults of the other lines). */
@@ -2107,7 +2508,11 @@ export class PetScene {
       }
       if (q > 0.5) {
         if (landed) {
-          x += 5 * Math.sin((q - 0.5) * 2 * Math.PI); // knocked back
+          const own = result === "special" ? pose.form[1] : "";
+          x += (5 + (SPECIAL_PUSH[own] ?? 0)) * Math.sin((q - 0.5) * 2 * Math.PI); // knocked back
+          if (own === "jesterwing") {
+            x += Math.trunc(t * 12) % 2; // and it shakes with laughter
+          }
           lift = Math.abs(Math.sin((q - 0.5) * 4 * Math.PI)) * 3;
           if (this.roundFor !== `${rounds.length}:${index}`) {
             this.roundFor = `${rounds.length}:${index}`;
@@ -2531,7 +2936,7 @@ export class PetScene {
   /** Another pet next to ours: a wild one on a trip, or the friend that is visiting. */
   private drawGuest(img: Image, guest: Guest, t: number): void {
     const [species, x, hop, face, heading = 0, move, stage = "adult"] = guest;
-    const walking = heading !== 0 && this.walks(stage, species);
+    const walking = heading !== 0 && (this.walks(stage, species) || (stage === "adult" && species in GLIDES));
     const [body, jump] = move ? [move.body, hop]
       : walking ? this.stride(stage, species, t) ?? ["idle", 0] : [hop > 1.5 ? "stretch" : "idle", hop];
     const lift = Math.round(jump);
@@ -2553,6 +2958,16 @@ export class PetScene {
     } else {
       img.paste(sprite, px, py);
     }
+  }
+
+  /** Prismfly's light, broken into seven rays in the colors of the rainbow, fanning out towards where it looks. */
+  private drawRays(img: Image, cx: number, cy: number): void {
+    PRISM.forEach((color, i) => {
+      const angle = RAY_TILT + (i / (PRISM.length - 1) - 0.5) * RAY_FAN;
+      for (let r = RAY_FROM; r < RAY_FROM + RAY_LENGTH; r++) {
+        img.point(Math.round(cx + Math.cos(angle) * r * this.facing), Math.round(cy + Math.sin(angle) * r), color);
+      }
+    });
   }
 
   /** Left edge of an opponent standing in the pet's way. */
@@ -2577,10 +2992,14 @@ export class PetScene {
         drakwing: FIRE, quill: CANNONBALL, steamo: STEAM_CLOUD, lillypot: BUBBLE, rapierre: SLASH, parcelbeak: LETTER,
         salamber: FIRE_WHEEL, lunarock: MOON_SICKLE, foxfire: FOX_FLAME, flurrbleat: SNOWBALL, sakurin: CHERRY,
         bubblehelm: ANCHOR, hippula: BAT, acewing: SONIC_RING,
-      } as Record<string, Bitmap>)[view.species] ?? SPARK;
+        mothmuff: DUST_PUFF, sunflutter: POLLEN, jesterwing: CONFETTI, digby: CLOD, barrelbard: SNOW_CHUNK,
+        pawdini: CIRCUS_BALL, rotorfly: GUST, jewelwing: JEWEL, prismfly: LIGHT_DOT, dambert: LOG, timberjack: WOOD_CHIP,
+        archibeaver: BRANCH,
+      } as Record<string, Bitmap | readonly Bitmap[]>)[view.species] ?? SPARK;
+      const many = (sprite as readonly unknown[]).every((part) => Array.isArray(part) && Array.isArray(part[0]));
       for (let i = 0; i < 10; i++) {
         this.particles.push({
-          sprite, x: this.x + SPRITE - 6, y: y - this.rng.uniform(0, 10),
+          sprite: many ? (sprite as readonly Bitmap[])[i % sprite.length] : sprite as Bitmap, x: this.x + SPRITE - 6, y: y - this.rng.uniform(0, 10),
           vx: this.rng.uniform(20, 36), vy: this.rng.uniform(-6, 6), life: 0.9,
         });
       }
@@ -2970,6 +3389,9 @@ export class PetScene {
       this.stand(img, sprite, plantX);
       this.covers.set("plant", GROUND + 1 - sprite.height);
     }
+    if (view.peeking) {
+      this.drawPeeking(img, view.peeking, t);
+    }
     (view.deco ?? []).slice(0, DECO_X.length).forEach((item, i) => {
       const sprite = this.dimmedSprite(item, t, true);
       this.stand(img, sprite, DECO_X[i]);
@@ -2992,6 +3414,43 @@ export class PetScene {
         ? clamp((this.elapsed(view, now) - BUILD_WALK) / (ACTIVITY_SECONDS["build"] - BUILD_WALK - 1), 0.0, 1.0)
         : 1.0;
       this.drawTrace(img, trace.kind, trace.look, PetScene.traceX(view, trace.spot), built);
+    }
+  }
+
+  /**
+   * A guest from the garden that hasn't come in yet: it peeks over the fence at the right edge of
+   * the garden, only its head above it, looking over at the pet, and now and then it ducks down.
+   */
+  private drawPeeking(img: Image, species: string, t: number): void {
+    const local = mod(t, PEEK_EVERY);
+    const duck = local < PEEK_DUCK ? Math.sin(local / PEEK_DUCK * Math.PI) : 0; // down and up again
+    const face = duck > 0.5 ? "blink" : Math.trunc(t) % 7 === 3 ? "blink" : "smile";
+    const [sprite, top] = this.pet("adult", species, "idle", t, face,
+      { glow: this.night > 0.5, lookLeft: true, sky: this.skyLook });
+    // as far as its eyes, however tall it is
+    let eyes = PEEK_ROWS;
+    if (species in SPECIES_SHEETS) {
+      const bodies = this.sheet(SPECIES_SHEETS[species][0]);
+      const [, faceRow] = faceAnchor(bodies.image("idle"), bodies.faceTop, bodies.faceCenter, bodies.faceShift);
+      eyes = faceRow + 1 + PEEK_EYES - top; // + 1: the outline
+    }
+    const peek = eyes / PEEK_ROWS * (1 - duck);
+    if (peek > 0) {
+      this.hideBehind(img, sprite, 0, top, [FENCE_X + 5, FENCE_TOP + 1, peek]); // just behind the top of the fence
+    }
+    // the fence: pickets with a rail, as far as the garden goes
+    const dim = 0.45 + 0.55 * (1 - this.night);
+    const picket = dimmed(FENCE[0], dim);
+    const rail = dimmed(FENCE[1], dim);
+    for (let x = FENCE_X; x < this.width; x++) {
+      const at = (x - FENCE_X) % 3;
+      if (at < 2) {
+        for (let y = FENCE_TOP + (at ? 1 : 0); y <= GROUND; y++) {
+          img.point(x, y, picket);
+        }
+      }
+      img.point(x, FENCE_TOP + 3, rail);
+      img.point(x, GROUND - 2, rail);
     }
   }
 
@@ -3381,12 +3840,13 @@ export class PetScene {
       if (p.life <= 0) {
         continue;
       }
+      p.vy += (p.ay ?? 0) * dt;
       p.x += p.vx * dt;
       p.y += p.vy * dt;
       bitmap(img, Math.round(p.x), Math.round(p.y), p.sprite, Math.min(1.0, p.life * 2));
       alive.push(p);
     }
-    this.particles = alive.slice(-30);
+    this.particles = alive.slice(-48); // enough for Prismfly's seven rays
   }
 
   /** Little quirks of the species: sparks, spores, glowing dust. */
@@ -3412,13 +3872,36 @@ export class PetScene {
     } else if (species === "grumpcap") {
       this.particles.push({ sprite: SPORE, x: cx + rng.uniform(-12, 12), y: top + 8, vx: rng.uniform(-2, 2), vy: -3, life: 2.0 });
       this.nextAmbient = t + 3.0;
-    } else if (species === "lumoth" && this.night > 0.5) {
+    } else if ((species === "lumoth" || species === "mothmuff") && this.night > 0.5) {
       this.particles.push({ sprite: DUST, x: cx + rng.uniform(-14, 14), y: top + 10, vx: rng.uniform(-1, 1), vy: 4, life: 2.0 });
       this.nextAmbient = t + 0.8;
     } else if ((species === "glimmerock" || species === "gemperor") && this.night > 0.5) {
       // a glint rises from the crystals now and then
       this.particles.push({ sprite: GLINT, x: cx + rng.uniform(-8, 8), y: top + 2, vx: 0, vy: -3, life: 1.2 });
       this.nextAmbient = t + 1.5;
+    } else if (species === "prismfly") {
+      // the light breaks in its wings: now and then a spot of color flies off
+      const side = rng.random() < 0.5 ? -1 : 1;
+      this.particles.push({
+        sprite: rng.choice(LIGHT_SPOT), x: cx + side * rng.uniform(8, 14), y: top + rng.uniform(4, 14),
+        vx: side * rng.uniform(4, 10), vy: rng.uniform(2, 6), life: 0.8,
+      });
+      this.nextAmbient = t + 0.7;
+    } else if (species === "pawdini") {
+      // stars twinkle round the artist
+      this.particles.push({ sprite: STAR, x: cx + rng.choice([-1, 1]) * rng.uniform(10, 15), y: top + rng.uniform(-2, 16),
+        vx: 0, vy: 0, life: 0.5 });
+      this.nextAmbient = t + 1.4;
+    } else if (species === "jesterwing") {
+      // a bit of confetti is always drifting down off it
+      this.particles.push({ sprite: rng.choice(CONFETTI), x: cx + rng.uniform(-14, 14), y: top + rng.uniform(0, 8),
+        vx: rng.uniform(-2, 2), vy: 5, life: 1.6 });
+      this.nextAmbient = t + 1.1;
+    } else if (species === "archibeaver" && Math.abs(this.x - this.targetX) < 0.5) {
+      // while it stands still and plans, its compass sparks
+      this.particles.push({ sprite: COMPASS_SPARK, x: cx + 11 + rng.uniform(-1, 1), y: top + rng.uniform(6, 10),
+        vx: rng.uniform(-3, 5), vy: rng.uniform(-8, -3), life: 0.5 });
+      this.nextAmbient = t + 0.45;
     }
   }
 

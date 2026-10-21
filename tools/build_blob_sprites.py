@@ -31,6 +31,11 @@ frameTags):
   their adults (faces of their own)
 - salamber, lunarock, foxfire, flurrbleat, sakurin, bubblehelm, hippula, acewing (_body / _faces) –
   the special forms of the lines (faces of their own)
+- <line>_baby_body / <line>_baby_faces, <child>_body / <line>_faces – baby and child of the
+  caterpillar (munchlet), dog (pupplet), dragonfly (nymphlet) and beaver (gnawlet) lines
+- mothmuff, sunflutter, jesterwing, digby, barrelbard, pawdini, rotorfly, jewelwing, prismfly, dambert,
+  timberjack, archibeaver (_body / _faces) – their adults, the last of each three the secret one
+  (faces of their own)
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine
 - trip                             – backpack, plants, decorations, hats, things along the path,
                                      opponents and guardians
@@ -3630,6 +3635,914 @@ SPECIAL_FORMS = (("salamber", FACES), ("lunarock", FACES), ("foxfire", FACES), (
                  ("sakurin", FACES), ("bubblehelm", BEAKED_FACES), ("hippula", HIPPULA_FACES),
                  ("acewing", BEAKED_FACES))
 
+# ---------------------------------------------------------------- The garden lines
+
+# Four more lines, each with its egg, baby, child, a basic adult, a second one and a secret one,
+# drawn after the drafts like the special forms. What every form of a line keeps: the pink pompoms
+# on the feelers (caterpillar), the floppy ear and the pricked one (dog), the four wings (dragonfly,
+# wherever they have gone) and the buck teeth (beaver). The child carries the colors the code may
+# recolor as a hint at its adult form: the pompoms, the ears, the goggles' frame, the pencil.
+
+# The eggs: a leaf-green egg in soft rings with a bite out of its top; a cream egg with a brown
+# patch and a paw print; a glassy blue egg with a shimmer of green, blue and violet across it; an
+# egg of wood with growth rings and gnaw marks bitten into one side.
+CATERPILLAR_EGG = [
+    "....o..o....",
+    "...ohe.eo...",
+    "..oheeooeo..",
+    "..oeeeeeeo..",
+    ".orrrrrrrro.",
+    ".oeeeeeeeEo.",
+    ".oeeeeeeeEo.",
+    ".orrrrrrrro.",
+    ".oeeeeeeeEo.",
+    ".oeeeeeeeEo.",
+    "..orrrrrro..",
+    "..oEeeeeEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+DOG_EGG = [
+    "....oooo....",
+    "...ottheo...",
+    "..otttteeo..",
+    "..otTtteeo..",
+    ".otTttteeeo.",
+    ".otttteeeEo.",
+    ".ottteeeeEo.",
+    ".oteeeepepo.",
+    ".oeeeeeeeEo.",
+    ".oeeeeppeEo.",
+    "..oeeepppo..",
+    "..oEeeeeEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+DRAGONFLY_EGG = [
+    "....oooo....",
+    "...ohheeo...",
+    "..oheeeeeo..",
+    "..oeeeeggo..",
+    ".oeeeeggbbo.",
+    ".oeeeggbbvo.",
+    ".oeeggbbvEo.",
+    ".oeggbbvveo.",
+    ".oggbbvveEo.",
+    ".obbvveeeEo.",
+    "..ovveeeEo..",
+    "..oEeeeeEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+BEAVER_EGG = [
+    "....oooo....",
+    "...ohheeo...",
+    "..oheerreo..",
+    "..oerreero..",
+    ".oerreeerro.",
+    ".oereerreEo.",
+    ".oereereo...",
+    ".oereerew...",
+    ".oereereo...",
+    ".oerreerreo.",
+    "..oerrreEo..",
+    "..oEeeeeEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+EGG_GRIDS |= {"caterpillar": CATERPILLAR_EGG, "dog": DOG_EGG, "dragonfly": DRAGONFLY_EGG, "beaver": BEAVER_EGG}
+RARE_EGG_PALETTES |= {
+    "caterpillar": {"o": (40, 80, 35), "e": (170, 220, 110), "E": (120, 180, 75), "h": (225, 250, 185),
+                    "r": (140, 200, 90), "x": (30, 60, 25)},
+    "dog": {"o": (85, 60, 40), "e": (250, 235, 205), "E": (215, 195, 160), "h": (255, 250, 235), "t": (160, 105, 60),
+            "T": (125, 80, 45), "p": (110, 75, 45), "x": (70, 45, 30)},
+    "dragonfly": {"o": (30, 60, 95), "e": (120, 190, 230), "E": (80, 145, 195), "h": (215, 245, 255),
+                  "g": (120, 225, 170), "b": (90, 150, 245), "v": (180, 130, 235), "x": (20, 40, 70)},
+    "beaver": {"o": (70, 45, 25), "e": (200, 150, 95), "E": (160, 110, 65), "h": (235, 195, 140), "r": (150, 100, 55),
+               "w": (245, 225, 190), "x": (50, 30, 15)},
+}
+
+
+def buck_teeth(face, rows):
+    """A face grid function with two buck teeth, `rows` long, under the middle of its bottom row."""
+    def grid(eyes, mouth, blush):
+        out = [list(r) for r in face(eyes, mouth, blush)]
+        width = len(out[0])
+        for _ in range(rows):
+            out.append(list("." * width))
+            out[-1][width // 2 - 1] = out[-1][width // 2] = "W"
+        return ["".join(r) for r in out]
+    grid.width = getattr(face, "width", None)
+    return grid
+
+
+def nosed(face, nose):
+    """A face grid function with a nose between the eyes (and what sits under it), from their bottom row."""
+    def grid(eyes, mouth, blush):
+        out = [list(r) for r in face(eyes, mouth, blush)]
+        for y, line in enumerate(nose):
+            left = (len(out[0]) - len(line)) // 2
+            for x, ch in enumerate(line):
+                out[2 + y][left + x] = ch
+        return ["".join(r) for r in out]
+    grid.width = face.width
+    return grid
+
+
+# ---- The caterpillar line: a caterpillar that becomes a moth or a butterfly
+
+CATERPILLAR_PALETTE = {
+    "o": (35, 85, 40),     # outline
+    "d": (80, 160, 60),    # shadow
+    "b": (130, 205, 85),   # leaf green
+    "l": (180, 235, 130),  # lit
+    "h": (225, 250, 190),  # highlight
+    "r": (75, 150, 50),    # the rings
+    "p": (245, 110, 170),  # the pompoms on the feelers (the hint)
+    "P": (200, 70, 130),
+    "w": (250, 248, 240),  # the bib
+    "W": (215, 210, 205),
+    "k": (240, 125, 175),  # its rim
+}
+# Baby: a plump green slime in rings, two feelers with pink pompoms, a row of little feet
+CATERPILLAR_BABY = [
+    "....pp....pp....",
+    "....Pp....Pp....",
+    ".....o....o.....",
+    "......o..o......",
+    "...oolhllbboo...",
+    "..olhhlbbbbbdo..",
+    ".ollhbbbbbbbbdo.",
+    ".olbbbbbbbbbbdo.",
+    "orrrrrrrrrrrrrro",
+    "olbbbbbbbbbbbddo",
+    "obbbbbbbbbbbbddo",
+    "orrrrrrrrrrrrrro",
+    "oddddddddddddddo",
+    ".oo.oo.oo.oo.oo.",
+]
+CATERPILLAR_BABY_TAGS = body_tags(CATERPILLAR_BABY, 6, 8, flat_rows=3)
+# Munchlet, the child: a fat caterpillar, its head in front and two rings of its body behind it,
+# a bib on (it never stops eating), the feelers grown long, a row of stubby feet
+MUNCHLET = [
+    "............pp.........pp.....",
+    "............pPp.......pPp.....",
+    ".............o.........o......",
+    "..............o.......o.......",
+    "...............o.....o........",
+    "...............oooooooo.......",
+    "............ooolllllbbbooo....",
+    "...........ohlllllllbbbbbbo...",
+    "..........olllbbbbbbbbbbbbdo..",
+    ".........ollllbbbbbbbbbbbbddo.",
+    "........olllllbbbbbbbbbbbbdddo",
+    "...oooooobbbbbbbbbbbbbbbbbdddo",
+    ".oollbboobbbbbbbbbbbbbbbbbdddo",
+    ".olbbbolobbbbbbbbbbbbbbbbbdddo",
+    "ollbbbobobbbbbbbbbbbbbbbbbdddo",
+    "obbbbbobobbbbbbbbbbbbbbbbbdddo",
+    "obbbbbobobbbbbbbbbbbbbbbbbdddo",
+    "obbbbbobboddddddddddddddddddo.",
+    "obbbbboddoddddkkkkkkkkkkddddo.",
+    "oddddddoooooookwwwwwwwwkoooo..",
+    ".ooooooooo.oo.okwwwwwwkoo.oo..",
+    "................kWWWWk........",
+]
+MUNCHLET_FACE_TOP, MUNCHLET_FACE_SHIFT = face_place(MUNCHLET, 9, 11, FACE_W)
+MUNCHLET_TAGS = body_tags(MUNCHLET, 15, 19, flat_rows=3)
+# Mothmuff: a ball of fur with feathery feelers, its wings hanging round it like a cloak with an
+# eye spot on each side; sleepy eyes, a fur ruff under its chin. It hops.
+MOTHMUFF_PALETTE = {
+    "o": (55, 42, 52), "b": (190, 175, 185), "l": (215, 205, 212), "h": (240, 235, 238), "d": (150, 135, 148),  # fur
+    "w": (130, 110, 120), "x": (165, 145, 150), "X": (100, 82, 92), "e": (245, 205, 120), "E": (90, 60, 55),  # wings
+    "c": (250, 246, 238), "C": (220, 212, 205),  # the ruff
+    "p": (245, 110, 170), "P": (200, 70, 130), "f": (120, 100, 90),  # the feelers
+}
+MOTHMUFF = [
+    "........pp...........pp.......",
+    "........Pp...........Pp.......",
+    "........fff.........fff.......",
+    "..........f.........f.........",
+    ".........fff.......fff........",
+    "...........f.......f..........",
+    "..........fff.....fff.........",
+    "............o.o.o.f...........",
+    "...........fooooooff..........",
+    "........o.oolllllboo.o........",
+    "......oooollllllbbbboooo......",
+    "....oowohllllllbbbbbbboxoo....",
+    "...oxwwollllllbbbbbbbboxxxo...",
+    "..oxwwollllllbbbbbbbbbboxwwo..",
+    "..oxwwolllllbbbbbbbbbbboxwwo..",
+    "..owwwollllbbbbbbbbbbbdowwwo..",
+    ".oxwwwolllbbbbbbbbbbbddowwwwo.",
+    ".oxwwwollbbbbbbbbbbbdddowwwwo.",
+    ".owwwwolbbbbbbbbbbbddddowwwwo.",
+    "oxEEEEoCCCCCCCCCCCCCCCCoEEEEXo",
+    "owEeeEobCccccccccccccCdoEeeEXo",
+    "owEeEEXoCcccccccccccCCowEeEEXo",
+    "owEEEEXoCccccccccCCCCCowEEEEXo",
+    "owwwwXXXoCCCCCCCCCCCCowwwwXXXo",
+    "owwwwXXXc.ocbdcddcoocowwwwXXXo",
+    "owwwXXXXo...oooooo...owwwXXXXo",
+    ".owwXXXXo.oo......oo.owwwXXXo.",
+    ".oooooooo.oo......oo.oooooooo.",
+]
+MOTHMUFF_FACE_TOP, MOTHMUFF_FACE_SHIFT = face_place(MOTHMUFF, 12, 9, 12)
+MOTHMUFF_TAGS = species_tags([MOTHMUFF, drop_rows(MOTHMUFF, 15)], 15, 15)
+# Sunflutter: its head is the middle of a sunflower and its wings a ring of petals round it; the
+# feelers poke out through the petals, and it stands on two leaves. It hops.
+SUNFLUTTER_PALETTE = {
+    "o": (110, 70, 20), "y": (255, 215, 50), "Y": (240, 170, 30), "z": (255, 240, 140),  # petals
+    "n": (130, 80, 35), "N": (95, 55, 25), "m": (160, 105, 45),  # the seeds
+    "g": (90, 170, 60), "G": (55, 120, 40), "q": (140, 210, 90), "s": (70, 120, 40),  # stem and leaves
+    "p": (245, 110, 170), "P": (200, 70, 130),
+}
+SUNFLUTTER = [
+    ".......pp.........pp......",
+    ".......Pp...oooo..Pp......",
+    ".......oooo.ozyyo.o.......",
+    "......ozzoyozyyyooooo.....",
+    "....ooozyyooyyyYozzyyo....",
+    "...ozyoyyyooooooozyyyo....",
+    "..ozyyyooommmmmnooyyYoo...",
+    "..oyyyyommmNmmnnnnoYozyoo.",
+    "..oyyyommmmmmnnNnnnozyyyo.",
+    ".oooyommNmmmnnnnnnnnoyyyo.",
+    "ozzyoommmmmnnnnnnnnnoyyYo.",
+    "ozyyyommmmnnnnnnnnNnoyYoo.",
+    "oyyyYommmnnnnnnnnnnNoooyyo",
+    "oyyYYommnnnnnnnnnnNNozyyyo",
+    ".ooooomnnnnnnnnnnNNNoyyyYo",
+    ".ozyyonnnnnnnnnnNNNNooyYYo",
+    ".oyyyonnnnnnnnnNNNNNoyooo.",
+    ".oyyyYonnnnnnnNNNNNoyyyo..",
+    ".ooyYozonNnnnNNNNNoyyyyo..",
+    "...oozyyoonnNNNNoooyyyYo..",
+    "....oyyyYoooooooyyyoyYo...",
+    "....oyyYYozyyyoyyyYooo....",
+    ".....oooooyyyYoyyYYo......",
+    ".........oysYo.sooo.......",
+    "..........osoo.s..........",
+    ".......ssss.....sss.......",
+    "....sssggss....sqqgsss....",
+    "....sgggsss....sssggs.....",
+    ".....sss..........sss.....",
+]
+SUNFLUTTER_FACE_TOP, SUNFLUTTER_FACE_SHIFT = face_place(SUNFLUTTER, 10, 8, 12)
+SUNFLUTTER_TAGS = species_tags([SUNFLUTTER, drop_rows(SUNFLUTTER, 13)], 13, 13)
+# Jesterwing (secret): a harlequin butterfly. Tall red wings with diamonds, a jester's cap in red and
+# violet with a bell on each tip, a broad grin. Confetti falling round it would be the scene's.
+JESTERWING_PALETTE = {
+    "o": (45, 25, 50), "b": (250, 232, 210), "l": (255, 245, 232), "h": (255, 255, 250), "d": (220, 190, 165),
+    "r": (225, 50, 75), "R": (165, 30, 55), "k": (55, 40, 75),  # the wings and their diamonds
+    "v": (130, 75, 200), "V": (90, 50, 150), "y": (255, 215, 60), "Y": (215, 165, 30),  # the cap and its bells
+}
+JESTERWING = [
+    "....yY.....................yY...",
+    "...oYy....................oYy...",
+    "...oroo..................ooro...",
+    "...orrooo..............ooorro...",
+    "..orrrorrooo........ooovvorro...",
+    "..orrrrorrrrooo..ooovvvvorrrro..",
+    "..orrrrorrrrrRRoovvvvvvvorkrro..",
+    ".okkrrrkorrrRRRoovvvvvvorkkkro..",
+    ".okrrrrrorRRRRRoovvvvVVorrkrrro.",
+    ".orrrrrrroooooooooooooorrrrrrro.",
+    "orrrrrrrrrolllllbbbbborrrrrrrro.",
+    "orrrrrrrrohllllbbbbbbborrrrrrrRo",
+    "orkrrrrrkollllbbbbbbbborrrkrrRRo",
+    "okkkrrrkkolllbbbbbbbbborrkkkrRo.",
+    ".okrrrrrkolllbbbbbbbbdorrrkrRRo.",
+    ".orrrrrrrollbbbbbbbbddorrrrrRRo.",
+    ".orrrrrrrolbbbbbbbbdddorrrrRRo..",
+    "..orrrrrRobbbbbbbbddddorrrRRRo..",
+    "..orrrrrkobbbbbbbbddddorrrkRRo..",
+    "..okrrrkooobbbbbbddddooorkkko...",
+    "...orrro...obbbbddddo...oRkRo...",
+    "...orro...oooooooooooo...oRRo...",
+    "...oro.....obbbbbbbbo.....oo....",
+    "....o.......obbbbbdo.......o....",
+    ".............oooooo.............",
+]
+JESTERWING_FACE_TOP, JESTERWING_FACE_SHIFT = face_place(JESTERWING, 12, 11, 12)
+JESTERWING_TAGS = species_tags([JESTERWING, drop_rows(JESTERWING, 15)], 15, 16, idle_ms=500)
+
+# ---- The dog line: a puppy with one ear up and one ear down
+
+DOG_PALETTE = {
+    "o": (85, 55, 30),     # outline
+    "d": (185, 135, 85),   # shadow
+    "b": (225, 180, 125),  # tan
+    "l": (240, 210, 165),  # lit
+    "h": (250, 235, 210),  # highlight
+    "t": (130, 85, 45),    # the ears and the tail (the hint)
+    "T": (95, 60, 30),
+}
+# Baby: a tan puppy slime, one ear pricked up and one floppy ear hanging down its side, a wagging tail
+DOG_BABY = [
+    ".................oo...",
+    "...ooooo........otto..",
+    "..otttTto......otTto..",
+    ".otttttTohllbbooTTto..",
+    ".ottttttolbbbbbdTTto..",
+    ".ottttttbbbbbbbbdoto..",
+    "..otTttbbbbbbbbbdoo.o.",
+    "...oTtbbbbbbbbbbddooto",
+    "...olbbbbbbbbbbbddoto.",
+    "...obbbbbbbbbbbbddoo..",
+    "...odbbbbbbbbbbdddo...",
+    "...oddddddddddddddo...",
+    "....oooooooooooooo....",
+]
+DOG_BABY_TAGS = body_tags(DOG_BABY, 9, 10, flat_rows=3)
+# Pupplet, the child: a puppy chasing its own tail; the tail curls round behind it, the ears have grown
+PUPPLET = [
+    "......................oo.....",
+    ".....................otto....",
+    "...oooooo...........otTto....",
+    "..otttttTo.........otTTto....",
+    ".otttttTTooooooooootTTTto....",
+    "otttttttTolllllbbbotTTTto....",
+    "ottttttttolllllbbbbbTTTto....",
+    "ottttttttbbbbbbbbbbbbdTto....",
+    "otttttttlbbbbbbbbbbbbddoo....",
+    ".ottTTtllbbbbbbbbbbbbddo...oo",
+    "..ooTTbbbbbbbbbbbbbbbdddo.oto",
+    "...obbbbbbbbbbbbbbbbbdddootTo",
+    "...obbbbbbbbbbbbbbbbbdddotto.",
+    "...obbbbbbbbbbbbbbbbbdddoTo..",
+    "...obbbbbbbbbbbbbbbbbdddoo...",
+    "...obbbbbbbbbbbbbbbbbdddo....",
+    "....oddddddddddddddddddo.....",
+    "....oddddddddddddddddddo.....",
+    "....oddddddddddddddddddo.....",
+    ".....oooooooooooooooooo......",
+    "........obbo....obbo.........",
+    "........oooo....oooo.........",
+]
+PUPPLET_FACE_TOP, PUPPLET_FACE_SHIFT = face_place(PUPPLET, 9, 6, FACE_W)
+PUPPLET_TAGS = body_tags(PUPPLET, 13, 13, flat_rows=3)
+DOG_ADULT_PALETTE = DOG_PALETTE | {"o": (75, 45, 25)}
+# Digby: a garden grows on its back. A bed of earth with sprouts, two flowers and a carrot behind its
+# head, earth on its nose (its face) and on its paws. It walks.
+DIGBY_PALETTE = DOG_ADULT_PALETTE | {
+    "e": (120, 80, 45), "E": (85, 55, 30),  # earth
+    "g": (100, 190, 70), "G": (60, 135, 45), "q": (160, 230, 110),  # sprouts
+    "r": (245, 130, 40), "R": (200, 90, 25), "f": (250, 120, 160),  # the carrot, flowers
+}
+DIGBY = [
+    "............g.g...........",
+    "...........gGqGg..........",
+    "............gGg...........",
+    "........gGq..r...gGq......",
+    "....f....G..rRr...G....f..",
+    "...gGq..oGooooooooG.oogGq.",
+    "....GoooeGeeeeeeeeGottoG..",
+    "..ooooooeGeeeeeeeeotTtoG..",
+    ".otttttToooooooooeotTTtoo.",
+    "otttttTTollllllbbooTTTtoeo",
+    "ottttttTolllllbbbbbTTttoEo",
+    "ottttttolllllbbbbbbbTttoEo",
+    "otttttollllbbbbbbbbbbttoEo",
+    "otTTtollllbbbbbbbbbbbboEo.",
+    ".oooollllbbbbbbbbbbbbdoo..",
+    "...olllbbbbbbbbbbbbbddo...",
+    "...ollbbbbbbbbbbbbddddo...",
+    "...olbbbbbbbbbbbbdddddo...",
+    "....obbbbbbbbbbbdddddo....",
+    "....oobbbbbbbbddddddoo....",
+    "...ollobbbbbbddddddobbo...",
+    "...ollloobbbdddddoobbdo...",
+    "...ollbbboooooooobbdddo...",
+    "...olbbbbbbbbbbbbdddddo...",
+    "....obbbbbbbbbbddddddo....",
+    ".....obbbbbbbbddddddo.....",
+    "......oobbbbddddddoo......",
+    "....oEEooooooooooooEEo....",
+    "....oooo..........oooo....",
+]
+DIGBY_FACE_TOP, DIGBY_FACE_SHIFT = face_place(DIGBY, 12, 7, 12)
+DIGBY_TAGS = species_tags([DIGBY, drop_rows(DIGBY, 16)], 16, 13)
+DIGBY_TAGS["walk"] = walk_tags(DIGBY, 16, range(4, 8), range(18, 22), 27, ms=(220, 130))
+# Barrelbard: a big shaggy St Bernard like a snowy mountain, the brown mask round its eyes,
+# snowflakes caught in its fur and a little barrel under its chin. It hops, heavily.
+BARRELBARD_PALETTE = DOG_ADULT_PALETTE | {
+    "b": (245, 240, 230), "l": (255, 252, 245), "h": (255, 255, 255), "d": (205, 195, 185),  # white fur
+    "t": (165, 85, 40), "T": (120, 55, 25),  # the brown patches
+    "k": (175, 115, 60), "K": (125, 80, 40), "x": (95, 95, 105), "s": (200, 230, 255),  # barrel, snow
+}
+BARRELBARD = [
+    ".......................oo.......",
+    "......................otto......",
+    ".....oooooo..........otTto......",
+    "....otttttTo.oooooo..otTTto.....",
+    "...otttttTToolllllloooTTTto.....",
+    "...ottttttTolllllbbbbbTTtto.....",
+    "...ottttttolllllbbbbbbtTtto.....",
+    "...otttttotllllbbbbbbbttoto.....",
+    "...otTTtottllbbbbbbbbbtto.......",
+    "....ooootttlbbbbbbbbbbttto......",
+    "......ottttbbbbbbbbbbbtddo......",
+    "......ottttbbbbbbbbbbbdddo......",
+    ".....oottttbbbbbbbbbbddddo......",
+    "....ollobbbbbbbbbbbdddddobo.....",
+    "...olllobbbbbbbbbbddddddobbo....",
+    "..olllllobbbbbbbbddddddobbbbo...",
+    "..ollllllobbbbbbddddddobbbbbbo..",
+    "..ollllllbooobdddddooobbbsbbbo..",
+    ".ollllllbbbbboooooobbbbbbbbbdo..",
+    ".ollllbbbbbboxxxxxxobbbbbbddddo.",
+    ".olsbbbbbbbbokKkKkKobbbbddddddo.",
+    ".obbbbbbbbbbokKkKkKobbddddddddo.",
+    ".obbbbbbbbbboxxxxxxoddddddddsdo.",
+    "obbbbbbbbbbbboooooodddddddddddo.",
+    "obbbbbbbbbbbbbbbbddddddddddddddo",
+    "obbbbbbsbbbbbbbddddddddddddddddo",
+    "obboobboobbooddoodsooddooddooddo",
+    ".oo..oo..oo..oo..oo..oo..oo..oo.",
+]
+BARRELBARD_FACE_TOP, BARRELBARD_FACE_SHIFT = face_place(BARRELBARD, 7, 10, 13)
+BARRELBARD_TAGS = species_tags([BARRELBARD, drop_rows(BARRELBARD, 15)], 15, 15)
+# Pawdini (secret): a circus dog. It stands on a big striped ball, balances a small one on its nose,
+# wears a frilled collar and grins. The stars that glitter round it would be the scene's.
+PAWDINI_PALETTE = DOG_ADULT_PALETTE | {
+    "c": (250, 250, 255), "C": (200, 200, 225),  # the collar
+    "r": (230, 60, 80), "R": (170, 35, 55), "u": (70, 130, 230), "U": (45, 90, 180), "y": (255, 215, 60),  # balls
+}
+PAWDINI = [
+    "...........oo.........",
+    "..........ouyo....oo..",
+    "..........oUuo...otto.",
+    "..oooooo...oo...otTto.",
+    ".otttttTooooooo.otTTto",
+    "otttttTTolllllbootTTto",
+    "ottttttTollllbbbbbTtto",
+    "ottttttolllbbbbbbbbtto",
+    "otttttolllbbbbbbbbbboo",
+    "otTTtollbbbbbbbbbbbdo.",
+    ".oooollbbbbbbbbbbbddo.",
+    "...olbbbbbbbbbbbbdddo.",
+    "...obbbbbbbbbbbdddddo.",
+    "....obbbbbbbbbdddddo..",
+    "....oobbbbbbddddddoo..",
+    "...ollooobbddddooobbo.",
+    "...oocCcocCcocCcocCco.",
+    "...ocCcCcCcCcCcCcCcCc.",
+    "...oocbcobocbcodocdco.",
+    "....obbbbbbbbddddddo..",
+    ".....oobbbbddddddoo...",
+    ".....oboooooooooobo...",
+    ".......orrrccrrro.....",
+    "......ocrrrrccrrro....",
+    ".....orccrrrrccrrro...",
+    ".....orrccrrrrccrro...",
+    ".....orrrccrrrrccRo...",
+    ".....orrrrccrrrRcco...",
+    ".....ocrrrrccrRRRco...",
+    "......ocrrrrccRRRo....",
+    ".......ocrrRRccRo.....",
+    "........oooooooo......",
+]
+PAWDINI_FACE_TOP, PAWDINI_FACE_SHIFT = face_place(PAWDINI, 7, 6, 12)
+PAWDINI_TAGS = species_tags([PAWDINI, drop_rows(PAWDINI, 11)], 11, 11)
+
+# ---- The dragonfly line: a dragonfly whose four wings become something else
+
+DRAGONFLY_PALETTE = {
+    "o": (25, 60, 100),    # outline
+    "d": (60, 130, 200),   # shadow
+    "b": (100, 175, 235),  # sky blue
+    "l": (160, 215, 250),  # lit
+    "h": (215, 240, 255),  # highlight
+    "w": (210, 245, 245),  # the wings
+    "W": (150, 210, 240),
+    "v": (185, 160, 245),
+    "g": (150, 235, 200),
+    "G": (240, 200, 90),   # the goggles' frame (the hint)
+    "D": (235, 252, 255),  # their lenses, dew drops
+    "q": (170, 230, 250),
+}
+# Baby: a sky-blue slime with two pairs of shimmering wings spread out sideways
+DRAGONFLY_BABY = [
+    ".........oo......oo.........",
+    ".ooooo...oolhllbboo...ooooo.",
+    "owwwgWo.olhhlbbbbbdo.oWgwwwo",
+    "oWwvwWWollhbbbbbbbbdoWWwvwWo",
+    ".ooooooolbbbbbbbbbbdooooooo.",
+    "owwgWWolbbbbbbbbbbbddoWWgwwo",
+    ".oooooolbbbbbbbbbbbddoooooo.",
+    "......obbbbbbbbbbbbddo......",
+    "......odbbbbbbbbbbdddo......",
+    "......oddddddddddddddo......",
+    ".......oooooooooooooo.......",
+]
+DRAGONFLY_BABY_TAGS = body_tags(DRAGONFLY_BABY, 8, 13, flat_rows=2)
+# Nymphlet, the child: a dragonfly larva, its long body in segments behind it, two wing stubs on its
+# back that can't fly yet, goggles of dew drops pushed up on its head, six little legs
+NYMPHLET = [
+    "...............ooo...........",
+    "..........ooo.owwWo..........",
+    ".........owwWGGGGvo.GGGG.....",
+    ".........oWwGDqqDGGGDqqDG....",
+    "..........ooGqDqqGlGqDqqG....",
+    "............oGGGGlllGGGGbo...",
+    "...........ollbbbbbbbbbbbdo..",
+    ".......oooolllbbbbbbbbbbbddo.",
+    "..ooooollollllbbbbbbbbbbbdddo",
+    ".ollbolbbobbbbbbbbbbbbbbbdddo",
+    "olbbbobbbobbbbbbbbbbbbbbbdddo",
+    "obbbbobbbobbbbbbbbbbbbbbbdddo",
+    "obbbbobbbobbbbbbbbbbbbbbbdddo",
+    "obbbbodddobbbbbbbbbbbbbbbdddo",
+    "oddddooooobbbbbbbbbbbbbbbdddo",
+    "oooooooo..oddddddddddddddddo.",
+    "..........oddddddddddddddddo.",
+    "..........oooooooooooooooooo.",
+    "..........o.o.o........o.o.o.",
+]
+NYMPHLET_FACE_TOP, NYMPHLET_FACE_SHIFT = face_place(NYMPHLET, 8, 11, FACE_W)
+NYMPHLET_TAGS = body_tags(NYMPHLET, 11, 18, flat_rows=3)
+# Rotorfly: a dragonfly that is a little helicopter. Its head is a glass cockpit with the face behind
+# the glass, its tail a tail boom with a small rotor, skids for legs, and its four wings have become
+# the rotor blades on top, which turn all the time. It hovers.
+ROTORFLY_PALETTE = DRAGONFLY_PALETTE | {
+    "q": (175, 235, 245), "Q": (120, 195, 220), "D": (240, 255, 255),  # the glass
+    "g": (215, 245, 245), "G": (150, 205, 225),  # the blades
+    "y": (250, 205, 60), "Y": (205, 150, 35), "k": (70, 80, 95), "K": (45, 50, 60),  # hubs, mast, skids
+}
+ROTORFLY = [
+    "...oooo...........oooo.........",
+    "oooggggoooooooooooggggooooo....",
+    "oooggggooooyYoooooggggooooo....",
+    "...oooo....oo.....oooo.........",
+    "............k..................",
+    "............k..................",
+    "........oooooooo...............",
+    "......oooqqqqqqooo..........oo.",
+    ".....ooqqDqqqqqqqoo.........oo.",
+    "....ooqqDqqqqqqqqqoo........oo.",
+    "....ooqDqqqqqqqqqqoo.......oggo",
+    "...oloqqqqqqqqqqqQoboo......oo.",
+    "...oloqqqqqqqqqQQQoboloooooooo.",
+    "...oloqqqqqqqqQQQQodobbdbbdooo.",
+    "...olloqqqqqqQQQQoddobodoodooo.",
+    "...olbbooqqQQQQoodddoo......oo.",
+    "...obbbbboooooodddddo.......oo.",
+    "....obbbbbbbbbdddddo.......oggo",
+    "....obbbbbbbbddddddo........oo.",
+    ".....obbbbbbddddddo.........oo.",
+    "......oobbbdddddoo..........oo.",
+    ".......Koooooooo.K.............",
+    "......K...........K............",
+    "......K...........K............",
+    "k....K.............K....k......",
+    ".kkkkkkkkkkkkkkkkkkkkkkk.......",
+]
+ROTORFLY_B = [
+    ".......ooo.....oooo............",
+    ".....oogggoooooggggoo..........",
+    ".....oogggoyYoogggGoo..........",
+    ".......ooo.oo..oooo............",
+    "............k..................",
+    "............k..................",
+    "........oooooooo...............",
+    "......oooqqqqqqooo.............",
+    ".....ooqqDqqqqqqqoo............",
+    "....ooqqDqqqqqqqqqoo........oo.",
+    "....ooqDqqqqqqqqqqoo........oo.",
+    "...oloqqqqqqqqqqqQoboo.....oggo",
+    "...oloqqqqqqqqqQQQobolooooo.oo.",
+    "...oloqqqqqqqqQQQQodobbdbbd.oo.",
+    "...olloqqqqqqQQQQoddobodood.oo.",
+    "...olbbooqqQQQQoodddoo......oo.",
+    "...obbbbboooooodddddo.......oo.",
+    "....obbbbbbbbbdddddo........oo.",
+    "....obbbbbbbbddddddo........oo.",
+    ".....obbbbbbddddddo.........oo.",
+    "......oobbbdddddoo..........oo.",
+    ".......Koooooooo.K.............",
+    "......K...........K............",
+    "......K...........K............",
+    "k....K.............K....k......",
+    ".kkkkkkkkkkkkkkkkkkkkkkk.......",
+]
+ROTORFLY_FACE_TOP, ROTORFLY_FACE_SHIFT = face_place(ROTORFLY, 10, 7, 12)
+ROTORFLY_TAGS = species_tags([ROTORFLY, ROTORFLY_B], 17, 12, idle_ms=90)
+# Jewelwing: an upright knight. Its body is plate armour in jewel green, its wings hang behind it
+# like two red banners with swallow tails, and it holds a lance with a pennant. It walks.
+JEWELWING_PALETTE = DRAGONFLY_PALETTE | {
+    "m": (60, 190, 140), "M": (30, 130, 95), "n": (150, 240, 200), "N": (220, 255, 240), "x": (20, 70, 55),  # armour
+    "r": (210, 50, 70), "R": (150, 30, 50), "y": (250, 205, 60), "Y": (205, 150, 35),  # the banners
+    "k": (150, 105, 60), "s": (220, 225, 235), "S": (160, 165, 180),  # the lance
+}
+JEWELWING = [
+    "...............x.............ss",
+    "..............Mxn............sS",
+    "............xxxxxx...........sS",
+    "..........xxnnnnnmxx..........k",
+    ".........xnnnnnmmmmmx.....yyyyk",
+    "........xnnnnnmmmmmmmx....yYy.k",
+    "xxxxxxxxxnnnnmmmmmmmmxxxxxyyxk.",
+    "xrrrrrrrxnnnmmmmmmmmmxrrrrrrrk.",
+    "xrrrrrrxnnmmmmmmmmmmMMxrrrrrrk.",
+    "xyyyyyyyxmmmmmmmmmmMMxyyyyyyyk.",
+    "xrrrrrrrxmmmmmmmmmMMMxrrrrrrrk.",
+    "xrrrrrrrxmmmmmmmmMMMMxrrrrrrrk.",
+    "xrrrrrrrxxmmmmmMMMMMxxrrrrrrrk.",
+    "xrrryrrrx.xxmmMMMMxx.xrrryrrrk.",
+    "xrryYyrrx.xNxxxxxxmx.xrryYyrrk.",
+    "xrrryrrrxxNnnnnnmmmmxxrrryrrrk.",
+    "xrrrrrrrxxMMMMMMMMMMxxrrrrrrkx.",
+    "xrrrrrrRxNnnnnmmmmmmmxrrrrrrkx.",
+    "xrrrrrrRxnnnnmmmmmmmmxrrrrrrkx.",
+    "xrrrrrrRxnnnmmmmmmmmmxrrrxorkx.",
+    "xrrrrrRRxMMMMMMMMMMMMxrrroxRkx.",
+    "xrrrrrRRxnnmmmmmmmmMMxrrrrrRkx.",
+    "xrrrrRRRxnmmmmmmmmMMMxrrrrRRkx.",
+    "xrrrrRRRxmmmmmmmmMMMMxrrrrRRkx.",
+    "xrrrxRRRxMMMMMMMMMMMMxrrrxRRkx.",
+    "xrrx.xRRxxmmmmmmMMMMxxrrx.xRkx.",
+    "xrx...xRxxmmmmmMMMMMxxrx...kRx.",
+    "xx.....xx.xmmmMMMMMx.xx....kxx.",
+    "x.......x..xxxxxxxx..x.....k.x.",
+    "..........xxxx...xxxx......k...",
+    "..........xMMx...xMMx......k...",
+    "...........................k...",
+]
+JEWELWING_FACE_TOP, JEWELWING_FACE_SHIFT = face_place(JEWELWING, 7, 10, 12)
+JEWELWING_TAGS = species_tags([JEWELWING, drop_rows(JEWELWING, 18)], 18, 15)
+JEWELWING_TAGS["walk"] = walk_tags(JEWELWING, 18, range(10, 14), range(17, 21), 29, ms=(220, 130))
+# Prismfly (secret): a body of glass, wings of prism shards in pink, cyan, yellow and violet, a long
+# glass tail, a twinkle above its head. It hovers. The rainbow light its wings throw would be the
+# scene's.
+PRISMFLY_PALETTE = DRAGONFLY_PALETTE | {
+    "o": (70, 120, 170), "g": (225, 250, 255), "G": (170, 225, 245), "D": (255, 255, 255),  # glass
+    "y": (250, 230, 90), "u": (90, 160, 245), "v": (175, 110, 240), "p": (255, 180, 220), "c": (170, 250, 240),
+}
+PRISMFLY = [
+    "...............D..............",
+    "o.............DuD............o",
+    "oo.............D............oo",
+    "oDo........................oyo",
+    ".oDo.......oooooooo.......oyo.",
+    ".oDpo.....oDDDDDDggo....ooyyo.",
+    ".opppoo..oDDDDDDggggo..oyyyyo.",
+    ".opppppooDDDDDDggggggooyyyyyo.",
+    ".opppppoDDDDDgggggggggoyyyyyo.",
+    "..oppppoDDDDggggggggggoyyyyo..",
+    "..opooooDDDggggggggggGooooyo..",
+    "..oo...oDDggggggggggGGo...oo..",
+    ".......oDggggggggggGGGo.......",
+    ".......ogggggggggGGGGGo.......",
+    ".....oooogggggggGGGGGoooo.....",
+    ".oooocccoogggggGGGGGooDvvoooo.",
+    "oDccccco..ogggGGGGGo..ovvvvvvo",
+    ".ooccco....oooooooo....ovvvoo.",
+    "...oco.......oDDo.......ovo...",
+    "....o.......oDDggo.......o....",
+    "............oGGGGG............",
+    "............oDgggo............",
+    "............oggggo............",
+    "...........oDGGGGGo...........",
+    "............oggggo............",
+    "............ogggGo............",
+    "............oGGGGG............",
+    "............oggGGo............",
+    ".............ogGo.............",
+    ".............oooo.............",
+]
+PRISMFLY_FACE_TOP, PRISMFLY_FACE_SHIFT = face_place(PRISMFLY, 10, 9, 12)
+PRISMFLY_TAGS = species_tags([PRISMFLY, dots(PRISMFLY, {(15, 0): ".", (14, 1): ".", (16, 1): ".", (15, 2): ".",
+                                                        (15, 1): "D"})], 11, 15, idle_ms=600)  # the twinkle
+
+# ---- The beaver line: a builder with buck teeth and a pencil behind its ear
+
+BEAVER_PALETTE = {
+    "o": (60, 35, 20),     # outline
+    "d": (120, 75, 40),    # shadow
+    "b": (160, 105, 60),   # brown
+    "l": (195, 145, 95),   # lit
+    "h": (225, 185, 140),  # highlight
+    "e": (90, 55, 30),     # inside the ears
+    "y": (245, 200, 60),   # the pencil (the hint)
+    "Y": (200, 150, 40),
+    "k": (60, 50, 45),     # its lead
+    "p": (240, 160, 150),  # its eraser
+    "t": (75, 55, 40),     # the flat tail
+    "T": (55, 40, 30),
+}
+# Baby: a brown slime with round ears, a pencil behind one ear and a flat tail; buck teeth (its faces)
+BEAVER_BABY = [
+    "...........k........",
+    "..oo......oYk.......",
+    ".oeeoooooooyYo......",
+    "..oolhllbbbyoo......",
+    "..olhhlbbbbbdo......",
+    ".ollhbbbbbbbbdo.....",
+    ".olbbbbbbbbbbdo.....",
+    "olbbbbbbbbbbbddo....",
+    "olbbbbbbbbbbbddo....",
+    "obbbbbbbbbbbbddottt.",
+    "odbbbbbbbbbbdddoTtTt",
+    "oddddddddddddddotTtT",
+    ".oooooooooooooo.oooo",
+]
+BEAVER_BABY_TAGS = body_tags(BEAVER_BABY, 7, 8, flat_rows=3)
+# Gnawlet, the child: a young beaver, the pencil still behind its ear, the buck teeth grown, the flat
+# crosshatched tail behind it
+GNAWLET = [
+    "...................k.......",
+    "..................oY.......",
+    ".................oyY.......",
+    "..oo............oyYo.......",
+    "..oeo..oooooooooyYoo.......",
+    "...o.oolllllbbbpyoo........",
+    "...oolllllllbbboooo........",
+    "..ohllbbbbbbbbbbbbdo.......",
+    ".ollllbbbbbbbbbbbbddo......",
+    ".ollllbbbbbbbbbbbbddo......",
+    "olllllbbbbbbbbbbbbdddo.....",
+    "obbbbbbbbbbbbbbbbbdddo.....",
+    "obbbbbbbbbbbbbbbbbdddo.....",
+    "obbbbbbbbbbbbbbbbbdddooooo.",
+    "obbbbbbbbbbbbbbbbbdddotTtTo",
+    "obbbbbbbbbbbbbbbbbdddoTtTto",
+    "obbbbbbbbbbbbbbbbbdddotTtTo",
+    ".oddddddddddddddddddotTtTto",
+    ".oddddddddddddddddddoooooo.",
+    ".oddddddddddddddddddo......",
+    "..oooooooooooooooooo.......",
+]
+GNAWLET_FACE_TOP, GNAWLET_FACE_SHIFT = face_place(GNAWLET, 9, 3, FACE_W)
+GNAWLET_TAGS = body_tags(GNAWLET, 12, 10, flat_rows=3)
+# Dambert: half beaver, half dam. It carries its dam on its back like a shell of logs with branches
+# poking out (one has a leaf), a little stream trickles out under it, and its tail is a trowel. It hops.
+DAMBERT_PALETTE = BEAVER_PALETTE | {
+    "t": (150, 100, 55), "T": (105, 65, 35), "r": (200, 160, 110),  # the logs
+    "s": (175, 180, 190), "S": (120, 125, 140), "q": (215, 220, 230),  # the trowel
+    "u": (90, 170, 230), "U": (60, 120, 190), "g": (100, 170, 70),
+}
+DAMBERT = [
+    "...............T...............",
+    "........T......T..........T....",
+    ".........T......T.g.g....T.....",
+    ".........T..ooooToog....T......",
+    "..........Torrrrrrrtoo.T.......",
+    "........ooTTTTTTTTTTTTTo.......",
+    ".......orrrrrrrrtttttttro......",
+    "..oo..orrrrroortttttttttto.....",
+    ".obdoooooooobdoTTTTTTTTTTo...TT",
+    "...oolllllboottttttttttttro.T..",
+    "..ollllllbbbbotttttttttttTTT...",
+    ".ollllllbbbbbboTTTTTTTTTTTo....",
+    ".ollllbbbbbbbbottttttttTTro....",
+    "ollllbbbbbbbbbbotttttTTTTTo....",
+    "olllbbbbbbbbbbdoTTTTTTTTTTo....",
+    "ollbbbbbbbbbbddotttTTTTTro.....",
+    "olbbbbbbbbbbdddottTTTTTTTo.....",
+    ".obbbbbbbbddddoTTTTTTTTTo......",
+    ".obbbbbbbdddddoTTTTTTroo.......",
+    "..obbbbbdddddoTTTTTToo....oo...",
+    "..ooobbddddooooooooodo...oqso..",
+    "..obboooooobbbdddddddo..oqssso.",
+    "...obbbbbbbbbdddddddoTTTTsssso.",
+    "....obbbbbbbdddddddo....ossso..",
+    ".....oobbbdddddddoo......oso...",
+    ".......oooooooooo.........o....",
+    "....oddo...oddo................",
+    "..........uUuuUuu..............",
+]
+DAMBERT_FACE_TOP, DAMBERT_FACE_SHIFT = face_place(DAMBERT, 13, 3, 12)
+DAMBERT_TAGS = species_tags([DAMBERT, drop_rows(DAMBERT, 14)], 14, 14)
+# Timberjack: broad and bearded, the plaid of a lumberjack's shirt grown into its fur, and its flat
+# tail ends in an axe blade. It walks.
+TIMBERJACK_PALETTE = BEAVER_PALETTE | {
+    "r": (200, 60, 55), "R": (140, 35, 35), "x": (60, 30, 30),  # plaid
+    "e": (120, 75, 45), "E": (85, 50, 30),  # the beard
+    "s": (200, 205, 215), "S": (140, 145, 160), "q": (240, 245, 250),  # the blade
+}
+TIMBERJACK = [
+    "....oo.............oo.........",
+    "...obdo.oooooooo..obdo........",
+    "......oollllllbboo............",
+    ".....ohllllllbbbbbo...........",
+    "....ohlllllbbbbbbbbo..........",
+    "....olllllbbbbbbbbbo..........",
+    "...olllllbbbbbbbbbbbo.........",
+    "...ollllbbbbbbbbbbbdo.........",
+    "...ollbbbbbbbbbbbdddo.........",
+    "...olbbbbbbbbbbbddddo.........",
+    "....oooooooooooooooo..........",
+    "...ooeeeeeeeeeeeeeeoo.........",
+    "..oRoeeeeeeeeeeeeeorro........",
+    ".oRxRoeeeeeeeeeeeeoRRRo.......",
+    ".orRroeeeeeeeeeeeeorrro.......",
+    "orrRroeeeeeeeeeeeeorrrro......",
+    "orrRroeeeeeeeeeeeeorrrRo...oo.",
+    "orrRroeeeeeeeeeeeoRrrRRo..oqo.",
+    "oRRxRRoeeeeeeeeeEoxRRRRo..oqo.",
+    "orrRrroeeeeeeeEEEoRRRRRo..oqo.",
+    "orrRrrroeeeeeEEEoRRRRRRo.ooqso",
+    ".orRrrrrooeeEEooRRRRRRooodosso",
+    ".orRrrrrRroEEorRRRRRRRodddosso",
+    "..oxRRRRxRRooxRRRRxRRoddddosso",
+    "...orrrrRrrrRRRRRRRRoodddoosso",
+    "....orrrRrrRRRRRRRRo.odddoosSo",
+    ".....oorRrRRRRRRRoo..ooooooso.",
+    ".......oooooooooo.......oooso.",
+    "....oddddo......oddddo.....oo.",
+    "....oooooo......oooooo......o.",
+]
+TIMBERJACK_FACE_TOP, TIMBERJACK_FACE_SHIFT = face_place(TIMBERJACK, 6, 7, 12)
+TIMBERJACK_TAGS = species_tags([TIMBERJACK, drop_rows(TIMBERJACK, 18)], 18, 13)
+TIMBERJACK_TAGS["walk"] = walk_tags(TIMBERJACK, 18, range(4, 10), range(16, 22), 28, ms=(240, 140))
+# Archibeaver (secret): the architect. It sits on a little tower it built of branches, with a door,
+# holds an unrolled blueprint with a floor plan on it and a compass, and the pencil is still behind
+# its ear. It hops, tower and all. The sparks of its compass would be the scene's.
+ARCHIBEAVER_PALETTE = BEAVER_PALETTE | {
+    "t": (150, 100, 55), "T": (105, 65, 35), "r": (200, 160, 110),  # the tower
+    "u": (80, 170, 255), "U": (40, 100, 210), "c": (200, 240, 255), "C": (140, 200, 240),  # the blueprint
+    "s": (190, 195, 210), "S": (130, 135, 150),  # the compass
+}
+ARCHIBEAVER = [
+    "...........................p....",
+    "..........................yY....",
+    "...........oo...........oyY.....",
+    "..........obdo.oooooo..oyYo.....",
+    ".............oolllllbookY.......",
+    "............ollllllbbbbo........",
+    "...........ollllllbbbbbbo.......",
+    "...........ollllbbbbbbbbo.......",
+    "..........ollllbbbbbbbbbbo......",
+    "..........olllbbbbbbbbbbdo......",
+    "..........ollbbbbbbbbbbddo......",
+    "..........olbbbbbbbbbbdddo......",
+    "...........obbbbbbbbddddo....S..",
+    "...........obbbbbbbdddddo....s..",
+    ".ooouuuuuuuuubbbbbdddddo.....s..",
+    "occouUUUUUUUUuobbddddooo....S.s.",
+    "ocCouUccccUcUuloooooobbbo...S.s.",
+    "ocCouUcUUUcUUullbbbbbbbbo...S.s.",
+    "ocCouUcUUcccobbobbbbbbbdo..S..s.",
+    "ocCouUcUUcUcoddobbbbbbddo..S..s.",
+    "ocCouUcccccUUoobbbbbbdddo.S....s",
+    "ocCouUUUUUUcuubbbbbbddddo.S....s",
+    "occouUUUUUUcubbbbbdddddo........",
+    ".ooouuuuuuuuooobbddddoooo.......",
+    "...........orrroooooottto.......",
+    "..........orrrrrrtttttttto......",
+    "..........TTTTTTTTTTTTTTTTT.....",
+    "..........orrtttttttttttTo......",
+    "..........otttttttttttTTTo......",
+    "..........TTTTTTooooTTTTTTT.....",
+    ".........ottttttotToTTTTTTo.....",
+    ".........oooooooooooooooooo.....",
+]
+ARCHIBEAVER_FACE_TOP, ARCHIBEAVER_FACE_SHIFT = face_place(ARCHIBEAVER, 8, 13, 12)
+ARCHIBEAVER_TAGS = species_tags([ARCHIBEAVER, drop_rows(ARCHIBEAVER, 13)], 13, 18)
+
+# Faces. Babies and children: the slime's faces in the line's colors; the beaver's have buck teeth.
+CATERPILLAR_FACE_PALETTE = FACE_PALETTE | {"d": (80, 160, 60), "m": (35, 85, 40)}
+DOG_FACE_PALETTE = FACE_PALETTE | {"d": (185, 135, 85), "m": (60, 40, 25)}
+DRAGONFLY_FACE_PALETTE = FACE_PALETTE | {"d": (60, 130, 200), "m": (25, 60, 100)}
+BEAVER_FACE_PALETTE = FACE_PALETTE | {"d": (120, 75, 40), "m": (60, 35, 20), "W": (255, 250, 235)}
+beaver_baby_face_grid = buck_teeth(baby_face_grid, 1)
+beaver_face_grid = buck_teeth(face_grid, 2)
+# The adults' (kit_face): dark eyes with a white glint, a nose for the dogs and the beavers
+GARDEN_FACE_PALETTE = {"w": (240, 245, 255), "p": (25, 30, 60), "g": (255, 255, 255), "m": (70, 30, 40),
+                       "r": (190, 45, 60), "k": (255, 150, 170), "n": (50, 30, 20), "W": (255, 252, 240)}
+GRINNING_FACES = kit_faces(normal=("open", "laugh", True), smile=("open", "laugh", True))
+mothmuff_face_grid = kit_face(6)
+MOTHMUFF_FACES = kit_faces(normal=("half", "small", True))  # sleepy, and soft as its fur
+MOTHMUFF_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (150, 135, 148)}
+sunflutter_face_grid = kit_face(6)
+SUNFLUTTER_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (95, 55, 25)}
+jesterwing_face_grid = kit_face(6)
+JESTERWING_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (220, 190, 165)}
+digby_face_grid = nosed(kit_face(6, mouth_row=4), ["nn", "EE"])  # earth on its nose
+DIGBY_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (185, 135, 85), "E": (120, 80, 45)}
+barrelbard_face_grid = kit_face(7)
+BARRELBARD_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (120, 55, 25)}
+pawdini_face_grid = kit_face(6)
+PAWDINI_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (185, 135, 85)}
+rotorfly_face_grid = kit_face(6)
+ROTORFLY_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (120, 195, 220)}
+jewelwing_face_grid = kit_face(6)
+JEWELWING_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (30, 130, 95)}
+prismfly_face_grid = kit_face(6)
+PRISMFLY_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (170, 225, 245)}
+dambert_face_grid = timberjack_face_grid = archibeaver_face_grid = buck_teeth(nosed(kit_face(6), ["nn"]), 2)
+DAMBERT_FACE_PALETTE = TIMBERJACK_FACE_PALETTE = ARCHIBEAVER_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (120, 75, 40)}
+GARDEN_LINES = (("caterpillar", "munchlet", baby_face_grid, face_grid),
+                ("dog", "pupplet", baby_face_grid, face_grid),
+                ("dragonfly", "nymphlet", baby_face_grid, face_grid),
+                ("beaver", "gnawlet", beaver_baby_face_grid, beaver_face_grid))
+GARDEN_FORMS = (("mothmuff", MOTHMUFF_FACES), ("sunflutter", FACES), ("jesterwing", GRINNING_FACES),
+                ("digby", FACES), ("barrelbard", FACES), ("pawdini", GRINNING_FACES),
+                ("rotorfly", FACES), ("jewelwing", FACES), ("prismfly", FACES),
+                ("dambert", FACES), ("timberjack", FACES), ("archibeaver", FACES))
+
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
     "food_full": ["...fffff...", "..fffffFf..", ".fffffffFf."],
@@ -3802,6 +4715,12 @@ TRIP_TAGS = {
     # the snow globe: a fir in the snow under glass, on a wooden foot; the flakes drift inside
     "snowglobe": [(['...IIIII...', '..IiifiiI..', '.IfiiyiifI.', '.IiiigiiiI.', 'IiifgggfiiI', 'IiiggGggiiI', '.IfiiGiifI.', '.IIwwwwwII.', '..TTTTTTT..', '.TtttttttT.', '..TTTTTTT..'], 900),
                   (['...IIIII...', '..IifiiiI..', '.IiiiyfiiI.', '.IfiigiiiI.', 'IiiigggifiI', 'IifggGggiiI', '.IiiiGfiiI.', '.IIwwwwwII.', '..TTTTTTT..', '.TtttttttT.', '..TTTTTTT..'], 900)],
+    # a garden pond: water in a ring of stones, a lily pad with its flower, a cattail at the edge
+    "pond": [(["........t..", "........t.l", "........Tl.", "..WsWsWsgs.", ".WiibbbbgbS", "WibblgpbbbS", "sbbGggbbIbS",
+               ".SBbbbbbBS.", "..SsSSsSS.."], 1000)],
+    # a woodpile: logs stacked with their cut ends to the front, growth rings and all
+    "woodpile": [(["....TTT....", "...TdddT...", "...TdDdT...", "..TTdddTT..", ".TdddTdddT.", ".TdDdTdDdT.", "TTdddTdddTT",
+                   "TdddTdddTdT", "TdDdTdDdTDT", "TdddTdddTdT", ".TTT.TTT.T."], 1000)],
     # Hats: the bottom two rows sit on the head
     "hat_daisy": [([".w...p...w.", "wywgpypgwyw"], 1000)],
     "hat_leaf": [(["....lg.", "..lggg.", ".lgGgg.", "...G..."], 1000)],
@@ -4720,6 +5639,20 @@ def main():
         write_sheet(f"{name}_faces", face_sheet(globals()[f"{name}_face_grid"], globals()[f"{upper}_FACE_PALETTE"],
                                                 faces))
     for name, faces in SPECIAL_FORMS:
+        upper = name.upper()
+        write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
+                    faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])
+        write_sheet(f"{name}_faces", face_sheet(globals()[f"{name}_face_grid"], globals()[f"{upper}_FACE_PALETTE"],
+                                                faces))
+    for line, child, baby_faces, child_faces in GARDEN_LINES:
+        upper, name = line.upper(), child.upper()
+        palette, face_palette = globals()[f"{upper}_PALETTE"], globals()[f"{upper}_FACE_PALETTE"]
+        write_sheet(f"{line}_baby_body", body_sheet(globals()[f"{upper}_BABY_TAGS"], palette))
+        write_sheet(f"{line}_baby_faces", face_sheet(baby_faces, face_palette))
+        write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
+                    faceShift=globals()[f"{name}_FACE_SHIFT"])
+        write_sheet(f"{line}_faces", face_sheet(child_faces, face_palette))
+    for name, faces in GARDEN_FORMS:
         upper = name.upper()
         write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
                     faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])

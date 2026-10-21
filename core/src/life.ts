@@ -35,6 +35,11 @@ export const LINES: Record<string, readonly string[]> = {
   duck: ["quill", "drakwing", "bubblehelm"],
   hippo: ["lillypot", "steamo", "hippula"],
   beak: ["parcelbeak", "rapierre", "acewing"],
+  // the garden's lines, whose eggs the guests bring (garden.ts)
+  caterpillar: ["mothmuff", "sunflutter", "jesterwing"],
+  dog: ["digby", "barrelbard", "pawdini"],
+  dragonfly: ["rotorfly", "jewelwing", "prismfly"],
+  beaver: ["dambert", "timberjack", "archibeaver"],
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
@@ -65,6 +70,10 @@ export const NEEDLENUB_LOVE_PER_DAY = 5; // the leaf line: a cactus that gets cu
 export const DRAKWING_BATTLES_PER_DAY = 2; // the duck line: scuffles a day, won or not → drakwing, otherwise quill
 export const STEAMO_BATHS_PER_DAY = 2; // the hippo line: bathed this often → steamo, otherwise lillypot
 export const RAPIERRE_TRICKS_PER_DAY = 2; // the beak line: tricks practiced → rapierre, otherwise parcelbeak
+export const FAVORITE_FRUITS = 4; // the caterpillar line: this many of one fruit, more than of any other → sunflutter (sunflower), otherwise mothmuff
+export const BARRELBARD_BOND = 4; // the dog line: bond hearts when it grows up → barrelbard, otherwise digby
+export const JEWELWING_BATHS = 14; // the dragonfly line: baths as a child → jewelwing, otherwise rotorfly
+// The beaver line: strength its highest battle stat when it grows up → timberjack, otherwise dambert
 // The special forms: a rare deed during the child stage (totals, not per day), or a rare moment
 // when it grows up. Their rule goes first.
 export const SALAMBER_GLOWBERRIES = 3; // the ember line: glowberries eaten as a child → salamber
@@ -75,6 +84,11 @@ export const SAKURIN_PLANT_FRUITS = 6; // the leaf line: fruits it picked off it
 export const BUBBLEHELM_RAIN_TRIPS = 3; // the duck line: trips with rain on the way → bubblehelm
 export const HIPPULA_TUCKED = 6; // the hippo line: evenings tucked in by hand → hippula
 export const ACEWING_GUARDIANS = 2; // the beak line: guardians it got past → acewing
+// The caterpillar line: cherries the fruit it ate most (at least FAVORITE_FRUITS) → jesterwing
+// The dog line: it knows all four tricks when it grows up → pawdini
+// The dragonfly line: it grows up while the sun shines after rain (SUN_AFTER_RAIN) → prismfly
+export const SUN_AFTER_RAIN = 3 * 3600; // seconds since the rain stopped that still count
+// The beaver line: the house is built to its last step when it grows up → archibeaver
 export const MISSING_AFTER = 30; // days with pets before a line whose egg never came gets the quiet safety net (Pet.longMissing)
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
@@ -109,6 +123,18 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   bubblehelm: { hygiene: 0.8 }, // the helmet keeps the muck out
   hippula: { energy: 1.2, mood: 0.85 }, // up all night, but nothing ruffles a count
   acewing: { energy: 1.15 }, // all those stunts
+  mothmuff: { energy: 0.85 }, // a moth naps the day away anyway
+  sunflutter: { mood: 0.85 }, // sunny by nature
+  jesterwing: { mood: 1.2, energy: 1.15 }, // always up to some fooling, and always wanting an audience
+  digby: { hygiene: 1.2 }, // its nose is always in the soil
+  barrelbard: { energy: 0.85 }, // a big, calm mountain of a dog
+  pawdini: { energy: 1.15 }, // the show never stops
+  rotorfly: { energy: 1.15 }, // all that hovering
+  jewelwing: { hygiene: 0.8 }, // armour wipes clean
+  prismfly: { satiety: 0.8 }, // it lives half on light
+  dambert: { satiety: 1.15 }, // it gnaws all day
+  timberjack: { satiety: 1.2 }, // a lumberjack's appetite
+  archibeaver: { mood: 0.85 }, // content with its plans
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -132,12 +158,18 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   bubblehelm: { play: 1.25 },
   hippula: { pet: 1.25 }, // a count likes to be admired
   acewing: { play: 1.25 }, // always up for a stunt
+  mothmuff: { pet: 1.25 }, // all that fur
+  digby: { play: 1.25 }, // fetch!
+  barrelbard: { heart: 1.25 }, // a loyal dog
+  pawdini: { play: 1.25 },
+  jewelwing: { sick: 0.6 }, // armoured
+  timberjack: { sick: 0.6 }, // tough as an old oak
 };
 
 /**
  * The care diary of a child. Besides these, it counts what a rule for an adult form may look at
- * one day (record): each food from the bag (`food_<name>`), fruits it picked off the plant itself
- * (`plant_fruits`), trips to each area (`trips_<area>`) and trips with rain on the way
+ * one day (record): each food from the bag or off the plant (`food_<name>`), fruits it picked off
+ * the plant itself (`plant_fruits`), trips to each area (`trips_<area>`) and trips with rain on the way
  * (`rain_trips`), scuffles in which it was never knocked over (`clean_battles`), guardians it got
  * past for the first time (`guardians`), games of hide and seek played and won (`games`, `games_won`),
  * evenings it was tucked in by hand (`tucked`) and minutes with its health below WEAK_HEALTH
@@ -231,6 +263,16 @@ export interface World {
   sunset?: number;
   /** The moon is full (sun.isFullMoon). */
   fullMoon?: boolean;
+  /** It rained at home lately (SUN_AFTER_RAIN), and doesn't any more. */
+  afterRain?: boolean;
+  /** What the pet itself has come to when it grows up: its bond hearts (care.bondLevel), */
+  bond?: number;
+  /** whether it knows every trick, */
+  allTricks?: boolean;
+  /** its highest battle stat, */
+  strongest?: string;
+  /** and whether its house is built to the last step (home.HOUSE_STEPS). */
+  houseBuilt?: boolean;
 }
 
 /** How many days the child stage of this pet lasts: less what the ember stone took off it. */
@@ -252,6 +294,11 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   const days = Math.min(Math.max(1.0, minutes / 1440), stageDays);
   const enough = (kind: string, perDay: number) => (diary[kind] ?? 0) >= perDay * days;
   const done = (kind: string, total: number) => (diary[kind] ?? 0) >= total;
+  const fruits = ["berry", "sunflower", "cherry", "herb"].map((kind) => [kind, diary[`food_fruit_${kind}`] ?? 0] as const);
+  const most = (kind: string) => { // the fruit it ate most, and enough of it
+    const eaten = fruits.find(([k]) => k === kind)![1];
+    return eaten >= FAVORITE_FRUITS && fruits.every(([k, n]) => k === kind || n < eaten);
+  };
   const special = ({
     ember: done("food_glowberry", SALAMBER_GLOWBERRIES),
     stone: Boolean(world.fullMoon && world.dark),
@@ -261,6 +308,10 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
     duck: done("rain_trips", BUBBLEHELM_RAIN_TRIPS),
     hippo: done("tucked", HIPPULA_TUCKED),
     beak: done("guardians", ACEWING_GUARDIANS),
+    caterpillar: most("cherry"),
+    dog: Boolean(world.allTricks),
+    dragonfly: Boolean(world.afterRain && !world.raining && !world.dark),
+    beaver: Boolean(world.houseBuilt),
   } as Record<string, boolean>)[line];
   if (special) {
     return LINES[line][2];
@@ -288,6 +339,18 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   }
   if (line === "beak") {
     return enough("tricks", RAPIERRE_TRICKS_PER_DAY) ? "rapierre" : "parcelbeak";
+  }
+  if (line === "caterpillar") {
+    return most("sunflower") ? "sunflutter" : "mothmuff";
+  }
+  if (line === "dog") {
+    return (world.bond ?? 0) >= BARRELBARD_BOND ? "barrelbard" : "digby";
+  }
+  if (line === "dragonfly") {
+    return done("baths", JEWELWING_BATHS) ? "jewelwing" : "rotorfly";
+  }
+  if (line === "beaver") {
+    return world.strongest === "strength" ? "timberjack" : "dambert";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if (enough("love", PURRLOOP_LOVE_PER_DAY)) {

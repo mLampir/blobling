@@ -82,6 +82,23 @@ export const TASTES: Record<string, readonly [string, string]> = {
   bubblehelm: ["watercress", "honeycomb"],
   hippula: ["fruit_berry", "fruit_herb"], // berry juice, and no garlicky herbs
   acewing: ["pinenut", "honeycomb"],
+  // the garden's lines
+  caterpillar: ["fruit_herb", "fruit_berry"], // leaves first
+  mothmuff: ["glowberry", "hazelnut"], // drawn to the light
+  sunflutter: ["fruit_sunflower", "pinenut"],
+  jesterwing: ["fruit_cherry", "watercress"],
+  dog: ["fruit_sunflower", "fruit_cherry"],
+  digby: ["hazelnut", "glowberry"], // dug up
+  barrelbard: ["honeycomb", "watercress"],
+  pawdini: ["honeycomb", "fruit_herb"], // a treat after the show
+  dragonfly: ["fruit_berry", "fruit_sunflower"],
+  rotorfly: ["pinenut", "honeycomb"],
+  jewelwing: ["watercress", "hazelnut"],
+  prismfly: ["glowberry", "pinenut"], // light
+  beaver: ["fruit_herb", "fruit_cherry"],
+  dambert: ["watercress", "glowberry"],
+  timberjack: ["pinenut", "honeycomb"], // from the forest
+  archibeaver: ["hazelnut", "fruit_berry"],
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],

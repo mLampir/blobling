@@ -138,6 +138,10 @@ function piece(event: PetEvent, t: Translate): Piece | null {
       return make(`fruit.${item}`, 2);
     case "visit":
       return make("visit", 5, { pet: t(`species.${item}`) });
+    case "peek": // a guest from the garden (garden.ts)
+      return make("peek", 6, { pet: t(`species.${item}`) });
+    case "guest":
+      return make("guest", 7, { pet: t(`species.${item}`) });
     case "gift":
       return make("gift", 6, { pet: t(`species.${item}`) });
     case "found":

@@ -10,6 +10,7 @@
 import * as battle from "./battle";
 import * as care from "./care";
 import * as food from "./food";
+import * as garden from "./garden";
 import * as habits from "./habits";
 import * as home from "./home";
 import * as idle from "./idle";
@@ -297,6 +298,9 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   care.driftWeight(state, TICK / 60, s.satiety < CRITICAL);
   state.bond = Math.max(0.0, state.bond - care.BOND_DECAY_PER_DAY / 1440);
   home.grow(state, TICK / 60, sky.precipitation(weather) === "rain");
+  if (sky.precipitation(weather) === "rain") {
+    garden.noteRain(state, t);
+  }
   idle.noteWeather(state, t, sky.precipitation(weather));
   idle.melt(state, temp);
   home.noteHeat(state, temp, t);
@@ -308,6 +312,9 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     if (done) {
       comeHome(state, t, done);
     }
+  }
+  for (const [action, item] of garden.step(state, t, !asleep && !state.trip)) {
+    logEvent(state, t, action, "system", { item });
   }
   if (state.friends.length) {
     for (const [action, item] of wild.step(state, t, !asleep && !state.trip)) {
@@ -363,6 +370,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     const kind = home.eatFruit(state);
     count(state, "fruits");
     life.record(state, "plant_fruits");
+    life.record(state, `food_fruit_${kind}`); // eaten like one from the bag (the caterpillar line goes by it)
     setActivity(state, "pick", t, kind);
     logEvent(state, t, "fruit", "system", { item: kind });
   }
@@ -625,7 +633,8 @@ function count(state: PetState, key: string): void {
 
 /**
  * The weather, the time of day and the moon at the time t, as far as they may decide an adult form.
- * With `state`: what is set out at its home too (the snow globe makes it snow).
+ * With `state`: what is set out at its home too (the snow globe makes it snow), the rain lately,
+ * and what the pet itself has come to (bond, tricks, battle stats, house).
  */
 export function worldAt(t: number, weather: sky.WeatherCode, location: Location, temp: number | null = null,
     state: PetState | null = null): life.World {
@@ -637,6 +646,20 @@ export function worldAt(t: number, weather: sky.WeatherCode, location: Location,
     storm: sky.isThunder(weather), temp, dark: isDark(t, location),
     minute: date.getHours() * 60 + date.getMinutes(), sunrise: Math.round(sunrise), sunset: Math.round(sunset),
     fullMoon: isFullMoon(t),
+    ...(state && petWorld(state, t)),
+  };
+}
+
+/** What the pet itself brings to the moment it grows up (life.World). */
+function petWorld(state: PetState, t: number): life.World {
+  const top = Math.max(...battle.SKILLS.map((skill) => state.skills[skill]));
+  const strongest = battle.SKILLS.filter((skill) => state.skills[skill] === top);
+  return {
+    afterRain: state.garden.rain_at > 0 && t - state.garden.rain_at <= life.SUN_AFTER_RAIN,
+    bond: care.bondLevel(state),
+    allTricks: Object.keys(care.TRICKS).every((trick) => care.knows(state, trick)),
+    strongest: strongest.length === 1 && top > 0 ? strongest[0] : undefined,
+    houseBuilt: state.house >= home.HOUSE_STEPS,
   };
 }
 
@@ -804,6 +827,9 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
   logEvent(state, now, action, by, { item: told, accepted: reason === null, reason });
   if (reason === null && by !== "system") {
     habits.record(state, action, now);
+    if (action === "play" || action === "game") {
+      garden.notePlay(state, now);
+    }
   }
   return { accepted: reason === null, reason };
 }
