@@ -35,7 +35,7 @@ test("trip in snapshot and view", () => {
       finds: ["glowshroom", "lantern", "cap", "snailshell"].map((id) => ({ id, found: false })), wild_left: true });
   assert.equal(state.areas[0].wild_left, null); // only wild pets of no line live on the meadow
   assert.deepEqual(state.guardians, { passed: 0, all: 5 });
-  assert.deepEqual(state.items[0], { id: "seed_berry", label: "Berry seed", kind: "seed", count: 2, active: false, place: null, effects: [] });
+  assert.deepEqual(state.items[0], { id: "seed_berry", label: "Berry seed", kind: "seed", count: 2, active: false, place: null, effects: ["satiety"] });
   assert.equal(view.area, "meadow");
   assert.deepEqual(disk.pet().state.trip, pet.state.trip);
 });

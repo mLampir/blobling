@@ -52,6 +52,12 @@ const THINGS: Record<string, string[]> = {
   medicine: ["items:medicine"],
   sponge: ["items:sponge"],
   baton: ["items:baton"],
+  whistle: ["items:whistle"],
+  hide: ["items:hide"],
+  // the training: what each exercise is about
+  strength: ["items:stone"],
+  speed: ["items:skill_speed"],
+  smarts: ["items:skill_smarts"],
   backpack: ["trip:backpack"],
   seed: ["trip:seed"],
   // fruits of the plant's kinds, kept in the bag

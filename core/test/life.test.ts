@@ -239,6 +239,11 @@ test("the snow globe makes it snow for the cloud line", () => {
   assert.deepEqual(home.effects("snowglobe"), ["snow"]);
 });
 
+test("a fruit and its seed tell what the fruit fills", () => {
+  assert.deepEqual(home.effects("fruit_berry"), ["satiety"]);
+  assert.deepEqual(home.effects("seed_herb"), ["health", "cure"]);
+});
+
 test("child keeps a diary and grows up", () => {
   pet.stage = "child";
   pet.stage_since = start;

@@ -19,7 +19,7 @@ import * as home from "./home";
 import * as life from "./life";
 import * as model from "./model";
 import * as notify from "./notify";
-import { hideX, houseArea, thingArea, type SceneView, type TripView } from "./scene";
+import { hideX, houseArea, plantArea, thingArea, type SceneView, type TripView } from "./scene";
 import * as sky from "./sky";
 import { fromDict, toDict, type Friend, type PetState } from "./state";
 import * as story from "./story";
@@ -1115,6 +1115,7 @@ export class Pet {
       plant: s.plant ? {
         kind: s.plant.kind, label: t(`plants.${s.plant.kind}`),
         stage: home.plantStage(s), ripe: home.ripe(s), left: s.plant.left,
+        area: plantArea(s.house), // where it stands in the scene, for a tap that tells how it is doing
       } : null,
       // Since when it has been at Grandma's (it waits there to be fetched: action "grandma"), or null
       grandma: s.grandma ? { since: Math.round(s.grandma) } : null,

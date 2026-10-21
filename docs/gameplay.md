@@ -79,6 +79,10 @@ it up a lot (mood +20), and one thing it won't eat: it turns its head away, and
 the thing stays in the bag. The app marks both (❤ and ✕) once they have been
 tried with this form; a new form has tastes of its own. Since there is never
 much of anything, finding out what a pet likes takes trying what there is.
+What a thing does is no secret: in the bag each one carries a small badge (a
+fruit and its seed the need the fruit fills, the seed's badge dashed), food
+that works from the backpack a little backpack, and held a moment, it says
+what it does.
 
 **Weight.** Meals and food add weight; playing, hide and seek,
 training and trips take it off, and by itself the weight drifts back to the
@@ -219,12 +223,12 @@ An adult can also lay an egg of its own, once it has made a friend (see
 battle stat its parent had when the egg was laid. Whatever hatches from it
 starts with that instead of zero.
 
-There are two ways to a new egg, both in the diary:
+There are two ways to a new egg:
 
-- **Brood** an egg, next to the egg among the finds. That works at any time,
+- **Brood** an egg: a tap on it in the bag. That works at any time,
   whatever stage the current pet is in. An egg is kept until you do; it is
   never lost, and up to nine are kept.
-- **Start over with a usual egg**, under *More*. There is always one of
+- **Start over with a usual egg**, with a tap on the pet's name. There is always one of
   those, and it starts from zero.
 
 **What stays, and what doesn't.** Everything the pets have found belongs to
@@ -255,10 +259,10 @@ favorite can stay while new eggs are raised for the album.
   new house while there is a free place, or in the place of one of the pets.
   A pet that makes room moves into the album; an egg that
   hasn't hatched is given up. Pets only leave by your choice.
-- **Move to the album** (under *More*) lets any pet of the home move
-  there without a new egg taking its place, not only the one on screen. A special egg goes back to the finds, to be brooded
+- **Move to the album** (a tap on the pet's name) lets any pet of the home move
+  there without a new egg taking its place, not only the one on screen. A special egg goes back into the bag, to be brooded
   later; a usual one is gone. The display always keeps one pet; a phone may
-  end up with none, keeps its finds and offers a new egg or one of the pets
+  end up with none, keeps its bag and offers a new egg or one of the pets
   in the album.
 - **The album** keeps the pets moved into it, frozen: they
   lose nothing, don't grow on and don't get older. **Bring home** next to one
@@ -310,11 +314,12 @@ with the display out of reach, the app shows only the phone's own pets.
 
 ## Tricks
 
-The pet can learn four tricks. Take the baton from the app's tray and draw
-the move from the table over the pet; it tries the trick on the panel. While
-the baton is in your hand, stroking waits; a tap on it puts it back. *Adventure*
-→ *Tricks* lists the moves and how far each trick has got, and while that list
-is open, the baton is in your hand.
+The pet can learn four tricks. A tap on the baton in the app's tray opens the
+tricks in place of the tray: the four moves, each drawing itself one after the
+other until you draw one, how far each trick has got, and a star once the pet
+knows it. While they are open the baton is in your hand: draw the move over
+the pet and it tries the trick on the panel; stroking waits until they are
+closed.
 
 Practicing costs energy and needs a break afterwards (below). A trick it
 already knows can be shown any time, for free and without a break; showing
@@ -342,7 +347,8 @@ different on the panel, but the gesture and what it does are the same.
 
 ## Hide and seek
 
-The pet hides, and you tap where you think it is. There are always three
+A tap on **Hide & seek** in the app's tray starts the game. The pet hides, and
+you tap where you think it is. There are always three
 places to hide: past the left and the right edge of the panel, and in the tall
 grass. The house takes the place of the left edge, and so does the plant while
 there is no house; a plant, and the decorations outside, are places of their
@@ -362,12 +368,12 @@ everybody – and strengthens the bond.
 ## Training
 
 The pet has three battle stats, each from 0 to 100. They only matter on trips,
-when somebody gets in its way. You train them from the app (**Train**) while
-watching the panel:
+when somebody gets in its way. You train them from the app (the whistle in
+the tray, **Train**) while watching the panel:
 
 | Stat | Exercise | In a scuffle |
 |---|---|---|
-| Strength | Swipe the ball up as hard as you can. The pet throws it as high as your swipe was fast. | a trick that works counts double more often |
+| Strength | Swipe the stone up as hard as you can. The pet throws it as high as your swipe was fast. | a trick that works counts double more often |
 | Speed | The pet crouches, and after two to five seconds a signal lights up above its head. Tap as soon as you see it – the Pi stops the time. | gets out of the way more often when a trick didn't work |
 | Smarts | The pet hops a sequence of directions (three at first, up to six). Swipe them back in the same order. | picks the right trick more often |
 
@@ -379,8 +385,8 @@ nothing and costs nothing, not even a break.
 
 ## Trips and finds
 
-From the child stage on, the pet can go on a trip: in *Adventure*, pack the
-backpack and send it off. It needs to be awake, healthy, reasonably fed and rested, back well
+From the child stage on, the pet can go on a trip: the app's *Trip* tab is the
+packing, pick where to and what comes along, and send it off. It needs to be awake, healthy, reasonably fed and rested, back well
 before bedtime, and it won't leave in a thunderstorm. Woken early in the morning, before
 bedtime is over, it may already set off.
 
@@ -567,7 +573,7 @@ then.
 After five visits that counted, the two build a **nest**, and an egg lies in
 it. The egg is of the pet's own line or of the friend's, and it carries the
 pet's heirloom (see [Growing up](#growing-up)). The egg waits in the nest until
-you tap it; then it is among the finds, to be brooded whenever
+you tap it; then it is in the bag, to be brooded whenever
 you like. While the nest is full, or there are nine eggs already, the next nest
 waits.
 
@@ -607,7 +613,7 @@ in the meadow again.
 
 Some of the guardians have been sitting on a rare egg. A guardian leaves its
 egg behind the first time a pet gets past it, so every pet can earn it once.
-If the pet got past it before (or there was no room among the finds), the egg
+If the pet got past it before (or there was no room for another egg), the egg
 waits at the end of the path on a later trip to that area. Getting
 past the last one, on the mountain, adds a step to the house (see
 [The house](#the-house)).
@@ -720,39 +726,50 @@ pet on the phone, it is the same as if it had been running.
 
 ## The app
 
-Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
+Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
 *More*.
 
 - **The pet** fills the screen: the scene, with the sky going on above it, the
   pet's name, form, age and mood at the top, and the **Sleep** / **Wake up**
   button next to them; with several pets at home, the pictures of the others
-  too, to switch to them. Stroke the pet itself to pet it (an egg
+  too, to switch to them. The name is a button: it opens the pet's own things
+  (rename it, start over with a usual egg, move a pet to the album, and with a
+  display, take it along or bring it there). Stroke the pet itself to pet it (an egg
   or a shivering pet is rubbed warm); the rest of the scene doesn't count,
-  apart from the house: a tap on it looks inside.
+  apart from the house (a tap looks inside) and the plant (a tap says how it
+  is doing and how many fruits are left).
 - Below it, the **needs** as five small meters. A tap on one says what helps.
   When the pet is ready to evolve, it says so here (an egg also tells when it
   will hatch), and so do a trip that is on, a backpack to unpack, a gift and
   what the pet found at home.
-- At the bottom, the **tray**: the meal, the bag, the ball, the sponge, the baton, and medicine
-  when it is sick. A tap on the bag opens it in place of the tray. Drag a thing onto the pet and
-  let go: food dropped right on it is eaten at once. Dropped anywhere else in
+- At the bottom, the **tray**, in two rows. On top the things to drag onto the
+  pet: the meal, the ball, the sponge, and medicine when it is sick. Let go
+  over the pet: food dropped right on it is eaten at once. Dropped anywhere else in
   the scene, it lands there and the pet goes to get it. The sponge is rubbed
   over the pet to clean it. Connected to a Pi, things can also be flicked up,
-  as before.
-- **Adventure** has the trip, the tricks, the training and hide and seek.
-  The tricks, the training and the game take the place of the needs and the
-  tray, below the scene, so the pet stays where it is and answers there. On a
-  tall phone the scene grows into the sky above it. Packing for a trip needs
-  no pet in sight: it covers the scene too and fits any phone without
-  scrolling, with the button to set off at the bottom.
-- **Diary** has one tab each for the history (where a scuffle can be watched
-  again), the stats (with weight and bond), the trips, the finds and the
-  album, with the pets kept in it below, each one that can come home with a
-  button for it. Trips and finds show up once there are
-  any, the album once the first egg has hatched.
-- **More**: renaming and starting over with a usual egg, sound on or off, the
-  weather (off, a fixed place, or following the phone) and connecting to an
-  LED display.
+  as before. A tap on one of them makes it hop up towards the pet, which shows
+  the way. Below, flat like buttons, the ones to tap: the **bag**, the
+  **baton** (tricks), the **whistle** (training) and **Hide & seek**.
+- The **bag** has a shelf each for what the pet eats, the seeds, and what it
+  wears or sets out, with the eggs to brood. Food and seeds are dragged onto
+  the pet like the things in the tray; a tap puts a hat on or off, sets a
+  decoration out or away (it then has a ring), or broods an egg.
+- The bag, the tricks, the training, the game and the pet's own things take
+  the place of the tray, below the scene and the needs, so the pet is never
+  covered and answers where it is. On a tall phone the scene grows into the
+  sky above it.
+- **Trip** is the packing: the hearts it would set off with, where to, and
+  what goes into the backpack, with the button to send it off at the bottom.
+  While the pet can't go for a while (still an egg or a baby, away, back with
+  a full backpack), that is what the tab says.
+- **Diary** has one tab each for the history, the album and the values. In the
+  history a trip opens with a tap into what happened on the way (where a
+  scuffle can be watched again). The album has the forms met so far, the pets
+  kept in it, each one that can come home with a button for it, and the
+  pet's friends. The values are weight, bond and what the pet has done so far.
+  The album shows up once the first egg has hatched.
+- **More**: sound on or off, the weather (off, a fixed place, or following the
+  phone) and connecting to an LED display.
 
 The phone buzzes softly with the pet's answers (in the app from the stores,
 and in a browser that can vibrate; the phone's own vibration setting

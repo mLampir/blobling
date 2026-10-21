@@ -300,8 +300,13 @@ export function snowDeco(state: PetState): boolean {
   return state.deco.some((item) => SNOW_DECO.includes(item));
 }
 
-/** What a find does besides looking nice (for the app). */
+/**
+ * What a find does besides looking nice (for the app). A fruit and its seed name the need the fruit
+ * fills, and "cure" if it also cures a sickness.
+ */
 export function effects(item: string): string[] {
+  const plant = item.replace(/^(fruit|seed)_/, "");
+  if (plant !== item && plant in PLANTS) return [PLANTS[plant][0], ...(CURES.includes(plant) ? ["cure"] : [])];
   return WARM_DECO.includes(item) ? ["growth"] : SNOW_DECO.includes(item) ? ["snow"] : [];
 }
 

@@ -289,7 +289,7 @@
       "play": "Watch again",
       "against": "Scuffle with {foe} …"
     },
-    "collected": "{egg} collected – it's with your finds now",
+    "collected": "{egg} collected – it's in your bag now",
     "unwrapped_fruit": "Inside: {fruit}. The bag was full, so {name} ate it straight away",
     "picked_fruit": "Picked up: {fruit}. The bag was full, so {name} ate it straight away",
     "boost": {
@@ -317,16 +317,14 @@
     "retire_egg_ok": "Give up",
     "retired": "{name} is in the album now.",
     "retired_egg": "The egg is gone.",
-    "retire_kept_confirm": "Put the egg back with your finds? You can hatch it later.",
+    "retire_kept_confirm": "Put the egg back into your bag? You can hatch it later.",
     "retire_kept_ok": "Put back",
-    "retired_kept": "The egg is with your finds now.",
+    "retired_kept": "The egg is in your bag now.",
     "things": {
       "meal": "Meal",
       "ball": "Ball",
       "medicine": "Medicine",
-      "trip": "Trip",
       "sponge": "Sponge",
-      "baton": "Baton",
       "bag": "Bag"
     },
     "tools": {
@@ -428,8 +426,6 @@
     "tabs": {
       "history": "History",
       "statistics": "Stats",
-      "travels": "Trips",
-      "finds": "Finds",
       "gallery": "Album",
       "more": "More"
     },
@@ -503,42 +499,6 @@
       "back": "{name} is back and brought something home. Unpack it while you're standing in front of the display.",
       "heading_home": "{name} is heading home",
       "brought": "Brought home: {items}"
-    },
-    "finds": {
-      "ripe": "a fruit is ripe",
-      "ripening": "the next fruit is ripening",
-      "growing": "still growing",
-      "left": {
-        "one": "1 fruit left",
-        "other": "{n} fruits left"
-      },
-      "in_bag": "×{n} · in your bag",
-      "hat_on": "put on",
-      "hat_off": "take off",
-      "deco_on": "set out",
-      "deco_off": "put away",
-      "egg": "waiting to hatch",
-      "egg_from": "laid by {name}",
-      "friend": "💛 {pet}",
-      "friend_visits": "a friend · {n} of {needed} visits",
-      "friend_here": "a friend · visiting right now",
-      "friend_old": "an old friend",
-      "egg_brood": "hatch",
-      "effects": {
-        "growth": "eggs, babies and children grow faster",
-        "snow": "it snows around the house",
-        "heart": "packed for a trip: one more heart",
-        "trick": "the next trick practice counts double",
-        "train": "the next exercise counts double",
-        "finder": "packed for a trip: finds something at every stop",
-        "fresh": "packed for a trip: won't tire it out, and brings home as much as the day's first"
-      },
-      "house": "🏠 {house}",
-      "house_spots": {
-        "one": "1 spot inside",
-        "other": "{n} spots inside"
-      },
-      "inside": "in the house"
     },
     "kinds": {
       "hat": "Hat",
@@ -651,11 +611,15 @@
         "night": "{where}, when the stars were out"
       },
       "mastered": "{form}, mastered",
-      "ancestors": "Pets in the album"
+      "ancestors": "Pets in the album",
+      "friends": "Friends",
+      "friend_visits": "a friend · {n} of {needed} visits",
+      "friend_here": "a friend · visiting right now",
+      "friend_old": "an old friend"
     },
     "travels": {
-      "heading": "{area} · {day} · {time}",
-      "quiet": "a quiet walk, nothing happened"
+      "quiet": "a quiet walk, nothing happened",
+      "away": "away for {time}"
     },
     "app": {
       "location_none": "No location yet: your pet has no weather, and the sun follows your time zone.",
@@ -693,11 +657,11 @@
     "train": {
       "hint": "Pick an exercise",
       "how": {
-        "strength": "throw the ball",
+        "strength": "throw a stone",
         "speed": "react to the signal",
         "smarts": "remember the hops"
       },
-      "strength": "Swipe the ball up as hard as you can",
+      "strength": "Swipe the stone up as hard as you can",
       "speed": "Watch the display – tap as soon as the signal lights up!",
       "tap": "Tap!",
       "smarts_watch": "Watch the display and remember which way it hops",
@@ -719,9 +683,7 @@
     "sleep": "Sleep",
     "history_empty": "Nothing has happened yet.",
     "hint": {
-      "sponge": "Rub the sponge over {name}",
-      "drag": "Drag it onto {name} or into the scene",
-      "baton": "Draw a trick over {name}."
+      "sponge": "Rub the sponge over {name}"
     },
     "needs": {
       "satiety": "Drag food onto {name}.",
@@ -731,14 +693,7 @@
       "health": "Medicine helps when {name} is sick. Being full, clean and well rested keeps it healthy."
     },
     "adventure": {
-      "egg": "Adventures start once the egg has hatched.",
-      "lead": "What will {name} do today?",
-      "away": "On a trip",
-      "tired": "Too tired",
-      "too_young": "Still too little",
-      "go": "Go",
-      "areas": "{n} of {all} areas known",
-      "tricks": "{n} of {all} learned"
+      "egg": "Trips start once the egg has hatched."
     },
     "values": {
       "weight": "Weight",
@@ -746,17 +701,16 @@
       "bond": "Bond"
     },
     "nav": {
-      "adventure": "Adventure"
+      "adventure": "Trip"
     },
     "more": {
       "sound": "Sound",
       "sound_on": "On",
       "sound_off": "Off",
-      "pet": "Pet",
-      "new_egg_note": "Your finds stay.",
+      "new_egg_note": "Your bag stays as it is.",
       "retire_note": "You can bring it home again any time.",
       "retire_egg_note": "It is gone then.",
-      "retire_kept_note": "Goes to your finds.",
+      "retire_kept_note": "Goes back into the bag.",
       "take_along_note": "It moves from the display to this phone, house and all.",
       "bring_display_note": "It moves from this phone to a house on the display."
     },
@@ -766,14 +720,30 @@
       "dance": "flat, back and forth",
       "flip": "up"
     },
-    "houses": {
-      "1": "Hut",
-      "2": "Cabin",
-      "3": "House"
-    },
     "bag": {
       "empty": "The bag is empty.",
-      "favorite": "{name} beams: that is the favorite!"
+      "favorite": "{name} beams: that is the favorite!",
+      "food": "Food",
+      "seeds": "Seeds",
+      "wear": "Wear · set out",
+      "grows": "grows {fruit}",
+      "inside": "in the house",
+      "egg": "waiting to hatch",
+      "egg_from": "laid by {name}",
+      "effects": {
+        "satiety": "fills it up",
+        "energy": "gives it energy",
+        "mood": "cheers it up",
+        "health": "makes it healthier",
+        "cure": "cures a sickness",
+        "growth": "eggs, babies and children grow faster",
+        "snow": "it snows around the house",
+        "heart": "packed for a trip: one more heart",
+        "trick": "the next trick practice counts double",
+        "train": "the next exercise counts double",
+        "finder": "packed for a trip: finds something at every stop",
+        "fresh": "packed for a trip: won't tire it out, and brings home as much as the day's first"
+      }
     },
     "unwrapped_bag": "Inside: {thing}. It's in your bag now",
     "picked_bag": "Picked up: {thing}. It's in your bag now",
@@ -786,7 +756,16 @@
     "twins": "{name} is here twice, on the phone and on the display, from before pets could move. Which one is the real one? The other one goes into the album.",
     "twin_phone": "On this phone",
     "twin_display": "On the display",
-    "look_phone": "Look at {name} (on this phone)"
+    "look_phone": "Look at {name} (on this phone)",
+    "plant": {
+      "ripe": "a fruit is ripe",
+      "ripening": "the next fruit is ripening",
+      "growing": "still growing",
+      "left": {
+        "one": "1 fruit left",
+        "other": "{n} fruits left"
+      }
+    }
   },
   "settings": {
     "title": "LED Matrix",
