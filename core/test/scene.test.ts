@@ -134,7 +134,7 @@ test("the status line: clock, temperature and what the pet needs", () => {
 test("every form of the pet can be drawn, in every state", () => {
   const forms = [...Object.keys(life.LINES).flatMap((line) => life.STAGES.map((stage) => [stage, line])),
     ...[...Object.values(life.LINES).flat(), ...life.WILD_ONLY].map((name) => ["adult", name])];
-  assert.equal(forms.length, 16 * 4 + 53);
+  assert.equal(forms.length, 19 * 4 + 62);
   const moods = ["normal", "happy", "sad", "hungry", "dirty", "sick", "tired"];
   for (const [stage, species] of forms) {
     for (const mood of moods) {
@@ -295,7 +295,9 @@ test("the garden's and the water's adults have a trick and a special move of the
   const own = { mothmuff: "spin", sunflutter: "dance", jesterwing: "flip", digby: "spin", barrelbard: "bow",
     pawdini: "dance", rotorfly: "spin", jewelwing: "bow", prismfly: "dance", dambert: "flip", timberjack: "spin",
     archibeaver: "bow", teacrab: "bow", lightclaw: "spin", castlecrab: "bow", mossolotl: "spin", medilotl: "dance",
-    axodrake: "flip", sirthimble: "bow", cogsqueak: "spin", woolwhisk: "spin" };
+    axodrake: "flip", sirthimble: "bow", cogsqueak: "spin", woolwhisk: "spin", hivebear: "bow", snorbear: "spin",
+    ursastra: "dance", tuxwaddle: "bow", glidepin: "spin", aurorapin: "dance", umbrabat: "flip", batbeat: "dance",
+    lunaflap: "spin" };
   const animations = new Set<string>();
   for (const [species, trick] of Object.entries(own)) {
     const animation = trickAnimation("adult", species, trick);
@@ -343,7 +345,7 @@ test("a guest from the garden peeks over the fence at the right edge, only at ho
 });
 
 test("the newer lines' children show where they are heading", () => {
-  for (const [line, adults] of Object.entries(life.LINES).slice(-7)) {
+  for (const [line, adults] of Object.entries(life.LINES).slice(-10)) {
     const looks = adults.map((hint) => frames({ species: line, hint }, 1)[0]);
     assert.ok(differing(looks[0], looks[1]) > 0 && differing(looks[1], looks[2]) > 0
       && differing(looks[0], looks[2]) > 0, line);

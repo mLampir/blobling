@@ -1446,6 +1446,8 @@ coiled in rings with an entrance on its belly, the honey pot is the tip of the
 hive, and bees fly in and out round it; only the ears, the muzzle and the
 stubby paws are still bear fur. It walks. With honey of its own it gets hungry
 more slowly, and warm and humming as it is, it loves to be petted.
+For its bow it lifts its honey pot like a hat and the bees fly up, and in a
+scuffle it sends a cloud of buzzing bees.
 
 ![Snorbear](images/pets/snorbear.png)
 
@@ -1453,7 +1455,8 @@ more slowly, and warm and humming as it is, it loves to be petted.
 like an earth mound with moss and snow on its back; only its sleepy head, one
 paw and the moss-grown honey pot show, and it snores. Half asleep all the time
 anyway, it tires more slowly, and nothing cheers it up like a scratch behind
-the ears.
+the ears. For its spin it rolls up in its mound and tumbles, and its special
+move is a yawn that sends the opponent to sleep.
 
 </details>
 
@@ -1486,7 +1489,9 @@ up on its hind legs with its paws raised, its fur night blue, and the seven
 stars of the Great Bear shine on its body. Star honey drips from its pot and
 rises again as little lights round it; at night its stars, its pot and the
 lights glow. It is as calm as the night sky, so its mood sinks more slowly,
-and it grew out of a strong bond: hearts mean more to it.
+and it grew out of a strong bond: hearts mean more to it. For its dance the
+seven stars leave its body and wander into a heart, and in a scuffle shooting
+stars rain down on the opponent.
 
 </details>
 
@@ -1522,7 +1527,8 @@ upright, its white front a shirt between dark lapels and its tail feathers
 grown into coat tails, it holds one flipper out flat as a tray with a steaming
 cup on it. Its earmuffs are a deeper red. It waddles. Always neat in its
 tailcoat, it gets dirty more slowly, and a loyal butler: hearts mean more to
-it.
+it. For its bow it serves with a waiter's bow, and its special move is a stack
+of flying plates.
 
 ![Glidepin](images/pets/glidepin.png)
 
@@ -1530,7 +1536,8 @@ it.
 leaning far forward, one flipper swung forward and one swept back, its belly
 smooth and shining like ice and its earmuffs ice blue, it skates along with
 frost spraying behind it. Always skating, it tires faster, and it is always up
-for a race: playing cheers it up more.
+for a race: playing cheers it up more. For its spin it pirouettes on its
+blades, and in a scuffle it lays an ice track the opponent slips on.
 
 </details>
 
@@ -1563,7 +1570,9 @@ Round and big, its belly is a window of ice into the night with one calm band
 of the northern lights in it; ribbons of light stream from its back as a
 train, snowflakes drift round it, and its earmuffs shine green and violet. At
 night the lights glow. The frost keeps it clean, so it gets dirty more slowly,
-and used to the polar cold, it gets sick less often.
+and used to the polar cold, it gets sick less often. For its dance aurora
+ribbons wave round it, and in a scuffle a curtain of aurora light comes down on
+the opponent.
 
 </details>
 
@@ -1599,7 +1608,9 @@ over its head, the finger bones are the ribs with a claw at each tip, its body
 is the shaft and its tail the hooked handle, and its big ears stick up through
 the top. Rain runs off its edge, and it floats along like an umbrella in the
 wind. The rain washes it, so it gets dirty more slowly, and keeping the rain
-off itself, it gets sick less often. It needs no umbrella of yours.
+off itself, it gets sick less often. It needs no umbrella of yours. For its flip it hangs from its hook tail and
+swings round, and in a scuffle it opens its umbrella wings and rain pelts
+off.
 
 ![Batbeat](images/pets/batbeat.png)
 
@@ -1607,7 +1618,8 @@ off itself, it gets sick less often. It needs no umbrella of yours.
 loudspeaker horns whose membranes throb to the beat, its wings bob up and down
 like arms over a mixing desk, and its eyes are shut with joy. Dancing all
 night, it tires faster, and anything to dance to cheers it up: playing means
-more to it.
+more to it. For its dance it nods to the bass while lights flash, and its
+special move is sound waves on the beat, then the drop.
 
 </details>
 
@@ -1640,7 +1652,9 @@ moonlight, silver and spread so wide they fill the sky, the tips of its big
 ears are two crescent moons, and silver sparks trickle down from the edge of
 its wings. It flies, and at night its wings, its moons and its sparks glow. It
 sleeps the day away and glides on moonlight, so it tires more slowly, and its
-wings are soft: petting cheers it up more.
+wings are soft: petting cheers it up more. For its spin it wraps itself in its wings and
+opens them as a full-moon disc, and in a scuffle a swarm of silver light
+moths flies at the opponent.
 
 </details>
 
