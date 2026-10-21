@@ -110,6 +110,9 @@ const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:mossolotl": { spin: "unfurl" }, // turns slowly, its gills unfurl, and bits of moss drift off its back
   "adult:medilotl": { dance: "heal" }, // a little dance, and hearts float up
   "adult:axodrake": { flip: "dragon_loop" }, // flies a loop in the air with a trail of glowing bubbles
+  "adult:sirthimble": { bow: "accolade" }, // a knight's bow, and its needle lance touches its shoulder with a glint
+  "adult:cogsqueak": { spin: "wind_up" }, // winds itself up, its key turning, and whirrs round on the spot
+  "adult:woolwhisk": { spin: "unravel" }, // her ball turns, and the golden thread unwinds round her and winds back up
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
@@ -118,9 +121,12 @@ const SPECIAL_MOVES = ["angloop", "gemperor", "purrloop", "lanternling", "flarel
   "prismist", "twiggle", "needlenub", "quill", "drakwing", "lillypot", "steamo", "parcelbeak", "rapierre", "glimmerock",
   "bouldergrin", "salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
   "mothmuff", "sunflutter", "jesterwing", "digby", "barrelbard", "pawdini", "rotorfly", "jewelwing", "prismfly", "dambert",
-  "timberjack", "archibeaver", "teacrab", "lightclaw", "castlecrab", "mossolotl", "medilotl", "axodrake"];
+  "timberjack", "archibeaver", "teacrab", "lightclaw", "castlecrab", "mossolotl", "medilotl", "axodrake",
+  "sirthimble", "cogsqueak", "woolwhisk"];
+// How fast an opponent is carried back after a special move has struck (pixels per second, roughly)
+const FOE_DRIFT = 22;
 // Special moves that knock the opponent further back than others: by this many pixels more
-const SPECIAL_PUSH: Record<string, number> = { rotorfly: 10 }; // its downwash blows it away
+const SPECIAL_PUSH: Record<string, number> = { rotorfly: 10, sirthimble: 8 }; // its downwash, its shield charge
 // The skipping stone: [start, length, height] of each hop, over the time in the air (0..1)
 const SKIPS: readonly (readonly [number, number, number])[] = [[0, 0.45, 12], [0.45, 0.3, 6], [0.75, 0.25, 3]];
 const SPIN_PAD = 8;
@@ -320,11 +326,13 @@ const STAGE_SHEETS: Record<string, Record<string, readonly [string, string]>> = 
   beaver: { baby: ["beaver_baby_body", "beaver_baby_faces"], child: ["gnawlet_body", "beaver_faces"] },
   crab: { baby: ["crab_baby_body", "crab_baby_faces"], child: ["shellbit_body", "crab_faces"] },
   axolotl: { baby: ["axolotl_baby_body", "axolotl_baby_faces"], child: ["axolittle_body", "axolotl_faces"] },
+  mouse: { baby: ["mouse_baby_body", "mouse_baby_faces"], child: ["squeaklet_body", "mouse_faces"] },
 };
 // The egg of a line: the tags in the items sheet start with this
 const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg", cloud: "cloud_egg",
   leaf: "leaf_egg", duck: "duck_egg", hippo: "hippo_egg", beak: "beak_egg", caterpillar: "caterpillar_egg", dog: "dog_egg",
-  dragonfly: "dragonfly_egg", beaver: "beaver_egg", crab: "crab_egg", axolotl: "axolotl_egg" };
+  dragonfly: "dragonfly_egg", beaver: "beaver_egg", crab: "crab_egg", axolotl: "axolotl_egg",
+  mouse: "mouse_egg" };
 // Color per adult species: hue shift (0–255) starting from teal.
 // Fallback for a species without pixel art of its own.
 const SPECIES_HUE: Record<string, number> = {
@@ -359,7 +367,8 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
   parcelbeak: ["parcelbeak_body", "parcelbeak_faces", 0],
   ...Object.fromEntries(["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
     "mothmuff", "sunflutter", "jesterwing", "digby", "barrelbard", "pawdini", "rotorfly", "jewelwing", "prismfly", "dambert",
-    "timberjack", "archibeaver", "teacrab", "lightclaw", "castlecrab", "mossolotl", "medilotl", "axodrake"]
+    "timberjack", "archibeaver", "teacrab", "lightclaw", "castlecrab", "mossolotl", "medilotl", "axodrake", "sirthimble",
+    "cogsqueak", "woolwhisk"]
     .map((species) => [species, [`${species}_body`, `${species}_faces`, 0] as const])),
 };
 // What grows on a child's head hints at the adult form it is heading for. Per line, the three
@@ -370,7 +379,8 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
 // hippo's towel, the young bird's goggles (lenses, frame), the pompoms on the caterpillar's feelers
 // (light, dark), the puppy's ears and tail (fur, shadow), the lenses of the larva's dew goggles
 // (lens, shadow), the young beaver's pencil (wood, shadow), the stripes of the young crab's shell
-// (stripe, shadow) and the young axolotl's gills (frond, shadow) – as in the palettes of
+// (stripe, shadow), the young axolotl's gills (frond, shadow) and the young mouse's crumb of
+// cheese (cheese, shadow) – as in the palettes of
 // tools/build_blob_sprites.py.
 const LURES: Record<string, readonly Color[]> = {
   blob: [[255, 235, 150], [240, 190, 90], [255, 255, 255]],
@@ -388,6 +398,7 @@ const LURES: Record<string, readonly Color[]> = {
   beaver: [[245, 200, 60], [200, 150, 40]],
   crab: [[175, 120, 90], [205, 170, 135]],
   axolotl: [[235, 75, 125], [180, 40, 90]],
+  mouse: [[250, 215, 80], [210, 165, 45]],
 };
 const LURE_HINT: Record<string, readonly Color[]> = {
   sneezle: [[125, 220, 105], [60, 170, 70], [235, 255, 205]],
@@ -440,6 +451,9 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   mossolotl: [[95, 150, 70], [65, 110, 50]], // moss
   medilotl: [[240, 60, 90], [190, 30, 60]], // its hearts
   axodrake: [[255, 190, 215], [240, 140, 180]], // the pink of its wings
+  sirthimble: [[215, 165, 100], [175, 120, 65]], // nutshell
+  cogsqueak: [[230, 190, 80], [180, 140, 50]], // brass
+  woolwhisk: [[215, 80, 80], [165, 50, 55]], // red wool
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
@@ -448,7 +462,8 @@ const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
 const GLIDES: Record<string, number> = { mothmuff: 4, sunflutter: 4, jesterwing: 5, rotorfly: 5, prismfly: 5, pawdini: 0, axodrake: 5 };
 const HOVERS = ["rotorfly"]; // flies steadily instead of fluttering up and down
 // Forms that hop all of a piece, without squashing and stretching: Archibeaver, tower and all, like a rook
-const STIFF_HOPS = ["archibeaver", "castlecrab"]; // and Castlecrab, moat and all
+// and Castlecrab, moat and all; Woolwhisk on her ball of wool
+const STIFF_HOPS = ["archibeaver", "castlecrab", "woolwhisk"];
 // the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
 // duck like it too, and a pond hippo is wet anyway; so is a beaver, a dragonfly grew up in a pond,
 // and a sunflower is a plant; an axolotl lives in the water
@@ -489,6 +504,10 @@ const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   archibeaver: [[[80, 170, 255], [130, 210, 255]], [[200, 240, 255], [235, 252, 255]]], // its blueprint
   lightclaw: [[[255, 235, 120], [255, 250, 200]], [[250, 200, 60], [255, 225, 120]]], // its lamp
   castlecrab: [[[255, 225, 120], [255, 250, 200]]], // light in its windows
+  woolwhisk: [ // its golden thread and the stars it knits
+    [[255, 215, 90], [255, 245, 170]], [[225, 165, 40], [255, 215, 110]], [[250, 230, 120], [255, 250, 200]],
+    [[255, 250, 200], [255, 255, 255]],
+  ],
   axodrake: [ // its gills and wings
     [[235, 75, 125], [255, 130, 190]], [[180, 40, 90], [235, 90, 160]], [[255, 190, 215], [255, 225, 240]],
     [[240, 140, 180], [255, 190, 225]],
@@ -672,6 +691,33 @@ const PLASTER: Bitmap = [[240, 205, 165], ["XXXXX", "XX.XX", "XXXXX"]]; // what 
 const MEDIC_CROSS: Bitmap = [[255, 255, 255], [".X.", "XXX", ".X."]];
 const GLOW_BUBBLE: Bitmap = [[170, 245, 255], [".XX.", "X..X", "X..X", ".XX."]]; // Axodrake's glowing breath
 const GLOW_DOT: Bitmap = [[200, 255, 250], ["X"]];
+// The mouse line's adults
+const NUTSHELL_CHIP: Bitmap = [[175, 120, 65], ["XX", "X."]]; // off Sir Thimble's shields
+const NEEDLE_GLINT: Bitmap = [[255, 225, 110], ["X"]]; // runs down its needle
+const NEEDLE_SHINE: Bitmap = [[255, 250, 215], [".X.", "XXX", ".X."]];
+const ACCOLADE_GLINT: Bitmap = [[255, 250, 215], ["..X..", "..X..", "XXXXX", "..X..", "..X.."]];
+const SHIELD_FLASH: Bitmap = [[255, 240, 190], ["..X..", "X.X.X", ".XXX.", "X.X.X", "..X.."]]; // its shields strike
+const COG: Bitmap = [[230, 190, 80], ["..X..", ".XXX.", "XX.XX", ".XXX.", "..X.."]]; // off Cogsqueak's clockwork
+const COG_SPARK: Bitmap = [[255, 235, 150], ["X"]];
+// The little wind-up mouse it lets go: brass body, tin key, red wheels, all going together
+const TOY_MOUSE: Bitmap = [[230, 190, 80], ["...XX..", ".XXXXX.", "XXXXXXX"]];
+const TOY_KEY: Bitmap = [[205, 210, 220], ["X.X", ".X."]];
+const TOY_WHEELS: Bitmap = [[200, 70, 60], [".X...X."]];
+const TOY_SPRING: Bitmap = [[190, 195, 205], ["XX.", "..X", "XX.", "..X", "XX."]];
+const GOLD_THREAD: Bitmap = [[255, 215, 90], ["X"]]; // Woolwhisk's golden thread
+const KNIT_STAR: Bitmap = [[255, 240, 150], ["..X..", "..X..", "XXXXX", "..X..", "..X.."]]; // the stars it knits
+const WOOL_STAR: Bitmap = [[255, 250, 200], [".X.", "XXX", ".X."]];
+const WOOL_TUFT: Bitmap = [[215, 80, 80], ["XX", ".X"]]; // off her ball of wool
+// Loops of the thread round an opponent: flat, and tilted one way and the other
+const WOOL_LOOPS: Bitmap[] = ([
+  [[255, 215, 90], ["..XXXXXXXXXXXX..", ".X............X.", "..XXXXXXXXXXXX.."]],
+  [[225, 165, 40], ["..........XXXX..", "......XXXX....X.", "..XXXX......XX..", ".X......XXXX....", "..XXXXXX........"]],
+  [[255, 215, 90], ["..XXXX..........", ".X....XXXX......", "..XX......XXXX..", "....XXXX......X.", "........XXXXXX.."]],
+] as Bitmap[]);
+// Where Sir Thimble's needle starts (up from the ground) and how far down it the glint runs, to its shoulder
+const ACCOLADE_TIP = 28;
+const ACCOLADE_RUN = 11;
+const ACCOLADE_SHOULDER = 17;
 
 export const APP_BACKGROUND: Color = [17, 19, 24]; // background of the app (pet.html), also for the app icon
 
@@ -1277,7 +1323,7 @@ export class PetScene {
       return this.leave(pose, view, t, dt, now);
     }
     if (activity === "trip_home" || activity === "grandma_home") {
-      return this.arrive(pose, view, t, dt, activity === "trip_home");
+      return this.arrive(pose, view, t, dt, activity === "trip_home" || !!view.backpack);
     }
     if (activity === "go_in" && view.house) {
       return this.goIn(pose, view, t, dt, now);
@@ -1948,6 +1994,69 @@ export class PetScene {
         pose.body = "squash";
       }
       pose.face = "happy";
+    } else if (animation === "accolade") {
+      // a knight's bow; at its lowest a glint runs down its needle lance and onto its shoulder, as at a
+      // knighting, and it stands up proud. Its body isn't drawn mirrored: the lance is always on the right
+      const f = this.facing;
+      pose.body = p < 0.1 || p > 0.85 ? "idle" : p < 0.25 || p > 0.68 ? "squash" : "flat";
+      pose.face = p >= 0.25 && p <= 0.68 ? "blink" : p > 0.72 ? "laugh" : "smile";
+      if (p > 0.72 && p < 0.85) {
+        pose.body = "stretch"; // chest out
+      }
+      const q = (p - 0.3) / 0.22;
+      if (q > 0 && q < 1) { // down the needle from its tip
+        const dy = Math.round(ACCOLADE_TIP - q * ACCOLADE_RUN);
+        this.trickFx(t, "accolade", 0.03, NEEDLE_GLINT, 1, 11 * f, dy, [0, 0], [0, 0], 0.6);
+        const speed = ACCOLADE_RUN / (0.22 * TRICK_SHOW);
+        this.trickFx(t, "accolade_shine", TRICK_SHOW, NEEDLE_SHINE, 1, 10 * f, dy + 1, [0, 0], [speed, speed], 0.22 * TRICK_SHOW);
+      } else if (q >= 1 && p < 0.62) { // and the touch on its shoulder
+        this.trickFx(t, "accolade_touch", TRICK_SHOW, ACCOLADE_GLINT, 1, 5 * f, ACCOLADE_SHOULDER + 1, [0, 0], [0, 0], 0.6);
+        this.ringFx(t, "accolade_ring", TRICK_SHOW, [NEEDLE_GLINT], 6, 8 * f, ACCOLADE_SHOULDER - 2, 14, 0.5);
+      }
+    } else if (animation === "wind_up") {
+      // the key in its back turns, it shakes harder and harder, then it whirrs round and round on the spot
+      // with sparks and little cogs flying off its wheels, and runs down
+      const f = this.facing;
+      if (p < 0.45) {
+        const shake = p > 0.1 ? Math.trunc(t * (10 + p * 30)) % 2 : 0;
+        Object.assign(pose, { body: this.bodyOf(...pose.form, "walk"), dx: shake, face: p > 0.3 ? "normal" : "blink" });
+        if (p > 0.1) { // ticks off the key
+          this.trickFx(t, "wind_up_tick", 0.15, COG_SPARK, 2, 6 * f, 19, [-6, 6], [-10, -4], 0.5);
+        }
+      } else if (p < 0.9) {
+        const q = (p - 0.45) / 0.45;
+        const turn = q * (q < 0.8 ? 4 : 3.6) * (2 * Math.PI) * (1 - q * 0.3);
+        Object.assign(pose, { body: this.bodyOf(...pose.form, "walk"), turn: Math.cos(turn),
+          dx: Math.round(Math.sin(turn) * 3), face: "laugh" });
+        this.trickFx(t, "wind_up", 0.06, COG_SPARK, 2, 0, 1, [-24, 24], [-14, -4], 0.5, 40);
+        this.trickFx(t, "wind_up_cog", 0.3, COG, 1, this.rng.uniform(-8, 8), 4, [-18, 18], [-22, -14], 0.9, 60);
+      } else {
+        Object.assign(pose, { body: "squash", face: "happy" });
+      }
+    } else if (animation === "unravel") {
+      // all of a piece, her ball turns slowly; the golden thread unwinds round her in a widening spiral and winds
+      // back up again, and stars twinkle where it has been
+      const q = clamp((p - 0.08) / 0.84, 0, 1);
+      Object.assign(pose, { turn: Math.cos((1 - Math.cos(q * Math.PI)) * Math.PI), face: q > 0.1 && q < 0.9 ? "blink" : "smile" });
+      if (q > 0 && q < 1) {
+        // the thread from where it had got to at the last frame on to where it is now, a stitch every two pixels
+        const spiral = (at: number): [number, number] => {
+          const [a, r] = [at * 2 * (2 * Math.PI), 5 + Math.sin(at * Math.PI) * 19];
+          return [this.x + SPRITE / 2 + Math.cos(a) * r, GROUND - 13 + Math.sin(a) * r * 0.55];
+        };
+        const last = this.trickFxAt.get("unravel") ?? -1; // where it had got to, unless that was another trick
+        let from = last <= q && last > q - 0.08 ? last : q;
+        while (from < q) {
+          const [x, y] = spiral(from);
+          this.particles.push({ sprite: Math.trunc(from * 90) % 4 ? GOLD_THREAD : NEEDLE_GLINT, x, y, vx: 0, vy: 0, life: 0.6 });
+          from += 2 / ((5 + Math.sin(from * Math.PI) * 19) * 4 * Math.PI * 0.8);
+        }
+        this.trickFxAt.set("unravel", from);
+      }
+      if (q > 0.15 && q < 0.9) {
+        this.trickFx(t, "unravel_star", 0.22, this.rng.uniform(0, 1) < 0.4 ? KNIT_STAR : WOOL_STAR, 1,
+          this.rng.uniform(-24, 22), this.rng.uniform(4, 30), [0, 0], [-2, 0], 0.7);
+      }
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
       if (p < 0.1 || p > 0.9) {
@@ -2000,6 +2109,10 @@ export class PetScene {
     const towards = (d: number) => Math.round(d) * this.facing;
     const out = Math.sin(clamp((q - 0.3) / 0.4, 0, 1) * Math.PI); // over to the opponent and back
     const once = BATTLE_ROUND;
+    // where the opponent's left edge is at q (it comes over and is knocked back), and how a particle is placed there
+    const foeLeft = (when: number) => FOE_X - Math.sin(Math.min(1, when / 0.7) * Math.PI) * FOE_REACH +
+      (when > 0.5 ? 5 * Math.sin((when - 0.5) * 2 * Math.PI) : 0);
+    const at = (x: number) => (x - this.x - SPRITE / 2) * this.facing;
     Object.assign(pose, { body: "idle", face: "laugh" });
     switch (pose.form[1]) {
       case "angloop": // casts its lure at the opponent, and the bulb flares up blinding bright
@@ -2471,6 +2584,89 @@ export class PetScene {
           }
         } else {
           Object.assign(pose, { jump: 8 * (1 - (q - 0.66) / 0.34), face: "happy" });
+        }
+        break;
+      case "sirthimble": // ears forward like a shield, a scrape of its feet, and it charges shield first into the
+        // opponent, who is knocked well back; nutshell chips fly off its shields
+        if (q < 0.3) {
+          Object.assign(pose, { body: "squash", rotate: -8 * this.facing, dx: q > 0.12 ? -(Math.trunc(t * 14) % 2) * this.facing : 0,
+            face: "normal" });
+          if (q > 0.12) {
+            this.trickFx(t, "sp_sirthimble_scrape", 0.15, DUST, 3, -8, 1, [-18, -8], [-10, -4], 0.5);
+          }
+        } else if (q < 0.5) {
+          const f = (q - 0.3) / 0.2;
+          Object.assign(pose, { body: "stretch", rotate: -14 * this.facing, dx: towards(f * 12), face: "laugh" });
+          this.trickFx(t, "sp_sirthimble_dust", 0.05, DUST, 2, -10 + f * 12, 1, [-14, -6], [-6, -2], 0.4);
+          if (q > 0.44) { // shields first into the opponent
+            this.trickFx(t, "sp_sirthimble", once, SHIELD_FLASH, 1, 19, 25, [0, 0], [0, 0], 0.5);
+            this.trickFx(t, "sp_sirthimble_chip", once, NUTSHELL_CHIP, 4, 21, 24, [4, 20], [-22, -8], 0.7, 60);
+          }
+        } else if (q < 0.7) {
+          Object.assign(pose, { body: "idle", dx: towards(12 * (1 - (q - 0.5) / 0.2)), face: "laugh" });
+        }
+        break;
+      case "cogsqueak": // winds up a little tin mouse of its own and lets it go: it rolls over to the opponent and pops
+        // open on a spring, cogs flying
+        if (q < 0.2) {
+          Object.assign(pose, { body: this.bodyOf(...pose.form, "walk"), dx: Math.trunc(t * 16) % 2, face: "normal" });
+          this.trickFx(t, "sp_cogsqueak_tick", 0.15, COG_SPARK, 2, 6 * this.facing, 19, [-6, 6], [-10, -4], 0.5);
+        } else if (q < 0.26) {
+          Object.assign(pose, { body: "stretch", face: "laugh" });
+        }
+        if (q >= 0.2 && q < 0.5) {
+          // off it goes, to where the opponent will be when it strikes. Particles darken as they die: a fresh one
+          // every frame at where it has got to keeps it bright, and the ones before it are a blur behind it
+          const from = this.x + SPRITE / 2 - 12 * this.facing; // out from under it
+          const x = from + (foeLeft(0.5) - 8 - from) * (q - 0.2) / 0.3;
+          this.trickFx(t, "sp_cogsqueak", 0.04, TOY_MOUSE, 1, at(x), 4, [0, 0], [0, 0], 0.55);
+          this.trickFx(t, "sp_cogsqueak_key", 0.04, TOY_KEY, 1, at(x + 1), 6, [0, 0], [0, 0], 0.55);
+          this.trickFx(t, "sp_cogsqueak_wheels", 0.04, TOY_WHEELS, 1, at(x), 1, [0, 0], [0, 0], 0.55);
+        } else if (q >= 0.5 && q < 0.7) { // and pops: a spring jumps out, and cogs fly
+          const x = foeLeft(0.5) - 6;
+          this.trickFx(t, "sp_cogsqueak_spring", once, TOY_SPRING, 1, at(x), 8, [-4, -4], [-34, -34], 0.9, 70);
+          this.ringFx(t, "sp_cogsqueak_pop", once, [COG, COG_SPARK, COG_SPARK], 9, at(x), 5, 22, 0.8, -Math.PI, 0);
+          this.trickFx(t, "sp_cogsqueak_smoke", once, SMOKE, 2, at(x), 6, [-6, 6], [-10, -4], 0.6);
+        }
+        break;
+      case "woolwhisk": // the grandest: her golden thread shoots out, wraps the opponent in loops of wool and knits
+        // a ring of stars round it. She stays sitting tall on her ball, all of a piece
+        pose.face = q < 0.3 ? "smile" : "laugh";
+        if (q < 0.3) { // the thread gathers round her and shines
+          pose.white = q > 0.24 && Math.trunc(t * 12) % 2 === 0;
+          this.trickFx(t, "sp_woolwhisk_glow", 0.08, Math.trunc(t * 9) % 2 ? GOLD_THREAD : WOOL_STAR, 1,
+            this.rng.uniform(-14, 14), this.rng.uniform(4, 26), [-3, 3], [-4, -1], 0.6);
+        } else if (q < 0.44 && t - (this.trickFxAt.get("sp_woolwhisk") ?? -Infinity) >= 0.02) {
+          // out it shoots, in a wavy line from her middle to the opponent's
+          this.trickFxAt.set("sp_woolwhisk", t);
+          const f = (q - 0.3) / 0.14;
+          const [x0, y0] = [this.x + SPRITE / 2 + 10 * this.facing, GROUND - 14];
+          const [x1, y1] = [foeLeft(0.44) + 6, GROUND - 7];
+          this.particles.push({ sprite: GOLD_THREAD, x: x0 + (x1 - x0) * f, y: y0 + (y1 - y0) * f + Math.sin(f * 3 * Math.PI) * 3,
+            vx: 0, vy: 0, life: (0.56 - q) * BATTLE_ROUND });
+        } else if (q >= 0.44 && q < 0.7) {
+          // round and round it go the loops (a fresh one every frame, as particles darken when they die), the stars
+          // are knitted one after the other round it and go along with it as it is knocked back, and at the end
+          // the loops are knitted up into stars too
+          const life = (0.7 - q) * BATTLE_ROUND;
+          if (q < 0.6) {
+            for (let i = 0; i < 3; i++) {
+              if (q > 0.44 + i * 0.025) {
+                this.trickFx(t, `sp_woolwhisk_loop${i}`, 0.04, WOOL_LOOPS[i], 1, at(foeLeft(q) - 2), 9 - i * 3 + (i ? 1 : 0),
+                  [0, 0], [0, 0], 0.5);
+              }
+            }
+          } else if (t - (this.trickFxAt.get("sp_woolwhisk_knit") ?? -Infinity) >= once) {
+            this.particles = this.particles.filter((particle) => !WOOL_LOOPS.includes(particle.sprite));
+            this.ringFx(t, "sp_woolwhisk_knit", once, [KNIT_STAR, WOOL_STAR, GOLD_THREAD], 9, at(foeLeft(q) + 4), 8, 20, 0.9);
+          }
+          for (let i = 0; i < 6; i++) {
+            if (q > 0.5 + i * 0.015) {
+              const a = -Math.PI / 2 + i * Math.PI / 3;
+              this.trickFx(t, `sp_woolwhisk_star${i}`, once, i % 2 ? WOOL_STAR : KNIT_STAR, 1,
+                at(foeLeft(q) + 4 + Math.cos(a) * 13), 9 - Math.sin(a) * 10, [FOE_DRIFT, FOE_DRIFT], [0, 0], life);
+            }
+          }
         }
         break;
       case "bouldergrin": // throws its top stone at the opponent; a new one grows back
@@ -3325,6 +3521,7 @@ export class PetScene {
         pawdini: CIRCUS_BALL, rotorfly: GUST, jewelwing: JEWEL, prismfly: LIGHT_DOT, dambert: LOG, timberjack: WOOD_CHIP,
         archibeaver: BRANCH, teacrab: TEA_SPLASH, lightclaw: BEACON_GLINT, castlecrab: [MOAT_SPRAY, SAND],
         mossolotl: MOSS_TUFT, medilotl: [HEART, PLASTER], axodrake: GLOW_BUBBLE,
+        sirthimble: [NUTSHELL_CHIP, NEEDLE_GLINT], cogsqueak: [COG, COG_SPARK], woolwhisk: [WOOL_STAR, WOOL_TUFT, GOLD_THREAD],
       } as Record<string, Bitmap | readonly Bitmap[]>)[view.species] ?? SPARK;
       const many = (sprite as readonly unknown[]).every((part) => Array.isArray(part) && Array.isArray(part[0]));
       for (let i = 0; i < 10; i++) {

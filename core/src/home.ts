@@ -45,6 +45,11 @@ export const ITEMS: Record<string, ItemKind> = {
   lily: "hat",
   batears: "hat",
   edelweiss: "hat",
+  // knitted by Grandma (grandma.ts)
+  earflap: "hat",
+  stripes: "hat",
+  cosy: "hat",
+  cake: "food",
   egg_blob: "egg",
   egg_ember: "egg",
   egg_stone: "egg",
@@ -60,6 +65,7 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_beaver: "egg",
   egg_crab: "egg",
   egg_axolotl: "egg",
+  egg_mouse: "egg",
 };
 export const MAX_SEEDS = 9; // per kind; decorations and hats exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
@@ -69,7 +75,7 @@ export const MAX_EGGS = 9; // this many are kept
 export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "ember", egg_stone: "stone", egg_fox: "fox",
   egg_cloud: "cloud", egg_leaf: "leaf", egg_duck: "duck", egg_hippo: "hippo", egg_beak: "beak",
   egg_caterpillar: "caterpillar", egg_dog: "dog", egg_dragonfly: "dragonfly", egg_beaver: "beaver",
-  egg_crab: "crab", egg_axolotl: "axolotl" };
+  egg_crab: "crab", egg_axolotl: "axolotl", egg_mouse: "mouse" };
 export const MAX_DECO = 2; // this many spots the scene has outside
 
 // Plant: [stat, effect of one fruit]
@@ -88,10 +94,10 @@ export const EAT_BELOW = 40; // below this value the pet eats a ripe fruit by it
 
 // Warmth: the ember stone glows from inside. Set out, it makes whatever is still growing grow
 // faster. And when it is cold outside, the pet shivers for a while after waking up: a moment to
-// rub it warm, not a state that costs anything. The ember stone, the bobble hat and a fire of its
+// rub it warm, not a state that costs anything. The ember stone, a woolly hat and a fire of its
 // own keep it from shivering at all.
 export const WARM_DECO = ["emberstone"];
-export const WARM_HATS = ["bobble"];
+export const WARM_HATS = ["bobble", "earflap", "stripes", "cosy"]; // wool
 export const WARM_LINES = ["ember"];
 export const GROWTH_SAVED = 0.3; // by the ember stone, a stage is over this much sooner
 export const COLD_BELOW = 5; // °C: below this it wakes up shivering (a first guess)

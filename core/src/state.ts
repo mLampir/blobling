@@ -278,8 +278,10 @@ export interface PetState {
   trace: Trace | null;
   /** When somebody fed it or played with it, over the last few days (habits.ts). */
   habits: number[];
-  /** Since when it has been staying at Grandma's, because nobody was there (model.GRANDMA_AFTER); 0 = at home. */
+  /** Since when it has been staying at Grandma's (model.GRANDMA_AFTER, or a visit); 0 = at home. */
   grandma: number;
+  /** It was taken there on purpose (grandma.ts): a visit, not because nobody came. */
+  grandma_visit: boolean;
 }
 
 /** A state with every field at its starting value. */
@@ -346,6 +348,7 @@ export function newState(): PetState {
     trace: null,
     habits: [],
     grandma: 0.0,
+    grandma_visit: false,
   };
 }
 

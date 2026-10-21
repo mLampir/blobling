@@ -29,7 +29,7 @@ const BASE: SceneView = {
 };
 // The special forms, the secret third adult of a line
 const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
-  "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake"];
+  "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake", "woolwhisk"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -63,15 +63,18 @@ const PETS: Record<string, [string, string]> = {
   teacrab: ["adult", "teacrab"], lightclaw: ["adult", "lightclaw"],
   axolotl_egg: ["egg", "axolotl"], axolotl_baby: ["baby", "axolotl"], axolittle: ["child", "axolotl"],
   mossolotl: ["adult", "mossolotl"], medilotl: ["adult", "medilotl"],
+  mouse_egg: ["egg", "mouse"], mouse_baby: ["baby", "mouse"], squeaklet: ["child", "mouse"],
+  sirthimble: ["adult", "sirthimble"], cogsqueak: ["adult", "cogsqueak"],
   ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
-// The leaf, duck, hippo, beak, garden and water lines: per line its line, child and adults, for the scenes below
+// The leaf, duck, hippo, beak, garden, water and Grandma's lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
   ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
   ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
   ["caterpillar", "munchlet", "mothmuff", "sunflutter"], ["dog", "pupplet", "digby", "barrelbard"],
   ["dragonfly", "nymphlet", "rotorfly", "jewelwing"], ["beaver", "gnawlet", "dambert", "timberjack"],
   ["crab", "shellbit", "teacrab", "lightclaw"], ["axolotl", "axolittle", "mossolotl", "medilotl"],
+  ["mouse", "squeaklet", "sirthimble", "cogsqueak"],
 ];
 const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
@@ -93,6 +96,9 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   mossolotl: "spin", // its gills unfurl
   medilotl: "dance", // hearts float up
   axodrake: "flip", // a loop with a trail of bubbles
+  sirthimble: "bow", // the accolade with its needle lance
+  cogsqueak: "spin", // winds itself up and whirrs round
+  woolwhisk: "spin", // the golden thread unwinds round her
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
@@ -204,6 +210,9 @@ const SCENES: Record<string, Scene> = {
   grandma: [{ grandma: true, deco: ["windmill"], plant: { kind: "berry", stage: "grown", ripe: false },
     trace: { kind: "tower", spot: 0.7, look: 0 } }, DAY, null],
   grandma_home: [{ activity: "grandma_home", mood: "happy", hat: "daisy" }, DAY, null, 0.5],
+  // back from a visit with Grandma's things in its backpack, and unpacking them
+  grandma_visit: [{ activity: "grandma_home", backpack: true, mood: "happy" }, DAY, null, 0.5],
+  grandma_unpack: [{ activity: "unpack", activity_item: "stripes,cake", mood: "happy" }, DAY, null],
   train_strength: [{ activity: "train_strength", activity_item: "0.80" }, DAY, null],
   train_ready: [{ activity: "train_ready", activity_item: "2.00" }, DAY, null],
   train_speed: [{ activity: "train_speed", activity_item: "0.90" }, DAY, null],

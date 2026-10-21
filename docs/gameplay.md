@@ -765,6 +765,22 @@ pet on the phone, it is the same as if it had been running.
 - After that it stays at least a day and a half again, even if nobody does
   anything with it.
 
+You can also take it there yourself, before a holiday or a busy week: the
+*Trip* tab has **Take to Grandma's** (from the baby on, while it is awake, at
+home and has nothing left in its backpack). It stays just the same, frozen,
+until you fetch it. Grandma rewards a visit, not being forgotten: after a
+whole day there it comes home with her things in its backpack, at most once
+every three days, and nothing if it went because nobody came:
+
+- **A hat she knitted**: an earflap hat, a striped stocking cap and a tea cosy
+  hat, one per visit until it has all three. They are found nowhere else, and
+  like the bobble hat they keep it warm on cold mornings.
+- **A slice of her cake**: it fills the pet up well and cheers it up all the
+  way, at once.
+- **Now and then an old egg from her attic**: sure by the third visit without
+  one. The first one is always the same rare egg; later ones are of lines the
+  pet knows (its own, its friends', and the eggs in its bag).
+
 ## The app
 
 Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
@@ -854,6 +870,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), hot afternoons, the house and its spots | `core/src/home.ts` |
 | What it does by itself, what it leaves behind or finds at home, and what it tells when you come back | `core/src/idle.ts` |
 | Going to Grandma's, staying there frozen, and being fetched | `core/src/model.ts` (`GRANDMA_AFTER`, `comeBack`) |
+| A visit to Grandma's on purpose: her hats, her cake and the attic | `core/src/grandma.ts` |
 | The story it tells when you come back, and Grandma's postcard | `core/src/story.ts`, texts under `page.story` in `app/locales/` |
 | When it calls for you next, and the app's notification for it | `core/src/notify.ts`, `app/src/notify.ts` |
 | Habits: the times it is usually fed or played with, and waiting for them | `core/src/habits.ts` |

@@ -16,6 +16,7 @@ import * as companion from "./companion";
 import * as fishing from "./fishing";
 import * as food from "./food";
 import * as garden from "./garden";
+import * as grandma from "./grandma";
 import * as habits from "./habits";
 import * as home from "./home";
 import * as life from "./life";
@@ -1123,8 +1124,11 @@ export class Pet {
         stage: home.plantStage(s), ripe: home.ripe(s), left: s.plant.left,
         area: plantArea(s.house), // where it stands in the scene, for a tap that tells how it is doing
       } : null,
-      // Since when it has been at Grandma's (it waits there to be fetched: action "grandma"), or null
-      grandma: s.grandma ? { since: Math.round(s.grandma) } : null,
+      // Since when it has been at Grandma's (it waits there to be fetched: action "grandma"), or null;
+      // whether it was taken there for a visit, and whether it would bring her things home now (grandma.ts)
+      grandma: s.grandma ? {
+        since: Math.round(s.grandma), visit: s.grandma_visit, gifts: grandma.giftsReady(s, now),
+      } : null,
       // What happened while nobody was there, told as a little story (story.tell), or null
       welcome: story.tell(s, now, t),
       // All the pets at home, in the order of their houses: for switching the camera between them

@@ -43,6 +43,8 @@ export const LINES: Record<string, readonly string[]> = {
   // caught when fishing (fishing.ts)
   crab: ["teacrab", "lightclaw", "castlecrab"],
   axolotl: ["mossolotl", "medilotl", "axodrake"],
+  // from Grandma's attic (grandma.ts)
+  mouse: ["sirthimble", "cogsqueak", "woolwhisk"],
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
@@ -97,6 +99,9 @@ export const SUN_AFTER_RAIN = 3 * 3600; // seconds since the rain stopped that s
 export const CASTLECRAB_COAST_TRIPS = 3; // the crab line: trips to the coast → castlecrab
 // The axolotl line: its health never below WEAK_HEALTH as a child → medilotl, otherwise mossolotl;
 // it beat Gloompeep as a child → axodrake
+// The mouse line: its satiety never below HUNGRY_SATIETY as a child → cogsqueak, otherwise
+// sirthimble; it wears one of Grandma's knitted hats (grandma.HATS) when it grows up → woolwhisk
+export const HUNGRY_SATIETY = 25;
 export const MISSING_AFTER = 30; // days with pets before a line whose egg never came gets the quiet safety net (Pet.longMissing)
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
@@ -149,6 +154,9 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   mossolotl: { energy: 0.8 }, // a stone on the lake floor hardly moves
   medilotl: { hygiene: 0.8 }, // a healer keeps clean
   axodrake: { energy: 1.15 }, // all that floating
+  sirthimble: { mood: 0.85 }, // a knight doesn't lose heart
+  cogsqueak: { energy: 0.85 }, // wound up, it keeps going
+  woolwhisk: { hygiene: 1.15 }, // wool picks up everything
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -181,6 +189,8 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   teacrab: { pet: 1.25 }, // warm to the touch
   medilotl: { sick: 0.5 }, // it heals itself first
   axodrake: { play: 1.25 },
+  woolwhisk: { pet: 1.25 }, // soft as wool
+  sirthimble: { sick: 0.6 }, // under its helmet
 };
 
 /**
@@ -189,8 +199,8 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
  * the plant itself (`plant_fruits`), trips to each area (`trips_<area>`) and trips with rain on the way
  * (`rain_trips`), scuffles in which it was never knocked over (`clean_battles`), the opponents it
  * beat (`won_<foe>`), guardians it got past for the first time (`guardians`), games of hide and seek played and won (`games`, `games_won`),
- * evenings it was tucked in by hand (`tucked`) and minutes with its health below WEAK_HEALTH
- * (`weak_minutes`).
+ * evenings it was tucked in by hand (`tucked`), minutes with its health below WEAK_HEALTH
+ * (`weak_minutes`) and minutes with its satiety below HUNGRY_SATIETY (`hungry_minutes`).
  */
 export function newDiary(): Record<string, number> {
   return { minutes: 0, good_minutes: 0, meals: 0, snacks: 0, plays: 0, love: 0, trips: 0, battles: 0, baths: 0, tricks: 0 };
@@ -248,6 +258,9 @@ export function recordMinute(state: PetState, good: boolean): void {
     if (state.stats.health < WEAK_HEALTH) {
       record(state, "weak_minutes");
     }
+    if (state.stats.satiety < HUNGRY_SATIETY) {
+      record(state, "hungry_minutes");
+    }
   }
 }
 
@@ -290,6 +303,8 @@ export interface World {
   strongest?: string;
   /** a decoration that glows stands outside (home.GLOWING_DECO), */
   glowOutside?: boolean;
+  /** whether it wears one of Grandma's knitted hats (grandma.HATS), */
+  grandmaHat?: boolean;
   /** and whether its house is built to the last step (home.HOUSE_STEPS). */
   houseBuilt?: boolean;
 }
@@ -333,6 +348,7 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
     beaver: Boolean(world.houseBuilt),
     crab: done("trips_coast", CASTLECRAB_COAST_TRIPS),
     axolotl: done("won_gloompeep", 1),
+    mouse: Boolean(world.grandmaHat),
   } as Record<string, boolean>)[line];
   if (special) {
     return LINES[line][2];
@@ -378,6 +394,9 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   }
   if (line === "axolotl") {
     return minutes > 0 && !diary.weak_minutes ? "medilotl" : "mossolotl";
+  }
+  if (line === "mouse") {
+    return minutes > 0 && !diary.hungry_minutes ? "cogsqueak" : "sirthimble";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if (enough("love", PURRLOOP_LOVE_PER_DAY)) {

@@ -60,7 +60,8 @@
     "dragonfly": "Nymphlet",
     "beaver": "Gnawlet",
     "crab": "Shellbit",
-    "axolotl": "Axolittle"
+    "axolotl": "Axolittle",
+    "mouse": "Squeaklet"
   },
   "species": {
     "blob": "Blob",
@@ -127,7 +128,11 @@
     "castlecrab": "Castlecrab",
     "mossolotl": "Mossolotl",
     "medilotl": "Medilotl",
-    "axodrake": "Axodrake"
+    "axodrake": "Axodrake",
+    "mouse": "Maus",
+    "sirthimble": "Sir Thimble",
+    "cogsqueak": "Cogsqueak",
+    "woolwhisk": "Woolwhisk"
   },
   "tricks": {
     "bow": "Verbeugen",
@@ -239,7 +244,12 @@
     "seagrass": "Seegras",
     "boot": "Alter Stiefel",
     "egg_crab": "Krebs-Ei",
-    "egg_axolotl": "Axolotl-Ei"
+    "egg_axolotl": "Axolotl-Ei",
+    "egg_mouse": "Mäuse-Ei",
+    "earflap": "Ohrenmütze",
+    "stripes": "Ringelzipfelmütze",
+    "cosy": "Teewärmermütze",
+    "cake": "Omas Kuchen"
   },
   "pack": {
     "ball": "Ball"
@@ -299,7 +309,8 @@
       "not_in_bag": "Das ist nicht mehr in der Tasche.",
       "pack_full": "In den Rucksack passen nur zwei Sachen.",
       "no_pond": "{name} kann nur angeln, wenn ein Teich im Garten steht.",
-      "no_line": "Zu spät – die Angel ist schon draußen."
+      "no_line": "Zu spät – die Angel ist schon draußen.",
+      "at_grandmas": "{name} ist schon bei Oma."
     },
     "notify": {
       "channel": "Wenn dein Pet dich braucht",
@@ -320,7 +331,8 @@
     "recall": "🏠 Nach Hause rufen",
     "grandma": {
       "fetch": "🏡 Bei Oma abholen",
-      "info": "{name} ist bei Oma."
+      "info": "{name} ist bei Oma.",
+      "visit": "🏡 Zu Oma bringen"
     },
     "unpack": "🎒 Auspacken",
     "replay": {
@@ -634,7 +646,9 @@
       "fish_cast": "hat am Teich geangelt 🎣",
       "fish_catch": "hat etwas gefangen: {item} 🎣",
       "fish_early": "hat die Angel zu früh eingeholt",
-      "fish_nothing": "es hat nichts angebissen"
+      "fish_nothing": "es hat nichts angebissen",
+      "visit_grandma": "ist zu Oma auf Besuch 🏡",
+      "cake": "Omas Kuchen 🍰"
     },
     "statistics": {
       "meals": "Mahlzeiten",

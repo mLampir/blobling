@@ -10,6 +10,7 @@
 import * as battle from "./battle";
 import * as care from "./care";
 import * as fishing from "./fishing";
+import * as grandma from "./grandma";
 import * as food from "./food";
 import * as garden from "./garden";
 import * as habits from "./habits";
@@ -62,7 +63,8 @@ const TRAIN_KEYS = battle.SKILLS.map((skill) => `train_${skill}`);
 export const EVENT_LIMIT = 100;
 
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
-  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in", "grandma", "fish"];
+  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in", "grandma", "fish",
+  "visit_grandma"];
 export const FOODS = ["meal", ...food.EDIBLE];
 export const GAME_MOVES = ["start", ...care.SPOTS]; // start, or look behind a spot
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
@@ -435,9 +437,13 @@ export function leavesForGrandma(state: PetState, t: number): boolean {
   return since > 0 && t - since >= GRANDMA_AFTER && !state.asleep && !state.trip;
 }
 
-/** Grandma takes it in at the time t; she also clears away what was lying around. */
-export function goToGrandma(state: PetState, t: number): void {
+/**
+ * Grandma takes it in at the time t; she also clears away what was lying around. `visit`: it was
+ * taken there on purpose, and brings Grandma's things home after a whole day (grandma.ts).
+ */
+export function goToGrandma(state: PetState, t: number, visit = false): void {
   state.grandma = t;
+  state.grandma_visit = visit;
   state.game = state.training = state.fishing = null;
   state.poops = 0;
   state.next_poop_at = null;
@@ -471,6 +477,10 @@ export function stayAtGrandmas(state: PetState, now: number): void {
  */
 export function comeBack(state: PetState, now: number): void {
   const days = Math.max(1, Math.round((now - state.grandma) / 86400));
+  if (grandma.giftsReady(state, now)) {
+    state.backpack = grandma.gifts(state, now, new Random(`grandma:${now}`)); // unpacked at home
+  }
+  state.grandma_visit = false;
   for (const k of STATS) {
     state.stats[k] = Math.max(state.stats[k], GRANDMA_STATS);
   }
@@ -573,6 +583,7 @@ export function availableActions(state: PetState, now: number): Record<string, b
     wear: true,
     deco: true,
     look_in: state.house > 0 && !asleep,
+    visit_grandma: grandma.canVisit(state) === null,
   };
 }
 
@@ -665,6 +676,7 @@ function petWorld(state: PetState, t: number): life.World {
     strongest: strongest.length === 1 && top > 0 ? strongest[0] : undefined,
     houseBuilt: state.house >= home.HOUSE_STEPS,
     glowOutside: home.placeDeco(state).outside.some((item) => home.GLOWING_DECO.includes(item)),
+    grandmaHat: grandma.HATS.includes(state.hat),
   };
 }
 
@@ -773,6 +785,16 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
     throw new RequestError(check[1]);
   }
   const value = checkValue(action, item, options.value);
+  if (action === "visit_grandma") {
+    // taken to Grandma's on purpose: it stays there until it is fetched, like when nobody came
+    const reason = grandma.canVisit(state);
+    if (reason === null) {
+      state.seen_at = now;
+      goToGrandma(state, now, true);
+    }
+    logEvent(state, now, action, by, { accepted: reason === null, reason });
+    return { accepted: reason === null, reason };
+  }
   if (action === "grandma") {
     // fetched from Grandma's; somebody is there, but what happened since they were last is still to be told
     const reason = state.grandma ? null : "at_home";
