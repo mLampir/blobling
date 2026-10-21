@@ -9,6 +9,7 @@
 
 import * as battle from "./battle";
 import * as care from "./care";
+import * as fishing from "./fishing";
 import * as food from "./food";
 import * as garden from "./garden";
 import * as habits from "./habits";
@@ -61,10 +62,11 @@ const TRAIN_KEYS = battle.SKILLS.map((skill) => `train_${skill}`);
 export const EVENT_LIMIT = 100;
 
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
-  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in", "grandma"];
+  "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in", "grandma", "fish"];
 export const FOODS = ["meal", ...food.EDIBLE];
 export const GAME_MOVES = ["start", ...care.SPOTS]; // start, or look behind a spot
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
+export const FISH_MOVES = ["cast", "pull"]; // cast the line at the pond, or pull it in
 export const TRAIN_MOVES = [...battle.SKILLS, "tap", "answer"]; // an exercise, or the answer to one that is waiting
 export const THROW_ACTIONS = ["feed", "play", "medicine", "trip", "plant"];
 export const THROW_SECONDS = 2.4; // a thrown item drops in and the pet hops over – only then does it start
@@ -79,6 +81,8 @@ export const ACTIVITY_SECONDS: Record<string, number> = {
   trip_start: 4, trip_home: 4, unpack: 6, plant: 3, pick: 4, collect: 4, unwrap: 4,
   discover: 4, pickup: 4, grandma_go: 5, grandma_home: 4,
   train_strength: 5, train_speed: 3, train_smarts: 3,
+  // the line in the water: as long as it can be until something bites and is gone again
+  fish_wait: fishing.EMPTY_WAIT, fish_catch: 4, fish_empty: 2.5,
   // waiting for the signal, and showing the sequence: as long as the longest one can take
   train_ready: battle.SIGNAL_DELAY[1] + battle.SIGNAL_WINDOW,
   train_show: battle.SEQUENCE[1] * battle.SHOW_STEP + 10,
@@ -239,7 +243,7 @@ export function criticalCount(state: PetState): number {
 export function fallAsleep(state: PetState, t: number): void {
   state.asleep = true;
   state.sleep_since = t;
-  state.game = state.training = null; // falling asleep ends the game and the training
+  state.game = state.training = state.fishing = null; // falling asleep ends the game and the training
   if (state.house) {
     setActivity(state, "go_in", t); // it goes into its house to sleep
   }
@@ -434,7 +438,7 @@ export function leavesForGrandma(state: PetState, t: number): boolean {
 /** Grandma takes it in at the time t; she also clears away what was lying around. */
 export function goToGrandma(state: PetState, t: number): void {
   state.grandma = t;
-  state.game = state.training = null;
+  state.game = state.training = state.fishing = null;
   state.poops = 0;
   state.next_poop_at = null;
   setActivity(state, "grandma_go", t);
@@ -660,6 +664,7 @@ function petWorld(state: PetState, t: number): life.World {
     allTricks: Object.keys(care.TRICKS).every((trick) => care.knows(state, trick)),
     strongest: strongest.length === 1 && top > 0 ? strongest[0] : undefined,
     houseBuilt: state.house >= home.HOUSE_STEPS,
+    glowOutside: home.placeDeco(state).outside.some((item) => home.GLOWING_DECO.includes(item)),
   };
 }
 
@@ -751,6 +756,7 @@ const ITEM_CHECKS: Record<string, [() => readonly string[], string]> = {
   wear: [() => ["none", ...home.ids("hat")], "unknown_hat"],
   deco: [() => home.ids("deco"), "unknown_deco"],
   train: [() => TRAIN_MOVES, "unknown_exercise"],
+  fish: [() => FISH_MOVES, "unknown_move"],
 };
 
 /** Carries out an action. An invalid request throws a RequestError. */
@@ -823,7 +829,9 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
     setActivity(state, "no", now);
   }
   clamp(state);
-  const told = (action === "unwrap" || action === "pickup") && reason === null ? state.activity_item : item;
+  // what was in it, what it picked up, and what came out of the pond
+  const told = (action === "unwrap" || action === "pickup" || (action === "fish" && item === "pull")) && reason === null
+    ? state.activity_item || "nothing" : item;
   logEvent(state, now, action, by, { item: told, accepted: reason === null, reason });
   if (reason === null && by !== "system") {
     habits.record(state, action, now);
@@ -917,6 +925,58 @@ function game(state: PetState, now: number, move: string, guest: boolean): strin
   return null;
 }
 
+/**
+ * Fishing at the pond: cast the line, then pull when the bobber dips (fishing.ts). A catch costs
+ * energy like a game; pulling too early costs nothing, too late costs half. Casting again soon
+ * after brings bites less often (repeatFactor).
+ */
+function fish(state: PetState, now: number, move: string): string | null {
+  const s = state.stats;
+  if (move === "pull") {
+    if (!fishing.active(state, now)) {
+      state.fishing = null;
+      return "no_line";
+    }
+    const result = fishing.pull(state, now);
+    if (result === "early") {
+      setActivity(state, "fish_empty", now, "early");
+      return null;
+    }
+    s.energy -= fishing.COST.energy * (result === "caught" ? 1 : 0.5);
+    s.satiety -= fishing.COST.satiety * (result === "caught" ? 1 : 0.5);
+    count(state, "fished");
+    life.record(state, "fished");
+    if (result === "gone") {
+      setActivity(state, "fish_empty", now, "gone");
+      return null;
+    }
+    const caught = fishing.catchFrom(state, "pond", new Random(`catch:${now}`));
+    if (caught) {
+      home.addItem(state, caught);
+      count(state, "caught");
+    }
+    s.mood += 15 * life.bonusFactor(state, "play");
+    care.addBond(state, "play");
+    setActivity(state, "fish_catch", now, caught ?? "");
+    return null;
+  }
+  if (state.asleep) {
+    return "asleep";
+  }
+  if (!fishing.canFish(state)) {
+    return "no_pond";
+  }
+  if (s.energy < fishing.FISH_ENERGY) {
+    return "tired";
+  }
+  state.game = state.training = null; // this ends a mini-game or an exercise in progress
+  const bite = fishing.cast(state, now, repeatFactor(state, "fish", now));
+  setActivity(state, "fish_wait", now, bite === null ? "" : bite.toFixed(2));
+  // it reels in by itself: with nothing, or a moment after whatever bit has got away
+  state.activity_until = now + (bite === null ? fishing.EMPTY_WAIT : bite + fishing.BITE_WINDOW + 1);
+  return null;
+}
+
 /** An egg can only be kept warm (petted). */
 function applyToEgg(state: PetState, action: string, now: number): string | null {
   if (action === "pet") {
@@ -966,7 +1026,7 @@ function train(state: PetState, now: number, move: string, value: unknown): stri
   if (restLeft(state, TRAIN_KEYS, now) > 0) {
     return "rest_train";
   }
-  state.game = state.training = null; // this ends a mini-game or another exercise in progress
+  state.game = state.training = state.fishing = null; // this ends a mini-game or another exercise in progress
   if (move === "strength") {
     return trained(state, now, move, value as number, (value as number).toFixed(2));
   }
@@ -1045,7 +1105,7 @@ function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string,
     return "too_late";
   }
   trip.begin(state, planned, now);
-  state.game = state.training = null;
+  state.game = state.training = state.fishing = null;
   setActivity(state, "trip_start", now, area);
   return null;
 }
@@ -1128,6 +1188,10 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
 
   if (action === "feed") {
     return feed(state, now, item!, thrown);
+  }
+
+  if (action === "fish") {
+    return fish(state, now, item!);
   }
 
   if (action === "play") {

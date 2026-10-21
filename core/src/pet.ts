@@ -13,6 +13,7 @@ import { API_OLDEST, API_VERSION } from "./api";
 import * as battle from "./battle";
 import * as care from "./care";
 import * as companion from "./companion";
+import * as fishing from "./fishing";
 import * as food from "./food";
 import * as garden from "./garden";
 import * as habits from "./habits";
@@ -1055,6 +1056,8 @@ export class Pet {
       })),
       skills: battle.SKILLS.map((k) => ({ id: k, label: t(`skills.${k}`), value: Number(s.skills[k].toFixed(1)) })),
       training: trainingInfo(s, now),
+      // fishing at the pond: whether it can (the pond is set out), and whether its line is in the water
+      can_fish: fishing.canFish(s), fishing: fishing.active(s, now),
       counters: { ...s.counters },
       trip: s.trip ? {
         area: s.trip.area, label: t(`areas.${s.trip.area}.name`),

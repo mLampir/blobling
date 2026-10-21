@@ -29,7 +29,7 @@ const BASE: SceneView = {
 };
 // The special forms, the secret third adult of a line
 const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
-  "jesterwing", "pawdini", "prismfly", "archibeaver"];
+  "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -59,14 +59,19 @@ const PETS: Record<string, [string, string]> = {
   rotorfly: ["adult", "rotorfly"], jewelwing: ["adult", "jewelwing"],
   beaver_egg: ["egg", "beaver"], beaver_baby: ["baby", "beaver"], gnawlet: ["child", "beaver"],
   dambert: ["adult", "dambert"], timberjack: ["adult", "timberjack"],
+  crab_egg: ["egg", "crab"], crab_baby: ["baby", "crab"], shellbit: ["child", "crab"],
+  teacrab: ["adult", "teacrab"], lightclaw: ["adult", "lightclaw"],
+  axolotl_egg: ["egg", "axolotl"], axolotl_baby: ["baby", "axolotl"], axolittle: ["child", "axolotl"],
+  mossolotl: ["adult", "mossolotl"], medilotl: ["adult", "medilotl"],
   ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
-// The leaf, duck, hippo, beak and garden lines: per line its line, child and adults, for the scenes below
+// The leaf, duck, hippo, beak, garden and water lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
   ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
   ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
   ["caterpillar", "munchlet", "mothmuff", "sunflutter"], ["dog", "pupplet", "digby", "barrelbard"],
   ["dragonfly", "nymphlet", "rotorfly", "jewelwing"], ["beaver", "gnawlet", "dambert", "timberjack"],
+  ["crab", "shellbit", "teacrab", "lightclaw"], ["axolotl", "axolittle", "mossolotl", "medilotl"],
 ];
 const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
@@ -82,6 +87,12 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   bubblehelm: "flip", hippula: "bow", acewing: "flip", mothmuff: "spin", sunflutter: "dance", jesterwing: "flip",
   digby: "spin", barrelbard: "bow", pawdini: "dance", rotorfly: "spin", jewelwing: "bow", prismfly: "dance",
   dambert: "flip", timberjack: "spin", archibeaver: "bow",
+  teacrab: "bow", // pours a cup of tea
+  lightclaw: "spin", // its beam sweeps round
+  castlecrab: "bow", // the drawbridge comes down
+  mossolotl: "spin", // its gills unfurl
+  medilotl: "dance", // hearts float up
+  axodrake: "flip", // a loop with a trail of bubbles
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
@@ -185,6 +196,11 @@ const SCENES: Record<string, Scene> = {
   }, DUSK, null],
   trip_home: [{ activity: "trip_home", backpack: true, mood: "happy" }, DAY, null],
   unpack: [{ activity: "unpack", activity_item: "seed_berry,cap", mood: "happy" }, DAY, null],
+  // fishing at the pond: waiting with the bobber on the water, the bite, the catch; and on a trip
+  fishing: [{ activity: "fish_wait", activity_item: "6.00", deco: ["pond"] }, DAY, null, 2],
+  fishing_bite: [{ activity: "fish_wait", activity_item: "1.00", deco: ["pond"] }, DAY, null, 1.2],
+  fishing_catch: [{ activity: "fish_catch", activity_item: "mussel", deco: ["pond"] }, DAY, null],
+  trip_fish: [{ trip: trip("stream", { event: "fish", item: "seagrass", event_age: 1 }) }, DAY, null],
   grandma: [{ grandma: true, deco: ["windmill"], plant: { kind: "berry", stage: "grown", ripe: false },
     trace: { kind: "tower", spot: 0.7, look: 0 } }, DAY, null],
   grandma_home: [{ activity: "grandma_home", mood: "happy", hat: "daisy" }, DAY, null, 0.5],

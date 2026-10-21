@@ -36,8 +36,12 @@ frameTags):
 - mothmuff, sunflutter, jesterwing, digby, barrelbard, pawdini, rotorfly, jewelwing, prismfly, dambert,
   timberjack, archibeaver (_body / _faces) – their adults, the last of each three the secret one
   (faces of their own)
+- <line>_baby_body / <line>_baby_faces, <child>_body / <line>_faces – baby and child of the
+  crab (shellbit) and axolotl (axolittle) lines
+- teacrab, lightclaw, castlecrab, mossolotl, medilotl, axodrake (_body / _faces) – their adults, the
+  last of each three the secret one (faces of their own)
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine, and
-                                     the app's things (sponge, baton, bag, whistle, training)
+                                     the app's things (sponge, baton, bag, whistle, training, rod)
 - trip                             – backpack, plants, decorations, hats, things along the path,
                                      opponents and guardians
 - house                            – the house in its three steps, outside and inside
@@ -4546,6 +4550,453 @@ GARDEN_FORMS = (("mothmuff", MOTHMUFF_FACES), ("sunflutter", FACES), ("jesterwin
                 ("rotorfly", FACES), ("jewelwing", FACES), ("prismfly", FACES),
                 ("dambert", FACES), ("timberjack", FACES), ("archibeaver", FACES))
 
+# ---------------------------------------------------------------- The water lines
+
+# Two more lines from the water, each with its egg, baby, child, a basic adult, a second one and a
+# secret one, drawn after the drafts like the garden lines. What every form of a line keeps: the
+# pincers (crab: the hermit's shell becomes a pot, a lighthouse and a castle) and the pink gill
+# fronds (axolotl: coral, stethoscope tubes and wings). The child carries the colors the code may
+# recolor as a hint at its adult form: the stripes and the shadow side of the conch, the gill fronds.
+
+# The eggs: a peach egg in diagonal bands like a seashell; a pink, glassy egg with the little one
+# curled up as a dark spot inside and two gill frills on top.
+CRAB_EGG = [
+    "....oooo....",
+    "...ohhero...",
+    "..oheereeo..",
+    "..oeeeeeeo..",
+    ".oeeeeeereo.",
+    ".oereeereEo.",
+    ".oreeereeEo.",
+    ".oeeereeeEo.",
+    ".oeeeeeerEo.",
+    ".oereeerEEo.",
+    "..oeeereEo..",
+    "..oEereeEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+AXOLOTL_EGG = [
+    "..g......g..",
+    "..gg.oo.gg..",
+    "...ohheeo...",
+    "..oheeeeeo..",
+    "..oeeeeeeo..",
+    ".oeeeeeeeeo.",
+    ".oeeeccceEo.",
+    ".oeeccceeEo.",
+    ".oeeecceeEo.",
+    ".oeeeeeeEEo.",
+    "..oeeeeeEo..",
+    "..oEeeeeEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+EGG_GRIDS |= {"crab": CRAB_EGG, "axolotl": AXOLOTL_EGG}
+RARE_EGG_PALETTES |= {
+    "crab": {"o": (120, 60, 40), "e": (250, 210, 175), "E": (215, 165, 130), "h": (255, 240, 220), "r": (225, 110, 80),
+             "x": (90, 35, 25)},
+    "axolotl": {"o": (130, 50, 85), "e": (250, 190, 210), "E": (225, 150, 180), "h": (255, 235, 245),
+                "c": (190, 80, 125), "g": (235, 80, 130), "x": (110, 35, 70)},
+}
+
+# ---- The crab line: a hermit crab whose shell grows into something to live in
+
+CRAB_PALETTE = {
+    "o": (100, 30, 25),    # outline
+    "d": (195, 65, 45),    # shadow
+    "b": (235, 105, 70),   # crab red
+    "l": (250, 155, 115),  # lit
+    "h": (255, 210, 185),  # highlight
+    "s": (245, 225, 195),  # the shell
+    "S": (205, 170, 135),  # its shadow side (the hint)
+    "r": (175, 120, 90),   # its stripes (the hint)
+}
+# Baby: a red slime in a far too big spiral shell, two small pincers in front
+CRAB_BABY = [
+    "..............ooooo.....",
+    "............oossssSoo...",
+    "...........osrrrrrrsSo..",
+    "..........osrssssssrSSo.",
+    "..........osrsrrrrsrsSo.",
+    "......oolhllbboorsrsSSo.",
+    ".....olhhlbbbbbdosrsSSo.",
+    "....ollhbbbbbbbbdosSSo..",
+    "....olbbbbbbbbbbdoSSSo..",
+    "oo.oobbbbbbbbbbbdooSoo..",
+    "obodobbbbbbbbbbbdodobo..",
+    "obbdobbbbbbbbbbbdodbbo..",
+    ".ooodbbbbbbbbbbdddooo...",
+    "...oddddddddddddddo.....",
+    "....oooooooooooooo......",
+]
+CRAB_BABY_FACE_TOP, CRAB_BABY_FACE_SHIFT = face_place(CRAB_BABY, 8, 6, BABY_W)
+CRAB_BABY_TAGS = body_tags(CRAB_BABY, 11, 8, flat_rows=3)
+# Shellbit, the child: a hermit crab in a tall conch far too big for it; it leans out of the
+# opening, one pincer bigger than the other, four little legs in front
+SHELLBIT = [
+    ".....................oo.........",
+    "....................osSo........",
+    "...................osrsSo.......",
+    "..................osrsssSo......",
+    ".................osrssrrsSo.....",
+    "................osrsrrsssSSo....",
+    "...............osrssssrrrsSSo...",
+    "..............osrsrrrrsssrsSSo..",
+    "..........ooooorssssssrrrsrsSSo.",
+    ".......ooolllbbooorrrrssssrsSSSo",
+    "......ollllllbbbbdosssrrrrsrSSSo",
+    ".....olllbbbbbbbbddorrssssrSSSSo",
+    "....ollllbbbbbbbbdddosrrrrSSSSo.",
+    "....obbbbbbbbbbbbdddoSSSSSSSoo..",
+    ".oo.ooobbbbbbbbbbdddoooooooo....",
+    "obbooobobbbbbbbbbddoo.oo........",
+    "obbbbbbobbbbbbbbbddobobo........",
+    "obbbbbdobbbbbbbbbddobbdo........",
+    ".obbbdoddddddddddddoooo.........",
+    "..oooodddddddddddddo............",
+    ".....ooooooooooooooo............",
+    ".....o.o.o.o......o.o.o.o.......",
+]
+SHELLBIT_FACE_TOP, SHELLBIT_FACE_SHIFT = face_place(SHELLBIT, 11, 5, FACE_W)
+SHELLBIT_TAGS = body_tags(SHELLBIT, 17, 11, flat_rows=3)
+# Teacrab: crab and teapot grown into one. A round belly of a pot with a band of green dots, the
+# big pincer is the spout with tea steaming out of it, the small one the handle, the lid a hat. It walks.
+TEACRAB_PALETTE = CRAB_PALETTE | {
+    "w": (245, 240, 230), "g": (90, 160, 140),  # the band
+    "s": (230, 235, 245), "S": (190, 200, 215), "k": (200, 150, 60),  # steam, the knob
+}
+TEACRAB = [
+    "............................s...",
+    ".............................s..",
+    "............................S...",
+    ".............................s..",
+    ".........................oo..oo.",
+    ".........................obo.bo.",
+    ".........................obbbdo.",
+    "..............oo..........obdo..",
+    ".............okko........oobo...",
+    "...........oooooooo......olbo...",
+    ".........oolllbbbbbboo...olbo...",
+    "........ollbbbbbbbbbbdo..obbo...",
+    ".........oooooooooooooo.obbo....",
+    ".......oohlllllbbbbbbboobbdo....",
+    "..ooo.ohllllllllbbbbbbbobbdo....",
+    ".olllohllllllllbbbbbbbbobdo.....",
+    ".olooollllllllbbbbbbbbbbbdo.....",
+    "olo.oolllllllbbbbbbbbbbbdo......",
+    "olo..olllllbbbbbbbbbbbbddo......",
+    ".olooollllbbbbbbbbbbbbdddo......",
+    ".obbbolllbbbbbbbbbbbbddddo......",
+    "..ooowwwgwwwgwwwgwwwgwwwgo......",
+    ".....owgwwwgwwwgwwwgwwwgwo......",
+    ".....obbbbbbbbbbbbddddddo.......",
+    "......obbbbbbbbbbddddddo........",
+    ".......oobbbbbbdddddoo..........",
+    ".........oooooooooooo...........",
+    "........o...o.....o...o.........",
+    ".......od..od....od..od.........",
+    ".......o...o.....o...o..........",
+]
+TEACRAB_FACE_TOP, TEACRAB_FACE_SHIFT = face_place(TEACRAB, 15, 9, 12)
+TEACRAB_TAGS = species_tags([TEACRAB, dots(drop_rows(TEACRAB, 18), {(28, 0): ".", (29, 0): "s", (28, 1): "s", (29, 1): ".",
+                                                                    (28, 2): ".", (29, 2): "S", (28, 3): "s", (29, 3): "."})],
+                            18, 14)  # the steam curls
+TEACRAB_TAGS["walk"] = walk_tags(TEACRAB, 18, range(7, 13), range(17, 23), 27, ms=(200, 120))
+# Lightclaw: tall, the shell ringed red and white like a lighthouse; the big pincer reaches up out of
+# the top and holds the lamp, whose light flashes out, and the small one waves. It walks.
+LIGHTCLAW_PALETTE = CRAB_PALETTE | {
+    "w": (245, 240, 235), "W": (205, 195, 190),  # the white rings
+    "y": (255, 235, 120), "Y": (250, 200, 60), "z": (255, 250, 200),  # the lamp and its light
+}
+LIGHTCLAW = [
+    "..........oo...oo.........",
+    ".........obbo.obbo........",
+    ".....y...obbYYYYdo....y...",
+    "......yy.obYzyyyYo..yy....",
+    "...z....y.oYyyyYY..y....z.",
+    "...........oYYYYo.........",
+    "............obdo..........",
+    "..z.........olbo.........z",
+    "............olbo..........",
+    "............obbo..........",
+    "............obdo..........",
+    "...........oobddo.........",
+    ".....oooooooooooooooooo...",
+    ".......ollllllllbbbbo.....",
+    ".......olllllllbbbbbo.....",
+    "......olllllllbbbbbddo....",
+    "......ollllllbbbbbbddo....",
+    "oo..ooowwwwwwwwwwwwWWo....",
+    "obo.bowwwwwwwwwwwwwWWWo...",
+    "obbbdowwwwwwwwwwwwwWWWo...",
+    ".obdoowwwwwwwwwwwwwWWWo...",
+    "..oo.owwwwwwwwwwwwWWWWo...",
+    ".....olllbbbbbbbbbbbddo...",
+    "....olllbbbbbbbbbbbbdddo..",
+    "....ollbbbbbbbbbbbbbdddo..",
+    "....obbbbbbbbbbbbbbddddo..",
+    "....owwwwwwwooooWWWWWWWo..",
+    "...owwwwwwwwoyYoWWWWWWWWo.",
+    "...owwwwwwwwoYYoWWWWWWWWo.",
+    "...oooooooooooooooooooooo.",
+    "......od..od......od..od..",
+    "......o...o.......o...o...",
+]
+LIGHTCLAW_FACE_TOP, LIGHTCLAW_FACE_SHIFT = face_place(LIGHTCLAW, 17, 7, 12)
+LIGHTCLAW_DARK = dots(LIGHTCLAW, {(5, 2): ".", (6, 3): ".", (7, 3): ".", (8, 4): ".", (22, 2): ".", (20, 3): ".",
+                                  (21, 3): ".", (19, 4): ".", (3, 4): ".", (24, 4): ".", (2, 7): ".", (25, 7): "."})
+LIGHTCLAW_TAGS = species_tags([LIGHTCLAW, LIGHTCLAW_DARK], 23, 13, idle_ms=600)  # the light flashes
+LIGHTCLAW_TAGS["walk"] = walk_tags(LIGHTCLAW, 23, range(6, 12), range(18, 24), 30, ms=(200, 120))
+# Castlecrab (secret): the crab is the castle. Battlements along the top of its shell, a keep with a
+# shell dome and a gold banner where the hermit's house was, its two pincers the gate towers with a
+# flag each, a gate with a portcullis, and a moat with foaming waves round it. At night its windows
+# light up (GLOWS in core/src/scene.ts: "y" is used for the windows only). It hops, castle and all.
+CASTLECRAB_PALETTE = CRAB_PALETTE | {
+    "s": (240, 215, 165), "S": (205, 170, 120),  # the keep's sandstone
+    "y": (255, 225, 120),  # the windows
+    "f": (240, 70, 90), "F": (250, 220, 80), "K": (110, 70, 45),  # flags and poles
+    "k": (130, 85, 55), "p": (95, 60, 40),  # the gate
+    "u": (90, 170, 230), "U": (55, 115, 190), "q": (230, 245, 255),  # the moat
+}
+CASTLECRAB = [
+    "................KFFF............",
+    "................KFF.............",
+    "................KF..............",
+    "...Kfff......oooooo.........KFFF",
+    "...Kff.....oolllbbboo.......KFF.",
+    "...Kf......olhllbbbdo.......KF..",
+    "...K.......olbbbbbddo.......K...",
+    "...K.......oooooooooo.......K...",
+    "oo.K.oo....ossssssSSo....oo.K.oo",
+    "oboKobo....ossyyssSSo....oboKobo",
+    "obbobboooo.ossyyssSSo.oooobbobbo",
+    "obbbbboobo.osssssSSSo.oboobbbbbo",
+    "ollbbboooooooooooooooooooollbbbo",
+    "ollbbbohhhhllllllllbbbbbbollbbbo",
+    "oloyobohhllllllllbbbbbbbboloyobo",
+    "oloyobohlllllllbbbbbbbbbboloyobo",
+    "olbbbbollllllbbbbbbbbbbbbolbbbdo",
+    "olbbbbolllllbbbbbbbbbbbbdolbbbdo",
+    "obbbbdoloobbbbbbbbbbbboodobbbbdo",
+    "obbbbdolyybbbbbbbbbbbbyydobbbbdo",
+    "obbbddobbbbbbbbbbbbbbbdddobbbddo",
+    "obbbddobbbbbbboooobbbbdddobbbddo",
+    "obbbddobbbbbbokpkpoddddddobbbddo",
+    "obbdddobbbbbbokpkpoddddddobbdddo",
+    "obbdddobbbbbbokpkpoddddddobbdddo",
+    "obbdddobbbbbbokpkpoddddddobbdddo",
+    "ooooooooooooookpkpoooooooooooooo",
+    ".qqq...qqq...qqq...qqq...qqq...q",
+    "quuuuuquuuuuquuuuuquuuuuquuuuuqu",
+    "uUUUuUUUuUUUuUUUuUUUuUUUuUUUuUUU",
+    "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+]
+CASTLECRAB_FACE_TOP, CASTLECRAB_FACE_SHIFT = face_place(CASTLECRAB, 16, 10, 12)
+CASTLECRAB_B = CASTLECRAB[:27] + [r[3:] + r[:3] for r in CASTLECRAB[27:30]] + CASTLECRAB[30:]  # the waves roll
+CASTLECRAB_TAGS = species_tags([CASTLECRAB, CASTLECRAB_B], 20, 10, idle_ms=600)
+
+# ---- The axolotl line: a pink axolotl that never quite grows up, with its gill fronds
+
+AXOLOTL_PALETTE = {
+    "o": (125, 45, 80),    # outline
+    "d": (220, 120, 155),  # shadow
+    "b": (245, 165, 190),  # pink
+    "l": (255, 200, 215),  # lit
+    "h": (255, 232, 240),  # highlight
+    "g": (235, 75, 125),   # the gill fronds (the hint)
+    "G": (180, 40, 90),
+    "f": (255, 215, 228),  # the fin of the tail
+    "F": (235, 165, 190),
+}
+# Baby: a pink slime with three feathery gill fronds on each side of its head
+AXOLOTL_BABY = [
+    "g........................g",
+    ".gG.....oolhllbboo.....Gg.",
+    "..gGo..olhhlbbbbbdo..oGg..",
+    "gggGGoollhbbbbbbbbdooGGggg",
+    "..gGo.olbbbbbbbbbbdo.oGg..",
+    ".gG..olbbbbbbbbbbbddo..Gg.",
+    "g....olbbbbbbbbbbbddo....g",
+    ".....obbbbbbbbbbbbddo.....",
+    ".....odbbbbbbbbbbdddo.....",
+    ".....oddddddddddddddo.....",
+    "......oooooooooooooo......",
+]
+AXOLOTL_BABY_FACE_TOP, AXOLOTL_BABY_FACE_SHIFT = face_place(AXOLOTL_BABY, 4, 8, BABY_W)
+AXOLOTL_BABY_TAGS = body_tags(AXOLOTL_BABY, 7, 12, flat_rows=3)
+# Axolittle, the child: the gill fronds stand up round its head like a crown, a long tail with a
+# soft fin behind it, four stubby legs
+AXOLITTLE = [
+    "......g.......g.......g.........",
+    "......gG.....gGg.....Gg.........",
+    ".......gG....gGg....Gg..........",
+    ".......gGG...gGg...GGg..........",
+    "........gGoooooooooGg...........",
+    "g......ooolllllbbbooo......g....",
+    "gG....ohlllllllbbbbbbo....Gg....",
+    ".gGG.olllbbbbbbbbbbbbdo.GGg.....",
+    "..gGollllbbbbbbbbbbbbddoGg......",
+    "...olllllbbbbbbbbbbbbdddo.......",
+    "...obbbbbbbbbbbbbbbbbdddo.......",
+    "...obbbbbbbbbbbbbbbbbdddo..ffff.",
+    "...obbbbbbbbbbbbbbbbbdddoffFFFf.",
+    "...obbbbbbbbbbbbbbbbbdddobdFFFf.",
+    "...obbbbbbbbbbbbbbbbbdddoddoFff.",
+    "...obbbbbbbbbbbbbbbbbdddodo.ff..",
+    "....oddddddddddddddddddooo......",
+    "....oddddddddddddddddddo........",
+    ".....oooooooooooooooooo.........",
+    "......obo.obo......obo..........",
+    "......ooo.ooo......ooo..........",
+]
+AXOLITTLE_FACE_TOP, AXOLITTLE_FACE_SHIFT = face_place(AXOLITTLE, 8, 6, FACE_W)
+AXOLITTLE_TAGS = body_tags(AXOLITTLE, 13, 11, flat_rows=3)
+# Mossolotl: an axolotl that has become a mossy stone on the lake floor: flat and broad, overgrown,
+# bits of stone showing through, its gill fronds sprouted into pink coral mushrooms. It crawls.
+MOSSOLOTL_PALETTE = AXOLOTL_PALETTE | {
+    "m": (95, 150, 70), "M": (65, 110, 50), "n": (140, 190, 95),  # moss
+    "s": (130, 125, 120),  # stone
+}
+MOSSOLOTL = [
+    "............ggg.....ggg.........",
+    "...........gGgGg...gGgGg........",
+    "..ggg........g.......g..........",
+    ".gGgGg.......g.......g.....ggg..",
+    "...g.........g.......g....gGgGg.",
+    "...g.........g.......g......g...",
+    "...g.......oooooooooooooo...g...",
+    "......ooooooomnnmnnnnmmmmoo.g...",
+    "....oomllmlbmoomnnmmmmmmmmmoo...",
+    "...olllllbbbbbbommmmmmmmmmmmmo..",
+    "..olllllbbbbbbbbommmmmmmmmmmmmo.",
+    "..olllbbbbbbbbbbommmmmmmmmmmMMo.",
+    ".olllbbbbbbbbbbddommmmmmmmMMMMo.",
+    "..obbbbbbbbbbbddommmmmmMMMMMMMo.",
+    "..obbbbbbbbbddddommmmMMsMMMMMoo.",
+    "...obbbbbbdddddommsMMMMMMsMoodo.",
+    "....oobbbddddoommMMMsMMMMooooo..",
+    ".....oboooooooooooooooobo.......",
+    ".....ooo..............ooo.......",
+]
+MOSSOLOTL_FACE_TOP, MOSSOLOTL_FACE_SHIFT = face_place(MOSSOLOTL, 10, 3, 12)
+MOSSOLOTL_TAGS = species_tags([MOSSOLOTL, drop_rows(MOSSOLOTL, 13)], 13, 12, idle_ms=900)
+MOSSOLOTL_TAGS["walk"] = walk_tags(MOSSOLOTL, 13, range(5, 8), range(22, 25), 17, ms=(320, 200))
+# Medilotl: upright and round like a hot-water bottle, its gill fronds hang long like stethoscope
+# tubes and end in heart blossoms; its tail is a spoon it hands out healing drink with. It hops.
+MEDILOTL_PALETTE = AXOLOTL_PALETTE | {
+    "r": (240, 60, 90), "R": (190, 30, 60),  # the hearts
+    "s": (210, 215, 225), "S": (150, 155, 170), "q": (245, 250, 255), "u": (140, 220, 200), "U": (90, 180, 160),
+}
+MEDILOTL = [
+    ".......g.g..g...g..g.g..........",
+    "........g..ggg.ggg..g...........",
+    ".......g.G.oGoooG..G.g..........",
+    ".......g.oolllllloo..g..........",
+    "......g.olllllllbbbo..g.........",
+    ".....g.ohllllllbbbbbo..g........",
+    "....g.ohllllllbbbbbbbo..g.......",
+    "....g.olllllllbbbbbbbo..g.......",
+    "....golllllllbbbbbbbbbo.g.oooo..",
+    "...g.ollllllbbbbbbbbbbo..gqUUso.",
+    "...gollllllbbbbbbbbbbbboogUuuUso",
+    "...golllllbbbbbbbbbbbbboogUuuUSo",
+    "...golllllbbbbbbbbbbbbdo.gsUUSo.",
+    "...gollllbbbbbbbbbbbbddo.goooo..",
+    "...golllbbbbbbbbbbbbdddo.g.S....",
+    "...gollbbbbbbbbbbbbddddo.gS.....",
+    "...golbbbbbbbbbbbbbddddo.gS.....",
+    "....gbbbbbbbbbbbbbdddddogS......",
+    "..rrgrrbbbbbbbbbbdddddrrgrr.....",
+    ".rRrrrRrbbbbbbbbdddddrRrrrRr....",
+    "..rrrrrbbbbbbbbddddddorrrrr.....",
+    "...rrrobbbbbbbdddddddoSrrr......",
+    "....r..obbbbbbddddddo...r.......",
+    "........obbbbddddddo............",
+    ".........oobdddddoo.............",
+    "...........oooooo...............",
+    "........obo.......obo...........",
+    "........ooo.......ooo...........",
+]
+MEDILOTL_FACE_TOP, MEDILOTL_FACE_SHIFT = face_place(MEDILOTL, 10, 8, 12)
+MEDILOTL_TAGS = species_tags([MEDILOTL, drop_rows(MEDILOTL, 17)], 17, 14)
+# Axodrake (secret): a slim dragon floating in an S-curve, its gill fronds become great pink fan
+# wings, bubbles rising round it. It flies. At night its gills and wings glow (GLOWS in
+# core/src/scene.ts: "g", "G", "w" and "W" are used there only).
+AXODRAKE_PALETTE = AXOLOTL_PALETTE | {
+    "w": (255, 190, 215), "W": (240, 140, 180),  # the wings
+    "q": (210, 240, 255), "Q": (150, 200, 240),  # bubbles
+}
+AXODRAKE = [
+    "...q..........q.................",
+    "..q.Q........q.Q................",
+    "...Q..........Q.................",
+    "............................q...",
+    "g.......................g..q.Q..",
+    "gwgg.................ggwg...Q...",
+    "gwwwggg...........gggwwwg.......",
+    ".gwwgwwwgg.....ggwwwgwwg........",
+    ".gWwwgwwwwgg.ggwwwwgwwWg........",
+    "..gWWwgwwwwg.gwwwwgwWWg.........",
+    "...gWWWwgwwg.gwwgwWWWg..........",
+    "....ggWWWwgg.ggwWWWgg...........",
+    ".......gggg...gggg..............",
+    "........oooooooo................",
+    "..g....olllllbbbo.....g.......oo",
+    "...g..olllllbbbbbo...g........oo",
+    "..g.Gollllbbbbbbbbo.G.g......owo",
+    "...g.olllbbbbbbbbbo..g......oowo",
+    "..g.ollbbbbbbbbbbddo..g....olooo",
+    ".....obbbbbbbbbbddo.oo.....obbo.",
+    ".....obbbbbbbbddddoolboo.ooooo..",
+    "......obbbbbbddddoolbbbooolbo...",
+    ".......obbbdddddo.obbbdobbobo...",
+    "........oooooooo..oobdoobdooo...",
+    "....................oooooo......",
+]
+AXODRAKE_B = [
+    "...q..........q.................",
+    "..q.Q........q.Q................",
+    "...Q..........Q.................",
+    "............................q...",
+    "...........................q.Q..",
+    "............................Q...",
+    "................................",
+    "gggg.................gggg.......",
+    "gwwwgggg.........ggggwwwg.......",
+    ".gWwwwwwgggg.ggggwwwwwWg........",
+    "..gWWWwgwwwg.gwwwgwWWWg.........",
+    "...ggWWWWwgg.ggwWWWWgg..........",
+    ".......gggg...gggg..............",
+    "........oooooooo................",
+    "..g....olllllbbbo.....g.......oo",
+    "...g..olllllbbbbbo...g........oo",
+    "..g.Gollllbbbbbbbbo.G.g......owo",
+    "...g.olllbbbbbbbbbo..g......oowo",
+    "..g.ollbbbbbbbbbbddo..g....olooo",
+    ".....obbbbbbbbbbddo.oo.....obbo.",
+    ".....obbbbbbbbddddoolboo.ooooo..",
+    "......obbbbbbddddoolbbbooolbo...",
+    ".......obbbdddddo.obbbdobbobo...",
+    "........oooooooo..oobdoobdooo...",
+    "....................oooooo......",
+]
+AXODRAKE_FACE_TOP, AXODRAKE_FACE_SHIFT = face_place(AXODRAKE, 14, 6, 12)
+AXODRAKE_TAGS = species_tags([AXODRAKE, AXODRAKE_B], 19, 11, idle_ms=350)  # the wings beat
+AXODRAKE_TAGS["flutter"] = [(AXODRAKE, 80), (AXODRAKE_B, 80)]
+
+# Faces. Baby and child: the slime's faces in the line's colors; the adults': kit_face, as the garden's.
+CRAB_FACE_PALETTE = FACE_PALETTE | {"d": (195, 65, 45), "m": (100, 30, 25), "k": (255, 150, 170)}
+AXOLOTL_FACE_PALETTE = FACE_PALETTE | {"d": (220, 120, 155), "m": (125, 45, 80), "k": (255, 150, 170)}
+teacrab_face_grid = lightclaw_face_grid = castlecrab_face_grid = kit_face(6)
+TEACRAB_FACE_PALETTE = LIGHTCLAW_FACE_PALETTE = CASTLECRAB_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (195, 65, 45)}
+mossolotl_face_grid = medilotl_face_grid = axodrake_face_grid = kit_face(6)
+MOSSOLOTL_FACE_PALETTE = MEDILOTL_FACE_PALETTE = AXODRAKE_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (220, 120, 155)}
+WATER_LINES = (("crab", "shellbit"), ("axolotl", "axolittle"))
+WATER_FORMS = (("teacrab", FACES), ("lightclaw", FACES), ("castlecrab", FACES),
+               ("mossolotl", kit_faces(normal=("half", "small", True))),  # calm as a stone
+               ("medilotl", FACES), ("axodrake", FACES))
+
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
     "food_full": ["...fffff...", "..fffffFf..", ".fffffffFf."],
@@ -4572,7 +5023,11 @@ ITEMS = {
     "stone": ["..SSS..", ".SSSSS.", "SShSSST", "SSSSSTT", ".TTTTT."],
     "skill_speed": ["....YY", "...YY.", "..YY..", ".YYYYY", "...YY.", "..YY..", ".Y...."],
     "skill_smarts": [".hhh.", "hYYYh", "hYYYO", "hYYYO", ".YOO.", ".SSS.", ".TTT."],
+    # the app's: the fishing rod, its line hanging down to a red-and-white float
+    "rod": ["........mMv.", ".......mM.v.", "......mM..v.", ".....mM...v.", "....mM....v.", "..SSM.....R.",
+            "..STm....RRr", ".mM......hhH", "mM........h."],
 }
+ITEM_PALETTE |= {"m": (175, 120, 65), "M": (120, 75, 40), "v": (215, 225, 240), "r": (165, 30, 45), "H": (200, 200, 215)}
 
 # ---------------------------------------------------------------- Trips and finds
 
@@ -4589,6 +5044,7 @@ TRIP_PALETTE = {
     "d": (205, 160, 105), "D": (150, 105, 65),                          # fur
     "e": (255, 235, 120), "E": (255, 190, 60),                          # eyes that glow
     "f": (255, 255, 255),
+    "m": (65, 80, 140), "M": (40, 50, 100), "j": (150, 175, 225), "q": (235, 225, 245),  # mussel
 }
 
 
@@ -4731,6 +5187,15 @@ TRIP_TAGS = {
     # a woodpile: logs stacked with their cut ends to the front, growth rings and all
     "woodpile": [(["....TTT....", "...TdddT...", "...TdDdT...", "..TTdddTT..", ".TdddTdddT.", ".TdDdTdDdT.", "TTdddTdddTT",
                    "TdddTdddTdT", "TdDdTdDdTDT", "TdddTdddTdT", ".TTT.TTT.T."], 1000)],
+    # the fishing (core/src/fishing.ts): what comes up on the hook, and the float on the water
+    # a mussel, blue-black with a pearly lip, and a frond of seagrass (food)
+    "mussel": [([".mmmM.", "mjjmmM", "mmmmMM", ".qMMM."], 1000)],
+    "seagrass": [(["..l..", ".lg.l", ".g.lg", "lg.g.", ".gGg.", "..gG.", "..G.."], 1000)],
+    # an old boot that leaks, a little plant growing out of it (a decoration)
+    "boot": [(["....l.l....", "...lg.gl...", "....gGg....", "..TTTGTTT..", "..TtttttT..", "..TtTttdT..", "..TttttdT..",
+               "..TttttdTT.", "..TttttttdT", "..TtttttttT", ".iSSSSSSSSS", "i.........."], 1000)],
+    # the float: red on top, white below
+    "bobber": [([".R.", "rrR", "wwW", ".W."], 1000)],
     # Hats: the bottom two rows sit on the head
     "hat_daisy": [([".w...p...w.", "wywgpypgwyw"], 1000)],
     "hat_leaf": [(["....lg.", "..lggg.", ".lgGgg.", "...G..."], 1000)],
@@ -5663,6 +6128,21 @@ def main():
                     faceShift=globals()[f"{name}_FACE_SHIFT"])
         write_sheet(f"{line}_faces", face_sheet(child_faces, face_palette))
     for name, faces in GARDEN_FORMS:
+        upper = name.upper()
+        write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
+                    faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])
+        write_sheet(f"{name}_faces", face_sheet(globals()[f"{name}_face_grid"], globals()[f"{upper}_FACE_PALETTE"],
+                                                faces))
+    for line, child in WATER_LINES:
+        upper, name = line.upper(), child.upper()
+        palette, face_palette = globals()[f"{upper}_PALETTE"], globals()[f"{upper}_FACE_PALETTE"]
+        write_sheet(f"{line}_baby_body", body_sheet(globals()[f"{upper}_BABY_TAGS"], palette),
+                    faceTop=globals()[f"{upper}_BABY_FACE_TOP"], faceShift=globals()[f"{upper}_BABY_FACE_SHIFT"])
+        write_sheet(f"{line}_baby_faces", face_sheet(baby_face_grid, face_palette))
+        write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
+                    faceShift=globals()[f"{name}_FACE_SHIFT"])
+        write_sheet(f"{line}_faces", face_sheet(face_grid, face_palette))
+    for name, faces in WATER_FORMS:
         upper = name.upper()
         write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
                     faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])

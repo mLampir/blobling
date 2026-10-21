@@ -237,6 +237,27 @@ The values are in `core/src/garden.ts`.
 
 </details>
 
+## Out of the water
+
+Two lines hatch from eggs that come up on the fishing line
+([gameplay.md](gameplay.md#fishing)).
+
+<details>
+<summary>Show which egg comes out of which water</summary>
+
+| Water | Egg |
+|---|---|
+| The pond in the garden, and the stream | **crab egg** |
+| The lake in the cave | **axolotl egg** |
+
+An egg is a rare catch, but it can't be missed: after fifteen catches at a
+water without its egg, the next one is the egg. After that it still comes up now and then, and with
+Angloop at the rod more often.
+
+The values are in `core/src/fishing.ts`.
+
+</details>
+
 ### The ember line
 
 <details>
@@ -1147,6 +1168,155 @@ special move is a tower of branches that grows up under the opponent.
 The house is built to its last step when the child grows up. This rule goes
 before the others of the line. While the child is on its way there, its hint
 color is blueprint blue.
+
+</details>
+
+### The crab line
+
+<details>
+<summary>Show the crab line</summary>
+
+| | Stage |
+|---|---|
+| ![Crab egg](images/pets/crab_egg.png) | **Crab egg** – a peach egg striped in diagonal bands like a seashell |
+| ![Crab baby](images/pets/crab_baby.png) | **Baby** – a red slime in a spiral shell far too big for it, two little pincers in front |
+| ![Shellbit](images/pets/shellbit.png) | **Child: Shellbit** – a hermit crab leaning out of a tall conch, one pincer bigger than the other |
+
+The stages last as long as the slime's. A hermit crab moves house as it
+grows, and each adult has grown together with the house it found.
+
+![Teacrab](images/pets/teacrab.png)
+
+**Teacrab**, crab and teapot in one: round and bellied, its big pincer is the
+spout that steams, its legs carry the pot, and the lid is its hat. There is
+always a cup of tea, so its mood drops more slowly, and it is warm to the
+touch: petting it does more. For its bow it pours a cup, and in a scuffle it
+pours a hot stream of tea over the opponent.
+
+![Lightclaw](images/pets/lightclaw.png)
+
+**Lightclaw**, tall and narrow, its shell ringed red and white like a
+lighthouse, and its big pincer up top is the lamp. Up all night keeping the
+light, it tires sooner. For its spin it turns like a lighthouse with its beam
+sweeping round, and its special move is a beam that dazzles the opponent.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Lightclaw | it grows up after dark while a decoration that glows stands outside (the lantern, the glow mushroom, the crystal or the ember stone) |
+| Teacrab | everything else |
+
+From its second day on, the stripes of Shellbit's conch show where it is
+heading: porcelain and tea green for Teacrab, lamp yellow for Lightclaw.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the sea.*
+
+<details>
+<summary>Show this form</summary>
+
+![Castlecrab](images/pets/castlecrab.png)
+
+**Castlecrab**, the crab that is a whole castle: broad, with battlements and a
+keep, its two pincers are the gate towers that open as the gate, a flag waves
+on every tower, and a moat foams round its feet. At night its windows light
+up. It hops along all of a piece, and a whole castle needs feeding: it gets
+hungry sooner. For its bow the drawbridge comes down and a fanfare of sparkle
+goes up over the keep; its special move is its moat rising into a wave that
+rolls over the opponent while the towers fire sand.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+Three trips to the coast while it is a child. The coast is an area still to
+come; until then this form can't be reached. This rule goes before the others
+of the line. While the child is on its way there, its hint color is sandstone.
+
+</details>
+
+### The axolotl line
+
+<details>
+<summary>Show the axolotl line</summary>
+
+| | Stage |
+|---|---|
+| ![Axolotl egg](images/pets/axolotl_egg.png) | **Axolotl egg** – a pink, glassy egg with the little one curled up inside, two gill frills on top |
+| ![Axolotl baby](images/pets/axolotl_baby.png) | **Baby** – a pink slime with feathery gill fronds on each side of its head |
+| ![Axolittle](images/pets/axolittle.png) | **Child: Axolittle** – a smiling axolotl, its gill fronds standing up like a crown, a long soft tail |
+
+The stages last as long as the slime's. What the adults keep is the pink and
+the gills.
+
+![Mossolotl](images/pets/mossolotl.png)
+
+**Mossolotl** lies flat and broad like a mossy stone on the lake floor, all
+overgrown, its gill fronds sprouted into pink coral mushrooms. Calm as a
+stone, with half-closed eyes, it hardly moves, so it tires more slowly. For
+its spin its gills slowly unfurl and moss drifts off its back, and in a
+scuffle moss grows up round the opponent's feet.
+
+![Medilotl](images/pets/medilotl.png)
+
+**Medilotl**, upright and round like a water bag, its gill fronds hanging down
+long like a stethoscope's tubes and ending in heart blossoms; its tail is a
+broad spoon for handing out medicine. A healer keeps clean, and heals itself
+first: it gets dirty more slowly and sick less often. For its dance hearts
+float up, and its special move is a plaster that bursts into hearts on the
+opponent.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Medilotl | its health never dropped below 80 while it was a child |
+| Mossolotl | everything else |
+
+From its second day on, Axolittle's gills show where it is heading: moss
+green for Mossolotl, heart red for Medilotl.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the cave.*
+
+<details>
+<summary>Show this form</summary>
+
+![Axodrake](images/pets/axodrake.png)
+
+**Axodrake**, a long, slender dragon floating in an S-curve above the ground.
+Its gill fronds have grown into big pink fan wings, and bubbles rise from it
+all the time. At night its gills and wings glow. All that floating tires it
+sooner, and it loves to play: playing cheers it up more. For its flip it flies
+a loop with a trail of bubbles, and its special move is a long stream of
+glowing bubbles it breathes at the opponent.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It got past Gloompeep, the guardian of the cave, while it was a child. This
+rule goes before the others of the line. While the child is on its way there,
+its hint color is wing pink.
 
 </details>
 

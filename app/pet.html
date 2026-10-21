@@ -425,6 +425,7 @@
         <button class="thing" data-thing="ball" data-action="play" data-helps="mood"><img alt=""><small data-t="page.things.ball"></small></button>
         <button class="thing" data-thing="sponge" data-action="clean" data-helps="hygiene" data-rub="1"><img alt=""><small data-t="page.things.sponge"></small></button>
         <button class="thing" data-thing="medicine" data-action="medicine" data-helps="health" hidden><img alt=""><small data-t="page.things.medicine"></small></button>
+        <button class="thing" data-thing="rod" data-action="fish" data-item="cast" data-helps="mood" hidden><img alt=""><small data-t="page.things.rod"></small></button>
       </div>
       <div class="tools">
         <button class="tool" data-tool="bag" data-thing="bag"><img alt=""><small data-t="page.things.bag"></small></button>
@@ -1057,7 +1058,7 @@ function render(s) {
   $("tray").hidden = egg;
   document.querySelectorAll(".tray .thing").forEach((b) => {
     const a = b.dataset.action;
-    b.hidden = a === "medicine" && !s.sick;
+    b.hidden = (a === "medicine" && !s.sick) || (a === "fish" && !s.can_fish);  // the rod: only with the pond out
     b.disabled = !s.actions[a];
     b.classList.toggle("wanted", s.needs.includes(b.dataset.helps));
   });
@@ -1612,6 +1613,8 @@ function eventText(e) {
     : e.action === "house" ? t(`page.events.house_${e.item}`)
     : e.action === "train" ? t("page.events.trained", { skill: T[`skills.${e.item}`] || e.item })
     : e.action === "find" ? t("page.events.find", { item: labels[e.item] || e.item })
+    : e.action === "fish" ? (["cast", "early", "nothing"].includes(e.item) ? t(`page.events.fish_${e.item}`)
+      : t("page.events.fish_catch", { item: labels[e.item] || e.item }))
     : e.action === "fruit" ? t("page.events.picked", { fruit: T[`fruits.${e.item}`] || e.item })
     : e.action === "plant" ? t("page.events.planted", { seed: labels["seed_" + e.item] || t("page.kinds.seed") })
     : e.action === "wear" ? (e.item === "none" ? t("page.events.hat_off") : t("page.events.hat", { item: labels[e.item] || e.item }))
@@ -1644,7 +1647,7 @@ function welcome(s) {
 }
 
 // What happens on the way of a trip: it is told under the trip's own line, not in the list
-const ON_THE_WAY = ["battle", "find", "wild"], TRIP_STOPS = ["snack", "beaten", "tired", "home"];
+const ON_THE_WAY = ["battle", "find", "wild", "fish"], TRIP_STOPS = ["snack", "beaten", "tired", "home"];
 let travels = [], lastEvents = null;
 const openTrips = new Set();  // the trips opened up, by when they set off
 function travelOf(e) {
@@ -1821,6 +1824,7 @@ async function loadTravels() {
 function stopEvents(stop) {
   const at = stop.at;
   if (stop.kind === "find") return [{ at, action: "find", item: stop.item }];
+  if (stop.kind === "fish") return [{ at, action: "fish", item: stop.item }];
   if (stop.kind === "ball") return [{ at, action: "battle", item: `${stop.foe}:ball` }];
   if (stop.kind === "wild") return [{ at, action: "wild", item: `${stop.wild}:${stop.outcome}` }];
   if (stop.kind === "battle") {
@@ -1972,6 +1976,8 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
   let stroke = null, lastPet = 0;
   hero.addEventListener("pointerdown", (e) => {
     if (e.target.closest("button") || !current || current.trip || baton) return;
+    // fishing: a tap anywhere in the scene pulls the line in, the moment the finger comes down
+    if (current.fishing) return pull();
     hero.setPointerCapture(e.pointerId);
     stroke = { id: e.pointerId, x: e.clientX, y: e.clientY, way: 0, puffed: 0 };
     updateArea();
@@ -2038,6 +2044,22 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
   };
   hero.addEventListener("pointerup", end);
   hero.addEventListener("pointercancel", () => { stroke = null; });
+}
+
+// Fishing: pulls the line in; what came up is shown in the scene, and said
+async function pull() {
+  current.fishing = false;  // one tap per cast
+  try {
+    const r = await action("fish", "pull");
+    render(r.state);
+    const item = r.accepted && r.state.activity === "fish_catch" ? r.state.activity_item : "";
+    const labels = r.state.item_labels || {};
+    say(!r.accepted ? r.message : item ? t("page.fishing.caught", { name: r.state.name, item: labels[item] || item })
+      : r.state.activity_item === "early" ? t("page.fishing.early", { name: r.state.name }) : "");
+    feel(r.accepted && item ? "great" : "no");
+  } catch (err) {
+    fail(err);
+  }
 }
 
 // ---------- The tray: drag a thing onto the pet ----------
@@ -2134,6 +2156,7 @@ function draggable(b) {
     const inside = overHero(e.clientX, e.clientY);
     if (!inside && vy > -FLICK_SPEED) return ghost.remove();
     const direct = inside && area && onPet(e.clientX, e.clientY) && ["feed", "medicine"].includes(b.dataset.action);
+    const thrown = !direct && b.dataset.action !== "fish";  // the rod isn't thrown: the pet takes it to the pond
     const where = Math.round(Math.max(0, Math.min(1, inScene(e.clientX, e.clientY)[0])) * 100) / 100;
     // it drops into the scene (or into the pet's mouth)
     ghost.style.transition = "transform .3s ease-out, opacity .3s";
@@ -2141,13 +2164,13 @@ function draggable(b) {
     ghost.style.opacity = "0";
     setTimeout(() => ghost.remove(), 350);
     try {
-      const r = await action(b.dataset.action, b.dataset.item, direct ? {} : { throw: where });
+      const r = await action(b.dataset.action, b.dataset.item, thrown ? { throw: where } : {});
       render(r.state);
       // from the bag: whether that was the favorite, and what food from a trip leaves in the pet
       const name = { name: r.state.name };
       say(!r.accepted ? r.message : b.dataset.item === r.state.favorite_food ? t("page.bag.favorite", name)
         : b.dataset.boost ? t(`page.boost.${r.state.boosts.at(-1)}`, name) : "");
-      if (r.accepted) setTimeout(() => feel(direct ? "munch" : "land"), direct ? 0 : LAND_MS);
+      if (r.accepted) setTimeout(() => feel(direct ? "munch" : "land"), thrown ? LAND_MS : 0);
       else feel("no");
     } catch (err) {
       fail(err);

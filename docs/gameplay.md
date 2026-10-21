@@ -383,6 +383,29 @@ the pet needs the same growing break as between tricks (two, ten, thirty
 minutes, an hour, two hours); after it, an exercise counts in full again. A tap before the signal, or a sequence that is all wrong, brings
 nothing and costs nothing, not even a break.
 
+## Fishing
+
+With the pond set out in the garden, the tray has a **rod**. Drag it onto the
+pet: it hops over to the pond and casts. After three to nine seconds the
+bobber dips under, and for two seconds a tap anywhere in the scene pulls the
+catch out. A tap before that reels in with nothing and costs nothing; miss the
+two seconds and whatever it was gets away. Now and then nothing bites at all,
+and after twelve seconds the pet reels in by itself.
+
+Mostly it catches something to eat (a mussel or seagrass, which go into the
+bag), once an old boot that can be set out as a decoration, and rarely an egg.
+The egg can't be missed: after fifteen catches at a water without it, the next
+one is the egg. A catch costs energy and a little satiety like a game, cheers
+the pet up and strengthens the bond. Fishing again and again soon after, fewer
+fish bite (the same falling-off as for playing). Angloop is a fisher by nature:
+with its lure something bites more often, and the rare things come up more
+often too.
+
+On a trip to the stream or into the cave, a rest by the water is a fishing
+break half of the time: the pet sits down with its rod and brings the catch
+home in its backpack. The lake in the cave has other things in it than the
+pond and the stream.
+
 ## Trips and finds
 
 From the child stage on, the pet can go on a trip: the app's *Trip* tab is the
@@ -438,6 +461,9 @@ there to see what it brought:
   | Stream | Watercress | the next training exercise counts double |
   | Cave | Glow berry | packed: it finds something at every stop where nothing else happens |
   | Mountain | Pine cone | packed: the trip doesn't tire it or make it hungry, and brings as much as the first trip of the day |
+
+  Two more come out of the water ([Fishing](#fishing)): a mussel works like
+  honeycomb, seagrass like a hazelnut.
 
   Hazelnut and watercress don't add up: while one is still waiting, the pet
   won't eat the same food again. Nothing is combined or cooked, and the plant stays the one that
@@ -819,6 +845,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Life cycle, lines and adult forms, the album's forms (`FORMS`) | `core/src/life.ts` |
 | Weight, bond, hide and seek, tricks | `core/src/care.ts` |
 | Trips, areas, what is found where | `core/src/trip.ts` |
+| Fishing: the bite, the tap, what comes up where | `core/src/fishing.ts` |
 | What is eaten from the bag, each form's favorite and dislike, and what food from trips leaves in the pet | `core/src/food.ts` |
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
 | Guests in the garden: what draws them, peeking over the fence | `core/src/garden.ts` |

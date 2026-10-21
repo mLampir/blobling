@@ -21,6 +21,8 @@ export const ITEMS: Record<string, ItemKind> = {
   watercress: "food",
   glowberry: "food",
   pinenut: "food",
+  mussel: "food",
+  seagrass: "food",
   flag: "deco",
   windmill: "deco",
   lantern: "deco",
@@ -35,6 +37,7 @@ export const ITEMS: Record<string, ItemKind> = {
   snowglobe: "deco",
   pond: "deco",
   woodpile: "deco",
+  boot: "deco",
   daisy: "hat",
   leaf: "hat",
   cap: "hat",
@@ -55,6 +58,8 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_dog: "egg",
   egg_dragonfly: "egg",
   egg_beaver: "egg",
+  egg_crab: "egg",
+  egg_axolotl: "egg",
 };
 export const MAX_SEEDS = 9; // per kind; decorations and hats exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
@@ -63,7 +68,8 @@ export const MAX_EGGS = 9; // this many are kept
 // what a pet has passed on to it (wild.ts), until it is brooded (model.nextPet).
 export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "ember", egg_stone: "stone", egg_fox: "fox",
   egg_cloud: "cloud", egg_leaf: "leaf", egg_duck: "duck", egg_hippo: "hippo", egg_beak: "beak",
-  egg_caterpillar: "caterpillar", egg_dog: "dog", egg_dragonfly: "dragonfly", egg_beaver: "beaver" };
+  egg_caterpillar: "caterpillar", egg_dog: "dog", egg_dragonfly: "dragonfly", egg_beaver: "beaver",
+  egg_crab: "crab", egg_axolotl: "axolotl" };
 export const MAX_DECO = 2; // this many spots the scene has outside
 
 // Plant: [stat, effect of one fruit]
@@ -111,6 +117,7 @@ export const OUTDOOR_DECO = ["snowman", "pond"]; // would melt inside; a pond be
 // The snow globe: set out at home, outside or in the house, it snows around the pet, and a pet of
 // the cloud line that grows up then counts it as snow (life.decideSpecies).
 export const SNOW_DECO = ["snowglobe"];
+export const GLOWING_DECO = ["lantern", "glowshroom", "crystal", "emberstone"]; // they light up at night
 
 export function kindOf(item: string): ItemKind {
   return ITEMS[item];

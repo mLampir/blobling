@@ -16,6 +16,7 @@
 
 import * as battle from "./battle";
 import type { Font } from "./font";
+import * as fishing from "./fishing";
 import * as home from "./home";
 import { Image, lerp, type Color } from "./image";
 import * as life from "./life";
@@ -103,6 +104,12 @@ const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:dambert": { flip: "hurdle" }, // trowel up, and a jump over a little stack of logs
   "adult:timberjack": { spin: "chop" }, // spins with its axe tail swinging, and wood chips fly
   "adult:archibeaver": { bow: "blueprint" }, // a bow, it unrolls its plan, and its compass sparks
+  "adult:teacrab": { bow: "pour" }, // a polite bow forward, as a teapot pours: a cup of tea, and the steam rises
+  "adult:lightclaw": { spin: "beacon" }, // turns slowly as a lighthouse does, and its beam sweeps round
+  "adult:castlecrab": { bow: "drawbridge" }, // its gate opens, the drawbridge comes down, and a fanfare sparkles
+  "adult:mossolotl": { spin: "unfurl" }, // turns slowly, its gills unfurl, and bits of moss drift off its back
+  "adult:medilotl": { dance: "heal" }, // a little dance, and hearts float up
+  "adult:axodrake": { flip: "dragon_loop" }, // flies a loop in the air with a trail of glowing bubbles
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
@@ -111,7 +118,7 @@ const SPECIAL_MOVES = ["angloop", "gemperor", "purrloop", "lanternling", "flarel
   "prismist", "twiggle", "needlenub", "quill", "drakwing", "lillypot", "steamo", "parcelbeak", "rapierre", "glimmerock",
   "bouldergrin", "salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
   "mothmuff", "sunflutter", "jesterwing", "digby", "barrelbard", "pawdini", "rotorfly", "jewelwing", "prismfly", "dambert",
-  "timberjack", "archibeaver"];
+  "timberjack", "archibeaver", "teacrab", "lightclaw", "castlecrab", "mossolotl", "medilotl", "axodrake"];
 // Special moves that knock the opponent further back than others: by this many pixels more
 const SPECIAL_PUSH: Record<string, number> = { rotorfly: 10 }; // its downwash blows it away
 // The skipping stone: [start, length, height] of each hop, over the time in the air (0..1)
@@ -261,6 +268,15 @@ const NEAR_STEP = 13; // spacing of the things along the path
 const FAR_STEP = 26; // trees and bushes behind them, passing at half the speed
 const FIND_SHOW = 8; // how long it is happy about a find
 const REST_SECONDS = 45;
+// Fishing (fishing.ts): it stands left of the pond with its rod and its right edge at the water;
+// on a trip it sits by the water, and after FISH_BITE seconds of FISH_SHOW something bites
+const FISH_STAND = 36; // from its left edge to the center of the pond
+const FISH_WATER = 3; // the bobber floats this far under the pond's top row, a little left of its center
+const FISH_BITE = 4;
+const FISH_SHOW = 10;
+const ROD: Color = [150, 100, 55];
+const FISHING_LINE: Color = [215, 215, 205];
+const RIPPLE: Color = [190, 225, 255];
 // Scuffle with an opponent: the pet stands on the left, the opponent comes in from the right
 const BATTLE_INTRO = 2.0;
 const BATTLE_ROUND = 3.0; // a little longer than a trick takes (TRICK_SHOW)
@@ -302,11 +318,13 @@ const STAGE_SHEETS: Record<string, Record<string, readonly [string, string]>> = 
   dog: { baby: ["dog_baby_body", "dog_baby_faces"], child: ["pupplet_body", "dog_faces"] },
   dragonfly: { baby: ["dragonfly_baby_body", "dragonfly_baby_faces"], child: ["nymphlet_body", "dragonfly_faces"] },
   beaver: { baby: ["beaver_baby_body", "beaver_baby_faces"], child: ["gnawlet_body", "beaver_faces"] },
+  crab: { baby: ["crab_baby_body", "crab_baby_faces"], child: ["shellbit_body", "crab_faces"] },
+  axolotl: { baby: ["axolotl_baby_body", "axolotl_baby_faces"], child: ["axolittle_body", "axolotl_faces"] },
 };
 // The egg of a line: the tags in the items sheet start with this
 const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg", cloud: "cloud_egg",
   leaf: "leaf_egg", duck: "duck_egg", hippo: "hippo_egg", beak: "beak_egg", caterpillar: "caterpillar_egg", dog: "dog_egg",
-  dragonfly: "dragonfly_egg", beaver: "beaver_egg" };
+  dragonfly: "dragonfly_egg", beaver: "beaver_egg", crab: "crab_egg", axolotl: "axolotl_egg" };
 // Color per adult species: hue shift (0–255) starting from teal.
 // Fallback for a species without pixel art of its own.
 const SPECIES_HUE: Record<string, number> = {
@@ -341,7 +359,7 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
   parcelbeak: ["parcelbeak_body", "parcelbeak_faces", 0],
   ...Object.fromEntries(["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
     "mothmuff", "sunflutter", "jesterwing", "digby", "barrelbard", "pawdini", "rotorfly", "jewelwing", "prismfly", "dambert",
-    "timberjack", "archibeaver"]
+    "timberjack", "archibeaver", "teacrab", "lightclaw", "castlecrab", "mossolotl", "medilotl", "axodrake"]
     .map((species) => [species, [`${species}_body`, `${species}_faces`, 0] as const])),
 };
 // What grows on a child's head hints at the adult form it is heading for. Per line, the three
@@ -351,7 +369,8 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
 // seedling's leaves (light, dark), the duckling's curl (curl, shadow), the stripe of the young
 // hippo's towel, the young bird's goggles (lenses, frame), the pompoms on the caterpillar's feelers
 // (light, dark), the puppy's ears and tail (fur, shadow), the lenses of the larva's dew goggles
-// (lens, shadow) and the young beaver's pencil (wood, shadow) – as in the palettes of
+// (lens, shadow), the young beaver's pencil (wood, shadow), the stripes of the young crab's shell
+// (stripe, shadow) and the young axolotl's gills (frond, shadow) – as in the palettes of
 // tools/build_blob_sprites.py.
 const LURES: Record<string, readonly Color[]> = {
   blob: [[255, 235, 150], [240, 190, 90], [255, 255, 255]],
@@ -367,6 +386,8 @@ const LURES: Record<string, readonly Color[]> = {
   dog: [[130, 85, 45], [95, 60, 30]],
   dragonfly: [[235, 252, 255], [170, 230, 250]],
   beaver: [[245, 200, 60], [200, 150, 40]],
+  crab: [[175, 120, 90], [205, 170, 135]],
+  axolotl: [[235, 75, 125], [180, 40, 90]],
 };
 const LURE_HINT: Record<string, readonly Color[]> = {
   sneezle: [[125, 220, 105], [60, 170, 70], [235, 255, 205]],
@@ -413,21 +434,28 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   dambert: [[205, 140, 70], [140, 85, 40]], // a log's fresh wood
   timberjack: [[210, 50, 50], [150, 30, 35]], // its plaid
   archibeaver: [[80, 170, 255], [40, 100, 210]], // its blueprint
+  teacrab: [[245, 240, 230], [90, 160, 140]], // porcelain and green tea
+  lightclaw: [[255, 235, 120], [250, 200, 60]], // lamp light
+  castlecrab: [[240, 215, 165], [205, 170, 120]], // sandstone
+  mossolotl: [[95, 150, 70], [65, 110, 50]], // moss
+  medilotl: [[240, 60, 90], [190, 30, 60]], // its hearts
+  axodrake: [[255, 190, 215], [240, 140, 180]], // the pink of its wings
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
 // Forms that neither hop nor walk but get about at a height of their own (rows above the ground):
 // the fliers fly (with their "flutter" frames, if they have any), and Pawdini rolls on its ball
-const GLIDES: Record<string, number> = { mothmuff: 4, sunflutter: 4, jesterwing: 5, rotorfly: 5, prismfly: 5, pawdini: 0 };
+const GLIDES: Record<string, number> = { mothmuff: 4, sunflutter: 4, jesterwing: 5, rotorfly: 5, prismfly: 5, pawdini: 0, axodrake: 5 };
 const HOVERS = ["rotorfly"]; // flies steadily instead of fluttering up and down
 // Forms that hop all of a piece, without squashing and stretching: Archibeaver, tower and all, like a rook
-const STIFF_HOPS = ["archibeaver"];
+const STIFF_HOPS = ["archibeaver", "castlecrab"]; // and Castlecrab, moat and all
 // the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
 // duck like it too, and a pond hippo is wet anyway; so is a beaver, a dragonfly grew up in a pond,
-// and a sunflower is a plant
+// and a sunflower is a plant; an axolotl lives in the water
 export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist", "leaf", "twiggle",
   "needlenub", "duck", "drakwing", "quill", "lillypot", "flurrbleat", "sakurin", "bubblehelm", "sunflutter", "dragonfly",
-  "rotorfly", "jewelwing", "prismfly", "beaver", "dambert", "timberjack", "archibeaver"];
+  "rotorfly", "jewelwing", "prismfly", "beaver", "dambert", "timberjack", "archibeaver", "axolotl",
+  "mossolotl", "medilotl", "axodrake"];
 // Needlenub's flower opens only when it is happy; otherwise it is a bud (the colors as in the
 // palette of tools/build_blob_sprites.py)
 const BUD: readonly (readonly [Color, Color])[] = [
@@ -457,6 +485,12 @@ const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
     [[170, 250, 240], [215, 255, 250]],
   ],
   archibeaver: [[[80, 170, 255], [130, 210, 255]], [[200, 240, 255], [235, 252, 255]]], // its blueprint
+  lightclaw: [[[255, 235, 120], [255, 250, 200]], [[250, 200, 60], [255, 225, 120]]], // its lamp
+  castlecrab: [[[255, 225, 120], [255, 250, 200]]], // light in its windows
+  axodrake: [ // its gills and wings
+    [[235, 75, 125], [255, 130, 190]], [[180, 40, 90], [235, 90, 160]], [[255, 190, 215], [255, 225, 240]],
+    [[240, 140, 180], [255, 190, 225]],
+  ],
 };
 // Lunarock's moonstone waxes and wanes with the real moon: the unlit part in this color (the lit one
 // as in the palette of tools/build_blob_sprites.py)
@@ -602,6 +636,40 @@ const TRUNK: Bitmap = [[150, 100, 60], ["XXXXXXXXXXXX", "XXXXXXXXXXXX", "XXXXXXX
 const BRANCH: Bitmap = [[160, 110, 60], ["X.XXXX.X", ".XXXXXX."]]; // what Archibeaver builds with
 const BLUEPRINT: Bitmap = [[90, 160, 235], ["XXXXXX", "X....X", "X.XX.X", "X....X", "XXXXXX"]]; // its plan
 const COMPASS_SPARK: Bitmap = [[255, 240, 140], ["X"]];
+// The crab line's adults
+const TEA: Bitmap = [[225, 145, 55], ["X"]]; // Teacrab's tea
+const TEA_DROP: Bitmap = [[250, 200, 120], ["X"]]; // the light on it, running down the stream
+const TEA_SPLASH: Bitmap = [[230, 150, 60], ["XX", "XX"]]; // its hot tea, poured at an opponent
+const TEACUP: Bitmap = [[245, 240, 230], ["X...X", "XXXXX", ".XXX."]]; // the cup it pours into
+const BEAM: Color = [255, 240, 170]; // Lightclaw's lamp
+const BEAM_REACH = 26; // how far its beam sweeps; at an opponent it reaches further
+const BEACON_GLINT: Bitmap = [[255, 245, 190], ["..X..", ".....", "X.X.X", ".....", "..X.."]];
+const DOORWAY: Bitmap = [[45, 30, 25], ["XXXX"]]; // a row of Castlecrab's gate, open, the portcullis up
+const DRAWBRIDGE: Bitmap = [[180, 125, 70], ["XXXXXXXX", "XXXXXXXX"]]; // lowered over its moat
+const SAND: Bitmap = [[235, 200, 130], ["XX", "XX"]]; // shot from its battlements
+const SAND_GRAIN: Bitmap = [[235, 200, 130], ["X"]];
+const MOAT_SPRAY: Bitmap = [[90, 170, 240], [".X", "XX"]];
+const FOAM_DROP: Bitmap = [[235, 248, 255], ["X"]];
+const SWELL: Bitmap = [[70, 150, 235], ["...XXXX...", ".XXXXXXXX.", "XXXXXXXXXX"]]; // its moat, rising
+const WAVE: Bitmap = [[70, 150, 235], [ // the wave it rolls over an opponent
+  ".......XXXX.....", ".....XXXXXXXX...", "....XXXXX..XXX..", "...XXXXX....XX..", "..XXXXX.....X...",
+  "..XXXXX.........", ".XXXXXXX........", ".XXXXXXXX.......", "XXXXXXXXXX......", "XXXXXXXXXXXX....",
+  "XXXXXXXXXXXXXXX.", "XXXXXXXXXXXXXXXX", "XXXXXXXXXXXXXXXX"]];
+const FOAM: Bitmap = [[235, 248, 255], [ // the crest on it, in the same place
+  ".......XXXX.....", ".....XX....XX...", "....X.......XX..", "...X........XX..", "..X.........X...",
+  "................", "................", "................", "...X......X.....", ".X....X.....X...",
+  "...........X..X."]];
+// The axolotl line's adults
+const MOSS_BIT: Bitmap = [[110, 175, 80], ["X"]]; // off Mossolotl's back
+const MOSS_TUFT: Bitmap = [[95, 150, 70], ["X.X", "XXX"]];
+// The moss it grows up round an opponent's feet, row by row from the ground up
+const MOSS_ROWS: Bitmap[] = ([[[80, 135, 60], ".XXXXXXXXXXXXXXXXX."], [[95, 150, 70], "XXXXXXXXXXXXXXXXXXX"],
+  [[95, 150, 70], ".XXXXX.XXXXXX.XXXX."], [[115, 175, 80], "..XXX...XX.X...XX.."], [[140, 200, 95], "..X.X....X......X.."]] as
+  [Color, string][]).map(([color, row]) => [color, [row]]);
+const PLASTER: Bitmap = [[240, 205, 165], ["XXXXX", "XX.XX", "XXXXX"]]; // what Medilotl sticks on a bump
+const MEDIC_CROSS: Bitmap = [[255, 255, 255], [".X.", "XXX", ".X."]];
+const GLOW_BUBBLE: Bitmap = [[170, 245, 255], [".XX.", "X..X", "X..X", ".XX."]]; // Axodrake's glowing breath
+const GLOW_DOT: Bitmap = [[200, 255, 250], ["X"]];
 
 export const APP_BACKGROUND: Color = [17, 19, 24]; // background of the app (pet.html), also for the app icon
 
@@ -806,6 +874,14 @@ export function trickAnimation(stage: string, species: string, trick: string): s
 }
 
 /** How high a thrown item is `e` seconds after the throw: it drops in from above and bounces once. */
+/** A straight line of single pixels from a to b. */
+function line(img: Image, [x0, y0]: readonly [number, number], [x1, y1]: readonly [number, number], color: Color): void {
+  const steps = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0), 1);
+  for (let i = 0; i <= steps; i++) {
+    img.point(Math.round(x0 + (x1 - x0) * i / steps), Math.round(y0 + (y1 - y0) * i / steps), color);
+  }
+}
+
 function dropLift(e: number): number {
   if (e < THROW_FALL) {
     return (GROUND + 2) * (1 - (e / THROW_FALL) ** 2); // starts just above the top edge
@@ -895,6 +971,10 @@ interface Pose {
   cover: Cover | null;
   /** Prismfly sends out its light, broken into seven rays. */
   rays: boolean;
+  /** Lightclaw's lamp shines: how far its beam reaches to the right (negative: to the left), and how much it slopes down. */
+  beam: [number, number] | null;
+  /** It is fishing: where the bobber floats [x, y of the water], and whether it is under. */
+  rod: [number, number, boolean] | null;
 }
 
 interface PetLook {
@@ -1094,6 +1174,9 @@ export class PetScene {
       this.stand(img, this.findImage(view.found), PetScene.foundX(view));
     }
     this.petTop = y + top;
+    if (pose.rod && !pose.hidden) {
+      this.drawRod(img, x, y + top, pose.rod, t);
+    }
     if (!pose.hidden && !pose.cover && (pose.pack || (view.backpack && !pose.egg && pose.body !== "sleep" && pose.scale === 1))) {
       // Backpack: hangs at the pet's lower back – at home until it has been unpacked
       const pack = this.sheet("trip").image("backpack");
@@ -1118,6 +1201,9 @@ export class PetScene {
     }
     if (pose.rays) {
       this.drawRays(img, x + SPRITE / 2, y + top + 8);
+    }
+    if (pose.beam !== null) {
+      this.drawBeam(img, x + SPRITE / 2, y + top + 3, ...pose.beam);
     }
     const guest = pose.wild || (!trip && !indoors && this.visitor(view, t));
     if (guest) {
@@ -1154,7 +1240,7 @@ export class PetScene {
       heart: null, form: [view.stage, view.species], white: false,
       egg: null, eggT: t, item: view.activity_item, propAt: null, thrown: null,
       activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false, bud: null, rainbow: false,
-      cover: null, rays: false,
+      cover: null, rays: false, beam: null, rod: null,
     };
     this.play = this.hiding = null;
     this.tallGrass = [];
@@ -1345,6 +1431,8 @@ export class PetScene {
       this.cheer(pose, t);
       this.burst(view, SPARK, 10, 22);
       pose.found = view.activity_item;
+    } else if (isOneOf(activity, "fish_wait", "fish_catch", "fish_empty")) {
+      this.fish(pose, view, t, dt, now);
     } else if (activity === "unpack") {
       // shows off one find after the other
       this.cheer(pose, t);
@@ -1765,6 +1853,96 @@ export class PetScene {
         this.trickFx(t, "blueprint", TRICK_SHOW, BLUEPRINT, 1, -23 * this.facing, 15, [0, 0], [0, 0], 1.1);
         this.trickFx(t, "blueprint_spark", 0.08, COMPASS_SPARK, 3, 11 * this.facing, 19, [-8, 8], [-12, -3], 0.5);
       }
+    } else if (animation === "pour") {
+      // a polite bow forward, as a teapot pours: tea runs out of its spout into a cup, and the steam rises off it.
+      // Its body isn't drawn mirrored: the spout and the cup are always on the right
+      const f = this.facing;
+      const tilt = clamp(Math.min((p - 0.12) / 0.13, (0.88 - p) / 0.13), 0, 1);
+      Object.assign(pose, { rotate: -24 * tilt, face: tilt > 0.5 ? "blink" : "smile" });
+      if (p > 0.15 && p < 0.9) {
+        this.trickFx(t, "pour_cup", TRICK_SHOW, TEACUP, 1, 19 * f, 2, [0, 0], [0, 0], (0.9 - p) * TRICK_SHOW);
+      }
+      if (tilt === 1 && t - (this.trickFxAt.get("pour") ?? -Infinity) >= TRICK_SHOW) {
+        // the stream, out of the tip of its spout in an arc down into the cup, as long as it pours
+        this.trickFxAt.set("pour", t);
+        for (let dy = 18; dy >= 3; dy--) {
+          this.particles.push({ sprite: TEA, x: this.x + SPRITE / 2 + 16 + Math.round(5 * Math.sqrt((18 - dy) / 15)),
+            y: GROUND - dy, vx: 0, vy: 0, life: (0.75 - p) * TRICK_SHOW });
+        }
+      }
+      if (tilt === 1 && p < 0.75) {
+        this.trickFx(t, "pour_drop", 0.1, TEA_DROP, 1, 17 * f, 17, [3 * f, 5 * f], [0, 4], 0.5, 80);
+        this.trickFx(t, "pour_steam", 0.25, STEAM, 1, 22 * f, 5, [0, 3 * f], [-10, -6], 1.0);
+      }
+    } else if (animation === "beacon") {
+      // turns slowly round as a lighthouse does, and the beam of its lamp sweeps round with it
+      const q = clamp((p - 0.08) / 0.84, 0, 1);
+      const a = (1 - Math.cos(q * Math.PI)) * 2 * Math.PI; // two turns, slow at the start and at the end
+      Object.assign(pose, { turn: Math.cos(a), face: "smile" });
+      if (q > 0 && q < 1) {
+        const reach = Math.sin(a) * BEAM_REACH;
+        pose.beam = Math.cos(a) < 0 && Math.abs(reach) < 4 ? null : [reach, 0]; // behind it, the lamp can't be seen
+        if (Math.abs(reach) > BEAM_REACH - 3) { // where the beam sweeps past, something glints
+          this.trickFx(t, "beacon", 0.4, BEACON_GLINT, 1, (reach - 2) * this.facing, 30, [0, 0], [0, 0], 0.5);
+        }
+      }
+    } else if (animation === "drawbridge") {
+      // stiff as a castle is: its portcullis goes up, the drawbridge comes down over the moat, a fanfare sparkles
+      // over its flags, and it all closes again. Its body isn't drawn mirrored
+      const f = this.facing;
+      pose.body = p > 0.08 && p < 0.16 ? "squash" : "idle";
+      pose.face = p > 0.3 && p < 0.75 ? "laugh" : "smile";
+      for (let i = 0; i < 4; i++) { // up from the bottom row of the gate, and down again from the top
+        const [from, to] = [0.18 + i * 0.03, 0.8 - i * 0.03];
+        if (p > from && p < to) {
+          this.trickFx(t, `drawbridge${i}`, TRICK_SHOW, DOORWAY, 1, -2 * f, 5 + i, [0, 0], [0, 0], (to - p) * TRICK_SHOW);
+        }
+      }
+      if (p > 0.3 && p < 0.68) {
+        this.trickFx(t, "drawbridge", TRICK_SHOW, DRAWBRIDGE, 1, -4 * f, 3, [0, 0], [0, 0], (0.68 - p) * TRICK_SHOW);
+      }
+      if (p > 0.38 && p < 0.6) { // the fanfare: sparkle bursts up over the keep, and notes from the towers
+        this.ringFx(t, "drawbridge_fanfare", TRICK_SHOW, [SPARK, ...CONFETTI], 12, 0, 31, 24, 1.0, -Math.PI + 0.3, -0.3);
+        this.trickFx(t, "drawbridge_note", 0.3, NOTE, 1, (Math.trunc(t * 3) % 2 ? 12 : -15) * f, 30, [-3, 3], [-12, -8], 0.9);
+      }
+      if (p > 0.25 && p < 0.8) { // its flags flutter in the wind
+        const [fx, fy] = [[2, 30], [-12, 27], [14, 27]][Math.trunc(t * 7) % 3];
+        this.trickFx(t, "drawbridge_flags", 0.08, this.rng.choice(CONFETTI), 1, fx * f, fy, [-10 * f, -4 * f], [-3, 2], 0.6);
+      }
+    } else if (animation === "unfurl") {
+      // turns slowly once round with its eyes half shut; its gills unfurl, and bits of moss drift off its back
+      const q = clamp((p - 0.1) / 0.8, 0, 1);
+      const a = (1 - Math.cos(q * Math.PI)) * Math.PI;
+      Object.assign(pose, { turn: Math.cos(a), body: q > 0.2 && q < 0.85 ? "stretch" : "idle", face: "blink" });
+      if (q > 0.15 && q < 0.9) {
+        const back = this.rng.uniform(-3, 14) * Math.cos(a) * this.facing; // the moss on its back turns with it
+        this.trickFx(t, "unfurl", 0.1, MOSS_BIT, 2, back, 13, [-6, 6], [-10, -4], 1.8, 8);
+        this.trickFx(t, "unfurl_leaf", 0.35, LEAFLET, 1, back, 14, [-8, 8], [-9, -5], 1.6, 6);
+      }
+    } else if (animation === "heal") {
+      // a little nurse's dance from one foot to the other, and hearts float up off it, with a twinkle of a cross
+      const step = Math.sin(p * 4 * (2 * Math.PI));
+      Object.assign(pose, { dx: Math.round(Math.sin(p * 2 * (2 * Math.PI)) * 3), body: step > 0 ? "stretch" : "squash",
+        jump: Math.max(0, step) * 2, face: "laugh" });
+      if (p > 0.1 && p < 0.9) {
+        this.trickFx(t, "heal", 0.22, HEART, 1, pose.dx * this.facing + this.rng.uniform(-10, 8), 28, [-4, 4], [-14, -9], 1.3);
+        this.trickFx(t, "heal_cross", 0.6, MEDIC_CROSS, 1, this.rng.uniform(-14, 12), this.rng.uniform(14, 28), [0, 0],
+          [-4, -2], 0.5);
+      }
+    } else if (animation === "dragon_loop") {
+      // up on its wings, a whole loop in the air with a trail of glowing bubbles behind, and down again
+      const q = (p - 0.1) / 0.8;
+      if (q > 0 && q < 1) {
+        const a = q * 2 * Math.PI;
+        Object.assign(pose, { body: this.bodyOf(...pose.form, "flutter", "stretch"),
+          jump: 12 + Math.sin(a - Math.PI / 2) * 10 + Math.sin(q * Math.PI) * 4,
+          dx: Math.round(Math.sin(a) * 10) * this.facing, rotate: -360 * q * this.facing });
+        this.trickFx(t, "dragon_loop", 0.05, Math.trunc(t * 10) % 3 ? BUBBLE : GLOW_BUBBLE, 1, pose.dx * this.facing,
+          16 + pose.jump, [-2, 2], [-4, 0], 1.1);
+      } else {
+        pose.body = "squash";
+      }
+      pose.face = "happy";
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
       if (p < 0.1 || p > 0.9) {
@@ -2189,6 +2367,107 @@ export class PetScene {
           }
         }
         break;
+      case "teacrab": // the kettle comes to the boil, and it pours a hot stream of tea and steam at the opponent
+        if (q < 0.35) { // leans back, rattling, and steam puffs out of its spout
+          Object.assign(pose, { rotate: 10 * q / 0.35, dx: Math.trunc(t * 14) % 2, face: "normal" });
+          this.trickFx(t, "sp_teacrab_steam", 0.1, STEAM, 2, 13, 26, [-2, 4], [-14, -8], 0.8);
+        } else if (q < 0.62) {
+          Object.assign(pose, { rotate: -30, face: "laugh" }); // its spout is on the right, as the opponent is
+          this.trickFx(t, "sp_teacrab", 0.03, TEA_SPLASH, 3, 16, 16, [22, 36], [0, 10], 0.6, 60); // down on the opponent
+          this.trickFx(t, "sp_teacrab_drop", 0.03, TEA, 3, 16, 16, [24, 38], [2, 12], 0.6, 60);
+          this.trickFx(t, "sp_teacrab_steam2", 0.08, STEAM_CLOUD, 1, 18, 18, [22, 30], [-8, -2], 0.8);
+        }
+        break;
+      case "lightclaw": // its lamp sweeps round gathering light, then shines one blinding beam into the opponent's eyes
+        if (q < 0.4) {
+          const a = q / 0.4 * 2 * Math.PI;
+          Object.assign(pose, { turn: Math.cos(a), face: "smile", white: q > 0.3 && Math.trunc(t * 12) % 2 === 0 });
+          pose.beam = Math.cos(a) < 0 && Math.abs(Math.sin(a)) < 0.2 ? null : [Math.sin(a) * BEAM_REACH, 0];
+        } else if (q < 0.65) {
+          // down at the opponent, who has come close
+          Object.assign(pose, { body: "stretch", beam: [26 * this.facing, 0.9], face: "laugh" });
+          this.trickFx(t, "sp_lightclaw", 0.08, BEACON_GLINT, 1, this.rng.uniform(10, 24), this.rng.uniform(5, 14), [0, 0],
+            [0, 0], 0.8);
+        }
+        break;
+      case "castlecrab": // its battlements shoot sand, and its moat rises into a great wave that rolls over the opponent
+        if (q < 0.36) { // the castle rumbles, and its moat stirs
+          Object.assign(pose, { dx: Math.trunc(t * 14) % 2, face: "normal" });
+          this.trickFx(t, "sp_castlecrab_moat", 0.06, MOAT_SPRAY, 2, this.rng.uniform(-14, 14), 3, [-4, 4], [-18, -8], 0.6, 50);
+        }
+        if (q > 0.16 && q < 0.46) { // a shot of sand from one tower, then the other
+          const side = Math.trunc(t * 7) % 2 ? 13 : -13;
+          this.trickFx(t, "sp_castlecrab_sand", 0.14, SAND, 1, side, 27, [26, 34], [-18, -12], 1.0, 140);
+          this.trickFx(t, "sp_castlecrab_puff", 0.14, SAND_GRAIN, 3, side, 28, [-8, 8], [-10, -4], 0.4);
+        }
+        if (q > 0.3 && q < 0.38) { // the moat swells up in front of it ...
+          this.trickFx(t, "sp_castlecrab_swell", once, SWELL, 1, 8, 5, [0, 0], [0, 0], 0.25);
+        } else if (q >= 0.38 && q < 0.6) { // ... and rolls over the opponent as a wave
+          Object.assign(pose, { face: "laugh", white: q < 0.4 });
+          this.trickFx(t, "sp_castlecrab_wave", once, WAVE, 1, 2, 13, [26, 26], [0, 0], 0.9);
+          this.trickFx(t, "sp_castlecrab_foam", once, FOAM, 1, 2, 13, [26, 26], [0, 0], 0.9);
+          if (q < 0.54) {
+            this.trickFx(t, "sp_castlecrab_spray", 0.05, MOAT_SPRAY, 2, 12 + (q - 0.38) * BATTLE_ROUND * 26, 14, [-6, 10],
+              [-16, -6], 0.5, 50);
+          } else {
+            this.ringFx(t, "sp_castlecrab_splash", once, [MOAT_SPRAY, FOAM_DROP], 10, 28, 8, 26, 0.7, -Math.PI + 0.3, -0.3);
+          }
+        }
+        break;
+      case "mossolotl": // sinks calmly into its moss; moss creeps over the ground and grows up round the opponent's feet
+        if (q < 0.45) {
+          Object.assign(pose, { body: q < 0.1 ? "squash" : "flat", face: "blink" });
+        } else {
+          pose.face = "smile";
+        }
+        for (let i = 0; i < 5; i++) { // a trail of moss over to the opponent
+          if (q > 0.1 + i * 0.06 && q < 0.95) {
+            this.trickFx(t, `sp_mossolotl_trail${i}`, once, MOSS_TUFT, 1, 11 + i * 3, 1, [0, 0], [0, 0],
+              (0.95 - q) * BATTLE_ROUND);
+          }
+        }
+        for (let i = 0; i < 5; i++) { // and up round its feet, row by row
+          if (q > 0.4 + i * 0.04 && q < 0.95) {
+            this.trickFx(t, `sp_mossolotl${i}`, once, MOSS_ROWS[i], 1, this.facing > 0 ? 18 : 1, i, [0, 0],
+              [0, 0], (0.95 - q) * BATTLE_ROUND);
+          }
+        }
+        break;
+      case "medilotl": // a plaster for the opponent's bump: it throws it with a heart, and both burst in sparkles
+        if (q < 0.36) {
+          Object.assign(pose, { body: q < 0.18 ? "squash" : "stretch", face: "smile" });
+          this.trickFx(t, "sp_medilotl_love", 0.15, LOVE, 1, this.rng.uniform(-8, 8), 26, [-3, 3], [-10, -6], 0.9);
+        } else if (q < 0.6) { // lobbed over at the opponent, who has come close by now
+          Object.assign(pose, { body: q < 0.4 ? "stretch" : "idle", dx: towards(q < 0.4 ? 2 : 0), face: "laugh" });
+          this.trickFx(t, "sp_medilotl", once, PLASTER, 1, 8, 22, [18, 18], [-12, -12], 0.9, 160);
+          this.trickFx(t, "sp_medilotl_heart", once, HEART, 1, 5, 25, [20, 20], [-14, -14], 0.9, 160);
+          if (q > 0.48) {
+            this.ringFx(t, "sp_medilotl_burst", once, [SPARK, LOVE, MEDIC_CROSS], 9, 15, 10, 22, 0.8);
+          }
+        }
+        break;
+      case "axodrake": // up on its wings and round to face the opponent, its gills glow brighter and brighter, and
+        // it breathes a long glowing stream of bubbles. Its head is drawn on the left: it turns round for this
+        pose.body = this.bodyOf(...pose.form, "flutter");
+        pose.turn = Math.cos(clamp((q - 0.1) / 0.2, 0, 1) * Math.PI - clamp((q - 0.7) / 0.2, 0, 1) * Math.PI);
+        if (q < 0.36) {
+          Object.assign(pose, { jump: Math.sin(clamp(q / 0.25, 0, 1) * Math.PI / 2) * 8, face: "smile",
+            white: q > 0.26 && Math.trunc(t * 12) % 2 === 0 });
+          this.trickFx(t, "sp_axodrake_glow", 0.08, GLOW_DOT, 2, this.rng.uniform(-14, 14),
+            this.rng.uniform(4, 28) + pose.jump, [-3, 3], [-6, -2], 0.6);
+        } else if (q < 0.66) {
+          Object.assign(pose, { jump: 8, face: "eat_open" });
+          const wave = Math.sin(t * 14) * 8; // the stream wavers up and down
+          this.trickFx(t, "sp_axodrake", 0.04, GLOW_BUBBLE, 2, 6, 8 + pose.jump, [30, 40], [wave - 2, wave + 4], 1.0);
+          this.trickFx(t, "sp_axodrake_small", 0.03, BUBBLE, 2, 6, 7 + pose.jump, [26, 38], [wave - 4, wave + 8], 1.0);
+          this.trickFx(t, "sp_axodrake_dot", 0.03, GLOW_DOT, 2, 6, 6 + pose.jump, [20, 36], [wave - 6, wave + 10], 0.8);
+          if (q > 0.5) {
+            this.ringFx(t, "sp_axodrake_burst", once, [GLOW_BUBBLE, BUBBLE, GLOW_DOT], 12, 18, 10, 24, 0.9);
+          }
+        } else {
+          Object.assign(pose, { jump: 8 * (1 - (q - 0.66) / 0.34), face: "happy" });
+        }
+        break;
       case "bouldergrin": // throws its top stone at the opponent; a new one grows back
         if (q < 0.15) {
           Object.assign(pose, { body: "squash", face: "normal" });
@@ -2463,6 +2742,7 @@ export class PetScene {
   /** Stopped on the way: happy about a find, taking a rest, or held up by an opponent. */
   private static pausing(trip: TripView): boolean {
     return (trip.event === "find" && trip.event_age < FIND_SHOW)
+      || (trip.event === "fish" && trip.event_age < FISH_SHOW)
       || (trip.event === "rest" && trip.event_age < REST_SECONDS) || PetScene.meeting(trip);
   }
 
@@ -2975,6 +3255,29 @@ export class PetScene {
     });
   }
 
+  /** Lightclaw's beam: a cone of light out of its lamp, widening and fading with the distance. */
+  private drawBeam(img: Image, cx: number, cy: number, reach: number, slope: number): void {
+    const side = Math.sign(reach);
+    const length = Math.abs(Math.round(reach));
+    for (let r = 2; r <= length; r++) {
+      const strength = 0.95 - 0.6 * r / (length + 4); // the light lies over what is behind it
+      const half = r / 6;
+      for (let h = -Math.floor(half); h <= Math.floor(half); h++) {
+        const [px, py] = [cx + side * r, cy + h + Math.round(r * slope)];
+        if (px >= 0 && px < img.width && py >= 0 && py < img.height) {
+          const i = (py * img.width + px) * 4;
+          const under: Color = [img.data[i], img.data[i + 1], img.data[i + 2]];
+          img.point(px, py, lerp(under, BEAM, strength * (1 - 0.6 * Math.abs(h) / (half + 1))));
+        }
+      }
+    }
+    if (length < 4) { // it shines straight out at us: the lamp flares up
+      for (const [dx, dy] of [[0, -2], [-2, 0], [2, 0], [0, 2], [-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+        img.point(cx + dx, cy + dy, BEAM);
+      }
+    }
+  }
+
   /** Left edge of an opponent standing in the pet's way. */
   private static foePlace(name: string): number {
     return battle.isGuardian(name) ? GUARDIAN_X : FOE_X;
@@ -2999,7 +3302,8 @@ export class PetScene {
         bubblehelm: ANCHOR, hippula: BAT, acewing: SONIC_RING,
         mothmuff: DUST_PUFF, sunflutter: POLLEN, jesterwing: CONFETTI, digby: CLOD, barrelbard: SNOW_CHUNK,
         pawdini: CIRCUS_BALL, rotorfly: GUST, jewelwing: JEWEL, prismfly: LIGHT_DOT, dambert: LOG, timberjack: WOOD_CHIP,
-        archibeaver: BRANCH,
+        archibeaver: BRANCH, teacrab: TEA_SPLASH, lightclaw: BEACON_GLINT, castlecrab: [MOAT_SPRAY, SAND],
+        mossolotl: MOSS_TUFT, medilotl: [HEART, PLASTER], axodrake: GLOW_BUBBLE,
       } as Record<string, Bitmap | readonly Bitmap[]>)[view.species] ?? SPARK;
       const many = (sprite as readonly unknown[]).every((part) => Array.isArray(part) && Array.isArray(part[0]));
       for (let i = 0; i < 10; i++) {
@@ -3056,6 +3360,19 @@ export class PetScene {
     } else if (trip.event === "find") {
       this.cheer(pose, t);
       pose.found = trip.item;
+    } else if (trip.event === "fish") {
+      // sits by the water with its rod; when the bobber dips, it pulls out what it brings home
+      this.facing = 1;
+      if (trip.event_age < FISH_BITE) {
+        pose.face = Math.trunc(t) % 4 === 0 ? "blink" : "smile";
+        pose.rod = [Math.round(this.x) + SPRITE + 4, GROUND, false];
+      } else if (trip.event_age < FISH_BITE + 0.6) {
+        Object.assign(pose, { face: "eat_open", body: "stretch" });
+        pose.rod = [Math.round(this.x) + SPRITE + 4, GROUND, true];
+      } else {
+        this.cheer(pose, t);
+        pose.found = trip.item;
+      }
     } else {
       pose.face = Math.trunc(t) % 4 === 0 ? "blink" : "smile"; // rest: sits and looks around
     }
@@ -3098,6 +3415,38 @@ export class PetScene {
     }
     this.targetX = this.x;
     return pose;
+  }
+
+  /**
+   * Fishing at the pond: it hops over and casts; the bobber rocks on the water until it dips under
+   * at the moment model.fish judges the tap against (activity_item: the seconds until the bite, ""
+   * if nothing bites). Then it holds up its catch, or flops down with nothing.
+   */
+  private fish(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
+    const slot = (view.deco ?? []).slice(0, DECO_X.length).indexOf("pond");
+    const pond = DECO_X[slot] ?? DECO_X[0];
+    const e = this.elapsed(view, now);
+    const activity = view.activity;
+    if (activity === "fish_catch") {
+      this.cheer(pose, t);
+      this.burst(view, SPARK, 10, 22);
+      pose.found = view.activity_item || null;
+    } else if (activity === "fish_empty") {
+      Object.assign(pose, view.activity_item === "early"
+        ? { body: "flat", face: "no", symbol: QUESTION } : { body: "squash", face: "sad" });
+    } else if (this.moveTowards(pond - FISH_STAND, THROW_SPEED, dt)) {
+      this.hop(pose, t, 3.5);
+      pose.face = "happy";
+    } else {
+      this.facing = 1;
+      const bite = view.activity_item ? Number(view.activity_item) : null;
+      const under = bite !== null && e >= bite && e < bite + fishing.BITE_WINDOW;
+      const missed = bite !== null && e >= bite + fishing.BITE_WINDOW;
+      pose.face = under ? "eat_open" : missed ? "sad" : Math.trunc(t) % 5 === 0 ? "blink" : "normal";
+      pose.body = under && Math.trunc(t * 6) % 2 ? "stretch" : "idle";
+      pose.rod = [pond - 1, GROUND + 1 - this.sheet("trip").image("pond").height + FISH_WATER, under];
+    }
+    this.targetX = this.x;
   }
 
   /** Hops over to the plant and eats the ripe fruit. */
@@ -3333,6 +3682,22 @@ export class PetScene {
   /** Stand something on the ground, centered at cx. */
   private stand(img: Image, sprite: Image, cx: number, lift = 0): void {
     img.paste(sprite, cx - Math.floor(sprite.width / 2), GROUND + 1 - sprite.height - lift);
+  }
+
+  /** The rod held up in front of the pet, the line down to the bobber, and the bobber rocking on the water or under it. */
+  private drawRod(img: Image, x: number, top: number, [bx, by, under]: [number, number, boolean], t: number): void {
+    const tip: [number, number] = [x + SPRITE, top - 3];
+    line(img, [x + SPRITE - 8, top + 10], tip, ROD);
+    const bob = under ? 1 : Math.round(Math.sin(t * 2.5) * 0.6);
+    line(img, tip, [bx, by - 1 + bob], FISHING_LINE);
+    if (under) {
+      const wide = Math.trunc(t * 6) % 2;
+      img.point(bx - 1 - wide, by, RIPPLE);
+      img.point(bx + 1 + wide, by, RIPPLE);
+    } else {
+      const bobber = this.sheet("trip").image("bobber");
+      img.paste(bobber, bx - Math.floor(bobber.width / 2), by - bobber.height + 2 + bob);
+    }
   }
 
   /** The opponent, and during a scuffle how much both of them still have in them. */

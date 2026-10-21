@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 
 import * as battle from "../src/battle";
+import * as fishing from "../src/fishing";
 import * as food from "../src/food";
 import * as home from "../src/home";
 import * as model from "../src/model";
@@ -25,11 +26,12 @@ function runUntil(when: number): void {
   model.advance(pet, when, BEDTIME);
 }
 
-test("every area has one food, and every food is found somewhere", () => {
+test("every area has one food, and every food is found or caught somewhere", () => {
   for (const area of trip.AREAS) {
     assert.equal(trip.FINDS[area].filter(([item]) => food.isFood(item)).length, 1, area);
   }
-  const found = trip.AREAS.flatMap((area) => trip.FINDS[area].map(([item]) => item));
+  const found = [...trip.AREAS.flatMap((area) => trip.FINDS[area].map(([item]) => item)),
+    ...Object.values(fishing.CATCHES).flatMap((catches) => catches.map(([item]) => item))];
   for (const item of Object.keys(food.FOODS)) {
     assert.equal(home.kindOf(item), "food");
     assert.ok(found.includes(item), item);
