@@ -139,7 +139,7 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
  * one day (record): each food from the bag (`food_<name>`), fruits it picked off the plant itself
  * (`plant_fruits`), trips to each area (`trips_<area>`) and trips with rain on the way
  * (`rain_trips`), scuffles in which it was never knocked over (`clean_battles`), guardians it got
- * past for the first time (`guardians`), guessing games played and won (`games`, `games_won`),
+ * past for the first time (`guardians`), games of hide and seek played and won (`games`, `games_won`),
  * evenings it was tucked in by hand (`tucked`) and minutes with its health below WEAK_HEALTH
  * (`weak_minutes`).
  */

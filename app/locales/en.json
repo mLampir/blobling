@@ -201,7 +201,6 @@
     "egg_beak": "Beak egg"
   },
   "pack": {
-    "snack": "Snack",
     "ball": "Ball"
   },
   "plants": {
@@ -223,7 +222,7 @@
       "full": "{name} is full.",
       "tired": "{name} is too tired to play.",
       "tired_trick": "{name} is too tired to practice.",
-      "rest_trick": "{name} needs a short break before the next trick.",
+      "rest_trick": "{name} needs a break before the next trick.",
       "already_asleep": "{name} is already asleep.",
       "not_tired": "{name} isn't tired yet.",
       "awake": "{name} is already awake.",
@@ -247,7 +246,7 @@
       "unpack_first": "Unpack the backpack first.",
       "nothing_packed": "The backpack is empty.",
       "tired_train": "{name} is too tired to train.",
-      "rest_train": "{name} needs a short break before the next exercise.",
+      "rest_train": "{name} needs a break before the next exercise.",
       "no_training": "Too late – that exercise is over.",
       "no_nest": "There's no egg in the nest.",
       "no_gift": "There's no gift lying there.",
@@ -255,7 +254,9 @@
       "inside": "{name} is asleep in the house.",
       "boost_waiting": "{name} still has the last one in its tummy.",
       "nothing_found": "There's nothing lying there.",
-      "dislikes": "{name} turns its head away – not that one!"
+      "dislikes": "{name} turns its head away – not that one!",
+      "not_in_bag": "That isn't in the bag any more.",
+      "pack_full": "Only two things fit into the backpack."
     },
     "notify": {
       "channel": "When your pet needs you",
@@ -288,18 +289,12 @@
       "play": "Watch again",
       "against": "Scuffle with {foe} …"
     },
-    "collect": "🥚 Collect the egg",
     "collected": "{egg} collected – it's with your finds now",
-    "unwrap": "🎁 Unwrap the gift",
     "unwrapped_fruit": "Inside: {fruit}. The bag was full, so {name} ate it straight away",
-    "pickup": "👐 Pick up: {thing}",
     "picked_fruit": "Picked up: {fruit}. The bag was full, so {name} ate it straight away",
     "boost": {
-      "heart": "Yum! {name} gets one extra heart on its next trip.",
       "trick": "{name} feels clever: the next trick practice counts double.",
-      "train": "{name} feels strong: the next exercise counts double.",
-      "finder": "{name}'s eyes are shining: on its next trip it finds something at every stop.",
-      "fresh": "{name} is full of beans: the next trip won't tire it out."
+      "train": "{name} feels strong: the next exercise counts double."
     },
     "rename": "✎ Rename",
     "rename_prompt": "New name",
@@ -335,7 +330,7 @@
       "bag": "Bag"
     },
     "tools": {
-      "game": "Guess",
+      "game": "Hide & seek",
       "tricks": "Tricks",
       "train": "Train"
     },
@@ -344,25 +339,19 @@
     },
     "cooled": "{name} has cooled down",
     "trick": {
-      "note": "Watch the display to see how it goes. Practice works best spread over several days.",
       "learned": "{name} learned a new trick: {trick}! 🎉",
       "known": "{trick}! ⭐",
       "fail": "{trick}: not quite yet",
       "ok": "{trick}: that looked pretty good!",
-      "unknown": "{name} doesn't know that move.",
-      "hint": "Take the baton from the tray and draw the move over the pet."
+      "unknown": "{name} doesn't know that move."
     },
     "game": {
-      "left": "left",
-      "right": "right",
-      "ask": "Which way will it jump?",
-      "jumped": "It jumped {side} – {result}",
-      "hit": "you got it! ✓",
-      "miss": "missed ✗",
-      "round": "Round {round} of {rounds} · {wins} right",
-      "result": "{result} of {rounds} right –\n{verdict}",
-      "won": "you win! 🎉",
-      "lost": "better luck next time!"
+      "miss": "Not there ✗",
+      "pet": "Found it! ✓",
+      "guest": "Found one! ✓",
+      "found": "{found} of {hiding} found",
+      "won": "Found everybody! 🎉",
+      "lost": "Nobody there – it wins this time!"
     },
     "dialog": {
       "cancel": "Cancel",
@@ -419,7 +408,7 @@
       "trip_home": "I came back home with a full backpack.",
       "trip_tired": "I got tired and turned back.",
       "trip_beaten": "I'd had enough and turned back.",
-      "trip_snack": "I ate my snack on the way and felt better.",
+      "trip_snack": "I had a bite from my backpack on the way and felt better.",
       "evolve": {
         "hatched": "I hatched! Hello, world!",
         "child": "I've grown – now I'm a {species}!",
@@ -538,11 +527,11 @@
       "effects": {
         "growth": "eggs, babies and children grow faster",
         "snow": "it snows around the house",
-        "heart": "one more heart on the next trip",
+        "heart": "packed for a trip: one more heart",
         "trick": "the next trick practice counts double",
         "train": "the next exercise counts double",
-        "finder": "finds something at every stop of the next trip",
-        "fresh": "the next trip won't tire it out and brings home as much as the day's first"
+        "finder": "packed for a trip: finds something at every stop",
+        "fresh": "packed for a trip: won't tire it out, and brings home as much as the day's first"
       },
       "house": "🏠 {house}",
       "house_spots": {
@@ -573,7 +562,7 @@
       "away": "stayed at Grandma's",
       "grandma": "picked up from Grandma's",
       "new_egg": "a new egg arrived",
-      "start": "played “Left or right?”",
+      "start": "played hide and seek",
       "unpack": "unpacked the backpack",
       "wild_friend": "showed {pet} its tricks and made a friend 💛",
       "wild_shrug": "showed {pet} its tricks – {pet} wasn't impressed",
@@ -617,7 +606,7 @@
       "battle_lose": "Scuffle ({foe}): lost",
       "battle_draw": "Scuffle ({foe}): nobody gave in",
       "battle_ball": "{foe} ran after the ball",
-      "trip_snack": "ate its snack and felt better",
+      "trip_snack": "had a bite from the backpack and felt better",
       "trip_beaten": "had enough and turned back",
       "guardian": "got past the guardian: {foe} 🏆",
       "unlock": "knows a new way now: {area} 🗺",
@@ -633,7 +622,7 @@
       "meals": "Meals",
       "snacks": "From the bag",
       "plays": "Times played",
-      "game": "Left or right?",
+      "game": "Hide and seek",
       "game_value": "{games} games, {won} won",
       "tricks": "Tricks",
       "tricks_value": "{tricks} (practiced {n} times)",
@@ -703,7 +692,6 @@
     },
     "train": {
       "hint": "Pick an exercise",
-      "note": "Watch the display while you train. Training works best spread over several days.",
       "how": {
         "strength": "throw the ball",
         "speed": "react to the signal",
@@ -723,7 +711,6 @@
     "pack": {
       "where": "Where to?",
       "what": "What goes into the backpack?",
-      "note": "A snack heals a heart on the way, and a ball distracts an opponent (but not a guardian).",
       "locked": "The way there leads past the guardian: {area}.",
       "guardian": "A guardian is waiting at the end of this path.",
       "go": "Send it off"
@@ -750,10 +737,8 @@
       "tired": "Too tired",
       "too_young": "Still too little",
       "go": "Go",
-      "trip": "Pack the backpack and send it off to explore.",
-      "tricks": "{n} of {all} learned",
-      "train": "Strength, speed and smarts for the trips.",
-      "game": "Guess which way it jumps – a little game for two."
+      "areas": "{n} of {all} areas known",
+      "tricks": "{n} of {all} learned"
     },
     "values": {
       "weight": "Weight",

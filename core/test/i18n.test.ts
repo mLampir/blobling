@@ -51,7 +51,7 @@ test("everything the game names has a text", () => {
     ...trip.AREAS.flatMap((area) => ["name", "away", "trip"].map((part) => `areas.${area}.${part}`)),
     ...battle.SKILLS.flatMap((skill) => [`skills.${skill}`, `page.train.how.${skill}`]),
     ...Object.keys(battle.FOES).map((foe) => `foes.${foe}`),
-    ...trip.PACKABLE.map((thing) => `pack.${thing}`),
+    `pack.${trip.BALL}`,
   ];
   for (const key of keys) {
     assert.ok(key in english, key);

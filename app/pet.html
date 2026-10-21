@@ -209,7 +209,7 @@
   .wide.danger { border-color: var(--danger); color: var(--danger); }
   .wide.quiet { color: var(--muted); }
 
-  /* ---------- Panels: packing for a trip, tricks, training, the guessing game ----------
+  /* ---------- Panels: packing for a trip, tricks, training, hide and seek ----------
      They take the place of the needs and the tray, below the scene: the pet stays where it is,
      big and bright, and answers there. */
   .home.busy > .needs, .home.busy > .status, .home.busy > .tray { display: none; }
@@ -250,6 +250,7 @@
   .sheet small { color: var(--muted); font-size: 13px; }
   .close { position: absolute; right: 6px; top: 4px; width: 44px; height: 44px; font-size: 20px; color: var(--muted); }
   .say { min-height: 1.4em; font-weight: 700; }
+  .hearts { margin: 0; color: var(--mood); font-size: 1.2em; letter-spacing: .1em; }
   .tricks { list-style: none; margin: 0; padding: 0; width: 100%; max-width: 360px; text-align: left; }
   .tricks li { display: flex; gap: 12px; align-items: center; padding: 7px 4px; border-bottom: 1px solid var(--line); }
   .tricks li > span:first-child { font-size: 24px; width: 32px; text-align: center; }
@@ -280,6 +281,7 @@
   .choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
   .choices button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
   .choices button.on { border-color: var(--accent); color: var(--accent); }
+  #pack-things img, .steps img { width: 24px; height: 24px; image-rendering: pixelated; vertical-align: middle; }
   /* the areas of a trip, each with what there is to discover there and its guardian */
   #pack-areas { flex-direction: column; align-items: stretch; }
   #pack-areas .area { display: flex; align-items: center; gap: 10px; text-align: left; }
@@ -361,11 +363,7 @@
       <div class="actions">
         <button class="soft" id="recall" hidden data-t="page.recall"></button>
         <button class="soft" id="grandma" hidden data-t="page.grandma.fetch"></button>
-        <button class="soft" id="unpack" hidden data-t="page.unpack"></button>
         <button class="soft" id="watch" hidden></button>
-        <button class="soft" id="collect" hidden data-t="page.collect"></button>
-        <button class="soft" id="unwrap" hidden data-t="page.unwrap"></button>
-        <button class="soft" id="pickup" hidden></button>
       </div>
     </div>
     <div class="tray" id="tray">
@@ -376,7 +374,7 @@
       <button class="thing" data-thing="baton" data-action="trick" data-wand="1"><img alt=""><small data-t="page.things.baton"></small></button>
       <button class="thing" data-thing="medicine" data-action="medicine" data-helps="health" hidden><img alt=""><small data-t="page.things.medicine"></small></button>
     </div>
-    <!-- What goes on instead of the tray: the bag, tricks, training, the guessing game, packing -->
+    <!-- What goes on instead of the tray: the bag, tricks, training, hide and seek, packing -->
     <div class="sheet" id="bag-mode" hidden>
       <button class="close" id="bag-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.things.bag"></h3>
@@ -385,11 +383,11 @@
       <button class="thing" data-thing="fruit_sunflower" data-action="feed" data-item="fruit_sunflower" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="fruit_cherry" data-action="feed" data-item="fruit_cherry" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="fruit_herb" data-action="feed" data-item="fruit_herb" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="honeycomb" data-action="feed" data-item="honeycomb" data-boost="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="honeycomb" data-action="feed" data-item="honeycomb" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="hazelnut" data-action="feed" data-item="hazelnut" data-boost="1" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="watercress" data-action="feed" data-item="watercress" data-boost="1" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="glowberry" data-action="feed" data-item="glowberry" data-boost="1" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="pinenut" data-action="feed" data-item="pinenut" data-boost="1" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="glowberry" data-action="feed" data-item="glowberry" hidden><img alt=""><small></small></button>
+      <button class="thing" data-thing="pinenut" data-action="feed" data-item="pinenut" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="seed" data-action="plant" data-item="berry" data-seed="seed_berry" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="seed" data-action="plant" data-item="sunflower" data-seed="seed_sunflower" hidden><img alt=""><small></small></button>
       <button class="thing" data-thing="seed" data-action="plant" data-item="cherry" data-seed="seed_cherry" hidden><img alt=""><small></small></button>
@@ -401,9 +399,7 @@
     <div class="sheet" id="trick-mode" hidden>
       <button class="close" id="trick-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.tools.tricks"></h3>
-      <p data-t="page.trick.hint"></p>
       <ul class="tricks" id="tricks"></ul>
-      <small data-t="page.trick.note"></small>
     </div>
 
     <div class="sheet" id="train-mode" hidden>
@@ -415,19 +411,18 @@
       <button class="tap" id="train-tap" hidden data-t="page.train.tap"></button>
       <div class="steps" id="train-steps" hidden></div>
       <p class="say" id="train-say" aria-live="polite"></p>
-      <small id="train-note" data-t="page.train.note"></small>
       <button class="link" id="train-back" hidden data-t="page.train.back"></button>
     </div>
 
     <div class="sheet cover" id="pack-mode" hidden>
       <button class="close" id="pack-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.things.trip"></h3>
+      <p class="hearts" id="pack-hearts"></p>
       <p data-t="page.pack.where"></p>
       <div class="choices" id="pack-areas"></div>
       <p data-t="page.pack.what"></p>
       <div class="steps" id="pack-slots"></div>
       <div class="choices" id="pack-things"></div>
-      <small data-t="page.pack.note"></small>
       <p class="say" id="pack-say" aria-live="polite"></p>
       <button class="wide primary" id="pack-go" data-t="page.pack.go"></button>
     </div>
@@ -435,11 +430,7 @@
     <div class="sheet" id="game" hidden>
       <button class="close" id="game-close" data-t-aria="page.close_game">✕</button>
       <h3 data-t="page.tools.game"></h3>
-      <p id="game-info"></p>
-      <div class="halves">
-        <button data-move="left">◀<small data-t="page.game.left"></small></button>
-        <button data-move="right">▶<small data-t="page.game.right"></small></button>
-      </div>
+      <p id="game-info" aria-live="polite"></p>
     </div>
   </section>
 
@@ -632,7 +623,13 @@ const PLANT_ICONS = { berry: "🫐", sunflower: "🌻", cherry: "🍒", herb: "�
 // Seeds: a tap switches the kind. The trip: where to and what comes along
 const choice = { trip: null };
 const packed = [];
-const PACK_ICONS = { snack: "🍪", ball: "⚽" };
+// The picture of something in the backpack: the ball, or a thing to eat from the bag
+function packPicture(id) {
+  const img = document.createElement("img");
+  img.alt = "";
+  img.src = app.thing(id);
+  return img;
+}
 // Battle stats: symbol and color of the bar
 const SKILL_ICONS = { strength: ["💪", "#ff8a5a"], speed: ["⚡", "#ffdc3c"], smarts: ["🧠", "#b48cff"] };
 const ARROWS = { left: "←", right: "→", up: "↑", down: "↓" };
@@ -900,6 +897,14 @@ function onHouse(x, y) {
   const [u, v] = inScene(x, y), [ax, ay, aw, ah] = current.house.area;
   return u >= ax && u <= ax + aw && v >= ay && v <= ay + ah;
 }
+// What is lying in the scene at a point: "nest", "gift", "found" or null
+function lyingAt(x, y) {
+  if (!current || !current.lying || current.trip) return null;
+  const [u, v] = inScene(x, y), m = 0.02;
+  const hit = Object.entries(current.lying).find(([, [ax, ay, aw, ah]]) =>
+    u >= ax - m && u <= ax + aw + m && v >= ay - m && v <= ay + ah + m);
+  return hit ? hit[0] : null;
+}
 function overHero(x, y) {
   const r = $("hero").getBoundingClientRect();
   return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
@@ -967,7 +972,8 @@ function render(s) {
     const found = s.trip.found.map((id) => s.item_labels[id] || id).join(", ");
     // hearts: a lost scuffle costs one; next to them, what is still in the backpack from home
     $("trip-info").textContent = t(s.trip.returning ? "page.trip.returning" : "page.trip.out", { time: inTime(s.trip.end - s.now) })
-      + ` · ${"♥".repeat(s.trip.hearts)}${s.trip.pack.map((id) => PACK_ICONS[id]).join("")}`
+      + ` · ${"♥".repeat(s.trip.hearts)}`
+      + (s.trip.pack.length ? ` · ${s.trip.pack.map((id) => s.item_labels[id] || t("pack.ball")).join(", ")}` : "")
       + (found ? ` · ${t("page.trip.backpack", { items: found })}` : "");
     $("recall").disabled = s.trip.end - s.now <= 300;
   } else if (s.backpack) {
@@ -981,22 +987,10 @@ function render(s) {
     $("trip-info").textContent = t("page.grandma.info", { name: s.name });
   }
   $("grandma").hidden = !s.grandma;
-  $("unpack").hidden = !s.backpack;
-  $("unpack").disabled = !s.actions.unpack;
   // the scuffles of the last trip, until they have been watched or the next trip sets off
   const fights = s.trip ? [] : lastFights(s);
   $("watch").hidden = !fights.length || stored("watched") === String(s.last_trip);
   $("watch").textContent = tn("page.replay.watch", fights.length);
-  // an egg is lying in the nest
-  $("collect").hidden = !s.nest;
-  $("collect").disabled = !s.actions.collect;
-  // a friend has left a gift
-  $("unwrap").hidden = !s.gift;
-  $("unwrap").disabled = !s.actions.unwrap;
-  // it found something at home by itself
-  $("pickup").hidden = !s.found;
-  $("pickup").disabled = !s.actions.pickup;
-  if (s.found) $("pickup").textContent = t("page.pickup", { thing: giftLabel(s.found) });
 
   // The tray: an egg can only be kept warm (by stroking it)
   $("tray").hidden = egg;
@@ -1064,15 +1058,19 @@ function renderAdventures(s) {
   const why = (a, energy) => s.trip ? t("page.adventure.away") : s.asleep ? t("page.status.asleep")
     : energy && !s.actions[a] ? t("page.adventure.tired") : "";
   const cards = egg ? [] : [
-    { id: "trip", color: "var(--hygiene)", title: t("page.things.trip"), text: t("page.adventure.trip"),
+    { id: "trip", color: "var(--hygiene)", title: t("page.things.trip"),
+      text: `${tripHearts(s)} · ${t("page.adventure.areas",
+        { n: s.areas.filter((a) => a.unlocked).length, all: s.areas.length })}`,
       ok: s.actions.trip, tag: s.trip ? t("page.adventure.away") : s.stage === "baby" ? t("page.adventure.too_young")
         : s.backpack ? t("page.unpack") : why("trip") || t("page.adventure.go") },
     { id: "trick", color: "var(--energy)", title: t("page.tools.tricks"),
       text: t("page.adventure.tricks", { n: s.tricks.filter((x) => x.learned).length, all: s.tricks.length }),
       ok: s.actions.trick, tag: why("trick", true) || t("page.adventure.go") },
-    { id: "train", color: "var(--satiety)", title: t("page.tools.train"), text: t("page.adventure.train"),
+    { id: "train", color: "var(--satiety)", title: t("page.tools.train"),
+      text: s.skills.map((skill) => `${SKILL_ICONS[skill.id][0]} ${Math.floor(skill.value)}`).join(" · "),
       ok: s.actions.train, tag: why("train", true) || t("page.adventure.go") },
-    { id: "game", color: "var(--mood)", title: t("page.tools.game"), text: t("page.adventure.game"),
+    { id: "game", color: "var(--mood)", title: t("page.tools.game"), text: t("page.statistics.game_value",
+      { games: s.counters?.games || 0, won: s.counters?.games_won || 0 }),
       ok: s.actions.game, tag: why("game", true) || t("page.adventure.go") },
   ];
   $("adventures").replaceChildren(...cards.map((c) => {
@@ -1095,6 +1093,7 @@ $("adventures").addEventListener("click", (e) => {
   if (id === "trip") {
     if (current.stage === "baby") return say(t("pet.rejected.too_young", { name: current.name }));
     if (current.trip) return say($("trip-info").textContent);
+    if (current.backpack) return unpack().then(() => showView("home"));
     return openPack();
   }
   if (id === "game") return act("game", "start").then((r) => { if (r && r.accepted) showView("home"); });
@@ -1104,10 +1103,17 @@ $("adventures").addEventListener("click", (e) => {
 
 // Sheets: one at a time, over the lower part, with the scene in sight (packing: the whole screen)
 function openSheet(id) {
+  if (id !== "trick-mode" && !$("trick-mode").hidden) holdBaton(false); // the tricks list hands the baton back
   document.querySelectorAll(".sheet").forEach((sheet) => { sheet.hidden = sheet.id !== id; });
   $("view-home").classList.toggle("busy", !!id);
   $("view-home").classList.toggle("cover", !!id && $(id).classList.contains("cover"));
   if (id) showView("home");
+}
+
+// The hearts it would set off with now, out of the usual three
+function tripHearts(s, more = 0) {
+  const n = s.trip_hearts + more;
+  return "♥".repeat(n) + "♡".repeat(Math.max(0, 3 - n));
 }
 
 // Packing: the destination, and up to max_pack things that help on the way
@@ -1118,6 +1124,10 @@ function openPack() {
 
 function renderPack() {
   const s = current, area = picked(s, "trip");
+  for (let i = packed.length - 1; i >= 0; i--) {
+    const thing = s.packable.find((x) => x.id === packed[i]);
+    if (!thing || packed.filter((id) => id === packed[i]).length > thing.count) packed.splice(i, 1);
+  }
   // An area opens up once the pet has got past the guardian of the one before
   const going = area && s.areas.find((a) => a.id === area[0]);
   $("pack-say").textContent = going && going.guardian ? t("page.pack.guardian") : "";
@@ -1161,7 +1171,7 @@ function renderPack() {
   // Slots: a tap takes the thing out again
   $("pack-slots").replaceChildren(...Array.from({ length: s.max_pack }, (_, i) => {
     const b = document.createElement("button");
-    b.textContent = PACK_ICONS[packed[i]] || "";
+    b.replaceChildren(...(packed[i] ? [packPicture(packed[i])] : []));
     b.classList.toggle("on", i < packed.length);
     b.disabled = i >= packed.length;
     b.addEventListener("click", () => {
@@ -1172,14 +1182,18 @@ function renderPack() {
   }));
   $("pack-things").replaceChildren(...s.packable.map((thing) => {
     const b = document.createElement("button");
-    b.textContent = `${PACK_ICONS[thing.id] || ""} ${thing.label}`;
-    b.disabled = packed.length >= s.max_pack;
+    b.replaceChildren(packPicture(thing.id), ` ${thing.label}`);
+    if (thing.id === s.disliked_food) b.append(" ✕"); // it won't eat that on the way either
+    b.disabled = packed.length >= s.max_pack || packed.filter((id) => id === thing.id).length >= thing.count;
     b.addEventListener("click", () => {
       packed.push(thing.id);
       renderPack();
     });
     return b;
   }));
+  // the hearts it would set off with: feeding it first can make one more
+  // a honeycomb packed is one heart more right away
+  $("pack-hearts").textContent = tripHearts(s, packed.includes("honeycomb") ? 1 : 0);
   $("pack-go").disabled = !s.actions.trip;
 }
 $("pack-close").addEventListener("click", () => openSheet(null));
@@ -1300,11 +1314,10 @@ function renderGame(s) {
   const active = !!(game && game.active);
   if (!active) gameDismissed = false;
   if (active && !gameDismissed) {
-    const last = game.last ? game.last.split(":") : null;
-    $("game-info").textContent = (last
-      ? t("page.game.jumped", { side: t(`page.game.${last[0]}`), result: t(`page.game.${last[1]}`) }) : t("page.game.ask"))
-      + "\n" + t("page.game.round", { round: game.round + 1, rounds: game.rounds, wins: game.wins });
-    document.querySelectorAll("[data-move]").forEach((b) => { b.disabled = false; });
+    const last = game.last ? game.last.split(":")[1] : null;
+    const left = "🔍".repeat(Math.max(0, game.rounds - game.round));
+    $("game-info").textContent = (last ? t(`page.game.${last}`) + "\n" : "")
+      + (game.hiding > 1 ? t("page.game.found", { found: game.found.length, hiding: game.hiding }) + " · " : "") + left;
     if ($("game").hidden) openSheet("game");
   } else if (!$("game").hidden && Date.now() >= gameHold) {
     openSheet(null);
@@ -1477,7 +1490,7 @@ function welcome(s) {
 
 function renderEvents(events) {
   let day, last;
-  // Single guesses in the mini-game stay out of the history (only the start counts),
+  // Single looks in hide and seek stay out of the history (only the start counts),
   // and so do the tap and the answer that belong to an exercise
   events = events.filter((e) => !(e.action === "game" && e.item !== "start")
     && !(e.action === "train" && !(e.item in SKILL_ICONS)));
@@ -1786,6 +1799,19 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
   });
   const end = (e) => {
     if (!stroke || e.pointerId !== stroke.id) return;
+    // hide and seek: a tap looks behind the spot nearest to it
+    if (stroke.way < 8 && current.game && current.game.active && current.game.spots) {
+      stroke = null;
+      seekAt(e.clientX, e.clientY);
+      return;
+    }
+    // a tap on the egg, a gift or what it found takes it; on the pet with its backpack, unpacks it
+    const lying = stroke.way < 8 && lyingAt(e.clientX, e.clientY);
+    if (lying || (stroke.way < 8 && current.backpack && !current.trip && onPet(e.clientX, e.clientY))) {
+      stroke = null;
+      (lying ? TAKE[lying] : unpack)();
+      return;
+    }
     // a tap on the house looks inside for a moment
     if (stroke.way < 8 && onHouse(e.clientX, e.clientY) && !(area && onPet(e.clientX, e.clientY))) {
       stroke = null;
@@ -1925,11 +1951,11 @@ function tapThing(b) {
 // shown if the pet knows it), and stroking waits until it is put back.
 
 let baton = false;
-function holdBaton(on) {
+function holdBaton(on, quiet = false) {
   baton = on && !!current;
   document.querySelector(".thing[data-wand]").classList.toggle("on", baton);
   $("hero").classList.toggle("wand", baton);
-  if (baton) say(t("page.hint.baton", { name: current.name }));
+  if (baton && !quiet) say(t("page.hint.baton", { name: current.name }));
 }
 {
   const hero = $("hero");
@@ -2126,7 +2152,8 @@ async function askTwins() {
   refresh();
 }
 
-$("unpack").addEventListener("click", async () => {
+// What is lying in the scene is taken with a tap on it (the backpack with a tap on the pet)
+async function unpack() {
   const before = current ? current.items.map((x) => x.id + x.count) : [];
   const eggs = current ? current.eggs.length : 0;
   const r = await act("unpack");
@@ -2134,12 +2161,12 @@ $("unpack").addEventListener("click", async () => {
   const got = [...r.state.items.filter((x) => !before.includes(x.id + x.count)), ...r.state.eggs.slice(eggs)]
     .map((x) => x.label);
   say(got.length ? t("page.trip.brought", { items: got.join(", ") }) : "");
-});
-$("collect").addEventListener("click", async () => {
+}
+async function collect() {
   const egg = current && current.nest;
   const r = await act("collect");
   if (r && r.accepted && egg) say(t("page.collected", { egg: egg.label }));
-});
+}
 // A gift or something found at home goes into the bag; a fruit that doesn't fit any more is eaten
 function intoBag(r, bagged, eaten) {
   const thing = r && r.accepted ? r.state.activity_item : "";
@@ -2149,14 +2176,15 @@ function intoBag(r, bagged, eaten) {
   else say(t(eaten, { fruit: giftLabel(thing), name: r.state.name }));
 }
 let before = null;
-$("unwrap").addEventListener("click", async () => {
+async function unwrap() {
   before = current;
   intoBag(await act("unwrap"), "page.unwrapped_bag", "page.unwrapped_fruit");
-});
-$("pickup").addEventListener("click", async () => {
+}
+async function pickup() {
   before = current;
   intoBag(await act("pickup"), "page.picked_bag", "page.picked_fruit");
-});
+}
+const TAKE = { nest: collect, gift: unwrap, found: pickup };
 $("grandma").addEventListener("click", () => act("grandma"));
 $("recall").addEventListener("click", async () => {
   const r = await act("trip", "recall");
@@ -2195,9 +2223,11 @@ function gesture(trail) {
   return null;
 }
 
-// What it knows and how far it has got; tricks are shown with the baton from the tray
+// What it knows and how far it has got. While the list is open the baton is in the hand, so a
+// move drawn over the pet is tried at once.
 function openTricks() {
   openSheet("trick-mode");
+  if (!document.querySelector(".thing[data-wand]").disabled) holdBaton(true, true);
 }
 $("trick-close").addEventListener("click", () => openSheet(null));
 
@@ -2215,7 +2245,7 @@ let openTraining;
     stage = next;
     clearTimeout(goTimer);
     $("train-hint").textContent = hint || t("page.train.hint");
-    $("skills").hidden = $("train-note").hidden = next !== "menu";
+    $("skills").hidden = next !== "menu";
     $("train-back").hidden = next === "menu";
     ball.hidden = next !== "strength";
     $("train-tap").hidden = next !== "speed";
@@ -2388,17 +2418,23 @@ let openTraining;
   b.addEventListener("pointercancel", release);
 }
 
-// ---------- Mini-game ----------
+// ---------- Hide and seek ----------
 
-document.querySelectorAll("[data-move]").forEach((b) => b.addEventListener("click", async () => {
-  document.querySelectorAll("[data-move]").forEach((x) => { x.disabled = true; });
+let seeking = false;
+async function seekAt(x, y) {
+  if (seeking) return;
+  const u = inScene(x, y)[0];
+  const spot = current.game.spots.reduce((a, b) => Math.abs(b.x - u) < Math.abs(a.x - u) ? b : a);
+  seeking = true;
   try {
-    const r = await action("game", b.dataset.move);
+    const r = await action("game", spot.id);
     const g = r.state.game;
+    const who = g && g.last ? g.last.split(":")[1] : null;
+    feel(who === "miss" ? "no" : "tap");
     if (g && !g.active && "result" in g) {
       // Leave the result up for a moment, then go back
       gameHold = Date.now() + 3500;
-      $("game-info").textContent = t("page.game.result", { result: g.result, rounds: g.rounds, verdict: t(g.won ? "page.game.won" : "page.game.lost") });
+      $("game-info").textContent = t(g.won ? "page.game.won" : "page.game.lost");
       feel(g.won ? "great" : "lost");
       setTimeout(() => current && renderGame(current), 3600);
     }
@@ -2406,9 +2442,10 @@ document.querySelectorAll("[data-move]").forEach((b) => b.addEventListener("clic
     if (!r.accepted) { say(r.message); feel("no"); }
   } catch (err) {
     fail(err);
-    document.querySelectorAll("[data-move]").forEach((x) => { x.disabled = false; });
+  } finally {
+    seeking = false;
   }
-}));
+}
 
 $("game-close").addEventListener("click", () => {
   gameDismissed = true;  // the game runs out by itself

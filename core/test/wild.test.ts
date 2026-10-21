@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 
 import * as care from "../src/care";
+import * as food from "../src/food";
 import * as home from "../src/home";
 import * as life from "../src/life";
 import * as model from "../src/model";
@@ -105,6 +106,32 @@ test("a strong bond gets one try more", () => {
   assert.ok(strong.every((s) => s.rounds.length === wild.SHOW + 1));
   const friends = (shows: ReturnType<typeof tries>) => shows.filter((s) => s.outcome === "friend").length;
   assert.ok(friends(strong) > friends(weak) + 20, `${friends(weak)} → ${friends(strong)}`);
+});
+
+test("a present it likes and a game of ball count as tricks that worked", () => {
+  // it knows no trick at all, so only what it offers can impress
+  const shown = wild.show(pet, "sneezle", new Random(1), start, ["gift:fruit_herb", "ball"]);
+  assert.deepEqual(shown.rounds.slice(0, 2), [["gift:fruit_herb", true], ["ball", true]]);
+  assert.equal(shown.rounds.length, 2 + wild.SHOW);
+  assert.equal(shown.outcome, "friend");
+});
+
+test("on a trip, the pet offers a wild pet its favorite and the ball from the backpack", () => {
+  pet.items = { [food.TASTES.sneezle[0]]: 1, fruit_cherry: 1 };
+  withRules(wild.rules, { meetChance: 1.0 }, () => {
+    act(pet, "trip", start, { item: "meadow", value: [food.TASTES.sneezle[0], "ball"] });
+    const stations = pet.trip!.stations;
+    let t = start;
+    // the first wild pet it meets: it gives the present only to one that likes it
+    while (!pet.trip!.last || pet.trip!.last.kind !== "wild") {
+      t = stations[pet.trip!.next] + 60;
+      runUntil(t);
+    }
+    const last = pet.trip!.last!;
+    const offered = last.rounds!.map(([thing]) => thing).filter((thing) => thing === "ball" || String(thing).startsWith("gift:"));
+    assert.deepEqual(offered, last.wild === "sneezle" ? [`gift:${food.TASTES.sneezle[0]}`, "ball"] : ["ball"]);
+    assert.ok(last.wild !== "sneezle" || last.outcome === "friend"); // two that worked, without a trick
+  });
 });
 
 test("meeting a wild pet on a trip", () => {

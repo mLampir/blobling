@@ -85,36 +85,42 @@ test("every form has a favorite and something it won't eat, and both show once t
 });
 
 test("food from trips: a little filling and a boost that doesn't add up", () => {
-  pet.items.honeycomb = 2;
-  assert.deepEqual(act(pet, "feed", start, { item: "honeycomb" }), [true, null]);
-  assert.equal(pet.items.honeycomb, 1);
-  assert.deepEqual(pet.boosts, ["heart"]);
+  pet.items.hazelnut = 2;
+  assert.deepEqual(act(pet, "feed", start, { item: "hazelnut" }), [true, null]);
+  assert.equal(pet.items.hazelnut, 1);
+  assert.deepEqual(pet.boosts, ["trick"]);
   assert.equal(pet.stats.satiety, 60 + food.SATIETY);
-  // while the heart is waiting, another honeycomb is refused
-  assert.deepEqual(act(pet, "feed", start + 60, { item: "honeycomb" }), [false, "boost_waiting"]);
-  assert.equal(pet.items.honeycomb, 1);
-  pet.items.hazelnut = 1;
-  assert.deepEqual(act(pet, "feed", start + 200, { item: "hazelnut" }), [true, null]);
-  assert.deepEqual(pet.boosts, ["heart", "trick"]);
+  // while the boost is waiting, another hazelnut is refused
+  assert.deepEqual(act(pet, "feed", start + 60, { item: "hazelnut" }), [false, "boost_waiting"]);
+  assert.equal(pet.items.hazelnut, 1);
+  // food that works from the backpack is plain food at home: no boost
+  pet.items.honeycomb = 1;
+  assert.deepEqual(act(pet, "feed", start + 200, { item: "honeycomb" }), [true, null]);
+  assert.deepEqual(pet.boosts, ["trick"]);
   // not in its sleep
   pet.items.watercress = 1;
   pet.asleep = true;
   assert.deepEqual(act(pet, "feed", start + 300, { item: "watercress" }), [false, "asleep"]);
 });
 
-test("honeycomb: one more heart on the next trip", () => {
+test("honeycomb: packed, one more heart on the trip", () => {
   const usual = trip.startHearts(pet);
-  pet.boosts = ["heart"];
-  assert.deepEqual(act(pet, "trip", start, { item: "meadow" }), [true, null]);
+  pet.items.honeycomb = 1;
+  assert.deepEqual(act(pet, "trip", start, { item: "meadow", value: ["honeycomb"] }), [true, null]);
   assert.equal(pet.trip!.hearts, usual + 1);
-  assert.deepEqual(pet.boosts, []); // used up
+  assert.deepEqual([pet.trip!.pack, pet.items.honeycomb], [[], undefined]); // used up when it sets off
+  // one still waiting from before packing existed works too
+  const old = grown(start);
+  old.boosts = ["heart"];
+  act(old, "trip", start, { item: "meadow" });
+  assert.deepEqual([old.trip!.hearts, old.boosts], [usual + 1, []]);
 });
 
-test("glow berry: it finds something at every quiet stop", () => {
-  pet.boosts = ["finder"];
+test("glow berry: packed, it finds something at every quiet stop", () => {
+  pet.items.glowberry = 1;
   pet.guardians = ["meadow"]; // so that nobody is waiting at the end of the path
   withRules(trip.rules, { encounterChance: 0 }, () => {
-    act(pet, "trip", start, { item: "meadow" });
+    act(pet, "trip", start, { item: "meadow", value: ["glowberry"] });
     const stations = pet.trip!.stations.length;
     runUntil(start + 3 * HOUR);
     const finds = pet.events.filter((e) => e.action === "find").length;
@@ -130,10 +136,10 @@ test("pine cone: the next trip doesn't tire it and brings as much as the first o
   const second = start + 3 * HOUR + 60;
   assert.equal(trip.dayFactor(pet, second), 0.5);
   const tired = fromDict(toDict(pet) as unknown as Record<string, unknown>);
-  pet.boosts = ["fresh"];
+  pet.items.pinenut = 1;
   withRules(trip.rules, { encounterChance: 0 }, () => {
     for (const p of [pet, tired]) {
-      model.applyAction(p, "trip", second, BEDTIME, { item: "meadow" });
+      model.applyAction(p, "trip", second, BEDTIME, { item: "meadow", value: p === pet ? ["pinenut"] : [] });
     }
     assert.equal(pet.trip!.factor, 1.0);
     assert.equal(tired.trip!.factor, 0.5);

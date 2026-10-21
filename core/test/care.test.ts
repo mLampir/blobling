@@ -1,4 +1,4 @@
-// Weight, bond, snacks, the mini-game and tricks.
+// Weight, bond, snacks, hide and seek and tricks.
 
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
@@ -76,22 +76,70 @@ test("high bond keeps the mood up", () => {
   assert.ok(loved.stats.mood > pet.stats.mood);
 });
 
-test("game", () => {
-  assert.deepEqual(act(pet, "game", start, { item: "left" }), [false, "no_game"]);
+test("hide and seek: found at its spot", () => {
+  assert.deepEqual(act(pet, "game", start, { item: "grass" }), [false, "no_game"]);
   assert.equal(act(pet, "game", start, { item: "start" })[0], true);
   assert.equal(care.gameActive(pet, start + 1), true);
-  let hits = 0;
-  for (let i = 0; i < care.GAME_ROUNDS; i++) {
-    assert.equal(act(pet, "game", start + 10 + i, { item: "left" })[0], true);
-    const [jump, result] = pet.activity_item.split(":");
-    hits += result === "hit" ? 1 : 0;
-    assert.equal(result === "hit", jump === "left");
+  const [spot] = pet.game!.spots!;
+  assert.ok(care.hidingSpots(pet, []).includes(spot));
+  const wrong = care.hidingSpots(pet, []).find((other) => other !== spot)!;
+  assert.equal(act(pet, "game", start + 10, { item: wrong })[0], true);
+  assert.equal(pet.activity_item, `${wrong}:miss`);
+  assert.equal(care.gameActive(pet, start + 11), true);
+  act(pet, "game", start + 12, { item: spot });
+  assert.equal(pet.activity_item, `${spot}:pet`);
+  assert.equal(care.gameActive(pet, start + 13), false);
+  assert.equal(pet.game!.won, true);
+  assert.equal(pet.counters.games, 1);
+  assert.equal(pet.counters.games_won, 1);
+  assert.deepEqual(act(pet, "game", start + 30, { item: spot }), [false, "no_game"]);
+});
+
+test("hide and seek: three tries, and it never hides at the same spot twice in a row", () => {
+  act(pet, "game", start, { item: "start" });
+  const [spot] = pet.game!.spots!;
+  const wrong = care.hidingSpots(pet, []).find((other) => other !== spot)!;
+  for (let i = 0; i < care.HIDE_TRIES; i++) {
+    act(pet, "game", start + 10 + i, { item: wrong });
   }
   assert.equal(care.gameActive(pet, start + 20), false);
-  assert.equal(pet.game!.result, hits);
-  assert.equal(pet.counters.games, 1);
-  assert.equal(pet.counters.games_won ?? 0, hits >= care.GAME_WIN ? 1 : 0);
-  assert.deepEqual(act(pet, "game", start + 30, { item: "left" }), [false, "no_game"]);
+  assert.equal(pet.game!.won, false);
+  assert.equal(pet.counters.games_won ?? 0, 0);
+  act(pet, "game", start + 60, { item: "start" });
+  assert.notEqual(pet.game!.spots![0], spot);
+});
+
+test("hide and seek: a guest hides too, and there is a try more", () => {
+  act(pet, "game", start, { item: "start" });
+  assert.equal(pet.game!.spots!.length, 1);
+  act(pet, "game", start + 60, { item: "start", guest: true });
+  const [mine, theirs] = pet.game!.spots!;
+  assert.notEqual(mine, theirs);
+  assert.equal(care.tries(pet.game!), care.HIDE_TRIES + 1);
+  act(pet, "game", start + 70, { item: theirs });
+  assert.equal(pet.activity_item, `${theirs}:guest`);
+  assert.equal(care.gameActive(pet, start + 71), true);
+  act(pet, "game", start + 72, { item: theirs }); // found already: nobody there any more
+  assert.equal(pet.activity_item, `${theirs}:miss`);
+  act(pet, "game", start + 73, { item: mine });
+  assert.equal(pet.game!.won, true);
+});
+
+test("the spots: the house, the plant and the decorations bring their own", () => {
+  assert.deepEqual(care.hidingSpots(pet, []), ["left", "grass", "right"]);
+  pet.house = 1;
+  pet.plant = { kind: "fruit_herb", grown: 0, ripening: 0, left: 1 };
+  assert.deepEqual(care.hidingSpots(pet, ["gnome"]), ["house", "plant", "grass", "deco0"]);
+  assert.deepEqual(care.hidingSpots(pet, ["gnome", "lantern"]), ["house", "plant", "grass", "deco1", "deco0"]);
+  // an app from before hide and seek still sends left or right
+  assert.ok(model.GAME_MOVES.includes("left") && model.GAME_MOVES.includes("right"));
+});
+
+test("a smart pet keeps still longer", () => {
+  pet.skills.smarts = 0;
+  assert.equal(care.peekEvery(pet), care.PEEK_EVERY[0]);
+  pet.skills.smarts = 100;
+  assert.equal(care.peekEvery(pet), care.PEEK_EVERY[1]);
 });
 
 test("game needs energy and times out", () => {
@@ -132,11 +180,11 @@ test("a trick it knows can be shown any time, for free", () => {
   assert.equal(model.restLeft(pet, ["trick"], start + 3), 0);
 });
 
-test("trick practice in a row brings less and bond helps", () => {
-  for (const when of [0, 60, 240, 840]) { // each time right after the break
+test("every practice after the break counts in full, and bond helps", () => {
+  for (const when of [0, 120, 720, 2520]) { // each time right after the break
     assert.equal(act(pet, "trick", start + when, { item: "flip" })[0], true);
   }
-  near(pet.tricks.flip, (1 + 0.6 + 0.3 + 0.15) * 1.1, 0.03);
+  near(pet.tricks.flip, 4 * 1.1, 0.05); // the bond grows a little on the way
   const loved = grown(start);
   loved.bond = 100;
   act(loved, "trick", start, { item: "flip" });
@@ -146,16 +194,16 @@ test("trick practice in a row brings less and bond helps", () => {
 test("tricks need a break, longer each time", () => {
   pet.bond = 0;
   act(pet, "trick", start, { item: "bow" });
-  assert.equal(model.restLeft(pet, ["trick"], start + 20), 40);
+  assert.equal(model.restLeft(pet, ["trick"], start + 20), 100);
   assert.deepEqual(act(pet, "trick", start + 30, { item: "spin" }), [false, "rest_trick"]); // any trick
   const energy = pet.stats.energy;
-  act(pet, "trick", start + 60, { item: "bow" });
+  act(pet, "trick", start + 120, { item: "bow" });
   assert.equal(pet.stats.energy, energy - 5);
-  assert.deepEqual(act(pet, "trick", start + 200, { item: "bow" }), [false, "rest_trick"]);
-  assert.equal(act(pet, "trick", start + 240, { item: "bow" })[0], true);
-  assert.equal(model.restLeft(pet, ["trick"], start + 240), 600);
-  near(pet.bond, 1 + 0.6 + 0.3); // the bond grows less with each one, too
-  assert.equal(model.restLeft(pet, ["trick"], start + 240 + model.REPEAT_WINDOW), 0); // a new day, a fresh start
+  assert.deepEqual(act(pet, "trick", start + 700, { item: "bow" }), [false, "rest_trick"]);
+  assert.equal(act(pet, "trick", start + 720, { item: "bow" })[0], true);
+  assert.equal(model.restLeft(pet, ["trick"], start + 720), 1800);
+  near(pet.bond, 3); // the break is the only brake: the bond grows in full each time
+  assert.equal(model.restLeft(pet, ["trick"], start + 720 + model.REST_WINDOW), 0); // later, a fresh start
 });
 
 test("trick refused", () => {

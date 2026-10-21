@@ -80,7 +80,7 @@ the thing stays in the bag. The app marks both (❤ and ✕) once they have been
 tried with this form; a new form has tastes of its own. Since there is never
 much of anything, finding out what a pet likes takes trying what there is.
 
-**Weight.** Meals and food add weight; playing, the guessing game,
+**Weight.** Meals and food add weight; playing, hide and seek,
 training and trips take it off, and by itself the weight drifts back to the
 ideal. A meal adds 1 g, a fruit half a gram and a honeycomb 2.5 g; a round of play
 burns 2 g and every stop on a trip half a gram. A pet that is too heavy tires
@@ -313,7 +313,8 @@ with the display out of reach, the app shows only the phone's own pets.
 The pet can learn four tricks. Take the baton from the app's tray and draw
 the move from the table over the pet; it tries the trick on the panel. While
 the baton is in your hand, stroking waits; a tap on it puts it back. *Adventure*
-→ *Tricks* lists the moves and how far each trick has got.
+→ *Tricks* lists the moves and how far each trick has got, and while that list
+is open, the baton is in your hand.
 
 Practicing costs energy and needs a break afterwards (below). A trick it
 already knows can be shown any time, for free and without a break; showing
@@ -326,11 +327,12 @@ the same one over and over just cheers it up less each time.
 | Dance | back and forth, flat, at least twice | 7 points |
 | Flip | swipe up | 10 points |
 
-One practice is worth a point (up to one and a half with a strong bond), and
-several in a row are worth less, for the bond too, so learning takes a few
-days. After each practice the pet needs a break before the next one: a minute,
-then three, ten and twenty minutes if you keep going (counted over two
-hours). At first the pet mostly flops over halfway; the further along it is,
+One practice is worth a point (up to one and a half with a strong bond).
+After each practice the pet needs a break before the next one, and that break
+is the only brake: two minutes, then ten, thirty, an hour and two hours if you
+keep going (counted over six hours), so learning takes a few days. You can see
+it: while it needs the break it sits down now and then, puffing and yawning,
+and doesn't show off. At first the pet mostly flops over halfway; the further along it is,
 the more often it works. Once it knows a trick, it shows it off by itself now
 and then when it is in a good mood. While nobody is there, it practices a
 little on its own (see [While nobody is there](#while-nobody-is-there)).
@@ -338,11 +340,24 @@ little on its own (see [While nobody is there](#while-nobody-is-there)).
 Every adult form, and some children, do one trick in their own way. It looks
 different on the panel, but the gesture and what it does are the same.
 
-## The guessing game
+## Hide and seek
 
-"Left or right?" has five rounds: you guess which way the pet will jump. Three
-hits win. It costs energy like playing does and cheers the pet up – more so
-if you win.
+The pet hides, and you tap where you think it is. There are always three
+places to hide: past the left and the right edge of the panel, and in the tall
+grass. The house takes the place of the left edge, and so does the plant while
+there is no house; a plant, and the decorations outside, are places of their
+own, and with decorations out the right edge is taken by them.
+
+You have three tries. A miss shows a cross over the spot. Now and then the
+pet can't help peeking out: its head comes up over the roof or the grass, or it
+leans in from the edge. The smarter it is, the longer it keeps still (every 3
+seconds at first, every 7 with full smarts). Each line has a favorite spot it
+goes for more often, and it never hides twice in a row at the same spot.
+
+While a friend visits, or the neighbour is out with it, the two hide together
+and you have a try more; you win when you have found both. Found or not, the
+game counts as playing: it costs energy, cheers the pet up – more if you found
+everybody – and strengthens the bond.
 
 ## Training
 
@@ -357,10 +372,9 @@ watching the panel:
 | Smarts | The pet hops a sequence of directions (three at first, up to six). Swipe them back in the same order. | picks the right trick more often |
 
 A perfect exercise is worth 4 points. Training counts as playing in the care
-diary, costs energy and a little satiety, and the same exercise again within
-two hours is worth less. Between two exercises, whichever they are, the pet
-needs the same growing break as between tricks (one, three, ten, twenty
-minutes). A tap before the signal, or a sequence that is all wrong, brings
+diary, costs energy and a little satiety. Between two exercises, whichever they are,
+the pet needs the same growing break as between tricks (two, ten, thirty
+minutes, an hour, two hours); after it, an exercise counts in full again. A tap before the signal, or a sequence that is all wrong, brings
 nothing and costs nothing, not even a break.
 
 ## Trips and finds
@@ -370,8 +384,20 @@ backpack and send it off. It needs to be awake, healthy, reasonably fed and rest
 before bedtime, and it won't leave in a thunderstorm. Woken early in the morning, before
 bedtime is over, it may already set off.
 
-Packing, you pick the destination and up to two things to take along. A snack heals a heart on the way, and a ball distracts
-one opponent (but not a guardian).
+Packing, you pick the destination and up to two things to take along: the
+pet's ball, or something to eat from the bag. Nothing comes out of thin air,
+so what goes into the backpack is taken from the bag, and what isn't used goes
+back into it when the pet comes home. Packing also shows the hearts it would
+set off with.
+
+- **Something to eat:** after a lost scuffle the pet eats it and has the heart
+  back. It won't eat what it doesn't like, on the way either.
+- **A wild pet's favorite:** the pet gives it as a present (see
+  [Friends](#friends)).
+- **The ball:** the pet plays a game of ball with a wild pet. It doesn't get
+  the pet out of a scuffle; that takes training and tricks.
+- **Honeycomb, glow berry and pine cone** work on the trip they are packed
+  for (see the food below), and are used up when the pet sets off.
 
 A trip takes one to one and a half hours. The panel shows the pet hopping
 through the landscape, stopping now and then to rest or to hold up something
@@ -380,11 +406,11 @@ home. A second trip on the same day finds less.
 
 Every trip goes into the **travel diary** (*Diary* → *Trips*): where the pet
 went, on which day and for how long, what it found, whom it scuffled with and
-how that went, a wild pet it met, and whether it ate its snack or turned back.
+how that went, a wild pet it met, and whether it ate something from the backpack or turned back.
 It keeps the last 30 trips of this pet; a trip it was called straight back
 from doesn't count.
 
-Back home, it keeps the backpack on until you tap **Unpack** – so you are
+Back home, it keeps the backpack on until you tap the pet (or **Unpack** on the trip card) – so you are
 there to see what it brought:
 
 - **Seeds** go into the bag and are dragged from there into the scene like food. One plant grows at a time
@@ -395,18 +421,20 @@ there to see what it brought:
   sickness without medicine.
 - **Food** – every area has one kind, and up to three of each are kept in the
   bag. It fills the pet up a little; what it is worth carrying home for is
-  what it leaves in the pet until it is used:
+  what it does. Three of them work from the backpack, on the trip they are
+  packed for; eaten at home, they only fill it up. The other two are eaten at
+  home and wait in the pet until they are used:
 
   | Area | Food | What it does |
   |---|---|---|
-  | Meadow | Honeycomb | one more heart on the next trip |
+  | Meadow | Honeycomb | packed: one more heart on the trip |
   | Mushroom forest | Hazelnut | the next trick practice counts double |
   | Stream | Watercress | the next training exercise counts double |
-  | Cave | Glow berry | on the next trip it finds something at every stop where nothing else happens |
-  | Mountain | Pine cone | the next trip doesn't tire it or make it hungry, and brings as much as the first trip of the day |
+  | Cave | Glow berry | packed: it finds something at every stop where nothing else happens |
+  | Mountain | Pine cone | packed: the trip doesn't tire it or make it hungry, and brings as much as the first trip of the day |
 
-  These don't add up: while one is still waiting, the pet won't eat the same
-  food again. Nothing is combined or cooked, and the plant stays the one that
+  Hazelnut and watercress don't add up: while one is still waiting, the pet
+  won't eat the same food again. Nothing is combined or cooked, and the plant stays the one that
   feeds the pet by itself.
 - **Decorations** stand in the scene, two at a time, and more in the house
   (see [The house](#the-house)). Some glow at night. Two
@@ -506,6 +534,9 @@ watches.
   bad mood only manages half as often.
 - A pet with three bond hearts or more is sure of itself and shows a fourth
   trick.
+- What it brought along comes first, and each counts as a trick that worked:
+  the wild pet's favorite food as a present (every form likes one thing
+  most, the same as when it is your pet), and a game with the ball.
 - If two of them work, the wild pet is impressed and the two are
   friends. Otherwise it hops on, and the pet may meet another one on a later
   trip.
@@ -517,14 +548,16 @@ or more); it cheers the pet up a little, too.
 
 While the friend is there, the two **play**: a game, a little rest side by
 side, the next game. They throw a ball to and fro, the friend copies a trick
-the pet shows it (each in its own way), or they hop in step and then by turns.
+the pet shows it (each in its own way), they hop in step and then by turns, or
+they play hide and seek: one ducks into the tall grass, the other counts with
+its eyes shut, looks around, and the one hiding jumps out.
 The pet only joins in when it is in a decent mood, awake and not busy with
 something else; otherwise the friend waits by its side. Playing is something
 to watch; what counts for the visit is still the pet's mood when the friend
 leaves.
 
 Now and then a visit that counts brings a **gift**. The friend leaves it on
-the ground, wrapped, and it stays there until you tap **Unwrap the gift**; no
+the ground, wrapped, and it stays there until you tap it; no
 new one comes while it is lying there. Mostly there is a fruit in it, of the
 same kinds as the plant's, and it goes into the bag (if there are three of it
 already, the pet eats it straight away). Rarely it is a seed, as long as there are fewer than nine of that
@@ -534,7 +567,7 @@ then.
 After five visits that counted, the two build a **nest**, and an egg lies in
 it. The egg is of the pet's own line or of the friend's, and it carries the
 pet's heirloom (see [Growing up](#growing-up)). The egg waits in the nest until
-you tap **Collect the egg**; then it is among the finds, to be brooded whenever
+you tap it; then it is among the finds, to be brooded whenever
 you like. While the nest is full, or there are nine eggs already, the next nest
 waits.
 
@@ -581,7 +614,8 @@ past the last one, on the mountain, adds a step to the house (see
 
 **Hearts.** The pet sets off with one to three hearts, depending on its
 condition that day (the average of satiety, energy and health: two hearts from
-45, three from 75). A lost scuffle costs one. At zero it heads home – merely
+45, three from 75), and a honeycomb eaten before adds one. Packing shows them,
+so a pet can be fed first to set off with more. A lost scuffle costs one. At zero it heads home – merely
 tired, and it keeps what it has already found.
 
 ## While nobody is there
@@ -616,14 +650,14 @@ the pet did is the same whether or not anybody was looking at the panel.
 small at home by itself: mostly a fruit of the plant's kinds, rarely a seed
 (as long as there are fewer than nine of that kind). It works like a friend's
 gift, but it isn't wrapped: it lies next to the plant, in front of everything
-else, until you tap **Pick up**, and nothing new turns up while it is there.
+else, until you tap it, and nothing new turns up while it is there.
 Like a gift, it goes into the bag. Unlike what it builds, it stays when somebody does
 something with the pet, and it is kept for the next pet. A baby finds things
 too.
 
 **Habits.** The pet notices when it is usually fed or played with. A time
 of day becomes a habit when somebody fed it, played with it or started the
-guessing game at about that time (within half an hour) on at least three of
+hide and seek at about that time (within half an hour) on at least three of
 the last seven days. About twenty minutes before such a time it goes to the
 nearer edge of the panel and waits there, leaning out and now and then on
 tiptoe, until its meal or game comes, or the time has passed. Once it has
@@ -705,7 +739,7 @@ Four tabs along the bottom: the pet (named after it), *Adventure*, *Diary* and
   the scene, it lands there and the pet goes to get it. The sponge is rubbed
   over the pet to clean it. Connected to a Pi, things can also be flicked up,
   as before.
-- **Adventure** has the trip, the tricks, the training and the guessing game.
+- **Adventure** has the trip, the tricks, the training and hide and seek.
   The tricks, the training and the game take the place of the needs and the
   tray, below the scene, so the pet stays where it is and answers there. On a
   tall phone the scene grows into the sky above it. Packing for a trip needs
@@ -751,7 +785,7 @@ keep its own pet or connect to a Pi; the README explains how.
 |---|---|
 | Stats, decay, actions, sleep | `core/src/model.ts` |
 | Life cycle, lines and adult forms, the album's forms (`FORMS`) | `core/src/life.ts` |
-| Weight, bond, guessing game, tricks | `core/src/care.ts` |
+| Weight, bond, hide and seek, tricks | `core/src/care.ts` |
 | Trips, areas, what is found where | `core/src/trip.ts` |
 | What is eaten from the bag, each form's favorite and dislike, and what food from trips leaves in the pet | `core/src/food.ts` |
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |

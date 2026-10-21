@@ -54,7 +54,7 @@ const ICONS: Record<string, Bitmap> = {
   health: [[255, 60, 60], ["..XXX..", "..XXX..", "XXXXXXX", "XXXXXXX", "XXXXXXX", "..XXX..", "..XXX.."]],
 };
 const HEART: Bitmap = [[255, 70, 110], [".X.X.", "XXXXX", ".XXX.", "..X.."]];
-// Mini-game: question mark while waiting, check mark or cross after the jump
+// Question mark while it wonders; check mark when it is found, cross where nobody was
 const QUESTION: Bitmap = [[255, 220, 90], [".XXX.", "X...X", "....X", "...X.", "..X..", ".....", "..X.."]];
 const CHECK: Bitmap = [[90, 225, 110], ["......X", ".....X.", "X...X..", ".X.X...", "..X...."]];
 const CROSS: Bitmap = [[255, 70, 70], ["X...X", ".X.X.", "..X..", ".X.X.", "X...X"]];
@@ -162,12 +162,38 @@ export function houseArea(step: number): [number, number, number, number] {
   const part = (n: number) => Number((n / 64).toFixed(3));
   return [0, part(GROUND + 1 - h), part(w), part(h)];
 }
+// Hide and seek: the tall grass is a hiding spot that is always there; one hiding below a cover
+// peeks out over it now and then, this many rows at the most
+const GRASS_X = 36;
+const TALL_GRASS = 8;
+const PEEK = 1.2; // seconds a peek takes
+const PEEK_ROWS = 13;
+// A pet hiding past the edge: its middle is this far out, and comes this far in when it peeks (far
+// enough to be seen on a phone too, where the app shows the scene a little cropped at the sides)
+const EDGE_OUT = 14;
+const EDGE_LEAN = 18;
+/** The middle of a hiding spot (care.SPOTS) on the panel. */
+export function hideX(spot: string, house: number): number {
+  return ({
+    left: 3, right: 61, house: Math.round(HOUSE_SIZE[house][0] / 2), plant: PLANT_X[house], grass: GRASS_X,
+    deco0: DECO_X[0], deco1: DECO_X[1],
+  } as Record<string, number>)[spot] ?? GRASS_X;
+}
 const FOUND_X = [15, 28, 32, 38]; // per step: what the pet found at home by itself lies here, next to the plant, until it is picked up
+/**
+ * Where something waiting to be taken lies (the egg in the nest, a friend's gift, what the pet
+ * found), as parts of the scene [x, y, width, height], for a tap in the app.
+ */
+export function thingArea(kind: "nest" | "gift" | "found", house: number): [number, number, number, number] {
+  const middle = { nest: NEST_X, gift: GIFT_X, found: FOUND_X[house] }[kind];
+  const part = (n: number) => Number((n / 64).toFixed(3));
+  return [part(middle - 7), part(GROUND - 12), part(14), part(14)];
+}
 const VISIT_WALK = 3.0; // seconds it takes to hop in and out
 // While the friend is there, the two play now and then: a game, a rest standing together, the next
 // game. Only while the pet is in a decent mood, awake and has nothing else to do; otherwise the
 // friend just waits by its side. Which game comes when follows from when the friend came.
-const PLAY_GAMES = ["catch", "copy", "bounce"] as const;
+const PLAY_GAMES = ["catch", "copy", "bounce", "hide"] as const;
 const PLAY_SECONDS = 24; // one game
 const PLAY_REST = 16; // in between, and before the first one
 const CATCH_HOLD = 0.6; // the ball rests on the catcher's head before it goes back
@@ -175,6 +201,11 @@ const CATCH_FLIGHT = 1.2;
 const CATCH_HIGH = 12; // how much higher than its head the ball flies
 const COPY_TURN = TRICK_SHOW + 0.8; // the pet shows a trick, then the friend does it too
 const BOUNCE_BEAT = 0.6; // one hop
+// hide and seek on a visit: the one hiding ducks into the tall grass, the other counts, looks
+// around, and the one hiding jumps out
+const HIDE_DUCK = 1.2;
+const HIDE_COUNT = 5;
+const HIDE_OUT = 17.5;
 const NOTE: Bitmap = [[255, 220, 120], ["..XX", "..X.", "..X.", "XXX.", "XX.."]];
 const HAT_SINK = 2; // a hat sits this many rows into the head
 // Trip: grass, soil, what stands along the path (null = nothing) and what passes by behind it, per area
@@ -509,6 +540,11 @@ export interface SceneView {
   hint?: string | null;
   weight_status?: string | null;
   game?: boolean;
+  /**
+   * Hide and seek: where the pet hides, then where its guest does; the spots found so far; every
+   * how many seconds one hiding peeks out; and whether the game is over (they all come out).
+   */
+  hide?: { spots: readonly string[]; found: readonly string[]; peek: number; over: boolean } | null;
   tricks?: readonly string[];
   trip?: TripView | null;
   /** It is staying at Grandma's (nobody was there for a long time): the scene shows home without it. */
@@ -539,6 +575,8 @@ export interface SceneView {
   trace?: { kind: string; spot: number; look: number } | null;
   /** It is about the time it is usually fed or played with: it waits at the edge (habits.ts). */
   waiting?: boolean;
+  /** It needs a break after practicing a trick or training (model.restLeft): it sits down and puffs now and then. */
+  resting?: boolean;
 }
 
 /** The weather as the weather service reports it: temperature in °C and a WMO code. */
@@ -707,7 +745,9 @@ type Foe = [string, number, number, boolean, number | null, number | null, strin
  * its stage (an adult unless it is the pet at the back).
  */
 type Guest = [string, number, number, string, number?, GuestMove?, string?];
-type GuestMove = { body: string; turn: number | null; rotate: number; dx: number; lookLeft: boolean };
+type GuestMove = { body: string; turn: number | null; rotate: number; dx: number; lookLeft: boolean; cover?: Cover };
+/** A pet hiding: its middle, the row it hides below (none: past the edge), and how far it peeks out (rows / PEEK_ROWS). */
+type Cover = [number, number, number];
 
 /**
  * A game with the visiting friend: which one, how far into it (seconds), the trick to copy, and who
@@ -746,6 +786,8 @@ interface Pose {
   /** Smaller than it is (going into the house, or coming out of it), and whether it can't be seen. */
   scale: number;
   hidden: boolean;
+  /** It hides (hide and seek). */
+  cover: Cover | null;
 }
 
 interface PetLook {
@@ -804,6 +846,9 @@ export class PetScene {
   private moon = 0.5; // the phase of the moon right now (Lunarock's moonstone)
   private roundFor: string | null = null; // effects of a round in a scuffle only once
   private play: Play | null = null; // the game with the visiting friend in this frame
+  private hiding: Guest | null = null; // the guest in a game of hide and seek, in this frame
+  private tallGrass: number[] = []; // where tall grass stands in this frame (hide and seek)
+  private covers = new Map<string, number>(); // the top row of each hiding spot's cover, in this frame
   private noteAt = 0; // the beat the last note of a game went up on
   private readonly clouds: [number, number, boolean][];
   private readonly stars: [number, number, number][];
@@ -926,7 +971,11 @@ export class PetScene {
         top = Math.round(top * pose.scale) + SPRITE - Math.round(SPRITE * pose.scale);
         pet = pet.resized(w, h);
       }
-      img.paste(pet, px, py);
+      if (pose.cover) {
+        this.hideBehind(img, pet, py, top, pose.cover);
+      } else {
+        img.paste(pet, px, py);
+      }
       if (indoors && view.asleep && view.house! > 1 && pose.body === "sleep") {
         // tucked in
         const [bx, by] = BLANKET_AT;
@@ -938,7 +987,7 @@ export class PetScene {
       this.stand(img, this.findImage(view.found), PetScene.foundX(view));
     }
     this.petTop = y + top;
-    if (!pose.hidden && (pose.pack || (view.backpack && !pose.egg && pose.body !== "sleep" && pose.scale === 1))) {
+    if (!pose.hidden && !pose.cover && (pose.pack || (view.backpack && !pose.egg && pose.body !== "sleep" && pose.scale === 1))) {
       // Backpack: hangs at the pet's lower back – at home until it has been unpacked
       const pack = this.sheet("trip").image("backpack");
       img.paste(pack, x + (this.facing > 0 ? 3 : SPRITE - 3 - pack.width), y + SPRITE - pack.height - 2);
@@ -953,7 +1002,7 @@ export class PetScene {
       bitmap(img, x + Math.floor((SPRITE - pose.symbol[1][0].length) / 2), y + top - 9 + Math.round(Math.sin(t * 4)),
         pose.symbol);
     }
-    if (pose.umbrella && !pose.hidden && !NO_UMBRELLA.includes(pose.form[1])) {
+    if (pose.umbrella && !pose.hidden && !pose.cover && !NO_UMBRELLA.includes(pose.form[1])) {
       const umbrella = items.image("umbrella");
       img.paste(umbrella, x + Math.floor((SPRITE - umbrella.width) / 2), y + top - umbrella.height + 3);
     }
@@ -964,6 +1013,10 @@ export class PetScene {
     if (guest) {
       this.drawGuest(img, guest, t);
     }
+    for (const gx of this.tallGrass) {
+      this.drawTallGrass(img, gx, t);
+    }
+    this.drawMiss(img, view, seconds);
     if (pose.heart !== null) {
       // falls from the sky (faster and faster) and lands on the head
       const hx = x + Math.floor((SPRITE - BIG_HEART[0].length) / 2);
@@ -991,8 +1044,10 @@ export class PetScene {
       heart: null, form: [view.stage, view.species], white: false,
       egg: null, eggT: t, item: view.activity_item, propAt: null, thrown: null,
       activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false, bud: null, rainbow: false,
+      cover: null,
     };
-    this.play = null;
+    this.play = this.hiding = null;
+    this.tallGrass = [];
     if (view.grandma) {
       if (activity === "grandma_go" && view.stage !== "egg") {
         return this.leave(pose, view, t, dt, now, false); // off to Grandma's
@@ -1053,16 +1108,11 @@ export class PetScene {
       return pose;
     }
 
-    if (view.game && isOneOf(activity, "idle", "game_wait")) {
-      // Mini-game: waits in the middle, looks left and right, question mark
-      this.targetX = (this.width - SPRITE) / 2;
-      this.wander(view, t, dt);
-      pose.face = Math.trunc(t * 1.5) % 2 ? "happy" : "smile";
-      pose.dx = Math.trunc(t * 1.5) % 2 ? 1 : -1;
-      pose.symbol = QUESTION;
+    if (view.hide && isOneOf(activity, "idle", "game_wait", "game_turn")) {
+      this.hideAndSeek(pose, view, t, now);
     } else if (activity === "idle") {
       const play = this.play = this.playing(view, now);
-      const show = view.waiting || play ? null : this.showOff(view, t);
+      const show = view.waiting || play || view.resting ? null : this.showOff(view, t);
       if (play) {
         this.playAlong(pose, play, t);
       } else if (view.waiting) {
@@ -1077,6 +1127,11 @@ export class PetScene {
       }
       if (mood === "tired" && Math.trunc(t) % 9 === 0) {
         pose.face = "yawn";
+      }
+      if (view.resting && !play && !view.waiting && Math.sin(t * 0.8) > 0.3) {
+        // out of breath after practicing: it sits down and puffs
+        Object.assign(pose, { body: "squash", jump: 0, face: Math.trunc(t * 1.5) % 3 ? "tired" : "yawn" });
+        this.targetX = this.x;
       }
       pose.umbrella = !show && !play && sky.precipitation(sky.codeOf(weather)) !== null;
       if (view.cold && !show && !play) {
@@ -1103,16 +1158,6 @@ export class PetScene {
     } else if (activity === "eat" || activity === "snack") {
       this.chew(pose, t);
       pose.prop = activity === "eat" ? "bowl" : "snack";
-    } else if (activity === "game_turn") {
-      // jumps left or right; check mark = guessed right
-      const [side, result] = view.activity_item.split(":");
-      const e = this.elapsed(view, now);
-      const hop = Math.min(1.0, e / 0.5);
-      pose.dx = Math.round(GAME_JUMP * hop) * (side === "left" ? -1 : 1);
-      pose.jump = Math.sin(Math.min(1.0, e / 0.5) * Math.PI) * 6;
-      pose.body = pose.jump > 2 ? "stretch" : "idle";
-      pose.face = result === "hit" ? "laugh" : "no";
-      pose.symbol = e > 0.5 ? (result === "hit" ? CHECK : CROSS) : null;
     } else if (activity === "play") {
       const phase = (t * 1.6) % 1.0;
       pose.jump = Math.sin(phase * Math.PI) * 9;
@@ -2114,6 +2159,23 @@ export class PetScene {
       x = this.comingIn(x, age);
       lift = Math.abs(Math.sin(t * 6)) * 3;
       pose.face = "happy";
+    } else if (index < rounds.length && rounds[index][0].startsWith("gift:")) {
+      // a present from the backpack: it holds it up, and the wild pet is delighted
+      this.cheer(pose, t);
+      if (q < 0.5) {
+        pose.found = rounds[index][0].slice("gift:".length);
+      } else {
+        face = "laugh";
+        lift = Math.abs(Math.sin(t * 6)) * 3;
+      }
+    } else if (index < rounds.length && rounds[index][0] === "ball") {
+      // a game of ball: over to the wild pet and back
+      const from = this.x + SPRITE - 4, to = WILD_X + 4;
+      const half = q < 0.5 ? q * 2 : (q - 0.5) * 2;
+      const [a, b] = q < 0.5 ? [from, to] : [to, from];
+      pose.thrown = ["ball", Math.round(a + (b - a) * half), Math.round(6 + Math.sin(half * Math.PI) * 28)]; // over their heads
+      pose.face = "laugh";
+      face = "laugh";
     } else if (index < rounds.length) {
       const [trick, worked] = rounds[index];
       this.trick(pose, trick, q * BATTLE_ROUND, worked, t);
@@ -2158,6 +2220,9 @@ export class PetScene {
     const games = PLAY_GAMES.filter((game) => game !== "copy" || tricks.length);
     const game = games[(came + round) % games.length];
     const trick = game === "copy" ? tricks[(came + round + Math.floor(e / (2 * COPY_TURN))) % tricks.length] : null;
+    if (game === "hide") {
+      return { game, e, trick, lead: (came + round) % 2 ? "pet" : "guest" }; // lead: the one hiding
+    }
     return { game, e, trick, lead: trick === null || own.includes(trick) ? "pet" : "guest" };
   }
 
@@ -2165,7 +2230,19 @@ export class PetScene {
   private playAlong(pose: Pose, play: Play, t: number): void {
     this.facing = 1;
     const { game, e } = play;
-    if (game === "catch") {
+    if (game === "hide") {
+      const middle = Math.round(this.x + SPRITE / 2);
+      this.tallGrass = [play.lead === "pet" ? middle : VISITOR_X + SPRITE / 2];
+      if (play.lead === "pet") {
+        pose.cover = this.hideCover(play, middle, t);
+        pose.face = "laugh";
+        if (!pose.cover) {
+          this.popOut(pose, e - HIDE_OUT);
+        }
+      } else {
+        this.seeking(pose, e, 1);
+      }
+    } else if (game === "catch") {
       const turn = CATCH_HOLD + CATCH_FLIGHT;
       const throws = Math.floor(e / turn);
       const f = (e - throws * turn - CATCH_HOLD) / CATCH_FLIGHT; // < 0: somebody holds the ball
@@ -2223,7 +2300,22 @@ export class PetScene {
     let face = "laugh";
     let lift = 0;
     const { game, e } = play;
-    if (game === "catch") {
+    if (game === "hide") {
+      const pose = { body: "idle", face: "laugh", jump: 0, dx: 0, symbol: null } as unknown as Pose;
+      const facing = this.facing;
+      if (play.lead === "guest") {
+        move.cover = this.hideCover(play, VISITOR_X + SPRITE / 2, t) ?? undefined;
+        if (!move.cover) {
+          this.popOut(pose, e - HIDE_OUT);
+        }
+      } else {
+        this.seeking(pose, e, -1);
+        move.lookLeft = this.facing < 0;
+        this.facing = facing;
+      }
+      Object.assign(move, { body: pose.body, dx: pose.dx });
+      [face, lift] = [pose.face, pose.jump];
+    } else if (game === "catch") {
       const turn = CATCH_HOLD + CATCH_FLIGHT;
       const throws = Math.floor(e / turn);
       const f = (e - throws * turn - CATCH_HOLD) / CATCH_FLIGHT;
@@ -2264,11 +2356,152 @@ export class PetScene {
     return [species, VISITOR_X, lift, face, 0, move, stage];
   }
 
+  /** Hide and seek on a visit, for the one hiding in the tall grass: how far it is down, or null once it is out again. */
+  private hideCover(play: Play, middle: number, t: number): Cover | null {
+    const e = play.e;
+    if (e >= HIDE_OUT) {
+      return null;
+    }
+    // ducks down, then peeks out now and then
+    const peek = e < HIDE_DUCK ? (1 - e / HIDE_DUCK) * SPRITE / PEEK_ROWS : this.peekAt(t, 3.5, middle);
+    return [middle, GROUND + 1 - TALL_GRASS, peek];
+  }
+
+  /** Hide and seek on a visit, for the one seeking: it counts with its eyes shut, then looks around. */
+  private seeking(pose: Pose, e: number, facing: number): void {
+    this.facing = facing;
+    if (e < HIDE_COUNT) {
+      Object.assign(pose, { face: "sleep", body: Math.trunc(e * 2) % 2 ? "squash" : "idle" });
+    } else if (e < HIDE_OUT) {
+      this.facing = Math.trunc(e / 1.5) % 2 ? -facing : facing;
+      Object.assign(pose, { face: "normal", dx: Math.trunc(e / 1.5) % 2 ? 1 : -1, symbol: QUESTION });
+    } else {
+      this.popOut(pose, e - HIDE_OUT); // found! (or the other way round)
+    }
+  }
+
+  /** Jumps up laughing, a moment after the end of hide and seek. */
+  private popOut(pose: Pose, e: number): void {
+    const jump = e < 0.6 ? Math.sin((e / 0.6) * Math.PI) * 8 : Math.abs(Math.sin(e * 5)) * 2;
+    Object.assign(pose, { jump, body: jump > 2 ? "stretch" : "idle", face: "laugh" });
+  }
+
+  /** How far one hiding peeks out at the time t (0 most of the time), every `every` seconds. */
+  private peekAt(t: number, every: number, seed: number): number {
+    const local = mod(t + seed * 0.37, every);
+    return local < PEEK ? Math.sin((local / PEEK) * Math.PI) : 0;
+  }
+
+  /** Where a pet hiding at this spot is drawn (Cover), `peek` out of PEEK_ROWS rows. */
+  private cover(spot: string, house: number, peek: number): Cover {
+    if (spot === "left") {
+      return [Math.round(-EDGE_OUT + EDGE_LEAN * peek), Infinity, peek];
+    }
+    if (spot === "right") {
+      return [Math.round(this.width + EDGE_OUT - EDGE_LEAN * peek), Infinity, peek];
+    }
+    return [hideX(spot, house), this.covers.get(spot) ?? GROUND + 1 - TALL_GRASS, peek];
+  }
+
+  /**
+   * Draws a pet that hides: past the edge (only what is on the panel shows), or below the top of
+   * what it hides behind, with only as much of its head above it as it peeks out.
+   */
+  private hideBehind(img: Image, sprite: Image, py: number, top: number, [middle, below, peek]: Cover): void {
+    const px = middle - Math.floor(sprite.width / 2);
+    if (below === Infinity) {
+      img.paste(sprite, px, py);
+      return;
+    }
+    const rows = Math.floor(PEEK_ROWS * peek);
+    const y = below - rows - top; // crouched behind it, however tall it is
+    if (below - y > 0) {
+      img.paste(sprite.crop(0, 0, sprite.width, Math.min(sprite.height, below - y)), px, y);
+    }
+  }
+
+  /** A clump of tall grass to hide in; it rustles a little. */
+  private drawTallGrass(img: Image, middle: number, t: number): void {
+    const color = dimmed([60, 165, 70], 0.45 + 0.55 * (1 - this.night));
+    const dark = dimmed(GRASS, 0.45 + 0.55 * (1 - this.night));
+    for (let dx = -7; dx <= 7; dx++) {
+      const height = TALL_GRASS - (Math.abs(dx) > 4 ? 3 : 0) - ((dx * 7 + 3) % 3 === 0 ? 1 : 0);
+      const sway = Math.round(Math.sin(t * 1.3 + dx) * 0.6);
+      for (let row = 0; row < height; row++) {
+        const lean = row >= height - 2 ? sway : 0;
+        img.point(middle + dx + lean, GROUND - row, row % 3 === 0 || dx % 2 ? dark : color);
+      }
+    }
+  }
+
+  /** Hide and seek: a cross over the spot that was looked behind for nothing. */
+  private drawMiss(img: Image, view: SceneView, now: number): void {
+    if (!view.hide || view.activity !== "game_turn") {
+      return;
+    }
+    const [spot, who] = view.activity_item.split(":");
+    const e = this.elapsed(view, now);
+    if (who === "miss" && e < 1.5) {
+      const x = Math.min(this.width - 5, Math.max(0, hideX(spot, view.house ?? 0) - 2));
+      bitmap(img, x, GROUND - 16 - Math.round(Math.min(1, e / 0.3) * 3), CROSS);
+    }
+  }
+
+  /**
+   * Hide and seek: the pet (and its guest) hide behind their spots and peek out now and then; one
+   * found jumps out laughing, and when the game is over, the rest come out too.
+   */
+  private hideAndSeek(pose: Pose, view: SceneView, t: number, now: number): void {
+    const hide = view.hide!;
+    const house = view.house ?? 0;
+    const turn = view.activity === "game_turn";
+    const [, who] = turn ? view.activity_item.split(":") : ["", ""];
+    const e = turn ? this.elapsed(view, now) : 0;
+    this.tallGrass = [GRASS_X];
+    // one hiding: [jumps out right now, how long ago, is out]
+    const state = (index: number): [boolean, number, boolean] => {
+      const spot = hide.spots[index];
+      const found = turn && who === (index ? "guest" : "pet");
+      const out = found || (hide.over && turn && e > 0.8) || hide.found.includes(spot);
+      return [found, found ? e : hide.found.includes(spot) ? 1 + t : e - 0.8, out];
+    };
+    const place = (spot: string) => clamp(hideX(spot, house) - SPRITE / 2, 0, this.width - SPRITE);
+    const mine = hide.spots[0];
+    const [, since, out] = state(0);
+    this.x = this.targetX = place(mine);
+    if (out) {
+      this.popOut(pose, since);
+      if (since < 1.2 && who === "pet") {
+        pose.symbol = CHECK;
+      }
+    } else {
+      pose.cover = this.cover(mine, house, this.peekAt(t, hide.peek, 0));
+      pose.face = "laugh"; // giggles
+    }
+    const visit = view.visitor;
+    if (hide.spots.length > 1 && visit) {
+      const theirs = hide.spots[1];
+      const [, guestSince, guestOut] = state(1);
+      const move: GuestMove = { body: "idle", turn: null, rotate: 0, dx: 0, lookLeft: true };
+      const guestPose = { body: "idle", face: "laugh", jump: 0 } as unknown as Pose;
+      if (guestOut) {
+        this.popOut(guestPose, guestSince);
+      } else {
+        move.cover = this.cover(theirs, house, this.peekAt(t, hide.peek, 17));
+      }
+      move.body = guestPose.body;
+      this.hiding = [visit.species, place(theirs), guestPose.jump, guestPose.face, 0, move, visit.stage ?? "adult"];
+    }
+  }
+
   /** The friend that is visiting at home: it hops in from the right, stays, and hops out again. */
   private visitor(view: SceneView, t: number): Guest | null {
     const visit = view.visitor;
     if (!visit) {
       return null;
+    }
+    if (this.hiding) {
+      return this.hiding;
     }
     const stage = visit.stage ?? "adult";
     const coming = Math.min(1.0, visit.age / VISIT_WALK, Math.max(0.0, visit.left) / VISIT_WALK);
@@ -2302,7 +2535,7 @@ export class PetScene {
     const [body, jump] = move ? [move.body, hop]
       : walking ? this.stride(stage, species, t) ?? ["idle", 0] : [hop > 1.5 ? "stretch" : "idle", hop];
     const lift = Math.round(jump);
-    let [sprite] = this.pet(stage, species, body, t, face,
+    let [sprite, top] = this.pet(stage, species, body, t, face,
       { glow: this.night > 0.5, lookLeft: move ? move.lookLeft : walking && heading < 0,
         sky: this.skyLook });
     let px = x + (move?.dx ?? 0) - Math.floor((sprite.width - SPRITE) / 2);
@@ -2315,7 +2548,11 @@ export class PetScene {
       px -= SPIN_PAD;
       py -= SPIN_PAD;
     }
-    img.paste(sprite, px, py);
+    if (move?.cover) {
+      this.hideBehind(img, sprite, py, top, move.cover);
+    } else {
+      img.paste(sprite, px, py);
+    }
   }
 
   /** Left edge of an opponent standing in the pet's way. */
@@ -2715,6 +2952,7 @@ export class PetScene {
   private drawHome(img: Image, view: SceneView, t: number, now: number): void {
     const activity = view.activity;
     const plantX = PetScene.plantX(view);
+    this.covers.clear();
     if (view.house) {
       this.drawHouse(img, view, t, now);
     }
@@ -2728,11 +2966,16 @@ export class PetScene {
       this.stand(img, this.sheet("trip").image("seed"), plantX, Math.round(dropLift(e)));
     } else if (plant) {
       const tag = plant.stage !== "grown" ? plant.stage : plant.kind + (plant.ripe ? "_ripe" : "");
-      this.stand(img, this.dimmedSprite(tag), plantX);
+      const sprite = this.dimmedSprite(tag);
+      this.stand(img, sprite, plantX);
+      this.covers.set("plant", GROUND + 1 - sprite.height);
     }
     (view.deco ?? []).slice(0, DECO_X.length).forEach((item, i) => {
-      this.stand(img, this.dimmedSprite(item, t, true), DECO_X[i]);
+      const sprite = this.dimmedSprite(item, t, true);
+      this.stand(img, sprite, DECO_X[i]);
+      this.covers.set(`deco${i}`, GROUND + 1 - sprite.height);
     });
+    this.covers.set("grass", GROUND + 1 - TALL_GRASS);
     if (view.nest) {
       // the egg sits in the nest: the rim covers its bottom rows. It isn't dimmed at night,
       // so that it can't be overlooked.
@@ -2797,6 +3040,7 @@ export class PetScene {
     const sprite = open ? this.dimmedSprite(`house_${step}_open`, t, false, "house")
       : this.dimmedSprite(`house_${step}`, t, inside, "house");
     img.paste(sprite, 0, GROUND + 1 - sprite.height);
+    this.covers.set("house", GROUND + 1 - sprite.height);
   }
 
   /** The inside of the house: the room (its window shows the sky behind it) and the decorations in it. */

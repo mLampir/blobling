@@ -60,8 +60,16 @@ export const GUARDIAN_MOOD = 15; // getting past a guardian makes it proud
 // there was no room for it, or the pet got past before the guardian had an egg, it leaves it at
 // the end of the path on a later trip.
 export const GUARDIAN_EGGS: Record<string, string> = { meadow: "egg_beak", stream: "egg_duck", cave: "egg_ember" };
-// What can go into the backpack: a snack heals a heart on the way, a ball distracts an opponent
-export const PACKABLE = ["snack", "ball"];
+// What goes into the backpack: the pet's own ball, and things to eat from the bag (food.EDIBLE).
+// Nothing comes out of thin air, so what is packed is taken from the bag, and what isn't used
+// goes back into it.
+// - Something to eat: after a lost scuffle the pet eats it and has the heart back.
+// - A wild pet's favorite (food.TASTES): the pet gives it as a present, and that counts as a trick
+//   that worked.
+// - The ball: the pet plays with a wild pet, and that counts as a trick that worked too.
+// - Food from trips that works on a trip (food.PACKED) does its own thing instead: it is used up
+//   when the pet sets off.
+export const BALL = "ball";
 export const MAX_PACK = 2;
 export const MAX_TRAVELS = 30; // trips kept in the travel diary
 export const REPLAYS = 10; // the latest scuffles are kept, to be watched again in the app
@@ -116,6 +124,31 @@ export function startHearts(state: PetState): number {
   return 1 + HEARTS.filter((limit) => condition >= limit).length;
 }
 
+/** The hearts it would set off with now: its condition, and one more from a honeycomb it has eaten. */
+export function heartsNow(state: PetState): number {
+  return startHearts(state) + (food.waiting(state, "heart") ? 1 : 0);
+}
+
+/** What could go into the backpack now: [item, how many]. The ball is always there. */
+export function packable(state: PetState): [string, number][] {
+  return [[BALL, 1], ...food.EDIBLE.filter((item) => state.items[item]).map((item): [string, number] =>
+    [item, state.items[item]])];
+}
+
+/** Null if all of it can be packed, or why not. */
+export function checkPack(state: PetState, pack: readonly string[]): string | null {
+  if (pack.length > MAX_PACK) {
+    return "pack_full";
+  }
+  const have = new Map(packable(state));
+  for (const item of new Set(pack)) {
+    if (pack.filter((x) => x === item).length > (have.get(item) ?? 0)) {
+      return "not_in_bag";
+    }
+  }
+  return null;
+}
+
 /** Plan a trip (without setting off yet). `pack`: what goes into the backpack (PACKABLE). */
 export function plan(state: PetState, area: string, now: number, pack: readonly string[] = []): Trip {
   const rng = new Random(`trip:${Math.trunc(now)}`);
@@ -131,10 +164,21 @@ export function plan(state: PetState, area: string, now: number, pack: readonly 
   };
 }
 
-/** Set off. What it has eaten for the way (food.ts) goes along and is used up. */
+/**
+ * Set off. What is packed comes out of the bag; food that works from the backpack is used up now.
+ * (A boost still waiting from a food eaten at home before packing existed is used as well.)
+ */
 export function begin(state: PetState, trip: Trip, now: number): void {
   state.recent.trip = [...(state.recent.trip ?? []).filter((t) => now - t < DAY_WINDOW), now];
-  const boosts = ["heart", "finder", "fresh"].filter((boost) => food.use(state, boost));
+  for (const item of trip.pack) {
+    if (item !== BALL) {
+      home.takeItem(state, item);
+    }
+  }
+  const packed = trip.pack.filter((item) => food.PACKED[item]);
+  trip.pack = trip.pack.filter((item) => !food.PACKED[item]);
+  const boosts = ["heart", "finder", "fresh"].filter((boost) =>
+    packed.some((item) => food.PACKED[item] === boost) || food.use(state, boost));
   if (boosts.includes("heart")) {
     trip.hearts += 1;
   }
@@ -194,6 +238,35 @@ function turnBack(trip: Trip, t: number): void {
 }
 
 /**
+ * What the pet offers a wild pet before its tricks, taken out of the backpack: the wild pet's
+ * favorite as a present ("gift:<item>"), and a game with the ball.
+ */
+function offer(trip: Trip, species: string): string[] {
+  const offered: string[] = [];
+  const favorite = food.TASTES[species]?.[0];
+  for (const item of [favorite, BALL]) {
+    if (item && trip.pack.includes(item)) {
+      trip.pack.splice(trip.pack.indexOf(item), 1);
+      offered.push(item === BALL ? BALL : `gift:${item}`);
+    }
+  }
+  return offered;
+}
+
+/** Something to eat from the backpack, if there is anything left that it eats (the ball is not). */
+function provision(state: PetState, trip: Trip): string | null {
+  return trip.pack.find((item) => item !== BALL && item !== food.disliked(state)) ?? null;
+}
+
+/** Back home: what is left in the backpack from home goes back into the bag. */
+export function putBack(state: PetState, trip: Trip): void {
+  for (const item of trip.pack.filter((x) => x !== BALL)) {
+    home.addItem(state, item);
+  }
+  trip.pack = [];
+}
+
+/**
  * What it finds at this station (or null). Decorations and hats exist only once.
  * `sure`: an opponent it chased off always leaves something behind, if there is anything left.
  */
@@ -211,21 +284,11 @@ function find(state: PetState, trip: Trip, rng: Random, weather: sky.WeatherCode
   return rng.weighted(options.map(([item]) => item), options.map(([, weight]) => weight));
 }
 
-/**
- * An opponent is in the way. With a ball in the backpack it gets distracted; otherwise they
- * scuffle. A guardian doesn't care about balls, and getting past it opens the way to the next
- * area.
- */
+/** An opponent is in the way, and they scuffle. Getting past a guardian opens the way to the next area. */
 function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weather: sky.WeatherCode, t: number,
     events: wild.Happened[]): void {
   const count = state.counters;
   const guardian = battle.isGuardian(foe);
-  if (trip.pack.includes("ball") && !guardian) {
-    trip.pack.splice(trip.pack.indexOf("ball"), 1);
-    happened(trip, { kind: "ball", foe, at: t });
-    events.push(["battle", `${foe}:ball`]);
-    return;
-  }
   const fight = rules.fight(state, foe, rng);
   const outcome = fight.outcome;
   const last: TripEvent = { kind: "battle", foe, rounds: fight.rounds, outcome, at: t };
@@ -272,10 +335,11 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
   } else if (outcome === "lose") {
     state.stats.mood += LOSE_MOOD;
     trip.hearts -= 1;
-    if (trip.pack.includes("snack")) {
-      trip.pack.splice(trip.pack.indexOf("snack"), 1);
+    const bite = provision(state, trip);
+    if (bite) {
+      trip.pack.splice(trip.pack.indexOf(bite), 1);
       trip.hearts += 1;
-      note(trip, { kind: "snack", at: t });
+      note(trip, { kind: "snack", item: bite, at: t });
       events.push(["trip", "snack"]);
     } else if (trip.hearts <= 0) {
       // beaten: it goes home, is merely tired and keeps what it already has
@@ -326,7 +390,7 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
     }
     const met = guardian ? null : wild.meet(state, trip.area, at, weather);
     if (met) {
-      const shown = wild.show(state, met, rng, t);
+      const shown = wild.show(state, met, rng, t, offer(trip, met));
       happened(trip, { kind: "wild", wild: met, rounds: shown.rounds, outcome: shown.outcome, at: t });
       events.push(["wild", `${met}:${shown.outcome}`]);
       continue;

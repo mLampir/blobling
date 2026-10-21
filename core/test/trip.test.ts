@@ -301,3 +301,13 @@ test("the travel diary keeps the latest trips", () => {
   // the next pet starts a diary of its own
   assert.deepEqual(model.nextPet(pet, start + 200).travels, []);
 });
+
+test("the hearts it would set off with are known before it goes", () => {
+  const state = grown(start);
+  state.stats.satiety = state.stats.energy = state.stats.health = 100;
+  assert.equal(trip.heartsNow(state), 3);
+  state.boosts.push("heart"); // a honeycomb eaten before
+  assert.equal(trip.heartsNow(state), 4);
+  state.stats.satiety = state.stats.energy = state.stats.health = 50;
+  assert.equal(trip.heartsNow(state), 3);
+});

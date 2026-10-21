@@ -201,7 +201,6 @@
     "egg_beak": "Schnabel-Ei"
   },
   "pack": {
-    "snack": "Snack",
     "ball": "Ball"
   },
   "plants": {
@@ -223,7 +222,7 @@
       "full": "{name} ist satt.",
       "tired": "{name} ist zu müde zum Spielen.",
       "tired_trick": "{name} ist zu müde zum Üben.",
-      "rest_trick": "{name} braucht eine kurze Pause vor dem nächsten Trick.",
+      "rest_trick": "{name} braucht eine Pause vor dem nächsten Trick.",
       "already_asleep": "{name} schläft schon.",
       "not_tired": "{name} ist noch gar nicht müde.",
       "awake": "{name} ist schon wach.",
@@ -247,7 +246,7 @@
       "unpack_first": "Pack erst den Rucksack aus.",
       "nothing_packed": "Der Rucksack ist leer.",
       "tired_train": "{name} ist zu müde zum Trainieren.",
-      "rest_train": "{name} braucht eine kurze Pause vor der nächsten Übung.",
+      "rest_train": "{name} braucht eine Pause vor der nächsten Übung.",
       "no_training": "Zu spät – die Übung ist vorbei.",
       "no_nest": "In keinem Nest liegt ein Ei.",
       "no_gift": "Da liegt kein Geschenk.",
@@ -255,7 +254,9 @@
       "inside": "{name} schläft im Haus.",
       "boost_waiting": "{name} hat das letzte noch im Bauch.",
       "nothing_found": "Da liegt nichts.",
-      "dislikes": "{name} dreht den Kopf weg – das bitte nicht!"
+      "dislikes": "{name} dreht den Kopf weg – das bitte nicht!",
+      "not_in_bag": "Das ist nicht mehr in der Tasche.",
+      "pack_full": "In den Rucksack passen nur zwei Sachen."
     },
     "notify": {
       "channel": "Wenn dein Pet dich braucht",
@@ -288,18 +289,12 @@
       "play": "Noch mal ansehen",
       "against": "Rauferei mit {foe} …"
     },
-    "collect": "🥚 Ei einsammeln",
     "collected": "{egg} eingesammelt – es liegt jetzt bei deinen Fundstücken",
-    "unwrap": "🎁 Geschenk auspacken",
     "unwrapped_fruit": "Drin war: {fruit}. Die Tasche war voll, also hat {name} gleich hineingebissen",
-    "pickup": "👐 Aufheben: {thing}",
     "picked_fruit": "Aufgehoben: {fruit}. Die Tasche war voll, also hat {name} gleich hineingebissen",
     "boost": {
-      "heart": "Mmh, süß! {name} hat auf dem nächsten Ausflug ein Herz mehr.",
       "trick": "{name} fühlt sich schlau: Das nächste Trick-Üben zählt doppelt.",
-      "train": "{name} fühlt sich stark: Die nächste Trainingsübung zählt doppelt.",
-      "finder": "{name} hat leuchtende Augen: Auf dem nächsten Ausflug findet es bei jeder Rast etwas.",
-      "fresh": "{name} steckt voller Tatendrang: Der nächste Ausflug macht es nicht müde."
+      "train": "{name} fühlt sich stark: Die nächste Trainingsübung zählt doppelt."
     },
     "rename": "✎ Umbenennen",
     "rename_prompt": "Neuer Name",
@@ -335,7 +330,7 @@
       "bag": "Tasche"
     },
     "tools": {
-      "game": "Raten",
+      "game": "Verstecken",
       "tricks": "Tricks",
       "train": "Training"
     },
@@ -344,25 +339,19 @@
     },
     "cooled": "{name} hat sich abgekühlt",
     "trick": {
-      "note": "Ob es klappt, siehst du auf dem Display. Am besten übst du verteilt über mehrere Tage.",
       "learned": "{name} kann jetzt {trick}! 🎉",
       "known": "{trick}! ⭐",
       "fail": "{trick}: klappt noch nicht ganz",
       "ok": "{trick}: schon ziemlich gut!",
-      "unknown": "Diese Bewegung kennt {name} nicht.",
-      "hint": "Nimm den Taktstock aus der Leiste und zeichne die Bewegung über das Pet."
+      "unknown": "Diese Bewegung kennt {name} nicht."
     },
     "game": {
-      "left": "links",
-      "right": "rechts",
-      "ask": "Wohin springt es?",
-      "jumped": "Nach {side} gesprungen – {result}",
-      "hit": "richtig! ✓",
-      "miss": "daneben ✗",
-      "round": "Runde {round} von {rounds} · {wins} richtig",
-      "result": "{result} von {rounds} richtig –\n{verdict}",
-      "won": "gewonnen! 🎉",
-      "lost": "vielleicht nächstes Mal!"
+      "miss": "Nicht da ✗",
+      "pet": "Gefunden! ✓",
+      "guest": "Einen gefunden! ✓",
+      "found": "{found} von {hiding} gefunden",
+      "won": "Alle gefunden! 🎉",
+      "lost": "Gut versteckt – diesmal gewinnt es!"
     },
     "dialog": {
       "cancel": "Abbrechen",
@@ -538,11 +527,11 @@
       "effects": {
         "growth": "Ei, Baby und Kind wachsen schneller",
         "snow": "es schneit ums Haus",
-        "heart": "ein Herz mehr auf dem nächsten Ausflug",
+        "heart": "im Rucksack: ein Herz mehr auf dem Ausflug",
         "trick": "das nächste Trick-Üben zählt doppelt",
         "train": "die nächste Trainingsübung zählt doppelt",
-        "finder": "findet auf dem nächsten Ausflug bei jeder Rast etwas",
-        "fresh": "der nächste Ausflug macht nicht müde und bringt so viel wie der erste des Tages"
+        "finder": "im Rucksack: findet bei jeder Rast etwas",
+        "fresh": "im Rucksack: macht nicht müde und bringt so viel wie der erste Ausflug des Tages"
       },
       "house": "🏠 {house}",
       "house_spots": {
@@ -573,7 +562,7 @@
       "away": "war bei Oma",
       "grandma": "von Oma abgeholt",
       "new_egg": "ein neues Ei ist da",
-      "start": "„Links oder rechts?“ gespielt",
+      "start": "Verstecken gespielt",
       "unpack": "Rucksack ausgepackt",
       "wild_friend": "hat {pet} seine Tricks gezeigt und sich angefreundet 💛",
       "wild_shrug": "hat {pet} seine Tricks gezeigt – {pet} war nicht beeindruckt",
@@ -617,7 +606,7 @@
       "battle_lose": "Rauferei ({foe}): verloren",
       "battle_draw": "Rauferei ({foe}): keiner hat nachgegeben",
       "battle_ball": "{foe} ist dem Ball nachgelaufen",
-      "trip_snack": "hat den Snack gegessen, schon geht's besser",
+      "trip_snack": "hat unterwegs etwas aus dem Rucksack gegessen, schon geht's besser",
       "trip_beaten": "hatte genug und ist umgekehrt",
       "guardian": "ist am Wächter vorbeigekommen: {foe} 🏆",
       "unlock": "kennt jetzt einen neuen Weg: {area} 🗺",
@@ -633,7 +622,7 @@
       "meals": "Mahlzeiten",
       "snacks": "Aus der Tasche",
       "plays": "Gespielt",
-      "game": "Links oder rechts?",
+      "game": "Verstecken",
       "game_value": "{games} Spiele, {won} gewonnen",
       "tricks": "Tricks",
       "tricks_value": "{tricks} ({n}× geübt)",
@@ -703,7 +692,6 @@
     },
     "train": {
       "hint": "Such eine Übung aus",
-      "note": "Schau beim Training aufs Display. Am besten trainierst du verteilt über mehrere Tage.",
       "how": {
         "strength": "den Ball werfen",
         "speed": "aufs Signal reagieren",
@@ -723,7 +711,6 @@
     "pack": {
       "where": "Wohin?",
       "what": "Was kommt in den Rucksack?",
-      "note": "Ein Snack heilt unterwegs ein Herz, ein Ball lenkt Gegner ab (Wächter aber nicht).",
       "locked": "Der Weg dorthin führt am Wächter vorbei: {area}.",
       "guardian": "Am Ende dieses Wegs wartet ein Wächter.",
       "go": "Losschicken"
@@ -750,10 +737,8 @@
       "tired": "Zu müde",
       "too_young": "Noch zu klein",
       "go": "Los",
-      "trip": "Rucksack packen und los auf Entdeckungstour.",
-      "tricks": "{n} von {all} gelernt",
-      "train": "Kraft, Tempo und Köpfchen für die Ausflüge.",
-      "game": "Rate, wohin es springt – ein kleines Spiel zu zweit."
+      "areas": "{n} von {all} Gebieten bekannt",
+      "tricks": "{n} von {all} gelernt"
     },
     "values": {
       "weight": "Gewicht",

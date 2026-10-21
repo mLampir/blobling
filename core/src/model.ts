@@ -51,15 +51,18 @@ export const HEART_EVERY = 5; // every fifth counted petting, a heart falls from
 export const HEART_MOOD = 10;
 export const REPEAT_WINDOW = 2 * 3600;
 export const REPEAT_FACTORS = [1.0, 0.6, 0.3, 0.15]; // the same action several times in a row is worth less
-// After a trick or an exercise the pet needs a break, longer each time within REPEAT_WINDOW (seconds)
-export const REST_SECONDS = [60, 180, 600, 1200];
+// Tricks and training have one rule instead: every practice is worth all it is, but afterwards the
+// pet needs a break, the longer the more it has practiced within REST_WINDOW (seconds). It shows:
+// while it rests it sits and puffs (SceneView.resting).
+export const REST_WINDOW = 6 * 3600;
+export const REST_SECONDS = [120, 600, 1800, 3600, 7200];
 const TRAIN_KEYS = battle.SKILLS.map((skill) => `train_${skill}`);
 export const EVENT_LIMIT = 100;
 
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
   "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in", "grandma"];
 export const FOODS = ["meal", ...food.EDIBLE];
-export const GAME_MOVES = ["start", "left", "right"];
+export const GAME_MOVES = ["start", ...care.SPOTS]; // start, or look behind a spot
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
 export const TRAIN_MOVES = [...battle.SKILLS, "tap", "answer"]; // an exercise, or the answer to one that is waiting
 export const THROW_ACTIONS = ["feed", "play", "medicine", "trip", "plant"];
@@ -118,8 +121,10 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
   const kept = newState();
   kept.items = { ...old.items };
   kept.eggs = [...old.eggs];
-  for (const found of [...old.backpack, ...(old.trip ? old.trip.found : [])]) {
-    home.addItem(kept, found);
+  for (const found of [...old.backpack, ...(old.trip ? [...old.trip.found, ...old.trip.pack] : [])]) {
+    if (found !== trip.BALL) {
+      home.addItem(kept, found);
+    }
   }
   if (old.nest) {
     kept.eggs.push(old.nest);
@@ -157,8 +162,10 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
 export function moveHome(from: PetState, to: PetState): void {
   to.items = from.items;
   to.eggs = from.eggs;
-  for (const found of [...from.backpack, ...(from.trip ? from.trip.found : [])]) {
-    home.addItem(to, found);
+  for (const found of [...from.backpack, ...(from.trip ? [...from.trip.found, ...from.trip.pack] : [])]) {
+    if (found !== trip.BALL) {
+      home.addItem(to, found);
+    }
   }
   Object.assign(to, {
     deco: from.deco, house: from.house, plant: from.plant, gift: from.gift, found: from.found, nest: from.nest,
@@ -578,9 +585,14 @@ function repeatFactor(state: PetState, key: string, now: number): number {
   return REPEAT_FACTORS[Math.min(times.length, REPEAT_FACTORS.length - 1)];
 }
 
+/** A trick or an exercise was practiced now: it counts towards the next break (restLeft). */
+function practiced(state: PetState, key: string, now: number): void {
+  state.recent[key] = [...(state.recent[key] ?? []).filter((t) => now - t < REST_WINDOW), now];
+}
+
 /** Seconds until the pet is up for another trick or exercise (keys: where `recent` keeps them); 0 = now. */
 export function restLeft(state: PetState, keys: string[], now: number): number {
-  const times = keys.flatMap((key) => state.recent[key] ?? []).filter((t) => now - t < REPEAT_WINDOW);
+  const times = keys.flatMap((key) => state.recent[key] ?? []).filter((t) => now - t < REST_WINDOW);
   if (!times.length) {
     return 0;
   }
@@ -646,6 +658,7 @@ function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCo
 /** Back from the trip. The finds stay in the backpack until someone is watching (action "unpack"). */
 function comeHome(state: PetState, now: number, done: Trip): void {
   state.backpack = [...done.found];
+  trip.putBack(state, done); // what it took along and didn't need
   state.stats.mood += 10 * done.factor;
   care.addBond(state, "trip");
   trip.remember(state, done, now);
@@ -669,7 +682,9 @@ function checkValue(action: string, item: string | null, value: unknown): unknow
   } else if (action === "train" && item === "answer") {
     ok = isList(value, battle.DIRECTIONS, battle.SEQUENCE[1]); // the directions that were swiped back
   } else if (action === "trip" && item !== "recall" && value != null) {
-    ok = isList(value, trip.PACKABLE, trip.MAX_PACK); // what goes into the backpack
+    // what goes into the backpack (checked in startTrip); "snack" comes from an app of API 7 or
+    // older, from before nothing to eat came out of thin air, and is left out
+    ok = isList(value, [trip.BALL, "snack", ...food.EDIBLE], trip.MAX_PACK);
   } else {
     return null;
   }
@@ -691,6 +706,8 @@ export interface ActionOptions {
   temp?: number | null;
   /** Where the sun rises and sets (the night decides a form). */
   location?: Location;
+  /** Another pet is there (a visiting friend, or the neighbour): it hides too. */
+  guest?: boolean;
   /** What else belongs to the action (see checkValue). */
   value?: unknown;
 }
@@ -778,7 +795,7 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
 
   const reason = state.stage === "egg"
     ? applyToEgg(state, action, now)
-    : apply(state, action, now, bedtime, item, thrown, by, weather, value, options.temp ?? null);
+    : apply(state, action, now, bedtime, item, thrown, by, weather, value, options.temp ?? null, !!options.guest);
   if (reason && state.activity_until <= now && state.stage !== "egg" && !state.trip) {
     setActivity(state, "no", now);
   }
@@ -827,8 +844,11 @@ function feed(state: PetState, now: number, name: string, thrown: number | null)
   return null;
 }
 
-/** Mini-game "Left or right?": five rounds of guessing which way the pet jumps. */
-function game(state: PetState, now: number, move: string): string | null {
+/**
+ * Hide and seek: the pet hides (and a guest with it), and every move looks behind one spot. It ends
+ * when everybody has been found or the tries are used up.
+ */
+function game(state: PetState, now: number, move: string, guest: boolean): string | null {
   const s = state.stats;
   if (move === "start") {
     if (state.asleep) {
@@ -837,7 +857,8 @@ function game(state: PetState, now: number, move: string): string | null {
     if (s.energy < care.GAME_ENERGY) {
       return "tired";
     }
-    care.startGame(state, now);
+    care.startGame(state, now, care.hidingSpots(state, home.placeDeco(state).outside), life.lineOf(state.species),
+      guest);
     setActivity(state, "game_wait", now);
     return null;
   }
@@ -845,14 +866,14 @@ function game(state: PetState, now: number, move: string): string | null {
     state.game = null;
     return "no_game";
   }
-  const [jump, hit, done] = care.guess(state, move, now);
-  setActivity(state, "game_turn", now, `${jump}:${hit ? "hit" : "miss"}`);
+  const [who, done] = care.seek(state, move, now);
+  setActivity(state, "game_turn", now, `${move}:${who ?? "miss"}`);
   if (!done) {
     return null;
   }
-  // Game over: counts as playing, and winning makes it happier
-  const wins = state.game!.wins!;
-  const won = wins >= care.GAME_WIN;
+  // Game over: counts as playing, and finding everybody makes it happier
+  const { found = [], spots = [] } = state.game!;
+  const won = found.length >= spots.length;
   s.mood += (won ? 25 : 10) * repeatFactor(state, "play", now) * life.bonusFactor(state, "play");
   s.energy -= 10;
   s.satiety -= 5;
@@ -866,7 +887,7 @@ function game(state: PetState, now: number, move: string): string | null {
     count(state, "games_won");
   }
   life.record(state, "plays");
-  state.game = { result: wins, last: now }; // result for the app
+  state.game = { result: found.length, last: now, spots, found, won }; // result for the app
   return null;
 }
 
@@ -929,8 +950,8 @@ function train(state: PetState, now: number, move: string, value: unknown): stri
 }
 
 /**
- * An exercise is over. It counts as playing, costs energy and is worth less when repeated; one
- * that went completely wrong costs nothing and brings nothing.
+ * An exercise is over. It counts as playing, costs energy and is followed by a break (restLeft);
+ * one that went completely wrong costs nothing and brings nothing.
  */
 function trained(state: PetState, now: number, skill: battle.Skill, score: number, shown: string): null {
   setActivity(state, `train_${skill}`, now, shown);
@@ -938,13 +959,13 @@ function trained(state: PetState, now: number, skill: battle.Skill, score: numbe
     return null;
   }
   const s = state.stats;
-  const factor = repeatFactor(state, `train_${skill}`, now);
-  battle.train(state, skill, score * factor * (food.use(state, "train") ? 2 : 1));
-  s.mood += 10 * factor * life.bonusFactor(state, "play");
+  practiced(state, `train_${skill}`, now);
+  battle.train(state, skill, score * (food.use(state, "train") ? 2 : 1));
+  s.mood += 10 * life.bonusFactor(state, "play");
   s.energy -= battle.TRAIN_COST.energy;
   s.satiety -= battle.TRAIN_COST.satiety;
   care.addWeight(state, care.PLAY_WEIGHT);
-  care.addBond(state, "play", factor);
+  care.addBond(state, "play");
   count(state, "trainings");
   life.record(state, "plays");
   return null;
@@ -988,6 +1009,10 @@ function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string,
   if (sky.isThunder(weather)) {
     return "thunder";
   }
+  const packing = trip.checkPack(state, pack);
+  if (packing) {
+    return packing;
+  }
   const planned = trip.plan(state, area, now, pack);
   if (isLateEvening(now, bedtime)
       || minutesUntilBed(now, bedtime) * 60 < planned.end - now + trip.HOME_BEFORE_BED) {
@@ -1001,11 +1026,11 @@ function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string,
 
 function apply(state: PetState, action: string, now: number, bedtime: Bedtime, item: string | null,
     thrown: number | null, by: string, weather: sky.WeatherCode, value: unknown,
-    temp: number | null): string | null {
+    temp: number | null, guest: boolean): string | null {
   const s = state.stats;
 
   if (action === "trip") {
-    return startTrip(state, now, bedtime, item!, weather, (value as string[] | null) ?? []);
+    return startTrip(state, now, bedtime, item!, weather, ((value as string[] | null) ?? []).filter((x) => x !== "snack"));
   }
   if (action === "plant") {
     const reason = home.plantSeed(state, item!);
@@ -1181,7 +1206,7 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
   }
 
   if (action === "game") {
-    return game(state, now, item!);
+    return game(state, now, item!, guest);
   }
 
   if (action === "train") {
@@ -1208,16 +1233,16 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     if (restLeft(state, ["trick"], now) > 0) {
       return "rest_trick";
     }
-    const factor = repeatFactor(state, "trick", now);
-    const result = care.practice(state, trick, factor * (food.use(state, "trick") ? 2 : 1), now);
+    practiced(state, "trick", now);
+    const result = care.practice(state, trick, food.use(state, "trick") ? 2 : 1, now);
     idle.practicedTogether(state, trick);
-    s.mood += (result === "fail" ? 3 : 6) * factor;
+    s.mood += result === "fail" ? 3 : 6;
     if (result === "learned") {
       s.mood += 10; // proud
       logEvent(state, now, "learned", by, { item: trick });
     }
     s.energy -= 5;
-    care.addBond(state, "trick", factor);
+    care.addBond(state, "trick");
     life.record(state, "tricks"); // practiced, in a child's care diary (the beak line)
     state.game = null; // this ends a mini-game in progress
     setActivity(state, "trick", now, `${trick}:${result}`);

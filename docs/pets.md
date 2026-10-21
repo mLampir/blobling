@@ -250,7 +250,7 @@ For its flip its flame shoots up out of the bowl and rains embers, and tongues o
 <details>
 <summary>Show how to get them</summary>
 
-Only playing counts for this line (training and the guessing game are playing,
+Only playing counts for this line (training and hide and seek are playing,
 too):
 
 | Form | Rule |
