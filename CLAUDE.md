@@ -44,6 +44,8 @@ Where to look first:
   there and run the script; never change the generated files by hand. The
   same goes for the sounds in `app/pet/sounds/`: their recipes are in
   `tools/sfx.ts`, and `npm run sounds` writes them.
+  Things drawn next to the pet keep the sizes in *Sizes of things next to
+  the pet* in [docs/gameplay.md](docs/gameplay.md).
 - **New creatures follow the design rules** in *Designing a creature* in
   [docs/gameplay.md](docs/gameplay.md): two ideas, a creature rather than
   an object with a face (an animal or a living thing), a face of its own,

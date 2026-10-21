@@ -1004,3 +1004,25 @@ For an adult form with pixel art of its own:
 Run `python tools/build_blob_sprites.py` after every change to the pixels, and
 `npm test && npm run check` before committing.
 
+
+### Sizes of things next to the pet
+
+The pet is the biggest thing on the panel: a baby is about 16 pixels wide, a
+child about 26, an adult about 30, with heights of 12, 22 and 27. Whatever
+it eats, holds or uses is drawn against that, so that it does not look like
+a doll's toy. The yardstick is the child, the stage seen longest; a baby
+next to the same things looks small and sweet, which is fine.
+
+| Kind | Size | Examples |
+|---|---|---|
+| What it eats | a mouthful that can be seen: 6–8 pixels | fruits from the plant, food from trips |
+| What it plays with | about a quarter of the child: 5–7 pixels | the ball |
+| What it carries over itself | at least as wide as its body: chosen per form | the umbrella (`UMBRELLAS` in `core/src/scene.ts`) |
+| What it sits at or goes into | about as wide as the child | the pond |
+| What grows | a bush or a herb below the child, a tree or a sunflower above it | the plant |
+| Decorations | 7–12 pixels: things in the garden, not furniture for the pet | the windmill, the snow globe |
+
+Food lies at the edge of the pet's body, not of its frame, so that a wide
+adult does not hide it (`reach` in `core/src/scene.ts`). Something wider
+than the space at the right edge moves in from it (`decoX`), and what lies
+flat on the ground is drawn behind the other decoration.

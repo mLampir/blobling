@@ -57,6 +57,7 @@ goes in the code: *Designing a creature* in docs/gameplay.md.
 """
 
 import json
+import math
 from pathlib import Path
 
 from PIL import Image
@@ -4997,6 +4998,27 @@ WATER_FORMS = (("teacrab", FACES), ("lightclaw", FACES), ("castlecrab", FACES),
                ("mossolotl", kit_faces(normal=("half", "small", True))),  # calm as a stone
                ("medilotl", FACES), ("axodrake", FACES))
 
+UMBRELLA_WIDTHS = (19, 23, 27, 31, 35)  # the scene picks the smallest that is as wide as the pet (scene.UMBRELLAS)
+
+
+def umbrella(width):
+    """The rain umbrella, `width` (odd) wide: a red dome with white dots, a scalloped rim and the stick."""
+    half = width // 2
+    height = width // 6 + 2  # rows of the dome
+    rows = []
+    for y in range(height):
+        reach = round(half * math.sqrt(1 - ((height - 1 - y) / height) ** 2))  # half the width of this row
+        rows.append(["u" if abs(x - half) <= reach else "." for x in range(width)])
+    for y in range(1, height - 1, 2):  # white dots, every other row, staggered
+        row = rows[y]
+        for x in range(1, width - 1):
+            if (x - half + 3 * (y // 2)) % 6 == 3 and row[x - 1] == row[x + 1] == "u":
+                row[x] = "w"
+    rim = ["." if x % 3 == 2 else "U" for x in range(width)]
+    rim[half] = "k"
+    return ["".join(r) for r in rows] + ["".join(rim)] + ["." * half + "k" + "." * half] * 3
+
+
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
     "food_full": ["...fffff...", "..fffffFf..", ".fffffffFf."],
@@ -5004,8 +5026,7 @@ ITEMS = {
     "food_low": ["...........", "...........", "...ff.f...."],
     "poop": ["....p...", "...pP...", "..pPPq..", ".pPPPPq.", "pPPPPPPq", ".qqqqqq."],
     "ball": [".aaa.", "asaaa", "aaaaA", "aaaAA", ".AAA."],
-    "umbrella": [".....uuuuu.....", "...uuwuuuwuu...", "..uwuuuuuuuwu..", ".uuuuuuuuuuuuu.",
-                 "UU.UU.UkU.UU.UU", ".......k.......", ".......k.......", ".......k......."],
+    **{f"umbrella_{width}": umbrella(width) for width in UMBRELLA_WIDTHS},
     "cloud": ["....ccc......", "..cccccccc...", ".ccccccccccc.", "ccccccccccccc", ".CCCCCCCCCCC."],
     "cloud_small": ["..ccc...", ".cccccc.", "cccccccc", ".CCCCCC."],
     "cookie": [".KKKKK.", "KKnKKKj", "KKKKnKj", "KnKKKKj", "KKKKnjj", ".jjjjj."],
@@ -5065,37 +5086,34 @@ BERRY = [
     "....tT.....",
     "....tT.....",
 ]
-SUNFLOWER = [
-    ".........",
-    "...lgl...",
-    "..lgggl..",
-    "..ggGgg..",
-    "...gGg...",
-    "....G....",
-    "..l.G....",
-    ".lggG....",
-    "..ggG.l..",
-    "....Gggl.",
-    "....Ggg..",
-    "....G....",
-    "....G....",
-    "....G....",
-]
-SUNFLOWER_RIPE = ["..yy.yy..", ".yyTTTyy.", ".yTTtTTy.", ".yyTTTyy.", "..yyGyy.."] + SUNFLOWER[5:]
+# A sunflower and a cherry tree grow taller than a child (docs/gameplay.md, *Sizes of things next to the pet*)
+SUNFLOWER_STEM = [".....G.....", "..l..G.....", ".lggGG.....", "..gggG.....", ".....G.....", ".....Gggl..",
+                  ".....GGggl.", ".....Gggg..", ".....G.....", "..l..G.....", ".lggGG.....", "..gggG.....", ".....G.....",
+                  "....GG....."]
+SUNFLOWER = ["...........", "....lgl....", "...lgggl...", "...ggGgg...", "....gGg....", ".....G....."] + SUNFLOWER_STEM
+SUNFLOWER_RIPE = ["...y.y.y...", "..yyyyyyy..", ".yyTTTTTyy.", "..yTtTtTy..", ".yyTTTTTyy.", "..yyyyyyy..",
+                  "...y.y.y..."] + SUNFLOWER_STEM[1:]
 CHERRY = [
-    "...lggl....",
-    "..lgggggl..",
-    ".lgggggggl.",
-    "lgggGggggg.",
-    "ggggggGgggg",
-    "gGggggggggG",
-    ".ggggGgggG.",
-    "..GGggGGG..",
-    "....tT.....",
-    "....tT.....",
-    "....tT.....",
-    "....tT.....",
-    "...ttTT....",
+    "....lllllgg....",
+    "..llggggggggg..",
+    ".lgggggggggggg.",
+    ".lgggggggGgggg.",
+    "lgggGgggggggggG",
+    "lgggggggggggggG",
+    "lggggggggggGggG",
+    "GgggggGgggggggG",
+    ".ggGggggggGggG.",
+    ".GggggggGggggG.",
+    "..GGgggggggGG..",
+    "....GGtTGGG....",
+    "......tT.......",
+    "......tT.......",
+    ".....ttT.......",
+    "......tT.......",
+    "......tT.......",
+    "......tTT......",
+    "......tT.......",
+    ".....ttTT......",
 ]
 HERB = [
     "....l....",
@@ -5131,15 +5149,16 @@ TRIP_TAGS = {
     "nest": [(["t..............t", "TtdTtdtDdtdTtdtT", ".TdtDdtTDtdDtdT.", "..TTtTTtTtTTtT.."], 1000)],
     # a friend's gift, wrapped, until it is unwrapped (scene.GIFT_X); then what was in it, held up
     "gift": [(["..y.y..", "...Y...", "rrryrrr", "yyyyyyy", "rrryrrr", "RRRyRRR"], 1000)],
-    "fruit_berry": [(["..l.", ".vv.", "vvVv", ".vV."], 1000)],
-    "fruit_cherry": [(["..G..", ".G.G.", "rr.rr", "rR.rR"], 1000)],
-    "fruit_sunflower": [([".yy.", "yOOy", "yOOy", ".yy."], 1000)],
-    "fruit_herb": [([".w.", "wyw", ".w.", ".g."], 1000)],
+    # What the pet eats is a mouthful it can be seen eating: 6–8 pixels (docs/gameplay.md, *Sizes of things next to the pet*)
+    "fruit_berry": [(["..gl..", ".vvvv.", "vfvVvV", "vvVvVV", ".vVvV.", "..VV.."], 1000)],
+    "fruit_cherry": [(["...lG..", "..G..G.", ".G...G.", "rfr.rfr", "rrR.rrR", ".R...R."], 1000)],
+    "fruit_sunflower": [(["..y.y..", ".yyyyy.", "yyTTTyy", ".yTtTy.", "yyTTTyy", ".yyyyy.", "..y.y.."], 1000)],
+    "fruit_herb": [([".w...w.", "wyw.wyw", ".w.w.w.", ".gwywg.", "..gwg..", "...g...", "...G..."], 1000)],
     # Food from trips, one per area (core/src/food.ts): given by hand, held up when it is found
     "honeycomb": [([".YYYY.", "YyYyYY", "YYyYyY", "YyYyYY", ".YYYY.", "..y..."], 1000)],
-    "hazelnut": [(["..l..", "dDdDd", ".ttt.", "ttttT", "ttttT", ".tTT."], 1000)],
-    "watercress": [(["l.l.l", "glglg", ".ggg.", "..g..", "..G.."], 1000)],
-    "glowberry": [(["..g..", ".cgc.", "cfccf", "cCcCC", ".cC.."], 1000)],
+    "hazelnut": [(["...l..", ".dDdDd", "dDdDdD", ".tttt.", "ttwttT", "tttttT", ".tTTT."], 1000)],
+    "watercress": [([".l...l.", "lgl.lgl", ".gglgg.", "..ggg..", "...g...", "...G..."], 1000)],
+    "glowberry": [(["...g..", "..g...", ".cccc.", "cfcccC", "ccccCC", ".cCCC."], 1000)],
     "pinenut": [(["..g..", ".tTt.", "tTtTt", ".tTt.", "tTtTt", ".tTt.", "..T.."], 1000)],
     # Plant: sprout, young plant, then per kind without and with a ripe fruit
     "sprout": [(["l...l", "gl.lg", ".ggg.", "..g..", "..G.."], 1000)],
@@ -5149,8 +5168,9 @@ TRIP_TAGS = {
     "sunflower": [(SUNFLOWER, 1000)],
     "sunflower_ripe": [(SUNFLOWER_RIPE, 1000)],
     "cherry": [(CHERRY, 1000)],
-    "cherry_ripe": [(dots(CHERRY, {(2, 5): "r", (3, 5): "r", (2, 6): "r", (3, 6): "R",
-                                   (7, 6): "r", (8, 6): "r", (7, 7): "r", (8, 7): "R"}), 1000)],
+    "cherry_ripe": [(dots(CHERRY, {(x + dx, y + dy): "R" if dx and dy else "r"
+                                   for x, y in ((2, 8), (10, 9), (6, 6), (11, 4)) for dx in (0, 1) for dy in (0, 1)}),
+                      1000)],
     "herb": [(HERB, 1000)],
     "herb_ripe": [(dots(HERB, {(4, 0): "w", (3, 1): "w", (5, 1): "w", (4, 1): "y", (4, 2): "w"}), 1000)],
     # Decorations
@@ -5182,8 +5202,18 @@ TRIP_TAGS = {
     "snowglobe": [(['...IIIII...', '..IiifiiI..', '.IfiiyiifI.', '.IiiigiiiI.', 'IiifgggfiiI', 'IiiggGggiiI', '.IfiiGiifI.', '.IIwwwwwII.', '..TTTTTTT..', '.TtttttttT.', '..TTTTTTT..'], 900),
                   (['...IIIII...', '..IifiiiI..', '.IiiiyfiiI.', '.IfiigiiiI.', 'IiiigggifiI', 'IifggGggiiI', '.IiiiGfiiI.', '.IIwwwwwII.', '..TTTTTTT..', '.TtttttttT.', '..TTTTTTT..'], 900)],
     # a garden pond: water in a ring of stones, a lily pad with its flower, a cattail at the edge
-    "pond": [(["........t..", "........t.l", "........Tl.", "..WsWsWsgs.", ".WiibbbbgbS", "WibblgpbbbS", "sbbGggbbIbS",
-               ".SBbbbbbBS.", "..SsSSsSS.."], 1000)],
+    # it is about as wide as a child, so that the pet can sit at it and fish (scene.ts keeps it on the panel)
+    "pond": [([".....................t...",
+               ".....................t.l.",
+               "....................lTl..",
+               "......sWsWsWsWsWsWs..g...",
+               "..WsWsiIbbbbbbbbbbbsWgW..",
+               ".WiibbbbbbbbbIibbbbbbbbW.",
+               "WibbbGggpgbbbbbbbbbbIbbbS",
+               "sbbbbGgyggbbbbbBbbbbbbbbS",
+               ".SBbbbbbbbbbbbbbbbbbbbBS.",
+               "..SSsSBBbbbbbbbbbbBBsSS..",
+               "......sSSsSSsSSsSSsSs...."], 1000)],
     # a woodpile: logs stacked with their cut ends to the front, growth rings and all
     "woodpile": [(["....TTT....", "...TdddT...", "...TdDdT...", "..TTdddTT..", ".TdddTdddT.", ".TdDdTdDdT.", "TTdddTdddTT",
                    "TdddTdddTdT", "TdDdTdDdTDT", "TdddTdddTdT", ".TTT.TTT.T."], 1000)],

@@ -5,6 +5,7 @@ import { test } from "node:test";
 
 import { Image } from "../src/image";
 import { Sheet, faceAnchor, outline, recolor, swapColors, tint } from "../src/sprites";
+import { EDIBLE } from "../src/food";
 import { readSheets } from "../../pi/src/assets";
 
 const sheets = readSheets();
@@ -101,4 +102,19 @@ test("swapping colors, tinting and the outline", () => {
     return a ? (r ? "o" : "#") : ".";
   }).join(""));
   assert.deepEqual(rows, [".#...", "#o##.", ".##o#", "...#."]);
+});
+
+test("sheets: things next to the pet keep their sizes (docs/gameplay.md)", () => {
+  const trip = sheets["trip"];
+  for (const food of EDIBLE) { // a mouthful that can be seen
+    const { width, height } = trip.image(food);
+    assert.ok(Math.max(width, height) >= 6 && Math.max(width, height) <= 8, `${food}: ${width}×${height}`);
+  }
+  assert.ok(trip.image("pond").width >= 24); // about as wide as a child
+  // there is an umbrella as wide as every pet, outline and all
+  const widest = Math.max(...Object.entries(sheets).filter(([name]) => name.endsWith("_body")).map(([, sheet]) => {
+    const [x0, , x1] = sheet.image("idle").bbox()!;
+    return x1 - x0 + 2;
+  }));
+  assert.ok(sheets["items"].has("umbrella_35") && widest <= 35, `${widest}`);
 });

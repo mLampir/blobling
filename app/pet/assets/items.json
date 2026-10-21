@@ -61,19 +61,59 @@
    "duration": 1000
   },
   {
-   "filename": "items umbrella 6",
+   "filename": "items umbrella_19 6",
    "frame": {
     "x": 57,
     "y": 0,
-    "w": 15,
-    "h": 8
+    "w": 19,
+    "h": 9
    },
    "duration": 1000
   },
   {
-   "filename": "items cloud 7",
+   "filename": "items umbrella_23 7",
    "frame": {
-    "x": 72,
+    "x": 76,
+    "y": 0,
+    "w": 23,
+    "h": 9
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items umbrella_27 8",
+   "frame": {
+    "x": 99,
+    "y": 0,
+    "w": 27,
+    "h": 10
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items umbrella_31 9",
+   "frame": {
+    "x": 126,
+    "y": 0,
+    "w": 31,
+    "h": 11
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items umbrella_35 10",
+   "frame": {
+    "x": 157,
+    "y": 0,
+    "w": 35,
+    "h": 11
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items cloud 11",
+   "frame": {
+    "x": 192,
     "y": 0,
     "w": 13,
     "h": 5
@@ -81,9 +121,9 @@
    "duration": 1000
   },
   {
-   "filename": "items cloud_small 8",
+   "filename": "items cloud_small 12",
    "frame": {
-    "x": 85,
+    "x": 205,
     "y": 0,
     "w": 8,
     "h": 4
@@ -91,9 +131,9 @@
    "duration": 1000
   },
   {
-   "filename": "items cookie 9",
+   "filename": "items cookie 13",
    "frame": {
-    "x": 93,
+    "x": 213,
     "y": 0,
     "w": 7,
     "h": 6
@@ -101,9 +141,9 @@
    "duration": 1000
   },
   {
-   "filename": "items icecream 10",
+   "filename": "items icecream 14",
    "frame": {
-    "x": 100,
+    "x": 220,
     "y": 0,
     "w": 5,
     "h": 8
@@ -111,9 +151,9 @@
    "duration": 1000
   },
   {
-   "filename": "items fruit 11",
+   "filename": "items fruit 15",
    "frame": {
-    "x": 105,
+    "x": 225,
     "y": 0,
     "w": 6,
     "h": 7
@@ -121,9 +161,9 @@
    "duration": 1000
   },
   {
-   "filename": "items medicine 12",
+   "filename": "items medicine 16",
    "frame": {
-    "x": 111,
+    "x": 231,
     "y": 0,
     "w": 5,
     "h": 7
@@ -131,9 +171,9 @@
    "duration": 1000
   },
   {
-   "filename": "items sponge 13",
+   "filename": "items sponge 17",
    "frame": {
-    "x": 116,
+    "x": 236,
     "y": 0,
     "w": 8,
     "h": 6
@@ -141,9 +181,9 @@
    "duration": 1000
   },
   {
-   "filename": "items baton 14",
+   "filename": "items baton 18",
    "frame": {
-    "x": 124,
+    "x": 244,
     "y": 0,
     "w": 8,
     "h": 7
@@ -151,9 +191,9 @@
    "duration": 1000
   },
   {
-   "filename": "items bag 15",
+   "filename": "items bag 19",
    "frame": {
-    "x": 132,
+    "x": 252,
     "y": 0,
     "w": 8,
     "h": 8
@@ -161,9 +201,9 @@
    "duration": 1000
   },
   {
-   "filename": "items whistle 16",
+   "filename": "items whistle 20",
    "frame": {
-    "x": 140,
+    "x": 260,
     "y": 0,
     "w": 12,
     "h": 6
@@ -171,9 +211,9 @@
    "duration": 1000
   },
   {
-   "filename": "items hide 17",
+   "filename": "items hide 21",
    "frame": {
-    "x": 152,
+    "x": 272,
     "y": 0,
     "w": 9,
     "h": 7
@@ -181,9 +221,9 @@
    "duration": 1000
   },
   {
-   "filename": "items stone 18",
+   "filename": "items stone 22",
    "frame": {
-    "x": 161,
+    "x": 281,
     "y": 0,
     "w": 7,
     "h": 5
@@ -191,9 +231,9 @@
    "duration": 1000
   },
   {
-   "filename": "items skill_speed 19",
+   "filename": "items skill_speed 23",
    "frame": {
-    "x": 168,
+    "x": 288,
     "y": 0,
     "w": 6,
     "h": 7
@@ -201,9 +241,9 @@
    "duration": 1000
   },
   {
-   "filename": "items skill_smarts 20",
+   "filename": "items skill_smarts 24",
    "frame": {
-    "x": 174,
+    "x": 294,
     "y": 0,
     "w": 5,
     "h": 7
@@ -211,9 +251,9 @@
    "duration": 1000
   },
   {
-   "filename": "items rod 21",
+   "filename": "items rod 25",
    "frame": {
-    "x": 179,
+    "x": 299,
     "y": 0,
     "w": 12,
     "h": 9
@@ -221,117 +261,17 @@
    "duration": 1000
   },
   {
-   "filename": "items egg 22",
-   "frame": {
-    "x": 191,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "items egg_wobble 23",
-   "frame": {
-    "x": 203,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items egg_wobble 24",
-   "frame": {
-    "x": 215,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items egg_wobble 25",
-   "frame": {
-    "x": 227,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items egg_wobble 26",
-   "frame": {
-    "x": 239,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items egg_crack 27",
-   "frame": {
-    "x": 251,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "items egg_open 28",
-   "frame": {
-    "x": 263,
-    "y": 0,
-    "w": 12,
-    "h": 15
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "items ember_egg 29",
-   "frame": {
-    "x": 275,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "items ember_egg_wobble 30",
-   "frame": {
-    "x": 287,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items ember_egg_wobble 31",
-   "frame": {
-    "x": 299,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items ember_egg_wobble 32",
+   "filename": "items egg 26",
    "frame": {
     "x": 311,
     "y": 0,
     "w": 12,
     "h": 14
    },
-   "duration": 150
+   "duration": 1000
   },
   {
-   "filename": "items ember_egg_wobble 33",
+   "filename": "items egg_wobble 27",
    "frame": {
     "x": 323,
     "y": 0,
@@ -341,9 +281,39 @@
    "duration": 150
   },
   {
-   "filename": "items ember_egg_crack 34",
+   "filename": "items egg_wobble 28",
    "frame": {
     "x": 335,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_wobble 29",
+   "frame": {
+    "x": 347,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_wobble 30",
+   "frame": {
+    "x": 359,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_crack 31",
+   "frame": {
+    "x": 371,
     "y": 0,
     "w": 12,
     "h": 14
@@ -351,9 +321,9 @@
    "duration": 1000
   },
   {
-   "filename": "items ember_egg_open 35",
+   "filename": "items egg_open 32",
    "frame": {
-    "x": 347,
+    "x": 383,
     "y": 0,
     "w": 12,
     "h": 15
@@ -361,9 +331,9 @@
    "duration": 1000
   },
   {
-   "filename": "items stone_egg 36",
+   "filename": "items ember_egg 33",
    "frame": {
-    "x": 359,
+    "x": 395,
     "y": 0,
     "w": 12,
     "h": 14
@@ -371,37 +341,7 @@
    "duration": 1000
   },
   {
-   "filename": "items stone_egg_wobble 37",
-   "frame": {
-    "x": 371,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items stone_egg_wobble 38",
-   "frame": {
-    "x": 383,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items stone_egg_wobble 39",
-   "frame": {
-    "x": 395,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items stone_egg_wobble 40",
+   "filename": "items ember_egg_wobble 34",
    "frame": {
     "x": 407,
     "y": 0,
@@ -411,9 +351,39 @@
    "duration": 150
   },
   {
-   "filename": "items stone_egg_crack 41",
+   "filename": "items ember_egg_wobble 35",
    "frame": {
     "x": 419,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_wobble 36",
+   "frame": {
+    "x": 431,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_wobble 37",
+   "frame": {
+    "x": 443,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_crack 38",
+   "frame": {
+    "x": 455,
     "y": 0,
     "w": 12,
     "h": 14
@@ -421,9 +391,9 @@
    "duration": 1000
   },
   {
-   "filename": "items stone_egg_open 42",
+   "filename": "items ember_egg_open 39",
    "frame": {
-    "x": 431,
+    "x": 467,
     "y": 0,
     "w": 12,
     "h": 15
@@ -431,9 +401,9 @@
    "duration": 1000
   },
   {
-   "filename": "items fox_egg 43",
+   "filename": "items stone_egg 40",
    "frame": {
-    "x": 443,
+    "x": 479,
     "y": 0,
     "w": 12,
     "h": 14
@@ -441,37 +411,7 @@
    "duration": 1000
   },
   {
-   "filename": "items fox_egg_wobble 44",
-   "frame": {
-    "x": 455,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items fox_egg_wobble 45",
-   "frame": {
-    "x": 467,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items fox_egg_wobble 46",
-   "frame": {
-    "x": 479,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items fox_egg_wobble 47",
+   "filename": "items stone_egg_wobble 41",
    "frame": {
     "x": 491,
     "y": 0,
@@ -481,9 +421,39 @@
    "duration": 150
   },
   {
-   "filename": "items fox_egg_crack 48",
+   "filename": "items stone_egg_wobble 42",
    "frame": {
     "x": 503,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_wobble 43",
+   "frame": {
+    "x": 515,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_wobble 44",
+   "frame": {
+    "x": 527,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_crack 45",
+   "frame": {
+    "x": 539,
     "y": 0,
     "w": 12,
     "h": 14
@@ -491,9 +461,9 @@
    "duration": 1000
   },
   {
-   "filename": "items fox_egg_open 49",
+   "filename": "items stone_egg_open 46",
    "frame": {
-    "x": 515,
+    "x": 551,
     "y": 0,
     "w": 12,
     "h": 15
@@ -501,9 +471,9 @@
    "duration": 1000
   },
   {
-   "filename": "items cloud_egg 50",
+   "filename": "items fox_egg 47",
    "frame": {
-    "x": 527,
+    "x": 563,
     "y": 0,
     "w": 12,
     "h": 14
@@ -511,37 +481,7 @@
    "duration": 1000
   },
   {
-   "filename": "items cloud_egg_wobble 51",
-   "frame": {
-    "x": 539,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items cloud_egg_wobble 52",
-   "frame": {
-    "x": 551,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items cloud_egg_wobble 53",
-   "frame": {
-    "x": 563,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items cloud_egg_wobble 54",
+   "filename": "items fox_egg_wobble 48",
    "frame": {
     "x": 575,
     "y": 0,
@@ -551,9 +491,39 @@
    "duration": 150
   },
   {
-   "filename": "items cloud_egg_crack 55",
+   "filename": "items fox_egg_wobble 49",
    "frame": {
     "x": 587,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_wobble 50",
+   "frame": {
+    "x": 599,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_wobble 51",
+   "frame": {
+    "x": 611,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_crack 52",
+   "frame": {
+    "x": 623,
     "y": 0,
     "w": 12,
     "h": 14
@@ -561,9 +531,9 @@
    "duration": 1000
   },
   {
-   "filename": "items cloud_egg_open 56",
+   "filename": "items fox_egg_open 53",
    "frame": {
-    "x": 599,
+    "x": 635,
     "y": 0,
     "w": 12,
     "h": 15
@@ -571,9 +541,9 @@
    "duration": 1000
   },
   {
-   "filename": "items leaf_egg 57",
+   "filename": "items cloud_egg 54",
    "frame": {
-    "x": 611,
+    "x": 647,
     "y": 0,
     "w": 12,
     "h": 14
@@ -581,37 +551,7 @@
    "duration": 1000
   },
   {
-   "filename": "items leaf_egg_wobble 58",
-   "frame": {
-    "x": 623,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items leaf_egg_wobble 59",
-   "frame": {
-    "x": 635,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items leaf_egg_wobble 60",
-   "frame": {
-    "x": 647,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items leaf_egg_wobble 61",
+   "filename": "items cloud_egg_wobble 55",
    "frame": {
     "x": 659,
     "y": 0,
@@ -621,9 +561,39 @@
    "duration": 150
   },
   {
-   "filename": "items leaf_egg_crack 62",
+   "filename": "items cloud_egg_wobble 56",
    "frame": {
     "x": 671,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_wobble 57",
+   "frame": {
+    "x": 683,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_wobble 58",
+   "frame": {
+    "x": 695,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_crack 59",
+   "frame": {
+    "x": 707,
     "y": 0,
     "w": 12,
     "h": 14
@@ -631,9 +601,9 @@
    "duration": 1000
   },
   {
-   "filename": "items leaf_egg_open 63",
+   "filename": "items cloud_egg_open 60",
    "frame": {
-    "x": 683,
+    "x": 719,
     "y": 0,
     "w": 12,
     "h": 15
@@ -641,9 +611,9 @@
    "duration": 1000
   },
   {
-   "filename": "items duck_egg 64",
+   "filename": "items leaf_egg 61",
    "frame": {
-    "x": 695,
+    "x": 731,
     "y": 0,
     "w": 12,
     "h": 14
@@ -651,37 +621,7 @@
    "duration": 1000
   },
   {
-   "filename": "items duck_egg_wobble 65",
-   "frame": {
-    "x": 707,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items duck_egg_wobble 66",
-   "frame": {
-    "x": 719,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items duck_egg_wobble 67",
-   "frame": {
-    "x": 731,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items duck_egg_wobble 68",
+   "filename": "items leaf_egg_wobble 62",
    "frame": {
     "x": 743,
     "y": 0,
@@ -691,9 +631,39 @@
    "duration": 150
   },
   {
-   "filename": "items duck_egg_crack 69",
+   "filename": "items leaf_egg_wobble 63",
    "frame": {
     "x": 755,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_wobble 64",
+   "frame": {
+    "x": 767,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_wobble 65",
+   "frame": {
+    "x": 779,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_crack 66",
+   "frame": {
+    "x": 791,
     "y": 0,
     "w": 12,
     "h": 14
@@ -701,9 +671,9 @@
    "duration": 1000
   },
   {
-   "filename": "items duck_egg_open 70",
+   "filename": "items leaf_egg_open 67",
    "frame": {
-    "x": 767,
+    "x": 803,
     "y": 0,
     "w": 12,
     "h": 15
@@ -711,9 +681,9 @@
    "duration": 1000
   },
   {
-   "filename": "items hippo_egg 71",
+   "filename": "items duck_egg 68",
    "frame": {
-    "x": 779,
+    "x": 815,
     "y": 0,
     "w": 12,
     "h": 14
@@ -721,37 +691,7 @@
    "duration": 1000
   },
   {
-   "filename": "items hippo_egg_wobble 72",
-   "frame": {
-    "x": 791,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items hippo_egg_wobble 73",
-   "frame": {
-    "x": 803,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items hippo_egg_wobble 74",
-   "frame": {
-    "x": 815,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items hippo_egg_wobble 75",
+   "filename": "items duck_egg_wobble 69",
    "frame": {
     "x": 827,
     "y": 0,
@@ -761,9 +701,39 @@
    "duration": 150
   },
   {
-   "filename": "items hippo_egg_crack 76",
+   "filename": "items duck_egg_wobble 70",
    "frame": {
     "x": 839,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_wobble 71",
+   "frame": {
+    "x": 851,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_wobble 72",
+   "frame": {
+    "x": 863,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_crack 73",
+   "frame": {
+    "x": 875,
     "y": 0,
     "w": 12,
     "h": 14
@@ -771,9 +741,9 @@
    "duration": 1000
   },
   {
-   "filename": "items hippo_egg_open 77",
+   "filename": "items duck_egg_open 74",
    "frame": {
-    "x": 851,
+    "x": 887,
     "y": 0,
     "w": 12,
     "h": 15
@@ -781,9 +751,9 @@
    "duration": 1000
   },
   {
-   "filename": "items beak_egg 78",
+   "filename": "items hippo_egg 75",
    "frame": {
-    "x": 863,
+    "x": 899,
     "y": 0,
     "w": 12,
     "h": 14
@@ -791,37 +761,7 @@
    "duration": 1000
   },
   {
-   "filename": "items beak_egg_wobble 79",
-   "frame": {
-    "x": 875,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beak_egg_wobble 80",
-   "frame": {
-    "x": 887,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beak_egg_wobble 81",
-   "frame": {
-    "x": 899,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beak_egg_wobble 82",
+   "filename": "items hippo_egg_wobble 76",
    "frame": {
     "x": 911,
     "y": 0,
@@ -831,9 +771,39 @@
    "duration": 150
   },
   {
-   "filename": "items beak_egg_crack 83",
+   "filename": "items hippo_egg_wobble 77",
    "frame": {
     "x": 923,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_wobble 78",
+   "frame": {
+    "x": 935,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_wobble 79",
+   "frame": {
+    "x": 947,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_crack 80",
+   "frame": {
+    "x": 959,
     "y": 0,
     "w": 12,
     "h": 14
@@ -841,9 +811,9 @@
    "duration": 1000
   },
   {
-   "filename": "items beak_egg_open 84",
+   "filename": "items hippo_egg_open 81",
    "frame": {
-    "x": 935,
+    "x": 971,
     "y": 0,
     "w": 12,
     "h": 15
@@ -851,9 +821,9 @@
    "duration": 1000
   },
   {
-   "filename": "items caterpillar_egg 85",
+   "filename": "items beak_egg 82",
    "frame": {
-    "x": 947,
+    "x": 983,
     "y": 0,
     "w": 12,
     "h": 14
@@ -861,37 +831,7 @@
    "duration": 1000
   },
   {
-   "filename": "items caterpillar_egg_wobble 86",
-   "frame": {
-    "x": 959,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items caterpillar_egg_wobble 87",
-   "frame": {
-    "x": 971,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items caterpillar_egg_wobble 88",
-   "frame": {
-    "x": 983,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items caterpillar_egg_wobble 89",
+   "filename": "items beak_egg_wobble 83",
    "frame": {
     "x": 995,
     "y": 0,
@@ -901,9 +841,39 @@
    "duration": 150
   },
   {
-   "filename": "items caterpillar_egg_crack 90",
+   "filename": "items beak_egg_wobble 84",
    "frame": {
     "x": 1007,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_wobble 85",
+   "frame": {
+    "x": 1019,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_wobble 86",
+   "frame": {
+    "x": 1031,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_crack 87",
+   "frame": {
+    "x": 1043,
     "y": 0,
     "w": 12,
     "h": 14
@@ -911,9 +881,9 @@
    "duration": 1000
   },
   {
-   "filename": "items caterpillar_egg_open 91",
+   "filename": "items beak_egg_open 88",
    "frame": {
-    "x": 1019,
+    "x": 1055,
     "y": 0,
     "w": 12,
     "h": 15
@@ -921,9 +891,9 @@
    "duration": 1000
   },
   {
-   "filename": "items dog_egg 92",
+   "filename": "items caterpillar_egg 89",
    "frame": {
-    "x": 1031,
+    "x": 1067,
     "y": 0,
     "w": 12,
     "h": 14
@@ -931,37 +901,7 @@
    "duration": 1000
   },
   {
-   "filename": "items dog_egg_wobble 93",
-   "frame": {
-    "x": 1043,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dog_egg_wobble 94",
-   "frame": {
-    "x": 1055,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dog_egg_wobble 95",
-   "frame": {
-    "x": 1067,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dog_egg_wobble 96",
+   "filename": "items caterpillar_egg_wobble 90",
    "frame": {
     "x": 1079,
     "y": 0,
@@ -971,9 +911,39 @@
    "duration": 150
   },
   {
-   "filename": "items dog_egg_crack 97",
+   "filename": "items caterpillar_egg_wobble 91",
    "frame": {
     "x": 1091,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_wobble 92",
+   "frame": {
+    "x": 1103,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_wobble 93",
+   "frame": {
+    "x": 1115,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_crack 94",
+   "frame": {
+    "x": 1127,
     "y": 0,
     "w": 12,
     "h": 14
@@ -981,9 +951,9 @@
    "duration": 1000
   },
   {
-   "filename": "items dog_egg_open 98",
+   "filename": "items caterpillar_egg_open 95",
    "frame": {
-    "x": 1103,
+    "x": 1139,
     "y": 0,
     "w": 12,
     "h": 15
@@ -991,9 +961,9 @@
    "duration": 1000
   },
   {
-   "filename": "items dragonfly_egg 99",
+   "filename": "items dog_egg 96",
    "frame": {
-    "x": 1115,
+    "x": 1151,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1001,37 +971,7 @@
    "duration": 1000
   },
   {
-   "filename": "items dragonfly_egg_wobble 100",
-   "frame": {
-    "x": 1127,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dragonfly_egg_wobble 101",
-   "frame": {
-    "x": 1139,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dragonfly_egg_wobble 102",
-   "frame": {
-    "x": 1151,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dragonfly_egg_wobble 103",
+   "filename": "items dog_egg_wobble 97",
    "frame": {
     "x": 1163,
     "y": 0,
@@ -1041,9 +981,39 @@
    "duration": 150
   },
   {
-   "filename": "items dragonfly_egg_crack 104",
+   "filename": "items dog_egg_wobble 98",
    "frame": {
     "x": 1175,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_wobble 99",
+   "frame": {
+    "x": 1187,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_wobble 100",
+   "frame": {
+    "x": 1199,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_crack 101",
+   "frame": {
+    "x": 1211,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1051,9 +1021,9 @@
    "duration": 1000
   },
   {
-   "filename": "items dragonfly_egg_open 105",
+   "filename": "items dog_egg_open 102",
    "frame": {
-    "x": 1187,
+    "x": 1223,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1061,9 +1031,9 @@
    "duration": 1000
   },
   {
-   "filename": "items beaver_egg 106",
+   "filename": "items dragonfly_egg 103",
    "frame": {
-    "x": 1199,
+    "x": 1235,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1071,37 +1041,7 @@
    "duration": 1000
   },
   {
-   "filename": "items beaver_egg_wobble 107",
-   "frame": {
-    "x": 1211,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beaver_egg_wobble 108",
-   "frame": {
-    "x": 1223,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beaver_egg_wobble 109",
-   "frame": {
-    "x": 1235,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beaver_egg_wobble 110",
+   "filename": "items dragonfly_egg_wobble 104",
    "frame": {
     "x": 1247,
     "y": 0,
@@ -1111,9 +1051,39 @@
    "duration": 150
   },
   {
-   "filename": "items beaver_egg_crack 111",
+   "filename": "items dragonfly_egg_wobble 105",
    "frame": {
     "x": 1259,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_wobble 106",
+   "frame": {
+    "x": 1271,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_wobble 107",
+   "frame": {
+    "x": 1283,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_crack 108",
+   "frame": {
+    "x": 1295,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1121,9 +1091,9 @@
    "duration": 1000
   },
   {
-   "filename": "items beaver_egg_open 112",
+   "filename": "items dragonfly_egg_open 109",
    "frame": {
-    "x": 1271,
+    "x": 1307,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1131,9 +1101,9 @@
    "duration": 1000
   },
   {
-   "filename": "items crab_egg 113",
+   "filename": "items beaver_egg 110",
    "frame": {
-    "x": 1283,
+    "x": 1319,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1141,37 +1111,7 @@
    "duration": 1000
   },
   {
-   "filename": "items crab_egg_wobble 114",
-   "frame": {
-    "x": 1295,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items crab_egg_wobble 115",
-   "frame": {
-    "x": 1307,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items crab_egg_wobble 116",
-   "frame": {
-    "x": 1319,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items crab_egg_wobble 117",
+   "filename": "items beaver_egg_wobble 111",
    "frame": {
     "x": 1331,
     "y": 0,
@@ -1181,9 +1121,39 @@
    "duration": 150
   },
   {
-   "filename": "items crab_egg_crack 118",
+   "filename": "items beaver_egg_wobble 112",
    "frame": {
     "x": 1343,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_wobble 113",
+   "frame": {
+    "x": 1355,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_wobble 114",
+   "frame": {
+    "x": 1367,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_crack 115",
+   "frame": {
+    "x": 1379,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1191,9 +1161,9 @@
    "duration": 1000
   },
   {
-   "filename": "items crab_egg_open 119",
+   "filename": "items beaver_egg_open 116",
    "frame": {
-    "x": 1355,
+    "x": 1391,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1201,9 +1171,9 @@
    "duration": 1000
   },
   {
-   "filename": "items axolotl_egg 120",
+   "filename": "items crab_egg 117",
    "frame": {
-    "x": 1367,
+    "x": 1403,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1211,37 +1181,7 @@
    "duration": 1000
   },
   {
-   "filename": "items axolotl_egg_wobble 121",
-   "frame": {
-    "x": 1379,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items axolotl_egg_wobble 122",
-   "frame": {
-    "x": 1391,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items axolotl_egg_wobble 123",
-   "frame": {
-    "x": 1403,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items axolotl_egg_wobble 124",
+   "filename": "items crab_egg_wobble 118",
    "frame": {
     "x": 1415,
     "y": 0,
@@ -1251,9 +1191,39 @@
    "duration": 150
   },
   {
-   "filename": "items axolotl_egg_crack 125",
+   "filename": "items crab_egg_wobble 119",
    "frame": {
     "x": 1427,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items crab_egg_wobble 120",
+   "frame": {
+    "x": 1439,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items crab_egg_wobble 121",
+   "frame": {
+    "x": 1451,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items crab_egg_crack 122",
+   "frame": {
+    "x": 1463,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1261,9 +1231,79 @@
    "duration": 1000
   },
   {
-   "filename": "items axolotl_egg_open 126",
+   "filename": "items crab_egg_open 123",
    "frame": {
-    "x": 1439,
+    "x": 1475,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items axolotl_egg 124",
+   "frame": {
+    "x": 1487,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items axolotl_egg_wobble 125",
+   "frame": {
+    "x": 1499,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items axolotl_egg_wobble 126",
+   "frame": {
+    "x": 1511,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items axolotl_egg_wobble 127",
+   "frame": {
+    "x": 1523,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items axolotl_egg_wobble 128",
+   "frame": {
+    "x": 1535,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items axolotl_egg_crack 129",
+   "frame": {
+    "x": 1547,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items axolotl_egg_open 130",
+   "frame": {
+    "x": 1559,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1275,7 +1315,7 @@
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 1451,
+   "w": 1571,
    "h": 15
   },
   "frameTags": [
@@ -1316,459 +1356,483 @@
     "direction": "forward"
    },
    {
-    "name": "umbrella",
+    "name": "umbrella_19",
     "from": 6,
     "to": 6,
     "direction": "forward"
    },
    {
-    "name": "cloud",
+    "name": "umbrella_23",
     "from": 7,
     "to": 7,
     "direction": "forward"
    },
    {
-    "name": "cloud_small",
+    "name": "umbrella_27",
     "from": 8,
     "to": 8,
     "direction": "forward"
    },
    {
-    "name": "cookie",
+    "name": "umbrella_31",
     "from": 9,
     "to": 9,
     "direction": "forward"
    },
    {
-    "name": "icecream",
+    "name": "umbrella_35",
     "from": 10,
     "to": 10,
     "direction": "forward"
    },
    {
-    "name": "fruit",
+    "name": "cloud",
     "from": 11,
     "to": 11,
     "direction": "forward"
    },
    {
-    "name": "medicine",
+    "name": "cloud_small",
     "from": 12,
     "to": 12,
     "direction": "forward"
    },
    {
-    "name": "sponge",
+    "name": "cookie",
     "from": 13,
     "to": 13,
     "direction": "forward"
    },
    {
-    "name": "baton",
+    "name": "icecream",
     "from": 14,
     "to": 14,
     "direction": "forward"
    },
    {
-    "name": "bag",
+    "name": "fruit",
     "from": 15,
     "to": 15,
     "direction": "forward"
    },
    {
-    "name": "whistle",
+    "name": "medicine",
     "from": 16,
     "to": 16,
     "direction": "forward"
    },
    {
-    "name": "hide",
+    "name": "sponge",
     "from": 17,
     "to": 17,
     "direction": "forward"
    },
    {
-    "name": "stone",
+    "name": "baton",
     "from": 18,
     "to": 18,
     "direction": "forward"
    },
    {
-    "name": "skill_speed",
+    "name": "bag",
     "from": 19,
     "to": 19,
     "direction": "forward"
    },
    {
-    "name": "skill_smarts",
+    "name": "whistle",
     "from": 20,
     "to": 20,
     "direction": "forward"
    },
    {
-    "name": "rod",
+    "name": "hide",
     "from": 21,
     "to": 21,
     "direction": "forward"
    },
    {
-    "name": "egg",
+    "name": "stone",
     "from": 22,
     "to": 22,
     "direction": "forward"
    },
    {
-    "name": "egg_wobble",
+    "name": "skill_speed",
     "from": 23,
+    "to": 23,
+    "direction": "forward"
+   },
+   {
+    "name": "skill_smarts",
+    "from": 24,
+    "to": 24,
+    "direction": "forward"
+   },
+   {
+    "name": "rod",
+    "from": 25,
+    "to": 25,
+    "direction": "forward"
+   },
+   {
+    "name": "egg",
+    "from": 26,
     "to": 26,
     "direction": "forward"
    },
    {
-    "name": "egg_crack",
+    "name": "egg_wobble",
     "from": 27,
-    "to": 27,
+    "to": 30,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_crack",
+    "from": 31,
+    "to": 31,
     "direction": "forward"
    },
    {
     "name": "egg_open",
-    "from": 28,
-    "to": 28,
+    "from": 32,
+    "to": 32,
     "direction": "forward"
    },
    {
     "name": "ember_egg",
-    "from": 29,
-    "to": 29,
-    "direction": "forward"
-   },
-   {
-    "name": "ember_egg_wobble",
-    "from": 30,
+    "from": 33,
     "to": 33,
     "direction": "forward"
    },
    {
-    "name": "ember_egg_crack",
+    "name": "ember_egg_wobble",
     "from": 34,
-    "to": 34,
+    "to": 37,
+    "direction": "forward"
+   },
+   {
+    "name": "ember_egg_crack",
+    "from": 38,
+    "to": 38,
     "direction": "forward"
    },
    {
     "name": "ember_egg_open",
-    "from": 35,
-    "to": 35,
+    "from": 39,
+    "to": 39,
     "direction": "forward"
    },
    {
     "name": "stone_egg",
-    "from": 36,
-    "to": 36,
-    "direction": "forward"
-   },
-   {
-    "name": "stone_egg_wobble",
-    "from": 37,
+    "from": 40,
     "to": 40,
     "direction": "forward"
    },
    {
-    "name": "stone_egg_crack",
+    "name": "stone_egg_wobble",
     "from": 41,
-    "to": 41,
+    "to": 44,
+    "direction": "forward"
+   },
+   {
+    "name": "stone_egg_crack",
+    "from": 45,
+    "to": 45,
     "direction": "forward"
    },
    {
     "name": "stone_egg_open",
-    "from": 42,
-    "to": 42,
+    "from": 46,
+    "to": 46,
     "direction": "forward"
    },
    {
     "name": "fox_egg",
-    "from": 43,
-    "to": 43,
-    "direction": "forward"
-   },
-   {
-    "name": "fox_egg_wobble",
-    "from": 44,
+    "from": 47,
     "to": 47,
     "direction": "forward"
    },
    {
-    "name": "fox_egg_crack",
+    "name": "fox_egg_wobble",
     "from": 48,
-    "to": 48,
+    "to": 51,
+    "direction": "forward"
+   },
+   {
+    "name": "fox_egg_crack",
+    "from": 52,
+    "to": 52,
     "direction": "forward"
    },
    {
     "name": "fox_egg_open",
-    "from": 49,
-    "to": 49,
+    "from": 53,
+    "to": 53,
     "direction": "forward"
    },
    {
     "name": "cloud_egg",
-    "from": 50,
-    "to": 50,
-    "direction": "forward"
-   },
-   {
-    "name": "cloud_egg_wobble",
-    "from": 51,
+    "from": 54,
     "to": 54,
     "direction": "forward"
    },
    {
-    "name": "cloud_egg_crack",
+    "name": "cloud_egg_wobble",
     "from": 55,
-    "to": 55,
+    "to": 58,
+    "direction": "forward"
+   },
+   {
+    "name": "cloud_egg_crack",
+    "from": 59,
+    "to": 59,
     "direction": "forward"
    },
    {
     "name": "cloud_egg_open",
-    "from": 56,
-    "to": 56,
+    "from": 60,
+    "to": 60,
     "direction": "forward"
    },
    {
     "name": "leaf_egg",
-    "from": 57,
-    "to": 57,
-    "direction": "forward"
-   },
-   {
-    "name": "leaf_egg_wobble",
-    "from": 58,
+    "from": 61,
     "to": 61,
     "direction": "forward"
    },
    {
-    "name": "leaf_egg_crack",
+    "name": "leaf_egg_wobble",
     "from": 62,
-    "to": 62,
+    "to": 65,
+    "direction": "forward"
+   },
+   {
+    "name": "leaf_egg_crack",
+    "from": 66,
+    "to": 66,
     "direction": "forward"
    },
    {
     "name": "leaf_egg_open",
-    "from": 63,
-    "to": 63,
+    "from": 67,
+    "to": 67,
     "direction": "forward"
    },
    {
     "name": "duck_egg",
-    "from": 64,
-    "to": 64,
-    "direction": "forward"
-   },
-   {
-    "name": "duck_egg_wobble",
-    "from": 65,
+    "from": 68,
     "to": 68,
     "direction": "forward"
    },
    {
-    "name": "duck_egg_crack",
+    "name": "duck_egg_wobble",
     "from": 69,
-    "to": 69,
+    "to": 72,
+    "direction": "forward"
+   },
+   {
+    "name": "duck_egg_crack",
+    "from": 73,
+    "to": 73,
     "direction": "forward"
    },
    {
     "name": "duck_egg_open",
-    "from": 70,
-    "to": 70,
+    "from": 74,
+    "to": 74,
     "direction": "forward"
    },
    {
     "name": "hippo_egg",
-    "from": 71,
-    "to": 71,
-    "direction": "forward"
-   },
-   {
-    "name": "hippo_egg_wobble",
-    "from": 72,
+    "from": 75,
     "to": 75,
     "direction": "forward"
    },
    {
-    "name": "hippo_egg_crack",
+    "name": "hippo_egg_wobble",
     "from": 76,
-    "to": 76,
+    "to": 79,
+    "direction": "forward"
+   },
+   {
+    "name": "hippo_egg_crack",
+    "from": 80,
+    "to": 80,
     "direction": "forward"
    },
    {
     "name": "hippo_egg_open",
-    "from": 77,
-    "to": 77,
+    "from": 81,
+    "to": 81,
     "direction": "forward"
    },
    {
     "name": "beak_egg",
-    "from": 78,
-    "to": 78,
-    "direction": "forward"
-   },
-   {
-    "name": "beak_egg_wobble",
-    "from": 79,
+    "from": 82,
     "to": 82,
     "direction": "forward"
    },
    {
-    "name": "beak_egg_crack",
+    "name": "beak_egg_wobble",
     "from": 83,
-    "to": 83,
+    "to": 86,
+    "direction": "forward"
+   },
+   {
+    "name": "beak_egg_crack",
+    "from": 87,
+    "to": 87,
     "direction": "forward"
    },
    {
     "name": "beak_egg_open",
-    "from": 84,
-    "to": 84,
+    "from": 88,
+    "to": 88,
     "direction": "forward"
    },
    {
     "name": "caterpillar_egg",
-    "from": 85,
-    "to": 85,
-    "direction": "forward"
-   },
-   {
-    "name": "caterpillar_egg_wobble",
-    "from": 86,
+    "from": 89,
     "to": 89,
     "direction": "forward"
    },
    {
-    "name": "caterpillar_egg_crack",
+    "name": "caterpillar_egg_wobble",
     "from": 90,
-    "to": 90,
+    "to": 93,
+    "direction": "forward"
+   },
+   {
+    "name": "caterpillar_egg_crack",
+    "from": 94,
+    "to": 94,
     "direction": "forward"
    },
    {
     "name": "caterpillar_egg_open",
-    "from": 91,
-    "to": 91,
+    "from": 95,
+    "to": 95,
     "direction": "forward"
    },
    {
     "name": "dog_egg",
-    "from": 92,
-    "to": 92,
-    "direction": "forward"
-   },
-   {
-    "name": "dog_egg_wobble",
-    "from": 93,
+    "from": 96,
     "to": 96,
     "direction": "forward"
    },
    {
-    "name": "dog_egg_crack",
+    "name": "dog_egg_wobble",
     "from": 97,
-    "to": 97,
+    "to": 100,
+    "direction": "forward"
+   },
+   {
+    "name": "dog_egg_crack",
+    "from": 101,
+    "to": 101,
     "direction": "forward"
    },
    {
     "name": "dog_egg_open",
-    "from": 98,
-    "to": 98,
+    "from": 102,
+    "to": 102,
     "direction": "forward"
    },
    {
     "name": "dragonfly_egg",
-    "from": 99,
-    "to": 99,
-    "direction": "forward"
-   },
-   {
-    "name": "dragonfly_egg_wobble",
-    "from": 100,
+    "from": 103,
     "to": 103,
     "direction": "forward"
    },
    {
-    "name": "dragonfly_egg_crack",
+    "name": "dragonfly_egg_wobble",
     "from": 104,
-    "to": 104,
+    "to": 107,
+    "direction": "forward"
+   },
+   {
+    "name": "dragonfly_egg_crack",
+    "from": 108,
+    "to": 108,
     "direction": "forward"
    },
    {
     "name": "dragonfly_egg_open",
-    "from": 105,
-    "to": 105,
+    "from": 109,
+    "to": 109,
     "direction": "forward"
    },
    {
     "name": "beaver_egg",
-    "from": 106,
-    "to": 106,
-    "direction": "forward"
-   },
-   {
-    "name": "beaver_egg_wobble",
-    "from": 107,
+    "from": 110,
     "to": 110,
     "direction": "forward"
    },
    {
-    "name": "beaver_egg_crack",
+    "name": "beaver_egg_wobble",
     "from": 111,
-    "to": 111,
+    "to": 114,
+    "direction": "forward"
+   },
+   {
+    "name": "beaver_egg_crack",
+    "from": 115,
+    "to": 115,
     "direction": "forward"
    },
    {
     "name": "beaver_egg_open",
-    "from": 112,
-    "to": 112,
+    "from": 116,
+    "to": 116,
     "direction": "forward"
    },
    {
     "name": "crab_egg",
-    "from": 113,
-    "to": 113,
-    "direction": "forward"
-   },
-   {
-    "name": "crab_egg_wobble",
-    "from": 114,
+    "from": 117,
     "to": 117,
     "direction": "forward"
    },
    {
-    "name": "crab_egg_crack",
+    "name": "crab_egg_wobble",
     "from": 118,
-    "to": 118,
+    "to": 121,
+    "direction": "forward"
+   },
+   {
+    "name": "crab_egg_crack",
+    "from": 122,
+    "to": 122,
     "direction": "forward"
    },
    {
     "name": "crab_egg_open",
-    "from": 119,
-    "to": 119,
+    "from": 123,
+    "to": 123,
     "direction": "forward"
    },
    {
     "name": "axolotl_egg",
-    "from": 120,
-    "to": 120,
-    "direction": "forward"
-   },
-   {
-    "name": "axolotl_egg_wobble",
-    "from": 121,
+    "from": 124,
     "to": 124,
     "direction": "forward"
    },
    {
-    "name": "axolotl_egg_crack",
+    "name": "axolotl_egg_wobble",
     "from": 125,
-    "to": 125,
+    "to": 128,
+    "direction": "forward"
+   },
+   {
+    "name": "axolotl_egg_crack",
+    "from": 129,
+    "to": 129,
     "direction": "forward"
    },
    {
     "name": "axolotl_egg_open",
-    "from": 126,
-    "to": 126,
+    "from": 130,
+    "to": 130,
     "direction": "forward"
    }
   ]
