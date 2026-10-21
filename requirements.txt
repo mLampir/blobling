@@ -1,3 +1,3 @@
 # What the panel driver (pi/panel_driver.py) needs next to the matrix library,
 # and what tools/build_blob_sprites.py draws the sprite sheets with.
-pillow==12.3.0
+pillow==13.0.0
