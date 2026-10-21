@@ -279,6 +279,29 @@ The values are in `core/src/grandma.ts`.
 
 </details>
 
+## Under the stars, on the stage and in the ground
+
+Four lines hatch from eggs that come from the shooting stars, the trick
+festival and digging ([gameplay.md](gameplay.md#shooting-stars)).
+
+<details>
+<summary>Show which eggs they are</summary>
+
+| Where | Egg |
+|---|---|
+| On the roof, after the fifth evening with a shooting star: the owl that sat there left it | **owl egg** |
+| The first first place at the trick festival | **chameleon egg** |
+| The second first place at the trick festival | **kite egg** |
+| The first dig at a treasure map's cross, for every pet | **scarab egg** |
+
+The dog and the beaver lines are diggers by nature: they dig twice as fast and
+find a seed more.
+
+The values are in `core/src/stars.ts`, `core/src/festival.ts` and
+`core/src/digging.ts`.
+
+</details>
+
 ### The ember line
 
 <details>

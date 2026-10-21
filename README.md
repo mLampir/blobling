@@ -37,6 +37,10 @@ a day and also tells you the time and the weather.
   in time the two lay an egg that passes a part of your pet's training on to
   the next one. Some guests come to the garden by themselves, when something
   there draws them; they peek over the fence first.
+- **Something going on.** On clear evenings a shooting star falls now and then
+  and leaves something in the garden; every second Saturday there is a trick
+  festival with a jury of wild pets; and a treasure map from a trip shows
+  where to dig.
 - **Up to four live at home.** A new egg doesn't take your favorite away:
   each pet has a house of its own along a street, a tap switches between them,
   and the neighbours get together to play, copy a trick from each other and

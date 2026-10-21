@@ -185,6 +185,11 @@
       "name": "Berg",
       "away": "unterwegs auf dem Berg",
       "trip": "Ausflug auf den Berg 🎒"
+    },
+    "festival": {
+      "name": "Trickfest",
+      "away": "auf dem Trickfest",
+      "trip": "Ab zum Trickfest 🎪"
     }
   },
   "foes": {
@@ -267,7 +272,17 @@
     "earflap": "Ohrenmütze",
     "stripes": "Ringelzipfelmütze",
     "cosy": "Teewärmermütze",
-    "cake": "Omas Kuchen"
+    "cake": "Omas Kuchen",
+    "star_shard": "Sternsplitter",
+    "ribbon_blue": "Blaue Rosette",
+    "ribbon_red": "Rote Rosette",
+    "fossil": "Fossil",
+    "helmet": "Forscherhelm",
+    "treasure_map": "Schatzkarte",
+    "egg_owl": "Eulen-Ei",
+    "egg_chameleon": "Chamäleon-Ei",
+    "egg_kite": "Drachen-Ei",
+    "egg_scarab": "Skarabäus-Ei"
   },
   "pack": {
     "ball": "Ball"
@@ -328,7 +343,11 @@
       "pack_full": "In den Rucksack passen nur zwei Sachen.",
       "no_pond": "{name} kann nur angeln, wenn ein Teich im Garten steht.",
       "no_line": "Zu spät – die Angel ist schon draußen.",
-      "at_grandmas": "{name} ist schon bei Oma."
+      "at_grandmas": "{name} ist schon bei Oma.",
+      "no_festival": "Heute ist kein Fest.",
+      "festival_done": "{name} war heute schon auf dem Fest.",
+      "no_map": "In der Tasche ist keine Schatzkarte.",
+      "no_room": "Dafür ist kein Platz mehr."
     },
     "notify": {
       "channel": "Wenn dein Pet dich braucht",
@@ -360,7 +379,9 @@
       },
       "again": "Noch mal",
       "play": "Noch mal ansehen",
-      "against": "Rauferei mit {foe} …"
+      "against": "Rauferei mit {foe} …",
+      "watch_show": "▶ Auftritt ansehen",
+      "show": "Auf der Bühne beim Trickfest …"
     },
     "collected": "{egg} eingesammelt – es liegt jetzt in deiner Tasche",
     "unwrapped_fruit": "Drin war: {fruit}. Die Tasche war voll, also hat {name} gleich hineingebissen",
@@ -666,7 +687,13 @@
       "fish_early": "hat die Angel zu früh eingeholt",
       "fish_nothing": "es hat nichts angebissen",
       "visit_grandma": "ist zu Oma auf Besuch 🏡",
-      "cake": "Omas Kuchen 🍰"
+      "cake": "Omas Kuchen 🍰",
+      "star": "hat eine Sternschnuppe gesehen und sich etwas gewünscht 🌠",
+      "show_0": "hat auf der Bühne seine Tricks gezeigt – diesmal ohne Platz",
+      "show_1": "hat das Trickfest gewonnen 🏆",
+      "show_2": "ist beim Trickfest Zweiter geworden 🥈",
+      "show_3": "ist beim Trickfest Dritter geworden 🥉",
+      "dig": "hat am roten Kreuz gegraben: {what}"
     },
     "statistics": {
       "meals": "Mahlzeiten",
@@ -857,7 +884,15 @@
         "one": "noch 1 Frucht",
         "other": "noch {n} Früchte"
       }
-    }
+    },
+    "festival": {
+      "soon": "🎪 Trickfest am {date}",
+      "today": "🎪 Heute ist Trickfest!",
+      "went": "🎪 {name} war schon auf dem Trickfest.",
+      "what": "Welche Tricks zeigt es?",
+      "go": "Zum Fest"
+    },
+    "picked_star": "Aufgehoben: {thing}. Das kam mit der Sternschnuppe"
   },
   "settings": {
     "title": "LED-Matrix",

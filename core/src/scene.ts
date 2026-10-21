@@ -15,6 +15,9 @@
  */
 
 import * as battle from "./battle";
+import * as care from "./care";
+import * as digging from "./digging";
+import * as festival from "./festival";
 import type { Font } from "./font";
 import * as fishing from "./fishing";
 import * as home from "./home";
@@ -24,6 +27,7 @@ import { ACTIVITY_SECONDS, THROW_SECONDS } from "./model";
 import { Random } from "./random";
 import * as sky from "./sky";
 import { faceAnchor, outline, recolor, swapColors, tint, wideRow, type Sheet } from "./sprites";
+import * as stars from "./stars";
 import { moonPhase, sunTimes } from "./sun";
 
 export const FPS = 10;
@@ -61,70 +65,6 @@ const CHECK: Bitmap = [[90, 225, 110], ["......X", ".....X.", "X...X..", ".X.X..
 const CROSS: Bitmap = [[255, 70, 70], ["X...X", ".X.X.", "..X..", ".X.X.", "X...X"]];
 const GAME_JUMP = 8; // how far the pet jumps to the side
 const TRICK_SHOW = 2.4; // how long a trick takes; after practicing, it stays happy a little longer
-// Tricks some forms do in their own way: the same gesture and the same effect, another animation.
-// "stage:species" → {trick: animation}
-const OWN_TRICKS: Record<string, Record<string, string>> = {
-  "adult:sneezle": { flip: "flutter" }, // its wings only flap for this: up, over at the top and down again
-  "adult:lumoth": { spin: "circle" }, // a moth: it flutters round in circles, as round a lamp
-  "adult:glimmerock": { spin: "shine" }, // a show: its crystals flash as it turns
-  "adult:bouldergrin": { flip: "toss" }, // its top stone does the flip for it and lands back on top
-  "adult:gemperor": { flip: "slam" }, // a king doesn't somersault: it leaps up and lands so hard that crystals shoot up
-  "adult:purrloop": { bow: "stretch" }, // a cat's bow: front down, a long stretch and a yawn, then a shake
-  "adult:lanternling": { spin: "swing" }, // it swings to and fro as a lantern does on its handle
-  "adult:flarelet": { flip: "flare" }, // the flame shoots up out of its bowl and rains embers
-  "adult:roamtail": { spin: "chase" }, // goes round in circles after its own tail
-  "adult:filchfox": { spin: "vanish" }, // a puff of smoke, gone, and it pops up again a little further on
-  "adult:rumblefluff": { bow: "charge" }, // head down, a scrape with the hoof, and a charge with sparks
-  "adult:prismist": { spin: "rainbow" }, // it turns, and a rainbow of shimmer arcs over it
-  "adult:twiggle": { spin: "rustle" }, // it turns, and leaves whirl off its crown
-  "adult:needlenub": { bow: "bloom" }, // it closes into a bud and blooms, and petals fly
-  "adult:quill": { dance: "hornpipe" }, // the sailor's dance: quick steps from one foot to the other
-  "adult:drakwing": { flip: "glide" }, // a few beats of its wings up, and it glides down in a long arc
-  "adult:lillypot": { bow: "soak" }, // sinks low, as into its pond, and blows bubbles
-  "adult:steamo": { dance: "sauna" }, // a bath dance that makes it steam
-  "adult:parcelbeak": { bow: "deliver" }, // a bow, and a letter flies out of its pouch
-  "adult:rapierre": { spin: "fence" }, // a fencer's lunge, forward and back, twice, with a flash
-  "adult:salamber": { dance: "ember_ring" }, // it dances round, and a ring of embers glows up round it
-  "adult:lunarock": { bow: "moonrise" }, // a bow, and its moonstone lights up and sends glints up into the sky
-  "adult:foxfire": { spin: "fox_fire" }, // it turns, and blue fox fires whirl round it
-  "adult:flurrbleat": { dance: "flurry" }, // it turns round and round in a flurry of snow
-  "adult:sakurin": { dance: "fan" }, // a fan dance: it sways to and fro, and blossom drifts off its crown
-  "adult:bubblehelm": { flip: "dive" }, // dives head first into the ground and pops out again in a burst of bubbles
-  "adult:hippula": { bow: "count" }, // a count's deep bow with a sweep of the cape, and bats flutter up
-  "adult:acewing": { flip: "loop" }, // a stunt flyer's loop with a trail of smoke
-  "adult:mothmuff": { spin: "lamp" }, // flutters round and round a light, as moths do round a lamp, and dust falls off its wings
-  "adult:sunflutter": { dance: "blossom" }, // sways, closes up, and its petals open like a blossom in the sun
-  "adult:jesterwing": { flip: "jest" }, // a fool's somersault high in the air, its bells jingling
-  "adult:digby": { spin: "settle" }, // goes round and round three times, as a dog does, and lies down
-  "adult:barrelbard": { bow: "shake_off" }, // a bow, and it shakes the snow out of its coat
-  "adult:pawdini": { dance: "ball_roll" }, // rolls to and fro on its big ball, the little one balanced on its nose
-  "adult:rotorfly": { spin: "lift_off" }, // lifts off, turns on the spot in the air and sets down again
-  "adult:jewelwing": { bow: "kneel" }, // a knight's bow: down on one knee with the lance lowered
-  "adult:prismfly": { dance: "light_dance" }, // spots of light in every color dance round it
-  "adult:dambert": { flip: "hurdle" }, // trowel up, and a jump over a little stack of logs
-  "adult:timberjack": { spin: "chop" }, // spins with its axe tail swinging, and wood chips fly
-  "adult:archibeaver": { bow: "blueprint" }, // a bow, it unrolls its plan, and its compass sparks
-  "adult:teacrab": { bow: "pour" }, // a polite bow forward, as a teapot pours: a cup of tea, and the steam rises
-  "adult:lightclaw": { spin: "beacon" }, // turns slowly as a lighthouse does, and its beam sweeps round
-  "adult:castlecrab": { bow: "drawbridge" }, // its gate opens, the drawbridge comes down, and a fanfare sparkles
-  "adult:mossolotl": { spin: "unfurl" }, // turns slowly, its gills unfurl, and bits of moss drift off its back
-  "adult:medilotl": { dance: "heal" }, // a little dance, and hearts float up
-  "adult:axodrake": { flip: "dragon_loop" }, // flies a loop in the air with a trail of glowing bubbles
-  "adult:sirthimble": { bow: "accolade" }, // a knight's bow, and its needle lance touches its shoulder with a glint
-  "adult:cogsqueak": { spin: "wind_up" }, // winds itself up, its key turning, and whirrs round on the spot
-  "adult:woolwhisk": { spin: "unravel" }, // her ball turns, and the golden thread unwinds round her and winds back up
-  "adult:hivebear": { bow: "hat_tip" }, // a bow, it lifts its honey pot like a hat, and the bees fly up
-  "adult:snorbear": { spin: "den_roll" }, // rolls up in its mound and tumbles round
-  "adult:ursastra": { dance: "star_picture" }, // dances, and the stars on its body wander up into a picture
-  "adult:tuxwaddle": { bow: "serve" }, // a waiter's bow, its tray held level, the cup steaming
-  "adult:glidepin": { spin: "pirouette" }, // a pirouette on its blades, faster and faster, frost flying
-  "adult:aurorapin": { dance: "aurora_ribbons" }, // ribbons of the northern lights wave round it as it dances
-  "adult:umbrabat": { flip: "hang_swing" }, // turns upside down, hangs from its hook tail and swings
-  "adult:batbeat": { dance: "bass_nod" }, // nods to the bass, and lights flash on the beat
-  "adult:lunaflap": { spin: "full_moon" }, // wraps itself in its wings, turns, and opens them as a full moon
-  "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
-  "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
-};
 // Forms whose special move in a scuffle is a move of its own (`special`), not the trick it used
 const SPECIAL_MOVES = ["angloop", "gemperor", "purrloop", "lanternling", "flarelet", "roamtail", "filchfox", "rumblefluff",
   "prismist", "twiggle", "needlenub", "quill", "drakwing", "lillypot", "steamo", "parcelbeak", "rapierre", "glimmerock",
@@ -220,6 +160,35 @@ export function hideX(spot: string, house: number): number {
   } as Record<string, number>)[spot] ?? GRASS_X;
 }
 const FOUND_X = [15, 28, 32, 38]; // per step: what the pet found at home by itself lies here, next to the plant, until it is picked up
+// What a shooting star left lies here (per step of the house) until it is picked up, glinting now
+// and then; the owl's egg lies on the roof, where the owl sat (stars.ts)
+const STAR_X = [34, 44, 46, 47];
+const STAR_GLINT: Color = [255, 245, 190];
+// The shooting star: from the upper left down to the right, with a tail that fades
+const SHOOTING_FROM: readonly [number, number] = [4, STATUS_HEIGHT + 2];
+const SHOOTING_TO: readonly [number, number] = [46, 30];
+const SHOOTING_TAIL = 7;
+const SHOOTING: Color = [255, 250, 225];
+const WISH_LOOK = 2.5; // seconds it looks up at the star before it shuts its eyes and wishes
+// A sparkle over its head while it wishes: a small star that twinkles
+const WISH_SPARKLE: readonly Bitmap[] = [[[255, 240, 150], ["..X..", ".XXX.", "XXXXX", ".XXX.", "..X.."]],
+  [[255, 250, 210], ["..X..", "..X..", "XXXXX", "..X..", "..X.."]]];
+// The treasure map's red cross, marked on the ground, and where it is (per step of the house); the
+// pet digs there, earth flies, and a hole opens (digging.ts)
+const DIG_X = [40, 44, 46, 48];
+const DIG_GAP = 4; // the pet digs from the left of the hole: from its right edge to the hole's middle
+const DIG_CROSS: Bitmap = [[225, 35, 40], ["XX...XX", "..X.X..", "...X...", "..X.X..", "XX...XX"]];
+const HOLE: Color = [35, 20, 8];
+const EARTH: Bitmap = [[120, 80, 40], ["XX", "X."]];
+/** Where what a shooting star left lies (`item`), as parts of the scene [x, y, width, height], for a tap in the app. */
+export function starArea(house: number, item: string): [number, number, number, number] {
+  const part = (n: number) => Number((n / 64).toFixed(3));
+  if (item === stars.OWL_EGG && house) {
+    const [w, h] = HOUSE_SIZE[house];
+    return [part(Math.round(w / 2) - 7), part(GROUND - h - 10), part(14), part(14)];
+  }
+  return [part(STAR_X[house] - 7), part(GROUND - 12), part(14), part(14)];
+}
 /**
  * Where something waiting to be taken lies (the egg in the nest, a friend's gift, what the pet
  * found), as parts of the scene [x, y, width, height], for a tap in the app.
@@ -241,6 +210,9 @@ const VISIT_WALK = 3.0; // seconds it takes to hop in and out
 const FENCE_X = 52;
 const FENCE_TOP = GROUND - 9;
 const FENCE: readonly [Color, Color] = [[205, 170, 120], [150, 115, 75]];
+// on the fence: the trick festival's poster (festival.ts), and the owl when there is no house to sit on (stars.ts)
+const POSTER_X = 58;
+const OWL_FENCE_X = 56;
 const PEEK_EYES = 5; // rows from the top of its face down to below its eyes
 const PEEK_EVERY = 9;
 const PEEK_DUCK = 1.6;
@@ -285,6 +257,23 @@ const TRAVEL: Record<string, readonly [Color, Color, readonly (string | null)[],
   cave: [[95, 95, 115], [45, 45, 60], ["stalagmite", "rock", "gem", "rock", null, null], "cave"],
   mountain: [[225, 235, 245], [120, 125, 140], ["pine", "snowrock", "drift", "pine", null, null], "peaks"],
 };
+TRAVEL[festival.AREA] = TRAVEL.meadow; // the festival is on the meadow
+// The trick festival (festival.ts): pennants on a string across the sky, the stage the pet stands
+// on, and the jury behind their table on the right, small, as if a little further back
+const PENNANTS: readonly Color[] = [[230, 60, 70], [255, 205, 60], [80, 150, 245], [90, 200, 110], [240, 130, 200]];
+const PENNANT_STRING: Color = [235, 230, 215];
+const PENNANT_TOP = STATUS_HEIGHT + 3;
+const STAGE: readonly [Color, Color] = [[175, 120, 70], [125, 80, 45]]; // boards, and their edge
+const STAGE_WIDTH = 36;
+const JURY_X = [41, 50, 59]; // the middle of each of them
+const JURY_SCALE = 0.5;
+const SCORE_CARD: Color = [250, 248, 235];
+const SCORE_DIGIT: Color = [40, 40, 60];
+// 3×5 digits for the jury's score cards
+const DIGITS = ["XXX|X.X|X.X|X.X|XXX", ".X.|XX.|.X.|.X.|XXX", "XXX|..X|XXX|X..|XXX", "XXX|..X|XXX|..X|XXX",
+  "X.X|X.X|XXX|..X|..X", "XXX|X..|XXX|..X|XXX", "XXX|X..|XXX|X.X|XXX", "XXX|..X|..X|.X.|.X.", "XXX|X.X|XXX|X.X|XXX",
+  "XXX|X.X|XXX|..X|XXX"].map((rows) => rows.split("|"));
+const PLUS = [".....", "..X..", ".XXX.", "..X..", "....."];
 const INDOORS = ["cave"]; // no sky and no weather in there
 const CAVE: [Color, Color] = [[10, 9, 20], [30, 26, 48]]; // the dark behind the path, top and bottom
 const CAVE_ROCK: [Color, Color] = [[52, 48, 74], [40, 37, 60]]; // what hangs from the ceiling, what stands at the back
@@ -863,9 +852,14 @@ export interface TripView {
   event_age: number;
   wild?: string | null;
   foe?: string | null;
-  /** A scuffle: [move, trick, result] per round. A wild pet: [trick, whether it worked]. */
+  /**
+   * A scuffle: [move, trick, result] per round. A wild pet: [trick, whether it worked]. The trick
+   * festival: [trick, whether it worked, points].
+   */
   rounds?: unknown[][] | null;
   outcome?: string | null;
+  /** The trick festival: the wild pets in the jury. */
+  jury?: readonly string[] | null;
 }
 
 /** The snapshot of the pet that Pet.view() returns. */
@@ -927,6 +921,16 @@ export interface SceneView {
   waiting?: boolean;
   /** It needs a break after practicing a trick or training (model.restLeft): it sits down and puffs now and then. */
   resting?: boolean;
+  /** A shooting star streaks over the sky: seconds since it fell (stars.ts). */
+  star?: number | null;
+  /** The owl sits on the roof (at night only, stars.ts). */
+  owl?: boolean;
+  /** What a shooting star left, lying in the garden (or the owl's egg on the roof). */
+  fallen?: string | null;
+  /** The trick festival is coming: its poster hangs on the fence (festival.ts). */
+  poster?: boolean;
+  /** A treasure map is in the bag: the red cross is marked in the garden (digging.ts). */
+  cross?: boolean;
 }
 
 /** The weather as the weather service reports it: temperature in °C and a WMO code. */
@@ -1066,7 +1070,7 @@ function leaning(hat: Image, lean: number): Image {
 
 /** The animation a form plays for a trick: usually the trick itself, for some forms one of their own. */
 export function trickAnimation(stage: string, species: string, trick: string): string {
-  return OWN_TRICKS[`${stage}:${species}`]?.[trick] ?? trick;
+  return care.OWN_TRICKS[`${stage}:${species}`]?.[trick] ?? trick;
 }
 
 /** How high a thrown item is `e` seconds after the throw: it drops in from above and bounces once. */
@@ -1297,6 +1301,9 @@ export class PetScene {
         : t - this.rainedAt < AFTER_RAIN ? "after_rain" : null;
     }
     const indoors = !trip && this.indoors(view, seconds);
+    if (view.star !== null && view.star !== undefined && !trip && !indoors) {
+      this.drawShootingStar(img, view.star);
+    }
     if (trip) {
       const [grass, soil] = TRAVEL[trip.area];
       this.drawGround(img, grass, soil);
@@ -1384,6 +1391,9 @@ export class PetScene {
     if (view.found && !trip && !indoors && pose.activity !== "discover") {
       // what it found at home lies in front of it, so that it can't be covered; while it shows it, it holds it up
       this.stand(img, this.findImage(view.found), PetScene.foundX(view));
+    }
+    if (!trip && !indoors && !(pose.activity === "pickup" && view.activity_item === view.fallen)) {
+      this.drawFallen(img, view, t);
     }
     this.petTop = y + top;
     if (pose.rod && !pose.hidden) {
@@ -1649,6 +1659,18 @@ export class PetScene {
       pose.found = view.activity_item;
     } else if (isOneOf(activity, "fish_wait", "fish_catch", "fish_empty")) {
       this.fish(pose, view, t, dt, now);
+    } else if (activity === "wish") {
+      // a shooting star: it looks up after it, then shuts its eyes and wishes, and a sparkle twinkles over it
+      const e = this.elapsed(view, now);
+      if (e < WISH_LOOK) {
+        Object.assign(pose, { body: e < 1.2 ? "stretch" : "idle", face: "eat_open" });
+      } else {
+        pose.face = "happy";
+        pose.symbol = WISH_SPARKLE[Math.trunc(t * 3) % 2];
+      }
+      this.targetX = this.x;
+    } else if (activity === "dig") {
+      this.dig(pose, view, t, dt, now);
     } else if (activity === "unpack") {
       // shows off one find after the other
       this.cheer(pose, t);
@@ -3525,7 +3547,7 @@ export class PetScene {
 
   /** Somebody is in the way: a scuffle, an opponent that runs after the ball, or a wild pet. */
   private static meeting(trip: TripView): boolean {
-    return ((trip.event === "battle" || trip.event === "wild") && trip.event_age < PetScene.battleSeconds(trip))
+    return (isOneOf(trip.event ?? "", "battle", "wild", "festival") && trip.event_age < PetScene.battleSeconds(trip))
       || (trip.event === "ball" && trip.event_age < BALL_SECONDS);
   }
 
@@ -4139,6 +4161,8 @@ export class PetScene {
     if (meeting) {
       if (trip.event === "battle") {
         this.battle(pose, view, trip, t);
+      } else if (trip.event === "festival") {
+        this.festivalShow(pose, trip, t);
       } else if (trip.event === "wild") {
         this.showTricks(pose, trip, t);
       } else {
@@ -4354,7 +4378,7 @@ export class PetScene {
     // it doesn't settle down right in front of what it left behind or found, so that it can be seen
     const trace = view.trace;
     const kept = [trace && trace.kind !== "drawing" ? PetScene.traceX(view, trace.spot) : null,
-      view.found ? PetScene.foundX(view) : null];
+      view.found ? PetScene.foundX(view) : null, view.fallen && !PetScene.onRoof(view) ? STAR_X[view.house ?? 0] : null];
     for (const cx of kept) {
       if (cx !== null && Math.abs(this.targetX + SPRITE / 2 - cx) < TRACE_GAP) {
         this.targetX = clamp(cx + TRACE_GAP - SPRITE / 2, lo, hi);
@@ -4556,7 +4580,16 @@ export class PetScene {
     }
     if (view.peeking) {
       this.drawPeeking(img, view.peeking, t);
+    } else if (view.poster || (view.owl && !view.house && this.night > 0.5)) {
+      this.drawFence(img);
     }
+    if (view.poster) {
+      // the trick festival is coming: its poster on a stake at the fence, above what stands in front of it
+      const poster = this.dimmedSprite("poster");
+      img.paste(poster, POSTER_X - Math.floor(poster.width / 2), FENCE_TOP + 2 - poster.height);
+    }
+    this.drawStarThings(img, view, t);
+    this.drawDig(img, view, now);
     const deco = (view.deco ?? []).slice(0, DECO_X.length);
     // what lies flat on the ground (the pond) first, so that the other decoration stands in front of it
     [...deco.keys()].sort((a, b) => Number(deco[b] === "pond") - Number(deco[a] === "pond")).forEach((i) => {
@@ -4589,6 +4622,12 @@ export class PetScene {
    * the garden, only its head above it, looking over at the pet, and now and then it ducks down.
    */
   private drawPeeking(img: Image, species: string, t: number): void {
+    this.peekOverFence(img, species, t);
+    this.drawFence(img);
+  }
+
+  /** The guest's head over the fence (drawPeeking), before the fence is drawn over its body. */
+  private peekOverFence(img: Image, species: string, t: number): void {
     const local = mod(t, PEEK_EVERY);
     const duck = local < PEEK_DUCK ? Math.sin(local / PEEK_DUCK * Math.PI) : 0; // down and up again
     const face = duck > 0.5 ? "blink" : Math.trunc(t) % 7 === 3 ? "blink" : "smile";
@@ -4604,20 +4643,6 @@ export class PetScene {
     const peek = eyes / PEEK_ROWS * (1 - duck);
     if (peek > 0) {
       this.hideBehind(img, sprite, 0, top, [FENCE_X + 5, FENCE_TOP + 1, peek]); // just behind the top of the fence
-    }
-    // the fence: pickets with a rail, as far as the garden goes
-    const dim = 0.45 + 0.55 * (1 - this.night);
-    const picket = dimmed(FENCE[0], dim);
-    const rail = dimmed(FENCE[1], dim);
-    for (let x = FENCE_X; x < this.width; x++) {
-      const at = (x - FENCE_X) % 3;
-      if (at < 2) {
-        for (let y = FENCE_TOP + (at ? 1 : 0); y <= GROUND; y++) {
-          img.point(x, y, picket);
-        }
-      }
-      img.point(x, FENCE_TOP + 3, rail);
-      img.point(x, GROUND - 2, rail);
     }
   }
 
@@ -4639,6 +4664,233 @@ export class PetScene {
 
   private static foundX(view: SceneView): number {
     return FOUND_X[view.house ?? 0];
+  }
+
+  /** The fence at the right edge of the garden: pickets with a rail. */
+  private drawFence(img: Image): void {
+    const dim = 0.45 + 0.55 * (1 - this.night);
+    const picket = dimmed(FENCE[0], dim);
+    const rail = dimmed(FENCE[1], dim);
+    for (let x = FENCE_X; x < this.width; x++) {
+      const at = (x - FENCE_X) % 3;
+      if (at < 2) {
+        for (let y = FENCE_TOP + (at ? 1 : 0); y <= GROUND; y++) {
+          img.point(x, y, picket);
+        }
+      }
+      img.point(x, FENCE_TOP + 3, rail);
+      img.point(x, GROUND - 2, rail);
+    }
+  }
+
+  /** The shooting star, `age` seconds after it fell: a bright head with a tail that fades. */
+  private drawShootingStar(img: Image, age: number): void {
+    const f = clamp(age / stars.SEEN_SECONDS, 0.0, 1.0);
+    const [x0, y0] = SHOOTING_FROM;
+    const [x1, y1] = SHOOTING_TO;
+    const fade = f > 0.75 ? (1 - f) / 0.25 : 1; // it burns out at the end
+    for (let i = SHOOTING_TAIL; i >= 0; i--) {
+      const g = f - i * 0.025;
+      if (g < 0) {
+        continue;
+      }
+      const light = (1 - i / (SHOOTING_TAIL + 1)) * fade;
+      const x = Math.round(x0 + (x1 - x0) * g);
+      const y = Math.round(y0 + (y1 - y0) * g);
+      if (x >= 0 && x < img.width && y >= 0 && y < img.height) {
+        const i = (y * img.width + x) * 4;
+        img.point(x, y, lerp([img.data[i], img.data[i + 1], img.data[i + 2]], SHOOTING, light));
+      }
+    }
+  }
+
+  /**
+   * The owl on the roof at night (without a house, on the fence), and the owl's egg up on the roof
+   * (what a shooting star left in the garden lies in front of the pet: drawFallen).
+   */
+  private drawStarThings(img: Image, view: SceneView, t: number): void {
+    const step = view.house ?? 0;
+    const roof = PetScene.roof(step);
+    if (view.owl && this.night > 0.5) {
+      // it looks about, blinks, and now and then turns its head to the pet
+      const owl = this.sheet("trip").frame("owl", t)[0];
+      const looking = Math.trunc(t / 3) % 4 === 1;
+      const sprite = looking ? owl.mirrored() : owl;
+      img.paste(sprite, roof[0] - Math.floor(sprite.width / 2), roof[1] - sprite.height);
+    }
+    if (view.fallen && PetScene.onRoof(view)) {
+      this.drawFallenAt(img, view.fallen, roof[0], roof[1], t);
+    }
+  }
+
+  /** The top of the roof (without a house: the fence), where the owl sits: [x, y of its feet]. */
+  private static roof(step: number): readonly [number, number] {
+    return step ? [Math.round(HOUSE_SIZE[step][0] / 2), GROUND + 2 - HOUSE_SIZE[step][1]] : [OWL_FENCE_X, FENCE_TOP + 1];
+  }
+
+  /** Whether what a shooting star left lies up on the roof: the owl's egg, where the owl sat. */
+  private static onRoof(view: SceneView): boolean {
+    return view.fallen === stars.OWL_EGG && (view.house ?? 0) > 0;
+  }
+
+  /** What a shooting star left in the garden, in front of the pet so that it can't be covered. */
+  private drawFallen(img: Image, view: SceneView, t: number): void {
+    if (view.fallen && !PetScene.onRoof(view)) {
+      this.drawFallenAt(img, view.fallen, STAR_X[view.house ?? 0], GROUND + 1, t);
+    }
+  }
+
+  /** What a shooting star left, standing on `bottom` around `cx`, glinting now and then. */
+  private drawFallenAt(img: Image, item: string, cx: number, bottom: number, t: number): void {
+    const sprite = this.findImage(item);
+    img.paste(sprite, cx - Math.floor(sprite.width / 2), bottom - sprite.height); // not dimmed, so it can't be missed
+    if (Math.trunc(t * 2) % 5 === 0) {
+      // a glint, as of starlight still on it
+      const gx = cx + Math.floor(sprite.width / 2);
+      const gy = bottom - sprite.height - 1;
+      for (const [dx, dy] of [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]]) {
+        img.point(gx + dx, gy + dy, STAR_GLINT);
+      }
+    }
+  }
+
+  /** The red cross of a treasure map, and while the pet digs, the hole and the earth beside it. */
+  private drawDig(img: Image, view: SceneView, now: number): void {
+    const cx = DIG_X[view.house ?? 0];
+    const dug = view.activity === "dig" ? this.digging(view, now) : null;
+    if (dug && dug.e >= digging.WALK_SECONDS) {
+      const deep = clamp((dug.e - digging.WALK_SECONDS) / dug.seconds, 0.0, 1.0);
+      const half = Math.round(1 + 3 * deep);
+      const rows = Math.round(1 + 4 * deep);
+      for (let y = 0; y < rows; y++) {
+        img.hline(cx - half + (y === rows - 1 ? 1 : 0), cx + half - (y === rows - 1 ? 1 : 0), GROUND + 2 + y, HOLE);
+      }
+      // the earth it threw out, in a little heap behind it
+      const heap = Math.round(3 * deep);
+      for (let y = 0; y < heap; y++) {
+        img.hline(cx + half + 1 + y, cx + half + 1 + 2 * heap - y, GROUND - y, dimmed(EARTH[0], 0.45 + 0.55 * (1 - this.night)));
+      }
+    } else if (view.cross) {
+      const [color, rows] = DIG_CROSS;
+      bitmap(img, cx - Math.floor(rows[0].length / 2), GROUND + 2, [dimmed(color, 0.6 + 0.4 * (1 - this.night)), rows]);
+    }
+  }
+
+  /** How far into digging it is: seconds since it set off for the cross, how long it digs, and what it found. */
+  private digging(view: SceneView, now: number): { e: number; seconds: number; found: string[] } {
+    const [seconds, found] = view.activity_item.split(":");
+    const dig = Number(seconds) || digging.DIG_SECONDS;
+    const total = digging.WALK_SECONDS + dig + digging.SHOW_SECONDS;
+    return { e: total - (view.activity_until - now), seconds: dig, found: (found ?? "").split(",").filter(Boolean) };
+  }
+
+  /** Digging at the cross: it hops over, digs with earth flying, and holds up one find after the other. */
+  private dig(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
+    const { e, seconds, found } = this.digging(view, now);
+    const hole = DIG_X[view.house ?? 0];
+    const spot = hole + DIG_GAP - SPRITE;
+    if (e < digging.WALK_SECONDS) {
+      if (this.moveTowards(spot, THROW_SPEED, dt)) {
+        this.hop(pose, t, 3.5);
+      }
+      pose.face = "happy";
+    } else if (e < digging.WALK_SECONDS + seconds) {
+      this.x = this.targetX = spot;
+      // nose down and paws going: quicker the more of a digger it is
+      const beat = Math.trunc(t * (12 / Math.max(0.5, seconds / digging.DIG_SECONDS))) % 2;
+      Object.assign(pose, { body: beat ? "squash" : "flat", face: "laugh", dx: beat ? 1 : -1 });
+      if (this.rng.random() < 0.5) {
+        // the earth flies up out of the hole, away from the pet
+        this.particles.push({
+          sprite: [dimmed(EARTH[0], 0.45 + 0.55 * (1 - this.night)), EARTH[1]],
+          x: hole, y: GROUND, vx: this.rng.uniform(-3, 20), vy: -this.rng.uniform(18, 30),
+          life: 0.8, ay: 60,
+        });
+      }
+    } else {
+      this.cheer(pose, t);
+      this.burst(view, SPARK, 10, 22);
+      const shown = e - digging.WALK_SECONDS - seconds;
+      pose.found = found[Math.min(found.length - 1, Math.trunc(shown / (digging.SHOW_SECONDS / Math.max(1, found.length))))]
+        ?? null;
+    }
+  }
+
+  /** Where the show is in a festival trip: the trick it is on (index), how far into it (q), and the jury. */
+  private static show(trip: TripView): { index: number; q: number; rounds: [string, boolean, number][] } {
+    const rounds = (trip.rounds ?? []) as [string, boolean, number][];
+    const position = Math.max(0.0, trip.event_age - BATTLE_INTRO) / BATTLE_ROUND;
+    const index = Math.floor(position);
+    return { index, q: position - index, rounds };
+  }
+
+  /**
+   * The trick festival: pennants over the meadow, and during the show the stage, the jury behind
+   * their table, and after every trick that worked a score card held up.
+   */
+  private drawFestival(img: Image, trip: TripView): void {
+    const t = this.last;
+    // the pennants, on a string that sags a little
+    for (let x = 0; x < this.width; x++) {
+      const sag = Math.round(2 * Math.sin(Math.PI * mod(x, 32) / 32));
+      img.point(x, PENNANT_TOP + sag, PENNANT_STRING);
+      if (mod(x, 6) === 1) {
+        const color = dimmed(PENNANTS[mod(Math.floor(x / 6), PENNANTS.length)], 0.5 + 0.5 * (1 - this.night));
+        img.hline(x, x + 2, PENNANT_TOP + sag + 1, color);
+        img.point(x + 1, PENNANT_TOP + sag + 2, color);
+      }
+    }
+    if (!PetScene.meeting(trip) || trip.event !== "festival") {
+      return;
+    }
+    // the stage under the pet
+    img.rectangle(0, GROUND + 1, STAGE_WIDTH, GROUND + 3, STAGE[0]);
+    img.hline(0, STAGE_WIDTH, GROUND + 3, STAGE[1]);
+    for (let x = 5; x < STAGE_WIDTH; x += 8) {
+      img.point(x, GROUND + 2, STAGE[1]);
+    }
+    const { index, q, rounds } = PetScene.show(trip);
+    const over = index >= rounds.length;
+    const [, worked, points] = rounds[Math.min(index, rounds.length - 1)] ?? ["", false, 0];
+    const cheering = over ? (trip.outcome ?? "0") !== "0" : q > 0.5 && worked;
+    const table = this.sheet("trip").image("jury_table");
+    const tableTop = GROUND + 1 - table.height;
+    (trip.jury ?? []).forEach((species, i) => {
+      const hop = cheering ? Math.abs(Math.sin(t * 6 + i)) * 2 : 0;
+      const face = cheering ? "laugh" : !over && q > 0.5 ? "blink" : Math.trunc(t + i) % 5 ? "smile" : "blink";
+      const [sprite] = this.pet("adult", species, hop > 1 ? "stretch" : "idle", t, face,
+        { glow: this.night > 0.5, lookLeft: true, sky: this.skyLook });
+      const small = sprite.resized(Math.round(sprite.width * JURY_SCALE), Math.round(sprite.height * JURY_SCALE));
+      img.paste(small, JURY_X[i] - Math.floor(small.width / 2), tableTop + 4 - small.height - Math.round(hop));
+    });
+    img.paste(table, this.width - table.width, tableTop);
+    if (!over && q > 0.5 && worked && points > 0) {
+      // the score card, held up in the middle
+      const digits = String(points).split("").map(Number);
+      const width = 6 + 4 * digits.length;
+      const left = JURY_X[1] - Math.floor(width / 2);
+      const top = tableTop - 22;
+      img.rectangle(left, top, left + width - 1, top + 6, SCORE_CARD);
+      bitmap(img, left + 1, top + 1, [SCORE_DIGIT, PLUS]);
+      digits.forEach((digit, i) => bitmap(img, left + 6 + 4 * i, top + 1, [SCORE_DIGIT, DIGITS[digit]]));
+    }
+  }
+
+  /** On the stage: one trick after the other, and at the end it holds up its prize. */
+  private festivalShow(pose: Pose, trip: TripView, t: number): void {
+    const { index, q, rounds } = PetScene.show(trip);
+    if (trip.event_age < BATTLE_INTRO) {
+      Object.assign(pose, { face: "happy", jump: Math.abs(Math.sin(t * 6)) * 2 }); // a bow to the jury, so to speak
+    } else if (index < rounds.length) {
+      const [trick, worked] = rounds[index];
+      this.trick(pose, trick, q * BATTLE_ROUND, worked, t);
+    } else if ((trip.outcome ?? "0") !== "0") {
+      this.cheer(pose, t);
+      pose.found = trip.item;
+    } else {
+      pose.face = "smile"; // it took part, and that was fun too
+      pose.found = trip.item;
+    }
   }
 
   // ---------- The house ----------
@@ -4787,6 +5039,12 @@ export class PetScene {
   private drawTravel(img: Image, trip: TripView, dt: number): void {
     if (!PetScene.pausing(trip)) {
       this.scroll += TRAVEL_SPEED * dt * (trip.returning ? -1 : 1);
+    }
+    if (trip.area === festival.AREA) {
+      this.drawFestival(img, trip);
+      if (PetScene.meeting(trip)) {
+        return; // on the stage: the landscape stands still behind it
+      }
     }
     const dim = 0.45 + 0.55 * (1 - this.night);
     const area = trip.area;
