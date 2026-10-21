@@ -1539,7 +1539,7 @@ for a race: playing cheers it up more.
 
 | Form | Rule |
 |---|---|
-| Glidepin | it went on 3 trips to the mountain while it was a child |
+| Glidepin | it has learned the spin when it grows up |
 | Tuxwaddle | everything else |
 
 From its second day on, Waddlet's earmuffs show where it is heading: deep red

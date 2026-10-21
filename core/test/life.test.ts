@@ -238,9 +238,9 @@ test("the bear, penguin and bat lines grow up by what they ate, where they went 
   assert.equal(life.decideSpecies({ ...week, food_honeycomb: life.SNORBEAR_HONEYCOMBS }, "bear"), "snorbear");
   assert.equal(life.decideSpecies({ ...week, food_honeycomb: 9 }, "bear", { bond: life.URSASTRA_BOND }), "ursastra");
   assert.equal(life.decideSpecies(week, "bear", { bond: life.URSASTRA_BOND - 1 }), "hivebear");
-  // the penguin: trips to the mountain make a Glidepin, the last hour before sunrise the aurora
+  // the penguin: the spin learned makes a Glidepin, the last hour before sunrise the aurora
   assert.equal(life.decideSpecies(week, "penguin"), "tuxwaddle");
-  assert.equal(life.decideSpecies({ ...week, trips_mountain: life.GLIDEPIN_MOUNTAIN_TRIPS }, "penguin"), "glidepin");
+  assert.equal(life.decideSpecies(week, "penguin", { spin: true }), "glidepin");
   const sunrise = 7 * 60;
   assert.equal(life.decideSpecies(week, "penguin", { minute: sunrise - 30, sunrise }), "aurorapin");
   assert.equal(life.decideSpecies(week, "penguin", { minute: sunrise - life.AURORAPIN_BEFORE_SUNRISE, sunrise }), "aurorapin");

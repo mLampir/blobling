@@ -109,7 +109,7 @@ export const CASTLECRAB_COAST_TRIPS = 3; // the crab line: trips to the coast �
 export const HUNGRY_SATIETY = 25;
 export const SNORBEAR_HONEYCOMBS = 4; // the bear line: honeycombs eaten as a child → snorbear, otherwise hivebear
 export const URSASTRA_BOND = 5; // the bear line: bond hearts when it grows up (all of them) → ursastra
-export const GLIDEPIN_MOUNTAIN_TRIPS = 3; // the penguin line: trips to the mountain as a child → glidepin, otherwise tuxwaddle
+// The penguin line: it has learned the spin (its pirouette) when it grows up → glidepin, otherwise tuxwaddle
 export const AURORAPIN_BEFORE_SUNRISE = 60; // the penguin line: it grows up this many minutes before sunrise or less → aurorapin
 // The bat line: speed its highest battle stat when it grows up → batbeat, otherwise umbrabat; it
 // grows up under a full moon at night → lunaflap
@@ -328,6 +328,8 @@ export interface World {
   bond?: number;
   /** whether it knows every trick, */
   allTricks?: boolean;
+  /** whether it knows the spin, */
+  spin?: boolean;
   /** its highest battle stat, */
   strongest?: string;
   /** a decoration that glows stands outside (home.GLOWING_DECO), */
@@ -443,7 +445,7 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
     return done("food_honeycomb", SNORBEAR_HONEYCOMBS) ? "snorbear" : "hivebear";
   }
   if (line === "penguin") {
-    return done("trips_mountain", GLIDEPIN_MOUNTAIN_TRIPS) ? "glidepin" : "tuxwaddle";
+    return world.spin ? "glidepin" : "tuxwaddle";
   }
   if (line === "bat") {
     return world.strongest === "speed" ? "batbeat" : "umbrabat";
