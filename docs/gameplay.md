@@ -589,6 +589,21 @@ other.
 Which wild pets live where is in [pets.md](pets.md), folded shut. A line
 whose egg a guardian gives is never among them.
 
+### Guests in the garden
+
+Some lines live nowhere on a trip. Their pets come to the garden by
+themselves, when something there draws them: a decoration that is set out,
+the plant, the weather at home, or how the pet spends its days with you.
+Which guest comes for what is in [pets.md](pets.md), folded shut.
+
+Once something draws a guest, it first **peeks over the fence** for a few
+hours, at the right edge of the garden. Then it comes in, and from then on it
+is a friend like one from a trip: it visits, plays, brings gifts and, after
+five visits that count, builds a nest. Its egg is always of its own line;
+that is what it came for. A guest comes to a pet only once, one at a time, and
+doesn't take the place of a friend from a trip. A pet that is still a baby or
+a child gets guests too.
+
 ### Guardians
 
 Every area has a guardian. It is twice the size of the others and waits at the
@@ -806,6 +821,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Trips, areas, what is found where | `core/src/trip.ts` |
 | What is eaten from the bag, each form's favorite and dislike, and what food from trips leaves in the pet | `core/src/food.ts` |
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
+| Guests in the garden: what draws them, peeking over the fence | `core/src/garden.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | A scuffle watched again in the app | `app/src/replay.ts` |
 | Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), hot afternoons, the house and its spots | `core/src/home.ts` |
@@ -872,35 +888,48 @@ A new creature should make you think "that one is different".
    of its brow). The forms of a line stay the same kind of creature: every
    adult of the slime is still a slime, only grown.
 5. **Something to look forward to.** Growing up should feel like a reward:
-   the adult is bigger and more than the child, and the form for the best
-   care is the most impressive one.
+   the adult is bigger and more than the child, the form for the best care
+   is more impressive than the plain one, and the secret form is the most
+   impressive of all (rule 8).
+6. **The adults of a line differ in shape, not just in color.** Each adult
+   has a silhouette and a pose of its own. Two forms that are the same body
+   in other colors are one form too many.
+7. **The second idea changes the body.** Not an ordinary animal with a hat
+   or a tool: the second idea shapes the creature itself. Wings become what
+   the idea is about, the tail is the tool, the body is the thing. A small
+   accessory can help, but it is never the idea on its own.
+8. **The secret form is extra special.** It stands out from the other
+   adults at first sight: an effect that belongs to it and is part of the
+   picture (flames, a glowing core, floating lights, falling snow or petals,
+   bubbles), a bolder silhouette that fills its space, and often a glow at
+   night. It is the form players are proud to show.
 
 #### The look
 
-6. **A face of its own.** Every adult form gets its own eyes and mouths, for
+9. **A face of its own.** Every adult form gets its own eyes and mouths, for
    all the moods the scene asks for (the names in `FACES`). The eyes carry the
    character more than anything else: their shape, the lid, a brow, the
    pupil (round, a slit, sideways). Its normal look is its character, not a
    neutral face: Angloop grins and shows two fangs. Small extras help: a
    crooked tooth, fangs, nostrils, cheeks only where they fit.
-7. **Body language.** Arms and feet, even if they are only two or three
+10. **Body language.** Arms and feet, even if they are only two or three
    pixels, or whatever stands in for them on an object; a pose. And something
    that is not symmetric: Angloop raises only one of its fins, and its lure
    hangs to one side.
-8. **Three colors.** A main color, a second one for larger parts (belly,
+11. **Three colors.** A main color, a second one for larger parts (belly,
    horns, a cap) and a small accent that stands out (the iris, the claws).
    Angloop is teal, orange and gold. One color in three shades looks
    flat, and on the LED panel clear colors read better than fine shades.
-9. **The silhouette reads.** Filled in with one color, the creature is still
+12. **The silhouette reads.** Filled in with one color, the creature is still
    recognizable at 32 pixels. A rounded rectangle is not a silhouette.
 
 #### Movement
 
-10. **It moves like what it is.** The slime hops. A creature with feet walks
+13. **It moves like what it is.** The slime hops. A creature with feet walks
     (a `walk` animation). One that jumps by nature, like a toad, walks and
     hops now and then (`WALK_HOPS`), and its jump frame shows how it jumps:
     the hind legs stretch out. Jumps for joy stay jumps for everyone.
-11. **Special abilities are for tricks.** Wings, a tail, a gulp of steam don't
+14. **Special abilities are for tricks.** Wings, a tail, a gulp of steam don't
     belong in the everyday walk, where they soon look like any other jump.
     They show in a trick done in its own way (`OWN_TRICKS`: a creature with
     wings flutters through its flip; the gesture and the effect stay the

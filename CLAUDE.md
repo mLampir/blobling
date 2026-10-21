@@ -49,7 +49,10 @@ Where to look first:
   an object with a face (an animal or a living thing), a face of its own,
   body language, three colors, a way of moving that fits it, and it shows
   its character and where it came from. The forms of a line stay the same
-  kind of creature, and growing up is something to look forward to.
+  kind of creature, and growing up is something to look forward to. The
+  adults of a line differ in shape, not just color; the second idea changes
+  the body instead of being a hat or a tool; and the secret form is extra
+  special, with an effect of its own.
 - **No spoilers outside `docs/pets.md`.** Which forms a pet can grow into is
   for players to find out. Pictures and text in the README and the other docs
   show only egg, baby, child and Angloop, as the one example of an adult.

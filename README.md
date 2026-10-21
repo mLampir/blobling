@@ -34,7 +34,8 @@ a day and also tells you the time and the weather.
 - **It makes friends.** A grown-up pet can impress a wild pet with its tricks.
   The friend comes to visit and plays with it, brings a gift now and then, and
   in time the two lay an egg that passes a part of your pet's training on to
-  the next one.
+  the next one. Some guests come to the garden by themselves, when something
+  there draws them; they peek over the fence first.
 - **Up to four live at home.** A new egg doesn't take your favorite away:
   each pet has a house of its own along a street, a tap switches between them,
   and the neighbours get together to play, copy a trick from each other and

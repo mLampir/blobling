@@ -14,6 +14,7 @@ import * as battle from "./battle";
 import * as care from "./care";
 import * as companion from "./companion";
 import * as food from "./food";
+import * as garden from "./garden";
 import * as habits from "./habits";
 import * as home from "./home";
 import * as life from "./life";
@@ -364,6 +365,8 @@ export class Pet {
         ? { species: guest.species, left: guest.until! - now, age: now - guest.until! + wild.VISIT_SECONDS }
         : this.neighbourView(s, now),
       nest: s.nest ? s.nest.line : null,
+      // a guest from the garden peeking over the fence before it comes in (garden.ts)
+      peeking: s.trip || s.grandma ? null : garden.peeking(s, now),
       gift: !!s.gift,
       found: s.found,
       plant: s.plant ? { kind: s.plant.kind, stage: home.plantStage(s), ripe: home.ripe(s) } : null,

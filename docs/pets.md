@@ -214,6 +214,29 @@ The values are in `core/src/wild.ts`.
 
 </details>
 
+## Guests in the garden
+
+Four lines live nowhere on a trip: their pets come to the garden when
+something there draws them ([gameplay.md](gameplay.md#guests-in-the-garden)
+has how a guest comes in). A guest's egg is always of its own line.
+
+<details>
+<summary>Show which guest comes for what</summary>
+
+| Guest | Line | What draws it |
+|---|---|---|
+| Mothmuff | caterpillar | a plant bore all three of its fruits |
+| Digby | dog | the pet played with you (a game, or the ball) on 5 of the last 7 days |
+| Rotorfly | dragonfly | the pond is set out, and it rained at home in the last week |
+| Dambert | beaver | the pond and the woodpile are both set out |
+
+The pond turns up at the stream, the woodpile in the mushroom forest, once
+each. The pond only stands outside.
+
+The values are in `core/src/garden.ts`.
+
+</details>
+
 ### The ember line
 
 <details>
@@ -834,6 +857,296 @@ Its flip is a loop with a trail of smoke, and its special move is a dive so fast
 <summary>Show how to get it</summary>
 
 As a child it got past 2 guardians for the first time. This rule goes before the others of the line. While the child is on its way there, its hint color is the white of its scarf and the leather of its cap.
+
+</details>
+
+### The caterpillar line
+
+<details>
+<summary>Show the caterpillar line</summary>
+
+| | Stage |
+|---|---|
+| ![Caterpillar egg](images/pets/caterpillar_egg.png) | **Caterpillar egg** – a leaf-green egg in soft rings like a caterpillar's body, with a bite out of its top |
+| ![Caterpillar baby](images/pets/caterpillar_baby.png) | **Baby** – a plump green slime in rings, two feelers with pink pompoms and little feet |
+| ![Munchlet](images/pets/munchlet.png) | **Child: Munchlet** – a fat caterpillar with a bib on, its pompom feelers grown long, and a row of stubby feet |
+
+The stages last as long as the slime's. What the adults keep is the feelers.
+
+![Mothmuff](images/pets/mothmuff.png)
+
+**Mothmuff**, a ball of fur with feathery feelers, its wings hanging round it
+like a cloak. A moth naps the day away anyway: it gets tired more slowly, and
+it loves being petted. For its spin it circles as round a lamp, and in a
+scuffle it shakes out a cloud of wing dust.
+
+![Sunflutter](images/pets/sunflutter.png)
+
+**Sunflutter**, a butterfly whose head is the middle of a sunflower, with a
+ring of petal wings, standing on leaf legs. Sunny by nature: its mood drops
+more slowly. For its dance its petals open like a blossom, and its special
+move is a whirl of pollen.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+This line goes by the fruit the child ate most, from the bag or off the plant.
+
+| Form | Rule |
+|---|---|
+| Sunflutter | sunflower seeds were its favorite: at least 4, and more than of any other fruit |
+| Mothmuff | everything else |
+
+From its second day on, the pompoms on Munchlet's feelers show where it is
+heading: a soft moth gray for Mothmuff, sunflower yellow for Sunflutter.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the fruit it likes best.*
+
+<details>
+<summary>Show this form</summary>
+
+![Jesterwing](images/pets/jesterwing.png)
+
+**Jesterwing**, a harlequin butterfly. Tall diamond wings, a jester's cap with
+bells, and it floats instead of walking. Always up to some fooling and always
+wanting an audience: it gets tired and glum sooner. Its flip is a somersault
+in the air with jingling bells, and its special move is confetti that makes
+the opponent laugh.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+Giggle cherries were the fruit the child ate most: at least 4, and more than
+of any other. This rule goes before the others of the line. While the child is
+on its way there, its hint color is the red and violet of a harlequin.
+
+</details>
+
+### The dog line
+
+<details>
+<summary>Show the dog line</summary>
+
+| | Stage |
+|---|---|
+| ![Dog egg](images/pets/dog_egg.png) | **Dog egg** – a cream egg with one big brown patch and a paw print |
+| ![Dog baby](images/pets/dog_baby.png) | **Baby** – a tan puppy slime, one ear pricked up and one hanging down its side, and a wagging tail |
+| ![Pupplet](images/pets/pupplet.png) | **Child: Pupplet** – a puppy chasing its own tail, which curls round in front of it |
+
+The stages last as long as the slime's. What the adults keep is the one
+floppy ear.
+
+![Digby](images/pets/digby.png)
+
+**Digby**, a dog with a garden bed growing on its back: sprouts and a carrot
+top, earth on its nose and paws. Its nose is always in the soil, so it gets
+dirty sooner, and it loves a game. For its spin it chases round three times
+and lies down, and in a scuffle it digs in and comes up under the opponent.
+
+![Barrelbard](images/pets/barrelbard.png)
+
+**Barrelbard**, a huge shaggy rescue dog like a snowy mountain, snowflakes
+caught in its fur and a little barrel under its chin. Big and calm, it tires
+more slowly, and every bond heart means a little more to it. For its bow it
+shakes the snow off, and its special move is an avalanche.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+This line goes by how close the child is to you when it grows up.
+
+| Form | Rule |
+|---|---|
+| Barrelbard | it has 4 bond hearts or more when it grows up |
+| Digby | everything else |
+
+From its second day on, Pupplet's ears and tail show where it is heading:
+sprout green for Digby, snow white for Barrelbard.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about tricks.*
+
+<details>
+<summary>Show this form</summary>
+
+![Pawdini](images/pets/pawdini.png)
+
+**Pawdini**, a circus dog standing on a big striped ball, a small ball
+balanced on its nose, a frilled ruff, and stars glitter round it. The show
+never stops: it tires sooner, and it loves a game. For its dance it rolls to
+and fro on its ball, and balls fly in arcs as its special move.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It knows all four tricks when it grows up. This rule goes before the others of
+the line. While the child is on its way there, its hint color is circus red.
+
+</details>
+
+### The dragonfly line
+
+<details>
+<summary>Show the dragonfly line</summary>
+
+| | Stage |
+|---|---|
+| ![Dragonfly egg](images/pets/dragonfly_egg.png) | **Dragonfly egg** – a glassy blue egg with a shimmer of green, blue and violet running across it |
+| ![Dragonfly baby](images/pets/dragonfly_baby.png) | **Baby** – a sky-blue slime with two pairs of shimmering wings spread out sideways |
+| ![Nymphlet](images/pets/nymphlet.png) | **Child: Nymphlet** – a dragonfly larva with wing stubs and diving goggles made of dew |
+
+The stages last as long as the slime's. What the adults keep is the
+shimmering wings.
+
+![Rotorfly](images/pets/rotorfly.png)
+
+**Rotorfly**, a dragonfly that is a little helicopter: its head is a glass
+cockpit with its face behind it, its tail a tail boom with a small rotor, its
+legs are skids, and its wings turn on top as the rotor. All that hovering
+tires it sooner. For its spin it lifts off and turns on the spot, and in a
+scuffle its downwash pushes the opponent away.
+
+![Jewelwing](images/pets/jewelwing.png)
+
+**Jewelwing**, a knight whose body is plate armour in jewel green, its wings
+hanging behind it like two banners, a lance in its hand. Armour wipes clean
+and keeps sickness out. For its bow it kneels with its lance lowered, and its
+special move is a lance thrust that sparkles.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+Only baths count for this line.
+
+| Form | Rule |
+|---|---|
+| Jewelwing | the child was bathed 14 times |
+| Rotorfly | everything else |
+
+From its second day on, Nymphlet's goggles show where it is heading:
+cockpit-glass cyan for Rotorfly, jewel green for Jewelwing.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the weather.*
+
+<details>
+<summary>Show this form</summary>
+
+![Prismfly](images/pets/prismfly.png)
+
+**Prismfly**, a dragonfly of glass with wings of prism shards in every color,
+throwing rainbow light; it glows at night. It lives half on light, so it gets
+hungry more slowly. For its dance spots of light in every color dance round
+it, and its special move is light broken into seven rays.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It grows up in the daytime, while it doesn't rain, within three hours after
+it last rained at home. This rule goes before the others of the line. While
+the child is on its way there, its hint color is a rainbow pink.
+
+</details>
+
+### The beaver line
+
+<details>
+<summary>Show the beaver line</summary>
+
+| | Stage |
+|---|---|
+| ![Beaver egg](images/pets/beaver_egg.png) | **Beaver egg** – an egg of wood, with growth rings and gnaw marks bitten into one side |
+| ![Beaver baby](images/pets/beaver_baby.png) | **Baby** – a brown slime with round ears, buck teeth, a pencil behind one ear and a flat tail |
+| ![Gnawlet](images/pets/gnawlet.png) | **Child: Gnawlet** – a young beaver, the pencil still behind its ear, gnawing on a twig |
+
+The stages last as long as the slime's. What the adults keep is the buck teeth
+and the flat tail.
+
+![Dambert](images/pets/dambert.png)
+
+**Dambert**, half beaver, half dam: it carries its dam of logs on its back
+like a shell, branches poking out, and its tail is a mason's trowel. It gnaws
+all day, so it gets hungry sooner. For its flip it raises its trowel and jumps
+over a little stack of wood, and in a scuffle it builds a dam in one go.
+
+![Timberjack](images/pets/timberjack.png)
+
+**Timberjack**, broad and bearded, the plaid of a lumberjack's shirt grown
+into its fur and its tail ending in an axe blade. A lumberjack's appetite, and
+tough as an old oak: it gets hungry sooner and sick less often. For its spin
+its axe tail swings round and wood chips fly, and its special move is a tree
+trunk that falls on the opponent.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+This line goes by the child's battle stats when it grows up.
+
+| Form | Rule |
+|---|---|
+| Timberjack | strength is its highest battle stat, higher than speed and smarts |
+| Dambert | everything else |
+
+From its second day on, Gnawlet's pencil shows where it is heading: the color
+of fresh-cut wood for Dambert, plaid red for Timberjack.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the house.*
+
+<details>
+<summary>Show this form</summary>
+
+![Archibeaver](images/pets/archibeaver.png)
+
+**Archibeaver**, the master builder. It sits on a little tower it built from
+branches and hops along with it, holds a blueprint that glows blue, and its
+compass throws sparks; the pencil is still behind its ear. Content with its
+plans, its mood drops more slowly. For its bow it unrolls the plan, and its
+special move is a tower of branches that grows up under the opponent.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+The house is built to its last step when the child grows up. This rule goes
+before the others of the line. While the child is on its way there, its hint
+color is blueprint blue.
 
 </details>
 

@@ -33,6 +33,8 @@ export const ITEMS: Record<string, ItemKind> = {
   snowman: "deco",
   emberstone: "deco",
   snowglobe: "deco",
+  pond: "deco",
+  woodpile: "deco",
   daisy: "hat",
   leaf: "hat",
   cap: "hat",
@@ -49,6 +51,10 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_duck: "egg",
   egg_hippo: "egg",
   egg_beak: "egg",
+  egg_caterpillar: "egg",
+  egg_dog: "egg",
+  egg_dragonfly: "egg",
+  egg_beaver: "egg",
 };
 export const MAX_SEEDS = 9; // per kind; decorations and hats exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
@@ -56,7 +62,8 @@ export const MAX_EGGS = 9; // this many are kept
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus
 // what a pet has passed on to it (wild.ts), until it is brooded (model.nextPet).
 export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "ember", egg_stone: "stone", egg_fox: "fox",
-  egg_cloud: "cloud", egg_leaf: "leaf", egg_duck: "duck", egg_hippo: "hippo", egg_beak: "beak" };
+  egg_cloud: "cloud", egg_leaf: "leaf", egg_duck: "duck", egg_hippo: "hippo", egg_beak: "beak",
+  egg_caterpillar: "caterpillar", egg_dog: "dog", egg_dragonfly: "dragonfly", egg_beaver: "beaver" };
 export const MAX_DECO = 2; // this many spots the scene has outside
 
 // Plant: [stat, effect of one fruit]
@@ -100,7 +107,7 @@ export const COOL_MOOD = 5; // what cooling it down is worth
 // inside, and each step has room for more decorations.
 export const HOUSE_STEPS = 3;
 export const HOUSE_SPOTS = [0, 1, 2, 3]; // per step: spots for decorations inside
-export const OUTDOOR_DECO = ["snowman"]; // would melt inside
+export const OUTDOOR_DECO = ["snowman", "pond"]; // would melt inside; a pond belongs in the garden
 // The snow globe: set out at home, outside or in the house, it snows around the pet, and a pet of
 // the cloud line that grows up then counts it as snow (life.decideSpecies).
 export const SNOW_DECO = ["snowglobe"];
@@ -218,6 +225,7 @@ export function eatFruit(state: PetState): string {
   plant.ripening = 0.0;
   if (plant.left <= 0) {
     state.plant = null;
+    state.garden.plants_done += 1; // all its fruits, and it never wilted before: a caterpillar may come (garden.ts)
   }
   return plant.kind;
 }

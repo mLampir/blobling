@@ -127,6 +127,20 @@ export interface Friend {
   until?: number;
   nests?: number;
   rest_until?: number;
+  /** A guest the garden drew (garden.ts), not met on a trip. */
+  guest?: boolean;
+}
+
+/** What draws guests to the garden (garden.ts). */
+export interface Garden {
+  /** Plants that bore all their fruits. */
+  plants_done: number;
+  /** The local days (garden.dayOf) with a game together, over the last week. */
+  play_days: number[];
+  /** When it last rained at home; 0 = not yet. */
+  rain_at: number;
+  /** The guest peeking over the fence, until it comes in. */
+  peeking: { species: string; until: number } | null;
 }
 
 export interface Plant {
@@ -223,6 +237,8 @@ export interface PetState {
   eggs: Egg[];
   /** The wild pets it has made friends with, the first first. */
   friends: Friend[];
+  /** What draws guests to the garden (garden.ts). */
+  garden: Garden;
   /** The egg the two have laid, until it is collected. */
   nest: Egg | null;
   /** What a friend has left behind (wild.giftFrom), until it is unwrapped. */
@@ -302,6 +318,7 @@ export function newState(): PetState {
     items: {},
     eggs: [],
     friends: [],
+    garden: { plants_done: 0, play_days: [], rain_at: 0.0, peeking: null },
     nest: null,
     gift: null,
     found: null,

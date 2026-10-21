@@ -54,7 +54,11 @@
     "leaf": "Sproutlet",
     "duck": "Paddlet",
     "hippo": "Soakling",
-    "beak": "Crestling"
+    "beak": "Crestling",
+    "caterpillar": "Munchlet",
+    "dog": "Pupplet",
+    "dragonfly": "Nymphlet",
+    "beaver": "Gnawlet"
   },
   "species": {
     "blob": "Blob",
@@ -97,7 +101,23 @@
     "sakurin": "Sakurin",
     "bubblehelm": "Bubblehelm",
     "hippula": "Hippula",
-    "acewing": "Acewing"
+    "acewing": "Acewing",
+    "caterpillar": "Raupe",
+    "dog": "Hund",
+    "dragonfly": "Libelle",
+    "beaver": "Biber",
+    "mothmuff": "Mothmuff",
+    "sunflutter": "Sunflutter",
+    "jesterwing": "Jesterwing",
+    "digby": "Digby",
+    "barrelbard": "Barrelbard",
+    "pawdini": "Pawdini",
+    "rotorfly": "Rotorfly",
+    "jewelwing": "Jewelwing",
+    "prismfly": "Prismfly",
+    "dambert": "Dambert",
+    "timberjack": "Timberjack",
+    "archibeaver": "Archibeaver"
   },
   "tricks": {
     "bow": "Verbeugen",
@@ -182,6 +202,8 @@
     "cairn": "Steinmännchen",
     "emberstone": "Glutstein",
     "snowglobe": "Schneekugel",
+    "pond": "Teich",
+    "woodpile": "Holzstapel",
     "snowman": "Schneemann",
     "daisy": "Blumenkranz",
     "leaf": "Blatt",
@@ -198,7 +220,11 @@
     "egg_leaf": "Blatt-Ei",
     "egg_duck": "Enten-Ei",
     "egg_hippo": "Nilpferd-Ei",
-    "egg_beak": "Schnabel-Ei"
+    "egg_beak": "Schnabel-Ei",
+    "egg_caterpillar": "Raupen-Ei",
+    "egg_dog": "Hunde-Ei",
+    "egg_dragonfly": "Libellen-Ei",
+    "egg_beaver": "Biber-Ei"
   },
   "pack": {
     "ball": "Ball"
@@ -386,6 +412,8 @@
         "herb": "Ich habe eine Heilblüte gegessen, und danach ging es mir viel besser."
       },
       "visit": "{pet} hat mich besucht.",
+      "peek": "{pet} hat über den Zaun zu mir hergeschaut.",
+      "guest": "{pet} ist aus dem Garten hereingekommen, jetzt sind wir Freunde.",
       "gift": "{pet} hat mir ein Geschenk mitgebracht!",
       "found": "Ich habe im Gras etwas gefunden und für dich aufgehoben: {thing}.",
       "nest": "Wir haben zu zweit ein Nest gebaut – und jetzt liegt ein Ei darin!",
@@ -527,6 +555,8 @@
       "wild_friend": "hat {pet} seine Tricks gezeigt und sich angefreundet 💛",
       "wild_shrug": "hat {pet} seine Tricks gezeigt – {pet} war nicht beeindruckt",
       "visit": "{pet} kam zu Besuch",
+      "peek": "{pet} schaute über den Zaun 👀",
+      "guest": "{pet} kam aus dem Garten und wurde ein Freund 💛",
       "nest": "hat mit seinem Freund ein Nest gebaut – darin liegt ein Ei 🥚",
       "collect": "Ei eingesammelt",
       "gift": "{pet} hat ein Geschenk mitgebracht 🎁",

@@ -28,7 +28,8 @@ const BASE: SceneView = {
   mood: "normal", needs: [], activity_until: 0, activity_item: "",
 };
 // The special forms, the secret third adult of a line
-const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing"];
+const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
+  "jesterwing", "pawdini", "prismfly", "archibeaver"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -50,17 +51,27 @@ const PETS: Record<string, [string, string]> = {
   lillypot: ["adult", "lillypot"], steamo: ["adult", "steamo"],
   beak_egg: ["egg", "beak"], beak_baby: ["baby", "beak"], crestling: ["child", "beak"],
   parcelbeak: ["adult", "parcelbeak"], rapierre: ["adult", "rapierre"],
+  caterpillar_egg: ["egg", "caterpillar"], caterpillar_baby: ["baby", "caterpillar"], munchlet: ["child", "caterpillar"],
+  mothmuff: ["adult", "mothmuff"], sunflutter: ["adult", "sunflutter"],
+  dog_egg: ["egg", "dog"], dog_baby: ["baby", "dog"], pupplet: ["child", "dog"],
+  digby: ["adult", "digby"], barrelbard: ["adult", "barrelbard"],
+  dragonfly_egg: ["egg", "dragonfly"], dragonfly_baby: ["baby", "dragonfly"], nymphlet: ["child", "dragonfly"],
+  rotorfly: ["adult", "rotorfly"], jewelwing: ["adult", "jewelwing"],
+  beaver_egg: ["egg", "beaver"], beaver_baby: ["baby", "beaver"], gnawlet: ["child", "beaver"],
+  dambert: ["adult", "dambert"], timberjack: ["adult", "timberjack"],
   ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
-// The leaf, duck, hippo and beak lines: per line its line, child and adults, for the scenes below
+// The leaf, duck, hippo, beak and garden lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
   ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
   ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
+  ["caterpillar", "munchlet", "mothmuff", "sunflutter"], ["dog", "pupplet", "digby", "barrelbard"],
+  ["dragonfly", "nymphlet", "rotorfly", "jewelwing"], ["beaver", "gnawlet", "dambert", "timberjack"],
 ];
 const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
   [a, b].flatMap((adult) => ["", "_sad", "_sleep", "_trick", "_rain"].map((what) => `${adult}${what}`))),
-["wild_forest_leaf", "wild_stream_hippo", "visit_beak", "visit_duck"]);
+["wild_forest_leaf", "wild_stream_hippo", "visit_beak", "visit_duck", "garden_peek"]);
 // The adult forms with a trick of their own (OWN_TRICKS in core/src/scene.ts) and that trick; each
 // gets a scene with the trick ("<form>_own") and one with its special move in a scuffle ("<form>_special")
 const OWN_TRICK_FORMS: Record<string, string> = {
@@ -68,7 +79,9 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   filchfox: "spin", rumblefluff: "bow", prismist: "spin", twiggle: "spin", needlenub: "bow", quill: "dance",
   drakwing: "flip", lillypot: "bow", steamo: "dance", parcelbeak: "bow", rapierre: "spin", glimmerock: "spin",
   bouldergrin: "flip", salamber: "dance", lunarock: "bow", foxfire: "spin", flurrbleat: "dance", sakurin: "dance",
-  bubblehelm: "flip", hippula: "bow", acewing: "flip",
+  bubblehelm: "flip", hippula: "bow", acewing: "flip", mothmuff: "spin", sunflutter: "dance", jesterwing: "flip",
+  digby: "spin", barrelbard: "bow", pawdini: "dance", rotorfly: "spin", jewelwing: "bow", prismfly: "dance",
+  dambert: "flip", timberjack: "spin", archibeaver: "bow",
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
@@ -499,6 +512,7 @@ const SCENES: Record<string, Scene> = {
     trip: trip("stream", { event: "wild", event_age: 4.0, wild: "steamo", outcome: "friend", rounds: [["bow", true]] }),
   }, DAY, null],
   visit_beak: [{ stage: "adult", species: "needlenub", visitor: { species: "rapierre", age: 60, left: 500 } }, DAY, null],
+  garden_peek: [{ stage: "child", species: "blob", peeking: "rotorfly" }, DAY, null],
   visit_duck: [{ stage: "adult", species: "parcelbeak", visitor: { species: "drakwing", age: 60, left: 500 } }, DAY,
     null],
   ...Object.fromEntries(Object.entries(OWN_TRICK_FORMS).flatMap(([adult, trick]) => [

@@ -1597,7 +1597,8 @@ function eventText(e) {
     : e.action === "trip" ? T[`areas.${e.item}.trip`] || T[`page.events.trip_${e.item}`] || t("page.events.trip")
     : e.action === "battle" ? battleText(e.item)
     : e.action === "wild" ? wildText(e.item)
-    : e.action === "visit" ? t("page.events.visit", { pet: T[`species.${e.item}`] || e.item })
+    : e.action === "visit" || e.action === "peek" || e.action === "guest"
+      ? t(`page.events.${e.action}`, { pet: T[`species.${e.item}`] || e.item })
     : e.action === "swap" ? t("page.events.swap", { pet: e.item || "" })
     : e.action === "bring_back" ? (e.item ? t("page.events.bring_back", { pet: e.item }) : t("page.events.bring_back_alone"))
     : e.action === "copied" ? t("page.events.copied", {

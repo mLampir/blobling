@@ -65,7 +65,8 @@ export type Happened = [string, string];
  * (or that has none yet), with room for another friend and another egg.
  */
 export function looking(state: PetState): boolean {
-  return state.stage === "adult" && state.friends.length < MAX_FRIENDS && state.friends.every((f) => f.nests)
+  const met = state.friends.filter((f) => !f.guest); // a guest from the garden doesn't take a friend's place
+  return state.stage === "adult" && met.length < MAX_FRIENDS && met.every((f) => f.nests)
     && !state.nest && roomForEgg(state);
 }
 
@@ -160,7 +161,8 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
     friend.visits = Math.min(friend.visits + 1, VISITS_FOR_NEST);
   }
   if (friend.visits >= VISITS_FOR_NEST && !state.nest && roomForEgg(state)) {
-    const line = rng.choice([life.lineOf(state.species), life.lineOf(friend.species)]);
+    // a guest from the garden came for its own line's sake
+    const line = friend.guest ? life.lineOf(friend.species) : rng.choice([life.lineOf(state.species), life.lineOf(friend.species)]);
     state.nest = {
       line,
       from: state.name,

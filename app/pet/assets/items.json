@@ -839,13 +839,293 @@
     "h": 15
    },
    "duration": 1000
+  },
+  {
+   "filename": "items caterpillar_egg 84",
+   "frame": {
+    "x": 935,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items caterpillar_egg_wobble 85",
+   "frame": {
+    "x": 947,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_wobble 86",
+   "frame": {
+    "x": 959,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_wobble 87",
+   "frame": {
+    "x": 971,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_wobble 88",
+   "frame": {
+    "x": 983,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_crack 89",
+   "frame": {
+    "x": 995,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items caterpillar_egg_open 90",
+   "frame": {
+    "x": 1007,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items dog_egg 91",
+   "frame": {
+    "x": 1019,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items dog_egg_wobble 92",
+   "frame": {
+    "x": 1031,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_wobble 93",
+   "frame": {
+    "x": 1043,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_wobble 94",
+   "frame": {
+    "x": 1055,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_wobble 95",
+   "frame": {
+    "x": 1067,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_crack 96",
+   "frame": {
+    "x": 1079,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items dog_egg_open 97",
+   "frame": {
+    "x": 1091,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items dragonfly_egg 98",
+   "frame": {
+    "x": 1103,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items dragonfly_egg_wobble 99",
+   "frame": {
+    "x": 1115,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_wobble 100",
+   "frame": {
+    "x": 1127,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_wobble 101",
+   "frame": {
+    "x": 1139,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_wobble 102",
+   "frame": {
+    "x": 1151,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_crack 103",
+   "frame": {
+    "x": 1163,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items dragonfly_egg_open 104",
+   "frame": {
+    "x": 1175,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items beaver_egg 105",
+   "frame": {
+    "x": 1187,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items beaver_egg_wobble 106",
+   "frame": {
+    "x": 1199,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_wobble 107",
+   "frame": {
+    "x": 1211,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_wobble 108",
+   "frame": {
+    "x": 1223,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_wobble 109",
+   "frame": {
+    "x": 1235,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_crack 110",
+   "frame": {
+    "x": 1247,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items beaver_egg_open 111",
+   "frame": {
+    "x": 1259,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 935,
+   "w": 1271,
    "h": 15
   },
   "frameTags": [
@@ -1189,6 +1469,102 @@
     "name": "beak_egg_open",
     "from": 83,
     "to": 83,
+    "direction": "forward"
+   },
+   {
+    "name": "caterpillar_egg",
+    "from": 84,
+    "to": 84,
+    "direction": "forward"
+   },
+   {
+    "name": "caterpillar_egg_wobble",
+    "from": 85,
+    "to": 88,
+    "direction": "forward"
+   },
+   {
+    "name": "caterpillar_egg_crack",
+    "from": 89,
+    "to": 89,
+    "direction": "forward"
+   },
+   {
+    "name": "caterpillar_egg_open",
+    "from": 90,
+    "to": 90,
+    "direction": "forward"
+   },
+   {
+    "name": "dog_egg",
+    "from": 91,
+    "to": 91,
+    "direction": "forward"
+   },
+   {
+    "name": "dog_egg_wobble",
+    "from": 92,
+    "to": 95,
+    "direction": "forward"
+   },
+   {
+    "name": "dog_egg_crack",
+    "from": 96,
+    "to": 96,
+    "direction": "forward"
+   },
+   {
+    "name": "dog_egg_open",
+    "from": 97,
+    "to": 97,
+    "direction": "forward"
+   },
+   {
+    "name": "dragonfly_egg",
+    "from": 98,
+    "to": 98,
+    "direction": "forward"
+   },
+   {
+    "name": "dragonfly_egg_wobble",
+    "from": 99,
+    "to": 102,
+    "direction": "forward"
+   },
+   {
+    "name": "dragonfly_egg_crack",
+    "from": 103,
+    "to": 103,
+    "direction": "forward"
+   },
+   {
+    "name": "dragonfly_egg_open",
+    "from": 104,
+    "to": 104,
+    "direction": "forward"
+   },
+   {
+    "name": "beaver_egg",
+    "from": 105,
+    "to": 105,
+    "direction": "forward"
+   },
+   {
+    "name": "beaver_egg_wobble",
+    "from": 106,
+    "to": 109,
+    "direction": "forward"
+   },
+   {
+    "name": "beaver_egg_crack",
+    "from": 110,
+    "to": 110,
+    "direction": "forward"
+   },
+   {
+    "name": "beaver_egg_open",
+    "from": 111,
+    "to": 111,
     "direction": "forward"
    }
   ]
