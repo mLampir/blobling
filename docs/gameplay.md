@@ -1013,7 +1013,7 @@ For an adult form with pixel art of its own:
 | `write_sheet` for the body and the faces, and the list at the top of the script | `tools/build_blob_sprites.py` |
 | Body and face sheet | `SPECIES_SHEETS` in `core/src/scene.ts` |
 | A face that is not to sit in the middle of its row (`faceTop`, `faceCenter`, `faceShift` in `write_sheet`) | `tools/build_blob_sprites.py`, `faceAnchor` in `core/src/sprites.ts` |
-| Colors of the child's lure, walking and hopping, umbrella, special move | `LURE_HINT`, `WALK_HOPS`, `NO_UMBRELLA`, `special` and `hit` in `core/src/scene.ts` |
+| Colors of the child's lure, walking and hopping, umbrella, where its hat sits, special move | `LURE_HINT`, `WALK_HOPS`, `NO_UMBRELLA`, `HAT_SPOTS`, `special` and `hit` in `core/src/scene.ts` |
 | A trick in its own way: the same gesture and effect, another animation | `OWN_TRICKS` and `trick` in `core/src/scene.ts`, frames of its own if it needs them |
 | Tests: every form in every state, how it moves, where the face sits | `core/test/scene.test.ts`, `core/test/sprites.test.ts` |
 | Text and picture, spoilers folded shut | [pets.md](pets.md), `npm run preview -- --pets` |
@@ -1035,9 +1035,18 @@ next to the same things looks small and sweet, which is fine.
 | What it eats | a mouthful that can be seen: 6–8 pixels | fruits from the plant, food from trips |
 | What it plays with | about a quarter of the child: 5–7 pixels | the ball |
 | What it carries over itself | at least as wide as its body: chosen per form | the umbrella (`UMBRELLAS` in `core/src/scene.ts`) |
+| What it carries on its back | about a third of its width: chosen per form | the backpack (`PACKS`) |
+| What it wears | about half the child's width (13–17 pixels); a baby wears a small one (`hat_*_small`) | hats |
 | What it sits at or goes into | about as wide as the child | the pond |
 | What grows | a bush or a herb below the child, a tree or a sunflower above it | the plant |
 | Decorations | 7–12 pixels: things in the garden, not furniture for the pet | the windmill, the snow globe |
+
+A hat sits on the head, never on what makes the form: the lure, a crown,
+a flame or a rotor stays visible. Where the top of a form is such a thing,
+`HAT_SPOTS` in `core/src/scene.ts` moves the hat: onto the head behind
+the lure or the rotor, or, for a crown or a flame, the small hat cocked on
+the side of the head. A new form gets a look with a hat on before it is
+done.
 
 Food lies at the edge of the pet's body, not of its frame, so that a wide
 adult does not hide it (`reach` in `core/src/scene.ts`). Something wider
