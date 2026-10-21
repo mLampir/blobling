@@ -42,6 +42,10 @@ frameTags):
   last of each three the secret one (faces of their own)
 - mouse_baby_body / mouse_baby_faces, squeaklet_body / mouse_faces – baby and child of the mouse line
 - sirthimble, cogsqueak, woolwhisk (_body / _faces) – its adults, Woolwhisk the secret one
+- <line>_baby_body / <line>_baby_faces, <child>_body / <line>_faces – baby and child of the
+  bear (cubble), penguin (waddlet) and bat (flapling) lines
+- hivebear, snorbear, ursastra, tuxwaddle, glidepin, aurorapin, umbrabat, batbeat, lunaflap
+  (_body / _faces) – their adults, the last of each three the secret one
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine, and
                                      the app's things (sponge, baton, bag, whistle, training, rod)
 - trip                             – backpack, plants, decorations, hats, things along the path,
@@ -5273,6 +5277,779 @@ GRANDMA_LINES = (("mouse", "squeaklet"),)
 GRANDMA_FORMS = (("sirthimble", FACES), ("cogsqueak", FACES),
                  ("woolwhisk", kit_faces(normal=("open", "small", True))))  # gracious
 
+# ---------------------------------------------------------------- The adventure lines
+
+# Three lines from the trips, each with its egg, baby, child, a basic adult, a second one and a
+# secret one: the bear from Mosswart's mushroom forest, the penguin from Frostfluff's mountain (both
+# guardians leave its egg) and the bat that lives in the cave as a wild pet. What every form of a
+# line keeps: the honey pot (the bear), the earmuffs (the penguin) and the big pointed ears (the
+# bat). The child carries the colors the code may recolor as a hint at its adult form: the glaze of
+# the honey pot, the earmuffs and the wing membrane.
+
+# The eggs: a caramel egg with honey dripping over its top, sitting in a cushion of moss; an ice-blue
+# egg with snow on its top and frost on it, in a tuft of the yeti's white fur; a purple egg wrapped in
+# two folded wings like a sleeping bat, hanging from the cave's ceiling by two little claws.
+BEAR_EGG = [
+    "....oooo....",
+    "...ojyyYo...",
+    "..ojyyyyYo..",
+    "..oyyyyyYo..",
+    ".oyyeyyYyYo.",
+    ".oyeeyyeYEo.",
+    ".oeeeyeeYEo.",
+    ".oeeeeeeYEo.",
+    ".oeeeeeeeEo.",
+    ".oeeeeeeEEo.",
+    "..oeeeeeEo..",
+    ".gGoeeeeoGg.",
+    "gGgggGgggGgG",
+    ".GGgGGGgGGG.",
+]
+PENGUIN_EGG = [
+    "....oooo....",
+    "...owwwWo...",
+    "..owwwwwWo..",
+    "..oWwWwWWo..",
+    ".oeeeeeeeEo.",
+    ".oeeeeeheEo.",
+    ".oeheeehhho.",
+    ".ohhheeeheo.",
+    ".oeheeeeeEo.",
+    ".oeeeeeheEo.",
+    "f.oeeeeeEo.f",
+    "fFfoeeeEofFf",
+    ".fFfFfFfFfF.",
+    "..FfFFFfFF..",
+]
+BAT_EGG = [
+    "SSTTSSSTTSST",
+    ".T..c..c..T.",
+    "....cvvc....",
+    "...ovVVvo...",
+    "..ovvVVvvo..",
+    "..oVvVVvVo..",
+    ".ovVvVVvVvo.",
+    ".ovVvVVvVvo.",
+    ".oVvvVVvvVo.",
+    ".ohVoVVoVeo.",
+    "..oeetteto..",
+    "..oteeeeEo..",
+    "...oEEtEo...",
+    "....oooo....",
+]
+EGG_GRIDS |= {"bear": BEAR_EGG, "penguin": PENGUIN_EGG, "bat": BAT_EGG}
+RARE_EGG_PALETTES |= {
+    "bear": {"o": (95, 55, 30), "e": (230, 190, 140), "E": (190, 145, 95), "y": (250, 190, 45), "Y": (205, 135, 25),
+             "j": (255, 230, 130), "g": (100, 160, 60), "G": (55, 110, 40), "x": (95, 55, 30)},
+    "penguin": {"o": (45, 70, 110), "e": (175, 215, 240), "E": (125, 170, 210), "h": (230, 245, 255),
+                "w": (250, 252, 255), "W": (200, 215, 235), "f": (240, 240, 250), "F": (190, 190, 215),
+                "x": (45, 70, 110)},
+    "bat": {"o": (35, 22, 50), "e": (150, 115, 185), "E": (110, 80, 145), "h": (195, 170, 220), "t": (190, 245, 220),
+            "v": (110, 75, 145), "V": (80, 52, 110), "c": (215, 205, 225), "S": (115, 110, 125), "T": (80, 76, 92),
+            "x": (35, 22, 50)},
+}
+
+
+def fanged(face):
+    """A face grid function with a little fang under the right corner of its mouth (none while asleep)."""
+    def grid(eyes, mouth, blush):
+        out = [list(r) for r in face(eyes, mouth, blush)]
+        width = len(out[0])
+        out.append(list("." * width))
+        if mouth != "none":
+            out[-1][width // 2] = "W"
+        return ["".join(r) for r in out]
+    grid.width = getattr(face, "width", None)
+    return grid
+
+
+# ---- The bear line: a bear cub with a honey pot for a hat
+
+BEAR_PALETTE = {
+    "o": (70, 40, 25),     # outline
+    "d": (140, 85, 45),    # shadow
+    "b": (180, 115, 60),   # bear brown
+    "l": (210, 150, 90),   # lit
+    "h": (235, 190, 130),  # highlight
+    "i": (230, 165, 120),  # the muzzle and inside the ears
+    "k": (245, 230, 195),  # the glaze of the honey pot (the hint)
+    "K": (205, 180, 140),
+    "y": (250, 190, 45),   # honey
+    "Y": (205, 135, 25),
+    "j": (255, 232, 140),
+}
+# Baby: a round brown cub with round ears and a little honey pot on its head, honey running down
+# onto its brow
+BEAR_BABY = [
+    "......yyyY......",
+    "....oyyyyyYo....",
+    ".....okykKo.....",
+    ".oo.okkkykKo.oo.",
+    "oddookkkkKKooddo",
+    "odiookkkKKKooido",
+    "oddooooooooooddo",
+    "..olhhybbbbbdo..",
+    ".ollhbYbbbbbbdo.",
+    ".olbbbbbbbbbbdo.",
+    "olbbbbbbbbbbbddo",
+    "olbbbiiiiiibbddo",
+    "obbbiiiiiiiibddo",
+    "odbbbiiiiiibdddo",
+    "oddddddddddddddo",
+    ".oooooooooooooo.",
+]
+BEAR_BABY_FACE_TOP, BEAR_BABY_FACE_SHIFT = face_place(BEAR_BABY, 9, 3, BABY_W)
+BEAR_BABY_TAGS = body_tags(BEAR_BABY, 10, 8, flat_rows=3)
+# Cubble, the child: the honey pot worn as a hat, honey welling over its rim and running down the
+# pot onto its brow, a pale muzzle, round ears and two stubby paws
+CUBBLE = [
+    "...........jjyyY..........",
+    ".........ojyyyyyyYo.......",
+    "........oyyyyykyyYYo......",
+    ".........okyykkkYo........",
+    "...ooo..okkyykkkkYKoooo...",
+    "..odddookkkyYkkkkYKodddo..",
+    "..odidookkkkYkkkKKKodido..",
+    "..oddiooooooooooooooiddo..",
+    "...ooohlllllylbbbbbbooo...",
+    "....olllbbbbybbbbbbbdo....",
+    "...ollllbbbbYbbbbbbbddo...",
+    "..olllllbbbbbbbbbbbbdddo..",
+    "..obbbbbbbbbbbbbbbbbdddo..",
+    "..obbbbbbbbbbbbbbbbbdddo..",
+    "..obbbbbbbbbbbbbbbbbdddo..",
+    "..obbbbbbbiiiiiibbbbdddo..",
+    "..obbbbbiiiiiiiiiibbdddo..",
+    "..obbbbbbiiiiiiiibbbdddo..",
+    "...oddddddddddddddddddo...",
+    "...oddddddddddddddddddo...",
+    "....oooooooooooooooooo....",
+    "....obbbo.......obbbo.....",
+    "....ooooo.......ooooo.....",
+]
+CUBBLE_FACE_TOP, CUBBLE_FACE_SHIFT = face_place(CUBBLE, 11, 5, FACE_W)
+CUBBLE_TAGS = body_tags(CUBBLE, 13, 13, flat_rows=3)
+# Hivebear: the bear has become a beehive. Its body is a round straw dome coiled in rings with an
+# entrance on its belly, the honey pot on top is the hive's tip, and bees fly in and out; the round
+# ears, the muzzle and the stubby paws are still bear fur. It walks.
+HIVEBEAR_PALETTE = BEAR_PALETTE | {
+    "i": (240, 200, 150), "n": (55, 30, 20),
+    "s": (225, 180, 95), "z": (245, 215, 140), "S": (175, 125, 55), "Z": (135, 90, 40),  # straw
+    "k": (245, 205, 110), "K": (200, 150, 60),  # the hive's tip
+    "q": (235, 245, 255), "x": (35, 25, 20),  # the bees' wings, and the dark of the entrance and their stripes
+}
+HIVEBEAR = [
+    "..............jyyY.............",
+    ".............jyyyyY............",
+    "............okkkkko............",
+    "............oykkkKy............",
+    "............oyooooY............",
+    ".........ooozYzzzzzooo.........",
+    "....ooo..oSZZZSZZZSZZo..ooo....",
+    "...obbdoozzzzzzzzsssssoobbdo...",
+    "..obbdoozzzzzzzzsssssssoodddo..",
+    "..obdioSZZZSZZZSZZZSZZZSoiddo..",
+    "..odddozzzzzzzssssssssssodddo..",
+    "...odozzzzzzsssssssssssssodo...",
+    "....ooZZSZZZSZZZSZZZSZZZSoo....",
+    ".....ozzzzssssssssssssssso.....",
+    "...oozzzzsssiiiiiiisssssssoo...",
+    "....oSZZZSZZiiiiiiiZZSZZZSo....",
+    "....ozzsssssiiiiiiissssSSSo....",
+    ".ooozsssssssssssssssssSSSSSooo.",
+    ".oboZZSZZZSZZZSZZZSZZZSZZZSobo.",
+    "obbossssssssssssssssSSSSSSSobbo",
+    ".oosssssssssssZZZssSSSSSSSSSoo.",
+    ".oooZZZSZZZSZZxxxZZSZZZSZZZooo.",
+    "...osssssssssZxxxZSSSSSSSSSo...",
+    "..osssssssssssZZZSSSSSSSSSSSo..",
+    "...oSZZZSZZZSZZkkZZZSZZZSZZo...",
+    "...osssssssssSSSSSSSSSSSSSSo...",
+    "...ooooooooooooooooooooooooo...",
+    "........obbo.......obbo........",
+    "........oooo.......oooo........",
+]
+HIVE_BEE = [".qq.", "yxyx", "yxyx"]
+HIVE_BEES = (((19, 20), (25, 22), (27, 10), (0, 13)), ((20, 19), (26, 21), (27, 9), (1, 12)))  # flying in and out
+
+
+def hivebear(step):
+    grid = HIVEBEAR
+    for at in HIVE_BEES[step]:
+        grid = overlay(grid, HIVE_BEE, at)
+    return grid
+
+
+HIVEBEAR_FACE_TOP, HIVEBEAR_FACE_SHIFT = face_place(HIVEBEAR, 11, 10, 12)
+HIVEBEAR_TAGS = species_tags([hivebear(0), hivebear(1)], 17, 15, idle_ms=250)
+HIVEBEAR_TAGS["walk"] = walk_tags(hivebear(0), 17, range(8, 12), range(19, 23), 27)
+# Snorbear: the bear has become its own winter den. It lies flat and wide like an earth mound with
+# moss and snow on its back; only its sleepy head, one paw and the honey pot (moss-glazed) show, and
+# it snores.
+SNORBEAR_PALETTE = BEAR_PALETTE | {
+    "e": (125, 90, 60), "E": (90, 62, 42), "m": (95, 145, 70), "M": (60, 105, 50), "g": (140, 185, 95),  # earth, moss
+    "w": (248, 250, 255), "W": (195, 210, 235), "f": (225, 235, 250),  # snow, and its breath in the cold
+    "k": (130, 170, 100), "K": (85, 125, 70),  # the moss glaze of its pot
+    "i": (240, 200, 150),
+}
+SNORBEAR = [
+    "................................",
+    "................................",
+    ".....................jyyY.......",
+    "....................jyyyyY......",
+    "....................ykkko.......",
+    "................ooooykkKo.......",
+    ".............ooowwwwYoooo.......",
+    "....o.......owwwwwWwwwwwwo......",
+    "...odo....oowWWwwWgWwwWWwwoo....",
+    "..oddooooowwwmgWWgmmWWmgWwwWo...",
+    "...oollllbooWgmmgmegmmgmmWwWo...",
+    "..ollllbbbbboeegmeeMmgeegmWgWo..",
+    ".ollllbbbbbbboeeeeeeeeeeemgmmWo.",
+    ".olllbbbbbbbdoeeeeeeMeeeeEmEgWo.",
+    ".olbbbbbbbbddoMeeeeeeeeEEEEMEmo.",
+    ".obbbbiiibdddoeeeeeeeMEEEEEEEgWo",
+    "f.obiiiiiiidoeeMeeeEEEEEEEEEMEWo",
+    ".f.oiiiiiiioeeoooEEEEEMEEEEEEEgo",
+    "f....oiiiooooobbbooooooooooooooo",
+    "..............ooo...............",
+]
+SNORE_Z, SNORE_ZZ = ["ff", ".f", "ff"], ["fff", ".f.", "fff"]
+SNORBEAR_FACE_TOP, SNORBEAR_FACE_SHIFT = face_place(SNORBEAR, 12, 2, 11)
+SNORBEAR_TAGS = species_tags([overlay(SNORBEAR, SNORE_Z, (9, 3)),
+                              overlay(overlay(drop_rows(SNORBEAR, 14), SNORE_Z, (9, 2)), SNORE_ZZ, (12, 0))],
+                             14, 19, idle_ms=1200)  # its back rises and falls, and it snores
+# Ursastra (secret): the bear of the night sky. A big bear upright on its hind legs with its paws
+# raised, its body night blue; the seven stars of the Big Dipper shine on it, star honey drips from
+# its pot and rises again as little lights. It glows at night (GLOWS in core/src/scene.ts: "k", "K",
+# "y", "Y" and "j").
+URSASTRA_PALETTE = BEAR_PALETTE | {
+    "o": (75, 90, 170), "d": (30, 40, 95), "b": (45, 60, 125), "l": (70, 90, 165), "h": (100, 120, 195),
+    "i": (130, 145, 215), "q": (110, 130, 215),  # the lines between the stars
+    "k": (255, 248, 210), "K": (255, 215, 110),  # starlight
+    "y": (255, 215, 90), "Y": (230, 165, 40), "j": (255, 240, 160),  # star honey
+    "p": (55, 75, 160), "P": (35, 50, 120),  # its pot, night blue
+}
+URSASTRA = [
+    "............j..j................",
+    ".................j..............",
+    ".............jyyY...............",
+    ".............yyyyY..............",
+    ".............yqppoY.............",
+    ".............YppPo..............",
+    ".k.kk....ooo..ooo..ooo....kk.k..",
+    "..ooo...olbbooooooolbbo...ooo...",
+    ".olbbo..obioolllbbooibo..olbbo..",
+    ".obbbo..obohlllbbbbbodo..obbbo..",
+    ".obbdo...oolllbbbbbboo...obbdo..",
+    "..oooo....ollbbbbbbbo....oooo...",
+    "...ollo...olbbbbbbddo...obbo....",
+    "...ollo...obbbiiidddo...obbo....",
+    "....obbo..obbiiiiiddo..obbo.....",
+    ".....obo...oobiiidoo..kobo......",
+    ".....obbo.ohlooooobboqobbo......",
+    "......oboohllllbbbbbkoobo.......",
+    ".......oohlllllbbbbqbboo........",
+    "........olllllbbbbkbbbo.........",
+    "........ollkqqbbqqbbbbo.........",
+    "........ollqbbqkbbbbbdo.........",
+    "........ollqbbbqbbbbddo.........",
+    "........olbqbbbqbbbdddo.........",
+    "........obbkqqbqbbddddo.........",
+    "........obbbbbqkbdddddo.........",
+    "........oobbbbbbdddddoo.........",
+    ".......olbobbbbdddddobbo........",
+    ".......obbbobbdddddobbdo........",
+    "........obbdooooooobbdo.........",
+    "........oodoo.....oodoo.........",
+    ".......oooooo.....oooooo........",
+]
+URSA_SPARKS = ((2, 3), (29, 4), (1, 22), (30, 24))
+
+
+def ursastra(step):
+    grid = URSASTRA
+    for i, (x, y) in enumerate(URSA_SPARKS):  # the starlight round it twinkles
+        grid = overlay(grid, [".k.", "kKk", ".k."] if (i + step) % 2 else ["K"], (x - 1, y - 1) if (i + step) % 2 else (x, y))
+    return grid
+
+
+URSASTRA_FACE_TOP, URSASTRA_FACE_SHIFT = face_place(URSASTRA, 11, 10, 12)
+URSASTRA_TAGS = species_tags([ursastra(0), ursastra(1)], 22, 15, idle_ms=500)
+URSASTRA_TAGS["walk"] = walk_tags(ursastra(0), 22, range(7, 13), range(18, 24), 30)  # upright on its hind legs
+
+# ---- The penguin line: a penguin chick in red earmuffs
+
+PENGUIN_PALETTE = {
+    "o": (25, 30, 45),     # outline
+    "d": (50, 58, 80),     # shadow
+    "b": (75, 85, 110),    # slate
+    "l": (110, 120, 148),  # lit
+    "h": (150, 160, 188),  # highlight
+    "w": (245, 247, 252),  # its white front
+    "W": (205, 210, 225),
+    "f": (190, 196, 212),  # a last tuft of down
+    "r": (225, 70, 70),    # the earmuffs (the hint)
+    "R": (160, 40, 50),
+    "q": (250, 140, 130),
+    "a": (250, 150, 40),   # feet
+    "A": (200, 105, 25),
+}
+# The baby is still in its grey down
+PENGUIN_BABY_PALETTE = PENGUIN_PALETTE | {
+    "o": (40, 45, 60), "d": (100, 108, 125), "b": (140, 148, 165), "l": (175, 182, 198), "h": (210, 215, 228)}
+# Baby: a fluffy grey chick with a white face, a tuft of down on top, orange feet and red earmuffs
+PENGUIN_BABY = [
+    "......l.l.......",
+    ".....olool......",
+    "....RRRRRRRR....",
+    "...RlhllbbbbR...",
+    "..RlhhlbbbbbdR..",
+    ".RRlhwwwwwbbdRR.",
+    "rqrhwwwwwwwwbrqr",
+    "rrrwwwwwwwwwwrrr",
+    "RrRwwwwwwwwwwRrR",
+    ".RRwwwwwwwwwwRR.",
+    ".obbwwwwwwwwbddo",
+    ".odbbwwwwwwbdddo",
+    ".oddddddddddddo.",
+    "..oaAaooooaAao..",
+]
+PENGUIN_BABY_FACE_TOP, PENGUIN_BABY_FACE_SHIFT = face_place(PENGUIN_BABY, 6, 3, BABY_W)
+PENGUIN_BABY_TAGS = body_tags(PENGUIN_BABY, 10, 8, flat_rows=3)
+# Waddlet, the child: grown upright, a slate back with a last tuft of down, a white heart-shaped face
+# and belly, little flippers held out for balance, orange feet, the earmuffs on their band
+WADDLET = [
+    "............f.f.............",
+    ".............f..............",
+    "...........RRRRRR...........",
+    "........RRRooooooRRR........",
+    ".......RooollllbboooR.......",
+    "......RohllllllbbbbboR......",
+    "......ollbbbbbbbbbbbdo......",
+    "...RRolllbbbbbbbbbbbddoRR...",
+    "..RrqRlwwwwwwbbwwwwWWdRqrR..",
+    "..rqrRlwwwwwwbbwwwwWWdRrqr..",
+    "..rrrRbwwwwwwbbwwwwWWdRrrr..",
+    "..RrRRbwwwwwwwwwwwwWWdRRrR..",
+    "...RRbbwwwwwwwwwwwwWWddRR...",
+    "...odbbwwwwwwwwwwwwWWdddo...",
+    "..oddbbwwwwwwwwwwwwWWddddo..",
+    ".oddobbwwwwwwwwwwwwWWddoddo.",
+    ".odo.odwwwwwwwwwwwwWWdo.odo.",
+    ".oo..oddwwwwwwwwwwwWddo..oo.",
+    ".....oddWWWWWWWWWWWWddo.....",
+    ".....oooooooooooooooooo.....",
+    "........aaA......aaA........",
+    ".......aaaAA....aaaAA.......",
+]
+WADDLET_FACE_TOP, WADDLET_FACE_SHIFT = face_place(WADDLET, 9, 6, FACE_W)
+WADDLET_TAGS = body_tags(WADDLET, 13, 14, flat_rows=3)
+# Tuxwaddle: the penguin's body has become a tailcoat. Tall, narrow and very upright, its white front
+# a shirt between dark lapels, its tail feathers grown long and split like coat tails; one flipper is
+# held out flat as a tray with a steaming cup on it. Its earmuffs are a deeper red. It waddles.
+TUXWADDLE_PALETTE = PENGUIN_PALETTE | {
+    "r": (200, 40, 60), "R": (130, 25, 45), "q": (240, 110, 130),  # velvet earmuffs
+    "z": (215, 225, 240),  # steam
+}
+TUXWADDLE = [
+    ".......RRRRRRR.............",
+    "......RoooooooR............",
+    ".....RohllllbboR...........",
+    "....RohlllllbbboR..........",
+    "..ooRowwwwlwwWWoRoo........",
+    ".oRroowwwwwwwWWooRro.......",
+    ".orqoowwwwwwwWWoorqo.......",
+    ".orroowwwwwwwWWoorro.......",
+    ".oRroolwwwwwWWdooRro.......",
+    "..oo.olbwwwwWddo.oo........",
+    "......olbbwbbdo............",
+    ".....ollbwwwbbbo...owwo....",
+    "....oolbbwwwbbbo...oWWo....",
+    "....oolbbwdwbbbo..ooooooo..",
+    "....oobbbwwwbbdooolllbbbbo.",
+    "....oobbbwdwbbdoobbbbbbddo.",
+    "....olbbbbwbbddo.ooooooooo.",
+    "....oobbbbdbbddo...........",
+    "....oobbbbwbdddo...........",
+    "....oobbbwwwdddo...........",
+    "...ooobbbwwwdddoo..........",
+    "....oobbwwwwWddoo..........",
+    "....odobwwwwWdodo..........",
+    "...oddowwwwwWWoddo.........",
+    "...odddowwwwWodddo.........",
+    "...oddooowwwoooddo.........",
+    "..oooo...ooo...oooo........",
+    ".......aaA...aA............",
+    ".......aaAA.aaAA...........",
+]
+TUX_STEAM = ({(20, 8): "z", (22, 8): "z", (19, 9): "z", (21, 9): "z"},
+             {(19, 8): "z", (21, 8): "z", (20, 9): "z", (22, 9): "z"})
+TUXWADDLE_FACE_TOP, TUXWADDLE_FACE_SHIFT = face_place(TUXWADDLE, 5, 5, 11)
+TUXWADDLE_TAGS = species_tags([dots(TUXWADDLE, steam) for steam in TUX_STEAM], 19, 10, idle_ms=600)
+TUXWADDLE_TAGS["walk"] = walk_tags(dots(TUXWADDLE, TUX_STEAM[0]), 19, range(7, 10), range(13, 16), 27, ms=(260, 160))
+# Glidepin: its feet have grown into skate blades. Streamlined and leaning far forward, one flipper
+# swung forward and one swept back (drawn lighter, so that it doesn't run into its back), its belly
+# smooth and shining like ice; the earmuffs are ice blue. It skates along, frost spraying behind it.
+GLIDEPIN_PALETTE = PENGUIN_PALETTE | {
+    "r": (140, 200, 240), "q": (215, 240, 255), "R": (80, 140, 195),  # ice-blue earmuffs
+    "c": (205, 232, 250), "C": (160, 205, 235), "z": (255, 255, 255),  # its icy belly, and speed lines
+    "s": (200, 210, 225), "S": (120, 130, 150),  # the blades
+}
+GLIDEPIN = [
+    "..............................o.",
+    "............................ooo.",
+    "..........................oolo..",
+    "....RRRRRRR.............oollo...",
+    "...RoooooooR..........oolloo....",
+    "...olllllbboR.......oolllo......",
+    "..ollllbbbbbo......ollloo.......",
+    ".oolllbbbbbboooooooooooooooo....",
+    "oRrowwwbwwccoRrollllbbbbbbo.....",
+    "orqowwwwwwccorqollbbbbbbbo......",
+    "orrowwwwwwccorrobbbbzccoo...CCCC",
+    ".oowwwwwwwccooobbbczcco.........",
+    "..owwwwwwwccobbbcczcco..........",
+    "...owwwwwwcobcccczcco.....CCCC..",
+    "....ooooooozcccczooo............",
+    "...ooobbo.ooooooo...o...........",
+    ".oobbbdoo..odo.....odo..........",
+    "oooooo.....odo.....odo..........",
+    "............o.......o...........",
+    "..........aaA.....aaA...........",
+    ".........ssssssSossssssSo.......",
+    "..........oSSSSo..oSSSSo........",
+]
+GLIDE_SPRAY = ({(26, 19): "q", (28, 18): "q", (29, 20): "q", (31, 19): "q", (27, 21): "q"},
+               {(27, 20): "q", (29, 19): "q", (28, 21): "q", (30, 18): "q", (31, 20): "q"})
+GLIDEPIN_FACE_TOP, GLIDEPIN_FACE_SHIFT = face_place(GLIDEPIN, 8, 2, 11)
+GLIDEPIN_TAGS = species_tags([dots(GLIDEPIN, GLIDE_SPRAY[0])], 11, 16)
+GLIDEPIN_TAGS["flutter"] = [(dots(GLIDEPIN, spray), 120) for spray in GLIDE_SPRAY]  # skating
+# Aurorapin (secret): round and big, its belly a window of ice into the polar night with one calm band
+# of the northern lights in it, ribbons of light streaming from its back as a train, snowflakes
+# round it, its earmuffs glowing green and violet. It glows at night (GLOWS in core/src/scene.ts:
+# "r", "q", "R", "g", "G", "t" and "v").
+AURORAPIN_PALETTE = PENGUIN_PALETTE | {
+    "o": (20, 25, 50), "d": (40, 48, 80), "b": (60, 70, 108), "l": (95, 105, 148), "h": (135, 145, 188),
+    "r": (90, 235, 170), "q": (210, 255, 235), "R": (170, 110, 235),  # glowing earmuffs
+    "n": (15, 22, 60), "N": (30, 40, 95), "x": (240, 245, 255), "f": (235, 245, 255),  # the polar night
+    "g": (90, 235, 170), "G": (60, 190, 160), "t": (120, 215, 240), "v": (180, 120, 240),  # the northern lights
+    "s": (190, 215, 240), "S": (130, 165, 205),  # the window's frame of ice
+}
+AURORAPIN = [
+    "..f.............................",
+    ".fxf............................",
+    "..f.............................",
+    ".......RRRRRRRRR................",
+    "......RoooooooooR...............",
+    ".....RolllllllbboR..............",
+    "....RolllllllbbbboR.............",
+    ".ooRollwwwwlwWWWbboR.oo.........",
+    "oRrolllwwwwbwWWWbbbooRro........",
+    "orqolllwwwwwwWWWbbboorqo........",
+    "orrolllwwwwwwWWWbbbborro........",
+    "orrolllwwwwwwWWWbbbborro........",
+    "oRrolllwwwwwwWWWbbbboRro........",
+    ".oolllwwwwwwwWWWWbbbboo.........",
+    ".ollllwwwwwwwWWWWbbbdo..........",
+    "oolllwwwwoooooWWWWbddoo.....f...",
+    "oolllwwooqqqqsooWWdddoo....fxf..",
+    "oollbwoqqNNNNnssoWdddodo....f...",
+    "oolbbwoqNxNNnnnsoWdddodo........",
+    "odobboqgggggggggsoddoddo........",
+    "odobboqGGGGGGGGGSoddodo.........",
+    "ooobboqNnnnnnnnnSoddooo.........",
+    "...obbosnnnnxnnSoddo............",
+    "...obbossfffffSSoddo............",
+    "....obboossSSSooddo......f......",
+    ".....obwwoooooWWdo......fxf.....",
+    "......obwwwwwWWdo........f......",
+    ".......ooooooooo................",
+    ".......aaA...aaA................",
+    ".......aaAA.aaAA................",
+]
+AURORA_TRAIN = ([
+        ".............vv",
+        "............v..",
+        "...........v.gg",
+        ".........vv.g..",
+        "..vvvvvvvvvg.tt",
+        ".vvvvvvvvgg.t..",
+        "vvgggggggggt...",
+        "vggggggggtt....",
+        "ggttttttttt....",
+        "gtttttttt......",
+        "tt.............",
+        "t..............",
+], [
+        "..........vvvvv",
+        "........vvv....",
+        ".......vvvggggg",
+        ".....vvvggg....",
+        "....vvvgggttttt",
+        "vvvvvgggttt....",
+        "vvvvgggttt.....",
+        "gggggttt.......",
+        "ggggttt........",
+        "ttttt..........",
+        "tttt...........",
+])
+AURORA_TRAIN_TOP = (2, 3)  # the ribbons wave
+AURORAPIN_FACE_TOP, AURORAPIN_FACE_SHIFT = face_place(AURORAPIN, 9, 5, 13)
+AURORAPIN_TAGS = species_tags([behind(AURORAPIN, train, 17, top) for train, top in zip(AURORA_TRAIN, AURORA_TRAIN_TOP)],
+                              20, 11, idle_ms=500)
+AURORAPIN_TAGS["walk"] = walk_tags(behind(AURORAPIN, AURORA_TRAIN[0], 17, AURORA_TRAIN_TOP[0]), 20, range(7, 10),
+                                   range(13, 16), 28, ms=(300, 180))
+
+# ---- The bat line: a bat with big pointed ears
+
+BAT_PALETTE = {
+    "o": (40, 25, 55),     # outline
+    "d": (100, 65, 130),   # shadow
+    "b": (140, 100, 175),  # bat purple
+    "l": (175, 140, 205),  # lit
+    "h": (210, 185, 230),  # highlight
+    "i": (240, 150, 190),  # inside the ears
+    "I": (200, 105, 150),
+    "v": (120, 80, 155),   # the wing membrane (the hint)
+    "V": (85, 55, 115),
+    "c": (225, 215, 235),  # claws
+}
+# Baby: a purple slime with two huge pointed ears and two small wings folded at its sides
+BAT_BABY = [
+    "....o............o....",
+    "...odo..........odo...",
+    "...oido........odio...",
+    "..odiido......odiido..",
+    "..odiIido....odiIido..",
+    "..odiIIido..odiIIido..",
+    "...odioolhllbbooido...",
+    "o..odolhhlbbbbbdodo..o",
+    "oo..ollhbbbbbbbbdo..oo",
+    "ovooolbbbbbbbbbbdooovo",
+    "ovvolbbbbbbbbbbbddovvo",
+    "oVvolbbbbbbbbbbbddovVo",
+    "ovVobbbbbbbbbbbbddoVvo",
+    "o.oodbbbbbbbbbbdddoo.o",
+    "...oddddddddddddddo...",
+    "....oooooooooooooo....",
+]
+BAT_BABY_FACE_TOP, BAT_BABY_FACE_SHIFT = face_place(BAT_BABY, 9, 6, BABY_W)
+BAT_BABY_TAGS = body_tags(BAT_BABY, 11, 11, flat_rows=3)
+# Flapling, the child: its two huge pointed ears, and real wings now, half spread with finger bones,
+# a scalloped edge and a thumb claw; little clawed feet
+FLAPLING = [
+    "........o..............o........",
+    ".......odo............odo.......",
+    ".......oido..........odio.......",
+    "......odiido........odiido......",
+    "......odiIido......odiIido......",
+    "c.....odiIIido....odiIIido.....c",
+    "oo....odiIIIido..odiIIIido....oo",
+    "ovoo...odiIIooooooooIIido...oovo",
+    "ovvvoo.oddoolllllbbbooddo.oovvvo",
+    "ovVvvvoooolllllllbbbbboooovvvVvo",
+    "ovvVvvvohllbbbbbbbbbbbddovvvVvvo",
+    "ovvvVvvolllbbbbbbbbbbbddovvVvvvo",
+    "oVvvvVollllbbbbbbbbbbbdddoVvvvVo",
+    "ovVvvvobbbbbbbbbbbbbbbdddovvvVvo",
+    "ovvVvvobbbbbbbbbbbbbbbdddovvVvvo",
+    "o.ovVvobbbbbbbbbbbbbbbdddovVvo.o",
+    "...o.oobbbbbbbbbbbbbbbdddoo.o...",
+    "......obbbbbbbbbbbbbbbdddo......",
+    ".......oddddddddddddddddo.......",
+    ".......oddddddddddddddddo.......",
+    ".......oooooooooooooooooo.......",
+    "...........oco....oco...........",
+]
+FLAPLING_FACE_TOP, FLAPLING_FACE_SHIFT = face_place(FLAPLING, 11, 8, FACE_W)
+FLAPLING_TAGS = body_tags(FLAPLING, 14, 16, flat_rows=3)
+# Umbrabat: its wings have grown together into an umbrella over its head, the finger bones its ribs
+# with a claw at each tip; its body is the shaft and its tail the hooked handle, and the big ears stick
+# up through the top. Rain runs off its edge. It floats along like an umbrella in the wind.
+UMBRABAT_PALETTE = BAT_PALETTE | {
+    "v": (125, 130, 155), "u": (165, 170, 192), "V": (85, 90, 115),  # its canopy, rain-cloud grey
+    "r": (140, 195, 240), "R": (90, 150, 210),  # rain
+}
+UMBRABAT = [
+    "........o...........o........",
+    "........do.........od........",
+    ".......odio.......oido.......",
+    ".......odiio.....oiido.......",
+    ".......odIIio...oiIIdo.......",
+    "........odiioooooiido........",
+    ".......ouodouddVVodoVo.......",
+    ".....ouuuuuudvdvVVVVVVVo.....",
+    "...ouuuuduudvvdvvVVVVVVVVo...",
+    "..ouuuduuudvvvdvvvVVVVVVVVo..",
+    ".ouuduuuudvvvvdvvvvVVVVVVVVo.",
+    ".oduuuuudvvvvvdvvvvvVVVVVVVo.",
+    ".ouuuuudvvvvvvdvvvvvvVVVVVVo.",
+    ".ooooooooooooooooooooooooooo.",
+    "..c.....c..ooooooo..c.....c..",
+    "..........ohlllbbbo..........",
+    ".........ollllbbbbbo.........",
+    ".........olllbbbbbbo.........",
+    ".........olbbbbbbbdo.........",
+    ".........obbbbbbbddo.........",
+    ".........obbbbbbdddo.........",
+    "..........obbbddddo..........",
+    "...........ooobooo...........",
+    ".............obo.............",
+    "..............d..............",
+    "..............d..............",
+    "..........c...d..............",
+    "..........d...d..............",
+    "...........d.d...............",
+    "............d................",
+]
+UMBRA_RAIN = ((2, 16), (26, 16), (8, 17), (20, 17), (0, 20), (28, 20))
+
+
+def umbrabat(step):
+    grid = UMBRABAT
+    for k, (x, y) in enumerate(UMBRA_RAIN):  # the drops run off and fall
+        grid = overlay(grid, ["r", "R"], (x, y + (k + step) % 2))
+    return grid
+
+
+UMBRABAT_FACE_TOP, UMBRABAT_FACE_SHIFT = face_place(UMBRABAT, 17, 9, 11)
+UMBRABAT_TAGS = species_tags([umbrabat(0), umbrabat(1)], 19, 14, idle_ms=400)
+# Batbeat: its big ears have become two loudspeaker horns whose membranes throb to the beat; a small
+# body, the wings bent like arms bobbing over a mixing desk, one up and one down, and its eyes shut
+# with joy. Sound rings ripple out of the horns.
+BATBEAT_PALETTE = BAT_PALETTE | {
+    "n": (80, 240, 230), "N": (30, 170, 180),  # the membranes, and the sound
+    "m": (250, 80, 200), "M": (180, 40, 150), "q": (255, 190, 240),  # its wings, neon
+    "x": (20, 12, 30),
+}
+BATBEAT = [
+    ".....n..................n.......",
+    "....n..ooo...........ooo..n.....",
+    "......oiiio.........oiiio.......",
+    ".....oinnnio.......oinnnio......",
+    "...n.oinxnIo.......oinxnIo.n....",
+    ".....oiNNNIo.......oiNNNIo......",
+    "......oIIIoo.......ooIIIo.......",
+    ".......ooobbo.....obbooo........",
+    "........obbbo.....obbbo.........",
+    "..oo.....obddo...obbbo..........",
+    "..oqoo....oddo...obbo...........",
+    "..oqmMoo...odooooobo............",
+    "...oqmmMoo.oollllboo.oooooo.....",
+    "..oqmmMmmMollllbbbbboomMmmqoo...",
+    "...oqmmMmmolllbbbbbbooMmmMmmqo..",
+    "..oqmmMmmMollbbbbbbboommMmmqo...",
+    "...ooqmmMollbbbbbbbbdoMmmMmmqo..",
+    ".....oooooobbbbbbbbdo.ooMmmqo...",
+    "..........obbbbbbdddo...ooMmqo..",
+    "..........obbbbbddddo.....ooqo..",
+    "...........oobbdddoo........oo..",
+    ".............ooooo..............",
+    "............c.c..c.c............",
+]
+BEAT_HORN = [".ooooo.", "oinnnio", "onnnnNo", "onnxnNo", "onNNNNo", "oiNNNIo", ".ooooo."]  # the membrane throbs out
+BATBEAT_LOUD = dots(overlay(overlay(BATBEAT, BEAT_HORN, (5, 1)), BEAT_HORN, (19, 1)),
+                    {(2, 1): "n", (28, 1): "n", (2, 4): "n", (28, 4): "n"})
+BATBEAT_FACE_TOP, BATBEAT_FACE_SHIFT = face_place(BATBEAT, 14, 10, 11)
+BATBEAT_TAGS = species_tags([BATBEAT, BATBEAT_LOUD], 17, 15, idle_ms=250)  # to the beat
+# Lunaflap (secret): the moon's bat. Its wings are made of moonlight, silver and spread so wide they
+# fill the sky; the tips of its big ears are two crescent moons, and silver sparks trickle down from
+# the edge of its wings. It flies, and it glows at night (GLOWS in core/src/scene.ts: "s", "S", "z",
+# "B", "k", "K" and "x").
+LUNAFLAP_PALETTE = BAT_PALETTE | {
+    "o": (95, 100, 160), "d": (70, 55, 120), "b": (105, 90, 165), "l": (145, 135, 200), "h": (190, 185, 235),
+    "s": (200, 210, 245), "S": (160, 175, 225), "z": (230, 236, 255), "B": (245, 248, 255),  # moonlight
+    "k": (255, 248, 205), "K": (230, 205, 120), "x": (220, 230, 255),  # the moons, and the sparks
+}
+LUNAFLAP = [
+    "........kkk..........kkk........",
+    ".......kk..............kk.......",
+    ".......kK..............Kk......B",
+    "BB......KKK..........KKK.....BB.",
+    "ozBB.....do..........od....BBso.",
+    "ozzzBB..odio........oido.BBssso.",
+    "ozzzzzBBodiio......oiidoBssssso.",
+    "ozzzzzssodIIioooo.oiIIdosssssso.",
+    "ozzzzssBBodioollbooiidoBsssssso.",
+    "ozzzzsBBBsoolllbbbbodoBBBssssso.",
+    "ozzzsBsBBsolllbbbbbbozBBsBsssso.",
+    "ozzsBssBBsollbbbbbbbosBBssBssSo.",
+    "oooBssBsBsolbbbbbbddosBsBssBoSo.",
+    "o.BossBsBsobbbbbbdddosBsBssoBoo.",
+    ".B.ossBsBSSobbbbdddossBsBsso.Bo.",
+    "B..ossBsBSSSooooooosssBsBsSo..B.",
+    "...osBssBSSoohllbboossBssBSo....",
+    "...osBoSBSo.ollbbbo.osBsoBo.....",
+    "....oB.oBo..olbbbbo..oBo.Bo....x",
+    "....B...B...obbbbdo...B...B.....",
+    "k...B...B...obbbddo...B...B...k.",
+    "........B....ooooo....B.........",
+    "............c.c..c.c............",
+    "...x.......................x....",
+    "..x....x...............x........",
+    ".xkxk..........x..........k..x..",
+    "..x.....k.....xkx.....k.....xkx.",
+    "...............x.............x..",
+]
+LUNAFLAP_B = [
+    "Bo......kkk..........kkk.....oB.",
+    "oBB....kk..............kk...BBo.",
+    "ozzB...kK..............Kk..Bsso.",
+    "ozzzBo..KKK..........KKK.oBssso.",
+    "ozzzzBB..do..........od.BBsssso.",
+    "ozzzzzsBodio........oidosssssso.",
+    "ozzzzsssodiio......oiidosssssso.",
+    "ozzzzssBodIIioooo.oiIIdosssssso.",
+    "ozzzsBBBBodioollbooiidoBBBsssso.",
+    "ozosBssBBsoolllbbbbodoBBssBsoSo.",
+    "ooBBsssBBsolllbbbbbbosBBsssBBoo.",
+    "oB.osssBBsollbbbbbbbosBBssso.Bo.",
+    "B..ossBsBsolbbbbbbddosBsBsso..B.",
+    "...ossBsBSobbbbbbdddosBsBsso....",
+    "...ossBsBSSobbbbdddossBsBsSo....",
+    "...osBosBSSSooooooosssBsoBSo...x",
+    "...ooB.oBSooohllbbooosBo.Boo....",
+    "k...oB.oBo..ollbbbo..oBo.Bo...k.",
+    "....oB.oB...olbbbbo...Bo.Bo.....",
+    "....B...B...obbbbdo...B...B.....",
+    "....B...B...obbbddo...B...B.....",
+    "........B....ooooo....B.........",
+    "............c.c..c.c............",
+    "...x.......................x....",
+    "..x....x...............x........",
+    ".xkxk..........x..........k..x..",
+    "..x.....k.....xkx.....k.....xkx.",
+    "...............x.............x..",
+]
+LUNAFLAP_FACE_TOP, LUNAFLAP_FACE_SHIFT = face_place(LUNAFLAP, 10, 10, 11)
+LUNAFLAP_TAGS = species_tags([LUNAFLAP, LUNAFLAP_B], 17, 15, idle_ms=600)
+LUNAFLAP_TAGS["flutter"] = [(LUNAFLAP, 120), (LUNAFLAP_B, 120)]  # its wings beat
+
+# Faces. Baby and child: the slime's faces in the line's colors (the bat's with a fang); the adults':
+# kit_face, the bears' with a nose, the bats' with a fang, and the penguins' mouth is a little beak.
+BEAR_FACE_PALETTE = FACE_PALETTE | {"d": (140, 85, 45), "m": (70, 40, 25), "k": (255, 150, 170)}
+PENGUIN_FACE_PALETTE = FACE_PALETTE | {"d": (100, 108, 125), "m": (240, 150, 40), "k": (255, 150, 170)}
+BAT_FACE_PALETTE = FACE_PALETTE | {"d": (100, 65, 130), "m": (45, 25, 60), "k": (255, 150, 170), "W": (255, 252, 240)}
+hivebear_face_grid = ursastra_face_grid = nosed(kit_face(6), ["nn"])
+snorbear_face_grid = nosed(kit_face(5), ["nn"])
+HIVEBEAR_FACE_PALETTE = SNORBEAR_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (140, 85, 45)}
+URSASTRA_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (30, 40, 95), "n": (20, 25, 60)}
+tuxwaddle_face_grid = glidepin_face_grid = kit_face(5)
+aurorapin_face_grid = kit_face(7)
+TUXWADDLE_FACE_PALETTE = GLIDEPIN_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (50, 58, 80), "m": (240, 150, 40)}
+AURORAPIN_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (40, 48, 80), "m": (240, 150, 40)}
+umbrabat_face_grid = batbeat_face_grid = lunaflap_face_grid = fanged(kit_face(5))
+UMBRABAT_FACE_PALETTE = BATBEAT_FACE_PALETTE = LUNAFLAP_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (100, 65, 130)}
+ADVENTURE_LINES = (("bear", "cubble", baby_face_grid, face_grid), ("penguin", "waddlet", baby_face_grid, face_grid),
+                   ("bat", "flapling", fanged(baby_face_grid), fanged(face_grid)))
+ADVENTURE_FORMS = (("hivebear", FACES), ("snorbear", kit_faces(normal=("closed", "small", False),
+                                                              smile=("closed", "small", True))),  # always dozing
+                   ("ursastra", FACES), ("tuxwaddle", FACES), ("glidepin", FACES), ("aurorapin", FACES),
+                   ("umbrabat", FACES), ("batbeat", kit_faces(normal=("happy", "laugh", True),  # lost in the music
+                                                              smile=("happy", "laugh", True))),
+                   ("lunaflap", FACES))
+
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
     "food_full": ["...fffff...", "..fffffFf..", ".fffffffFf."],
@@ -6464,7 +7241,17 @@ def main():
         write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
                     faceShift=globals()[f"{name}_FACE_SHIFT"])
         write_sheet(f"{line}_faces", face_sheet(face_grid, face_palette))
-    for name, faces in WATER_FORMS + GRANDMA_FORMS:
+    for line, child, baby_faces, child_faces in ADVENTURE_LINES:
+        upper, name = line.upper(), child.upper()
+        palette, face_palette = globals()[f"{upper}_PALETTE"], globals()[f"{upper}_FACE_PALETTE"]
+        write_sheet(f"{line}_baby_body", body_sheet(globals()[f"{upper}_BABY_TAGS"],
+                                                    globals().get(f"{upper}_BABY_PALETTE", palette)),
+                    faceTop=globals()[f"{upper}_BABY_FACE_TOP"], faceShift=globals()[f"{upper}_BABY_FACE_SHIFT"])
+        write_sheet(f"{line}_baby_faces", face_sheet(baby_faces, face_palette))
+        write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
+                    faceShift=globals()[f"{name}_FACE_SHIFT"])
+        write_sheet(f"{line}_faces", face_sheet(child_faces, face_palette))
+    for name, faces in WATER_FORMS + GRANDMA_FORMS + ADVENTURE_FORMS:
         upper = name.upper()
         write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
                     faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])

@@ -45,6 +45,11 @@ export const LINES: Record<string, readonly string[]> = {
   axolotl: ["mossolotl", "medilotl", "axodrake"],
   // from Grandma's attic (grandma.ts)
   mouse: ["sirthimble", "cogsqueak", "woolwhisk"],
+  // from the trips: the guardians of the forest and the mountain leave their eggs (trip.GUARDIAN_EGGS),
+  // and the bat lives in the cave as a wild pet (wild.WILD)
+  bear: ["hivebear", "snorbear", "ursastra"],
+  penguin: ["tuxwaddle", "glidepin", "aurorapin"],
+  bat: ["umbrabat", "batbeat", "lunaflap"],
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
@@ -102,6 +107,12 @@ export const CASTLECRAB_COAST_TRIPS = 3; // the crab line: trips to the coast �
 // The mouse line: its satiety never below HUNGRY_SATIETY as a child → cogsqueak, otherwise
 // sirthimble; it wears one of Grandma's knitted hats (grandma.HATS) when it grows up → woolwhisk
 export const HUNGRY_SATIETY = 25;
+export const SNORBEAR_HONEYCOMBS = 4; // the bear line: honeycombs eaten as a child → snorbear, otherwise hivebear
+export const URSASTRA_BOND = 5; // the bear line: bond hearts when it grows up (all of them) → ursastra
+export const GLIDEPIN_MOUNTAIN_TRIPS = 3; // the penguin line: trips to the mountain as a child → glidepin, otherwise tuxwaddle
+export const AURORAPIN_BEFORE_SUNRISE = 60; // the penguin line: it grows up this many minutes before sunrise or less → aurorapin
+// The bat line: speed its highest battle stat when it grows up → batbeat, otherwise umbrabat; it
+// grows up under a full moon at night → lunaflap
 export const MISSING_AFTER = 30; // days with pets before a line whose egg never came gets the quiet safety net (Pet.longMissing)
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
@@ -157,6 +168,15 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   sirthimble: { mood: 0.85 }, // a knight doesn't lose heart
   cogsqueak: { energy: 0.85 }, // wound up, it keeps going
   woolwhisk: { hygiene: 1.15 }, // wool picks up everything
+  hivebear: { satiety: 0.85 }, // it has honey of its own
+  snorbear: { energy: 0.8 }, // half asleep all the time anyway
+  ursastra: { mood: 0.85 }, // as calm as the night sky
+  tuxwaddle: { hygiene: 0.8 }, // always neat in its tailcoat
+  glidepin: { energy: 1.15 }, // always skating
+  aurorapin: { hygiene: 0.85 }, // the frost keeps it clean
+  umbrabat: { hygiene: 0.85 }, // the rain washes it
+  batbeat: { energy: 1.2 }, // dancing all night
+  lunaflap: { energy: 0.85 }, // it sleeps the day away and glides on moonlight
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -191,6 +211,15 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   axodrake: { play: 1.25 },
   woolwhisk: { pet: 1.25 }, // soft as wool
   sirthimble: { sick: 0.6 }, // under its helmet
+  hivebear: { pet: 1.25 }, // warm and humming
+  snorbear: { pet: 1.5 }, // a sleepy bear loves a scratch behind the ears
+  ursastra: { heart: 1.5 }, // it grew out of a strong bond
+  tuxwaddle: { heart: 1.25 }, // a loyal butler
+  glidepin: { play: 1.25 }, // always up for a race
+  aurorapin: { sick: 0.6 }, // used to the polar cold
+  umbrabat: { sick: 0.6 }, // it keeps the rain off itself
+  batbeat: { play: 1.5 }, // anything to dance to
+  lunaflap: { pet: 1.25 }, // its wings of moonlight are soft to stroke
 };
 
 /**
@@ -309,6 +338,15 @@ export interface World {
   houseBuilt?: boolean;
 }
 
+/** Whether it is the last hour before sunrise (AURORAPIN_BEFORE_SUNRISE), by the clock and the sun where the pet lives. */
+export function beforeSunrise(world: World): boolean {
+  if (world.minute === undefined || world.sunrise === undefined) {
+    return false;
+  }
+  const until = world.sunrise - world.minute;
+  return until > 0 && until <= AURORAPIN_BEFORE_SUNRISE;
+}
+
 /** How many days the child stage of this pet lasts: less what the ember stone took off it. */
 export function childDays(state: PetState): number {
   return Math.max(1.0, (STAGE_SECONDS.child! - state.egg_warmth) / 86400);
@@ -349,6 +387,9 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
     crab: done("trips_coast", CASTLECRAB_COAST_TRIPS),
     axolotl: done("won_gloompeep", 1),
     mouse: Boolean(world.grandmaHat),
+    bear: (world.bond ?? 0) >= URSASTRA_BOND,
+    penguin: beforeSunrise(world),
+    bat: Boolean(world.fullMoon && world.dark),
   } as Record<string, boolean>)[line];
   if (special) {
     return LINES[line][2];
@@ -397,6 +438,15 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   }
   if (line === "mouse") {
     return minutes > 0 && !diary.hungry_minutes ? "cogsqueak" : "sirthimble";
+  }
+  if (line === "bear") {
+    return done("food_honeycomb", SNORBEAR_HONEYCOMBS) ? "snorbear" : "hivebear";
+  }
+  if (line === "penguin") {
+    return done("trips_mountain", GLIDEPIN_MOUNTAIN_TRIPS) ? "glidepin" : "tuxwaddle";
+  }
+  if (line === "bat") {
+    return world.strongest === "speed" ? "batbeat" : "umbrabat";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if (enough("love", PURRLOOP_LOVE_PER_DAY)) {

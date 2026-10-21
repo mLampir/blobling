@@ -119,6 +119,19 @@ export const TASTES: Record<string, readonly [string, string]> = {
   sirthimble: ["hazelnut", "seagrass"], // a nut, like its shield
   cogsqueak: ["pinenut", "fruit_cherry"],
   woolwhisk: ["cake", "watercress"], // Grandma's
+  // the lines from the trips
+  bear: ["fruit_berry", "fruit_herb"],
+  hivebear: ["honeycomb", "watercress"], // honey, of course
+  snorbear: ["hazelnut", "glowberry"], // fattening up for the winter, and nothing that keeps it awake
+  ursastra: ["glowberry", "pinenut"], // a little starlight
+  penguin: ["fruit_cherry", "fruit_herb"],
+  tuxwaddle: ["mussel", "hazelnut"], // dinner from the sea
+  glidepin: ["pinenut", "honeycomb"], // a mountain food; honey would stick to its blades
+  aurorapin: ["seagrass", "fruit_sunflower"], // the polar sea; it lives in the night
+  bat: ["fruit_cherry", "fruit_sunflower"], // a fruit bat
+  umbrabat: ["watercress", "fruit_sunflower"], // it grows in the rain
+  batbeat: ["honeycomb", "watercress"], // energy for the dance floor
+  lunaflap: ["fruit_cherry", "glowberry"], // it has light enough
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],

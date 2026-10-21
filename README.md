@@ -29,7 +29,7 @@ a day and also tells you the time and the weather.
   goes on trips, scuffles with whoever gets in its way there and brings things
   home, among them food that gives it an edge on the next trip or in training,
   and the diary keeps every trip. Five areas open up one after the other, each one past a guardian, and
-  some of the guardians keep a rare egg that something else hatches from.
+  each guardian keeps a rare egg that something else hatches from.
   Every pet that gets past the last guardian adds a step to its house, from a
   hut of thatch to a whole house, where it sleeps and keeps more decorations.
 - **It makes friends.** A grown-up pet can impress a wild pet with its tricks.

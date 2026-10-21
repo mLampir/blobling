@@ -61,7 +61,10 @@
     "beaver": "Gnawlet",
     "crab": "Shellbit",
     "axolotl": "Axolittle",
-    "mouse": "Squeaklet"
+    "mouse": "Squeaklet",
+    "bear": "Cubble",
+    "penguin": "Waddlet",
+    "bat": "Flapling"
   },
   "species": {
     "blob": "Blob",
@@ -132,7 +135,19 @@
     "mouse": "Mouse",
     "sirthimble": "Sir Thimble",
     "cogsqueak": "Cogsqueak",
-    "woolwhisk": "Woolwhisk"
+    "woolwhisk": "Woolwhisk",
+    "bear": "Bear",
+    "hivebear": "Hivebear",
+    "snorbear": "Snorbear",
+    "ursastra": "Ursastra",
+    "penguin": "Penguin",
+    "tuxwaddle": "Tuxwaddle",
+    "glidepin": "Glidepin",
+    "aurorapin": "Aurorapin",
+    "bat": "Bat",
+    "umbrabat": "Umbrabat",
+    "batbeat": "Batbeat",
+    "lunaflap": "Lunaflap"
   },
   "tricks": {
     "bow": "Bow",
@@ -246,6 +261,9 @@
     "egg_crab": "Crab egg",
     "egg_axolotl": "Axolotl egg",
     "egg_mouse": "Mouse egg",
+    "egg_bear": "Bear egg",
+    "egg_penguin": "Penguin egg",
+    "egg_bat": "Bat egg",
     "earflap": "Earflap hat",
     "stripes": "Striped stocking cap",
     "cosy": "Tea cosy hat",

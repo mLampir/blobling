@@ -44,7 +44,7 @@ test("only an adult without a friend is looking", () => {
   assert.equal(wild.looking(pet), true);
   assert.deepEqual(met(pet, "meadow"), new Set([null, "cyclopuff", "sneezle", "flicker", "lumoth"]));
   assert.ok(met(pet, "meadow", 63).has("grumpcap"));
-  assert.deepEqual(met(pet, "cave"), new Set([null]));
+  assert.deepEqual(met(pet, "cave"), new Set([null, "umbrabat", "batbeat"])); // the bat line
   // the stone line and the hippo line
   assert.deepEqual(met(pet, "stream"), new Set([null, "bouldergrin", "glimmerock", "lillypot", "steamo"]));
   // the fox line and the leaf line

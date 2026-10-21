@@ -30,6 +30,7 @@ export const WILD: Record<string, readonly (readonly [string, number, sky.Precip
     ["lumoth", 1, null]],
   forest: [["filchfox", 3, null], ["roamtail", 1, null], ["twiggle", 2, null], ["needlenub", 1, null]],
   stream: [["bouldergrin", 3, null], ["glimmerock", 1, null], ["lillypot", 2, null], ["steamo", 1, null]],
+  cave: [["umbrabat", 3, null], ["batbeat", 1, null]],
   mountain: [["rumblefluff", 3, "rain"], ["prismist", 1, null]], // the thundercloud only comes out in the rain
 };
 export const MISSING_WEIGHT = 3; // a line the home has long been missing (state.missing_lines): its wild pets come this much more often

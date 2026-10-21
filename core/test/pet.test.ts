@@ -32,7 +32,7 @@ test("trip in snapshot and view", () => {
     [["meadow", true], ["forest", false], ["stream", false], ["cave", false], ["mountain", false]]);
   assert.deepEqual(state.areas[1],
     { id: "forest", label: "Mushroom forest", unlocked: false, blocked_by: "Meadow", guardian: true, keeper: "mosswart",
-      finds: ["glowshroom", "lantern", "cap", "woodpile", "snailshell"].map((id) => ({ id, found: false })), wild_left: true });
+      finds: ["egg_bear", "glowshroom", "lantern", "cap", "woodpile", "snailshell"].map((id) => ({ id, found: false })), wild_left: true });
   assert.equal(state.areas[0].wild_left, null); // only wild pets of no line live on the meadow
   assert.deepEqual(state.guardians, { passed: 0, all: 5 });
   assert.deepEqual(state.items[0], { id: "seed_berry", label: "Berry seed", kind: "seed", count: 2, active: false, place: null, effects: ["satiety"] });
@@ -338,7 +338,7 @@ test("after a month, the lines whose egg never came are long missing", () => {
 test("an area shows whether a wild pet of a line the home never had still lives there", () => {
   const pet = new Disk().pet();
   assert.equal(pet.wildLeft("meadow"), null); // only wild pets of no line
-  assert.equal(pet.wildLeft("cave"), null); // nobody wild in there
+  assert.equal(pet.wildLeft("cave"), true); // the bat line
   assert.equal(pet.wildLeft("mountain"), true);
   for (const [form] of wild.WILD.mountain) {
     pet.album.push(`egg:${life.lineOf(form)}`);
