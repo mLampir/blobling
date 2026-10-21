@@ -299,10 +299,16 @@
   .steps i { width: 40px; height: 40px; border-radius: 10px; border: 2px solid var(--line); font-style: normal; font-size: 22px; line-height: 36px; }
   .steps i.on { border-color: var(--accent); color: var(--accent); }
   /* The bag: a shelf each for what it eats, seeds, and what it wears or sets out (and eggs) */
-  .shelves { width: 100%; display: grid; gap: 12px; text-align: left; }
-  .shelf { display: grid; gap: 6px; }
-  .shelf > div { display: flex; flex-wrap: wrap; gap: 8px; }
-  .tile { flex: 0 0 68px; height: 70px; }
+  .shelves { width: 100%; display: grid; gap: 6px; text-align: left; }
+  /* Each shelf is one row that scrolls sideways: a swipe to the side looks along it, a drag up
+     takes a thing out towards the pet, so the two never get in each other's way */
+  .shelf { display: grid; gap: 2px; min-width: 0; }
+  .shelf > div {
+    display: flex; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    padding: 8px 6px 6px; margin: 0 -6px;
+  }
+  .shelf > div::-webkit-scrollbar { display: none; }
+  .tile { flex: 0 0 66px; height: 66px; touch-action: pan-x; }
   /* how many there are (and once found out: ❤ its favorite, ✕ what it won't eat), what it does,
      and whether it can go into the backpack */
   .tile .n { position: absolute; left: 6px; top: 3px; font-size: 11px; font-weight: 700; color: var(--muted); pointer-events: none; }
