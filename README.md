@@ -7,7 +7,7 @@ a day and also tells you the time and the weather.
 
 <p align="center">
   <img src="docs/images/panel.jpg" width="420" alt="The LED panel: a blue sky with sun and a cloud, the time and the temperature at the top, the baby pet on the grass">
-  <img src="docs/images/pet-page.png" width="190" alt="The app on a phone: the pet in its scene, its needs as small meters, and a tray of things to drag onto it">
+  <img src="docs/images/pet-page.png" width="190" alt="The app on a phone: the pet in its scene, its needs as small meters, a row of things to drag onto it and a row of buttons below">
 </p>
 
 - **It lives with you.** The sky follows the real time of day, with sunrise

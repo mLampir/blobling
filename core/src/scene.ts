@@ -189,6 +189,11 @@ export function thingArea(kind: "nest" | "gift" | "found", house: number): [numb
   const part = (n: number) => Number((n / 64).toFixed(3));
   return [part(middle - 7), part(GROUND - 12), part(14), part(14)];
 }
+/** Where the plant stands, as parts of the scene [x, y, width, height], for a tap in the app. */
+export function plantArea(house: number): [number, number, number, number] {
+  const part = (n: number) => Number((n / 64).toFixed(3));
+  return [part(PLANT_X[house] - 7), part(GROUND - 15), part(14), part(17)];
+}
 const VISIT_WALK = 3.0; // seconds it takes to hop in and out
 // While the friend is there, the two play now and then: a game, a rest standing together, the next
 // game. Only while the pet is in a decent mood, awake and has nothing else to do; otherwise the
@@ -1989,7 +1994,7 @@ export class PetScene {
   }
 
   /**
-   * Throws the ball straight up: the harder the swipe was, the higher it flies (a strong throw
+   * Throws a stone straight up: the harder the swipe was, the higher it flies (a strong throw
    * leaves the panel at the top and takes a while to come back).
    */
   private trainStrength(pose: Pose, view: SceneView, t: number, now: number): void {
@@ -1999,10 +2004,10 @@ export class PetScene {
     const onHead = GROUND - this.petTop + 1;
     const flight = 0.8 + 1.6 * power;
     if (e < 0.8) { // winds up
-      Object.assign(pose, { body: "squash", face: "happy", thrown: ["ball", ballX, onHead - 3] });
+      Object.assign(pose, { body: "squash", face: "happy", thrown: ["stone", ballX, onHead - 3] });
     } else if (e < 0.8 + flight) {
       const f = (e - 0.8) / flight;
-      pose.thrown = ["ball", ballX, onHead + Math.round(4 * f * (1 - f) * (8 + 72 * power))];
+      pose.thrown = ["stone", ballX, onHead + Math.round(4 * f * (1 - f) * (8 + 72 * power))];
       Object.assign(pose, { face: "eat_open", body: f < 0.15 ? "stretch" : "idle" }); // looks after it
     } else if (power >= 0.5) {
       this.cheer(pose, t);

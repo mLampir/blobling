@@ -172,9 +172,9 @@ Three guardians have been sitting on a rare egg:
 
 A guardian leaves its egg behind the first time a pet gets past it, so every
 pet can earn each of them once. A pet that got past a guardian before that
-guardian had an egg for it (or while there was no room for one among the
-finds) finds the egg at the end of the path on a later trip to that area.
-After unpacking, the egg is among the finds and stays there, from one pet to
+guardian had an egg for it (or while there was no room for one in the
+bag) finds the egg at the end of the path on a later trip to that area.
+After unpacking, the egg is in the bag and stays there, from one pet to
 the next, until you tap **brood** next to it.
 
 </details>
