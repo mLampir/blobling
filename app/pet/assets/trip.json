@@ -1509,13 +1509,53 @@
     "h": 14
    },
    "duration": 1000
+  },
+  {
+   "filename": "trip egg_owl 151",
+   "frame": {
+    "x": 1697,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_chameleon 152",
+   "frame": {
+    "x": 1709,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_scarab 153",
+   "frame": {
+    "x": 1721,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_kite 154",
+   "frame": {
+    "x": 1733,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "trip.png",
   "size": {
-   "w": 1697,
+   "w": 1745,
    "h": 24
   },
   "frameTags": [
@@ -2297,6 +2337,30 @@
     "name": "egg_bat",
     "from": 150,
     "to": 150,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_owl",
+    "from": 151,
+    "to": 151,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_chameleon",
+    "from": 152,
+    "to": 152,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_scarab",
+    "from": 153,
+    "to": 153,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_kite",
+    "from": 154,
+    "to": 154,
     "direction": "forward"
    }
   ]

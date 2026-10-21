@@ -134,7 +134,7 @@ test("the status line: clock, temperature and what the pet needs", () => {
 test("every form of the pet can be drawn, in every state", () => {
   const forms = [...Object.keys(life.LINES).flatMap((line) => life.STAGES.map((stage) => [stage, line])),
     ...[...Object.values(life.LINES).flat(), ...life.WILD_ONLY].map((name) => ["adult", name])];
-  assert.equal(forms.length, 19 * 4 + 62);
+  assert.equal(forms.length, 23 * 4 + 74);
   const moods = ["normal", "happy", "sad", "hungry", "dirty", "sick", "tired"];
   for (const [stage, species] of forms) {
     for (const mood of moods) {
@@ -345,7 +345,7 @@ test("a guest from the garden peeks over the fence at the right edge, only at ho
 });
 
 test("the newer lines' children show where they are heading", () => {
-  for (const [line, adults] of Object.entries(life.LINES).slice(-10)) {
+  for (const [line, adults] of Object.entries(life.LINES).slice(-14)) {
     const looks = adults.map((hint) => frames({ species: line, hint }, 1)[0]);
     assert.ok(differing(looks[0], looks[1]) > 0 && differing(looks[1], looks[2]) > 0
       && differing(looks[0], looks[2]) > 0, line);

@@ -64,7 +64,11 @@
     "mouse": "Squeaklet",
     "bear": "Cubble",
     "penguin": "Waddlet",
-    "bat": "Flapling"
+    "bat": "Flapling",
+    "owl": "Hootlet",
+    "chameleon": "Colorlet",
+    "scarab": "Rollet",
+    "kite": "Kitelet"
   },
   "species": {
     "blob": "Blob",
@@ -147,7 +151,23 @@
     "bat": "Bat",
     "umbrabat": "Umbrabat",
     "batbeat": "Batbeat",
-    "lunaflap": "Lunaflap"
+    "lunaflap": "Lunaflap",
+    "owl": "Owl",
+    "owlbert": "Owlbert",
+    "stargazer": "Stargazer",
+    "ninjowl": "Ninjowl",
+    "chameleon": "Chameleon",
+    "palettino": "Palettino",
+    "hidewell": "Hidewell",
+    "mirrorleon": "Mirrorleon",
+    "scarab": "Scarab",
+    "solroll": "Solroll",
+    "clockbeetle": "Clockbeetle",
+    "pharabug": "Pharabug",
+    "kite": "Paper kite",
+    "origrane": "Origrane",
+    "lionkite": "Lionkite",
+    "stormkite": "Stormkite"
   },
   "tricks": {
     "bow": "Bow",
@@ -264,6 +284,10 @@
     "egg_bear": "Bear egg",
     "egg_penguin": "Penguin egg",
     "egg_bat": "Bat egg",
+    "egg_owl": "Owl egg",
+    "egg_chameleon": "Chameleon egg",
+    "egg_scarab": "Scarab egg",
+    "egg_kite": "Paper kite egg",
     "earflap": "Earflap hat",
     "stripes": "Striped stocking cap",
     "cosy": "Tea cosy hat",

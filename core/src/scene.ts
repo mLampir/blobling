@@ -273,6 +273,8 @@ const HAT_SPOTS: Record<string, HatSpot> = {
   "adult:gemperor": [-6, 2, -1], "adult:flarelet": [5, 1, 1], "adult:salamber": [-6, 3, -1],
   "adult:glimmerock": [-10, 6, -1], "adult:needlenub": [5, 0, 1], "adult:rotorfly": [0, 6, 0, true],
   "adult:lightclaw": [5, 11, 1, true], "adult:sirthimble": [-10, 1, -1], "adult:castlecrab": [-12, 0, -1],
+  "adult:palettino": [-19, 6, 0, true], "adult:hidewell": [-12, 0, 0, true], "adult:solroll": [-11, 8, -1],
+  "adult:mirrorleon": [-8, 3, 0, true], "adult:pharabug": [5, 10, 1],
 };
 // Trip: grass, soil, what stands along the path (null = nothing) and what passes by behind it, per area
 const TRAVEL: Record<string, readonly [Color, Color, readonly (string | null)[], string]> = {
@@ -353,12 +355,18 @@ const STAGE_SHEETS: Record<string, Record<string, readonly [string, string]>> = 
   bear: { baby: ["bear_baby_body", "bear_baby_faces"], child: ["cubble_body", "bear_faces"] },
   penguin: { baby: ["penguin_baby_body", "penguin_baby_faces"], child: ["waddlet_body", "penguin_faces"] },
   bat: { baby: ["bat_baby_body", "bat_baby_faces"], child: ["flapling_body", "bat_faces"] },
+  // the festival and star lines
+  owl: { baby: ["owl_baby_body", "owl_baby_faces"], child: ["hootlet_body", "owl_faces"] },
+  chameleon: { baby: ["chameleon_baby_body", "chameleon_baby_faces"], child: ["colorlet_body", "chameleon_faces"] },
+  scarab: { baby: ["scarab_baby_body", "scarab_baby_faces"], child: ["rollet_body", "scarab_faces"] },
+  kite: { baby: ["kite_baby_body", "kite_baby_faces"], child: ["kitelet_body", "kite_faces"] },
 };
 // The egg of a line: the tags in the items sheet start with this
 const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg", cloud: "cloud_egg",
   leaf: "leaf_egg", duck: "duck_egg", hippo: "hippo_egg", beak: "beak_egg", caterpillar: "caterpillar_egg", dog: "dog_egg",
   dragonfly: "dragonfly_egg", beaver: "beaver_egg", crab: "crab_egg", axolotl: "axolotl_egg",
-  mouse: "mouse_egg", bear: "bear_egg", penguin: "penguin_egg", bat: "bat_egg" };
+  mouse: "mouse_egg", bear: "bear_egg", penguin: "penguin_egg", bat: "bat_egg",
+  owl: "owl_egg", chameleon: "chameleon_egg", scarab: "scarab_egg", kite: "kite_egg" };
 // Color per adult species: hue shift (0–255) starting from teal.
 // Fallback for a species without pixel art of its own.
 const SPECIES_HUE: Record<string, number> = {
@@ -395,7 +403,8 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
     "mothmuff", "sunflutter", "jesterwing", "digby", "barrelbard", "pawdini", "rotorfly", "jewelwing", "prismfly", "dambert",
     "timberjack", "archibeaver", "teacrab", "lightclaw", "castlecrab", "mossolotl", "medilotl", "axodrake", "sirthimble",
     "cogsqueak", "woolwhisk", "hivebear", "snorbear", "ursastra", "tuxwaddle", "glidepin", "aurorapin", "umbrabat",
-    "batbeat", "lunaflap"]
+    "batbeat", "lunaflap", "owlbert", "stargazer", "ninjowl", "palettino", "hidewell", "mirrorleon", "solroll",
+    "clockbeetle", "pharabug", "origrane", "lionkite", "stormkite"]
     .map((species) => [species, [`${species}_body`, `${species}_faces`, 0] as const])),
 };
 // What grows on a child's head hints at the adult form it is heading for. Per line, the three
@@ -408,7 +417,9 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
 // (lens, shadow), the young beaver's pencil (wood, shadow), the stripes of the young crab's shell
 // (stripe, shadow), the young axolotl's gills (frond, shadow), the young mouse's crumb of
 // cheese (cheese, shadow), the glaze of the bear cub's honey pot (glaze, shadow), the penguin chick's
-// earmuffs (muff, shadow, shine) and the young bat's wing membrane (membrane, shadow) – as in the palettes of
+// earmuffs (muff, shadow, shine), the young bat's wing membrane (membrane, shadow), the rims of the young
+// owl's glasses (rim, shadow), the young chameleon's tail spiral (stripe, shadow, light), the young
+// scarab's ball (sand, shadow, light) and the young kite's bows (bow, shadow) – as in the palettes of
 // tools/build_blob_sprites.py.
 const LURES: Record<string, readonly Color[]> = {
   blob: [[255, 235, 150], [240, 190, 90], [255, 255, 255]],
@@ -430,6 +441,10 @@ const LURES: Record<string, readonly Color[]> = {
   bear: [[245, 230, 195], [205, 180, 140]],
   penguin: [[225, 70, 70], [160, 40, 50], [250, 140, 130]],
   bat: [[120, 80, 155], [85, 55, 115]],
+  owl: [[240, 195, 60], [185, 135, 35]],
+  chameleon: [[245, 125, 55], [190, 80, 40], [255, 190, 110]],
+  scarab: [[230, 200, 140], [185, 150, 95], [250, 230, 185]],
+  kite: [[90, 170, 235], [50, 110, 190]],
 };
 const LURE_HINT: Record<string, readonly Color[]> = {
   sneezle: [[125, 220, 105], [60, 170, 70], [235, 255, 205]],
@@ -494,21 +509,34 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   umbrabat: [[125, 130, 155], [85, 90, 115]], // rain-cloud grey
   batbeat: [[250, 80, 200], [180, 40, 150]], // neon
   lunaflap: [[200, 210, 245], [160, 175, 225]], // moonlight
+  owlbert: [[150, 80, 35], [70, 32, 18]], // tortoiseshell
+  stargazer: [[215, 170, 70], [150, 105, 35]], // brass
+  ninjowl: [[200, 45, 45], [40, 30, 50]], // its red band, and soot
+  palettino: [[230, 70, 70], [70, 130, 230], [250, 210, 60]], // paint
+  hidewell: [[110, 175, 60], [95, 65, 40], [175, 220, 95]], // ivy and bark
+  mirrorleon: [[205, 212, 236], [140, 205, 230], [248, 250, 255]], // mirror and prism
+  solroll: [[245, 140, 45], [205, 80, 35], [255, 215, 90]], // the sun
+  clockbeetle: [[250, 242, 220], [190, 135, 45], [245, 200, 80]], // the dial and its brass case
+  pharabug: [[50, 80, 190], [250, 210, 90], [70, 205, 195]], // lapis, gold and turquoise
+  origrane: [[250, 250, 245], [200, 195, 185]], // crane white
+  lionkite: [[245, 200, 80], [255, 130, 170]], // festival gold and pompoms
+  stormkite: [[68, 80, 128], [255, 225, 60]], // thunderstorm and lightning
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
 // Forms that neither hop nor walk but get about at a height of their own (rows above the ground):
 // the fliers fly (with their "flutter" frames, if they have any), and Pawdini rolls on its ball
-// and Glidepin skates; Umbrabat floats along like an umbrella in the wind
+// and Glidepin skates; Umbrabat floats along like an umbrella in the wind, and Stormkite flies like a kite
 const GLIDES: Record<string, number> = { mothmuff: 4, sunflutter: 4, jesterwing: 5, rotorfly: 5, prismfly: 5, pawdini: 0, axodrake: 5,
-  glidepin: 0, umbrabat: 3, lunaflap: 6 };
+  glidepin: 0, umbrabat: 3, lunaflap: 6, stormkite: 6 };
 const HOVERS = ["rotorfly", "umbrabat"]; // flies steadily instead of fluttering up and down
 // Forms that hop all of a piece, without squashing and stretching: Archibeaver, tower and all, like a rook
 // and Castlecrab, moat and all; Woolwhisk on her ball of wool
 const STIFF_HOPS = ["archibeaver", "castlecrab", "woolwhisk"];
 // the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
 // duck like it too, and a pond hippo is wet anyway; so is a beaver, a dragonfly grew up in a pond,
-// and a sunflower is a plant; an axolotl lives in the water, and Umbrabat is an umbrella itself
+// and a sunflower is a plant; an axolotl lives in the water, and Umbrabat is an umbrella itself;
+// Hidewell has become a twig, and Stormkite is the storm
 // The widths of the umbrellas in the items sheet: the pet holds the smallest that covers it
 const UMBRELLAS = [19, 23, 27, 31, 35];
 // The backpack for a pet narrower than this, outline and all; wider ones carry the biggest
@@ -516,7 +544,7 @@ const PACKS: [number, string][] = [[22, "backpack"], [30, "backpack_9"]];
 export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist", "leaf", "twiggle",
   "needlenub", "duck", "drakwing", "quill", "lillypot", "flurrbleat", "sakurin", "bubblehelm", "sunflutter", "dragonfly",
   "rotorfly", "jewelwing", "prismfly", "beaver", "dambert", "timberjack", "archibeaver", "axolotl",
-  "mossolotl", "medilotl", "axodrake", "umbrabat"];
+  "mossolotl", "medilotl", "axodrake", "umbrabat", "hidewell", "stormkite"];
 // Needlenub's flower opens only when it is happy; otherwise it is a bud (the colors as in the
 // palette of tools/build_blob_sprites.py)
 const BUD: readonly (readonly [Color, Color])[] = [
@@ -525,7 +553,8 @@ const BUD: readonly (readonly [Color, Color])[] = [
 // Species that glow at night ([day color, night color], the day colors as in the palettes of
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals,
 // Gemperor's crystals and core, the bulb of Angloop's lure, Prismfly's glass and wings, Archibeaver's blueprint,
-// Ursastra's stars, Aurorapin's aurora and Lunaflap's moon
+// Ursastra's stars, Aurorapin's aurora, Lunaflap's moon, Ninjowl's blades, Mirrorleon's prism and rainbow,
+// Pharabug's sun and Stormkite's lightning
 const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   lumoth: [
     [[250, 160, 215], [150, 255, 235]], [[255, 215, 110], [255, 255, 200]], [[240, 200, 120], [190, 255, 240]],
@@ -565,6 +594,21 @@ const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
     [[200, 210, 245], [225, 235, 255]], [[160, 175, 225], [195, 210, 250]], [[230, 236, 255], [245, 250, 255]],
     [[245, 248, 255], [255, 255, 255]], [[255, 248, 205], [255, 255, 235]], [[230, 205, 120], [255, 235, 160]],
     [[220, 230, 255], [245, 250, 255]],
+  ],
+  ninjowl: [ // the steel tips of its feathers
+    [[215, 225, 240], [245, 250, 255]], [[140, 150, 175], [200, 215, 240]],
+  ],
+  mirrorleon: [ // its prism and the rainbow it makes
+    [[200, 240, 250], [235, 255, 255]], [[140, 205, 230], [190, 240, 255]], [[245, 110, 110], [255, 160, 160]],
+    [[250, 220, 90], [255, 245, 160]], [[120, 225, 130], [170, 255, 180]], [[110, 160, 245], [160, 200, 255]],
+    [[180, 120, 235], [220, 170, 255]],
+  ],
+  pharabug: [ // the sun it holds up
+    [[255, 250, 220], [255, 255, 245]], [[255, 220, 100], [255, 240, 160]], [[250, 150, 50], [255, 200, 90]],
+    [[215, 85, 35], [250, 135, 60]],
+  ],
+  stormkite: [ // its horns, whiskers, bows and sparks of lightning
+    [[255, 225, 60], [255, 250, 170]], [[255, 245, 150], [255, 255, 230]],
   ],
   axodrake: [ // its gills and wings
     [[235, 75, 125], [255, 130, 190]], [[180, 40, 90], [235, 90, 160]], [[255, 190, 215], [255, 225, 240]],

@@ -29,7 +29,8 @@ const BASE: SceneView = {
 };
 // The special forms, the secret third adult of a line
 const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
-  "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake", "woolwhisk", "ursastra", "aurorapin", "lunaflap"];
+  "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake", "woolwhisk", "ursastra", "aurorapin", "lunaflap",
+  "ninjowl", "mirrorleon", "pharabug", "stormkite"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -71,9 +72,17 @@ const PETS: Record<string, [string, string]> = {
   tuxwaddle: ["adult", "tuxwaddle"], glidepin: ["adult", "glidepin"],
   bat_egg: ["egg", "bat"], bat_baby: ["baby", "bat"], flapling: ["child", "bat"],
   umbrabat: ["adult", "umbrabat"], batbeat: ["adult", "batbeat"],
+  owl_egg: ["egg", "owl"], owl_baby: ["baby", "owl"], hootlet: ["child", "owl"],
+  owlbert: ["adult", "owlbert"], stargazer: ["adult", "stargazer"],
+  chameleon_egg: ["egg", "chameleon"], chameleon_baby: ["baby", "chameleon"], colorlet: ["child", "chameleon"],
+  palettino: ["adult", "palettino"], hidewell: ["adult", "hidewell"],
+  scarab_egg: ["egg", "scarab"], scarab_baby: ["baby", "scarab"], rollet: ["child", "scarab"],
+  solroll: ["adult", "solroll"], clockbeetle: ["adult", "clockbeetle"],
+  kite_egg: ["egg", "kite"], kite_baby: ["baby", "kite"], kitelet: ["child", "kite"],
+  origrane: ["adult", "origrane"], lionkite: ["adult", "lionkite"],
   ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
-// The leaf, duck, hippo, beak, garden, water, Grandma's and adventure lines: per line its line, child and adults, for the scenes below
+// The leaf, duck, hippo, beak, garden, water, Grandma's, adventure, festival and star lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
   ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
   ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
@@ -82,6 +91,8 @@ const NEW_LINES: [string, string, string, string][] = [
   ["crab", "shellbit", "teacrab", "lightclaw"], ["axolotl", "axolittle", "mossolotl", "medilotl"],
   ["mouse", "squeaklet", "sirthimble", "cogsqueak"], ["bear", "cubble", "hivebear", "snorbear"],
   ["penguin", "waddlet", "tuxwaddle", "glidepin"], ["bat", "flapling", "umbrabat", "batbeat"],
+  ["owl", "hootlet", "owlbert", "stargazer"], ["chameleon", "colorlet", "palettino", "hidewell"],
+  ["scarab", "rollet", "solroll", "clockbeetle"], ["kite", "kitelet", "origrane", "lionkite"],
 ];
 const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>

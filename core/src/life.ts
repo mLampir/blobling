@@ -50,6 +50,11 @@ export const LINES: Record<string, readonly string[]> = {
   bear: ["hivebear", "snorbear", "ursastra"],
   penguin: ["tuxwaddle", "glidepin", "aurorapin"],
   bat: ["umbrabat", "batbeat", "lunaflap"],
+  // from the festival and the stars
+  owl: ["owlbert", "stargazer", "ninjowl"],
+  chameleon: ["palettino", "hidewell", "mirrorleon"],
+  scarab: ["solroll", "clockbeetle", "pharabug"],
+  kite: ["origrane", "lionkite", "stormkite"],
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
@@ -113,6 +118,14 @@ export const URSASTRA_BOND = 5; // the bear line: bond hearts when it grows up (
 export const AURORAPIN_BEFORE_SUNRISE = 60; // the penguin line: it grows up this many minutes before sunrise or less → aurorapin
 // The bat line: speed its highest battle stat when it grows up → batbeat, otherwise umbrabat; it
 // grows up under a full moon at night → lunaflap
+// The owl line: it grows up after dark under a clear sky → stargazer, otherwise owlbert
+export const NINJOWL_CLEAN_BATTLES = 3; // the owl line: scuffles as a child without being knocked over once → ninjowl
+export const HIDEWELL_GAMES = 7; // the chameleon line: games of hide and seek as a child → hidewell, otherwise palettino
+// The chameleon line: it has a friend when it grows up → mirrorleon
+export const CLOCKBEETLE_MINUTES = 5; // the scarab line: it grows up within this many minutes after a full hour → clockbeetle, otherwise solroll
+export const PHARABUG_HEAT = 27; // the scarab line: °C or more when it grows up → pharabug
+// The kite line: it has learned the dance when it grows up → lionkite, otherwise origrane; a
+// thunderstorm when it grows up → stormkite
 export const MISSING_AFTER = 30; // days with pets before a line whose egg never came gets the quiet safety net (Pet.longMissing)
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
@@ -177,6 +190,18 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   umbrabat: { hygiene: 0.85 }, // the rain washes it
   batbeat: { energy: 1.2 }, // dancing all night
   lunaflap: { energy: 0.85 }, // it sleeps the day away and glides on moonlight
+  owlbert: { mood: 0.85 }, // there is always another book
+  stargazer: { energy: 0.85 }, // it sleeps the day away and watches the sky at night
+  ninjowl: { satiety: 0.85 }, // a ninja lives on little
+  palettino: { hygiene: 1.15 }, // paint everywhere
+  hidewell: { energy: 0.85 }, // it keeps still for hours
+  mirrorleon: { hygiene: 0.8 }, // a mirror wipes clean
+  solroll: { energy: 1.15 }, // always pushing
+  clockbeetle: { energy: 0.85 }, // wound up, it keeps going
+  pharabug: { satiety: 0.85 }, // used to the desert
+  origrane: { hygiene: 0.85 }, // crisp, clean paper
+  lionkite: { energy: 1.15 }, // dancing through the festival
+  stormkite: { mood: 1.15 }, // as changeable as the weather
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -220,6 +245,18 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   umbrabat: { sick: 0.6 }, // it keeps the rain off itself
   batbeat: { play: 1.5 }, // anything to dance to
   lunaflap: { pet: 1.25 }, // its wings of moonlight are soft to stroke
+  owlbert: { play: 1.25 }, // a quiz is a game too
+  stargazer: { heart: 1.25 }, // it wishes on every star for you
+  ninjowl: { sick: 0.6 }, // nothing catches a ninja
+  palettino: { play: 1.25 }, // anything can be painted
+  hidewell: { play: 1.5 }, // hide and seek!
+  mirrorleon: { heart: 1.5 }, // it grew out of a friendship
+  solroll: { pet: 1.25 }, // its sun keeps it warm and cosy
+  clockbeetle: { sick: 0.6 }, // well oiled
+  pharabug: { sick: 0.6 }, // the sun keeps it healthy
+  origrane: { heart: 1.25 }, // a folded crane brings luck
+  lionkite: { play: 1.5 }, // a festival every day
+  stormkite: { sick: 0.6 }, // nothing gets through storm paper
 };
 
 /**
@@ -311,6 +348,8 @@ export interface World {
   snowing?: boolean;
   /** A thunderstorm right now. */
   storm?: boolean;
+  /** The sky is clear (or nearly) right now. */
+  clear?: boolean;
   /** The temperature in °C, or null without weather data. */
   temp?: number | null;
   /** The sun is down. */
@@ -330,6 +369,10 @@ export interface World {
   allTricks?: boolean;
   /** whether it knows the spin, */
   spin?: boolean;
+  /** whether it knows the dance, */
+  dance?: boolean;
+  /** whether it has a friend (a wild pet or a guest from the garden), */
+  friend?: boolean;
   /** its highest battle stat, */
   strongest?: string;
   /** a decoration that glows stands outside (home.GLOWING_DECO), */
@@ -392,6 +435,10 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
     bear: (world.bond ?? 0) >= URSASTRA_BOND,
     penguin: beforeSunrise(world),
     bat: Boolean(world.fullMoon && world.dark),
+    owl: done("clean_battles", NINJOWL_CLEAN_BATTLES),
+    chameleon: Boolean(world.friend),
+    scarab: (world.temp ?? -Infinity) >= PHARABUG_HEAT,
+    kite: Boolean(world.storm),
   } as Record<string, boolean>)[line];
   if (special) {
     return LINES[line][2];
@@ -449,6 +496,18 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   }
   if (line === "bat") {
     return world.strongest === "speed" ? "batbeat" : "umbrabat";
+  }
+  if (line === "owl") {
+    return world.dark && world.clear ? "stargazer" : "owlbert";
+  }
+  if (line === "chameleon") {
+    return done("games", HIDEWELL_GAMES) ? "hidewell" : "palettino";
+  }
+  if (line === "scarab") {
+    return world.minute !== undefined && world.minute % 60 < CLOCKBEETLE_MINUTES ? "clockbeetle" : "solroll";
+  }
+  if (line === "kite") {
+    return world.dance ? "lionkite" : "origrane";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if (enough("love", PURRLOOP_LOVE_PER_DAY)) {
