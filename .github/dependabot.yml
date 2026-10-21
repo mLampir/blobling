@@ -1,0 +1,30 @@
+# Dependency updates: once a month, one grouped pull request per ecosystem,
+# so the tests check them together and one merge takes them all.
+# The Gradle and Swift files under app/android and app/ios are left out: the
+# Capacitor CLI manages them, and they follow the Capacitor packages from npm
+# (update those, then `npm run app:sync`).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      npm:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      pip:
+        patterns: ["*"]

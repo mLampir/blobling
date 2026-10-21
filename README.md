@@ -512,6 +512,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `tools/store_shots.ts`, `store/` | `npm run store`: the screenshots for the stores, and their headlines per language |
 | `install.sh` | Downloads a release on the Pi and runs its `setup.sh` (attached to every release) |
 | `tools/package.mjs`, `tools/bundle.mjs` | `npm run package`: the release package; `bundle.mjs` lists the files that go to the Pi, for the package and for `npm run deploy` |
+| `.github/dependabot.yml` | Dependency updates once a month, one grouped pull request each for npm, GitHub Actions and pip |
 | `.github/workflows/release.yml` | Builds the package and attaches it and `install.sh` to each release |
 | `codemagic.yaml` | Builds the apps for the stores on a release tag and uploads them for testing |
 | `.github/workflows/android-test.yml` | Started by hand: a test APK of the app, to install on an Android phone (a debug build, kept for a week) |
