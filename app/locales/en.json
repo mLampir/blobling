@@ -677,7 +677,9 @@
       "what": "What goes into the backpack?",
       "locked": "The way there leads past the guardian: {area}.",
       "guardian": "A guardian is waiting at the end of this path.",
-      "go": "Send it off"
+      "go": "Send it off",
+      "ball_does": "plays with wild pets on the way",
+      "food_does": "heals a heart after a lost scuffle"
     },
     "wake": "Wake up",
     "sleep": "Sleep",

@@ -677,7 +677,9 @@
       "what": "Was kommt in den Rucksack?",
       "locked": "Der Weg dorthin führt am Wächter vorbei: {area}.",
       "guardian": "Am Ende dieses Wegs wartet ein Wächter.",
-      "go": "Losschicken"
+      "go": "Losschicken",
+      "ball_does": "spielt unterwegs mit wilden Pets",
+      "food_does": "heilt nach einer verlorenen Rauferei ein Herz"
     },
     "wake": "Aufwecken",
     "sleep": "Schlafen",

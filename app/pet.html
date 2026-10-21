@@ -258,8 +258,10 @@
     background: var(--surface); border-radius: 24px 24px 0 0; border-top: 1px solid var(--line);
     padding: 14px 16px 14px; touch-action: none;
   }
-  /* The bag scrolls in its own place: things are dragged out of it onto the pet */
-  #bag-mode { touch-action: pan-y; }
+  /* The bag scrolls in its own place, however full it gets: things are dragged out of it onto
+     the pet, which stays in sight */
+  #bag-mode { touch-action: pan-y; max-height: 42dvh; }
+  #pet-mode { max-height: 42dvh; }
   .sheet h3 { margin: 0; font: 700 18px/1.2 var(--round); }
   .sheet p { margin: 0; }
   .sheet small { color: var(--muted); font-size: 13px; }
@@ -305,12 +307,13 @@
      and whether it can go into the backpack */
   .tile .n { position: absolute; left: 6px; top: 3px; font-size: 11px; font-weight: 700; color: var(--muted); pointer-events: none; }
   .tile .n b { color: var(--accent); }
-  .tile .badge {
-    position: absolute; right: -5px; top: -6px; display: flex; align-items: center; gap: 1px; padding: 0 4px; height: 18px;
+  .badge {
+    display: inline-flex; align-items: center; gap: 1px; padding: 0 4px; height: 18px; vertical-align: middle;
     border-radius: 9px; background: var(--night); border: 1px solid var(--c); color: var(--c); font-size: 11px; font-weight: 800; pointer-events: none;
   }
-  .tile .badge.seed { border-style: dashed; }
-  .tile .badge svg { width: 12px; height: 12px; }
+  .badge.seed { border-style: dashed; }
+  .badge svg { width: 12px; height: 12px; }
+  .tile .badge { position: absolute; right: -5px; top: -6px; }
   .tile .packs { position: absolute; right: -5px; bottom: -5px; width: 18px; height: 18px; padding: 1px; border-radius: 6px; background: var(--night); pointer-events: none; }
   .tile.worn { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255, 179, 71, .35); }
   .choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
@@ -1204,10 +1207,15 @@ function renderPack() {
     const b = document.createElement("button");
     b.replaceChildren(packPicture(thing.id), ` ${thing.label}`);
     if (thing.id === s.disliked_food) b.append(" ✕"); // it won't eat that on the way either
+    // what works from the backpack carries its badge, as in the bag
+    const effects = packedEffects(thing.id);
+    if (effects.length) b.append(" ", ...badge(effects));
     b.disabled = packed.length >= s.max_pack || packed.filter((id) => id === thing.id).length >= thing.count;
     b.addEventListener("click", () => {
       packed.push(thing.id);
       renderPack();
+      // once packed, it says what it does on the way
+      $("pack-say").textContent = `${thing.label}: ${packText(thing.id)}`;
     });
     return b;
   }));
@@ -1215,6 +1223,17 @@ function renderPack() {
   // a honeycomb packed is one heart more right away
   $("pack-hearts").textContent = tripHearts(s, packed.includes("honeycomb") ? 1 : 0);
 }
+// What a thing in the backpack does on the way: the ball plays with wild pets, anything to eat heals
+// a heart after a lost scuffle, and some food works from the backpack besides
+function packedEffects(id) {
+  const item = current && current.items.find((x) => x.id === id);
+  return item ? item.effects.filter((k) => PACKED.includes(k)) : [];
+}
+function packText(id) {
+  if (id === "ball") return t("page.pack.ball_does");
+  return [...effectText(packedEffects(id)), t("page.pack.food_does")].join(" · ");
+}
+
 // If it can't set off right now (asleep, too tired, …), it says why once asked
 $("pack-go").addEventListener("click", async () => {
   const area = current && picked(current, "trip");
