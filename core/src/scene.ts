@@ -251,6 +251,18 @@ const HIDE_COUNT = 5;
 const HIDE_OUT = 17.5;
 const NOTE: Bitmap = [[255, 220, 120], ["..XX", "..X.", "..X.", "XXX.", "XX.."]];
 const HAT_SINK = 2; // a hat sits this many rows into the head
+const HAT_ROOM = 12; // room above a pet for its hat
+// Where a form wears its hat when the top of its head is not where it goes (a lure, a crown, a flame,
+// a rotor): [right, down, lean] from the middle of the first row at least 8 pixels wide, and whether
+// what is above the brim (the lure, a rotor on its mast) stays in front of it. A hat worn at a slant
+// (lean > 0: to the right) is the small one, cocked on the side of the head.
+type HatSpot = readonly [number, number, number, boolean?];
+const HAT_SPOTS: Record<string, HatSpot> = {
+  "child:blob": [-7, 4, 0, true], "child:leaf": [-1, 5, 0, true], "adult:angloop": [-8, 6, 0, true], "adult:purrloop": [-6, 3, -1],
+  "adult:gemperor": [-6, 2, -1], "adult:flarelet": [5, 1, 1], "adult:salamber": [-6, 3, -1],
+  "adult:glimmerock": [-10, 6, -1], "adult:needlenub": [5, 0, 1], "adult:rotorfly": [0, 6, 0, true],
+  "adult:lightclaw": [5, 11, 1, true], "adult:sirthimble": [-10, 1, -1], "adult:castlecrab": [-12, 0, -1],
+};
 // Trip: grass, soil, what stands along the path (null = nothing) and what passes by behind it, per area
 const TRAVEL: Record<string, readonly [Color, Color, readonly (string | null)[], string]> = {
   meadow: [GRASS, SOIL, ["tuft", "flower_red", "tuft", "flower_white", "flower_blue", null, null], "bushes"],
@@ -469,6 +481,8 @@ const STIFF_HOPS = ["archibeaver", "castlecrab", "woolwhisk"];
 // and a sunflower is a plant; an axolotl lives in the water
 // The widths of the umbrellas in the items sheet: the pet holds the smallest that covers it
 const UMBRELLAS = [19, 23, 27, 31, 35];
+// The backpack for a pet narrower than this, outline and all; wider ones carry the biggest
+const PACKS: [number, string][] = [[22, "backpack"], [30, "backpack_9"]];
 export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist", "leaf", "twiggle",
   "needlenub", "duck", "drakwing", "quill", "lillypot", "flurrbleat", "sakurin", "bubblehelm", "sunflutter", "dragonfly",
   "rotorfly", "jewelwing", "prismfly", "beaver", "dambert", "timberjack", "archibeaver", "axolotl",
@@ -902,16 +916,33 @@ function spun(img: Image, angle: number): Image {
 }
 
 /**
- * Hat on the head: centered above the first row that is at least 8 pixels wide.
- * `pokeThrough`: what grows above that row (the lure, Flicker's flame) stays in front of the hat.
+ * Hat on the head: centered above the first row that is at least 8 pixels wide, or where `spot`
+ * moves it. The picture gets HAT_ROOM rows of room above it and half of that at each side, so that
+ * the hat is never cut off. `pokeThrough`: what grows above that row (the lure, Flicker's flame)
+ * stays in front of the hat.
  */
-function withHat(img: Image, hat: Image, pokeThrough = false): Image {
+function withHat(img: Image, hat: Image, pokeThrough = false, [dx, dy, lean, under]: HatSpot = [0, 0, 0]): Image {
   const [top, rows] = wideRow(img);
   const cx = rows[top].length ? (rows[top][0] + rows[top].at(-1)! + 1) / 2 : img.width / 2;
-  const out = img.copy();
-  out.alphaComposite(hat, Math.max(0, Math.round(cx - hat.width / 2)), Math.max(0, top + HAT_SINK - hat.height));
-  if (pokeThrough && top) {
-    out.alphaComposite(img.crop(0, 0, img.width, top));
+  const side = HAT_ROOM / 2;
+  const out = new Image(img.width + 2 * side, img.height + HAT_ROOM);
+  out.alphaComposite(img, side, HAT_ROOM);
+  const worn = lean ? leaning(hat, lean) : hat;
+  const left = Math.round(cx - hat.width / 2) + dx - (lean < 0 ? worn.width - hat.width : 0); // the brim stays put
+  out.alphaComposite(worn, side + left, HAT_ROOM + top + HAT_SINK - hat.height + dy);
+  const front = under ? top + dy : pokeThrough ? top : 0;
+  if (front > 0) {
+    out.alphaComposite(img.crop(0, 0, img.width, front), side, HAT_ROOM);
+  }
+  return out;
+}
+
+/** A hat worn at a slant: the higher a row, the further it leans to the side (`lean` < 0: to the left). */
+function leaning(hat: Image, lean: number): Image {
+  const shift = (y: number) => Math.round(Math.abs(lean) * (hat.height - 1 - y) * 0.4);
+  const out = new Image(hat.width + shift(0), hat.height);
+  for (let y = 0; y < hat.height; y++) {
+    out.alphaComposite(hat.crop(0, y, hat.width, y + 1), lean > 0 ? shift(y) : shift(0) - shift(y), y);
   }
   return out;
 }
@@ -1188,8 +1219,10 @@ export class PetScene {
         glow: this.night > 0.5, lookLeft: this.facing < 0, sky: pose.rainbow ? "after_rain" : this.skyLook,
         moon: species === "lunarock" ? Math.round(this.moon * 16) / 16 : null,
       });
+      const room = pet.height - SPRITE - 2; // above it, for a hat
       let px = x - Math.floor((pet.width - SPRITE) / 2);
-      let py = y - 1; // -1 because of the outline
+      let py = y - 1 - room; // -1 because of the outline
+      top -= room;
       if (pose.turn !== null) {
         pet = turned(pet, pose.turn);
       }
@@ -1208,7 +1241,7 @@ export class PetScene {
         pet = pet.resized(w, h);
       }
       if (pose.cover) {
-        this.hideBehind(img, pet, py, top, pose.cover);
+        this.hideBehind(img, pet, py, top + room, pose.cover);
       } else {
         img.paste(pet, px, py);
       }
@@ -1228,8 +1261,10 @@ export class PetScene {
     }
     if (!pose.hidden && !pose.cover && (pose.pack || (view.backpack && !pose.egg && pose.body !== "sleep" && pose.scale === 1))) {
       // Backpack: hangs at the pet's lower back – at home until it has been unpacked
-      const pack = this.sheet("trip").image("backpack");
-      img.paste(pack, x + (this.facing > 0 ? 3 : SPRITE - 3 - pack.width), y + SPRITE - pack.height - 2);
+      const [left, right] = this.reach(...pose.form);
+      const size = PACKS.find(([narrower]) => right - left < narrower)?.[1] ?? "backpack_11";
+      const pack = this.sheet("trip").image(size);
+      img.paste(pack, x + (this.facing > 0 ? left + 1 : right - 1 - pack.width), y + SPRITE - pack.height - 2);
     }
     if (pose.found) {
       // Find: holds it proudly above its head
@@ -4601,7 +4636,9 @@ export class PetScene {
         img = widen(img, 4); // too heavy: visibly wider
       }
       if (hat) {
-        img = withHat(img, this.sheet("trip").image(`hat_${hat}`), stage === "child" || species === "flicker");
+        const spot = HAT_SPOTS[`${stage}:${species}`];
+        img = withHat(img, this.sheet("trip").image(stage === "baby" || spot?.[2] ? `hat_${hat}_small` : `hat_${hat}`),
+          stage === "child" || species === "flicker", spot);
       }
       if (whiteOut) {
         img = white(img);

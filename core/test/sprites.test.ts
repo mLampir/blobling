@@ -6,6 +6,7 @@ import { test } from "node:test";
 import { Image } from "../src/image";
 import { Sheet, faceAnchor, outline, recolor, swapColors, tint } from "../src/sprites";
 import { EDIBLE } from "../src/food";
+import { ITEMS } from "../src/home";
 import { readSheets } from "../../pi/src/assets";
 
 const sheets = readSheets();
@@ -117,4 +118,11 @@ test("sheets: things next to the pet keep their sizes (docs/gameplay.md)", () =>
     return x1 - x0 + 2;
   }));
   assert.ok(sheets["items"].has("umbrella_35") && widest <= 35, `${widest}`);
+  // hats: a big one for a child or an adult, a small one for a baby
+  const hats = Object.keys(ITEMS).filter((item) => ITEMS[item] === "hat").map((item) => `hat_${item}`);
+  assert.ok(hats.length >= 10);
+  for (const hat of hats) {
+    assert.ok(trip.has(`${hat}_small`), hat);
+    assert.ok(trip.image(hat).width >= 10 && trip.image(hat).width > trip.image(`${hat}_small`).width, hat);
+  }
 });

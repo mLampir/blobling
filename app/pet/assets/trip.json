@@ -11,9 +11,29 @@
    "duration": 1000
   },
   {
-   "filename": "trip seed 1",
+   "filename": "trip backpack_9 1",
    "frame": {
     "x": 7,
+    "y": 0,
+    "w": 9,
+    "h": 9
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip backpack_11 2",
+   "frame": {
+    "x": 16,
+    "y": 0,
+    "w": 11,
+    "h": 11
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip seed 3",
+   "frame": {
+    "x": 27,
     "y": 0,
     "w": 4,
     "h": 4
@@ -21,9 +41,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip nest 2",
+   "filename": "trip nest 4",
    "frame": {
-    "x": 11,
+    "x": 31,
     "y": 0,
     "w": 16,
     "h": 4
@@ -31,99 +51,49 @@
    "duration": 1000
   },
   {
-   "filename": "trip gift 3",
-   "frame": {
-    "x": 27,
-    "y": 0,
-    "w": 7,
-    "h": 6
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip fruit_berry 4",
-   "frame": {
-    "x": 34,
-    "y": 0,
-    "w": 6,
-    "h": 6
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip fruit_cherry 5",
-   "frame": {
-    "x": 40,
-    "y": 0,
-    "w": 7,
-    "h": 6
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip fruit_sunflower 6",
+   "filename": "trip gift 5",
    "frame": {
     "x": 47,
     "y": 0,
     "w": 7,
-    "h": 7
+    "h": 6
    },
    "duration": 1000
   },
   {
-   "filename": "trip fruit_herb 7",
+   "filename": "trip fruit_berry 6",
    "frame": {
     "x": 54,
     "y": 0,
-    "w": 7,
-    "h": 7
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip honeycomb 8",
-   "frame": {
-    "x": 61,
-    "y": 0,
     "w": 6,
     "h": 6
    },
    "duration": 1000
   },
   {
-   "filename": "trip hazelnut 9",
+   "filename": "trip fruit_cherry 7",
+   "frame": {
+    "x": 60,
+    "y": 0,
+    "w": 7,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip fruit_sunflower 8",
    "frame": {
     "x": 67,
     "y": 0,
-    "w": 6,
+    "w": 7,
     "h": 7
    },
    "duration": 1000
   },
   {
-   "filename": "trip watercress 10",
+   "filename": "trip fruit_herb 9",
    "frame": {
-    "x": 73,
-    "y": 0,
-    "w": 7,
-    "h": 6
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip glowberry 11",
-   "frame": {
-    "x": 80,
-    "y": 0,
-    "w": 6,
-    "h": 6
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip cake 12",
-   "frame": {
-    "x": 86,
+    "x": 74,
     "y": 0,
     "w": 7,
     "h": 7
@@ -131,9 +101,59 @@
    "duration": 1000
   },
   {
-   "filename": "trip pinenut 13",
+   "filename": "trip honeycomb 10",
+   "frame": {
+    "x": 81,
+    "y": 0,
+    "w": 6,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hazelnut 11",
+   "frame": {
+    "x": 87,
+    "y": 0,
+    "w": 6,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip watercress 12",
    "frame": {
     "x": 93,
+    "y": 0,
+    "w": 7,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip glowberry 13",
+   "frame": {
+    "x": 100,
+    "y": 0,
+    "w": 6,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip cake 14",
+   "frame": {
+    "x": 106,
+    "y": 0,
+    "w": 7,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip pinenut 15",
+   "frame": {
+    "x": 113,
     "y": 0,
     "w": 5,
     "h": 7
@@ -141,9 +161,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip sprout 14",
+   "filename": "trip sprout 16",
    "frame": {
-    "x": 98,
+    "x": 118,
     "y": 0,
     "w": 5,
     "h": 5
@@ -151,9 +171,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip young 15",
+   "filename": "trip young 17",
    "frame": {
-    "x": 103,
+    "x": 123,
     "y": 0,
     "w": 7,
     "h": 8
@@ -161,9 +181,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip berry 16",
+   "filename": "trip berry 18",
    "frame": {
-    "x": 110,
+    "x": 130,
     "y": 0,
     "w": 11,
     "h": 10
@@ -171,9 +191,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip berry_ripe 17",
+   "filename": "trip berry_ripe 19",
    "frame": {
-    "x": 121,
+    "x": 141,
     "y": 0,
     "w": 11,
     "h": 10
@@ -181,9 +201,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip sunflower 18",
+   "filename": "trip sunflower 20",
    "frame": {
-    "x": 132,
+    "x": 152,
     "y": 0,
     "w": 11,
     "h": 20
@@ -191,9 +211,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip sunflower_ripe 19",
+   "filename": "trip sunflower_ripe 21",
    "frame": {
-    "x": 143,
+    "x": 163,
     "y": 0,
     "w": 11,
     "h": 20
@@ -201,9 +221,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip cherry 20",
+   "filename": "trip cherry 22",
    "frame": {
-    "x": 154,
+    "x": 174,
     "y": 0,
     "w": 15,
     "h": 20
@@ -211,9 +231,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip cherry_ripe 21",
+   "filename": "trip cherry_ripe 23",
    "frame": {
-    "x": 169,
+    "x": 189,
     "y": 0,
     "w": 15,
     "h": 20
@@ -221,9 +241,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip herb 22",
+   "filename": "trip herb 24",
    "frame": {
-    "x": 184,
+    "x": 204,
     "y": 0,
     "w": 9,
     "h": 9
@@ -231,9 +251,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip herb_ripe 23",
+   "filename": "trip herb_ripe 25",
    "frame": {
-    "x": 193,
+    "x": 213,
     "y": 0,
     "w": 9,
     "h": 9
@@ -241,9 +261,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip flag 24",
+   "filename": "trip flag 26",
    "frame": {
-    "x": 202,
+    "x": 222,
     "y": 0,
     "w": 7,
     "h": 11
@@ -251,19 +271,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip windmill 25",
+   "filename": "trip windmill 27",
    "frame": {
-    "x": 209,
-    "y": 0,
-    "w": 7,
-    "h": 11
-   },
-   "duration": 300
-  },
-  {
-   "filename": "trip windmill 26",
-   "frame": {
-    "x": 216,
+    "x": 229,
     "y": 0,
     "w": 7,
     "h": 11
@@ -271,9 +281,19 @@
    "duration": 300
   },
   {
-   "filename": "trip lantern 27",
+   "filename": "trip windmill 28",
    "frame": {
-    "x": 223,
+    "x": 236,
+    "y": 0,
+    "w": 7,
+    "h": 11
+   },
+   "duration": 300
+  },
+  {
+   "filename": "trip lantern 29",
+   "frame": {
+    "x": 243,
     "y": 0,
     "w": 5,
     "h": 11
@@ -281,9 +301,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip lantern_lit 28",
+   "filename": "trip lantern_lit 30",
    "frame": {
-    "x": 228,
+    "x": 248,
     "y": 0,
     "w": 5,
     "h": 11
@@ -291,9 +311,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip glowshroom 29",
+   "filename": "trip glowshroom 31",
    "frame": {
-    "x": 233,
+    "x": 253,
     "y": 0,
     "w": 7,
     "h": 7
@@ -301,9 +321,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip glowshroom_lit 30",
+   "filename": "trip glowshroom_lit 32",
    "frame": {
-    "x": 240,
+    "x": 260,
     "y": 0,
     "w": 7,
     "h": 7
@@ -311,9 +331,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip emberstone 31",
+   "filename": "trip emberstone 33",
    "frame": {
-    "x": 247,
+    "x": 267,
     "y": 0,
     "w": 9,
     "h": 7
@@ -321,9 +341,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip emberstone_lit 32",
+   "filename": "trip emberstone_lit 34",
    "frame": {
-    "x": 256,
+    "x": 276,
     "y": 0,
     "w": 9,
     "h": 7
@@ -331,9 +351,9 @@
    "duration": 900
   },
   {
-   "filename": "trip emberstone_lit 33",
+   "filename": "trip emberstone_lit 35",
    "frame": {
-    "x": 265,
+    "x": 285,
     "y": 0,
     "w": 9,
     "h": 7
@@ -341,9 +361,9 @@
    "duration": 900
   },
   {
-   "filename": "trip snailshell 34",
+   "filename": "trip snailshell 36",
    "frame": {
-    "x": 274,
+    "x": 294,
     "y": 0,
     "w": 7,
     "h": 6
@@ -351,9 +371,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip cattail 35",
+   "filename": "trip cattail 37",
    "frame": {
-    "x": 281,
+    "x": 301,
     "y": 0,
     "w": 7,
     "h": 11
@@ -361,9 +381,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip boat 36",
+   "filename": "trip boat 38",
    "frame": {
-    "x": 288,
+    "x": 308,
     "y": 0,
     "w": 9,
     "h": 8
@@ -371,9 +391,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip crystal 37",
+   "filename": "trip crystal 39",
    "frame": {
-    "x": 297,
+    "x": 317,
     "y": 0,
     "w": 9,
     "h": 9
@@ -381,9 +401,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip crystal_lit 38",
+   "filename": "trip crystal_lit 40",
    "frame": {
-    "x": 306,
+    "x": 326,
     "y": 0,
     "w": 9,
     "h": 9
@@ -391,9 +411,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip cairn 39",
+   "filename": "trip cairn 41",
    "frame": {
-    "x": 315,
+    "x": 335,
     "y": 0,
     "w": 8,
     "h": 9
@@ -401,9 +421,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip snowman 40",
+   "filename": "trip snowman 42",
    "frame": {
-    "x": 323,
+    "x": 343,
     "y": 0,
     "w": 7,
     "h": 12
@@ -411,9 +431,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip snowglobe 41",
+   "filename": "trip snowglobe 43",
    "frame": {
-    "x": 330,
+    "x": 350,
     "y": 0,
     "w": 11,
     "h": 11
@@ -421,9 +441,9 @@
    "duration": 900
   },
   {
-   "filename": "trip snowglobe 42",
+   "filename": "trip snowglobe 44",
    "frame": {
-    "x": 341,
+    "x": 361,
     "y": 0,
     "w": 11,
     "h": 11
@@ -431,9 +451,9 @@
    "duration": 900
   },
   {
-   "filename": "trip pond 43",
+   "filename": "trip pond 45",
    "frame": {
-    "x": 352,
+    "x": 372,
     "y": 0,
     "w": 25,
     "h": 11
@@ -441,9 +461,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip woodpile 44",
+   "filename": "trip woodpile 46",
    "frame": {
-    "x": 377,
+    "x": 397,
     "y": 0,
     "w": 11,
     "h": 11
@@ -451,9 +471,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip mussel 45",
+   "filename": "trip mussel 47",
    "frame": {
-    "x": 388,
+    "x": 408,
     "y": 0,
     "w": 6,
     "h": 4
@@ -461,9 +481,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip seagrass 46",
+   "filename": "trip seagrass 48",
    "frame": {
-    "x": 394,
+    "x": 414,
     "y": 0,
     "w": 5,
     "h": 7
@@ -471,9 +491,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip boot 47",
+   "filename": "trip boot 49",
    "frame": {
-    "x": 399,
+    "x": 419,
     "y": 0,
     "w": 11,
     "h": 12
@@ -481,9 +501,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip bobber 48",
+   "filename": "trip bobber 50",
    "frame": {
-    "x": 410,
+    "x": 430,
     "y": 0,
     "w": 3,
     "h": 4
@@ -491,9 +511,109 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_daisy 49",
+   "filename": "trip hat_daisy 51",
    "frame": {
-    "x": 413,
+    "x": 433,
+    "y": 0,
+    "w": 17,
+    "h": 3
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_leaf 52",
+   "frame": {
+    "x": 450,
+    "y": 0,
+    "w": 10,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_cap 53",
+   "frame": {
+    "x": 460,
+    "y": 0,
+    "w": 16,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_bobble 54",
+   "frame": {
+    "x": 476,
+    "y": 0,
+    "w": 14,
+    "h": 10
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_lily 55",
+   "frame": {
+    "x": 490,
+    "y": 0,
+    "w": 15,
+    "h": 5
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_batears 56",
+   "frame": {
+    "x": 505,
+    "y": 0,
+    "w": 15,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_edelweiss 57",
+   "frame": {
+    "x": 520,
+    "y": 0,
+    "w": 11,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_earflap 58",
+   "frame": {
+    "x": 531,
+    "y": 0,
+    "w": 15,
+    "h": 10
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_stripes 59",
+   "frame": {
+    "x": 546,
+    "y": 0,
+    "w": 17,
+    "h": 10
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_cosy 60",
+   "frame": {
+    "x": 563,
+    "y": 0,
+    "w": 14,
+    "h": 9
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip hat_daisy_small 61",
+   "frame": {
+    "x": 577,
     "y": 0,
     "w": 11,
     "h": 2
@@ -501,9 +621,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_leaf 50",
+   "filename": "trip hat_leaf_small 62",
    "frame": {
-    "x": 424,
+    "x": 588,
     "y": 0,
     "w": 7,
     "h": 4
@@ -511,9 +631,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_cap 51",
+   "filename": "trip hat_cap_small 63",
    "frame": {
-    "x": 431,
+    "x": 595,
     "y": 0,
     "w": 12,
     "h": 5
@@ -521,9 +641,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_bobble 52",
+   "filename": "trip hat_bobble_small 64",
    "frame": {
-    "x": 443,
+    "x": 607,
     "y": 0,
     "w": 10,
     "h": 7
@@ -531,9 +651,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_lily 53",
+   "filename": "trip hat_lily_small 65",
    "frame": {
-    "x": 453,
+    "x": 617,
     "y": 0,
     "w": 11,
     "h": 4
@@ -541,9 +661,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_batears 54",
+   "filename": "trip hat_batears_small 66",
    "frame": {
-    "x": 464,
+    "x": 628,
     "y": 0,
     "w": 11,
     "h": 5
@@ -551,9 +671,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_edelweiss 55",
+   "filename": "trip hat_edelweiss_small 67",
    "frame": {
-    "x": 475,
+    "x": 639,
     "y": 0,
     "w": 9,
     "h": 5
@@ -561,9 +681,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_earflap 56",
+   "filename": "trip hat_earflap_small 68",
    "frame": {
-    "x": 484,
+    "x": 648,
     "y": 0,
     "w": 11,
     "h": 7
@@ -571,9 +691,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_stripes 57",
+   "filename": "trip hat_stripes_small 69",
    "frame": {
-    "x": 495,
+    "x": 659,
     "y": 0,
     "w": 13,
     "h": 8
@@ -581,9 +701,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip hat_cosy 58",
+   "filename": "trip hat_cosy_small 70",
    "frame": {
-    "x": 508,
+    "x": 672,
     "y": 0,
     "w": 10,
     "h": 7
@@ -591,9 +711,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip tuft 59",
+   "filename": "trip tuft 71",
    "frame": {
-    "x": 518,
+    "x": 682,
     "y": 0,
     "w": 5,
     "h": 3
@@ -601,9 +721,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip flower_red 60",
+   "filename": "trip flower_red 72",
    "frame": {
-    "x": 523,
+    "x": 687,
     "y": 0,
     "w": 3,
     "h": 5
@@ -611,9 +731,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip flower_white 61",
+   "filename": "trip flower_white 73",
    "frame": {
-    "x": 526,
+    "x": 690,
     "y": 0,
     "w": 3,
     "h": 5
@@ -621,9 +741,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip flower_blue 62",
+   "filename": "trip flower_blue 74",
    "frame": {
-    "x": 529,
+    "x": 693,
     "y": 0,
     "w": 3,
     "h": 5
@@ -631,9 +751,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip bush 63",
+   "filename": "trip bush 75",
    "frame": {
-    "x": 532,
+    "x": 696,
     "y": 0,
     "w": 12,
     "h": 7
@@ -641,9 +761,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip shroom_red 64",
+   "filename": "trip shroom_red 76",
    "frame": {
-    "x": 544,
+    "x": 708,
     "y": 0,
     "w": 5,
     "h": 5
@@ -651,9 +771,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip shroom_brown 65",
+   "filename": "trip shroom_brown 77",
    "frame": {
-    "x": 549,
+    "x": 713,
     "y": 0,
     "w": 5,
     "h": 4
@@ -661,9 +781,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip fern 66",
+   "filename": "trip fern 78",
    "frame": {
-    "x": 554,
+    "x": 718,
     "y": 0,
     "w": 7,
     "h": 4
@@ -671,9 +791,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip stump 67",
+   "filename": "trip stump 79",
    "frame": {
-    "x": 561,
+    "x": 725,
     "y": 0,
     "w": 6,
     "h": 4
@@ -681,9 +801,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip reed 68",
+   "filename": "trip reed 80",
    "frame": {
-    "x": 567,
+    "x": 731,
     "y": 0,
     "w": 5,
     "h": 7
@@ -691,199 +811,189 @@
    "duration": 1000
   },
   {
-   "filename": "trip pebble 69",
-   "frame": {
-    "x": 572,
-    "y": 0,
-    "w": 5,
-    "h": 3
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip lilypad 70",
-   "frame": {
-    "x": 577,
-    "y": 0,
-    "w": 7,
-    "h": 4
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip rock 71",
-   "frame": {
-    "x": 584,
-    "y": 0,
-    "w": 7,
-    "h": 4
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip stalagmite 72",
-   "frame": {
-    "x": 591,
-    "y": 0,
-    "w": 5,
-    "h": 7
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip gem 73",
-   "frame": {
-    "x": 596,
-    "y": 0,
-    "w": 5,
-    "h": 5
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip pine 74",
-   "frame": {
-    "x": 601,
-    "y": 0,
-    "w": 7,
-    "h": 9
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip snowrock 75",
-   "frame": {
-    "x": 608,
-    "y": 0,
-    "w": 7,
-    "h": 4
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip drift 76",
-   "frame": {
-    "x": 615,
-    "y": 0,
-    "w": 9,
-    "h": 3
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip trace_tower 77",
-   "frame": {
-    "x": 624,
-    "y": 0,
-    "w": 7,
-    "h": 8
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip trace_snowman 78",
-   "frame": {
-    "x": 631,
-    "y": 0,
-    "w": 7,
-    "h": 10
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip trace_drawing_0 79",
-   "frame": {
-    "x": 638,
-    "y": 0,
-    "w": 7,
-    "h": 5
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip trace_drawing_1 80",
-   "frame": {
-    "x": 645,
-    "y": 0,
-    "w": 9,
-    "h": 5
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip foe_bumblebop 81",
-   "frame": {
-    "x": 654,
-    "y": 0,
-    "w": 16,
-    "h": 9
-   },
-   "duration": 120
-  },
-  {
-   "filename": "trip foe_bumblebop 82",
-   "frame": {
-    "x": 670,
-    "y": 0,
-    "w": 16,
-    "h": 9
-   },
-   "duration": 120
-  },
-  {
-   "filename": "trip foe_diggle 83",
-   "frame": {
-    "x": 686,
-    "y": 0,
-    "w": 12,
-    "h": 9
-   },
-   "duration": 600
-  },
-  {
-   "filename": "trip foe_diggle 84",
-   "frame": {
-    "x": 698,
-    "y": 0,
-    "w": 12,
-    "h": 8
-   },
-   "duration": 600
-  },
-  {
-   "filename": "trip foe_prickleroll 85",
-   "frame": {
-    "x": 710,
-    "y": 0,
-    "w": 13,
-    "h": 10
-   },
-   "duration": 600
-  },
-  {
-   "filename": "trip foe_prickleroll 86",
-   "frame": {
-    "x": 723,
-    "y": 0,
-    "w": 13,
-    "h": 9
-   },
-   "duration": 600
-  },
-  {
-   "filename": "trip foe_drizzleshell 87",
+   "filename": "trip pebble 81",
    "frame": {
     "x": 736,
     "y": 0,
-    "w": 13,
-    "h": 7
+    "w": 5,
+    "h": 3
    },
-   "duration": 700
+   "duration": 1000
   },
   {
-   "filename": "trip foe_drizzleshell 88",
+   "filename": "trip lilypad 82",
    "frame": {
-    "x": 749,
+    "x": 741,
+    "y": 0,
+    "w": 7,
+    "h": 4
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip rock 83",
+   "frame": {
+    "x": 748,
+    "y": 0,
+    "w": 7,
+    "h": 4
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip stalagmite 84",
+   "frame": {
+    "x": 755,
+    "y": 0,
+    "w": 5,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip gem 85",
+   "frame": {
+    "x": 760,
+    "y": 0,
+    "w": 5,
+    "h": 5
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip pine 86",
+   "frame": {
+    "x": 765,
+    "y": 0,
+    "w": 7,
+    "h": 9
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip snowrock 87",
+   "frame": {
+    "x": 772,
+    "y": 0,
+    "w": 7,
+    "h": 4
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip drift 88",
+   "frame": {
+    "x": 779,
+    "y": 0,
+    "w": 9,
+    "h": 3
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip trace_tower 89",
+   "frame": {
+    "x": 788,
+    "y": 0,
+    "w": 7,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip trace_snowman 90",
+   "frame": {
+    "x": 795,
+    "y": 0,
+    "w": 7,
+    "h": 10
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip trace_drawing_0 91",
+   "frame": {
+    "x": 802,
+    "y": 0,
+    "w": 7,
+    "h": 5
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip trace_drawing_1 92",
+   "frame": {
+    "x": 809,
+    "y": 0,
+    "w": 9,
+    "h": 5
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip foe_bumblebop 93",
+   "frame": {
+    "x": 818,
+    "y": 0,
+    "w": 16,
+    "h": 9
+   },
+   "duration": 120
+  },
+  {
+   "filename": "trip foe_bumblebop 94",
+   "frame": {
+    "x": 834,
+    "y": 0,
+    "w": 16,
+    "h": 9
+   },
+   "duration": 120
+  },
+  {
+   "filename": "trip foe_diggle 95",
+   "frame": {
+    "x": 850,
+    "y": 0,
+    "w": 12,
+    "h": 9
+   },
+   "duration": 600
+  },
+  {
+   "filename": "trip foe_diggle 96",
+   "frame": {
+    "x": 862,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   },
+   "duration": 600
+  },
+  {
+   "filename": "trip foe_prickleroll 97",
+   "frame": {
+    "x": 874,
+    "y": 0,
+    "w": 13,
+    "h": 10
+   },
+   "duration": 600
+  },
+  {
+   "filename": "trip foe_prickleroll 98",
+   "frame": {
+    "x": 887,
+    "y": 0,
+    "w": 13,
+    "h": 9
+   },
+   "duration": 600
+  },
+  {
+   "filename": "trip foe_drizzleshell 99",
+   "frame": {
+    "x": 900,
     "y": 0,
     "w": 13,
     "h": 7
@@ -891,9 +1001,19 @@
    "duration": 700
   },
   {
-   "filename": "trip foe_puddlin 89",
+   "filename": "trip foe_drizzleshell 100",
    "frame": {
-    "x": 762,
+    "x": 913,
+    "y": 0,
+    "w": 13,
+    "h": 7
+   },
+   "duration": 700
+  },
+  {
+   "filename": "trip foe_puddlin 101",
+   "frame": {
+    "x": 926,
     "y": 0,
     "w": 14,
     "h": 10
@@ -901,9 +1021,9 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_puddlin 90",
+   "filename": "trip foe_puddlin 102",
    "frame": {
-    "x": 776,
+    "x": 940,
     "y": 0,
     "w": 14,
     "h": 9
@@ -911,9 +1031,9 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_carrotnose 91",
+   "filename": "trip foe_carrotnose 103",
    "frame": {
-    "x": 790,
+    "x": 954,
     "y": 0,
     "w": 15,
     "h": 15
@@ -921,9 +1041,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_carrotnose 92",
+   "filename": "trip foe_carrotnose 104",
    "frame": {
-    "x": 805,
+    "x": 969,
     "y": 0,
     "w": 15,
     "h": 15
@@ -931,9 +1051,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_duskwisp 93",
+   "filename": "trip foe_duskwisp 105",
    "frame": {
-    "x": 820,
+    "x": 984,
     "y": 0,
     "w": 9,
     "h": 10
@@ -941,9 +1061,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_duskwisp 94",
+   "filename": "trip foe_duskwisp 106",
    "frame": {
-    "x": 829,
+    "x": 993,
     "y": 0,
     "w": 9,
     "h": 10
@@ -951,9 +1071,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_ribbop 95",
+   "filename": "trip foe_ribbop 107",
    "frame": {
-    "x": 838,
+    "x": 1002,
     "y": 0,
     "w": 15,
     "h": 10
@@ -961,9 +1081,9 @@
    "duration": 900
   },
   {
-   "filename": "trip foe_ribbop 96",
+   "filename": "trip foe_ribbop 108",
    "frame": {
-    "x": 853,
+    "x": 1017,
     "y": 0,
     "w": 15,
     "h": 10
@@ -971,9 +1091,9 @@
    "duration": 300
   },
   {
-   "filename": "trip foe_sidleclaw 97",
+   "filename": "trip foe_sidleclaw 109",
    "frame": {
-    "x": 868,
+    "x": 1032,
     "y": 0,
     "w": 16,
     "h": 10
@@ -981,9 +1101,9 @@
    "duration": 250
   },
   {
-   "filename": "trip foe_sidleclaw 98",
+   "filename": "trip foe_sidleclaw 110",
    "frame": {
-    "x": 884,
+    "x": 1048,
     "y": 0,
     "w": 16,
     "h": 10
@@ -991,9 +1111,9 @@
    "duration": 250
   },
   {
-   "filename": "trip foe_echoflit 99",
+   "filename": "trip foe_echoflit 111",
    "frame": {
-    "x": 900,
+    "x": 1064,
     "y": 0,
     "w": 17,
     "h": 10
@@ -1001,9 +1121,9 @@
    "duration": 200
   },
   {
-   "filename": "trip foe_echoflit 100",
+   "filename": "trip foe_echoflit 112",
    "frame": {
-    "x": 917,
+    "x": 1081,
     "y": 0,
     "w": 17,
     "h": 10
@@ -1011,9 +1131,9 @@
    "duration": 200
   },
   {
-   "filename": "trip foe_glintbug 101",
+   "filename": "trip foe_glintbug 113",
    "frame": {
-    "x": 934,
+    "x": 1098,
     "y": 0,
     "w": 14,
     "h": 7
@@ -1021,9 +1141,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_glintbug 102",
+   "filename": "trip foe_glintbug 114",
    "frame": {
-    "x": 948,
+    "x": 1112,
     "y": 0,
     "w": 14,
     "h": 7
@@ -1031,9 +1151,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_glintbug_curl 103",
+   "filename": "trip foe_glintbug_curl 115",
    "frame": {
-    "x": 962,
+    "x": 1126,
     "y": 0,
     "w": 13,
     "h": 6
@@ -1041,9 +1161,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_tumblesnow 104",
+   "filename": "trip foe_tumblesnow 116",
    "frame": {
-    "x": 975,
+    "x": 1139,
     "y": 0,
     "w": 16,
     "h": 14
@@ -1051,9 +1171,9 @@
    "duration": 1400
   },
   {
-   "filename": "trip foe_tumblesnow 105",
+   "filename": "trip foe_tumblesnow 117",
    "frame": {
-    "x": 991,
+    "x": 1155,
     "y": 0,
     "w": 16,
     "h": 14
@@ -1061,9 +1181,9 @@
    "duration": 300
   },
   {
-   "filename": "trip foe_tumblesnow_curl 106",
+   "filename": "trip foe_tumblesnow_curl 118",
    "frame": {
-    "x": 1007,
+    "x": 1171,
     "y": 0,
     "w": 16,
     "h": 10
@@ -1071,9 +1191,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_craghorn 107",
+   "filename": "trip foe_craghorn 119",
    "frame": {
-    "x": 1023,
+    "x": 1187,
     "y": 0,
     "w": 16,
     "h": 13
@@ -1081,9 +1201,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_craghorn 108",
+   "filename": "trip foe_craghorn 120",
    "frame": {
-    "x": 1039,
+    "x": 1203,
     "y": 0,
     "w": 16,
     "h": 13
@@ -1091,9 +1211,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_crowcomb 109",
+   "filename": "trip foe_crowcomb 121",
    "frame": {
-    "x": 1055,
+    "x": 1219,
     "y": 0,
     "w": 24,
     "h": 23
@@ -1101,9 +1221,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_crowcomb 110",
+   "filename": "trip foe_crowcomb 122",
    "frame": {
-    "x": 1079,
+    "x": 1243,
     "y": 0,
     "w": 24,
     "h": 23
@@ -1111,9 +1231,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_mosswart 111",
+   "filename": "trip foe_mosswart 123",
    "frame": {
-    "x": 1103,
+    "x": 1267,
     "y": 0,
     "w": 24,
     "h": 19
@@ -1121,9 +1241,9 @@
    "duration": 2600
   },
   {
-   "filename": "trip foe_mosswart 112",
+   "filename": "trip foe_mosswart 124",
    "frame": {
-    "x": 1127,
+    "x": 1291,
     "y": 0,
     "w": 24,
     "h": 19
@@ -1131,9 +1251,9 @@
    "duration": 400
   },
   {
-   "filename": "trip foe_ripplesprite 113",
+   "filename": "trip foe_ripplesprite 125",
    "frame": {
-    "x": 1151,
+    "x": 1315,
     "y": 0,
     "w": 24,
     "h": 22
@@ -1141,9 +1261,9 @@
    "duration": 300
   },
   {
-   "filename": "trip foe_ripplesprite 114",
+   "filename": "trip foe_ripplesprite 126",
    "frame": {
-    "x": 1175,
+    "x": 1339,
     "y": 0,
     "w": 24,
     "h": 22
@@ -1151,9 +1271,9 @@
    "duration": 300
   },
   {
-   "filename": "trip foe_gloompeep 115",
+   "filename": "trip foe_gloompeep 127",
    "frame": {
-    "x": 1199,
+    "x": 1363,
     "y": 0,
     "w": 24,
     "h": 9
@@ -1161,9 +1281,9 @@
    "duration": 2400
   },
   {
-   "filename": "trip foe_gloompeep 116",
+   "filename": "trip foe_gloompeep 128",
    "frame": {
-    "x": 1223,
+    "x": 1387,
     "y": 0,
     "w": 24,
     "h": 9
@@ -1171,9 +1291,9 @@
    "duration": 200
   },
   {
-   "filename": "trip foe_gloompeep_beaten 117",
+   "filename": "trip foe_gloompeep_beaten 129",
    "frame": {
-    "x": 1247,
+    "x": 1411,
     "y": 0,
     "w": 10,
     "h": 7
@@ -1181,9 +1301,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_frostfluff 118",
+   "filename": "trip foe_frostfluff 130",
    "frame": {
-    "x": 1257,
+    "x": 1421,
     "y": 0,
     "w": 24,
     "h": 24
@@ -1191,9 +1311,9 @@
    "duration": 1800
   },
   {
-   "filename": "trip foe_frostfluff 119",
+   "filename": "trip foe_frostfluff 131",
    "frame": {
-    "x": 1281,
+    "x": 1445,
     "y": 0,
     "w": 24,
     "h": 24
@@ -1201,9 +1321,9 @@
    "duration": 500
   },
   {
-   "filename": "trip egg_blob 120",
+   "filename": "trip egg_blob 132",
    "frame": {
-    "x": 1305,
+    "x": 1469,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1211,9 +1331,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_ember 121",
+   "filename": "trip egg_ember 133",
    "frame": {
-    "x": 1317,
+    "x": 1481,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1221,9 +1341,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_stone 122",
+   "filename": "trip egg_stone 134",
    "frame": {
-    "x": 1329,
+    "x": 1493,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1231,9 +1351,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_fox 123",
+   "filename": "trip egg_fox 135",
    "frame": {
-    "x": 1341,
+    "x": 1505,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1241,9 +1361,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_cloud 124",
+   "filename": "trip egg_cloud 136",
    "frame": {
-    "x": 1353,
+    "x": 1517,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1251,9 +1371,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_leaf 125",
+   "filename": "trip egg_leaf 137",
    "frame": {
-    "x": 1365,
+    "x": 1529,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1261,9 +1381,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_duck 126",
+   "filename": "trip egg_duck 138",
    "frame": {
-    "x": 1377,
+    "x": 1541,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1271,9 +1391,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_hippo 127",
+   "filename": "trip egg_hippo 139",
    "frame": {
-    "x": 1389,
+    "x": 1553,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1281,9 +1401,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_beak 128",
+   "filename": "trip egg_beak 140",
    "frame": {
-    "x": 1401,
+    "x": 1565,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1291,9 +1411,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_caterpillar 129",
+   "filename": "trip egg_caterpillar 141",
    "frame": {
-    "x": 1413,
+    "x": 1577,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1301,9 +1421,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_dog 130",
+   "filename": "trip egg_dog 142",
    "frame": {
-    "x": 1425,
+    "x": 1589,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1311,9 +1431,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_dragonfly 131",
+   "filename": "trip egg_dragonfly 143",
    "frame": {
-    "x": 1437,
+    "x": 1601,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1321,9 +1441,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_beaver 132",
+   "filename": "trip egg_beaver 144",
    "frame": {
-    "x": 1449,
+    "x": 1613,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1331,9 +1451,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_crab 133",
+   "filename": "trip egg_crab 145",
    "frame": {
-    "x": 1461,
+    "x": 1625,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1341,9 +1461,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_axolotl 134",
+   "filename": "trip egg_axolotl 146",
    "frame": {
-    "x": 1473,
+    "x": 1637,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1351,9 +1471,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_mouse 135",
+   "filename": "trip egg_mouse 147",
    "frame": {
-    "x": 1485,
+    "x": 1649,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1365,7 +1485,7 @@
   "app": "tools/build_blob_sprites.py",
   "image": "trip.png",
   "size": {
-   "w": 1497,
+   "w": 1661,
    "h": 24
   },
   "frameTags": [
@@ -1376,687 +1496,759 @@
     "direction": "forward"
    },
    {
-    "name": "seed",
+    "name": "backpack_9",
     "from": 1,
     "to": 1,
     "direction": "forward"
    },
    {
-    "name": "nest",
+    "name": "backpack_11",
     "from": 2,
     "to": 2,
     "direction": "forward"
    },
    {
-    "name": "gift",
+    "name": "seed",
     "from": 3,
     "to": 3,
     "direction": "forward"
    },
    {
-    "name": "fruit_berry",
+    "name": "nest",
     "from": 4,
     "to": 4,
     "direction": "forward"
    },
    {
-    "name": "fruit_cherry",
+    "name": "gift",
     "from": 5,
     "to": 5,
     "direction": "forward"
    },
    {
-    "name": "fruit_sunflower",
+    "name": "fruit_berry",
     "from": 6,
     "to": 6,
     "direction": "forward"
    },
    {
-    "name": "fruit_herb",
+    "name": "fruit_cherry",
     "from": 7,
     "to": 7,
     "direction": "forward"
    },
    {
-    "name": "honeycomb",
+    "name": "fruit_sunflower",
     "from": 8,
     "to": 8,
     "direction": "forward"
    },
    {
-    "name": "hazelnut",
+    "name": "fruit_herb",
     "from": 9,
     "to": 9,
     "direction": "forward"
    },
    {
-    "name": "watercress",
+    "name": "honeycomb",
     "from": 10,
     "to": 10,
     "direction": "forward"
    },
    {
-    "name": "glowberry",
+    "name": "hazelnut",
     "from": 11,
     "to": 11,
     "direction": "forward"
    },
    {
-    "name": "cake",
+    "name": "watercress",
     "from": 12,
     "to": 12,
     "direction": "forward"
    },
    {
-    "name": "pinenut",
+    "name": "glowberry",
     "from": 13,
     "to": 13,
     "direction": "forward"
    },
    {
-    "name": "sprout",
+    "name": "cake",
     "from": 14,
     "to": 14,
     "direction": "forward"
    },
    {
-    "name": "young",
+    "name": "pinenut",
     "from": 15,
     "to": 15,
     "direction": "forward"
    },
    {
-    "name": "berry",
+    "name": "sprout",
     "from": 16,
     "to": 16,
     "direction": "forward"
    },
    {
-    "name": "berry_ripe",
+    "name": "young",
     "from": 17,
     "to": 17,
     "direction": "forward"
    },
    {
-    "name": "sunflower",
+    "name": "berry",
     "from": 18,
     "to": 18,
     "direction": "forward"
    },
    {
-    "name": "sunflower_ripe",
+    "name": "berry_ripe",
     "from": 19,
     "to": 19,
     "direction": "forward"
    },
    {
-    "name": "cherry",
+    "name": "sunflower",
     "from": 20,
     "to": 20,
     "direction": "forward"
    },
    {
-    "name": "cherry_ripe",
+    "name": "sunflower_ripe",
     "from": 21,
     "to": 21,
     "direction": "forward"
    },
    {
-    "name": "herb",
+    "name": "cherry",
     "from": 22,
     "to": 22,
     "direction": "forward"
    },
    {
-    "name": "herb_ripe",
+    "name": "cherry_ripe",
     "from": 23,
     "to": 23,
     "direction": "forward"
    },
    {
-    "name": "flag",
+    "name": "herb",
     "from": 24,
     "to": 24,
     "direction": "forward"
    },
    {
-    "name": "windmill",
+    "name": "herb_ripe",
     "from": 25,
+    "to": 25,
+    "direction": "forward"
+   },
+   {
+    "name": "flag",
+    "from": 26,
     "to": 26,
     "direction": "forward"
    },
    {
-    "name": "lantern",
+    "name": "windmill",
     "from": 27,
-    "to": 27,
-    "direction": "forward"
-   },
-   {
-    "name": "lantern_lit",
-    "from": 28,
     "to": 28,
     "direction": "forward"
    },
    {
-    "name": "glowshroom",
+    "name": "lantern",
     "from": 29,
     "to": 29,
     "direction": "forward"
    },
    {
-    "name": "glowshroom_lit",
+    "name": "lantern_lit",
     "from": 30,
     "to": 30,
     "direction": "forward"
    },
    {
-    "name": "emberstone",
+    "name": "glowshroom",
     "from": 31,
     "to": 31,
     "direction": "forward"
    },
    {
-    "name": "emberstone_lit",
+    "name": "glowshroom_lit",
     "from": 32,
+    "to": 32,
+    "direction": "forward"
+   },
+   {
+    "name": "emberstone",
+    "from": 33,
     "to": 33,
     "direction": "forward"
    },
    {
-    "name": "snailshell",
+    "name": "emberstone_lit",
     "from": 34,
-    "to": 34,
-    "direction": "forward"
-   },
-   {
-    "name": "cattail",
-    "from": 35,
     "to": 35,
     "direction": "forward"
    },
    {
-    "name": "boat",
+    "name": "snailshell",
     "from": 36,
     "to": 36,
     "direction": "forward"
    },
    {
-    "name": "crystal",
+    "name": "cattail",
     "from": 37,
     "to": 37,
     "direction": "forward"
    },
    {
-    "name": "crystal_lit",
+    "name": "boat",
     "from": 38,
     "to": 38,
     "direction": "forward"
    },
    {
-    "name": "cairn",
+    "name": "crystal",
     "from": 39,
     "to": 39,
     "direction": "forward"
    },
    {
-    "name": "snowman",
+    "name": "crystal_lit",
     "from": 40,
     "to": 40,
     "direction": "forward"
    },
    {
-    "name": "snowglobe",
+    "name": "cairn",
     "from": 41,
+    "to": 41,
+    "direction": "forward"
+   },
+   {
+    "name": "snowman",
+    "from": 42,
     "to": 42,
     "direction": "forward"
    },
    {
-    "name": "pond",
+    "name": "snowglobe",
     "from": 43,
-    "to": 43,
-    "direction": "forward"
-   },
-   {
-    "name": "woodpile",
-    "from": 44,
     "to": 44,
     "direction": "forward"
    },
    {
-    "name": "mussel",
+    "name": "pond",
     "from": 45,
     "to": 45,
     "direction": "forward"
    },
    {
-    "name": "seagrass",
+    "name": "woodpile",
     "from": 46,
     "to": 46,
     "direction": "forward"
    },
    {
-    "name": "boot",
+    "name": "mussel",
     "from": 47,
     "to": 47,
     "direction": "forward"
    },
    {
-    "name": "bobber",
+    "name": "seagrass",
     "from": 48,
     "to": 48,
     "direction": "forward"
    },
    {
-    "name": "hat_daisy",
+    "name": "boot",
     "from": 49,
     "to": 49,
     "direction": "forward"
    },
    {
-    "name": "hat_leaf",
+    "name": "bobber",
     "from": 50,
     "to": 50,
     "direction": "forward"
    },
    {
-    "name": "hat_cap",
+    "name": "hat_daisy",
     "from": 51,
     "to": 51,
     "direction": "forward"
    },
    {
-    "name": "hat_bobble",
+    "name": "hat_leaf",
     "from": 52,
     "to": 52,
     "direction": "forward"
    },
    {
-    "name": "hat_lily",
+    "name": "hat_cap",
     "from": 53,
     "to": 53,
     "direction": "forward"
    },
    {
-    "name": "hat_batears",
+    "name": "hat_bobble",
     "from": 54,
     "to": 54,
     "direction": "forward"
    },
    {
-    "name": "hat_edelweiss",
+    "name": "hat_lily",
     "from": 55,
     "to": 55,
     "direction": "forward"
    },
    {
-    "name": "hat_earflap",
+    "name": "hat_batears",
     "from": 56,
     "to": 56,
     "direction": "forward"
    },
    {
-    "name": "hat_stripes",
+    "name": "hat_edelweiss",
     "from": 57,
     "to": 57,
     "direction": "forward"
    },
    {
-    "name": "hat_cosy",
+    "name": "hat_earflap",
     "from": 58,
     "to": 58,
     "direction": "forward"
    },
    {
-    "name": "tuft",
+    "name": "hat_stripes",
     "from": 59,
     "to": 59,
     "direction": "forward"
    },
    {
-    "name": "flower_red",
+    "name": "hat_cosy",
     "from": 60,
     "to": 60,
     "direction": "forward"
    },
    {
-    "name": "flower_white",
+    "name": "hat_daisy_small",
     "from": 61,
     "to": 61,
     "direction": "forward"
    },
    {
-    "name": "flower_blue",
+    "name": "hat_leaf_small",
     "from": 62,
     "to": 62,
     "direction": "forward"
    },
    {
-    "name": "bush",
+    "name": "hat_cap_small",
     "from": 63,
     "to": 63,
     "direction": "forward"
    },
    {
-    "name": "shroom_red",
+    "name": "hat_bobble_small",
     "from": 64,
     "to": 64,
     "direction": "forward"
    },
    {
-    "name": "shroom_brown",
+    "name": "hat_lily_small",
     "from": 65,
     "to": 65,
     "direction": "forward"
    },
    {
-    "name": "fern",
+    "name": "hat_batears_small",
     "from": 66,
     "to": 66,
     "direction": "forward"
    },
    {
-    "name": "stump",
+    "name": "hat_edelweiss_small",
     "from": 67,
     "to": 67,
     "direction": "forward"
    },
    {
-    "name": "reed",
+    "name": "hat_earflap_small",
     "from": 68,
     "to": 68,
     "direction": "forward"
    },
    {
-    "name": "pebble",
+    "name": "hat_stripes_small",
     "from": 69,
     "to": 69,
     "direction": "forward"
    },
    {
-    "name": "lilypad",
+    "name": "hat_cosy_small",
     "from": 70,
     "to": 70,
     "direction": "forward"
    },
    {
-    "name": "rock",
+    "name": "tuft",
     "from": 71,
     "to": 71,
     "direction": "forward"
    },
    {
-    "name": "stalagmite",
+    "name": "flower_red",
     "from": 72,
     "to": 72,
     "direction": "forward"
    },
    {
-    "name": "gem",
+    "name": "flower_white",
     "from": 73,
     "to": 73,
     "direction": "forward"
    },
    {
-    "name": "pine",
+    "name": "flower_blue",
     "from": 74,
     "to": 74,
     "direction": "forward"
    },
    {
-    "name": "snowrock",
+    "name": "bush",
     "from": 75,
     "to": 75,
     "direction": "forward"
    },
    {
-    "name": "drift",
+    "name": "shroom_red",
     "from": 76,
     "to": 76,
     "direction": "forward"
    },
    {
-    "name": "trace_tower",
+    "name": "shroom_brown",
     "from": 77,
     "to": 77,
     "direction": "forward"
    },
    {
-    "name": "trace_snowman",
+    "name": "fern",
     "from": 78,
     "to": 78,
     "direction": "forward"
    },
    {
-    "name": "trace_drawing_0",
+    "name": "stump",
     "from": 79,
     "to": 79,
     "direction": "forward"
    },
    {
-    "name": "trace_drawing_1",
+    "name": "reed",
     "from": 80,
     "to": 80,
     "direction": "forward"
    },
    {
-    "name": "foe_bumblebop",
+    "name": "pebble",
     "from": 81,
+    "to": 81,
+    "direction": "forward"
+   },
+   {
+    "name": "lilypad",
+    "from": 82,
     "to": 82,
     "direction": "forward"
    },
    {
-    "name": "foe_diggle",
+    "name": "rock",
     "from": 83,
+    "to": 83,
+    "direction": "forward"
+   },
+   {
+    "name": "stalagmite",
+    "from": 84,
     "to": 84,
     "direction": "forward"
    },
    {
-    "name": "foe_prickleroll",
+    "name": "gem",
     "from": 85,
+    "to": 85,
+    "direction": "forward"
+   },
+   {
+    "name": "pine",
+    "from": 86,
     "to": 86,
     "direction": "forward"
    },
    {
-    "name": "foe_drizzleshell",
+    "name": "snowrock",
     "from": 87,
+    "to": 87,
+    "direction": "forward"
+   },
+   {
+    "name": "drift",
+    "from": 88,
     "to": 88,
     "direction": "forward"
    },
    {
-    "name": "foe_puddlin",
+    "name": "trace_tower",
     "from": 89,
+    "to": 89,
+    "direction": "forward"
+   },
+   {
+    "name": "trace_snowman",
+    "from": 90,
     "to": 90,
     "direction": "forward"
    },
    {
-    "name": "foe_carrotnose",
+    "name": "trace_drawing_0",
     "from": 91,
+    "to": 91,
+    "direction": "forward"
+   },
+   {
+    "name": "trace_drawing_1",
+    "from": 92,
     "to": 92,
     "direction": "forward"
    },
    {
-    "name": "foe_duskwisp",
+    "name": "foe_bumblebop",
     "from": 93,
     "to": 94,
     "direction": "forward"
    },
    {
-    "name": "foe_ribbop",
+    "name": "foe_diggle",
     "from": 95,
     "to": 96,
     "direction": "forward"
    },
    {
-    "name": "foe_sidleclaw",
+    "name": "foe_prickleroll",
     "from": 97,
     "to": 98,
     "direction": "forward"
    },
    {
-    "name": "foe_echoflit",
+    "name": "foe_drizzleshell",
     "from": 99,
     "to": 100,
     "direction": "forward"
    },
    {
-    "name": "foe_glintbug",
+    "name": "foe_puddlin",
     "from": 101,
     "to": 102,
     "direction": "forward"
    },
    {
-    "name": "foe_glintbug_curl",
+    "name": "foe_carrotnose",
     "from": 103,
-    "to": 103,
+    "to": 104,
     "direction": "forward"
    },
    {
-    "name": "foe_tumblesnow",
-    "from": 104,
-    "to": 105,
-    "direction": "forward"
-   },
-   {
-    "name": "foe_tumblesnow_curl",
-    "from": 106,
+    "name": "foe_duskwisp",
+    "from": 105,
     "to": 106,
     "direction": "forward"
    },
    {
-    "name": "foe_craghorn",
+    "name": "foe_ribbop",
     "from": 107,
     "to": 108,
     "direction": "forward"
    },
    {
-    "name": "foe_crowcomb",
+    "name": "foe_sidleclaw",
     "from": 109,
     "to": 110,
     "direction": "forward"
    },
    {
-    "name": "foe_mosswart",
+    "name": "foe_echoflit",
     "from": 111,
     "to": 112,
     "direction": "forward"
    },
    {
-    "name": "foe_ripplesprite",
+    "name": "foe_glintbug",
     "from": 113,
     "to": 114,
     "direction": "forward"
    },
    {
-    "name": "foe_gloompeep",
+    "name": "foe_glintbug_curl",
     "from": 115,
-    "to": 116,
+    "to": 115,
     "direction": "forward"
    },
    {
-    "name": "foe_gloompeep_beaten",
-    "from": 117,
+    "name": "foe_tumblesnow",
+    "from": 116,
     "to": 117,
     "direction": "forward"
    },
    {
-    "name": "foe_frostfluff",
+    "name": "foe_tumblesnow_curl",
     "from": 118,
-    "to": 119,
+    "to": 118,
     "direction": "forward"
    },
    {
-    "name": "egg_blob",
-    "from": 120,
+    "name": "foe_craghorn",
+    "from": 119,
     "to": 120,
     "direction": "forward"
    },
    {
-    "name": "egg_ember",
+    "name": "foe_crowcomb",
     "from": 121,
-    "to": 121,
-    "direction": "forward"
-   },
-   {
-    "name": "egg_stone",
-    "from": 122,
     "to": 122,
     "direction": "forward"
    },
    {
-    "name": "egg_fox",
+    "name": "foe_mosswart",
     "from": 123,
-    "to": 123,
-    "direction": "forward"
-   },
-   {
-    "name": "egg_cloud",
-    "from": 124,
     "to": 124,
     "direction": "forward"
    },
    {
-    "name": "egg_leaf",
+    "name": "foe_ripplesprite",
     "from": 125,
-    "to": 125,
-    "direction": "forward"
-   },
-   {
-    "name": "egg_duck",
-    "from": 126,
     "to": 126,
     "direction": "forward"
    },
    {
-    "name": "egg_hippo",
+    "name": "foe_gloompeep",
     "from": 127,
-    "to": 127,
-    "direction": "forward"
-   },
-   {
-    "name": "egg_beak",
-    "from": 128,
     "to": 128,
     "direction": "forward"
    },
    {
-    "name": "egg_caterpillar",
+    "name": "foe_gloompeep_beaten",
     "from": 129,
     "to": 129,
     "direction": "forward"
    },
    {
-    "name": "egg_dog",
+    "name": "foe_frostfluff",
     "from": 130,
-    "to": 130,
-    "direction": "forward"
-   },
-   {
-    "name": "egg_dragonfly",
-    "from": 131,
     "to": 131,
     "direction": "forward"
    },
    {
-    "name": "egg_beaver",
+    "name": "egg_blob",
     "from": 132,
     "to": 132,
     "direction": "forward"
    },
    {
-    "name": "egg_crab",
+    "name": "egg_ember",
     "from": 133,
     "to": 133,
     "direction": "forward"
    },
    {
-    "name": "egg_axolotl",
+    "name": "egg_stone",
     "from": 134,
     "to": 134,
     "direction": "forward"
    },
    {
-    "name": "egg_mouse",
+    "name": "egg_fox",
     "from": 135,
     "to": 135,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_cloud",
+    "from": 136,
+    "to": 136,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_leaf",
+    "from": 137,
+    "to": 137,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_duck",
+    "from": 138,
+    "to": 138,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_hippo",
+    "from": 139,
+    "to": 139,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_beak",
+    "from": 140,
+    "to": 140,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_caterpillar",
+    "from": 141,
+    "to": 141,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_dog",
+    "from": 142,
+    "to": 142,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_dragonfly",
+    "from": 143,
+    "to": 143,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_beaver",
+    "from": 144,
+    "to": 144,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_crab",
+    "from": 145,
+    "to": 145,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_axolotl",
+    "from": 146,
+    "to": 146,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_mouse",
+    "from": 147,
+    "to": 147,
     "direction": "forward"
    }
   ]
