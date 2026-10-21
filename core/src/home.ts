@@ -4,7 +4,7 @@ import * as life from "./life";
 import type { Random } from "./random";
 import type { PetState, Stat } from "./state";
 
-export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg";
+export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg" | "map";
 
 // Name: kind
 export const ITEMS: Record<string, ItemKind> = {
@@ -50,6 +50,13 @@ export const ITEMS: Record<string, ItemKind> = {
   stripes: "hat",
   cosy: "hat",
   cake: "food",
+  // from a shooting star (stars.ts), the trick festival (festival.ts) and digging (digging.ts)
+  star_shard: "deco",
+  ribbon_blue: "deco",
+  ribbon_red: "deco",
+  helmet: "hat",
+  fossil: "deco",
+  treasure_map: "map",
   egg_blob: "egg",
   egg_ember: "egg",
   egg_stone: "egg",
@@ -74,7 +81,7 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_scarab: "egg",
   egg_kite: "egg",
 };
-export const MAX_SEEDS = 9; // per kind; decorations and hats exist only once
+export const MAX_SEEDS = 9; // per kind; decorations, hats and the treasure map exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
 export const MAX_EGGS = 9; // this many are kept
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus
@@ -131,7 +138,7 @@ export const OUTDOOR_DECO = ["snowman", "pond"]; // would melt inside; a pond be
 // The snow globe: set out at home, outside or in the house, it snows around the pet, and a pet of
 // the cloud line that grows up then counts it as snow (life.decideSpecies).
 export const SNOW_DECO = ["snowglobe"];
-export const GLOWING_DECO = ["lantern", "glowshroom", "crystal", "emberstone"]; // they light up at night
+export const GLOWING_DECO = ["lantern", "glowshroom", "crystal", "emberstone", "star_shard"]; // they light up at night
 
 export function kindOf(item: string): ItemKind {
   return ITEMS[item];
@@ -259,6 +266,12 @@ export const SEED_CHANCE = 0.15; // how often a small thing is a seed rather tha
 export function smallThing(state: PetState, rng: Random): string {
   const kind = rng.choice(Object.keys(PLANTS));
   return rng.random() < SEED_CHANCE && canAdd(state, `seed_${kind}`) ? `seed_${kind}` : `fruit_${kind}`;
+}
+
+/** A seed of some plant if there is room for it, else that plant's fruit (eaten if that doesn't fit either). */
+export function smallSeed(state: PetState, rng: Random): string {
+  const kind = rng.choice(Object.keys(PLANTS));
+  return canAdd(state, `seed_${kind}`) ? `seed_${kind}` : `fruit_${kind}`;
 }
 
 /** Take a small thing: it goes into the bag, and a fruit that doesn't fit any more is eaten. */

@@ -1,5 +1,5 @@
 /**
- * A scuffle watched again: the scene of the core draws it once more from what was kept of it
+ * A scuffle (or a show at the trick festival) watched again: the scene of the core draws it once more from what was kept of it
  * (state.replays), the way the panel showed it on the trip. It runs in the page, so it plays on
  * the phone whether the pet lives there or on a Pi.
  */
@@ -23,12 +23,15 @@ export interface Replay {
   stage: string;
   hat: string;
   weather: number | null;
+  /** "festival": a show at the trick festival, with the wild pets of its jury. */
+  kind?: string;
+  jury?: string[];
 }
 
 function tripView(replay: Replay, age: number): TripView {
   return {
-    area: replay.area, returning: false, event: "battle", item: replay.item, event_age: age,
-    foe: replay.foe, rounds: replay.rounds, outcome: replay.outcome,
+    area: replay.area, returning: false, event: replay.kind === "festival" ? "festival" : "battle", item: replay.item,
+    event_age: age, foe: replay.foe, rounds: replay.rounds, outcome: replay.outcome, jury: replay.jury ?? null,
   };
 }
 

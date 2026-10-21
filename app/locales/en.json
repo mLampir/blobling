@@ -205,6 +205,11 @@
       "name": "Mountain",
       "away": "out on the mountain",
       "trip": "Trip to the mountain 🎒"
+    },
+    "festival": {
+      "name": "Trick festival",
+      "away": "at the trick festival",
+      "trip": "Off to the trick festival 🎪"
     }
   },
   "foes": {
@@ -291,7 +296,13 @@
     "earflap": "Earflap hat",
     "stripes": "Striped stocking cap",
     "cosy": "Tea cosy hat",
-    "cake": "Grandma's cake"
+    "cake": "Grandma's cake",
+    "star_shard": "Star shard",
+    "ribbon_blue": "Blue rosette",
+    "ribbon_red": "Red rosette",
+    "fossil": "Fossil",
+    "helmet": "Explorer's helmet",
+    "treasure_map": "Treasure map"
   },
   "pack": {
     "ball": "Ball"
@@ -352,7 +363,11 @@
       "pack_full": "Only two things fit into the backpack.",
       "no_pond": "{name} can only fish with a pond in the garden.",
       "no_line": "Too late – the line is out of the water.",
-      "at_grandmas": "{name} is at Grandma's already."
+      "at_grandmas": "{name} is at Grandma's already.",
+      "no_festival": "There's no festival today.",
+      "festival_done": "{name} has been to the festival already today.",
+      "no_map": "There's no treasure map in the bag.",
+      "no_room": "There's no room for that any more."
     },
     "notify": {
       "channel": "When your pet needs you",
@@ -384,7 +399,9 @@
       },
       "again": "Again",
       "play": "Watch again",
-      "against": "Scuffle with {foe} …"
+      "against": "Scuffle with {foe} …",
+      "watch_show": "▶ Watch the show",
+      "show": "On stage at the trick festival …"
     },
     "collected": "{egg} collected – it's in your bag now",
     "unwrapped_fruit": "Inside: {fruit}. The bag was full, so {name} ate it straight away",
@@ -690,7 +707,13 @@
       "fish_early": "pulled the line in too early",
       "fish_nothing": "nothing bit",
       "visit_grandma": "went to stay at Grandma's 🏡",
-      "cake": "Grandma's cake 🍰"
+      "cake": "Grandma's cake 🍰",
+      "star": "saw a shooting star and made a wish 🌠",
+      "show_0": "showed its tricks on stage – no place this time",
+      "show_1": "won the trick festival 🏆",
+      "show_2": "came second at the trick festival 🥈",
+      "show_3": "came third at the trick festival 🥉",
+      "dig": "dug at the red cross: {what}"
     },
     "statistics": {
       "meals": "Meals",
@@ -881,7 +904,15 @@
         "one": "1 fruit left",
         "other": "{n} fruits left"
       }
-    }
+    },
+    "festival": {
+      "soon": "🎪 Trick festival on {date}",
+      "today": "🎪 The trick festival is today!",
+      "went": "🎪 {name} has been to today's trick festival.",
+      "what": "Which tricks will it show?",
+      "go": "To the festival"
+    },
+    "picked_star": "Picked up: {thing}. It fell with the shooting star"
   },
   "settings": {
     "title": "LED Matrix",

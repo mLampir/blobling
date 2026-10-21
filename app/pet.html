@@ -326,6 +326,9 @@
   .choices button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
   .choices button.on { border-color: var(--accent); color: var(--accent); }
   #pack-things img, .steps img { width: 24px; height: 24px; image-rendering: pixelated; vertical-align: middle; }
+  /* the tricks for the festival: each as its move, in the slots in the order it shows them */
+  #festival-slots svg, #festival-tricks svg { width: 26px; height: 26px; vertical-align: middle; }
+  #festival-tricks button { display: inline-flex; align-items: center; gap: 6px; }
   /* The trip tab is the packing: where to, what comes along, and the button to send it off */
   .packing { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
   .packing p { margin: 0; }
@@ -483,6 +486,17 @@
     <div class="page trip">
       <h2 data-t="page.nav.adventure"></h2>
       <p class="lead" id="adventure-lead" hidden></p>
+      <!-- the trick festival, from its poster on (core/src/festival.ts): on the day, the tricks to show -->
+      <div class="packing" id="festival" hidden>
+        <p class="lead" id="festival-when"></p>
+        <div class="packing" id="festival-pick">
+          <p data-t="page.festival.what"></p>
+          <div class="steps" id="festival-slots"></div>
+          <div class="choices" id="festival-tricks"></div>
+          <p class="say" id="festival-say" aria-live="polite"></p>
+          <button class="wide primary" id="festival-go" data-t="page.festival.go"></button>
+        </div>
+      </div>
       <div class="packing" id="packing">
         <p class="hearts" id="pack-hearts"></p>
         <p data-t="page.pack.where"></p>
@@ -669,6 +683,8 @@ const PLANT_ICONS = { berry: "🫐", sunflower: "🌻", cherry: "🍒", herb: "�
 // Seeds: a tap switches the kind. The trip: where to and what comes along
 const choice = { trip: null };
 const packed = [];
+// the tricks picked for the trick festival, in order (null: not touched yet, it shows its best)
+let shows = null;
 // The picture of something in the backpack: the ball, or a thing to eat from the bag
 function packPicture(id) {
   const img = document.createElement("img");
@@ -1036,7 +1052,7 @@ function render(s) {
     const found = s.trip.found.map((id) => s.item_labels[id] || id).join(", ");
     // hearts: a lost scuffle costs one; next to them, what is still in the backpack from home
     $("trip-info").textContent = t(s.trip.returning ? "page.trip.returning" : "page.trip.out", { time: inTime(s.trip.end - s.now) })
-      + ` · ${"♥".repeat(s.trip.hearts)}`
+      + (s.trip.area === "festival" ? "" : ` · ${"♥".repeat(s.trip.hearts)}`)  // no scuffles at the festival
       + (s.trip.pack.length ? ` · ${s.trip.pack.map((id) => s.item_labels[id] || t("pack.ball")).join(", ")}` : "")
       + (found ? ` · ${t("page.trip.backpack", { items: found })}` : "");
     $("recall").disabled = s.trip.end - s.now <= 300;
@@ -1054,7 +1070,8 @@ function render(s) {
   // the scuffles of the last trip, until they have been watched or the next trip sets off
   const fights = s.trip ? [] : lastFights(s);
   $("watch").hidden = !fights.length || stored("watched") === String(s.last_trip);
-  $("watch").textContent = tn("page.replay.watch", fights.length);
+  $("watch").textContent = fights.some((r) => r.kind === "festival") ? t("page.replay.watch_show")
+    : tn("page.replay.watch", fights.length);
 
   // The tray: an egg can only be kept warm (by stroking it)
   $("tray").hidden = egg;
@@ -1146,7 +1163,77 @@ function renderTrip(s) {
     packedFor = key;
     renderPack();
   }
+  renderFestival(s);
 }
+
+// The trick festival: from its poster on, when it is; on the day, the tricks it is to show
+let festivalFor = "";
+function renderFestival(s) {
+  const f = s.festival;
+  $("festival").hidden = !f;
+  if (!f) return;
+  const date = new Date(f.day * 1000).toLocaleDateString(LANG, { weekday: "long", day: "numeric", month: "long" });
+  const went = f.today && f.reason === "festival_done";
+  $("festival-when").textContent = went ? t("page.festival.went", { name: s.name })
+    : f.today ? t("page.festival.today") : t("page.festival.soon", { date });
+  // it can be sent off any time on the day, while it isn't away (else it says why, once asked)
+  $("festival-pick").hidden = !f.today || went || !!s.trip || !!s.grandma || s.stage === "egg";
+  const key = JSON.stringify([s.id, f, s.tricks]);
+  if (!$("festival-pick").hidden && view === "adventure" && key !== festivalFor) {
+    festivalFor = key;
+    renderShows();
+  }
+}
+function renderShows() {
+  const f = current.festival, chosen = shows ?? f.tricks;
+  const move = (id) => {
+    const icon = document.createElement("span");
+    icon.innerHTML = svg(id);
+    icon.setAttribute("role", "img");
+    icon.setAttribute("aria-label", trickLabel(id));
+    return icon;
+  };
+  // Slots: a tap takes the trick out again
+  $("festival-slots").replaceChildren(...Array.from({ length: f.max_tricks }, (_, i) => {
+    const b = document.createElement("button");
+    b.replaceChildren(...(chosen[i] ? [move(chosen[i])] : []));
+    b.classList.toggle("on", i < chosen.length);
+    b.disabled = i >= chosen.length;
+    b.addEventListener("click", () => {
+      shows = chosen.filter((_, j) => j !== i);
+      renderShows();
+    });
+    return b;
+  }));
+  // the tricks it has, how well it has them as a share: what it practiced shows more often
+  $("festival-tricks").replaceChildren(...current.tricks.filter((x) => x.progress > 0).map((trick) => {
+    const b = document.createElement("button");
+    b.append(move(trick.id), trick.label, meter(trick.progress, "var(--energy)"));
+    b.disabled = chosen.length >= f.max_tricks;
+    b.addEventListener("click", () => {
+      shows = [...chosen, trick.id];
+      renderShows();
+    });
+    return b;
+  }));
+}
+$("festival-go").addEventListener("click", async () => {
+  if (!current || !current.festival) return;
+  try {
+    const r = await action("festival", null, { value: [...(shows ?? current.festival.tricks)] });
+    render(r.state);
+    if (!r.accepted) {
+      $("festival-say").textContent = r.message;
+      return feel("no");
+    }
+    feel("ok");
+    shows = null;
+    $("festival-say").textContent = "";
+    showView("home");  // to see it set off
+  } catch (err) {
+    fail(err);
+  }
+});
 
 // The hearts it would set off with now, out of the usual three
 function tripHearts(s, more = 0) {
@@ -1385,6 +1472,13 @@ function renderBag(s) {
         n.textContent = `×${item.count}`;
         b.append(n, ...badge(item.effects, true));
         seeds.push(b);
+      } else if (item.kind === "map") {
+        // the treasure map: dragged onto the pet, it goes over to the red cross and digs
+        const b = bagTile(app.discovery(item.id, true), item.label, item.label);
+        b.dataset.action = "dig";
+        b.dataset.item = item.id;
+        draggable(b);
+        wear.push(b);
       } else {
         const b = bagTile(app.discovery(item.id, true), item.label, [item.label, t(`page.kinds.${item.kind}`),
           item.place === "inside" && t("page.bag.inside"), ...effectText(item.effects)].filter(Boolean).join(" · "));
@@ -1599,6 +1693,9 @@ function eventText(e) {
     : e.action === "solo" ? (T[`page.events.solo_${e.item}`] ? t(`page.events.solo_${e.item}`)
       : t("page.events.solo_trick", { trick: trickLabel(e.item) }))
     : e.action === "trip" ? T[`areas.${e.item}.trip`] || T[`page.events.trip_${e.item}`] || t("page.events.trip")
+    : e.action === "festival" ? t("areas.festival.trip")
+    : e.action === "show" ? t(`page.events.show_${e.item || 0}`)
+    : e.action === "dig" ? t("page.events.dig", { what: (e.item || "").split(",").map(giftLabel).join(", ") })
     : e.action === "battle" ? battleText(e.item)
     : e.action === "wild" ? wildText(e.item)
     : e.action === "visit" || e.action === "peek" || e.action === "guest"
@@ -1650,11 +1747,19 @@ function welcome(s) {
 }
 
 // What happens on the way of a trip: it is told under the trip's own line, not in the list
-const ON_THE_WAY = ["battle", "find", "wild", "fish"], TRIP_STOPS = ["snack", "beaten", "tired", "home"];
+const ON_THE_WAY = ["battle", "find", "wild", "fish", "show"], TRIP_STOPS = ["snack", "beaten", "tired", "home"];
 let travels = [], lastEvents = null;
 const openTrips = new Set();  // the trips opened up, by when they set off
 function travelOf(e) {
-  return e.accepted && e.action === "trip" && travels.find((tr) => tr.area === e.item && Math.abs(tr.start - e.at) < 120);
+  // a trip, or setting off for the trick festival (by itself, or sent)
+  const area = e.action === "festival" ? "festival" : e.action === "trip" ? e.item : null;
+  return e.accepted && area && travels.find((tr) => tr.area === area && Math.abs(tr.start - e.at) < 120);
+}
+// A scuffle or a show at the festival that was kept, to be watched again
+function replayOf(e) {
+  const replays = (current && current.replays) || [];
+  return e.action === "battle" ? replays.find((r) => r.at === e.at && e.item === `${r.foe}:${r.outcome}`)
+    : e.action === "show" ? replays.find((r) => r.at === e.at && r.kind === "festival") : null;
 }
 function onTheWay(e) {
   const way = ON_THE_WAY.includes(e.action) || (e.action === "trip" && TRIP_STOPS.includes(e.item));
@@ -1702,8 +1807,7 @@ function renderEvents(events) {
       return [...(heading ? [heading] : []), ...tripLines(li, text, travel)];
     }
     // a scuffle that was kept can be watched again
-    const replay = e.action === "battle" && current && (current.replays || [])
-      .find((r) => r.at === e.at && e.item === `${r.foe}:${r.outcome}`);
+    const replay = replayOf(e);
     if (replay) li.append(playButton(replay));
     return heading ? [heading, li] : [li];
   });
@@ -1740,9 +1844,8 @@ function tripLines(li, text, travel) {
     const what = document.createElement("span");
     what.textContent = e.quiet ? t("page.travels.quiet") : eventText({ ...e, accepted: true });
     stop.append(time, what);
-    // a scuffle that was kept can be watched again
-    const replay = e.action === "battle" && current && (current.replays || [])
-      .find((r) => r.at === e.at && e.item === `${r.foe}:${r.outcome}`);
+    // a scuffle (or a show) that was kept can be watched again
+    const replay = replayOf(e);
     if (replay) stop.append(playButton(replay));
     return stop;
   });
@@ -1789,8 +1892,9 @@ async function watch(replays) {
     // who it is up against, and once the rounds are over, how it ended
     (i, over) => {
       const r = replays[i];
-      $("replay-text").textContent = over ? battleText(`${r.foe}:${r.outcome}`)
-        : t("page.replay.against", { foe: T[`foes.${r.foe}`] || r.foe });
+      $("replay-text").textContent = r.kind === "festival"
+        ? (over ? t(`page.events.show_${r.outcome}`) : t("page.replay.show"))
+        : over ? battleText(`${r.foe}:${r.outcome}`) : t("page.replay.against", { foe: T[`foes.${r.foe}`] || r.foe });
     },
     () => { $("replay-again").disabled = false; });
   if (!$("replay").open) $("replay").showModal();
@@ -1830,6 +1934,10 @@ function stopEvents(stop) {
   if (stop.kind === "fish") return [{ at, action: "fish", item: stop.item }];
   if (stop.kind === "ball") return [{ at, action: "battle", item: `${stop.foe}:ball` }];
   if (stop.kind === "wild") return [{ at, action: "wild", item: `${stop.wild}:${stop.outcome}` }];
+  // the show at the trick festival, and its prize
+  if (stop.kind === "festival") {
+    return [{ at, action: "show", item: stop.outcome }, ...stop.item ? [{ at, action: "find", item: stop.item }] : []];
+  }
   if (stop.kind === "battle") {
     const scuffle = { at, action: "battle", item: `${stop.foe}:${stop.outcome}` };
     return stop.item ? [scuffle, { at, action: "find", item: stop.item }] : [scuffle];
@@ -2159,7 +2267,8 @@ function draggable(b) {
     const inside = overHero(e.clientX, e.clientY);
     if (!inside && vy > -FLICK_SPEED) return ghost.remove();
     const direct = inside && area && onPet(e.clientX, e.clientY) && ["feed", "medicine"].includes(b.dataset.action);
-    const thrown = !direct && b.dataset.action !== "fish";  // the rod isn't thrown: the pet takes it to the pond
+    // the rod isn't thrown: the pet takes it to the pond; nor the map: it goes to the cross
+    const thrown = !direct && !["fish", "dig"].includes(b.dataset.action);
     const where = Math.round(Math.max(0, Math.min(1, inScene(e.clientX, e.clientY)[0])) * 100) / 100;
     // it drops into the scene (or into the pet's mouth)
     ghost.style.transition = "transform .3s ease-out, opacity .3s";
@@ -2429,7 +2538,14 @@ async function pickup() {
   before = current;
   intoBag(await act("pickup"), "page.picked_bag", "page.picked_fruit");
 }
-const TAKE = { nest: collect, gift: unwrap, found: pickup };
+// what a shooting star left: into the bag (or, an egg, among the eggs)
+async function pickStar() {
+  before = current;
+  const r = await act("pickup", "star");
+  if (r?.accepted && r.state.activity_item.startsWith("egg_")) say(t("page.picked_star", { thing: giftLabel(r.state.activity_item) }));
+  else intoBag(r, "page.picked_star", "page.picked_fruit");
+}
+const TAKE = { nest: collect, gift: unwrap, found: pickup, star: pickStar };
 $("grandma").addEventListener("click", () => act("grandma"));
 $("visit-grandma").addEventListener("click", async () => {
   const r = await act("visit_grandma");

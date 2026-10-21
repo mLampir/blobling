@@ -7087,6 +7087,17 @@ GLOWSHROOM = ["..ccc..", ".cCccc.", "cccccCc", "ccCcccc", "..www..", "..wWw..", 
 # Ember stone: a stone with cracks that glow from inside. At night the whole stone glows, and
 # the cracks pulse.
 EMBERSTONE = ["...sSSs..", "..sSoSSS.", ".sSSOoSSS", "sSSoSSOSS", "SSOSSSoSS", "SSSoSSSSS", ".SSSSSSS."]
+# A shard of a shooting star, in the little crater it made ("n": pale, glowing as "y" at night)
+STAR_SHARD = ["...n.....", "...nn..n.", "..nqnn.n.", "..nqqnnN.", ".nnqqnNN.", ".nqqnNNN.", "WsnnNNNsW", ".WsssssS."]
+# The owl on the roof: brown, a light belly, eyes that shine at night, sitting on its talons
+OWL = ["D.......D", "DDdddddDD", "DeeedeeeD", "DeTedeTeD", "DdeeYeedD", "DddhYhddD", "DdhhhhhdD", ".DhHhHhD.",
+       "..DDDDD..", "..Y...Y.."]
+OWL_BLINK = OWL[:2] + ["DdddddddD", "DTTTdTTTD"] + OWL[4:]
+# A rosette on a stake, with two tails
+ROSETTE = ["...bbb...", ".bbBbBbb.", ".bBwwwBb.", "bbwyyywbb", ".bBwwwBb.", ".bbBbBbb.", "...bbb...", "..BbtbB..",
+           "..b.t.b..", "..B.t.B..", "....t...."]
+# The jury's table: a cloth in stripes of the festival's colors, scalloped at the hem
+JURY_TABLE = ['tttttttttttttttttttttttttttttt', 'rrrrryyyyybbbbbrrrrryyyyybbbbb', 'rrrrryyyyybbbbbrrrrryyyyybbbbb', 'RrrrRYyyyYBbbbBRrrrRYyyyYBbbbB', '.rrr..yyy..bbb..rrr..yyy..bbb.', '.T..........................T.', '.T..........................T.']
 TRIP_TAGS = {
     "backpack": [([".TT.TT.", ".ooooo.", "ooooooo", "oYYYYYo", "ooTTToo", "ooooooo", ".OOOOO."], 1000)],
     # bigger ones for bigger pets (scene.PACKS): it should look like a backpack, not a purse
@@ -7178,6 +7189,27 @@ TRIP_TAGS = {
                "..TttttdTT.", "..TttttttdT", "..TtttttttT", ".iSSSSSSSSS", "i.........."], 1000)],
     # the float: red on top, white below
     "bobber": [([".R.", "rrR", "wwW", ".W."], 1000)],
+    # Shooting stars (core/src/stars.ts): a shard of the star in its little crater, pale by day and
+    # glowing at night (a decoration), and the owl that comes to sit on the roof and blinks
+    "star_shard": [(STAR_SHARD, 1000)],
+    "star_shard_lit": [(swap(swap(STAR_SHARD, "n", "y"), "N", "Y"), 1200),
+                       (dots(swap(swap(STAR_SHARD, "n", "y"), "N", "Y"), {(3, 0): "f", (4, 2): "f"}), 400)],
+    "owl": [(OWL, 2600), (OWL_BLINK, 200)],
+    # The trick festival (core/src/festival.ts): its poster on a stake, the jury's table under a
+    # cloth in the colors of the pennants, and the rosettes for second and third place (decorations)
+    "poster": [(["wwwwwwww", "wrrrrrrw", "wwwyywww", "wwyyyyww", "wwwyywww", "wwywwyww", "wbbbbbbw", "wwwwwwwW",
+                 "...tT...", "...tT..."], 1000)],
+    "jury_table": [(JURY_TABLE, 1000)],
+    "ribbon_blue": [(ROSETTE, 1000)],
+    "ribbon_red": [(swap(swap(ROSETTE, "b", "r"), "B", "R"), 1000)],
+    # Digging (core/src/digging.ts): the treasure map, a dashed path to its red cross; what only the
+    # digging turns up: a khaki helmet with a band (a hat) and an ammonite in its stone (a decoration)
+    "treasure_map": [(["HhhhhhhH", "hDDhhrhr", "hhhDhhrh", "hhhhDrhr", "hDhhhDhh", "hhDDhhhh", "HHhhhhHH"], 1000)],
+    "hat_helmet": [(["......hhh......", "....hhhhhhh....", "...hhwhhhhhH...", "..hhhhhhhhhHH..", "..aaaaaaaaaaA..",
+                     ".hhhhhhhhhhhhH.", "HHHHHHHHHHHHHHH"], 1000)],
+    "hat_helmet_small": [(["....hhh....", "..hhwhhhH..", "..aaaaaaA..", ".hhhhhhhhH.", "HHHHHHHHHHH"], 1000)],
+    "fossil": [(["..sWsss..", ".sWhhhsS.", "sWhHHHhsS", "shHhhhHhS", "shHhHhHhS", "shhHhHhSS", ".shhhHhS.", "..SSSSS.."],
+                1000)],
     # Hats: the bottom two rows sit on the head. A child or an adult wears the big one, a baby the small
     # one (docs/gameplay.md, *Sizes of things next to the pet*)
     "hat_daisy": [([".w......p......w.", "wywg...pyp...gwyw", "gwgggggpgpgggggwg"], 1000)],

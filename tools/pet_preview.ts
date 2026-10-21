@@ -98,7 +98,7 @@ const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
   [a, b].flatMap((adult) => ["", "_sad", "_sleep", "_trick", "_rain"].map((what) => `${adult}${what}`))),
 ["wild_forest_leaf", "wild_stream_hippo", "visit_beak", "visit_duck", "garden_peek"]);
-// The adult forms with a trick of their own (OWN_TRICKS in core/src/scene.ts) and that trick; each
+// The adult forms with a trick of their own (OWN_TRICKS in core/src/care.ts) and that trick; each
 // gets a scene with the trick ("<form>_own") and one with its special move in a scuffle ("<form>_special")
 const OWN_TRICK_FORMS: Record<string, string> = {
   angloop: "bow", gemperor: "flip", purrloop: "bow", lanternling: "spin", flarelet: "flip", roamtail: "spin",
@@ -141,7 +141,7 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "glimmerock_night", "glimmerock_shine", "bouldergrin", "bouldergrin_sad", "bouldergrin_sleep", "bouldergrin_toss", "wild_stream", "visit_stone",
   "wild_forest", "visit_fox", "fox_egg", "fox_hatch", "fox_baby", "kitlet", "kitlet_hint", "kitlet_hat", "kitlet_sick",
   "fox_evolve", "roamtail", "roamtail_trip", "roamtail_sleep", "roamtail_rain", "filchfox", "filchfox_hat",
-  "filchfox_sad", "filchfox_sleep", "filchfox_night",
+  "filchfox_sad", "filchfox_sleep", "filchfox_night", "owl_egg",
   "wild_mountain", "visit_cloud", "cloud_egg", "cloud_hatch", "cloud_baby", "nimbit", "nimbit_hint", "nimbit_rain",
   "nimbit_hat", "cloud_evolve", "rumblefluff", "rumblefluff_rain", "rumblefluff_sleep", "rumblefluff_trick", "rumblefluff_storm", "prismist",
   "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip", "prismist_rain",
@@ -580,6 +580,27 @@ const SCENES: Record<string, Scene> = {
   ])),
   lunarock_new_moon: [{ stage: "adult", species: "lunarock" }, new Date(2026, 9, 10, 23, 30), null],
   snowglobe: [{ stage: "adult", species: "rumblefluff", deco: ["snowglobe"] }, DAY, null],
+  // shooting stars (core/src/stars.ts): the star, the wish, the owl on the roof (or the fence), what is left
+  shooting_star: [{ activity: "wish", star: 1.6 }, NIGHT, null, -0.5],
+  star_wish: [{ activity: "wish" }, NIGHT, null, 4],
+  owl_roof: [{ owl: true, house: 2 }, NIGHT, null],
+  owl_fence: [{ owl: true }, NIGHT, null],
+  star_shard: [{ fallen: "star_shard", deco: ["star_shard"] }, DAY, null],
+  owl_egg: [{ fallen: "egg_owl", house: 2 }, DAY, null],
+  // the trick festival (core/src/festival.ts): its poster, a trick on stage with the score held up, the prize
+  festival_poster: [{ poster: true }, DAY, null],
+  festival_show: [{
+    trip: trip("festival", { event: "festival", event_age: 4.2, outcome: "2", item: "ribbon_blue",
+      jury: ["sneezle", "flicker", "cyclopuff"], rounds: [["spin", true, 2], ["flip", true, 5], ["bow", false, 0]] }),
+  }, DAY, null],
+  festival_prize: [{
+    trip: trip("festival", { event: "festival", event_age: 11.5, outcome: "2", item: "ribbon_blue",
+      jury: ["sneezle", "flicker", "cyclopuff"], rounds: [["spin", true, 2], ["flip", true, 5], ["bow", false, 0]] }),
+  }, DAY, null],
+  // digging (core/src/digging.ts): the red cross, digging, and what it found
+  dig_cross: [{ cross: true, hat: "helmet" }, DAY, null],
+  dig: [{ activity: "dig", activity_item: "8:seed_berry,fossil" }, DAY, null, 4],
+  dig_found: [{ activity: "dig", activity_item: "8:fossil", deco: ["fossil", "ribbon_red"] }, DAY, null, 9.5],
 };
 
 const assets = readAssets(BDF_FONT_DIR);

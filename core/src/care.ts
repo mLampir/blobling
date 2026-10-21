@@ -181,6 +181,72 @@ export const TRICKS: Record<string, number> = { bow: 3, spin: 5, dance: 7, flip:
 export const TRICK_ENERGY = 15; // minimum energy, same as playing
 export const TRICK_LUCK = 0.25; // how often it already works on the very first try
 
+// Tricks some forms do in their own way: the same gesture and the same effect, another animation
+// (drawn in scene.ts). At the trick festival (festival.ts) a form's own trick counts double.
+// "stage:species" → {trick: animation}
+export const OWN_TRICKS: Record<string, Record<string, string>> = {
+  "adult:sneezle": { flip: "flutter" }, // its wings only flap for this: up, over at the top and down again
+  "adult:lumoth": { spin: "circle" }, // a moth: it flutters round in circles, as round a lamp
+  "adult:glimmerock": { spin: "shine" }, // a show: its crystals flash as it turns
+  "adult:bouldergrin": { flip: "toss" }, // its top stone does the flip for it and lands back on top
+  "adult:gemperor": { flip: "slam" }, // a king doesn't somersault: it leaps up and lands so hard that crystals shoot up
+  "adult:purrloop": { bow: "stretch" }, // a cat's bow: front down, a long stretch and a yawn, then a shake
+  "adult:lanternling": { spin: "swing" }, // it swings to and fro as a lantern does on its handle
+  "adult:flarelet": { flip: "flare" }, // the flame shoots up out of its bowl and rains embers
+  "adult:roamtail": { spin: "chase" }, // goes round in circles after its own tail
+  "adult:filchfox": { spin: "vanish" }, // a puff of smoke, gone, and it pops up again a little further on
+  "adult:rumblefluff": { bow: "charge" }, // head down, a scrape with the hoof, and a charge with sparks
+  "adult:prismist": { spin: "rainbow" }, // it turns, and a rainbow of shimmer arcs over it
+  "adult:twiggle": { spin: "rustle" }, // it turns, and leaves whirl off its crown
+  "adult:needlenub": { bow: "bloom" }, // it closes into a bud and blooms, and petals fly
+  "adult:quill": { dance: "hornpipe" }, // the sailor's dance: quick steps from one foot to the other
+  "adult:drakwing": { flip: "glide" }, // a few beats of its wings up, and it glides down in a long arc
+  "adult:lillypot": { bow: "soak" }, // sinks low, as into its pond, and blows bubbles
+  "adult:steamo": { dance: "sauna" }, // a bath dance that makes it steam
+  "adult:parcelbeak": { bow: "deliver" }, // a bow, and a letter flies out of its pouch
+  "adult:rapierre": { spin: "fence" }, // a fencer's lunge, forward and back, twice, with a flash
+  "adult:salamber": { dance: "ember_ring" }, // it dances round, and a ring of embers glows up round it
+  "adult:lunarock": { bow: "moonrise" }, // a bow, and its moonstone lights up and sends glints up into the sky
+  "adult:foxfire": { spin: "fox_fire" }, // it turns, and blue fox fires whirl round it
+  "adult:flurrbleat": { dance: "flurry" }, // it turns round and round in a flurry of snow
+  "adult:sakurin": { dance: "fan" }, // a fan dance: it sways to and fro, and blossom drifts off its crown
+  "adult:bubblehelm": { flip: "dive" }, // dives head first into the ground and pops out again in a burst of bubbles
+  "adult:hippula": { bow: "count" }, // a count's deep bow with a sweep of the cape, and bats flutter up
+  "adult:acewing": { flip: "loop" }, // a stunt flyer's loop with a trail of smoke
+  "adult:mothmuff": { spin: "lamp" }, // flutters round and round a light, as moths do round a lamp, and dust falls off its wings
+  "adult:sunflutter": { dance: "blossom" }, // sways, closes up, and its petals open like a blossom in the sun
+  "adult:jesterwing": { flip: "jest" }, // a fool's somersault high in the air, its bells jingling
+  "adult:digby": { spin: "settle" }, // goes round and round three times, as a dog does, and lies down
+  "adult:barrelbard": { bow: "shake_off" }, // a bow, and it shakes the snow out of its coat
+  "adult:pawdini": { dance: "ball_roll" }, // rolls to and fro on its big ball, the little one balanced on its nose
+  "adult:rotorfly": { spin: "lift_off" }, // lifts off, turns on the spot in the air and sets down again
+  "adult:jewelwing": { bow: "kneel" }, // a knight's bow: down on one knee with the lance lowered
+  "adult:prismfly": { dance: "light_dance" }, // spots of light in every color dance round it
+  "adult:dambert": { flip: "hurdle" }, // trowel up, and a jump over a little stack of logs
+  "adult:timberjack": { spin: "chop" }, // spins with its axe tail swinging, and wood chips fly
+  "adult:archibeaver": { bow: "blueprint" }, // a bow, it unrolls its plan, and its compass sparks
+  "adult:teacrab": { bow: "pour" }, // a polite bow forward, as a teapot pours: a cup of tea, and the steam rises
+  "adult:lightclaw": { spin: "beacon" }, // turns slowly as a lighthouse does, and its beam sweeps round
+  "adult:castlecrab": { bow: "drawbridge" }, // its gate opens, the drawbridge comes down, and a fanfare sparkles
+  "adult:mossolotl": { spin: "unfurl" }, // turns slowly, its gills unfurl, and bits of moss drift off its back
+  "adult:medilotl": { dance: "heal" }, // a little dance, and hearts float up
+  "adult:axodrake": { flip: "dragon_loop" }, // flies a loop in the air with a trail of glowing bubbles
+  "adult:sirthimble": { bow: "accolade" }, // a knight's bow, and its needle lance touches its shoulder with a glint
+  "adult:cogsqueak": { spin: "wind_up" }, // winds itself up, its key turning, and whirrs round on the spot
+  "adult:woolwhisk": { spin: "unravel" }, // her ball turns, and the golden thread unwinds round her and winds back up
+  "adult:hivebear": { bow: "hat_tip" }, // a bow, it lifts its honey pot like a hat, and the bees fly up
+  "adult:snorbear": { spin: "den_roll" }, // rolls up in its mound and tumbles round
+  "adult:ursastra": { dance: "star_picture" }, // dances, and the stars on its body wander up into a picture
+  "adult:tuxwaddle": { bow: "serve" }, // a waiter's bow, its tray held level, the cup steaming
+  "adult:glidepin": { spin: "pirouette" }, // a pirouette on its blades, faster and faster, frost flying
+  "adult:aurorapin": { dance: "aurora_ribbons" }, // ribbons of the northern lights wave round it as it dances
+  "adult:umbrabat": { flip: "hang_swing" }, // turns upside down, hangs from its hook tail and swings
+  "adult:batbeat": { dance: "bass_nod" }, // nods to the bass, and lights flash on the beat
+  "adult:lunaflap": { spin: "full_moon" }, // wraps itself in its wings, turns, and opens them as a full moon
+  "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
+  "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
+};
+
 /** 0–1: how well it already knows the trick. */
 export function trickProgress(state: PetState, trick: string): number {
   return Math.min(1.0, (state.tricks[trick] ?? 0.0) / TRICKS[trick]);
