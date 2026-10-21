@@ -40,6 +40,9 @@ export const LINES: Record<string, readonly string[]> = {
   dog: ["digby", "barrelbard", "pawdini"],
   dragonfly: ["rotorfly", "jewelwing", "prismfly"],
   beaver: ["dambert", "timberjack", "archibeaver"],
+  // caught when fishing (fishing.ts)
+  crab: ["teacrab", "lightclaw", "castlecrab"],
+  axolotl: ["mossolotl", "medilotl", "axodrake"],
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
@@ -89,6 +92,11 @@ export const ACEWING_GUARDIANS = 2; // the beak line: guardians it got past → 
 // The dragonfly line: it grows up while the sun shines after rain (SUN_AFTER_RAIN) → prismfly
 export const SUN_AFTER_RAIN = 3 * 3600; // seconds since the rain stopped that still count
 // The beaver line: the house is built to its last step when it grows up → archibeaver
+// The crab line: it grows up after dark while a decoration that glows stands outside → lightclaw,
+// otherwise teacrab
+export const CASTLECRAB_COAST_TRIPS = 3; // the crab line: trips to the coast → castlecrab
+// The axolotl line: its health never below WEAK_HEALTH as a child → medilotl, otherwise mossolotl;
+// it beat Gloompeep as a child → axodrake
 export const MISSING_AFTER = 30; // days with pets before a line whose egg never came gets the quiet safety net (Pet.longMissing)
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
@@ -135,6 +143,12 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   dambert: { satiety: 1.15 }, // it gnaws all day
   timberjack: { satiety: 1.2 }, // a lumberjack's appetite
   archibeaver: { mood: 0.85 }, // content with its plans
+  teacrab: { mood: 0.85 }, // there is always a cup of tea
+  lightclaw: { energy: 1.15 }, // up all night, keeping the light
+  castlecrab: { satiety: 1.15 }, // a whole castle to feed
+  mossolotl: { energy: 0.8 }, // a stone on the lake floor hardly moves
+  medilotl: { hygiene: 0.8 }, // a healer keeps clean
+  axodrake: { energy: 1.15 }, // all that floating
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -164,14 +178,17 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   pawdini: { play: 1.25 },
   jewelwing: { sick: 0.6 }, // armoured
   timberjack: { sick: 0.6 }, // tough as an old oak
+  teacrab: { pet: 1.25 }, // warm to the touch
+  medilotl: { sick: 0.5 }, // it heals itself first
+  axodrake: { play: 1.25 },
 };
 
 /**
  * The care diary of a child. Besides these, it counts what a rule for an adult form may look at
  * one day (record): each food from the bag or off the plant (`food_<name>`), fruits it picked off
  * the plant itself (`plant_fruits`), trips to each area (`trips_<area>`) and trips with rain on the way
- * (`rain_trips`), scuffles in which it was never knocked over (`clean_battles`), guardians it got
- * past for the first time (`guardians`), games of hide and seek played and won (`games`, `games_won`),
+ * (`rain_trips`), scuffles in which it was never knocked over (`clean_battles`), the opponents it
+ * beat (`won_<foe>`), guardians it got past for the first time (`guardians`), games of hide and seek played and won (`games`, `games_won`),
  * evenings it was tucked in by hand (`tucked`) and minutes with its health below WEAK_HEALTH
  * (`weak_minutes`).
  */
@@ -271,6 +288,8 @@ export interface World {
   allTricks?: boolean;
   /** its highest battle stat, */
   strongest?: string;
+  /** a decoration that glows stands outside (home.GLOWING_DECO), */
+  glowOutside?: boolean;
   /** and whether its house is built to the last step (home.HOUSE_STEPS). */
   houseBuilt?: boolean;
 }
@@ -312,6 +331,8 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
     dog: Boolean(world.allTricks),
     dragonfly: Boolean(world.afterRain && !world.raining && !world.dark),
     beaver: Boolean(world.houseBuilt),
+    crab: done("trips_coast", CASTLECRAB_COAST_TRIPS),
+    axolotl: done("won_gloompeep", 1),
   } as Record<string, boolean>)[line];
   if (special) {
     return LINES[line][2];
@@ -351,6 +372,12 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   }
   if (line === "beaver") {
     return world.strongest === "strength" ? "timberjack" : "dambert";
+  }
+  if (line === "crab") {
+    return world.dark && world.glowOutside ? "lightclaw" : "teacrab";
+  }
+  if (line === "axolotl") {
+    return minutes > 0 && !diary.weak_minutes ? "medilotl" : "mossolotl";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if (enough("love", PURRLOOP_LOVE_PER_DAY)) {

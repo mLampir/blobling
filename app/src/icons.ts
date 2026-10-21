@@ -54,6 +54,7 @@ const THINGS: Record<string, string[]> = {
   baton: ["items:baton"],
   whistle: ["items:whistle"],
   hide: ["items:hide"],
+  rod: ["items:rod"],
   // the training: what each exercise is about
   strength: ["items:stone"],
   speed: ["items:skill_speed"],
@@ -71,6 +72,9 @@ const THINGS: Record<string, string[]> = {
   watercress: ["trip:watercress"],
   glowberry: ["trip:glowberry"],
   pinenut: ["trip:pinenut"],
+  // food from fishing
+  mussel: ["trip:mussel"],
+  seagrass: ["trip:seagrass"],
 };
 
 /** A thing the player hands the pet (food, the ball, the sponge, the baton, …) as a picture, or "" if there is none. */

@@ -51,8 +51,10 @@ Where to look first:
   its character and where it came from. The forms of a line stay the same
   kind of creature, and growing up is something to look forward to. The
   adults of a line differ in shape, not just color; the second idea changes
-  the body instead of being a hat or a tool; and the secret form is extra
-  special, with an effect of its own.
+  the body instead of being a hat or a tool; and the secret form stands
+  above the other adults, not beside them: the legendary version of the
+  line, its feature grown beyond the others, the biggest form, with an
+  effect of its own.
 - **No spoilers outside `docs/pets.md`.** Which forms a pet can grow into is
   for players to find out. Pictures and text in the README and the other docs
   show only egg, baby, child and Angloop, as the one example of an adult.

@@ -58,7 +58,9 @@
     "caterpillar": "Munchlet",
     "dog": "Pupplet",
     "dragonfly": "Nymphlet",
-    "beaver": "Gnawlet"
+    "beaver": "Gnawlet",
+    "crab": "Shellbit",
+    "axolotl": "Axolittle"
   },
   "species": {
     "blob": "Blob",
@@ -117,7 +119,15 @@
     "prismfly": "Prismfly",
     "dambert": "Dambert",
     "timberjack": "Timberjack",
-    "archibeaver": "Archibeaver"
+    "archibeaver": "Archibeaver",
+    "crab": "Krebs",
+    "axolotl": "Axolotl",
+    "teacrab": "Teacrab",
+    "lightclaw": "Lightclaw",
+    "castlecrab": "Castlecrab",
+    "mossolotl": "Mossolotl",
+    "medilotl": "Medilotl",
+    "axodrake": "Axodrake"
   },
   "tricks": {
     "bow": "Verbeugen",
@@ -224,7 +234,12 @@
     "egg_caterpillar": "Raupen-Ei",
     "egg_dog": "Hunde-Ei",
     "egg_dragonfly": "Libellen-Ei",
-    "egg_beaver": "Biber-Ei"
+    "egg_beaver": "Biber-Ei",
+    "mussel": "Muschel",
+    "seagrass": "Seegras",
+    "boot": "Alter Stiefel",
+    "egg_crab": "Krebs-Ei",
+    "egg_axolotl": "Axolotl-Ei"
   },
   "pack": {
     "ball": "Ball"
@@ -282,7 +297,9 @@
       "nothing_found": "Da liegt nichts.",
       "dislikes": "{name} dreht den Kopf weg – das bitte nicht!",
       "not_in_bag": "Das ist nicht mehr in der Tasche.",
-      "pack_full": "In den Rucksack passen nur zwei Sachen."
+      "pack_full": "In den Rucksack passen nur zwei Sachen.",
+      "no_pond": "{name} kann nur angeln, wenn ein Teich im Garten steht.",
+      "no_line": "Zu spät – die Angel ist schon draußen."
     },
     "notify": {
       "channel": "Wenn dein Pet dich braucht",
@@ -351,12 +368,17 @@
       "ball": "Ball",
       "medicine": "Medizin",
       "sponge": "Schwamm",
-      "bag": "Tasche"
+      "bag": "Tasche",
+      "rod": "Angel"
     },
     "tools": {
       "game": "Verstecken",
       "tricks": "Tricks",
       "train": "Training"
+    },
+    "fishing": {
+      "caught": "{name} hat etwas gefangen: {item}!",
+      "early": "Zu früh – {name} holt die Schnur ein, noch hat nichts angebissen."
     },
     "petting": {
       "warmed": "{name} ist wieder warm"
@@ -606,7 +628,13 @@
       "copied": "hat sich {trick} bei {pet} abgeschaut",
       "house_1": "hat sich eine Hütte gebaut 🏠",
       "house_2": "hat aus der Hütte ein Häuschen gemacht 🏠",
-      "house_3": "hat aus dem Häuschen ein richtiges Haus gemacht 🏠"
+      "house_3": "hat aus dem Häuschen ein richtiges Haus gemacht 🏠",
+      "mussel": "Muschel 🐚",
+      "seagrass": "Seegras 🌿",
+      "fish_cast": "hat am Teich geangelt 🎣",
+      "fish_catch": "hat etwas gefangen: {item} 🎣",
+      "fish_early": "hat die Angel zu früh eingeholt",
+      "fish_nothing": "es hat nichts angebissen"
     },
     "statistics": {
       "meals": "Mahlzeiten",

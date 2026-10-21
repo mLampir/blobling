@@ -35,9 +35,15 @@ export interface Training {
   sequence?: string[];
 }
 
+/** A line in the water at the pond (fishing.cast): since when, and after how many seconds something bites (null: nothing). */
+export interface Fishing {
+  at: number;
+  bite: number | null;
+}
+
 /** What happened at the last station of a trip. */
 export interface TripEvent {
-  kind: "find" | "rest" | "tired" | "ball" | "battle" | "wild";
+  kind: "find" | "rest" | "tired" | "ball" | "battle" | "wild" | "fish";
   at: number;
   item?: string | null;
   foe?: string;
@@ -222,6 +228,8 @@ export interface PetState {
   /** Battle stats, 0–100 (battle.SKILLS). */
   skills: Record<string, number>;
   training: Training | null;
+  /** A line in the water at the pond (fishing.ts). */
+  fishing: Fishing | null;
   trip: Trip | null;
   /** Areas whose guardian it has got past (trip.AREAS). */
   guardians: string[];
@@ -310,6 +318,7 @@ export function newState(): PetState {
     tricks: {},
     skills: battle.newSkills(),
     training: null,
+    fishing: null,
     trip: null,
     guardians: [],
     guardian_eggs: [],

@@ -15,6 +15,7 @@
 
 import * as battle from "./battle";
 import * as care from "./care";
+import * as fishing from "./fishing";
 import * as food from "./food";
 import * as home from "./home";
 import * as life from "./life";
@@ -307,6 +308,7 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
   life.record(state, "clean_battles", fight.rounds.some(([, , result]) => result === "ouch") ? 0 : 1);
   if (outcome === "win") {
     let egg: string | null = null;
+    life.record(state, `won_${foe}`); // whom it beat as a child (the axolotl line)
     count.battles_won = (count.battles_won ?? 0) + 1;
     state.stats.mood += guardian ? GUARDIAN_MOOD : WIN_MOOD;
     if (guardian && !state.guardians.includes(trip.area)) {
@@ -406,6 +408,14 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
       trip.found.push(item);
       events.push(["find", item]);
       happened(trip, { kind: "find", item, at: t });
+    } else if (fishing.TRIP_WATERS.includes(trip.area) && rng.random() < fishing.TRIP_CHANCE) {
+      // a rest by the water: it fishes, and what it catches comes home with it
+      const caught = fishing.catchFrom(state, trip.area, rng);
+      if (caught) {
+        trip.found.push(caught);
+        events.push(["find", caught]);
+      }
+      happened(trip, { kind: "fish", item: caught, at: t });
     } else {
       trip.last = { kind: "rest", item, at: t }; // a rest is not worth a line in the diary
     }

@@ -58,7 +58,9 @@
     "caterpillar": "Munchlet",
     "dog": "Pupplet",
     "dragonfly": "Nymphlet",
-    "beaver": "Gnawlet"
+    "beaver": "Gnawlet",
+    "crab": "Shellbit",
+    "axolotl": "Axolittle"
   },
   "species": {
     "blob": "Blob",
@@ -117,7 +119,15 @@
     "prismfly": "Prismfly",
     "dambert": "Dambert",
     "timberjack": "Timberjack",
-    "archibeaver": "Archibeaver"
+    "archibeaver": "Archibeaver",
+    "crab": "Crab",
+    "axolotl": "Axolotl",
+    "teacrab": "Teacrab",
+    "lightclaw": "Lightclaw",
+    "castlecrab": "Castlecrab",
+    "mossolotl": "Mossolotl",
+    "medilotl": "Medilotl",
+    "axodrake": "Axodrake"
   },
   "tricks": {
     "bow": "Bow",
@@ -224,7 +234,12 @@
     "egg_caterpillar": "Caterpillar egg",
     "egg_dog": "Dog egg",
     "egg_dragonfly": "Dragonfly egg",
-    "egg_beaver": "Beaver egg"
+    "egg_beaver": "Beaver egg",
+    "mussel": "Mussel",
+    "seagrass": "Seagrass",
+    "boot": "Old boot",
+    "egg_crab": "Crab egg",
+    "egg_axolotl": "Axolotl egg"
   },
   "pack": {
     "ball": "Ball"
@@ -282,7 +297,9 @@
       "nothing_found": "There's nothing lying there.",
       "dislikes": "{name} turns its head away – not that one!",
       "not_in_bag": "That isn't in the bag any more.",
-      "pack_full": "Only two things fit into the backpack."
+      "pack_full": "Only two things fit into the backpack.",
+      "no_pond": "{name} can only fish with a pond in the garden.",
+      "no_line": "Too late – the line is out of the water."
     },
     "notify": {
       "channel": "When your pet needs you",
@@ -351,12 +368,17 @@
       "ball": "Ball",
       "medicine": "Medicine",
       "sponge": "Sponge",
-      "bag": "Bag"
+      "bag": "Bag",
+      "rod": "Rod"
     },
     "tools": {
       "game": "Hide & seek",
       "tricks": "Tricks",
       "train": "Train"
+    },
+    "fishing": {
+      "caught": "{name} caught something: {item}!",
+      "early": "Too early – {name} reels in, nothing on the hook yet."
     },
     "petting": {
       "warmed": "{name} is warm again"
@@ -606,7 +628,13 @@
       "copied": "copied {trick} from {pet}",
       "house_1": "built itself a hut 🏠",
       "house_2": "made the hut into a cabin 🏠",
-      "house_3": "made the cabin into a real house 🏠"
+      "house_3": "made the cabin into a real house 🏠",
+      "mussel": "Mussel 🐚",
+      "seagrass": "Seagrass 🌿",
+      "fish_cast": "went fishing at the pond 🎣",
+      "fish_catch": "caught something: {item} 🎣",
+      "fish_early": "pulled the line in too early",
+      "fish_nothing": "nothing bit"
     },
     "statistics": {
       "meals": "Meals",

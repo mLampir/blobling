@@ -31,8 +31,11 @@ export const FOODS: Record<string, string> = {
   watercress: "train",
   glowberry: "finder",
   pinenut: "fresh",
+  // caught when fishing (fishing.ts)
+  mussel: "heart",
+  seagrass: "trick",
 };
-export const PACKED: Record<string, string> = { honeycomb: "heart", glowberry: "finder", pinenut: "fresh" };
+export const PACKED: Record<string, string> = { honeycomb: "heart", glowberry: "finder", pinenut: "fresh", mussel: "heart" };
 export const FRUITS = Object.keys(home.PLANTS).map((kind) => `fruit_${kind}`);
 export const EDIBLE = [...FRUITS, ...Object.keys(FOODS)];
 export const SATIETY = 10; // food from trips
@@ -99,6 +102,15 @@ export const TASTES: Record<string, readonly [string, string]> = {
   dambert: ["watercress", "glowberry"],
   timberjack: ["pinenut", "honeycomb"], // from the forest
   archibeaver: ["hazelnut", "fruit_berry"],
+  // the lines caught when fishing
+  crab: ["fruit_berry", "fruit_herb"],
+  teacrab: ["honeycomb", "mussel"], // something sweet with the tea, and never its own kind
+  lightclaw: ["glowberry", "seagrass"],
+  castlecrab: ["mussel", "pinenut"],
+  axolotl: ["fruit_cherry", "fruit_sunflower"],
+  mossolotl: ["seagrass", "honeycomb"],
+  medilotl: ["watercress", "honeycomb"], // healthy
+  axodrake: ["mussel", "seagrass"],
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],
