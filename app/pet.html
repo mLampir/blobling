@@ -13,7 +13,7 @@
 <style>
   /* The pet is the app: its scene fills the top of the screen and is touched directly (stroke it,
      rub it with the sponge, hand it food from the tray). Below it, what it needs and the tray;
-     at the bottom the tabs: the pet, adventures, the diary and the rest. One dark night-sky look,
+     at the bottom the tabs: the pet, the trip, the diary and the rest. One dark night-sky look,
      the scene's own. */
   :root {
     --night: #0d1220; --surface: #161d30; --raised: #1f2840; --line: #2a3452;
@@ -72,6 +72,11 @@
     background: rgba(13, 18, 32, .62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font-weight: 700; font-size: 14px;
   }
   .pill svg { width: 20px; height: 20px; color: var(--energy); }
+  /* The name is a button like the sleep button: its picture, the name and an arrow */
+  .pill.name { height: auto; min-height: 40px; max-width: 100%; padding: 3px 12px 3px 4px; }
+  .pill.name img { flex: none; width: 34px; height: 34px; border-radius: 50%; image-rendering: pixelated; }
+  .pill.name h1 { font-size: 20px; text-shadow: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pill.name .chev { font-size: 20px; line-height: 1; }
   .hero-buttons { flex: none; display: flex; gap: 8px; }
   .neighbours { display: flex; gap: 6px; }
   .pill.neighbour { position: relative; padding: 0 6px; }
@@ -121,8 +126,17 @@
   .evolve.holding::before { width: 100%; transition: width 1.2s linear; }
   .evolve span { position: relative; }
 
-  /* The tray: things to hand the pet. Drag one onto it; with a Pi, flick it up as well. */
-  .tray { flex: none; display: flex; gap: 6px; justify-content: center; padding: 10px 12px 12px; }
+  /* The tray: on top the things to hand the pet, lying there like things: drag one onto it (with a
+     Pi, flick it up as well). Below, flat like buttons, the ones a tap opens or starts. */
+  .tray { flex: none; display: grid; gap: 4px; padding: 10px 12px 10px; }
+  .things, .tools { display: flex; gap: 6px; justify-content: center; }
+  .tool {
+    flex: 0 1 76px; min-width: 0; height: 52px; border-radius: 14px; color: var(--muted);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  }
+  .tool img { width: 26px; height: 26px; image-rendering: pixelated; pointer-events: none; }
+  .tool small { font-size: 10px; font-weight: 700; max-width: 100%; padding: 0 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tool:active { background: var(--surface); }
   .thing {
     flex: 0 1 60px; min-width: 0; height: 66px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; touch-action: none; position: relative;
@@ -135,6 +149,12 @@
   .thing.lift { opacity: .35; }
   .thing.wanted:not(:disabled) { border-color: var(--accent); }
   .thing.on { border-color: var(--energy); background: var(--raised); box-shadow: 0 0 0 2px var(--energy); }
+  /* A tap instead of a drag: the thing hops up towards the pet and falls back */
+  .thing.hop img { animation: hop .7s ease-out; }
+  @keyframes hop {
+    0% { transform: none; } 35% { transform: translateY(-38px) scale(1.15); } 65% { transform: none; }
+    80% { transform: translateY(-7px); } 100% { transform: none; }
+  }
   .ghost {
     position: fixed; z-index: 50; left: 0; top: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; pointer-events: none;
     display: grid; place-items: center; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .5));
@@ -209,10 +229,10 @@
   .wide.danger { border-color: var(--danger); color: var(--danger); }
   .wide.quiet { color: var(--muted); }
 
-  /* ---------- Panels: packing for a trip, tricks, training, hide and seek ----------
-     They take the place of the needs and the tray, below the scene: the pet stays where it is,
+  /* ---------- Panels: the bag, tricks, training, hide and seek, the pet's own things ----------
+     They take the place of the tray, below the scene and what it needs: the pet stays where it is,
      big and bright, and answers there. */
-  .home.busy > .needs, .home.busy > .status, .home.busy > .tray { display: none; }
+  .home.busy > .status, .home.busy > .tray { display: none; }
   .home.busy > .hero { min-height: 220px; }  /* the ground and the pet; above is only sky */
   /* The panel's own picture has the clock and the temperature at the top: it is shown whole,
      below the name and the sleep button */
@@ -226,9 +246,11 @@
   .home:has(> .hero.whole):not(.busy) > .tray { margin-block: auto; }
   /* A tall screen has room for bigger things to hand over */
   @media (min-height: 780px) {
-    .thing { flex-basis: 64px; height: 80px; border-radius: 20px; gap: 5px; }
-    .thing img { width: 38px; height: 38px; }
-    .thing small { font-size: 11px; }
+    .tray > .things .thing { flex-basis: 64px; height: 76px; border-radius: 20px; gap: 5px; }
+    .tray > .things .thing img { width: 38px; height: 38px; }
+    .thing small, .tool small { font-size: 11px; }
+    .tool { height: 58px; }
+    .tool img { width: 30px; height: 30px; }
   }
   .sheet {
     position: relative; flex: 0 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; margin-top: 10px;
@@ -236,15 +258,10 @@
     background: var(--surface); border-radius: 24px 24px 0 0; border-top: 1px solid var(--line);
     padding: 14px 16px 14px; touch-action: none;
   }
-  /* Packing needs no pet in sight: it takes the scene's place too and fits the screen whole,
-     the button to set off at the bottom, under the thumb */
-  .home.cover > .hero { display: none; }
-  .sheet.cover {
-    flex: 1 1 auto; margin-top: 0; border-radius: 0 0 30px 30px; border-top: 0; touch-action: pan-y;
-    padding: calc(18px + var(--safe-top)) 16px 16px; gap: clamp(8px, 2.2dvh, 18px);
-  }
-  .sheet.cover .close { top: calc(8px + var(--safe-top)); }
-  .sheet.cover > p:first-of-type, .sheet.cover > :last-child { margin-top: auto; flex: none; }
+  /* The bag scrolls in its own place, however full it gets: things are dragged out of it onto
+     the pet, which stays in sight */
+  #bag-mode { touch-action: pan-y; max-height: 42dvh; }
+  #pet-mode { max-height: 42dvh; }
   .sheet h3 { margin: 0; font: 700 18px/1.2 var(--round); }
   .sheet p { margin: 0; }
   .sheet small { color: var(--muted); font-size: 13px; }
@@ -259,29 +276,59 @@
   .tricks .meter { display: block; max-width: none; margin-top: 6px; height: 7px; background: var(--line); }
   .tricks li > b { color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
   .tricks li.hit { animation: hit .6s ease-out; }
-  /* the four tricks as tiles, so they fit below the scene on a small phone too */
-  #tricks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: none; }
-  #tricks li { gap: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 14px; }
-  #tricks .move { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--raised); color: var(--energy); }
-  #tricks .move svg { width: 24px; height: 24px; }
-  #tricks .learned svg { width: 18px; height: 18px; color: var(--accent); fill: var(--accent); }
+  /* The four tricks side by side: each move draws itself, one after the other, until the first
+     move is drawn over the pet; below it how far the pet has got, a star once it knows it */
+  #tricks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 400px; }
+  #tricks li { flex-direction: column; gap: 6px; padding: 8px 6px; border: 1px solid var(--line); border-radius: 14px; background: var(--raised); text-align: center; }
+  #tricks li > div { width: 100%; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+  #tricks .move { width: auto; color: var(--energy); }
+  #tricks .move svg { width: 40px; height: 40px; }
+  #tricks .move path, #tricks .move circle { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 3.2s ease-in-out infinite; }
+  #tricks li:nth-child(2) .move :is(path, circle) { animation-delay: .8s; }
+  #tricks li:nth-child(3) .move :is(path, circle) { animation-delay: 1.6s; }
+  #tricks li:nth-child(4) .move :is(path, circle) { animation-delay: 2.4s; }
+  @keyframes draw { 0%, 10% { stroke-dashoffset: 1; } 45%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 1; } }
+  #trick-mode.drawn .move :is(path, circle) { animation: none; stroke-dashoffset: 0; }
+  #tricks .learned svg { width: 16px; height: 16px; color: var(--accent); fill: var(--accent); }
+  #skills li > img { width: 32px; height: 32px; image-rendering: pixelated; }
   @keyframes hit { 0% { background: rgba(111, 220, 140, .3); } }
-  .ball { font-size: 72px; line-height: 1; will-change: transform; }
+  .ball { width: 72px; height: 72px; image-rendering: pixelated; will-change: transform; }
   .tap { width: min(46vw, 200px); aspect-ratio: 1; border-radius: 50%; border: 3px solid var(--accent); background: var(--raised); font-size: 24px; font-weight: 700; }
   .tap:active { background: var(--accent); color: var(--accent-ink); }
   .steps { display: flex; gap: 8px; min-height: 44px; }
   .steps i { width: 40px; height: 40px; border-radius: 10px; border: 2px solid var(--line); font-style: normal; font-size: 22px; line-height: 36px; }
   .steps i.on { border-color: var(--accent); color: var(--accent); }
-  .bag { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
-  .bag .thing { flex: 0 0 76px; }
-  /* how many there are, and once found out: ❤ its favorite, ✕ what it won't eat */
-  .bag .thing::before, .bag .thing::after { position: absolute; top: 4px; font-size: 11px; font-weight: 700; pointer-events: none; }
-  .bag .thing::before { content: "×" attr(data-count); left: 7px; color: var(--muted); }
-  .bag .thing::after { content: attr(data-mark); right: 7px; color: var(--accent); }
+  /* The bag: a shelf each for what it eats, seeds, and what it wears or sets out (and eggs) */
+  .shelves { width: 100%; display: grid; gap: 6px; text-align: left; }
+  /* Each shelf is one row that scrolls sideways: a swipe to the side looks along it, a drag up
+     takes a thing out towards the pet, so the two never get in each other's way */
+  .shelf { display: grid; gap: 2px; min-width: 0; }
+  .shelf > div {
+    display: flex; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    padding: 8px 6px 6px; margin: 0 -6px;
+  }
+  .shelf > div::-webkit-scrollbar { display: none; }
+  .tile { flex: 0 0 66px; height: 66px; touch-action: pan-x; }
+  /* how many there are (and once found out: ❤ its favorite, ✕ what it won't eat), what it does,
+     and whether it can go into the backpack */
+  .tile .n { position: absolute; left: 6px; top: 3px; font-size: 11px; font-weight: 700; color: var(--muted); pointer-events: none; }
+  .tile .n b { color: var(--accent); }
+  .badge {
+    display: inline-flex; align-items: center; gap: 1px; padding: 0 4px; height: 18px; vertical-align: middle;
+    border-radius: 9px; background: var(--night); border: 1px solid var(--c); color: var(--c); font-size: 11px; font-weight: 800; pointer-events: none;
+  }
+  .badge.seed { border-style: dashed; }
+  .badge svg { width: 12px; height: 12px; }
+  .tile .badge { position: absolute; right: -5px; top: -6px; }
+  .tile .packs { position: absolute; right: -5px; bottom: -5px; width: 18px; height: 18px; padding: 1px; border-radius: 6px; background: var(--night); pointer-events: none; }
+  .tile.worn { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255, 179, 71, .35); }
   .choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
   .choices button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
   .choices button.on { border-color: var(--accent); color: var(--accent); }
   #pack-things img, .steps img { width: 24px; height: 24px; image-rendering: pixelated; vertical-align: middle; }
+  /* The trip tab is the packing: where to, what comes along, and the button to send it off */
+  .packing { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+  .packing p { margin: 0; }
   /* the areas of a trip, each with what there is to discover there and its guardian */
   #pack-areas { flex-direction: column; align-items: stretch; }
   #pack-areas .area { display: flex; align-items: center; gap: 10px; text-align: left; }
@@ -327,6 +374,11 @@
   }
   /* A scuffle watched again */
   dialog canvas { display: block; width: 100%; aspect-ratio: 1; margin-bottom: 14px; border-radius: 14px; image-rendering: pixelated; }
+  /* A trip in the history opens up into what happened on the way */
+  .list > li.trip { cursor: pointer; }
+  .list > li.trip .chev { flex: none; transition: transform .2s; }
+  .list > li.trip.open .chev { transform: rotate(90deg); }
+  .list > li.stop { padding: 8px 16px 8px 28px; font-size: 14px; background: var(--night); border-top-style: dashed; }
   .list .play { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--raised); color: var(--accent); font-size: 13px; }
 
   /* The Pi can't be reached */
@@ -347,7 +399,7 @@
     <div class="hero" id="hero">
       <canvas class="scene" id="scene" width="64" height="64" hidden></canvas>
       <div class="hero-top">
-        <div><h1 id="name">…</h1><p class="sub" id="sub"></p></div>
+        <div><button class="pill name" id="name-button"><img id="name-icon" alt=""><h1 id="name">…</h1><span class="chev">›</span></button><p class="sub" id="sub"></p></div>
         <div class="hero-buttons">
           <div class="neighbours" id="neighbours"></div>
           <button class="pill" id="sleep" hidden></button>
@@ -366,33 +418,26 @@
         <button class="soft" id="watch" hidden></button>
       </div>
     </div>
+    <!-- The tray: on top the things that are dragged onto the pet, below the ones that open something -->
     <div class="tray" id="tray">
-      <button class="thing" data-thing="meal" data-action="feed" data-item="meal" data-helps="satiety"><img alt=""><small data-t="page.things.meal"></small></button>
-      <button class="thing" data-thing="bag" data-bag="1" id="thing-bag"><img alt=""><small data-t="page.things.bag"></small></button>
-      <button class="thing" data-thing="ball" data-action="play" data-helps="mood"><img alt=""><small data-t="page.things.ball"></small></button>
-      <button class="thing" data-thing="sponge" data-action="clean" data-helps="hygiene" data-rub="1"><img alt=""><small data-t="page.things.sponge"></small></button>
-      <button class="thing" data-thing="baton" data-action="trick" data-wand="1"><img alt=""><small data-t="page.things.baton"></small></button>
-      <button class="thing" data-thing="medicine" data-action="medicine" data-helps="health" hidden><img alt=""><small data-t="page.things.medicine"></small></button>
+      <div class="things">
+        <button class="thing" data-thing="meal" data-action="feed" data-item="meal" data-helps="satiety"><img alt=""><small data-t="page.things.meal"></small></button>
+        <button class="thing" data-thing="ball" data-action="play" data-helps="mood"><img alt=""><small data-t="page.things.ball"></small></button>
+        <button class="thing" data-thing="sponge" data-action="clean" data-helps="hygiene" data-rub="1"><img alt=""><small data-t="page.things.sponge"></small></button>
+        <button class="thing" data-thing="medicine" data-action="medicine" data-helps="health" hidden><img alt=""><small data-t="page.things.medicine"></small></button>
+      </div>
+      <div class="tools">
+        <button class="tool" data-tool="bag" data-thing="bag"><img alt=""><small data-t="page.things.bag"></small></button>
+        <button class="tool" data-tool="baton" data-thing="baton"><img alt=""><small data-t="page.tools.tricks"></small></button>
+        <button class="tool" data-tool="train" data-thing="whistle"><img alt=""><small data-t="page.tools.train"></small></button>
+        <button class="tool" data-tool="game" data-thing="hide"><img alt=""><small data-t="page.tools.game"></small></button>
+      </div>
     </div>
-    <!-- What goes on instead of the tray: the bag, tricks, training, hide and seek, packing -->
+    <!-- What goes on instead of the tray: the bag, tricks, training, hide and seek, the pet's own things -->
     <div class="sheet" id="bag-mode" hidden>
       <button class="close" id="bag-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.things.bag"></h3>
-      <div class="bag" id="bag">
-      <button class="thing" data-thing="fruit_berry" data-action="feed" data-item="fruit_berry" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="fruit_sunflower" data-action="feed" data-item="fruit_sunflower" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="fruit_cherry" data-action="feed" data-item="fruit_cherry" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="fruit_herb" data-action="feed" data-item="fruit_herb" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="honeycomb" data-action="feed" data-item="honeycomb" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="hazelnut" data-action="feed" data-item="hazelnut" data-boost="1" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="watercress" data-action="feed" data-item="watercress" data-boost="1" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="glowberry" data-action="feed" data-item="glowberry" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="pinenut" data-action="feed" data-item="pinenut" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="seed" data-action="plant" data-item="berry" data-seed="seed_berry" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="seed" data-action="plant" data-item="sunflower" data-seed="seed_sunflower" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="seed" data-action="plant" data-item="cherry" data-seed="seed_cherry" hidden><img alt=""><small></small></button>
-      <button class="thing" data-thing="seed" data-action="plant" data-item="herb" data-seed="seed_herb" hidden><img alt=""><small></small></button>
-      </div>
+      <div class="shelves" id="bag"></div>
       <p id="bag-empty" data-t="page.bag.empty" hidden></p>
     </div>
 
@@ -402,29 +447,28 @@
       <ul class="tricks" id="tricks"></ul>
     </div>
 
+    <div class="sheet" id="pet-mode" hidden>
+      <button class="close" id="pet-close" data-t-aria="page.close">✕</button>
+      <h3 class="pet-name"></h3>
+      <ul class="list">
+        <li><button class="row" id="rename"><span><span data-t="page.rename"></span><small class="pet-name"></small></span><span class="chev">›</span></button></li>
+        <li id="new-egg-row"><button class="row" id="new-egg"><span><span data-t="page.new_egg"></span><small data-t="page.more.new_egg_note"></small></span><span class="chev">›</span></button></li>
+        <li id="retire-row"><button class="row" id="retire"><span><span data-t="page.retire"></span><small data-t="page.more.retire_note"></small></span><span class="chev">›</span></button></li>
+        <li id="take-row" hidden><button class="row" id="take-along"><span><span data-t="page.take_along"></span><small data-t="page.more.take_along_note"></small></span><span class="chev">›</span></button></li>
+        <li id="bring-row" hidden><button class="row" id="bring-display"><span><span data-t="page.bring_display"></span><small data-t="page.more.bring_display_note"></small></span><span class="chev">›</span></button></li>
+      </ul>
+    </div>
+
     <div class="sheet" id="train-mode" hidden>
       <button class="close" id="train-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.tools.train"></h3>
       <p id="train-hint"></p>
       <ul class="tricks" id="skills"></ul>
-      <div class="ball" id="train-ball" hidden>⚽</div>
+      <img class="ball" id="train-ball" alt="" hidden>
       <button class="tap" id="train-tap" hidden data-t="page.train.tap"></button>
       <div class="steps" id="train-steps" hidden></div>
       <p class="say" id="train-say" aria-live="polite"></p>
       <button class="link" id="train-back" hidden data-t="page.train.back"></button>
-    </div>
-
-    <div class="sheet cover" id="pack-mode" hidden>
-      <button class="close" id="pack-close" data-t-aria="page.close">✕</button>
-      <h3 data-t="page.things.trip"></h3>
-      <p class="hearts" id="pack-hearts"></p>
-      <p data-t="page.pack.where"></p>
-      <div class="choices" id="pack-areas"></div>
-      <p data-t="page.pack.what"></p>
-      <div class="steps" id="pack-slots"></div>
-      <div class="choices" id="pack-things"></div>
-      <p class="say" id="pack-say" aria-live="polite"></p>
-      <button class="wide primary" id="pack-go" data-t="page.pack.go"></button>
     </div>
 
     <div class="sheet" id="game" hidden>
@@ -435,10 +479,19 @@
   </section>
 
   <section class="view" id="view-adventure" hidden>
-    <div class="page">
+    <div class="page trip">
       <h2 data-t="page.nav.adventure"></h2>
-      <p class="lead" id="adventure-lead"></p>
-      <div id="adventures" style="display: grid; gap: 10px"></div>
+      <p class="lead" id="adventure-lead" hidden></p>
+      <div class="packing" id="packing">
+        <p class="hearts" id="pack-hearts"></p>
+        <p data-t="page.pack.where"></p>
+        <div class="choices" id="pack-areas"></div>
+        <p data-t="page.pack.what"></p>
+        <div class="steps" id="pack-slots"></div>
+        <div class="choices" id="pack-things"></div>
+        <p class="say" id="pack-say" aria-live="polite"></p>
+        <button class="wide primary" id="pack-go" data-t="page.pack.go"></button>
+      </div>
     </div>
   </section>
 
@@ -447,23 +500,21 @@
       <h2 data-t="page.diary"></h2>
       <nav class="segments" role="tablist">
         <button role="tab" data-tab="history" data-t="page.tabs.history"></button>
-        <button role="tab" data-tab="statistics" data-t="page.tabs.statistics" hidden></button>
-        <button role="tab" data-tab="travels" data-t="page.tabs.travels" hidden></button>
-        <button role="tab" data-tab="finds" data-t="page.tabs.finds" hidden></button>
         <button role="tab" data-tab="gallery" data-t="page.tabs.gallery" hidden></button>
+        <button role="tab" data-tab="statistics" data-t="page.tabs.statistics" hidden></button>
       </nav>
       <ul class="list" data-panel="history" id="events"></ul>
       <div data-panel="statistics" hidden style="display: grid; gap: 14px">
         <ul class="list" id="values"></ul>
         <ul class="list" id="statistics"></ul>
       </div>
-      <ul class="list" data-panel="travels" id="travels" hidden></ul>
-      <ul class="list" data-panel="finds" id="finds" hidden></ul>
       <div data-panel="gallery" hidden style="display: grid; gap: 14px">
         <div class="label" id="album-count"></div>
         <div class="pages" id="album"></div>
         <div class="label" id="ancestors-label" data-t="page.gallery.ancestors" hidden></div>
         <ul class="list gallery" id="gallery" hidden></ul>
+        <div class="label" id="friends-label" data-t="page.gallery.friends" hidden></div>
+        <ul class="list" id="friends" hidden></ul>
       </div>
     </div>
   </section>
@@ -471,14 +522,6 @@
   <section class="view" id="view-more" hidden>
     <div class="page">
       <h2 data-t="page.tabs.more"></h2>
-      <div class="label" data-t="page.more.pet"></div>
-      <ul class="list">
-        <li><button class="row" id="rename"><span><span data-t="page.rename"></span><small class="pet-name"></small></span><span class="chev">›</span></button></li>
-        <li id="new-egg-row"><button class="row" id="new-egg"><span><span data-t="page.new_egg"></span><small data-t="page.more.new_egg_note"></small></span><span class="chev">›</span></button></li>
-        <li id="retire-row"><button class="row" id="retire"><span><span data-t="page.retire"></span><small data-t="page.more.retire_note"></small></span><span class="chev">›</span></button></li>
-        <li id="take-row" hidden><button class="row" id="take-along"><span><span data-t="page.take_along"></span><small data-t="page.more.take_along_note"></small></span><span class="chev">›</span></button></li>
-        <li id="bring-row" hidden><button class="row" id="bring-display"><span><span data-t="page.bring_display"></span><small data-t="page.more.bring_display_note"></small></span><span class="chev">›</span></button></li>
-      </ul>
       <div style="display: grid; gap: 8px">
         <div class="label" data-t="page.more.sound"></div>
         <div class="segments" role="group" data-t-aria="page.more.sound">
@@ -509,7 +552,7 @@
 
   <nav class="tabbar" id="tabbar">
     <button data-view="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-4.4 0-8 3.6-8 8.5 0 3.6 3 6.5 8 6.5s8-2.9 8-6.5C20 7.6 16.4 4 12 4z"/><circle cx="9.5" cy="11.5" r="1" fill="currentColor"/><circle cx="14.5" cy="11.5" r="1" fill="currentColor"/></svg><span id="nav-name"></span></button>
-    <button data-view="adventure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5z"/></svg><span data-t="page.nav.adventure"></span></button>
+    <button data-view="adventure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V6a5 5 0 0 1 10 0v2"/><rect x="5" y="8" width="14" height="13" rx="3"/><path d="M9 14h6"/></svg><span data-t="page.nav.adventure"></span></button>
     <button data-view="diary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7h6"/></svg><span data-t="page.diary"></span></button>
     <button data-view="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg><span data-t="page.tabs.more"></span></button>
   </nav>
@@ -630,8 +673,18 @@ function packPicture(id) {
   img.src = app.thing(id);
   return img;
 }
-// Battle stats: symbol and color of the bar
-const SKILL_ICONS = { strength: ["💪", "#ff8a5a"], speed: ["⚡", "#ffdc3c"], smarts: ["🧠", "#b48cff"] };
+// Battle stats: the color of the bar (the picture comes from app.thing)
+const SKILL_COLORS = { strength: "#ff8a5a", speed: "#ffdc3c", smarts: "#b48cff" };
+// What a thing in the bag does, as a small badge on it: [what it shows, its color]. Fruits (and,
+// dashed, their seeds) show the need they fill.
+const BADGES = {
+  satiety: [svg("satiety"), "var(--satiety)"], energy: [svg("energy"), "var(--energy)"],
+  mood: [svg("mood"), "var(--mood)"], health: [svg("health"), "var(--health)"],
+  heart: [svg("health"), "var(--mood)"], finder: ["✦", "var(--hygiene)"], fresh: [svg("energy"), "var(--energy)"],
+  trick: ["×2" + svg("trick"), "var(--energy)"], train: ["×2" + svg("train"), "var(--satiety)"],
+  growth: ["↑", "var(--health)"], snow: ["❄", "var(--hygiene)"],
+};
+const PACKED = ["heart", "finder", "fresh"];  // what works from the backpack on a trip
 const ARROWS = { left: "←", right: "→", up: "↑", down: "↓" };
 const LAND_MS = 900;  // how long a thrown item falls in the scene (THROW_FALL in core/src/scene.ts)
 let pollTimer, sayTimer, current, view = "home", tab = "history";
@@ -891,6 +944,12 @@ function onPet(x, y) {
   const [ax, ay, aw, ah] = area, m = 0.03;  // a little room around it
   return u >= ax - m && u <= ax + aw + m && v >= ay - m && v <= ay + ah + m;
 }
+// Whether a point is on the plant
+function onPlant(x, y) {
+  if (!current || !current.plant || !current.plant.area || current.trip) return false;
+  const [u, v] = inScene(x, y), [ax, ay, aw, ah] = current.plant.area;
+  return u >= ax && u <= ax + aw && v >= ay && v <= ay + ah;
+}
 // Whether a point is on the house (it stands at the same place on the phone and on the Pi)
 function onHouse(x, y) {
   if (!current || !current.house || current.trip) return false;
@@ -924,13 +983,15 @@ function burst(x, y, kind = "heart") {
 
 $("stats").innerHTML = STATS.map((key) =>
   `<button class="need" data-key="${key}" style="--c:var(--${key})">${svg(key)}<span class="meter"><b></b></span></button>`).join("");
-document.querySelectorAll(".thing").forEach((b) => { b.firstElementChild.src = app.thing(b.dataset.thing); });
+document.querySelectorAll(".tray .thing, .tool").forEach((b) => { b.firstElementChild.src = app.thing(b.dataset.thing); });
+$("train-ball").src = app.thing("strength");
 
 function render(s) {
   current = s;
   $("hero").classList.toggle("whole", app.home() !== "phone");
   renderMoving(s);
   $("name").textContent = s.name;
+  $("name-icon").src = app.icon(s.stage, s.species);
   $("nav-name").textContent = s.name;
   renderNeighbours(s);
   document.querySelectorAll(".pet-name").forEach((e) => { e.textContent = s.name; });
@@ -994,23 +1055,18 @@ function render(s) {
 
   // The tray: an egg can only be kept warm (by stroking it)
   $("tray").hidden = egg;
-  document.querySelectorAll(".thing").forEach((b) => {
+  document.querySelectorAll(".tray .thing").forEach((b) => {
     const a = b.dataset.action;
-    // in the bag: how much of it there is, and once found out, what it loves and what it won't eat
-    const id = b.dataset.seed || (b.closest(".bag") && b.dataset.item);
-    const kept = id && s.items.find((x) => x.id === id);
-    if (kept) {
-      b.lastElementChild.textContent = kept.label;
-      b.dataset.count = kept.count;
-      b.dataset.mark = s.favorite_food === id ? "❤" : s.disliked_food === id ? "✕" : "";
-    }
-    b.hidden = egg || (a === "medicine" && !s.sick) || (id && !kept);
-    // the baton shows tricks: practicing needs energy, showing one it knows doesn't
-    b.disabled = b.dataset.bag ? false : b.dataset.wand ? s.asleep || !!s.trip : !s.actions[a];
-    if (b.dataset.wand && b.disabled && baton) holdBaton(false);
+    b.hidden = a === "medicine" && !s.sick;
+    b.disabled = !s.actions[a];
     b.classList.toggle("wanted", s.needs.includes(b.dataset.helps));
   });
-  $("bag-empty").hidden = [...$("bag").children].some((b) => !b.hidden);
+  // Tricks, training and hide and seek wait while it is away; when it can't right now, it says so
+  // once asked (the bag opens always)
+  const away = !!s.trip || !!s.grandma;
+  document.querySelectorAll(".tool").forEach((b) => { b.disabled = b.dataset.tool !== "bag" && away; });
+  if (away && baton) holdBaton(false);
+  renderBag(s);
 
   // Sleeping: what the button does is what it says
   const sleep = $("sleep");
@@ -1024,8 +1080,8 @@ function render(s) {
   renderSkills(s);
   renderValues(s);
   renderStatistics(s);
-  renderFinds(s);
-  renderAdventures(s);
+  renderFriends(s);
+  renderTrip(s);
   $("new-egg-row").hidden = egg;
   // the display keeps its last pet
   $("retire-row").hidden = app.home() === "display" && s.pets.filter((p) => !p.phone).length <= 1;
@@ -1049,65 +1105,43 @@ function picked(s, action) {
   return all.find((x) => x[0] === choice[action]) || all[0];
 }
 
-// ---------- Adventures ----------
-
-function renderAdventures(s) {
-  const egg = s.stage === "egg";
-  $("adventure-lead").textContent = t(egg ? "page.adventure.egg" : "page.adventure.lead", { name: s.name });
-  // Why something can't be done right now, as a short word on its card
-  const why = (a, energy) => s.trip ? t("page.adventure.away") : s.asleep ? t("page.status.asleep")
-    : energy && !s.actions[a] ? t("page.adventure.tired") : "";
-  const cards = egg ? [] : [
-    { id: "trip", color: "var(--hygiene)", title: t("page.things.trip"),
-      text: `${tripHearts(s)} · ${t("page.adventure.areas",
-        { n: s.areas.filter((a) => a.unlocked).length, all: s.areas.length })}`,
-      ok: s.actions.trip, tag: s.trip ? t("page.adventure.away") : s.stage === "baby" ? t("page.adventure.too_young")
-        : s.backpack ? t("page.unpack") : why("trip") || t("page.adventure.go") },
-    { id: "trick", color: "var(--energy)", title: t("page.tools.tricks"),
-      text: t("page.adventure.tricks", { n: s.tricks.filter((x) => x.learned).length, all: s.tricks.length }),
-      ok: s.actions.trick, tag: why("trick", true) || t("page.adventure.go") },
-    { id: "train", color: "var(--satiety)", title: t("page.tools.train"),
-      text: s.skills.map((skill) => `${SKILL_ICONS[skill.id][0]} ${Math.floor(skill.value)}`).join(" · "),
-      ok: s.actions.train, tag: why("train", true) || t("page.adventure.go") },
-    { id: "game", color: "var(--mood)", title: t("page.tools.game"), text: t("page.statistics.game_value",
-      { games: s.counters?.games || 0, won: s.counters?.games_won || 0 }),
-      ok: s.actions.game, tag: why("game", true) || t("page.adventure.go") },
-  ];
-  $("adventures").replaceChildren(...cards.map((c) => {
-    const b = document.createElement("button");
-    b.className = "card";
-    b.dataset.adventure = c.id;
-    b.style.setProperty("--c", c.color);
-    b.innerHTML = `<span class="icon">${svg(c.id)}</span><span><h3></h3><p></p></span><span class="tag${c.ok ? " go" : ""}"></span>`;
-    b.querySelector("h3").textContent = c.title;
-    b.querySelector("p").textContent = c.text;
-    b.querySelector(".tag").textContent = c.tag;
-    return b;
-  }));
-}
-
-$("adventures").addEventListener("click", (e) => {
-  const b = e.target.closest("[data-adventure]");
-  if (!b || !current) return;
-  const id = b.dataset.adventure;
-  if (id === "trip") {
-    if (current.stage === "baby") return say(t("pet.rejected.too_young", { name: current.name }));
-    if (current.trip) return say($("trip-info").textContent);
-    if (current.backpack) return unpack().then(() => showView("home"));
-    return openPack();
-  }
-  if (id === "game") return act("game", "start").then((r) => { if (r && r.accepted) showView("home"); });
-  if (id === "trick") return openTricks();
-  if (id === "train") return openTraining();
-});
-
-// Sheets: one at a time, over the lower part, with the scene in sight (packing: the whole screen)
+// Sheets: one at a time, in the place of the tray, with the scene and what it needs in sight
 function openSheet(id) {
-  if (id !== "trick-mode" && !$("trick-mode").hidden) holdBaton(false); // the tricks list hands the baton back
+  if (id !== "trick-mode" && !$("trick-mode").hidden) holdBaton(false); // the tricks hand the baton back
   document.querySelectorAll(".sheet").forEach((sheet) => { sheet.hidden = sheet.id !== id; });
   $("view-home").classList.toggle("busy", !!id);
-  $("view-home").classList.toggle("cover", !!id && $(id).classList.contains("cover"));
   if (id) showView("home");
+}
+
+// The lower row of the tray: a tap opens the bag, the tricks or the training, or starts hide and seek
+const TOOLS = {
+  bag: () => openSheet("bag-mode"),
+  baton: () => openTricks(),
+  train: () => openTraining(),
+  game: () => act("game", "start"),
+};
+document.querySelectorAll(".tool").forEach((b) => b.addEventListener("click", () => { if (current) TOOLS[b.dataset.tool](); }));
+$("name-button").addEventListener("click", () => { if (current) openSheet("pet-mode"); });
+$("pet-close").addEventListener("click", () => openSheet(null));
+
+// ---------- The trip ----------
+// The tab is the packing itself. While the pet can't set off for a while (it is still an egg or
+// too little, it is away, its backpack is still full), that stands there instead.
+
+let packedFor = "";
+function renderTrip(s) {
+  const reason = s.stage === "egg" ? t("page.adventure.egg")
+    : s.stage === "baby" ? t("pet.rejected.too_young", { name: s.name })
+    : s.trip || s.grandma || s.backpack ? $("trip-info").textContent : "";
+  $("adventure-lead").hidden = !reason;
+  $("adventure-lead").textContent = reason;
+  $("packing").hidden = !!reason;
+  // built again only when something changes, so a tap in the middle of it isn't lost
+  const key = JSON.stringify([s.id, s.areas, s.packable, s.trip_hearts, s.max_pack]);
+  if (!reason && view === "adventure" && key !== packedFor) {
+    packedFor = key;
+    renderPack();
+  }
 }
 
 // The hearts it would set off with now, out of the usual three
@@ -1117,11 +1151,6 @@ function tripHearts(s, more = 0) {
 }
 
 // Packing: the destination, and up to max_pack things that help on the way
-function openPack() {
-  renderPack();
-  openSheet("pack-mode");
-}
-
 function renderPack() {
   const s = current, area = picked(s, "trip");
   for (let i = packed.length - 1; i >= 0; i--) {
@@ -1184,29 +1213,50 @@ function renderPack() {
     const b = document.createElement("button");
     b.replaceChildren(packPicture(thing.id), ` ${thing.label}`);
     if (thing.id === s.disliked_food) b.append(" ✕"); // it won't eat that on the way either
+    // what works from the backpack carries its badge, as in the bag
+    const effects = packedEffects(thing.id);
+    if (effects.length) b.append(" ", ...badge(effects));
     b.disabled = packed.length >= s.max_pack || packed.filter((id) => id === thing.id).length >= thing.count;
     b.addEventListener("click", () => {
       packed.push(thing.id);
       renderPack();
+      // once packed, it says what it does on the way
+      $("pack-say").textContent = `${thing.label}: ${packText(thing.id)}`;
     });
     return b;
   }));
   // the hearts it would set off with: feeding it first can make one more
   // a honeycomb packed is one heart more right away
   $("pack-hearts").textContent = tripHearts(s, packed.includes("honeycomb") ? 1 : 0);
-  $("pack-go").disabled = !s.actions.trip;
 }
-$("pack-close").addEventListener("click", () => openSheet(null));
+// What a thing in the backpack does on the way: the ball plays with wild pets, anything to eat heals
+// a heart after a lost scuffle, and some food works from the backpack besides
+function packedEffects(id) {
+  const item = current && current.items.find((x) => x.id === id);
+  return item ? item.effects.filter((k) => PACKED.includes(k)) : [];
+}
+function packText(id) {
+  if (id === "ball") return t("page.pack.ball_does");
+  return [...effectText(packedEffects(id)), t("page.pack.food_does")].join(" · ");
+}
+
+// If it can't set off right now (asleep, too tired, …), it says why once asked
 $("pack-go").addEventListener("click", async () => {
   const area = current && picked(current, "trip");
   if (!area) return;
-  // the backpack drops into the scene, the pet puts it on and sets off
-  const r = await act("trip", area[0], { throw: 0.5, value: [...packed] });
-  if (r && r.accepted) {
+  try {
+    // the backpack drops into the scene, the pet puts it on and sets off
+    const r = await action("trip", area[0], { throw: 0.5, value: [...packed] });
+    render(r.state);
+    if (!r.accepted) {
+      $("pack-say").textContent = r.message;
+      return feel("no");
+    }
+    feel("ok");
     packed.length = 0;
-    openSheet(null);
-  } else if (r) {
-    $("pack-say").textContent = r.message;
+    showView("home");
+  } catch (err) {
+    fail(err);
   }
 });
 
@@ -1264,49 +1314,150 @@ function meter(percent, color) {
   return bar;
 }
 
-// Finds: the friends, eggs to brood, hats to put on, decorations to set out, the seeds and the plant
-function renderFinds(s) {
-  const rows = [];
-  // a display from before there could be several friends only tells of one
-  for (const friend of s.friends ?? (s.friend ? [s.friend] : [])) {
-    // after a nest the visits don't count for a while: an old friend, without a count that doesn't move
-    rows.push([t("page.finds.friend", { pet: friend.label }), friend.visiting ? t("page.finds.friend_here")
-      : friend.resting ? t("page.finds.friend_old")
-      : t("page.finds.friend_visits", { n: friend.visits, needed: friend.needed })]);
-  }
-  for (const egg of s.eggs) {
-    // what a pet has passed on to its egg
-    const note = [t("page.finds.egg"), egg.from && t("page.finds.egg_from", { name: egg.from }),
-      ...egg.skills.map((k) => `${k.label} ${k.value}`)];
-    rows.push([egg.label, note.filter(Boolean).join(" · "), { kind: "egg", egg }]);
-  }
-  if (s.plant) {
-    const state = t(s.plant.ripe ? "page.finds.ripe" : s.plant.stage === "grown" ? "page.finds.ripening" : "page.finds.growing");
-    rows.push([`${PLANT_ICONS[s.plant.kind]} ${s.plant.label}`, `${state} · ${tn("page.finds.left", s.plant.left)}`]);
-  }
-  if (s.house) rows.push([t("page.finds.house", { house: t(`page.houses.${s.house.step}`) }), tn("page.finds.house_spots", s.house.spots)]);
-  for (const item of s.items) {
-    rows.push(item.kind === "seed" || item.kind === "fruit" ? [item.label, t("page.finds.in_bag", { n: item.count })]
-      : item.kind === "food" ? [item.label, [t("page.finds.in_bag", { n: item.count }),
-        ...item.effects.map((k) => t(`page.finds.effects.${k}`))].join(" · ")]
-      : [item.label, [t(`page.kinds.${item.kind}`), item.place === "inside" && t("page.finds.inside"),
-        ...item.effects.map((k) => t(`page.finds.effects.${k}`))].filter(Boolean).join(" · "), item]);
-  }
-  offerTab("finds", rows.length);
-  $("finds").replaceChildren(...rows.map(([label, note, item]) => {
-    if (!item) return row(label, note);
-    const b = document.createElement("button");
-    b.className = "small";
-    if (item.kind === "egg") {
-      b.textContent = t("page.finds.egg_brood");
-      b.addEventListener("click", () => newEgg(item.egg));
-    } else {
-      b.textContent = t(`page.finds.${item.kind}_${item.active ? "off" : "on"}`);
-      b.classList.toggle("on", item.active);
-      b.addEventListener("click", () => act(item.kind === "hat" ? "wear" : "deco", item.id));
+// ---------- The bag ----------
+// A shelf each for what it eats, the seeds, and what it wears or sets out (with the eggs to brood).
+// What it eats and the seeds are dragged onto the pet like the things in the tray; a hat or a
+// decoration is put on or away with a tap, an egg is brooded. Held a moment, each says what it does.
+
+// One thing in the bag: its picture, its name, and what it says when held
+function bagTile(picture, label, info) {
+  const b = document.createElement("button");
+  b.className = "thing tile";
+  const img = document.createElement("img");
+  img.alt = "";
+  img.src = picture;
+  const small = document.createElement("small");
+  small.textContent = label;
+  b.append(img, small);
+  b.dataset.info = info;
+  b.setAttribute("aria-label", info);
+  b.addEventListener("contextmenu", (e) => e.preventDefault());
+  return b;
+}
+
+// What it does, as a badge (the first thing it does is enough for that)
+function badge(effects, seed) {
+  const [mark, color] = BADGES[effects[0]] || [];
+  if (!mark) return [];
+  const span = document.createElement("span");
+  span.className = seed ? "badge seed" : "badge";
+  span.style.setProperty("--c", color);
+  span.innerHTML = mark;
+  return [span];
+}
+
+const effectText = (effects) => effects.map((k) => t(`page.bag.effects.${k}`));
+
+function renderBag(s) {
+  const bag = $("bag");
+  // built again only when what is in it changes, so that a drag going on isn't broken
+  const key = JSON.stringify([s.items.map((x) => [x.id, x.count, x.active, x.place]), s.eggs, s.favorite_food, s.disliked_food]);
+  if (bag.dataset.key !== key) {
+    bag.dataset.key = key;
+    const fruits = [], foods = [], seeds = [], wear = [];
+    for (const item of s.items) {
+      if (item.kind === "fruit" || item.kind === "food") {
+        const b = bagTile(app.thing(item.id), item.label, [item.label, ...effectText(item.effects)].join(" · "));
+        b.dataset.action = "feed";
+        b.dataset.item = item.id;
+        if (item.effects.some((k) => k === "trick" || k === "train")) b.dataset.boost = "1";
+        // how many, and once found out, what it loves and what it won't eat
+        const n = document.createElement("span");
+        n.className = "n";
+        n.textContent = `×${item.count}`;
+        const mark = s.favorite_food === item.id ? "❤" : s.disliked_food === item.id ? "✕" : "";
+        if (mark) n.append(" ", Object.assign(document.createElement("b"), { textContent: mark }));
+        b.append(n, ...badge(item.effects));
+        if (item.effects.some((k) => PACKED.includes(k))) b.append(Object.assign(packPicture("backpack"), { className: "packs" }));
+        (item.kind === "fruit" ? fruits : foods).push(b);
+      } else if (item.kind === "seed") {
+        const plant = item.id.replace("seed_", "");
+        const b = bagTile(app.thing("seed"), item.label, [item.label,
+          t("page.bag.grows", { fruit: s.item_labels[`fruit_${plant}`] || plant }), ...effectText(item.effects)].join(" · "));
+        b.dataset.action = "plant";
+        b.dataset.item = plant;
+        const n = document.createElement("span");
+        n.className = "n";
+        n.textContent = `×${item.count}`;
+        b.append(n, ...badge(item.effects, true));
+        seeds.push(b);
+      } else {
+        const b = bagTile(app.discovery(item.id, true), item.label, [item.label, t(`page.kinds.${item.kind}`),
+          item.place === "inside" && t("page.bag.inside"), ...effectText(item.effects)].filter(Boolean).join(" · "));
+        b.classList.toggle("worn", item.active);
+        b.append(...badge(item.effects));
+        pressable(b, () => act(item.kind === "hat" ? "wear" : "deco", item.id));
+        wear.push(b);
+      }
     }
-    return row(label, note, b);
+    for (const egg of s.eggs) {
+      // what a pet has passed on to its egg
+      const b = bagTile(app.icon("egg", egg.line), egg.label, [egg.label, t("page.bag.egg"),
+        egg.from && t("page.bag.egg_from", { name: egg.from }), ...egg.skills.map((k) => `${k.label} ${k.value}`)]
+        .filter(Boolean).join(" · "));
+      pressable(b, () => newEgg(egg));
+      wear.push(b);
+    }
+    const eat = [...fruits, ...foods];
+    eat.concat(seeds).forEach(draggable);
+    const shelf = (title, tiles) => {
+      if (!tiles.length) return [];
+      const div = document.createElement("div"), label = document.createElement("div"), row = document.createElement("div");
+      div.className = "shelf";
+      label.className = "label";
+      label.textContent = t(title);
+      row.append(...tiles);
+      div.append(label, row);
+      return [div];
+    };
+    bag.replaceChildren(...shelf("page.bag.food", eat), ...shelf("page.bag.seeds", seeds), ...shelf("page.bag.wear", wear));
+    $("bag-empty").hidden = bag.children.length > 0;
+  }
+  // what it can't have right now looks it; dragged onto it anyway, it says why
+  bag.querySelectorAll("[data-action]").forEach((b) => b.classList.toggle("locked", !s.actions[b.dataset.action]));
+}
+
+// A tile that is tapped (a hat, a decoration, an egg): held a moment instead, it says what it is
+const HOLD_MS = 450;
+function pressable(b, onTap) {
+  let timer = 0, held = false;
+  b.addEventListener("pointerdown", () => {
+    held = false;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      held = true;
+      say(b.dataset.info);
+      feel("tap");
+    }, HOLD_MS);
+  });
+  for (const type of ["pointerleave", "pointercancel"]) b.addEventListener(type, () => clearTimeout(timer));
+  b.addEventListener("click", () => {
+    clearTimeout(timer);
+    if (!held) onTap();
+    held = false;
+  });
+}
+
+// Its friends, in the album below the pets: how far each one is from the next nest
+let albumHas = false;
+function renderFriends(s) {
+  // a display from before there could be several friends only tells of one
+  const friends = s.friends ?? (s.friend ? [s.friend] : []);
+  $("friends").replaceChildren(...friends.map((friend) => {
+    // after a nest the visits don't count for a while: an old friend, without a count that doesn't move
+    const li = row(friend.label, friend.visiting ? t("page.gallery.friend_here")
+      : friend.resting ? t("page.gallery.friend_old")
+      : t("page.gallery.friend_visits", { n: friend.visits, needed: friend.needed }));
+    if (friend.species) {
+      const img = document.createElement("img");
+      img.alt = "";
+      img.src = app.icon("adult", friend.species);
+      li.prepend(img);
+    }
+    return li;
   }));
+  $("friends").hidden = $("friends-label").hidden = !friends.length;
+  offerTab("gallery", albumHas || friends.length > 0);
 }
 
 function renderGame(s) {
@@ -1330,13 +1481,18 @@ function trickLabel(id) {
 }
 
 function renderTricks(s) {
+  // built again only when something changes, so the moves keep drawing themselves
+  const key = JSON.stringify(s.tricks);
+  if ($("tricks").dataset.key === key) return;
+  $("tricks").dataset.key = key;
   $("tricks").replaceChildren(...s.tricks.map((trick) => {
     const li = document.createElement("li");
     li.dataset.trick = trick.id;
     // the move as a picture (its words for screen readers)
     const icon = document.createElement("span");
     icon.className = "move";
-    icon.innerHTML = svg(trick.id);
+    // the move draws itself: each line runs from 0 to 1 along its length
+    icon.innerHTML = svg(trick.id).replace(/<(path|circle) /g, '<$1 pathLength="1" ');
     icon.setAttribute("role", "img");
     icon.setAttribute("aria-label", t(`page.gestures.${trick.id}`));
     const text = document.createElement("div");
@@ -1356,11 +1512,10 @@ function renderTricks(s) {
 // Battle stats in the training sheet: a tap on one starts its exercise
 function renderSkills(s) {
   $("skills").replaceChildren(...s.skills.map((skill) => {
-    const [symbol, color] = SKILL_ICONS[skill.id] || ["?", "var(--accent)"];
+    const color = SKILL_COLORS[skill.id] || "var(--accent)";
     const li = document.createElement("li");
     li.dataset.skill = skill.id;
-    const icon = document.createElement("span");
-    icon.textContent = symbol;
+    const icon = packPicture(skill.id);
     const text = document.createElement("div");
     const hint = document.createElement("small");
     hint.textContent = t(`page.train.how.${skill.id}`);
@@ -1385,11 +1540,10 @@ async function refresh() {
   }
 }
 
-// How it is: the five needs, its weight and the bond
+// How it is: its weight and the bond (the needs are on the pet's own screen)
 function renderValues(s) {
   const note = { heavy: t("page.weight.heavy"), light: t("page.weight.light") }[s.weight_status] || "";
   $("values").replaceChildren(
-    ...STATS.map((key) => row(t(`page.stats.${key}`), "", meter(s.stats[key], `var(--${key})`))),
     row(t("page.values.weight"), t("page.values.ideal", { ideal: s.ideal_weight }) + note, figure(`${Math.round(s.weight)} g`)),
     row(t("page.values.bond"), "", figure("♥".repeat(s.bond_level) + "♡".repeat(5 - s.bond_level))),
   );
@@ -1489,12 +1643,25 @@ function welcome(s) {
   $("welcome").showModal();
 }
 
+// What happens on the way of a trip: it is told under the trip's own line, not in the list
+const ON_THE_WAY = ["battle", "find", "wild"], TRIP_STOPS = ["snack", "beaten", "tired", "home"];
+let travels = [], lastEvents = null;
+const openTrips = new Set();  // the trips opened up, by when they set off
+function travelOf(e) {
+  return e.accepted && e.action === "trip" && travels.find((tr) => tr.area === e.item && Math.abs(tr.start - e.at) < 120);
+}
+function onTheWay(e) {
+  const way = ON_THE_WAY.includes(e.action) || (e.action === "trip" && TRIP_STOPS.includes(e.item));
+  return way && travels.some((tr) => e.at >= tr.start && e.at <= tr.end + 5);
+}
+
 function renderEvents(events) {
+  lastEvents = events;
   let day, last;
   // Single looks in hide and seek stay out of the history (only the start counts),
   // and so do the tap and the answer that belong to an exercise
   events = events.filter((e) => !(e.action === "game" && e.item !== "start")
-    && !(e.action === "train" && !(e.item in SKILL_ICONS)));
+    && !(e.action === "train" && !(e.item in SKILL_COLORS)) && !onTheWay(e));
   const items = events.flatMap((e) => {
     const li = document.createElement("li");
     if (!e.accepted) li.className = "rejected";
@@ -1522,17 +1689,16 @@ function renderEvents(events) {
     last = { text: text.textContent, n: 1, times: document.createElement("span") };
     last.times.className = "times";
     li.append(time, text, last.times);
+    // a trip opens up with a tap into what happened on the way
+    const travel = travelOf(e);
+    if (travel) {
+      last = null;
+      return [...(heading ? [heading] : []), ...tripLines(li, text, travel)];
+    }
     // a scuffle that was kept can be watched again
     const replay = e.action === "battle" && current && (current.replays || [])
       .find((r) => r.at === e.at && e.item === `${r.foe}:${r.outcome}`);
-    if (replay) {
-      const play = document.createElement("button");
-      play.className = "play";
-      play.textContent = "▶";
-      play.setAttribute("aria-label", t("page.replay.play"));
-      play.addEventListener("click", () => watch([replay]));
-      li.append(play);
-    }
+    if (replay) li.append(playButton(replay));
     return heading ? [heading, li] : [li];
   });
   if (!items.length) {
@@ -1542,6 +1708,57 @@ function renderEvents(events) {
     items.push(li);
   }
   $("events").replaceChildren(...items);
+}
+
+// The line of a trip, with how long it was away, and below it, once opened, what happened on the way
+function tripLines(li, text, travel) {
+  const note = document.createElement("small");
+  note.textContent = t("page.travels.away", { time: inTime(travel.end - travel.start) });
+  text.append(note);
+  const chev = document.createElement("span");
+  chev.className = "chev";
+  chev.textContent = "›";
+  li.append(chev);
+  li.classList.add("trip");
+  const open = openTrips.has(travel.start);
+  li.classList.toggle("open", open);
+  const events = travel.stops.flatMap(stopEvents);
+  if (!events.some((e) => e.action !== "trip")) events.push({ at: travel.end, quiet: true });
+  events.push({ at: travel.end, action: "trip", item: "home" });
+  const lines = events.map((e) => {
+    const stop = document.createElement("li");
+    stop.className = "stop";
+    stop.hidden = !open;
+    const time = document.createElement("time");
+    time.textContent = new Date(e.at * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const what = document.createElement("span");
+    what.textContent = e.quiet ? t("page.travels.quiet") : eventText({ ...e, accepted: true });
+    stop.append(time, what);
+    // a scuffle that was kept can be watched again
+    const replay = e.action === "battle" && current && (current.replays || [])
+      .find((r) => r.at === e.at && e.item === `${r.foe}:${r.outcome}`);
+    if (replay) stop.append(playButton(replay));
+    return stop;
+  });
+  li.addEventListener("click", () => {
+    const opened = !openTrips.delete(travel.start);
+    if (opened) openTrips.add(travel.start);
+    li.classList.toggle("open", opened);
+    lines.forEach((line) => { line.hidden = !opened; });
+  });
+  return [li, ...lines];
+}
+
+function playButton(replay) {
+  const play = document.createElement("button");
+  play.className = "play";
+  play.textContent = "▶";
+  play.setAttribute("aria-label", t("page.replay.play"));
+  play.addEventListener("click", (e) => {
+    e.stopPropagation();
+    watch([replay]);
+  });
+  return play;
 }
 
 // A scuffle on a trip: "opponent:outcome" (win, lose, draw, or ball = distracted)
@@ -1590,35 +1807,14 @@ function wildText(item) {
   return t(`page.events.wild_${outcome}`, { pet: T[`species.${species}`] || species });
 }
 
-// The travel diary: one heading per trip (where, which day, how long), below it what happened
+// The trips, for the history: where, when, and what happened on the way
 async function loadTravels() {
   try {
-    const { travels } = await api("GET", "/api/pet/travels");
-    offerTab("travels", travels.length);
-    $("travels").replaceChildren(...travels.flatMap((travel) => {
-      const heading = document.createElement("li");
-      heading.className = "day";
-      heading.textContent = t("page.travels.heading", {
-        area: T[`areas.${travel.area}.name`] || travel.area,
-        day: dayLabel(new Date(travel.start * 1000)), time: inTime(travel.end - travel.start),
-      });
-      const lines = travel.stops.flatMap(stopEvents);
-      if (!lines.some((e) => e.action !== "trip")) lines.push({ at: travel.end, quiet: true });
-      lines.push({ at: travel.end, action: "trip", item: "home" });
-      return [heading, ...lines.map((e) => {
-        const li = document.createElement("li");
-        const time = document.createElement("time");
-        time.textContent = new Date(e.at * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        const text = document.createElement("span");
-        text.textContent = e.quiet ? t("page.travels.quiet") : eventText({ ...e, accepted: true });
-        li.append(time, text);
-        return li;
-      })];
-    }));
+    ({ travels } = await api("GET", "/api/pet/travels"));
   } catch (err) {
-    // An older Pi has no travel diary yet; the tab then stays away
-    offerTab("travels", false);
+    travels = []; // an older Pi has no travel diary yet: its trips stay plain lines
   }
+  if (lastEvents) renderEvents(lastEvents);
 }
 
 // A station of a trip as lines of the history: the scuffle, and what it left behind
@@ -1666,8 +1862,9 @@ async function loadGallery() {
     // A display with an older version has no album
     const { ancestors, album = [], lines } = await api("GET", "/api/pet/ancestors");
     const met = album.filter(Boolean);
-    // The album shows once there is more than the first egg in it
-    offerTab("gallery", ancestors.length || met.length > 1);
+    // The album shows once there is more than the first egg in it (or a friend)
+    albumHas = ancestors.length > 0 || met.length > 1;
+    if (current) renderFriends(current);
     $("album-count").hidden = !album.length;
     $("album-count").textContent = t("page.gallery.album", { met: met.length, all: album.length });
     $("album").hidden = !album.length;
@@ -1754,6 +1951,10 @@ function showView(name) {
     loadTravels();
     loadGallery();
   }
+  if (name === "adventure" && current) {
+    packedFor = "";
+    renderTrip(current);
+  }
   if (name === "more" && app.mode === "local") showLocation();  // the live location may have moved meanwhile
   if (name === "home") nextPreview();
 }
@@ -1813,6 +2014,15 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
       (lying ? TAKE[lying] : unpack)();
       return;
     }
+    // a tap on the plant says how it is doing
+    if (stroke.way < 8 && onPlant(e.clientX, e.clientY) && !(area && onPet(e.clientX, e.clientY))) {
+      stroke = null;
+      const plant = current.plant;
+      const state = t(plant.ripe ? "page.plant.ripe" : plant.stage === "grown" ? "page.plant.ripening" : "page.plant.growing");
+      say(`${PLANT_ICONS[plant.kind] || ""} ${plant.label}: ${state} · ${tn("page.plant.left", plant.left)}`);
+      feel("tap");
+      return;
+    }
     // a tap on the house looks inside for a moment
     if (stroke.way < 8 && onHouse(e.clientX, e.clientY) && !(area && onPet(e.clientX, e.clientY))) {
       stroke = null;
@@ -1833,36 +2043,49 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
 // ---------- The tray: drag a thing onto the pet ----------
 // Dropped right on the pet, food is eaten at once (on the phone, where the page knows where the
 // pet is). Anywhere else in the scene, or flicked up, it lands there and the pet goes to get it.
-// The sponge is rubbed over the pet.
+// The sponge is rubbed over the pet. A tap shows the way: the thing hops up towards the pet.
+// The same goes for what is eaten or planted from the bag; held a moment, that says what it does.
 
 const RUB_PX = 320;       // this much rubbing (px) is one cleaning
 const FLICK_SPEED = 0.5;  // a swipe up this fast (px/ms) throws it into the scene
 const sleepMs = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-document.querySelectorAll(".thing").forEach((b) => {
+document.querySelectorAll(".tray .thing").forEach(draggable);
+function draggable(b) {
   let drag = null;
 
   b.addEventListener("pointerdown", (e) => {
-    if (b.disabled || drag || b.dataset.bag) return;
+    if (b.disabled || drag) return;
     b.setPointerCapture(e.pointerId);
     const ghost = document.createElement("div");
     ghost.className = "ghost";
     ghost.append(b.firstElementChild.cloneNode());
-    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, trail: [[e.timeStamp, e.clientX, e.clientY]], ghost, rub: 0, rubbed: false, moved: false };
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, trail: [[e.timeStamp, e.clientX, e.clientY]], ghost, rub: 0, rubbed: false, moved: false,
+      held: false, timer: 0 };
+    if (b.dataset.info) {
+      const it = drag;
+      it.timer = setTimeout(() => {
+        if (it.moved) return;
+        it.held = true;
+        say(b.dataset.info);
+        feel("tap");
+      }, HOLD_MS);
+    }
     updateArea();
   });
   b.addEventListener("pointermove", (e) => {
     if (!drag || e.pointerId !== drag.id) return;
     const last = drag.trail[drag.trail.length - 1];
     drag.trail.push([e.timeStamp, e.clientX, e.clientY]);
-    if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 8) return;
+    if (!drag.moved && (drag.held || Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 8)) return;
     if (!drag.moved) {
+      clearTimeout(drag.timer);
       drag.moved = true;
       document.body.append(drag.ghost);
       b.classList.add("lift");
     }
     drag.ghost.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     const inside = overHero(e.clientX, e.clientY);
-    $("hero").classList.toggle("drop", inside && !b.dataset.rub && !b.dataset.wand);
+    $("hero").classList.toggle("drop", inside && !b.dataset.rub);
     if (b.dataset.rub && onPet(e.clientX, e.clientY)) {
       drag.rub += Math.hypot(e.clientX - last[1], e.clientY - last[2]);
       if (Math.random() < 0.3) {
@@ -1884,23 +2107,21 @@ document.querySelectorAll(".thing").forEach((b) => {
   };
   b.addEventListener("pointercancel", () => {
     if (!drag) return;
+    clearTimeout(drag.timer);
     drag.ghost.remove();
     drag = null;
     done();
   });
   b.addEventListener("pointerup", async (e) => {
     if (!drag || e.pointerId !== drag.id) return;
-    const { ghost, trail, moved, rubbed } = drag;
+    const { ghost, trail, moved, rubbed, held, timer } = drag;
     drag = null;
+    clearTimeout(timer);
     done();
-    if (b.dataset.wand) {
-      // the baton: a tap takes it or puts it back, dragged out it is taken
-      ghost.remove();
-      return holdBaton(moved || !baton);
-    }
     if (!moved) {
       ghost.remove();
-      return tapThing(b);
+      if (!held) hop(b);
+      return;
     }
     if (b.dataset.rub) {
       ghost.remove();
@@ -1911,10 +2132,7 @@ document.querySelectorAll(".thing").forEach((b) => {
     const from = trail.find(([at]) => e.timeStamp - at <= 100) || trail[trail.length - 1];
     const vy = (e.clientY - from[2]) / Math.max(1, e.timeStamp - from[0]);
     const inside = overHero(e.clientX, e.clientY);
-    if (!inside && vy > -FLICK_SPEED) {
-      ghost.remove();
-      return say(t("page.hint.drag", { name: current.name }));
-    }
+    if (!inside && vy > -FLICK_SPEED) return ghost.remove();
     const direct = inside && area && onPet(e.clientX, e.clientY) && ["feed", "medicine"].includes(b.dataset.action);
     const where = Math.round(Math.max(0, Math.min(1, inScene(e.clientX, e.clientY)[0])) * 100) / 100;
     // it drops into the scene (or into the pet's mouth)
@@ -1935,28 +2153,27 @@ document.querySelectorAll(".thing").forEach((b) => {
       fail(err);
     }
   });
-});
-
-// The bag: a tap opens it, and what is in it is dragged onto the pet like everything else
-$("thing-bag").addEventListener("click", () => { if (current) openSheet("bag-mode"); });
-$("bag-close").addEventListener("click", () => openSheet(null));
-
-// A tap instead of a drag: say how it goes
-function tapThing(b) {
-  if (!current) return;
-  say(t(b.dataset.rub ? "page.hint.sponge" : "page.hint.drag", { name: current.name }));
 }
 
+// A tap instead of a drag: the thing hops up towards the pet and falls back
+function hop(b) {
+  b.classList.remove("hop");
+  void b.offsetWidth;  // starts the hop again if it is still going
+  b.classList.add("hop");
+  b.addEventListener("animationend", () => b.classList.remove("hop"), { once: true });
+  feel("tap");
+}
+
+$("bag-close").addEventListener("click", () => openSheet(null));
+
 // ---------- The baton: tricks ----------
-// Taken from the tray, it stays in the hand: a move drawn over the scene is a trick (practiced, or
-// shown if the pet knows it), and stroking waits until it is put back.
+// While the tricks are open, it is in the hand: a move drawn over the scene is a trick (practiced,
+// or shown if the pet knows it), and stroking waits until it is put back.
 
 let baton = false;
-function holdBaton(on, quiet = false) {
+function holdBaton(on) {
   baton = on && !!current;
-  document.querySelector(".thing[data-wand]").classList.toggle("on", baton);
   $("hero").classList.toggle("wand", baton);
-  if (baton && !quiet) say(t("page.hint.baton", { name: current.name }));
 }
 {
   const hero = $("hero");
@@ -1967,7 +2184,7 @@ function holdBaton(on, quiet = false) {
     path = { id: e.pointerId, points: [[e.clientX, e.clientY]], spark: null };
     held = document.createElement("div");
     held.className = "ghost";
-    held.append(document.querySelector(".thing[data-wand] img").cloneNode());
+    held.append(packPicture("baton"));
     held.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     document.body.append(held);
   });
@@ -1994,6 +2211,7 @@ function holdBaton(on, quiet = false) {
 
 // The move drawn with the baton: the trick it stands for, practiced or shown
 async function showTrick(path) {
+  $("trick-mode").classList.add("drawn");  // the moves have been seen: they stop drawing themselves
   const id = gesture(path);
   // (a little touch is nothing; a real move it doesn't know gets an answer)
   const far = Math.max(...path.map(([x, y]) => Math.hypot(x - path[0][0], y - path[0][1])));
@@ -2224,11 +2442,12 @@ function gesture(trail) {
   return null;
 }
 
-// What it knows and how far it has got. While the list is open the baton is in the hand, so a
-// move drawn over the pet is tried at once.
+// What it knows and how far it has got, each move drawing itself. While they are open the baton
+// is in the hand, so a move drawn over the pet is tried at once.
 function openTricks() {
+  $("trick-mode").classList.remove("drawn");
   openSheet("trick-mode");
-  if (!document.querySelector(".thing[data-wand]").disabled) holdBaton(true, true);
+  holdBaton(true);
 }
 $("trick-close").addEventListener("click", () => openSheet(null));
 

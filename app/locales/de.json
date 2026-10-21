@@ -315,7 +315,7 @@
       "play": "Noch mal ansehen",
       "against": "Rauferei mit {foe} …"
     },
-    "collected": "{egg} eingesammelt – es liegt jetzt bei deinen Fundstücken",
+    "collected": "{egg} eingesammelt – es liegt jetzt in deiner Tasche",
     "unwrapped_fruit": "Drin war: {fruit}. Die Tasche war voll, also hat {name} gleich hineingebissen",
     "picked_fruit": "Aufgehoben: {fruit}. Die Tasche war voll, also hat {name} gleich hineingebissen",
     "boost": {
@@ -343,16 +343,14 @@
     "retire_egg_ok": "Aufgeben",
     "retired": "{name} ist jetzt im Album.",
     "retired_egg": "Das Ei ist weg.",
-    "retire_kept_confirm": "Das Ei zurück zu deinen Fundstücken legen? Du kannst es später ausbrüten.",
+    "retire_kept_confirm": "Das Ei zurück in deine Tasche legen? Du kannst es später ausbrüten.",
     "retire_kept_ok": "Zurücklegen",
-    "retired_kept": "Das Ei liegt jetzt bei deinen Fundstücken.",
+    "retired_kept": "Das Ei liegt jetzt in deiner Tasche.",
     "things": {
       "meal": "Mahlzeit",
       "ball": "Ball",
       "medicine": "Medizin",
-      "trip": "Ausflug",
       "sponge": "Schwamm",
-      "baton": "Taktstock",
       "bag": "Tasche"
     },
     "tools": {
@@ -456,8 +454,6 @@
     "tabs": {
       "history": "Verlauf",
       "statistics": "Werte",
-      "travels": "Ausflüge",
-      "finds": "Fundstücke",
       "gallery": "Album",
       "more": "Mehr"
     },
@@ -531,42 +527,6 @@
       "back": "{name} ist zurück und hat etwas mitgebracht. Pack aus, wenn du vor dem Display stehst.",
       "heading_home": "{name} macht sich auf den Heimweg",
       "brought": "Mitgebracht: {items}"
-    },
-    "finds": {
-      "ripe": "eine Frucht ist reif",
-      "ripening": "die nächste Frucht reift",
-      "growing": "wächst noch",
-      "left": {
-        "one": "noch 1 Frucht",
-        "other": "noch {n} Früchte"
-      },
-      "in_bag": "×{n} · in der Tasche",
-      "hat_on": "aufsetzen",
-      "hat_off": "abnehmen",
-      "deco_on": "aufstellen",
-      "deco_off": "wegräumen",
-      "egg": "wartet aufs Ausbrüten",
-      "egg_from": "gelegt von {name}",
-      "friend": "💛 {pet}",
-      "friend_visits": "Freundschaft · Besuche: {n} von {needed}",
-      "friend_here": "Freundschaft · gerade zu Besuch",
-      "friend_old": "alte Freundschaft",
-      "egg_brood": "ausbrüten",
-      "effects": {
-        "growth": "Ei, Baby und Kind wachsen schneller",
-        "snow": "es schneit ums Haus",
-        "heart": "im Rucksack: ein Herz mehr auf dem Ausflug",
-        "trick": "das nächste Trick-Üben zählt doppelt",
-        "train": "die nächste Trainingsübung zählt doppelt",
-        "finder": "im Rucksack: findet bei jeder Rast etwas",
-        "fresh": "im Rucksack: macht nicht müde und bringt so viel wie der erste Ausflug des Tages"
-      },
-      "house": "🏠 {house}",
-      "house_spots": {
-        "one": "1 Platz drinnen",
-        "other": "{n} Plätze drinnen"
-      },
-      "inside": "im Haus"
     },
     "kinds": {
       "hat": "Hut",
@@ -681,11 +641,15 @@
         "night": "{where}, unterm Sternenhimmel"
       },
       "mastered": "{form}, gemeistert",
-      "ancestors": "Pets im Album"
+      "ancestors": "Pets im Album",
+      "friends": "Freunde",
+      "friend_visits": "Freundschaft · Besuche: {n} von {needed}",
+      "friend_here": "Freundschaft · gerade zu Besuch",
+      "friend_old": "alte Freundschaft"
     },
     "travels": {
-      "heading": "{area} · {day} · {time}",
-      "quiet": "ein ruhiger Spaziergang ohne Zwischenfälle"
+      "quiet": "ein ruhiger Spaziergang ohne Zwischenfälle",
+      "away": "{time} unterwegs"
     },
     "app": {
       "location_none": "Noch kein Ort: Dein Pet hat kein Wetter, und die Sonne richtet sich nach deiner Zeitzone.",
@@ -723,11 +687,11 @@
     "train": {
       "hint": "Such eine Übung aus",
       "how": {
-        "strength": "den Ball werfen",
+        "strength": "einen Stein werfen",
         "speed": "aufs Signal reagieren",
         "smarts": "die Hüpfer merken"
       },
-      "strength": "Wisch den Ball so fest du kannst nach oben",
+      "strength": "Wisch den Stein so fest du kannst nach oben",
       "speed": "Schau aufs Display – tipp, sobald das Signal aufleuchtet!",
       "tap": "Tippen!",
       "smarts_watch": "Schau aufs Display und merk dir, wohin es hüpft",
@@ -743,15 +707,15 @@
       "what": "Was kommt in den Rucksack?",
       "locked": "Der Weg dorthin führt am Wächter vorbei: {area}.",
       "guardian": "Am Ende dieses Wegs wartet ein Wächter.",
-      "go": "Losschicken"
+      "go": "Losschicken",
+      "ball_does": "spielt unterwegs mit wilden Pets",
+      "food_does": "heilt nach einer verlorenen Rauferei ein Herz"
     },
     "wake": "Aufwecken",
     "sleep": "Schlafen",
     "history_empty": "Noch ist nichts passiert.",
     "hint": {
-      "sponge": "Reib mit dem Schwamm über {name}",
-      "drag": "Zieh es auf {name} oder in die Szene",
-      "baton": "Zeichne einen Trick über {name}."
+      "sponge": "Reib mit dem Schwamm über {name}"
     },
     "needs": {
       "satiety": "Zieh Futter auf {name}.",
@@ -761,14 +725,7 @@
       "health": "Medizin hilft, wenn {name} krank ist. Satt, sauber und ausgeschlafen bleibt es gesund."
     },
     "adventure": {
-      "egg": "Abenteuer gibt es, sobald das Ei geschlüpft ist.",
-      "lead": "Was macht {name} heute?",
-      "away": "Unterwegs",
-      "tired": "Zu müde",
-      "too_young": "Noch zu klein",
-      "go": "Los",
-      "areas": "{n} von {all} Gebieten bekannt",
-      "tricks": "{n} von {all} gelernt"
+      "egg": "Ausflüge gibt es, sobald das Ei geschlüpft ist."
     },
     "values": {
       "weight": "Gewicht",
@@ -776,17 +733,16 @@
       "bond": "Bindung"
     },
     "nav": {
-      "adventure": "Abenteuer"
+      "adventure": "Ausflug"
     },
     "more": {
       "sound": "Ton",
       "sound_on": "An",
       "sound_off": "Aus",
-      "pet": "Pet",
-      "new_egg_note": "Deine Fundstücke bleiben.",
+      "new_egg_note": "Deine Tasche bleibt, wie sie ist.",
       "retire_note": "Du kannst es jederzeit wieder nach Hause holen.",
       "retire_egg_note": "Dann ist es weg.",
-      "retire_kept_note": "Kommt zurück zu deinen Fundstücken.",
+      "retire_kept_note": "Kommt zurück in die Tasche.",
       "take_along_note": "Es zieht mitsamt seinem Haus vom Display aufs Handy.",
       "bring_display_note": "Es zieht vom Handy in ein Haus auf dem Display."
     },
@@ -796,14 +752,30 @@
       "dance": "flach hin und her",
       "flip": "nach oben"
     },
-    "houses": {
-      "1": "Hütte",
-      "2": "Häuschen",
-      "3": "Haus"
-    },
     "bag": {
       "empty": "Die Tasche ist leer.",
-      "favorite": "{name} strahlt: Das ist das Lieblingsessen!"
+      "favorite": "{name} strahlt: Das ist das Lieblingsessen!",
+      "food": "Essen",
+      "seeds": "Samen",
+      "wear": "Anziehen · Aufstellen",
+      "grows": "daraus wächst: {fruit}",
+      "inside": "im Haus",
+      "egg": "wartet aufs Ausbrüten",
+      "egg_from": "gelegt von {name}",
+      "effects": {
+        "satiety": "macht satt",
+        "energy": "gibt Energie",
+        "mood": "macht gute Laune",
+        "health": "macht gesünder",
+        "cure": "heilt eine Krankheit",
+        "growth": "Ei, Baby und Kind wachsen schneller",
+        "snow": "es schneit ums Haus",
+        "heart": "im Rucksack: ein Herz mehr auf dem Ausflug",
+        "trick": "das nächste Trick-Üben zählt doppelt",
+        "train": "die nächste Trainingsübung zählt doppelt",
+        "finder": "im Rucksack: findet bei jeder Rast etwas",
+        "fresh": "im Rucksack: macht nicht müde und bringt so viel wie der erste Ausflug des Tages"
+      }
     },
     "unwrapped_bag": "Drin war: {thing}. Liegt jetzt in deiner Tasche",
     "picked_bag": "Aufgehoben: {thing}. Liegt jetzt in deiner Tasche",
@@ -816,7 +788,16 @@
     "twins": "{name} gibt es zweimal, auf dem Handy und auf dem Display – noch aus der Zeit, bevor Pets umziehen konnten. Welches ist das echte? Das andere kommt ins Album.",
     "twin_phone": "Auf dem Handy",
     "twin_display": "Auf dem Display",
-    "look_phone": "Zu {name} wechseln (auf dem Handy)"
+    "look_phone": "Zu {name} wechseln (auf dem Handy)",
+    "plant": {
+      "ripe": "eine Frucht ist reif",
+      "ripening": "die nächste Frucht reift",
+      "growing": "wächst noch",
+      "left": {
+        "one": "noch 1 Frucht",
+        "other": "noch {n} Früchte"
+      }
+    }
   },
   "settings": {
     "title": "LED-Matrix",

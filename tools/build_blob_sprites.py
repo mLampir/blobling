@@ -36,7 +36,8 @@ frameTags):
 - mothmuff, sunflutter, jesterwing, digby, barrelbard, pawdini, rotorfly, jewelwing, prismfly, dambert,
   timberjack, archibeaver (_body / _faces) – their adults, the last of each three the secret one
   (faces of their own)
-- items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine
+- items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine, and
+                                     the app's things (sponge, baton, bag, whistle, training)
 - trip                             – backpack, plants, decorations, hats, things along the path,
                                      opponents and guardians
 - house                            – the house in its three steps, outside and inside
@@ -2446,6 +2447,8 @@ ITEM_PALETTE = {
     "g": (110, 200, 70), "R": (225, 45, 55), "Q": (160, 25, 40), "W": (255, 190, 190),     # apple
     "t": (40, 200, 188), "o": (150, 135, 100), "x": (110, 85, 55),
     "Y": (245, 212, 90), "O": (200, 160, 55), "L": (175, 230, 250),    # sponge with soap bubbles
+    "S": (165, 165, 180), "T": (110, 110, 130),                         # stone
+    "l": (110, 200, 90), "G": (60, 140, 70),                            # bush
 }
 
 EGG = [
@@ -4562,6 +4565,13 @@ ITEMS = {
     "baton": ["......Y.", ".....YYY", "....h.Y.", "...h....", "..h.....", ".nn.....", "nn......"],  # the app's, for tricks
     # the app's: the bag with what there is to eat and plant
     "bag": ["..n..n..", "...nn...", "..KKKK..", ".KKKKKj.", "KKKKKKKj", "KKKKKKjj", "KKKKKjjj", ".jjjjjj."],
+    # the app's: the whistle that starts training, and hide and seek (two eyes peeking out of a bush)
+    "whistle": ["......YYYY..", "YYYYY.YhYYY.", "YhYYYYYYYYYu", "OOOOOYYYYYOu", ".....OYYYO.u", "......OOO.u."],
+    "hide": ["..ll.ll..", ".lllllll.", "lllGllllG", "lllllllGl", "lhnlhnlGG", "GlllllGGG", ".GGGGGGG."],
+    # the training: the stone that is thrown for strength, the flash for speed, the light bulb for smarts
+    "stone": ["..SSS..", ".SSSSS.", "SShSSST", "SSSSSTT", ".TTTTT."],
+    "skill_speed": ["....YY", "...YY.", "..YY..", ".YYYYY", "...YY.", "..YY..", ".Y...."],
+    "skill_smarts": [".hhh.", "hYYYh", "hYYYO", "hYYYO", ".YOO.", ".SSS.", ".TTT."],
 }
 
 # ---------------------------------------------------------------- Trips and finds

@@ -7,7 +7,7 @@ a day and also tells you the time and the weather.
 
 <p align="center">
   <img src="docs/images/panel.jpg" width="420" alt="The LED panel: a blue sky with sun and a cloud, the time and the temperature at the top, the baby pet on the grass">
-  <img src="docs/images/pet-page.png" width="190" alt="The app on a phone: the pet in its scene, its needs as small meters, and a tray of things to drag onto it">
+  <img src="docs/images/pet-page.png" width="190" alt="The app on a phone: the pet in its scene, its needs as small meters, a row of things to drag onto it and a row of buttons below">
 </p>
 
 - **It lives with you.** The sky follows the real time of day, with sunrise
@@ -513,6 +513,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `tools/store_shots.ts`, `store/` | `npm run store`: the screenshots for the stores, and their headlines per language |
 | `install.sh` | Downloads a release on the Pi and runs its `setup.sh` (attached to every release) |
 | `tools/package.mjs`, `tools/bundle.mjs` | `npm run package`: the release package; `bundle.mjs` lists the files that go to the Pi, for the package and for `npm run deploy` |
+| `.github/dependabot.yml` | Dependency updates once a month, one grouped pull request each for npm, GitHub Actions and pip |
 | `.github/workflows/release.yml` | Builds the package and attaches it and `install.sh` to each release |
 | `codemagic.yaml` | Builds the apps for the stores on a release tag and uploads them for testing |
 | `.github/workflows/android-test.yml` | Started by hand: a test APK of the app, to install on an Android phone (a debug build, kept for a week) |
