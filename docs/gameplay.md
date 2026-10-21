@@ -898,11 +898,14 @@ A new creature should make you think "that one is different".
    or a tool: the second idea shapes the creature itself. Wings become what
    the idea is about, the tail is the tool, the body is the thing. A small
    accessory can help, but it is never the idea on its own.
-8. **The secret form is extra special.** It stands out from the other
-   adults at first sight: an effect that belongs to it and is part of the
-   picture (flames, a glowing core, floating lights, falling snow or petals,
-   bubbles), a bolder silhouette that fills its space, and often a glow at
-   night. It is the form players are proud to show.
+8. **The secret form stands above the others, not beside them.** It is the
+   legendary version of the line: the line's own feature grows beyond the
+   other adults (one tail becomes many, a little light fills the picture),
+   it is the biggest form of the line, and it has an effect that belongs to
+   it and is part of the picture (flames, a glowing core, floating lights,
+   falling snow or petals, bubbles), often with a glow at night. The test:
+   put the three adults side by side, and everyone points at it first. A
+   third idea that is only as good as the other two fails the test.
 
 #### The look
 
