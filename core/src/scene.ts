@@ -138,7 +138,7 @@ const SPARK: Bitmap = [[255, 240, 150], [".X.", "XXX", ".X."]];
 const THROW_FALL = 0.9;
 const THROW_BOUNCE = 0.3;
 const THROW_SPEED = 26; // pixels per second, faster than when wandering around
-const PROP_OVERLAP: Record<string, number> = { bowl: 5, snack: 6 }; // how far the item reaches into the pet's sprite frame
+const PROP_OVERLAP: Record<string, number> = { bowl: 3, snack: 2 }; // how far the item reaches into the pet's body
 const THROWN_BASE: Record<string, string> = { throw_meal: "eat", throw_snack: "snack" }; // otherwise: the name without "throw_"
 const POOP_X = [55, 1, 47]; // at the edges, so the pet doesn't cover them
 // Home: plant on the left, two spots for decorations on the right (the center of each). Once there
@@ -215,7 +215,7 @@ export function thingArea(kind: "nest" | "gift" | "found", house: number): [numb
 /** Where the plant stands, as parts of the scene [x, y, width, height], for a tap in the app. */
 export function plantArea(house: number): [number, number, number, number] {
   const part = (n: number) => Number((n / 64).toFixed(3));
-  return [part(PLANT_X[house] - 7), part(GROUND - 15), part(14), part(17)];
+  return [part(PLANT_X[house] - 8), part(GROUND - 20), part(16), part(22)];
 }
 const VISIT_WALK = 3.0; // seconds it takes to hop in and out
 // A guest from the garden peeks over the fence at the right edge before it comes in: the fence
@@ -270,8 +270,8 @@ const FIND_SHOW = 8; // how long it is happy about a find
 const REST_SECONDS = 45;
 // Fishing (fishing.ts): it stands left of the pond with its rod and its right edge at the water;
 // on a trip it sits by the water, and after FISH_BITE seconds of FISH_SHOW something bites
-const FISH_STAND = 36; // from its left edge to the center of the pond
-const FISH_WATER = 3; // the bobber floats this far under the pond's top row, a little left of its center
+const FISH_REACH = 1; // its body reaches this far over the pond's rim
+const FISH_WATER = 3; // the bobber floats this far under the pond's top row, a third of the way across
 const FISH_BITE = 4;
 const FISH_SHOW = 10;
 const ROD: Color = [150, 100, 55];
@@ -452,6 +452,8 @@ const STIFF_HOPS = ["archibeaver", "castlecrab"]; // and Castlecrab, moat and al
 // the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
 // duck like it too, and a pond hippo is wet anyway; so is a beaver, a dragonfly grew up in a pond,
 // and a sunflower is a plant; an axolotl lives in the water
+// The widths of the umbrellas in the items sheet: the pet holds the smallest that covers it
+const UMBRELLAS = [19, 23, 27, 31, 35];
 export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist", "leaf", "twiggle",
   "needlenub", "duck", "drakwing", "quill", "lillypot", "flurrbleat", "sakurin", "bubblehelm", "sunflutter", "dragonfly",
   "rotorfly", "jewelwing", "prismfly", "beaver", "dambert", "timberjack", "archibeaver", "axolotl",
@@ -1015,6 +1017,7 @@ export class PetScene {
   private skyLook: SkyLook = null; // the weather as the cloud adults show it
   private rainedAt = -Infinity; // when it last rained (animation time)
   private readonly petCache = new Map<string, [Image, number]>();
+  private readonly reachCache = new Map<string, readonly [number, number]>();
   private readonly eggCache = new Map<string, Image>();
   private petTop = GROUND - 20; // top row of the pet on the panel (for particles)
   private burstFor: number | null = null; // one-off effects only once per animation
@@ -1193,8 +1196,10 @@ export class PetScene {
         pose.symbol);
     }
     if (pose.umbrella && !pose.hidden && !pose.cover && !NO_UMBRELLA.includes(pose.form[1])) {
-      const umbrella = items.image("umbrella");
-      img.paste(umbrella, x + Math.floor((SPRITE - umbrella.width) / 2), y + top - umbrella.height + 3);
+      const [left, right] = pose.egg ? [0, SPRITE] : this.reach(...pose.form);
+      const size = UMBRELLAS.find((width) => width >= right - left) ?? UMBRELLAS[UMBRELLAS.length - 1];
+      const umbrella = items.image(`umbrella_${size}`);
+      img.paste(umbrella, x + Math.floor((left + right - umbrella.width) / 2), y + top - umbrella.height + 3);
     }
     if (pose.foe) {
       this.drawFoe(img, pose.foe, t);
@@ -2542,9 +2547,24 @@ export class PetScene {
     }
   }
 
-  /** Left edge of an item lying in front of the pet (at x). */
-  private beside(x: number, width: number, overlap: number, facing = this.facing): number {
-    return facing > 0 ? x + SPRITE - overlap : x - width + overlap;
+  /** Left edge of an item lying in front of the pet (at x), `overlap` pixels in front of its body. */
+  private beside(x: number, width: number, overlap: number, form: readonly [string, string], facing = this.facing): number {
+    const [left, right] = this.reach(...form);
+    return facing > 0 ? x + right - overlap : x + left - width + overlap;
+  }
+
+  /** Where a form's body reaches in its sprite frame, outline and all: [left, right) columns, standing still. */
+  private reach(stage: string, species: string): readonly [number, number] {
+    const key = `${stage}|${species}`;
+    let reach = this.reachCache.get(key);
+    if (!reach) {
+      const [img] = this.pet(stage, species, "idle", 0, "normal");
+      const [x0, , x1] = img.bbox()!;
+      const shift = Math.floor((img.width - SPRITE) / 2); // as render() places it
+      reach = [x0 - shift, x1 - shift];
+      this.reachCache.set(key, reach);
+    }
+    return reach;
   }
 
   /** A thrown item drops in and the pet hops over. Returns what it is doing right now. */
@@ -2571,7 +2591,8 @@ export class PetScene {
         this.throwFacing = Number(where) >= 0.5 ? 1 : -1;
       } else {
         const left = Number(where) * (this.width - width);
-        const spots: [number, number][] = [[left - SPRITE + overlap, 1], [left + width - overlap, -1]];
+        const [body0, body1] = this.reach(...pose.form);
+        const spots: [number, number][] = [[left - body1 + overlap, 1], [left + width - overlap - body0, -1]];
         const cost = (spot: [number, number]) => [Math.abs(spot[0] - clamp(spot[0], lo, hi)), Math.abs(spot[0] - this.x)];
         const [first, second] = spots.map(cost);
         [x, this.throwFacing] = second[0] < first[0] || (second[0] === first[0] && second[1] < first[1])
@@ -2587,7 +2608,7 @@ export class PetScene {
       return base;
     }
 
-    const itemX = this.beside(this.throwX, width, overlap, this.throwFacing);
+    const itemX = this.beside(this.throwX, width, overlap, pose.form, this.throwFacing);
     const lift = dropLift(e);
     if (food) {
       pose.propAt = [Math.round(itemX), Math.round(lift)];
@@ -3423,8 +3444,9 @@ export class PetScene {
    * if nothing bites). Then it holds up its catch, or flops down with nothing.
    */
   private fish(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
-    const slot = (view.deco ?? []).slice(0, DECO_X.length).indexOf("pond");
-    const pond = DECO_X[slot] ?? DECO_X[0];
+    const water = this.sheet("trip").image("pond");
+    const slot = Math.max(0, (view.deco ?? []).slice(0, DECO_X.length).indexOf("pond"));
+    const rim = this.decoX(slot, water.width) - Math.floor(water.width / 2); // its left edge
     const e = this.elapsed(view, now);
     const activity = view.activity;
     if (activity === "fish_catch") {
@@ -3434,7 +3456,7 @@ export class PetScene {
     } else if (activity === "fish_empty") {
       Object.assign(pose, view.activity_item === "early"
         ? { body: "flat", face: "no", symbol: QUESTION } : { body: "squash", face: "sad" });
-    } else if (this.moveTowards(pond - FISH_STAND, THROW_SPEED, dt)) {
+    } else if (this.moveTowards(rim + FISH_REACH - this.reach(...pose.form)[1], THROW_SPEED, dt)) {
       this.hop(pose, t, 3.5);
       pose.face = "happy";
     } else {
@@ -3444,7 +3466,7 @@ export class PetScene {
       const missed = bite !== null && e >= bite + fishing.BITE_WINDOW;
       pose.face = under ? "eat_open" : missed ? "sad" : Math.trunc(t) % 5 === 0 ? "blink" : "normal";
       pose.body = under && Math.trunc(t * 6) % 2 ? "stretch" : "idle";
-      pose.rod = [pond - 1, GROUND + 1 - this.sheet("trip").image("pond").height + FISH_WATER, under];
+      pose.rod = [rim + Math.floor(water.width / 3), GROUND + 1 - water.height + FISH_WATER, under];
     }
     this.targetX = this.x;
   }
@@ -3762,9 +3784,11 @@ export class PetScene {
     if (view.peeking) {
       this.drawPeeking(img, view.peeking, t);
     }
-    (view.deco ?? []).slice(0, DECO_X.length).forEach((item, i) => {
-      const sprite = this.dimmedSprite(item, t, true);
-      this.stand(img, sprite, DECO_X[i]);
+    const deco = (view.deco ?? []).slice(0, DECO_X.length);
+    // what lies flat on the ground (the pond) first, so that the other decoration stands in front of it
+    [...deco.keys()].sort((a, b) => Number(deco[b] === "pond") - Number(deco[a] === "pond")).forEach((i) => {
+      const sprite = this.dimmedSprite(deco[i], t, true);
+      this.stand(img, sprite, this.decoX(i, sprite.width));
       this.covers.set(`deco${i}`, GROUND + 1 - sprite.height);
     });
     this.covers.set("grass", GROUND + 1 - TALL_GRASS);
@@ -3831,6 +3855,11 @@ export class PetScene {
   }
 
   /** Where the plant stands (its center). */
+  /** The middle of decoration spot `slot` for something this wide: something wide moves in from the edge. */
+  private decoX(slot: number, width: number): number {
+    return Math.min(DECO_X[slot], this.width - Math.ceil(width / 2));
+  }
+
   private static plantX(view: SceneView): number {
     return PLANT_X[view.house ?? 0];
   }
@@ -4115,7 +4144,7 @@ export class PetScene {
     }
     if (pose.prop === "bowl") {
       const bowl = items.image("bowl");
-      const bx = at ?? this.beside(x, bowl.width, PROP_OVERLAP["bowl"]);
+      const bx = at ?? this.beside(x, bowl.width, PROP_OVERLAP["bowl"], pose.form);
       const by = GROUND + 1 - bowl.height - lift;
       const eaten = Math.max(0.0, 1 - (view.activity_until - now) / ACTIVITY_SECONDS["eat"]);
       const food = items.image(eaten < 0.35 ? "food_full" : eaten < 0.7 ? "food_half" : "food_low");
@@ -4126,7 +4155,7 @@ export class PetScene {
       const left = (view.activity_until - now) / ACTIVITY_SECONDS["snack"];
       if (pose.item && left > 0.4) {
         const food = this.foodImage(pose.item);
-        const fx = at ?? this.beside(x, food.width, PROP_OVERLAP["snack"]);
+        const fx = at ?? this.beside(x, food.width, PROP_OVERLAP["snack"], pose.form);
         img.paste(food, fx, GROUND + 1 - food.height - lift);
       }
     } else if (pose.prop === "ball") {
