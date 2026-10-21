@@ -230,6 +230,33 @@ test("a rare deed or moment makes the special form, and its rule goes first", ()
   assert.equal(life.decideSpecies(week, "stone", { fullMoon: true }), "bouldergrin");
 });
 
+test("the bear, penguin and bat lines grow up by what they ate, where they went and how they fight", () => {
+  const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
+  // the bear: honey as a child makes a sleepy Snorbear, five bond hearts the star bear
+  assert.equal(life.decideSpecies(week, "bear"), "hivebear");
+  assert.equal(life.decideSpecies({ ...week, food_honeycomb: life.SNORBEAR_HONEYCOMBS - 1 }, "bear"), "hivebear");
+  assert.equal(life.decideSpecies({ ...week, food_honeycomb: life.SNORBEAR_HONEYCOMBS }, "bear"), "snorbear");
+  assert.equal(life.decideSpecies({ ...week, food_honeycomb: 9 }, "bear", { bond: life.URSASTRA_BOND }), "ursastra");
+  assert.equal(life.decideSpecies(week, "bear", { bond: life.URSASTRA_BOND - 1 }), "hivebear");
+  // the penguin: the spin learned makes a Glidepin, the last hour before sunrise the aurora
+  assert.equal(life.decideSpecies(week, "penguin"), "tuxwaddle");
+  assert.equal(life.decideSpecies(week, "penguin", { spin: true }), "glidepin");
+  const sunrise = 7 * 60;
+  assert.equal(life.decideSpecies(week, "penguin", { minute: sunrise - 30, sunrise }), "aurorapin");
+  assert.equal(life.decideSpecies(week, "penguin", { minute: sunrise - life.AURORAPIN_BEFORE_SUNRISE, sunrise }), "aurorapin");
+  assert.equal(life.decideSpecies(week, "penguin", { minute: sunrise - life.AURORAPIN_BEFORE_SUNRISE - 1, sunrise }), "tuxwaddle");
+  assert.equal(life.decideSpecies(week, "penguin", { minute: sunrise, sunrise }), "tuxwaddle"); // the sun is up
+  // the bat: speed as its highest battle stat makes a Batbeat, a full-moon night Lunaflap
+  assert.equal(life.decideSpecies(week, "bat"), "umbrabat");
+  assert.equal(life.decideSpecies(week, "bat", { strongest: "speed" }), "batbeat");
+  assert.equal(life.decideSpecies(week, "bat", { strongest: "attack" }), "umbrabat");
+  assert.equal(life.decideSpecies(week, "bat", { strongest: "speed", dark: true, fullMoon: true }), "lunaflap");
+  assert.equal(life.decideSpecies(week, "bat", { fullMoon: true }), "umbrabat"); // a full moon by day
+  for (const line of ["bear", "penguin", "bat"]) {
+    assert.ok(life.LINES[line].every((adult) => food.TASTES[adult]?.length === 2), line);
+  }
+});
+
 test("the snow globe makes it snow for the cloud line", () => {
   const cloud = model.newPet(start, "", "cloud");
   assert.equal(model.worldAt(start, null, null, null, cloud).snowing, false);

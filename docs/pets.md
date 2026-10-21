@@ -162,13 +162,15 @@ other adults, and another rule for which adult it becomes.
 <details>
 <summary>Show where a rare egg comes from</summary>
 
-Three guardians have been sitting on a rare egg:
+Every guardian has been sitting on a rare egg:
 
 | Area | Guardian | Egg |
 |---|---|---|
 | Meadow | Crowcomb | **beak egg** |
+| Mushroom forest | Mosswart | **bear egg** |
 | Stream | Ripplesprite | **duck egg** |
 | Cave | Gloompeep | **ember egg** |
+| Mountain | Frostfluff | **penguin egg** |
 
 A guardian leaves its egg behind the first time a pet gets past it, so every
 pet can earn each of them once. A pet that got past a guardian before that
@@ -206,8 +208,11 @@ On the mountain live the two adults of the cloud line (below): Rumblefluff,
 which only comes out in the rain, and more rarely Prismist. A friend of theirs
 is the only way to a cloud egg.
 
-The cave has no wild pets so far. The ember, duck and beak lines have none:
-their eggs come from guardians. A pet of one of them with a slime for a friend
+In the cave live the two adults of the bat line (below): Umbrabat, and more
+rarely Batbeat. A friend of theirs is the only way to a bat egg.
+
+The ember, duck, beak, bear and penguin lines have no wild pets: their eggs
+come from guardians. A pet of one of them with a slime for a friend
 can still lay an egg of its own line, though.
 
 The values are in `core/src/wild.ts`.
@@ -1415,6 +1420,250 @@ scuffle she wraps the opponent in loops of wool that knit up into stars.
 It wears one of the hats Grandma knitted when it grows up. This rule goes
 before the others of the line. While the child is on its way there, its hint
 color is red wool.
+
+</details>
+
+### The bear line
+
+This is the line from Mosswart's egg in the mushroom forest.
+
+<details>
+<summary>Show the bear line</summary>
+
+| | Stage |
+|---|---|
+| ![Bear egg](images/pets/bear_egg.png) | **Bear egg** – a caramel egg with honey dripping over its top, sitting in a cushion of moss |
+| ![Bear baby](images/pets/bear_baby.png) | **Baby** – a round brown cub with round ears and a little honey pot on its head, honey running down onto its brow |
+| ![Cubble](images/pets/cubble.png) | **Child: Cubble** – a bear cub with a pale muzzle and stubby paws, the honey pot worn as a hat and honey welling over its rim |
+
+The stages last as long as the slime's. What the adults keep is the honey pot
+on their head, the round ears and the muzzle.
+
+![Hivebear](images/pets/hivebear.png)
+
+**Hivebear**, a bear that has become a beehive. Its body is a round straw dome
+coiled in rings with an entrance on its belly, the honey pot is the tip of the
+hive, and bees fly in and out round it; only the ears, the muzzle and the
+stubby paws are still bear fur. It walks. With honey of its own it gets hungry
+more slowly, and warm and humming as it is, it loves to be petted.
+For its bow it lifts its honey pot like a hat and the bees fly up, and in a
+scuffle it sends a cloud of buzzing bees.
+
+![Snorbear](images/pets/snorbear.png)
+
+**Snorbear**, a bear that has become its own winter den. It lies flat and wide
+like an earth mound with moss and snow on its back; only its sleepy head, one
+paw and the moss-grown honey pot show, and it snores. Half asleep all the time
+anyway, it tires more slowly, and nothing cheers it up like a scratch behind
+the ears. For its spin it rolls up in its mound and tumbles, and its special
+move is a yawn that sends the opponent to sleep.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Snorbear | it ate 4 honeycombs while it was a child |
+| Hivebear | everything else |
+
+From its second day on, the glaze of Cubble's honey pot shows where it is
+heading: gold for Hivebear, moss green for Snorbear.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the two of you.*
+
+<details>
+<summary>Show this form</summary>
+
+![Ursastra](images/pets/ursastra.png)
+
+**Ursastra**, the bear of the night sky and the biggest of its line. It stands
+up on its hind legs with its paws raised, its fur night blue, and the seven
+stars of the Great Bear shine on its body. Star honey drips from its pot and
+rises again as little lights round it; at night its stars, its pot and the
+lights glow. It is as calm as the night sky, so its mood sinks more slowly,
+and it grew out of a strong bond: hearts mean more to it. For its dance the
+seven stars leave its body and wander into a heart, and in a scuffle shooting
+stars rain down on the opponent.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It has all five bond hearts when it grows up. This rule goes before the others
+of the line. While the child is on its way there, its hint color is the blue
+of the night sky.
+
+</details>
+
+### The penguin line
+
+This is the line from Frostfluff's egg on the mountain.
+
+<details>
+<summary>Show the penguin line</summary>
+
+| | Stage |
+|---|---|
+| ![Penguin egg](images/pets/penguin_egg.png) | **Penguin egg** – an ice-blue egg with snow on its top and frost on its shell, in a tuft of the yeti's white fur |
+| ![Penguin baby](images/pets/penguin_baby.png) | **Baby** – a fluffy grey chick with a white face, a tuft of down on top, orange feet and red earmuffs |
+| ![Waddlet](images/pets/waddlet.png) | **Child: Waddlet** – an upright young penguin with a slate back and a last tuft of down, a white heart-shaped face and belly, little flippers held out for balance and its earmuffs on their band |
+
+The stages last as long as the slime's. What the adults keep is the
+earmuffs, the white face and the orange feet.
+
+![Tuxwaddle](images/pets/tuxwaddle.png)
+
+**Tuxwaddle**, a penguin butler whose body has become a tailcoat. Tall and very
+upright, its white front a shirt between dark lapels and its tail feathers
+grown into coat tails, it holds one flipper out flat as a tray with a steaming
+cup on it. Its earmuffs are a deeper red. It waddles. Always neat in its
+tailcoat, it gets dirty more slowly, and a loyal butler: hearts mean more to
+it. For its bow it serves with a waiter's bow, and its special move is a stack
+of flying plates.
+
+![Glidepin](images/pets/glidepin.png)
+
+**Glidepin**, a penguin whose feet have grown into skate blades. Streamlined and
+leaning far forward, one flipper swung forward and one swept back, its belly
+smooth and shining like ice and its earmuffs ice blue, it skates along with
+frost spraying behind it. Always skating, it tires faster, and it is always up
+for a race: playing cheers it up more. For its spin it pirouettes on its
+blades, and in a scuffle it lays an ice track the opponent slips on.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Glidepin | it has learned the spin when it grows up |
+| Tuxwaddle | everything else |
+
+From its second day on, Waddlet's earmuffs show where it is heading: deep red
+for Tuxwaddle, ice blue for Glidepin.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the time of day.*
+
+<details>
+<summary>Show this form</summary>
+
+![Aurorapin](images/pets/aurorapin.png)
+
+**Aurorapin**, the penguin of the polar night and the biggest of its line.
+Round and big, its belly is a window of ice into the night with one calm band
+of the northern lights in it; ribbons of light stream from its back as a
+train, snowflakes drift round it, and its earmuffs shine green and violet. At
+night the lights glow. The frost keeps it clean, so it gets dirty more slowly,
+and used to the polar cold, it gets sick less often. For its dance aurora
+ribbons wave round it, and in a scuffle a curtain of aurora light comes down on
+the opponent.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It grows up in the last hour before sunrise, by the sun where it lives. This
+rule goes before the others of the line. While the child is on its way there,
+its hint colors are the green and violet of the northern lights.
+
+</details>
+
+### The bat line
+
+This is the line from the cave, where its adults live as wild pets.
+
+<details>
+<summary>Show the bat line</summary>
+
+| | Stage |
+|---|---|
+| ![Bat egg](images/pets/bat_egg.png) | **Bat egg** – a purple egg wrapped in two folded wings like a sleeping bat, hanging from the cave's ceiling by two little claws |
+| ![Bat baby](images/pets/bat_baby.png) | **Baby** – a purple slime with two huge pointed ears, a little fang and two small wings folded at its sides |
+| ![Flapling](images/pets/flapling.png) | **Child: Flapling** – a young bat with its huge pointed ears and real wings now, half spread, with finger bones, a scalloped edge and a thumb claw |
+
+The stages last as long as the slime's. What the adults keep is the big
+pointed ears and the little fang.
+
+![Umbrabat](images/pets/umbrabat.png)
+
+**Umbrabat**, a bat that has become an umbrella. Its wings have grown together
+over its head, the finger bones are the ribs with a claw at each tip, its body
+is the shaft and its tail the hooked handle, and its big ears stick up through
+the top. Rain runs off its edge, and it floats along like an umbrella in the
+wind. The rain washes it, so it gets dirty more slowly, and keeping the rain
+off itself, it gets sick less often. It needs no umbrella of yours. For its flip it hangs from its hook tail and
+swings round, and in a scuffle it opens its umbrella wings and rain pelts
+off.
+
+![Batbeat](images/pets/batbeat.png)
+
+**Batbeat**, a bat for the dance floor. Its big ears have become two
+loudspeaker horns whose membranes throb to the beat, its wings bob up and down
+like arms over a mixing desk, and its eyes are shut with joy. Dancing all
+night, it tires faster, and anything to dance to cheers it up: playing means
+more to it. For its dance it nods to the bass while lights flash, and its
+special move is sound waves on the beat, then the drop.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Batbeat | speed is its highest battle stat when it grows up (higher than each of the others) |
+| Umbrabat | everything else |
+
+From its second day on, Flapling's wing membrane shows where it is heading:
+grey for Umbrabat, neon pink for Batbeat.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the sky.*
+
+<details>
+<summary>Show this form</summary>
+
+![Lunaflap](images/pets/lunaflap.png)
+
+**Lunaflap**, the moon's bat and the biggest of its line. Its wings are made of
+moonlight, silver and spread so wide they fill the sky, the tips of its big
+ears are two crescent moons, and silver sparks trickle down from the edge of
+its wings. It flies, and at night its wings, its moons and its sparks glow. It
+sleeps the day away and glides on moonlight, so it tires more slowly, and its
+wings are soft: petting cheers it up more. For its spin it wraps itself in its wings and
+opens them as a full-moon disc, and in a scuffle a swarm of silver light
+moths flies at the opponent.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It grows up at night under a full moon. This rule goes before the others of
+the line. While the child is on its way there, its hint color is moonlight
+silver.
 
 </details>
 

@@ -1479,13 +1479,43 @@
     "h": 14
    },
    "duration": 1000
+  },
+  {
+   "filename": "trip egg_bear 148",
+   "frame": {
+    "x": 1661,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_penguin 149",
+   "frame": {
+    "x": 1673,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_bat 150",
+   "frame": {
+    "x": 1685,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "trip.png",
   "size": {
-   "w": 1661,
+   "w": 1697,
    "h": 24
   },
   "frameTags": [
@@ -2249,6 +2279,24 @@
     "name": "egg_mouse",
     "from": 147,
     "to": 147,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_bear",
+    "from": 148,
+    "to": 148,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_penguin",
+    "from": 149,
+    "to": 149,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_bat",
+    "from": 150,
+    "to": 150,
     "direction": "forward"
    }
   ]

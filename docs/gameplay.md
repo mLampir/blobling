@@ -652,7 +652,7 @@ can get past Crowcomb with some luck; for the later ones the pet needs its
 tricks and a good deal of training. Progress counts per pet: a new egg starts
 in the meadow again.
 
-Some of the guardians have been sitting on a rare egg. A guardian leaves its
+Every guardian has been sitting on a rare egg. A guardian leaves its
 egg behind the first time a pet gets past it, so every pet can earn it once.
 If the pet got past it before (or there was no room for another egg), the egg
 waits at the end of the path on a later trip to that area. Getting

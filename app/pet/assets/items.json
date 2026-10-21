@@ -1379,13 +1379,223 @@
     "h": 15
    },
    "duration": 1000
+  },
+  {
+   "filename": "items bear_egg 138",
+   "frame": {
+    "x": 1655,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items bear_egg_wobble 139",
+   "frame": {
+    "x": 1667,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bear_egg_wobble 140",
+   "frame": {
+    "x": 1679,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bear_egg_wobble 141",
+   "frame": {
+    "x": 1691,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bear_egg_wobble 142",
+   "frame": {
+    "x": 1703,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bear_egg_crack 143",
+   "frame": {
+    "x": 1715,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items bear_egg_open 144",
+   "frame": {
+    "x": 1727,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items penguin_egg 145",
+   "frame": {
+    "x": 1739,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items penguin_egg_wobble 146",
+   "frame": {
+    "x": 1751,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items penguin_egg_wobble 147",
+   "frame": {
+    "x": 1763,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items penguin_egg_wobble 148",
+   "frame": {
+    "x": 1775,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items penguin_egg_wobble 149",
+   "frame": {
+    "x": 1787,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items penguin_egg_crack 150",
+   "frame": {
+    "x": 1799,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items penguin_egg_open 151",
+   "frame": {
+    "x": 1811,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items bat_egg 152",
+   "frame": {
+    "x": 1823,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items bat_egg_wobble 153",
+   "frame": {
+    "x": 1835,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bat_egg_wobble 154",
+   "frame": {
+    "x": 1847,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bat_egg_wobble 155",
+   "frame": {
+    "x": 1859,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bat_egg_wobble 156",
+   "frame": {
+    "x": 1871,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bat_egg_crack 157",
+   "frame": {
+    "x": 1883,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items bat_egg_open 158",
+   "frame": {
+    "x": 1895,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 1655,
+   "w": 1907,
    "h": 15
   },
   "frameTags": [
@@ -1927,6 +2137,78 @@
     "name": "mouse_egg_open",
     "from": 137,
     "to": 137,
+    "direction": "forward"
+   },
+   {
+    "name": "bear_egg",
+    "from": 138,
+    "to": 138,
+    "direction": "forward"
+   },
+   {
+    "name": "bear_egg_wobble",
+    "from": 139,
+    "to": 142,
+    "direction": "forward"
+   },
+   {
+    "name": "bear_egg_crack",
+    "from": 143,
+    "to": 143,
+    "direction": "forward"
+   },
+   {
+    "name": "bear_egg_open",
+    "from": 144,
+    "to": 144,
+    "direction": "forward"
+   },
+   {
+    "name": "penguin_egg",
+    "from": 145,
+    "to": 145,
+    "direction": "forward"
+   },
+   {
+    "name": "penguin_egg_wobble",
+    "from": 146,
+    "to": 149,
+    "direction": "forward"
+   },
+   {
+    "name": "penguin_egg_crack",
+    "from": 150,
+    "to": 150,
+    "direction": "forward"
+   },
+   {
+    "name": "penguin_egg_open",
+    "from": 151,
+    "to": 151,
+    "direction": "forward"
+   },
+   {
+    "name": "bat_egg",
+    "from": 152,
+    "to": 152,
+    "direction": "forward"
+   },
+   {
+    "name": "bat_egg_wobble",
+    "from": 153,
+    "to": 156,
+    "direction": "forward"
+   },
+   {
+    "name": "bat_egg_crack",
+    "from": 157,
+    "to": 157,
+    "direction": "forward"
+   },
+   {
+    "name": "bat_egg_open",
+    "from": 158,
+    "to": 158,
     "direction": "forward"
    }
   ]

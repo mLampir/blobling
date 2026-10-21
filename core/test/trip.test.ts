@@ -123,7 +123,7 @@ test("each area shows what is still to discover there once", () => {
   home.addItem(pet, "seed_berry"); // seeds come again and again, they don't count
   pet.guardian_eggs.push("meadow");
   assert.deepEqual(found(), ["egg_beak", "windmill"]);
-  assert.equal(trip.discoveries(pet, "forest")[0].id, "glowshroom"); // its guardian has no egg
+  assert.equal(trip.discoveries(pet, "forest")[0].id, "egg_bear"); // Mosswart sits on the bear's egg
 });
 
 test("healing herb cures", () => {

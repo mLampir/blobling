@@ -673,6 +673,7 @@ function petWorld(state: PetState, t: number): life.World {
     afterRain: state.garden.rain_at > 0 && t - state.garden.rain_at <= life.SUN_AFTER_RAIN,
     bond: care.bondLevel(state),
     allTricks: Object.keys(care.TRICKS).every((trick) => care.knows(state, trick)),
+    spin: care.knows(state, "spin"),
     strongest: strongest.length === 1 && top > 0 ? strongest[0] : undefined,
     houseBuilt: state.house >= home.HOUSE_STEPS,
     glowOutside: home.placeDeco(state).outside.some((item) => home.GLOWING_DECO.includes(item)),

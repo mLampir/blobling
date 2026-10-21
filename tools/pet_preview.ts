@@ -29,7 +29,7 @@ const BASE: SceneView = {
 };
 // The special forms, the secret third adult of a line
 const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
-  "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake", "woolwhisk"];
+  "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake", "woolwhisk", "ursastra", "aurorapin", "lunaflap"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -65,16 +65,23 @@ const PETS: Record<string, [string, string]> = {
   mossolotl: ["adult", "mossolotl"], medilotl: ["adult", "medilotl"],
   mouse_egg: ["egg", "mouse"], mouse_baby: ["baby", "mouse"], squeaklet: ["child", "mouse"],
   sirthimble: ["adult", "sirthimble"], cogsqueak: ["adult", "cogsqueak"],
+  bear_egg: ["egg", "bear"], bear_baby: ["baby", "bear"], cubble: ["child", "bear"],
+  hivebear: ["adult", "hivebear"], snorbear: ["adult", "snorbear"],
+  penguin_egg: ["egg", "penguin"], penguin_baby: ["baby", "penguin"], waddlet: ["child", "penguin"],
+  tuxwaddle: ["adult", "tuxwaddle"], glidepin: ["adult", "glidepin"],
+  bat_egg: ["egg", "bat"], bat_baby: ["baby", "bat"], flapling: ["child", "bat"],
+  umbrabat: ["adult", "umbrabat"], batbeat: ["adult", "batbeat"],
   ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
-// The leaf, duck, hippo, beak, garden, water and Grandma's lines: per line its line, child and adults, for the scenes below
+// The leaf, duck, hippo, beak, garden, water, Grandma's and adventure lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
   ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
   ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
   ["caterpillar", "munchlet", "mothmuff", "sunflutter"], ["dog", "pupplet", "digby", "barrelbard"],
   ["dragonfly", "nymphlet", "rotorfly", "jewelwing"], ["beaver", "gnawlet", "dambert", "timberjack"],
   ["crab", "shellbit", "teacrab", "lightclaw"], ["axolotl", "axolittle", "mossolotl", "medilotl"],
-  ["mouse", "squeaklet", "sirthimble", "cogsqueak"],
+  ["mouse", "squeaklet", "sirthimble", "cogsqueak"], ["bear", "cubble", "hivebear", "snorbear"],
+  ["penguin", "waddlet", "tuxwaddle", "glidepin"], ["bat", "flapling", "umbrabat", "batbeat"],
 ];
 const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
@@ -99,6 +106,15 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   sirthimble: "bow", // the accolade with its needle lance
   cogsqueak: "spin", // winds itself up and whirrs round
   woolwhisk: "spin", // the golden thread unwinds round her
+  hivebear: "bow", // lifts its honey pot like a hat
+  snorbear: "spin", // rolls up in its mound and tumbles
+  ursastra: "dance", // its stars wander into a picture
+  tuxwaddle: "bow", // a waiter's bow
+  glidepin: "spin", // a pirouette on its blades
+  aurorapin: "dance", // aurora ribbons wave round it
+  umbrabat: "flip", // hangs from its hook tail and swings
+  batbeat: "dance", // nods to the bass, lights flash
+  lunaflap: "spin", // opens its wings as a full moon
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It

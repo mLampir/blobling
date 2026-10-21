@@ -60,7 +60,8 @@ export const GUARDIAN_MOOD = 15; // getting past a guardian makes it proud
 // Area: the rare egg its guardian leaves behind the first time the pet gets past it (home.EGGS). If
 // there was no room for it, or the pet got past before the guardian had an egg, it leaves it at
 // the end of the path on a later trip.
-export const GUARDIAN_EGGS: Record<string, string> = { meadow: "egg_beak", stream: "egg_duck", cave: "egg_ember" };
+export const GUARDIAN_EGGS: Record<string, string> = { meadow: "egg_beak", forest: "egg_bear", stream: "egg_duck",
+  cave: "egg_ember", mountain: "egg_penguin" };
 // What goes into the backpack: the pet's own ball, and things to eat from the bag (food.EDIBLE).
 // Nothing comes out of thin air, so what is packed is taken from the bag, and what isn't used
 // goes back into it.
