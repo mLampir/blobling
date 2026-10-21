@@ -258,6 +258,22 @@ The values are in `core/src/fishing.ts`.
 
 </details>
 
+## From Grandma's attic
+
+One line hatches from an old egg that Grandma finds in her attic, when a pet
+visits her ([gameplay.md](gameplay.md#at-grandmas)).
+
+<details>
+<summary>Show which egg is in the attic</summary>
+
+The first egg from the attic is always the **mouse egg**, in one of Grandma's
+knitted egg cosies. It comes on a visit with her things, sure by the third
+such visit. Later the attic has eggs of the lines the pet knows.
+
+The values are in `core/src/grandma.ts`.
+
+</details>
+
 ### The ember line
 
 <details>
@@ -1317,6 +1333,88 @@ glowing bubbles it breathes at the opponent.
 It got past Gloompeep, the guardian of the cave, while it was a child. This
 rule goes before the others of the line. While the child is on its way there,
 its hint color is wing pink.
+
+</details>
+
+### The mouse line
+
+This is the line from Grandma's attic.
+
+<details>
+<summary>Show the mouse line</summary>
+
+| | Stage |
+|---|---|
+| ![Mouse egg](images/pets/mouse_egg.png) | **Mouse egg** – in one of Grandma's knitted egg cosies, red with a white bobble |
+| ![Mouse baby](images/pets/mouse_baby.png) | **Baby** – a small grey slime with two big round ears |
+| ![Squeaklet](images/pets/squeaklet.png) | **Child: Squeaklet** – a little grey mouse with big round ears and a ringed tail, holding a crumb of cheese in both paws |
+
+The stages last as long as the slime's. What the adults keep is the big round
+ears and the ringed tail.
+
+![Sir Thimble](images/pets/sirthimble.png)
+
+**Sir Thimble**, a mouse knight, upright with a proud chest. Its ears have
+grown hard as two nutshell shields, its tail stands up beside it as a lance
+with a needle for a tip, and Grandma's thimble is its helmet. It marches. A
+knight doesn't lose heart, and under its helmet it gets sick less often.
+For its bow it dubs itself: a glint runs down
+the lance to its shoulder. In a scuffle it charges behind its shield ears and
+knocks the opponent back.
+
+![Cogsqueak](images/pets/cogsqueak.png)
+
+**Cogsqueak**, a wind-up tin-toy mouse, low and long on three little wheels.
+Its ears are two cogs, its tail a spiral spring, and the winding key in its
+back turns as it rolls along. Wound up, it keeps going: it tires more slowly.
+For its spin it winds itself up until it whirrs round, throwing sparks and
+little cogs, and its special move is a wind-up toy mouse that rolls over to
+the opponent and pops.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Cogsqueak | its satiety never dropped below 25 while it was a child |
+| Sir Thimble | everything else |
+
+From its second day on, Squeaklet's crumb of cheese shows where it is heading:
+nutshell brown for Sir Thimble, brass for Cogsqueak.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about Grandma.*
+
+<details>
+<summary>Show this form</summary>
+
+![Woolwhisk](images/pets/woolwhisk.png)
+
+**Woolwhisk**, the queen of Grandma's wool basket. She sits up tall on a big
+ball of red wool, her fur grown into knitted wool, two crossed knitting needles
+on her head for a crown. Her tail has become a golden thread that loops round
+her in rings, and where it crosses itself it knits little stars that shine and
+fade; at night the thread and the stars glow. She is soft as wool, so petting
+cheers her up more, and wool picks up everything: she gets dirty sooner.
+For
+her spin her golden thread unwinds round her and winds back in, and in a
+scuffle she wraps the opponent in loops of wool that knit up into stars.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It wears one of the hats Grandma knitted when it grows up. This rule goes
+before the others of the line. While the child is on its way there, its hint
+color is red wool.
 
 </details>
 

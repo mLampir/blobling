@@ -37,6 +37,7 @@
     "trip",
     "unpack",
     "unwrap",
+    "visit_grandma",
     "wake",
     "wear"
   ],
@@ -62,6 +63,7 @@
     "GET /api/pet actions.trip": "boolean",
     "GET /api/pet actions.unpack": "boolean",
     "GET /api/pet actions.unwrap": "boolean",
+    "GET /api/pet actions.visit_grandma": "boolean",
     "GET /api/pet actions.wake": "boolean",
     "GET /api/pet actions.wear": "boolean",
     "GET /api/pet activity": "string",

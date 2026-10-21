@@ -1309,13 +1309,83 @@
     "h": 15
    },
    "duration": 1000
+  },
+  {
+   "filename": "items mouse_egg 131",
+   "frame": {
+    "x": 1571,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items mouse_egg_wobble 132",
+   "frame": {
+    "x": 1583,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items mouse_egg_wobble 133",
+   "frame": {
+    "x": 1595,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items mouse_egg_wobble 134",
+   "frame": {
+    "x": 1607,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items mouse_egg_wobble 135",
+   "frame": {
+    "x": 1619,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items mouse_egg_crack 136",
+   "frame": {
+    "x": 1631,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items mouse_egg_open 137",
+   "frame": {
+    "x": 1643,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 1571,
+   "w": 1655,
    "h": 15
   },
   "frameTags": [
@@ -1833,6 +1903,30 @@
     "name": "axolotl_egg_open",
     "from": 130,
     "to": 130,
+    "direction": "forward"
+   },
+   {
+    "name": "mouse_egg",
+    "from": 131,
+    "to": 131,
+    "direction": "forward"
+   },
+   {
+    "name": "mouse_egg_wobble",
+    "from": 132,
+    "to": 135,
+    "direction": "forward"
+   },
+   {
+    "name": "mouse_egg_crack",
+    "from": 136,
+    "to": 136,
+    "direction": "forward"
+   },
+   {
+    "name": "mouse_egg_open",
+    "from": 137,
+    "to": 137,
     "direction": "forward"
    }
   ]

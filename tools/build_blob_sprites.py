@@ -40,6 +40,8 @@ frameTags):
   crab (shellbit) and axolotl (axolittle) lines
 - teacrab, lightclaw, castlecrab, mossolotl, medilotl, axodrake (_body / _faces) – their adults, the
   last of each three the secret one (faces of their own)
+- mouse_baby_body / mouse_baby_faces, squeaklet_body / mouse_faces – baby and child of the mouse line
+- sirthimble, cogsqueak, woolwhisk (_body / _faces) – its adults, Woolwhisk the secret one
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine, and
                                      the app's things (sponge, baton, bag, whistle, training, rod)
 - trip                             – backpack, plants, decorations, hats, things along the path,
@@ -5018,6 +5020,258 @@ def umbrella(width):
     rim[half] = "k"
     return ["".join(r) for r in rows] + ["".join(rim)] + ["." * half + "k" + "." * half] * 3
 
+# ---------------------------------------------------------------- The mouse line
+
+# Grandma's line: a little grey mouse who lives in Grandma's house, with its egg, baby, child, a basic
+# adult, a second one and a secret one. What every form keeps: the big round ears and the ringed
+# tail (the knight's ears are nutshell shields and its tail a lance, the tin toy's ears are cogs and
+# its tail a spring, and the queen's tail a golden thread). The child carries the colors the code may
+# recolor as a hint at its adult form: the crumb of cheese it holds.
+
+# The egg sits in one of Grandma's knitted egg cosies, red with a white bobble.
+MOUSE_EGG = [
+    ".....ww.....",
+    "....wwWo....",
+    "...okkkko...",
+    "..okKkkKko..",
+    "..okkKkkko..",
+    ".okKkkKkkko.",
+    ".okkkKkkKko.",
+    ".oKkKkKkKKo.",
+    ".oeeeeeeeEo.",
+    ".oeeeeeeeEo.",
+    "..oeeeeeEo..",
+    "..oEeeeeEo..",
+    "...oEEEEo...",
+    "....oooo....",
+]
+EGG_GRIDS |= {"mouse": MOUSE_EGG}
+RARE_EGG_PALETTES |= {
+    "mouse": {"o": (80, 45, 45), "e": (245, 238, 220), "E": (205, 195, 175), "k": (215, 75, 70), "K": (165, 45, 50),
+              "w": (250, 245, 235), "W": (215, 210, 200), "x": (70, 35, 35)},
+}
+
+MOUSE_PALETTE = {
+    "o": (60, 55, 65),     # outline
+    "d": (135, 130, 145),  # shadow
+    "b": (180, 175, 190),  # mouse grey
+    "l": (215, 210, 222),  # lit
+    "h": (240, 238, 245),  # highlight
+    "p": (245, 165, 185),  # the pink of the ears and the tail
+    "P": (210, 120, 145),
+    "y": (250, 215, 80),   # the crumb of cheese (the hint)
+    "Y": (210, 165, 45),
+}
+# Baby: a grey slime with two big round ears and a ringed tail, a crumb of cheese in front of it
+MOUSE_BABY = [
+    ".oooo........oooo.....",
+    "oddddo......oddddo....",
+    "odppdo......odppdo....",
+    "odpPdo......odPpdo....",
+    "odddoolhllbboodddo....",
+    ".ooolhhlbbbbbdooo.....",
+    "..ollhbbbbbbbbdo.pp...",
+    "..olbbbbbbbbbbdop..p..",
+    ".olbbbbbbbbbbbddo.p...",
+    ".olbbbbbbbbbbbddop....",
+    ".obobbbbbbbbbbddo.....",
+    ".oyobbbbbbbbbdddo.....",
+    "oyYoddddddddddddo.....",
+    "oooooooooooooooo......",
+]
+MOUSE_BABY_FACE_TOP, MOUSE_BABY_FACE_SHIFT = face_place(MOUSE_BABY, 7, 4, BABY_W)
+MOUSE_BABY_TAGS = body_tags(MOUSE_BABY, 8, 8, flat_rows=3)
+# Squeaklet, the child: big round ears, the ringed tail curling up behind it, and a crumb of cheese
+# held in both paws in front of its tummy
+SQUEAKLET = [
+    "...oooo...........oooo........",
+    "..oddddo.........oddddo.......",
+    ".oddppddo.......oddppddo......",
+    ".odpppPdo.......odPpppdo......",
+    ".odppPPdo.......odPPppdo......",
+    ".oddPPddoooooooooddPPddo......",
+    "..odddoolllllbbbooddddo.......",
+    "...ooolllllllbbbbboooo........",
+    "....ollbbbbbbbbbbbdo..........",
+    "...olllbbbbbbbbbbbddo...pppp..",
+    "..ollllbbbbbbbbbbbdddo.p....p.",
+    "..obbbbbbbbbbbbbbbdddop..pp.p.",
+    "..obbbbbbbbbbbbbbbdddop.p..p..",
+    "..obbbbbbbbbbbbbbbdddop..pp...",
+    "..obbbbbbbbbbbbbbbdddo.p......",
+    "..obbbbbbbbbbbbobbdddo..p.....",
+    "..obbbbbbboobboyoobdddo.p.....",
+    "...oddddddolbyyYlbodddo.......",
+    "...odddddoyyyyyYoddddo........",
+    "...oooooooyyyyYoooooo.........",
+    ".........ooooooo..............",
+    ".......obbo...obbo............",
+    ".......oooo...oooo............",
+]
+SQUEAKLET_FACE_TOP, SQUEAKLET_FACE_SHIFT = face_place(SQUEAKLET, 8, 4, FACE_W)
+SQUEAKLET_TAGS = body_tags(SQUEAKLET, 12, 11, flat_rows=3)
+# Sir Thimble: a mouse knight, upright with a proud chest. Its round ears have grown hard as two
+# nutshell shields, its ringed tail stands straight up beside it as a lance with a needle for a tip,
+# and Grandma's thimble is its helmet. It marches.
+SIRTHIMBLE_PALETTE = MOUSE_PALETTE | {
+    "t": (175, 120, 65), "T": (125, 80, 40), "u": (215, 165, 100),  # the nutshells
+    "s": (205, 210, 220), "S": (140, 145, 160), "q": (245, 248, 252),  # the thimble and the needle
+}
+SIRTHIMBLE = [
+    "..........................q.....",
+    "..........................sS....",
+    "..........................sS....",
+    ".....ooo....oooo....ooo...sS....",
+    "...oottToo.oqssSo.oottToo.sS....",
+    "...ouuttto.oqSsSo.ouuttto.sS....",
+    "..ottTTTTToosSsSoottTTTTTosS....",
+    "..ouutttttoossSSoouutttttosS....",
+    "..otTTTTTTooooooootTTTTTTosS....",
+    "..otttttoolllllbbbootttTTosS....",
+    "...oTTTTolllllbbbbboTTTTo.sS....",
+    "...ootTollllbbbbbbbboTToo.pP....",
+    ".....ooolllbbbbbbbbbooo...PP....",
+    "......ollbbbbbbbbbbddo....pP....",
+    ".......obbbbbbbbbbddo.....pP....",
+    ".......obbbbbbbbddddo.....PP....",
+    "........obbbbbbddddo......pP....",
+    "........oobbbdddddoo......pP....",
+    ".........oooooooooo.....oooP....",
+    ".......oollllllbbbbboooobbbo....",
+    ".......ollhhhhhbbbbbbbbbbbdo....",
+    "......ollhhhhhhhbbbbbdooooP.....",
+    "......ollhhhhhhhbbbbbo....pP....",
+    "......olhhhhhhhhlbbbdo....pP....",
+    "......olhhhhhhhllbbddo....PP....",
+    "......olhhhhhhlllbdddo....pP....",
+    "......obbhhhhllldddddo....pP....",
+    ".......obhhhllllddddo.....PP....",
+    ".......oobhllllddddoo.PPPPpP....",
+    ".........oobbddddoo.......pP....",
+    ".......obbdooooobbdo............",
+    ".......ooooo...ooooo............",
+]
+SIRTHIMBLE_FACE_TOP, SIRTHIMBLE_FACE_SHIFT = face_place(SIRTHIMBLE, 12, 8, 12)
+SIRTHIMBLE_TAGS = species_tags([SIRTHIMBLE, drop_rows(SIRTHIMBLE, 23)], 23, 14)  # breathing, chest out
+SIRTHIMBLE_TAGS["walk"] = walk_tags(SIRTHIMBLE, 23, range(7, 12), range(15, 20), 30, ms=(220, 140))  # it marches
+# Cogsqueak: a wind-up tin-toy mouse, low and long on three little wheels. Its ears are two cogs,
+# its ringed tail a spiral spring, and the winding key in its back turns as it rolls along.
+COGSQUEAK_PALETTE = MOUSE_PALETTE | {
+    "y": (230, 190, 80), "Y": (180, 140, 50), "z": (250, 225, 130),  # brass: the cogs and the key
+    "s": (190, 195, 205), "S": (120, 125, 140),  # the spring and the seam of the tin
+    "k": (200, 70, 60), "K": (140, 45, 45), "n": (230, 110, 140),  # red tin wheels, the nose
+}
+COG_EAR = [".y.y.y.", "yzzyyYy", ".zyoyY.", "yyoooYy", ".yyoYY.", "yYyYYYy", ".Y.Y.Y."]
+COG_BODY = [
+    "........oooooooooooo......",
+    "......oolllhhhllllbbboo...",
+    ".....olllhhhllllllbbbbbo..",
+    "....ollllllllllbbbbbbbbdo.",
+    "...olllllllllbbbbbbbbbbddo",
+    "..ollllllllbbbbbbbbbbbbddo",
+    "nolllllllbbbbbbbbbbbbbbddo",
+    ".oobbbbbbbbbbbbbbbbbbbbddo",
+    "...oSSSSSSSSSSSSSSSSSSSSo.",
+    "...obbbbbbbbbbbbbbbbbbddo.",
+    "....oooooooooooooooooooo..",
+]
+COG_KEYS = (["yz.yy", "yyyyY", "yY.YY", "..S..", "..S.."],  # the key, seen flat on
+            [".zyy.", ".yyY.", ".yYY.", "..S..", "..S.."],  # turning
+            ["..z..", "..y..", "..Y..", "..S..", "..S.."])  # edge on
+COG_SPRING = [".s.s.", "sSsSs", ".S.S."]
+COG_WHEELS = ([".kk.", "ksKk", "kKKk", ".KK."], [".kk.", "kKsk", "kKKk", ".KK."],
+              [".kk.", "kKKk", "kKsk", ".KK."], [".kk.", "kKKk", "ksKk", ".KK."])  # the spoke goes round
+
+
+def cogsqueak(key, wheel):
+    grid = ["." * CANVAS] * 19
+    for part, at in ((COG_KEYS[key], (20, 0)), (COG_EAR, (4, 0)), (COG_EAR, (12, 0)), (COG_BODY, (1, 5)),
+                     (COG_SPRING, (27, 10)), (COG_WHEELS[wheel], (5, 15)), (COG_WHEELS[wheel], (12, 15)),
+                     (COG_WHEELS[wheel], (19, 15))):
+        grid = overlay(grid, part, at)
+    return grid
+
+
+COGSQUEAK = cogsqueak(0, 0)
+COGSQUEAK_FACE_TOP, COGSQUEAK_FACE_SHIFT = face_place(COGSQUEAK, 8, 3, 11)
+# standing, it unwinds slowly; rolling, the key turns and the wheels go round
+COGSQUEAK_TAGS = species_tags([cogsqueak(k, 0) for k in (0, 1, 2, 1)], 11, 14, idle_ms=450)
+COGSQUEAK_TAGS["walk"] = [(cogsqueak(k, w), 110) for k, w in ((0, 0), (1, 1), (2, 2), (1, 3))]
+# Woolwhisk (secret): the queen of Grandma's wool basket. She sits up tall on a big ball of red wool,
+# her fur grown into knitted wool, two crossed knitting needles on her head for a crown. Her ringed
+# tail has become a golden thread that loops round her in rings, and where it crosses itself it
+# knits little stars that shine and fade. At night the thread and the stars glow (GLOWS in
+# core/src/scene.ts: "y", "Y", "k" and "z" are used for them only).
+WOOLWHISK_PALETTE = MOUSE_PALETTE | {
+    "r": (215, 80, 80), "R": (165, 50, 55), "w": (240, 120, 110), "W": (250, 170, 160),  # the ball of wool
+    "s": (205, 175, 120), "S": (160, 125, 80),  # the knitting needles
+    "f": (235, 230, 240), "F": (200, 195, 210),  # her knitted fur
+    "y": (255, 215, 90), "Y": (225, 165, 40),  # the golden thread, in front and behind
+    "k": (250, 230, 120), "z": (255, 250, 200),  # the stars
+}
+WOOLWHISK = [
+    "...........rr.......rr..........",
+    "............S.......s...........",
+    ".........o...S.....s..o.........",
+    ".......ooloo..S...s.ooloo.......",
+    "......ollpbbo..S.s.ollpbbo......",
+    "......olpppbo...s..olpppbo......",
+    ".....olppppPooosoSooppppPdo.....",
+    "......obppoohlsllbSboopPdo......",
+    "......obbohlllllbbbbbboddo......",
+    ".......ooollllbbbbbbbbooo.......",
+    ".........olllbbbbbbbbdo.........",
+    ".........olbbbbbbbbbddo.........",
+    ".........obbbbbbbbddddo.........",
+    ".........obbbbbbbdddddo.........",
+    "..........oobbbdddddoo..........",
+    "..YYYYYYYYoFoooooooofo..........",
+    ".YY......ohhhhffffffffoY........",
+    "yy.......ohFhFfFfFfFfdoYYYYYYY..",
+    ".yy.....obbofffffffobbo....YYYYY",
+    "...yyyYYYofFfFfFfFFdFdo.......Yy",
+    "...YYyyyyyoffffffFFFFo.........y",
+    ".YYY....oyyyyyydFdFooooo.....yyy",
+    ".Y.....oWwwRwooyyyyyyyyyyyyyyyy.",
+    "yy....oRwwRwwRrrRrrRrrRryyyy....",
+    ".yy..oRwwRwwRrrRrrRryyyyyro.....",
+    "...yyyyyyyyyyyyyyyyyRrrRRRo.....",
+    ".....owRwrRrrRrrRrrRrrrRRro.....",
+    ".....oRrrRrrRrrRrrRrRrRRrRo.....",
+    "......orRrrRrrRrrRrRrRRrRo......",
+    ".......orrRrrRrrRRRrRRrRo.......",
+    "........ooorRrrrRRrRRooo........",
+    "...........oooooooooo...........",
+]
+# The stars: (x, y) of their middle, and how far along their twinkle each one is
+WOOL_STARS = (((2, 18), 0), ((29, 20), 2), ((4, 10), 4), ((27, 12), 1), ((29, 26), 3))
+WOOL_TWINKLE = ([], ["z"], [".k.", "kzk", ".k."], ["..k..", "..k..", "kkzkk", "..k..", "..k.."],
+                [".k.", "kzk", ".k."], ["k"])  # knitted, shining, fading
+
+
+def woolwhisk(step):
+    grid = WOOLWHISK
+    for (x, y), phase in WOOL_STARS:
+        star = WOOL_TWINKLE[(step + phase) % len(WOOL_TWINKLE)]
+        if star:
+            r = len(star) // 2
+            grid = overlay(grid, star, (x - r, y - r))
+    return grid
+
+
+WOOLWHISK_FACE_TOP, WOOLWHISK_FACE_SHIFT = face_place(WOOLWHISK, 9, 10, 12)
+WOOLWHISK_TAGS = species_tags([woolwhisk(i) for i in range(len(WOOL_TWINKLE))], 27, 16, idle_ms=260)
+
+# Faces. Baby and child: the slime's faces in the line's colors; the adults': kit_face with a pink
+# nose (Cogsqueak's nose is on the tip of its snout).
+MOUSE_FACE_PALETTE = FACE_PALETTE | {"d": (135, 130, 145), "m": (60, 55, 65), "k": (255, 150, 170)}
+sirthimble_face_grid = woolwhisk_face_grid = nosed(kit_face(6), ["nn"])
+cogsqueak_face_grid = kit_face(5)
+SIRTHIMBLE_FACE_PALETTE = COGSQUEAK_FACE_PALETTE = WOOLWHISK_FACE_PALETTE = GARDEN_FACE_PALETTE | {
+    "d": (135, 130, 145), "n": (230, 110, 140)}
+GRANDMA_LINES = (("mouse", "squeaklet"),)
+GRANDMA_FORMS = (("sirthimble", FACES), ("cogsqueak", FACES),
+                 ("woolwhisk", kit_faces(normal=("open", "small", True))))  # gracious
 
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
@@ -5066,6 +5320,10 @@ TRIP_PALETTE = {
     "e": (255, 235, 120), "E": (255, 190, 60),                          # eyes that glow
     "f": (255, 255, 255),
     "m": (65, 80, 140), "M": (40, 50, 100), "j": (150, 175, 225), "q": (235, 225, 245),  # mussel
+    "a": (230, 165, 65), "A": (175, 110, 45),                           # Grandma's wool: mustard,
+    "k": (200, 95, 125), "K": (150, 60, 95),                            # heather,
+    "u": (215, 85, 70), "U": (160, 50, 50),                             # and berry red
+    "h": (240, 200, 125), "H": (200, 150, 85),                          # sponge cake
 }
 
 
@@ -5159,6 +5417,8 @@ TRIP_TAGS = {
     "hazelnut": [(["...l..", ".dDdDd", "dDdDdD", ".tttt.", "ttwttT", "tttttT", ".tTTT."], 1000)],
     "watercress": [([".l...l.", "lgl.lgl", ".gglgg.", "..ggg..", "...g...", "...G..."], 1000)],
     "glowberry": [(["...g..", "..g...", ".cccc.", "cfcccC", "ccccCC", ".cCCC."], 1000)],
+    # a slice of Grandma's cake: sponge, jam and cream, a cherry on top (from her house)
+    "cake": [(["....G..", "...uU..", ".wwwwwW", "hhhhhhH", "pppppPp", "hhhhhhH", ".HHHHH."], 1000)],
     "pinenut": [(["..g..", ".tTt.", "tTtTt", ".tTt.", "tTtTt", ".tTt.", "..T.."], 1000)],
     # Plant: sprout, young plant, then per kind without and with a ripe fruit
     "sprout": [(["l...l", "gl.lg", ".ggg.", "..g..", "..G.."], 1000)],
@@ -5235,6 +5495,14 @@ TRIP_TAGS = {
     "hat_lily": [(["...p.p.p...", "...ppypp...", ".GGgpppgGG.", "GggggggggGg"], 1000)],
     "hat_batears": [(["v.........v", "vv.......vv", "vpv.....vpv", "vpv.....vpv", "VvV.....VvV"], 1000)],
     "hat_edelweiss": [(["..w.w.w..", ".wwwywww.", "..wyyyw..", ".wwwywww.", "..w.g.w.."], 1000)],
+    # Grandma's knitting: a mustard hat with ear flaps and braided ties, a long striped stocking cap
+    # whose pompom flops over, and a heather hat knitted like a tea cosy with a knob on top
+    "hat_earflap": [(["....wAw....", "..aaaaaaa..", ".aaAaaaAaa.", "aaaaaaaaaaa", "wAwAwAwAwAw", "aaA.....Aaa",
+                      ".w.......A."], 1000)],
+    "hat_stripes": [([".......uuu...", "......wwwuu..", ".....uuu..wW.", "....wwww..WWw", "...uuuuu...w.",
+                      "..wwwwwww....", ".uuuuuuuuu...", "UwUwUwUwUwU.."], 1000)],
+    "hat_cosy": [(["....AA....", "...kkkk...", "..kKkKkK..", ".kKkKkKkK.", "kkKkKkKkKK", "kKkKkKkKKK", "wwwwwwwwww"],
+                  1000)],
     # What stands along the path on a trip
     "tuft": [([".l.l.", "g.g.g", ".ggg."], 1000)],
     "flower_red": [([".r.", "ryr", ".r.", ".g.", ".g."], 1000)],
@@ -6163,7 +6431,7 @@ def main():
                     faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])
         write_sheet(f"{name}_faces", face_sheet(globals()[f"{name}_face_grid"], globals()[f"{upper}_FACE_PALETTE"],
                                                 faces))
-    for line, child in WATER_LINES:
+    for line, child in WATER_LINES + GRANDMA_LINES:
         upper, name = line.upper(), child.upper()
         palette, face_palette = globals()[f"{upper}_PALETTE"], globals()[f"{upper}_FACE_PALETTE"]
         write_sheet(f"{line}_baby_body", body_sheet(globals()[f"{upper}_BABY_TAGS"], palette),
@@ -6172,7 +6440,7 @@ def main():
         write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
                     faceShift=globals()[f"{name}_FACE_SHIFT"])
         write_sheet(f"{line}_faces", face_sheet(face_grid, face_palette))
-    for name, faces in WATER_FORMS:
+    for name, faces in WATER_FORMS + GRANDMA_FORMS:
         upper = name.upper()
         write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
                     faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])

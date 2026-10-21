@@ -493,6 +493,8 @@
         <p class="say" id="pack-say" aria-live="polite"></p>
         <button class="wide primary" id="pack-go" data-t="page.pack.go"></button>
       </div>
+      <!-- or a visit to Grandma's, which she rewards after a whole day (core/src/grandma.ts) -->
+      <button class="wide" id="visit-grandma" data-t="page.grandma.visit" hidden></button>
     </div>
   </section>
 
@@ -1135,6 +1137,7 @@ function renderTrip(s) {
     : s.stage === "baby" ? t("pet.rejected.too_young", { name: s.name })
     : s.trip || s.grandma || s.backpack ? $("trip-info").textContent : "";
   $("adventure-lead").hidden = !reason;
+  $("visit-grandma").hidden = !s.actions.visit_grandma;
   $("adventure-lead").textContent = reason;
   $("packing").hidden = !!reason;
   // built again only when something changes, so a tap in the middle of it isn't lost
@@ -2428,6 +2431,10 @@ async function pickup() {
 }
 const TAKE = { nest: collect, gift: unwrap, found: pickup };
 $("grandma").addEventListener("click", () => act("grandma"));
+$("visit-grandma").addEventListener("click", async () => {
+  const r = await act("visit_grandma");
+  if (r?.accepted) showView("home");  // to see it set off
+});
 $("recall").addEventListener("click", async () => {
   const r = await act("trip", "recall");
   if (r && r.accepted) say(t("page.trip.heading_home", { name: r.state.name }));

@@ -60,7 +60,8 @@
     "dragonfly": "Nymphlet",
     "beaver": "Gnawlet",
     "crab": "Shellbit",
-    "axolotl": "Axolittle"
+    "axolotl": "Axolittle",
+    "mouse": "Squeaklet"
   },
   "species": {
     "blob": "Blob",
@@ -127,7 +128,11 @@
     "castlecrab": "Castlecrab",
     "mossolotl": "Mossolotl",
     "medilotl": "Medilotl",
-    "axodrake": "Axodrake"
+    "axodrake": "Axodrake",
+    "mouse": "Mouse",
+    "sirthimble": "Sir Thimble",
+    "cogsqueak": "Cogsqueak",
+    "woolwhisk": "Woolwhisk"
   },
   "tricks": {
     "bow": "Bow",
@@ -239,7 +244,12 @@
     "seagrass": "Seagrass",
     "boot": "Old boot",
     "egg_crab": "Crab egg",
-    "egg_axolotl": "Axolotl egg"
+    "egg_axolotl": "Axolotl egg",
+    "egg_mouse": "Mouse egg",
+    "earflap": "Earflap hat",
+    "stripes": "Striped stocking cap",
+    "cosy": "Tea cosy hat",
+    "cake": "Grandma's cake"
   },
   "pack": {
     "ball": "Ball"
@@ -299,7 +309,8 @@
       "not_in_bag": "That isn't in the bag any more.",
       "pack_full": "Only two things fit into the backpack.",
       "no_pond": "{name} can only fish with a pond in the garden.",
-      "no_line": "Too late – the line is out of the water."
+      "no_line": "Too late – the line is out of the water.",
+      "at_grandmas": "{name} is at Grandma's already."
     },
     "notify": {
       "channel": "When your pet needs you",
@@ -320,7 +331,8 @@
     "recall": "🏠 Call back home",
     "grandma": {
       "fetch": "🏡 Pick up from Grandma's",
-      "info": "{name} is staying at Grandma's."
+      "info": "{name} is staying at Grandma's.",
+      "visit": "🏡 Take to Grandma's"
     },
     "unpack": "🎒 Unpack",
     "replay": {
@@ -634,7 +646,9 @@
       "fish_cast": "went fishing at the pond 🎣",
       "fish_catch": "caught something: {item} 🎣",
       "fish_early": "pulled the line in too early",
-      "fish_nothing": "nothing bit"
+      "fish_nothing": "nothing bit",
+      "visit_grandma": "went to stay at Grandma's 🏡",
+      "cake": "Grandma's cake 🍰"
     },
     "statistics": {
       "meals": "Meals",

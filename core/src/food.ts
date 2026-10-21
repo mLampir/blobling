@@ -23,8 +23,9 @@ import type { PetState } from "./state";
 // - heart: packed for a trip, it sets off with one more heart (trip.begin)
 // - finder: packed for a trip, it finds something at every stop where nothing else happens
 // - fresh: packed for a trip, it doesn't get tired or hungry, and finds as much as on the first of the day
-// The first two are eaten at home and leave a boost until it is used; the others work from the
-// backpack (PACKED) and are plain food at home.
+// - comfort: Grandma's cake (grandma.ts) fills it up well and cheers it up all the way, at once
+// The first two are eaten at home and leave a boost until it is used; heart, finder and fresh work
+// from the backpack (PACKED) and are plain food at home.
 export const FOODS: Record<string, string> = {
   honeycomb: "heart",
   hazelnut: "trick",
@@ -34,6 +35,8 @@ export const FOODS: Record<string, string> = {
   // caught when fishing (fishing.ts)
   mussel: "heart",
   seagrass: "trick",
+  // from Grandma's (grandma.ts)
+  cake: "comfort",
 };
 export const PACKED: Record<string, string> = { honeycomb: "heart", glowberry: "finder", pinenut: "fresh", mussel: "heart" };
 export const FRUITS = Object.keys(home.PLANTS).map((kind) => `fruit_${kind}`);
@@ -42,7 +45,8 @@ export const SATIETY = 10; // food from trips
 export const FRUIT_MOOD = 5;
 export const FAVORITE_MOOD = 20;
 // Grams: the honeycomb is the sweet one
-export const WEIGHT: Record<string, number> = { honeycomb: 2.5 };
+export const WEIGHT: Record<string, number> = { honeycomb: 2.5, cake: 3 };
+export const CAKE_SATIETY = 40; // Grandma's cake, and it cheers it up all the way
 export const FRUIT_WEIGHT = 0.5;
 
 // Form (or line, as baby and child): its favorite and what it won't eat. A baby can't go on trips
@@ -111,6 +115,10 @@ export const TASTES: Record<string, readonly [string, string]> = {
   mossolotl: ["seagrass", "honeycomb"],
   medilotl: ["watercress", "honeycomb"], // healthy
   axodrake: ["mussel", "seagrass"],
+  mouse: ["hazelnut", "fruit_herb"],
+  sirthimble: ["hazelnut", "seagrass"], // a nut, like its shield
+  cogsqueak: ["pinenut", "fruit_cherry"],
+  woolwhisk: ["cake", "watercress"], // Grandma's
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],
@@ -160,7 +168,7 @@ export function give(state: PetState, item: string): string | null {
     state.counters[`disliked_${state.species}`] = 1; // from now on the app shows it
     return "dislikes";
   }
-  const boost = PACKED[item] ? null : FOODS[item];
+  const boost = PACKED[item] || FOODS[item] === "comfort" ? null : FOODS[item];
   if (boost && state.boosts.includes(boost)) {
     return "boost_waiting";
   }
@@ -168,7 +176,10 @@ export function give(state: PetState, item: string): string | null {
   if (boost) {
     state.boosts.push(boost);
   }
-  if (isFood(item)) {
+  if (FOODS[item] === "comfort") {
+    state.stats.satiety += CAKE_SATIETY;
+    state.stats.mood = 100;
+  } else if (isFood(item)) {
     state.stats.satiety += SATIETY;
   } else {
     home.eat(state, item.slice("fruit_".length));
