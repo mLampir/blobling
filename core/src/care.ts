@@ -243,6 +243,18 @@ export const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:umbrabat": { flip: "hang_swing" }, // turns upside down, hangs from its hook tail and swings
   "adult:batbeat": { dance: "bass_nod" }, // nods to the bass, and lights flash on the beat
   "adult:lunaflap": { spin: "full_moon" }, // wraps itself in its wings, turns, and opens them as a full moon
+  "adult:owlbert": { bow: "close_book" }, // closes its book, nods over it, and opens it again
+  "adult:stargazer": { spin: "head_turn" }, // only its head turns, all the way round, as an owl's can
+  "adult:ninjowl": { flip: "shadow_flip" }, // gone in a puff of smoke, and it drops in behind where it stood
+  "adult:palettino": { spin: "color_run" }, // its colors run round and round its body
+  "adult:hidewell": { bow: "melt_away" }, // a bow that melts it into the scene until it is nearly gone
+  "adult:mirrorleon": { dance: "mirror_dance" }, // its friend's dance in its friend's colors (or the rainbow's)
+  "adult:solroll": { flip: "ball_vault" }, // a somersault over its sun ball and back
+  "adult:clockbeetle": { dance: "cog_dance" }, // bobs to the beat, and its cog ticks round a step on each
+  "adult:pharabug": { bow: "raise_sun" }, // a pharaoh's greeting: it raises its sun high, and the sun shines out
+  "adult:origrane": { bow: "fold_up" }, // folds itself up small and unfolds again
+  "adult:lionkite": { dance: "lion_dance" }, // a lion dance, its head rearing and shaking, pompoms flying
+  "adult:stormkite": { flip: "storm_dive" }, // torn up high by the wind, it turns over and dives down
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };

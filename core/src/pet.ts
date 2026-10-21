@@ -385,6 +385,8 @@ export class Pet {
       // the trick festival is coming (festival.ts), and a treasure map is in the bag (digging.ts)
       poster: festival.announced(s, now) !== null,
       cross: (s.items[digging.MAP] ?? 0) > 0,
+      // the friend it made last: Mirrorleon copies its dance and its special move
+      friend: s.friends.at(-1)?.species ?? null,
     };
   }
 

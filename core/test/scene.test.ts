@@ -297,7 +297,9 @@ test("the garden's and the water's adults have a trick and a special move of the
     archibeaver: "bow", teacrab: "bow", lightclaw: "spin", castlecrab: "bow", mossolotl: "spin", medilotl: "dance",
     axodrake: "flip", sirthimble: "bow", cogsqueak: "spin", woolwhisk: "spin", hivebear: "bow", snorbear: "spin",
     ursastra: "dance", tuxwaddle: "bow", glidepin: "spin", aurorapin: "dance", umbrabat: "flip", batbeat: "dance",
-    lunaflap: "spin" };
+    lunaflap: "spin", owlbert: "bow", stargazer: "spin", ninjowl: "flip", palettino: "spin", hidewell: "bow",
+    mirrorleon: "dance", solroll: "flip", clockbeetle: "dance", pharabug: "bow", origrane: "bow", lionkite: "dance",
+    stormkite: "flip" };
   const animations = new Set<string>();
   for (const [species, trick] of Object.entries(own)) {
     const animation = trickAnimation("adult", species, trick);
@@ -316,6 +318,18 @@ test("the garden's and the water's adults have a trick and a special move of the
       trip: { ...trip, rounds: [["charge", "flip", "hit"]] } }, 50);
     assert.ok(fight.slice(20).some((image, i) => differing(image, plain[20 + i]) > 10), species);
   }
+});
+
+test("Mirrorleon dances its friend's dance in its friend's colors, and makes its friend's special move", () => {
+  const dance = { stage: "adult", species: "mirrorleon", activity: "trick", activity_item: "dance:ok" };
+  const alone = frames(dance, 20);
+  const copying = frames({ ...dance, friend: "sakurin" }, 20);
+  assert.ok(copying.some((image, i) => differing(image, alone[i]) > 50));
+  const trip = { area: "meadow", returning: false, event: "battle", item: null, event_age: 0, foe: "bumblebop",
+    rounds: [["charge", "flip", "special"]], outcome: "win" };
+  const prism = frames({ stage: "adult", species: "mirrorleon", trip }, 50);
+  const copied = frames({ stage: "adult", species: "mirrorleon", friend: "lunaflap", trip }, 50);
+  assert.ok(copied.slice(20).some((image, i) => differing(image, prism[20 + i]) > 10));
 });
 
 test("a guest from the garden peeks over the fence at the right edge, only at home and outside", () => {

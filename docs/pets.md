@@ -1841,7 +1841,9 @@ splits the light into a rainbow, and its tail rolls into one huge round spiral
 beside it. At night its prism and the rainbow glow. A mirror wipes clean, so it
 gets dirty more slowly, and it grew out of a friendship: hearts mean more to
 it. For its dance it copies its friend's dance in its friend's colors, and in
-a scuffle it uses its friend's special move in its own colors.
+a scuffle it uses its friend's special move in its own colors. Without a
+friend, the rainbow runs over its mirrors when it dances, and in a scuffle its
+prism breaks a beam of light into the rainbow.
 
 </details>
 
@@ -1885,8 +1887,8 @@ its body flat and round as a dial in a gold case; its wing cases have grown
 into one lid, swung open on a hinge at its side, its horns are the clock's
 hands, and the ball is now a brass cog it keeps beside it. Wound up, it keeps
 going and tires more slowly, and well oiled as it is, it gets sick less often.
-For its dance its cogs turn to the beat, and its special move stops the time:
-the opponent loses a round.
+For its dance its cog ticks round to the beat, and its special move stops the
+time: the opponent stands frozen and gray and loses its move that round.
 
 </details>
 
@@ -1920,8 +1922,8 @@ its wing cases are gold with turquoise stripes and frame its head like a
 pharaoh's headdress, and above its head it holds up a big sun with its front
 legs; sand trickles down from it, and at night the sun glows. Used to the
 desert, it gets hungry more slowly, and the sun keeps it healthy: it gets sick
-less often. For its bow it raises its crook, and in a scuffle it sends a
-sandstorm.
+less often. For its bow it greets you as a pharaoh, raising its sun high, and
+in a scuffle it sends a sandstorm.
 
 </details>
 

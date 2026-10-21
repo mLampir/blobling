@@ -126,6 +126,18 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   umbrabat: "flip", // hangs from its hook tail and swings
   batbeat: "dance", // nods to the bass, lights flash
   lunaflap: "spin", // opens its wings as a full moon
+  owlbert: "bow", // closes its book and nods
+  stargazer: "spin", // its head turns all the way round
+  ninjowl: "flip", // gone in smoke, and it lands behind itself
+  palettino: "spin", // its colors run round its body
+  hidewell: "bow", // melts into the scene
+  mirrorleon: "dance", // the rainbow runs over its mirrors (with a friend: see mirrorleon_friend_own)
+  solroll: "flip", // a somersault over its ball
+  clockbeetle: "dance", // its cog ticks round to the beat
+  pharabug: "bow", // raises its sun
+  origrane: "bow", // folds itself small and unfolds again
+  lionkite: "dance", // a lion dance, pompoms flying
+  stormkite: "flip", // torn up by the wind, it dives down
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
@@ -141,13 +153,14 @@ const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "fli
   "glimmerock_night", "glimmerock_shine", "bouldergrin", "bouldergrin_sad", "bouldergrin_sleep", "bouldergrin_toss", "wild_stream", "visit_stone",
   "wild_forest", "visit_fox", "fox_egg", "fox_hatch", "fox_baby", "kitlet", "kitlet_hint", "kitlet_hat", "kitlet_sick",
   "fox_evolve", "roamtail", "roamtail_trip", "roamtail_sleep", "roamtail_rain", "filchfox", "filchfox_hat",
-  "filchfox_sad", "filchfox_sleep", "filchfox_night", "owl_egg",
+  "filchfox_sad", "filchfox_sleep", "filchfox_night", "owl_egg_roof",
   "wild_mountain", "visit_cloud", "cloud_egg", "cloud_hatch", "cloud_baby", "nimbit", "nimbit_hint", "nimbit_rain",
   "nimbit_hat", "cloud_evolve", "rumblefluff", "rumblefluff_rain", "rumblefluff_sleep", "rumblefluff_trick", "rumblefluff_storm", "prismist",
   "prismist_hat", "prismist_sad", "prismist_sleep", "prismist_trip", "prismist_rain",
   "gemperor", "gemperor_night", "gemperor_sad", "gemperor_hint",
   "angloop", "angloop_night", "angloop_hungry", "angloop_hint",
-  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", ...NEW_SCENES, ...OWN_SCENES,
+  "purrloop", "purrloop_happy", "purrloop_night", "purrloop_hint", ...NEW_SCENES, ...OWN_SCENES, "mirrorleon_friend_own",
+  "mirrorleon_friend_special",
   ...SPECIAL_FORMS.flatMap((adult) => [adult, `${adult}_night`]), "lunarock_new_moon", "snowglobe"];
 const PETS_DIR = "docs/images/pets";
 const DAY = new Date(2026, 9, 12, 13, 0);
@@ -578,6 +591,13 @@ const SCENES: Record<string, Scene> = {
     [adult, [{ stage: "adult", species: adult }, DAY, null]],
     [`${adult}_night`, [{ stage: "adult", species: adult }, NIGHT, null]],
   ])),
+  // Mirrorleon with a friend: it dances its friend's dance in its friend's colors, and makes its special move
+  mirrorleon_friend_own: [{ stage: "adult", species: "mirrorleon", friend: "sakurin", activity: "trick",
+    activity_item: "dance:ok" }, DAY, null],
+  mirrorleon_friend_special: [{
+    stage: "adult", species: "mirrorleon", friend: "sakurin",
+    trip: trip("stream", { event: "battle", foe: "puddlin", outcome: "win", rounds: [["charge", "flip", "special"]] }),
+  }, DAY, null],
   lunarock_new_moon: [{ stage: "adult", species: "lunarock" }, new Date(2026, 9, 10, 23, 30), null],
   snowglobe: [{ stage: "adult", species: "rumblefluff", deco: ["snowglobe"] }, DAY, null],
   // shooting stars (core/src/stars.ts): the star, the wish, the owl on the roof (or the fence), what is left
@@ -586,7 +606,7 @@ const SCENES: Record<string, Scene> = {
   owl_roof: [{ owl: true, house: 2 }, NIGHT, null],
   owl_fence: [{ owl: true }, NIGHT, null],
   star_shard: [{ fallen: "star_shard", deco: ["star_shard"] }, DAY, null],
-  owl_egg: [{ fallen: "egg_owl", house: 2 }, DAY, null],
+  owl_egg_roof: [{ fallen: "egg_owl", house: 2 }, DAY, null],
   // the trick festival (core/src/festival.ts): its poster, a trick on stage with the score held up, the prize
   festival_poster: [{ poster: true }, DAY, null],
   festival_show: [{
