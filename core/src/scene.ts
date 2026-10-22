@@ -144,7 +144,7 @@ const HOUSE_SIZE: readonly (readonly [number, number])[] = [[0, 0], [15, 13], [1
 export function houseArea(step: number): [number, number, number, number] {
   const [w, h] = HOUSE_SIZE[step];
   const part = (n: number) => Number((n / 64).toFixed(3));
-  return [0, part(GROUND + 1 - h), part(w), part(h)];
+  return [0, part(GROUND + 2 - h), part(w), part(h)];
 }
 // Hide and seek: the tall grass is a hiding spot that is always there; one hiding below a cover
 // peeks out over it now and then, this many rows at the most
@@ -211,7 +211,7 @@ const YARD_WALK = 2.5; // seconds from the trough over to the basin
 export function yardArea(what: "trough" | "basin", size: number): [number, number, number, number] {
   const width = YARD_WIDTH[size];
   const height = YARD_HEIGHT[size] + YARD_HEAP;
-  const area = [YARD_X[what] - width / 2, GROUND + 1 - height, width, height];
+  const area = [YARD_X[what] - width / 2, GROUND + 2 - height, width, height];
   return area.map((v) => Number((v / 64).toFixed(3))) as [number, number, number, number];
 }
 
@@ -1646,7 +1646,7 @@ export class PetScene {
       this.drawHome(img, view, t, seconds);
       const poop = items.image("poop");
       for (let i = 0; i < Math.min(view.poops, POOP_X.length); i++) {
-        img.paste(poop, POOP_X[i], GROUND + 1 - poop.height);
+        img.paste(poop, POOP_X[i], GROUND + 2 - poop.height);
         if (Math.trunc(t * 2 + i) % 2 === 0) { // stink
           img.point(POOP_X[i] + 3 + (i % 2), GROUND - 8, [90, 140, 60]);
         }
@@ -5449,7 +5449,7 @@ export class PetScene {
       const missed = bite !== null && e >= bite + fishing.BITE_WINDOW;
       pose.face = under ? "eat_open" : missed ? "sad" : Math.trunc(t) % 5 === 0 ? "blink" : "normal";
       pose.body = under && Math.trunc(t * 6) % 2 ? "stretch" : "idle";
-      pose.rod = [rim + Math.floor(water.width / 3), GROUND + 1 - water.height + FISH_WATER, under];
+      pose.rod = [rim + Math.floor(water.width / 3), GROUND + 2 - water.height + FISH_WATER, under];
     }
     this.targetX = this.x;
   }
@@ -5686,7 +5686,7 @@ export class PetScene {
 
   /** Stand something on the ground, centered at cx. */
   private stand(img: Image, sprite: Image, cx: number, lift = 0): void {
-    img.paste(sprite, cx - Math.floor(sprite.width / 2), GROUND + 1 - sprite.height - lift);
+    img.paste(sprite, cx - Math.floor(sprite.width / 2), GROUND + 2 - sprite.height - lift);
   }
 
   /** The rod held up in front of the pet, the line down to the bobber, and the bobber rocking on the water or under it. */
@@ -5774,7 +5774,7 @@ export class PetScene {
       const tag = plant.stage !== "grown" ? plant.stage : plant.kind + (plant.ripe ? "_ripe" : "");
       const sprite = this.dimmedSprite(tag);
       this.stand(img, sprite, plantX);
-      this.covers.set("plant", GROUND + 1 - sprite.height);
+      this.covers.set("plant", GROUND + 2 - sprite.height);
     }
     if (view.peeking) {
       this.drawPeeking(img, view.peeking, t);
@@ -5793,7 +5793,7 @@ export class PetScene {
     [...deco.keys()].sort((a, b) => Number(deco[b] === "pond") - Number(deco[a] === "pond")).forEach((i) => {
       const sprite = this.dimmedSprite(deco[i], t, true);
       this.stand(img, sprite, this.decoX(i, sprite.width));
-      this.covers.set(`deco${i}`, GROUND + 1 - sprite.height);
+      this.covers.set(`deco${i}`, GROUND + 2 - sprite.height);
     });
     this.covers.set("grass", GROUND + 1 - TALL_GRASS);
     if (view.nest) {
@@ -5923,7 +5923,7 @@ export class PetScene {
 
   /** The top of the roof (without a house: the fence), where the owl sits: [x, y of its feet]. */
   private static roof(step: number): readonly [number, number] {
-    return step ? [Math.round(HOUSE_SIZE[step][0] / 2), GROUND + 2 - HOUSE_SIZE[step][1]] : [OWL_FENCE_X, FENCE_TOP + 1];
+    return step ? [Math.round(HOUSE_SIZE[step][0] / 2), GROUND + 3 - HOUSE_SIZE[step][1]] : [OWL_FENCE_X, FENCE_TOP + 1];
   }
 
   /** Whether what a shooting star left lies up on the roof: the owl's egg, where the owl sat. */
@@ -5934,7 +5934,7 @@ export class PetScene {
   /** What a shooting star left in the garden, in front of the pet so that it can't be covered. */
   private drawFallen(img: Image, view: SceneView, t: number): void {
     if (view.fallen && !PetScene.onRoof(view)) {
-      this.drawFallenAt(img, view.fallen, STAR_X[view.house ?? 0], GROUND + 1, t);
+      this.drawFallenAt(img, view.fallen, STAR_X[view.house ?? 0], GROUND + 2, t);
     }
   }
 
@@ -6120,8 +6120,8 @@ export class PetScene {
     const inside = view.asleep && !(view.activity === "go_in" && e < GO_IN.shrink);
     const sprite = open ? this.dimmedSprite(`house_${step}_open`, t, false, "house")
       : this.dimmedSprite(`house_${step}`, t, inside, "house");
-    img.paste(sprite, 0, GROUND + 1 - sprite.height);
-    this.covers.set("house", GROUND + 1 - sprite.height);
+    img.paste(sprite, 0, GROUND + 2 - sprite.height);
+    this.covers.set("house", GROUND + 2 - sprite.height);
   }
 
   /** The inside of the house: the room (its window shows the sky behind it) and the decorations in it. */
