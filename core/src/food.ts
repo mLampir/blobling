@@ -149,6 +149,15 @@ export const TASTES: Record<string, readonly [string, string]> = {
   origrane: ["seagrass", "honeycomb"], // honey would glue its folds
   lionkite: ["cake", "mussel"], // festival food
   stormkite: ["glowberry", "fruit_sunflower"], // lightning, and no sunshine
+  // the lines from the coast and the ruins
+  octopus: ["fruit_berry", "fruit_sunflower"],
+  inkasso: ["fruit_berry", "fruit_cherry"], // the colors of its paint
+  octavio: ["fruit_cherry", "honeycomb"], // round things to juggle, and energy
+  abyssink: ["mussel", "glowberry"], // food from the deep, and its own light
+  gargoyle: ["fruit_herb", "fruit_cherry"],
+  gargard: ["hazelnut", "fruit_cherry"], // hard as stone
+  fountaingle: ["watercress", "seagrass"], // what grows where water runs
+  bellfry: ["honeycomb", "cake"], // bronze-gold and festive
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],

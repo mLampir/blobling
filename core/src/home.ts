@@ -80,6 +80,8 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_chameleon: "egg",
   egg_scarab: "egg",
   egg_kite: "egg",
+  egg_octopus: "egg",
+  egg_gargoyle: "egg",
 };
 export const MAX_SEEDS = 9; // per kind; decorations, hats and the treasure map exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
@@ -90,7 +92,8 @@ export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "embe
   egg_cloud: "cloud", egg_leaf: "leaf", egg_duck: "duck", egg_hippo: "hippo", egg_beak: "beak",
   egg_caterpillar: "caterpillar", egg_dog: "dog", egg_dragonfly: "dragonfly", egg_beaver: "beaver",
   egg_crab: "crab", egg_axolotl: "axolotl", egg_mouse: "mouse", egg_bear: "bear", egg_penguin: "penguin",
-  egg_bat: "bat", egg_owl: "owl", egg_chameleon: "chameleon", egg_scarab: "scarab", egg_kite: "kite" };
+  egg_bat: "bat", egg_owl: "owl", egg_chameleon: "chameleon", egg_scarab: "scarab", egg_kite: "kite",
+  egg_octopus: "octopus", egg_gargoyle: "gargoyle" };
 export const MAX_DECO = 2; // this many spots the scene has outside
 
 // Plant: [stat, effect of one fruit]

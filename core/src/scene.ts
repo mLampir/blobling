@@ -73,12 +73,13 @@ const SPECIAL_MOVES = ["angloop", "gemperor", "purrloop", "lanternling", "flarel
   "timberjack", "archibeaver", "teacrab", "lightclaw", "castlecrab", "mossolotl", "medilotl", "axodrake",
   "sirthimble", "cogsqueak", "woolwhisk", "hivebear", "snorbear", "ursastra", "tuxwaddle", "glidepin", "aurorapin",
   "umbrabat", "batbeat", "lunaflap", "owlbert", "stargazer", "ninjowl", "palettino", "hidewell", "mirrorleon", "solroll",
-  "clockbeetle", "pharabug", "origrane", "lionkite", "stormkite"];
+  "clockbeetle", "pharabug", "origrane", "lionkite", "stormkite", "inkasso", "octavio", "abyssink", "gargard",
+  "fountaingle", "bellfry"];
 // How fast an opponent is carried back after a special move has struck (pixels per second, roughly)
 const FOE_DRIFT = 22;
 // Special moves that knock the opponent further back than others: by this many pixels more
-const SPECIAL_PUSH: Record<string, number> = { rotorfly: 10, sirthimble: 8, glidepin: 10, solroll: 6 }; // its downwash,
-// its shield charge, the ice it slips on, and the sun ball rolled into it
+const SPECIAL_PUSH: Record<string, number> = { rotorfly: 10, sirthimble: 8, glidepin: 10, solroll: 6, bellfry: 8 }; // its
+// downwash, its shield charge, the ice it slips on, the sun ball rolled into it, and the shock wave of the bell
 // The skipping stone: [start, length, height] of each hop, over the time in the air (0..1)
 const SKIPS: readonly (readonly [number, number, number])[] = [[0, 0.45, 12], [0.45, 0.3, 6], [0.75, 0.25, 3]];
 const SPIN_PAD = 8;
@@ -248,6 +249,7 @@ const HAT_SPOTS: Record<string, HatSpot> = {
   "adult:lightclaw": [5, 11, 1, true], "adult:sirthimble": [-10, 1, -1], "adult:castlecrab": [-12, 0, -1],
   "adult:palettino": [-19, 6, 0, true], "adult:hidewell": [-12, 0, 0, true], "adult:solroll": [-11, 8, -1],
   "adult:mirrorleon": [-8, 3, 0, true], "adult:pharabug": [5, 10, 1],
+  "child:octopus": [-4, 3, 0], "adult:inkasso": [0, 6, 0, true], "adult:fountaingle": [5, 1, 0],
 };
 // Trip: grass, soil, what stands along the path (null = nothing) and what passes by behind it, per area
 const TRAVEL: Record<string, readonly [Color, Color, readonly (string | null)[], string]> = {
@@ -350,13 +352,17 @@ const STAGE_SHEETS: Record<string, Record<string, readonly [string, string]>> = 
   chameleon: { baby: ["chameleon_baby_body", "chameleon_baby_faces"], child: ["colorlet_body", "chameleon_faces"] },
   scarab: { baby: ["scarab_baby_body", "scarab_baby_faces"], child: ["rollet_body", "scarab_faces"] },
   kite: { baby: ["kite_baby_body", "kite_baby_faces"], child: ["kitelet_body", "kite_faces"] },
+  // the coast and ruins lines
+  octopus: { baby: ["octopus_baby_body", "octopus_baby_faces"], child: ["inklet_body", "octopus_faces"] },
+  gargoyle: { baby: ["gargoyle_baby_body", "gargoyle_baby_faces"], child: ["gargit_body", "gargoyle_faces"] },
 };
 // The egg of a line: the tags in the items sheet start with this
 const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg", cloud: "cloud_egg",
   leaf: "leaf_egg", duck: "duck_egg", hippo: "hippo_egg", beak: "beak_egg", caterpillar: "caterpillar_egg", dog: "dog_egg",
   dragonfly: "dragonfly_egg", beaver: "beaver_egg", crab: "crab_egg", axolotl: "axolotl_egg",
   mouse: "mouse_egg", bear: "bear_egg", penguin: "penguin_egg", bat: "bat_egg",
-  owl: "owl_egg", chameleon: "chameleon_egg", scarab: "scarab_egg", kite: "kite_egg" };
+  owl: "owl_egg", chameleon: "chameleon_egg", scarab: "scarab_egg", kite: "kite_egg",
+  octopus: "octopus_egg", gargoyle: "gargoyle_egg" };
 // Color per adult species: hue shift (0–255) starting from teal.
 // Fallback for a species without pixel art of its own.
 const SPECIES_HUE: Record<string, number> = {
@@ -394,7 +400,8 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
     "timberjack", "archibeaver", "teacrab", "lightclaw", "castlecrab", "mossolotl", "medilotl", "axodrake", "sirthimble",
     "cogsqueak", "woolwhisk", "hivebear", "snorbear", "ursastra", "tuxwaddle", "glidepin", "aurorapin", "umbrabat",
     "batbeat", "lunaflap", "owlbert", "stargazer", "ninjowl", "palettino", "hidewell", "mirrorleon", "solroll",
-    "clockbeetle", "pharabug", "origrane", "lionkite", "stormkite"]
+    "clockbeetle", "pharabug", "origrane", "lionkite", "stormkite", "inkasso", "octavio", "abyssink", "gargard",
+    "fountaingle", "bellfry"]
     .map((species) => [species, [`${species}_body`, `${species}_faces`, 0] as const])),
 };
 // What grows on a child's head hints at the adult form it is heading for. Per line, the three
@@ -409,7 +416,8 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
 // cheese (cheese, shadow), the glaze of the bear cub's honey pot (glaze, shadow), the penguin chick's
 // earmuffs (muff, shadow, shine), the young bat's wing membrane (membrane, shadow), the rims of the young
 // owl's glasses (rim, shadow), the young chameleon's tail spiral (stripe, shadow, light), the young
-// scarab's ball (sand, shadow, light) and the young kite's bows (bow, shadow) – as in the palettes of
+// scarab's ball (sand, shadow, light), the young kite's bows (bow, shadow), the young octopus's ink
+// blot and drop (ink, shine) and the edges of the young gargoyle's wings (edge, shadow) – as in the palettes of
 // tools/build_blob_sprites.py.
 const LURES: Record<string, readonly Color[]> = {
   blob: [[255, 235, 150], [240, 190, 90], [255, 255, 255]],
@@ -435,6 +443,8 @@ const LURES: Record<string, readonly Color[]> = {
   chameleon: [[245, 125, 55], [190, 80, 40], [255, 190, 110]],
   scarab: [[230, 200, 140], [185, 150, 95], [250, 230, 185]],
   kite: [[90, 170, 235], [50, 110, 190]],
+  octopus: [[62, 58, 138], [130, 125, 225]],
+  gargoyle: [[175, 190, 225], [125, 140, 185]],
 };
 const LURE_HINT: Record<string, readonly Color[]> = {
   sneezle: [[125, 220, 105], [60, 170, 70], [235, 255, 205]],
@@ -511,22 +521,30 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   origrane: [[250, 250, 245], [200, 195, 185]], // crane white
   lionkite: [[245, 200, 80], [255, 130, 170]], // festival gold and pompoms
   stormkite: [[68, 80, 128], [255, 225, 60]], // thunderstorm and lightning
+  inkasso: [[70, 185, 90], [215, 160, 245]], // paint
+  octavio: [[240, 70, 75], [255, 215, 70]], // its juggling balls
+  abyssink: [[40, 30, 90], [110, 240, 255]], // the deep sea, and its glowing dots
+  gargard: [[120, 132, 170], [190, 95, 70]], // shield iron and brick
+  fountaingle: [[95, 160, 140], [90, 170, 245]], // verdigris and water
+  bellfry: [[235, 180, 85], [165, 100, 40]], // bronze
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
 // Forms that neither hop nor walk but get about at a height of their own (rows above the ground):
 // the fliers fly (with their "flutter" frames, if they have any), and Pawdini rolls on its ball
-// and Glidepin skates; Umbrabat floats along like an umbrella in the wind, and Stormkite flies like a kite
+// and Glidepin skates; Umbrabat floats along like an umbrella in the wind, Stormkite flies like a kite
+// and Abyssink drifts like a jellyfish of the deep
 const GLIDES: Record<string, number> = { mothmuff: 4, sunflutter: 4, jesterwing: 5, rotorfly: 5, prismfly: 5, pawdini: 0, axodrake: 5,
-  glidepin: 0, umbrabat: 3, lunaflap: 6, stormkite: 6 };
+  glidepin: 0, umbrabat: 3, lunaflap: 6, stormkite: 6, abyssink: 2 };
 const HOVERS = ["rotorfly", "umbrabat"]; // flies steadily instead of fluttering up and down
 // Forms that hop all of a piece, without squashing and stretching: Archibeaver, tower and all, like a rook
-// and Castlecrab, moat and all; Woolwhisk on her ball of wool
-const STIFF_HOPS = ["archibeaver", "castlecrab", "woolwhisk"];
+// and Castlecrab, moat and all; Woolwhisk on her ball of wool; Gargard, plinth and all, and Bellfry, a bell of bronze
+const STIFF_HOPS = ["archibeaver", "castlecrab", "woolwhisk", "gargard", "bellfry"];
 // the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
 // duck like it too, and a pond hippo is wet anyway; so is a beaver, a dragonfly grew up in a pond,
 // and a sunflower is a plant; an axolotl lives in the water, and Umbrabat is an umbrella itself;
-// Hidewell has become a twig, and Stormkite is the storm
+// Hidewell has become a twig, and Stormkite is the storm; an octopus lives in the sea, Fountaingle
+// loves the rain, and Bellfry has roofs of its own
 // The widths of the umbrellas in the items sheet: the pet holds the smallest that covers it
 const UMBRELLAS = [19, 23, 27, 31, 35];
 // The backpack for a pet narrower than this, outline and all; wider ones carry the biggest
@@ -534,7 +552,8 @@ const PACKS: [number, string][] = [[22, "backpack"], [30, "backpack_9"]];
 export const NO_UMBRELLA = ["lanternling", "grumpcap", "cloud", "rumblefluff", "prismist", "leaf", "twiggle",
   "needlenub", "duck", "drakwing", "quill", "lillypot", "flurrbleat", "sakurin", "bubblehelm", "sunflutter", "dragonfly",
   "rotorfly", "jewelwing", "prismfly", "beaver", "dambert", "timberjack", "archibeaver", "axolotl",
-  "mossolotl", "medilotl", "axodrake", "umbrabat", "hidewell", "stormkite"];
+  "mossolotl", "medilotl", "axodrake", "umbrabat", "hidewell", "stormkite", "octopus", "inkasso", "octavio", "abyssink",
+  "fountaingle", "bellfry"];
 // Needlenub's flower opens only when it is happy; otherwise it is a bud (the colors as in the
 // palette of tools/build_blob_sprites.py)
 const BUD: readonly (readonly [Color, Color])[] = [
@@ -544,7 +563,8 @@ const BUD: readonly (readonly [Color, Color])[] = [
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals,
 // Gemperor's crystals and core, the bulb of Angloop's lure, Prismfly's glass and wings, Archibeaver's blueprint,
 // Ursastra's stars, Aurorapin's aurora, Lunaflap's moon, Ninjowl's blades, Mirrorleon's prism and rainbow,
-// Pharabug's sun and Stormkite's lightning
+// Pharabug's sun, Stormkite's lightning, Abyssink's lure, dots and bubbles, and Bellfry's bronze and gold
+// (it glows warm in the evening)
 const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   lumoth: [
     [[250, 160, 215], [150, 255, 235]], [[255, 215, 110], [255, 255, 200]], [[240, 200, 120], [190, 255, 240]],
@@ -599,6 +619,14 @@ const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   ],
   stormkite: [ // its horns, whiskers, bows and sparks of lightning
     [[255, 225, 60], [255, 250, 170]], [[255, 245, 150], [255, 255, 230]],
+  ],
+  abyssink: [ // its lure, the dots along its arms, and the bubbles
+    [[110, 240, 255], [170, 255, 255]], [[50, 175, 230], [110, 225, 255]], [[225, 255, 255], [250, 255, 255]],
+    [[120, 230, 255], [180, 250, 255]],
+  ],
+  bellfry: [ // its bronze warms up, the finials shine and its rings of sound glow
+    [[205, 140, 55], [235, 160, 60]], [[235, 180, 85], [255, 200, 95]], [[255, 222, 140], [255, 235, 165]],
+    [[255, 225, 110], [255, 245, 170]], [[255, 220, 120], [255, 240, 160]], [[230, 175, 80], [255, 205, 110]],
   ],
   axodrake: [ // its gills and wings
     [[235, 75, 125], [255, 130, 190]], [[180, 40, 90], [235, 90, 160]], [[255, 190, 215], [255, 225, 240]],
@@ -940,6 +968,63 @@ const ROCKET: Bitmap = [[255, 235, 170], ["X"]];
 const KITE_STRING: Bitmap = [[200, 205, 220], ["X"]];
 const LIGHTNING: Bitmap = [[255, 250, 170], ["X.", ".X", "X."]]; // a bolt running down the string
 const STORMKITE_TAIL: readonly [number, number] = [27, 31]; // where its string is tied
+// The coast and ruins lines' adults
+const INK: readonly Color[] = [[230, 55, 65], [70, 185, 90], [60, 130, 235], [245, 195, 50], [160, 85, 210]]; // Inkasso's brushes
+const INK_STROKE: Bitmap[] = INK.map((color) => [color, ["XX", "XX"]]); // the circle it paints
+const INK_DRIP: Bitmap[] = INK.map((color) => [color, ["X", "X"]]);
+const INK_BLOB: Bitmap[] = INK.map((color) => [color, [".XX.", "XXXX", "XXXX", ".XX."]]); // what it throws
+const INK_SPLAT: Bitmap[] = INK.map((color) => [color, ["X.", ".X"]]);
+const INKASSO_CIRCLE = 18; // the radius of the circle it paints round itself
+const BRUSH_TIPS: readonly (readonly [number, number])[] = [[8, 7], [16, 5], [24, 8]]; // in its frame
+// Octavio's juggling balls: red, gold and two of its own
+const JUGGLE_BALL: Bitmap[] = ([[240, 70, 75], [255, 215, 70], [90, 200, 240], [130, 220, 110]] as Color[])
+  .map((color) => [color, [".XX.", "XXXX", "XXXX", ".XX."]]);
+const JUGGLE_SPARK: Bitmap[] = JUGGLE_BALL.map(([color]) => [color, ["XX", "XX"]]);
+const JUGGLE_HANDS: readonly [number, number] = [6, 27]; // the arms it throws from and catches with, in its frame
+// Abyssink's ink, and the lights of the deep it confuses with
+const INK_CLOUD: Bitmap = [[55, 45, 120], [".XX..", "XXXXX", "XXXX.", ".XX.."]];
+const INK_WISP: Bitmap = [[105, 95, 195], [".X.", "X.X"]];
+const DEEP_LIGHT: Bitmap[] = ([[110, 240, 255], [225, 255, 255], [50, 175, 230]] as Color[]).map((color) => [color, ["X"]]);
+const DEEP_GLOW: Bitmap = [[120, 230, 255], [".X.", "XXX", ".X."]];
+const DEEP_DOT: Bitmap[] = DEEP_LIGHT.map(([color]) => [color, ["XX", "XX"]]);
+const ABYSSINK_RISE = 18; // how high it appears again over its ink cloud
+// Gargard's stone gaze, and the chips that fly when the stone cracks
+const GAZE: Bitmap = [[255, 200, 90], ["X"]];
+const STONE_CHIP: Bitmap = [[200, 196, 188], ["XX", "X."]];
+const GARGARD_EYES: readonly [number, number] = [16, 11]; // between its eyes, in its frame
+// Fountaingle's water
+const WATER: Bitmap = [[90, 170, 245], ["X"]];
+const SPRAY: Bitmap = [[190, 230, 255], ["X"]];
+const WATER_DROP: Bitmap = [[140, 205, 250], [".X", "XX"]];
+const FOUNTAIN: Bitmap = [[90, 170, 245], ["XX", "XX"]];
+const FOUNTAIN_TOP: Bitmap = [[190, 230, 255], [".X.", "XXX"]];
+const FOUNTAINGLE_MOUTH: readonly [number, number] = [29, 20]; // where the water runs out, in its frame
+const FOUNTAINGLE_MIDDLE = 19; // the row it turns round in its somersault
+// Bellfry's chime: rings that spread from the bell, and half rings that roll along the ground as a shock wave
+const CHIME: Color = [255, 225, 110];
+const CHIME_RINGS: Bitmap[] = Array.from({ length: 16 }, (_, radius) => ringBitmap(radius, CHIME));
+const SHOCK_WAVES: Bitmap[] = Array.from({ length: 44 }, (_, radius) => halfRing(radius, CHIME));
+const SHOCK_DIM: Bitmap[] = Array.from({ length: 44 }, (_, radius) => halfRing(radius, [215, 160, 85]));
+const BELL_MIDDLE: readonly [number, number] = [16, 18]; // in its frame
+
+/** The upper half of a ring of the given radius (Bellfry's shock wave, rolling along the ground). */
+function halfRing(radius: number, color: Color): Bitmap {
+  return [color, ringBitmap(radius, color)[1].slice(0, radius + 1)];
+}
+
+/** Turned to stone, `amount` of the way (0–1): its colors go to a weathered gray. */
+function petrified(img: Image, amount: number): Image {
+  const out = img.copy();
+  const data = out.data;
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3]) {
+      const light = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
+      data.set(lerp([data[i], data[i + 1], data[i + 2]], [light * 0.78, light * 0.78, light * 0.82], amount)
+        .map((v) => Math.round(v)), i);
+    }
+  }
+  return out;
+}
 
 /** Each of `colors` replaced by one of `into`, in the same order. */
 function colorSwaps(colors: readonly Color[], into: readonly Color[]): (readonly [Color, Color])[] {
@@ -1351,6 +1436,8 @@ interface Pose {
   paint: number | null;
   /** Mirrorleon dances in its friend's colors: the friend's species. */
   tint: string | null;
+  /** How far it has turned to stone (0 = not at all): Gargard holding still as a statue. */
+  stone: number;
 }
 
 interface PetLook {
@@ -1403,7 +1490,9 @@ export class PetScene {
   private readonly mirrors = new Map<Bitmap, Bitmap>(); // particles in Mirrorleon's colors (mirrorSprite)
   private readonly mirrored = new Map<Bitmap, Bitmap>(); // and what each of them was
   private friend: string | null = null; // the friend Mirrorleon copies (SceneView.friend)
-  private foeFrozen = false; // Clockbeetle has stopped time: the opponent stands still
+  // the opponent can't make its move: Clockbeetle has stopped time, Gargard's gaze has turned it to stone,
+  // or Abyssink's lights have it looking this way and that
+  private foeFrozen: "time" | "stone" | "dazed" | null = null;
   private petTop = GROUND - 20; // top row of the pet on the panel (for particles)
   private burstFor: number | null = null; // one-off effects only once per animation
   private trickFxAt = new Map<string, number>(); // when an effect of a trick of its own last went off
@@ -1504,7 +1593,7 @@ export class PetScene {
     }
 
     this.friend = view.friend ?? null;
-    this.foeFrozen = false;
+    this.foeFrozen = null;
     const pose = this.behave(view, weather, t, dt, seconds);
     this.drawProps(img, view, pose, t, seconds);
     const x = Math.round(this.x + pose.dx);
@@ -1553,6 +1642,9 @@ export class PetScene {
         const pad = rotate ? SPIN_PAD : 0;
         part = rotate ? spun(part, rotate) : part;
         piece = [part, x + x0 + Math.round(dx) - pad, y + y0 - Math.round(up) - pad];
+      }
+      if (pose.stone > 0) {
+        pet = petrified(pet, pose.stone);
       }
       if (pose.fade < 1) {
         pet = faded(pet, pose.fade);
@@ -1677,7 +1769,7 @@ export class PetScene {
       egg: null, eggT: t, item: view.activity_item, propAt: null, thrown: null,
       activity, pack: false, found: null, foe: null, wild: null, scale: 1, hidden: false, bud: null, rainbow: false,
       cover: null, rays: false, beam: null, rod: null, lift: null, starless: false, piece: null, fade: 1, fold: 0,
-      paint: null, tint: null,
+      paint: null, tint: null, stone: 0,
     };
     this.play = this.hiding = null;
     this.tallGrass = [];
@@ -2757,6 +2849,112 @@ export class PetScene {
       } else if (p > 0.76 && p < 0.84) {
         this.ringFx(t, "storm_dive_pull", TRICK_SHOW, [GUST, BOLT], 8, 0, 8, 26, 0.5, -Math.PI, 0);
       }
+    } else if (animation === "ink_circle") {
+      // it turns round and round, and the brush on its arm paints a circle in the air all round it, one
+      // color after the other; the paint drips, and the circle fades
+      const q = clamp((p - 0.08) / 0.45, 0, 1);
+      Object.assign(pose, { turn: q > 0 && q < 1 ? Math.cos(q * 2 * (2 * Math.PI)) : null, jump: Math.sin(q * Math.PI) * 3,
+        face: q < 1 ? "laugh" : "smile", body: q > 0 && q < 1 ? "idle" : p < 0.1 ? "squash" : "idle" });
+      const points: [Bitmap, number, number][] = [];
+      if (q > 0 && p < 0.86) {
+        const [cx, cy] = [this.x + SPRITE / 2, GROUND - SPRITE / 2];
+        const steps = Math.round(2 * Math.PI * INKASSO_CIRCLE * q * 1.3);
+        for (let k = 0; k <= steps; k++) {
+          const a = -Math.PI / 2 + k / 1.3 / INKASSO_CIRCLE * this.facing;
+          const color = Math.floor(k / (2 * Math.PI * INKASSO_CIRCLE * 1.3) * INK.length) % INK.length;
+          points.push([INK_STROKE[color], cx + Math.cos(a) * INKASSO_CIRCLE - 1, cy + Math.sin(a) * INKASSO_CIRCLE * 0.8 - 1]);
+        }
+      }
+      this.place(INK_STROKE, points);
+      if (q >= 1 && p < 0.86) { // the paint runs
+        const a = this.rng.uniform(0, Math.PI);
+        this.trickFx(t, "ink_circle", 0.08, INK_DRIP[Math.trunc(t * 8) % INK.length], 1, Math.cos(a) * INKASSO_CIRCLE,
+          SPRITE / 2 - 1 - Math.sin(a) * INKASSO_CIRCLE * 0.8, [0, 0], [0, 4], 0.8, 30);
+      }
+    } else if (animation === "arm_juggle") {
+      // it juggles with all its arms: balls fly up from one arm in an arc and come down in another, faster
+      // and faster, and it sways and bobs along
+      const on = p > 0.06 && p < 0.92;
+      const beat = p * TRICK_SHOW * 3;
+      Object.assign(pose, { body: on && beat % 1 < 0.3 ? "squash" : "idle", dx: on ? Math.round(Math.sin(p * 4 * Math.PI) * 2) : 0,
+        face: on ? "laugh" : "smile" });
+      const points: [Bitmap, number, number][] = [];
+      if (on) {
+        const [left, right] = JUGGLE_HANDS.map((col) => this.x + pose.dx + (this.facing > 0 ? col : SPRITE - 1 - col));
+        const period = 1.1;
+        for (let i = 0; i < JUGGLE_BALL.length; i++) {
+          const s = e + i * period / JUGGLE_BALL.length;
+          const u = (s % period) / period;
+          const [from, to] = Math.trunc(s / period) % 2 ? [right, left] : [left, right];
+          const height = 12 + (i % 2) * 5;
+          points.push([JUGGLE_BALL[i], from + (to - from) * u - 2, GROUND - SPRITE + 4 - Math.sin(u * Math.PI) * height]);
+        }
+      }
+      this.place(JUGGLE_BALL, points);
+    } else if (animation === "ink_vanish") {
+      // a cloud of ink and it is gone; a little cloud puffs up higher, it appears on top of it, turns over
+      // and sinks back down to where it was, glowing
+      const fall = clamp((p - 0.5) / 0.32, 0, 1);
+      Object.assign(pose, { jump: GLIDES.abyssink, hidden: p > 0.22 && p < 0.5, body: p > 0.1 && p < 0.22 ? "squash" : fall > 0 && fall < 1 ? "stretch" : "idle",
+        face: p < 0.22 ? "smile" : "laugh" });
+      if (p >= 0.5) {
+        Object.assign(pose, { jump: GLIDES.abyssink + ABYSSINK_RISE * (1 - (1 - Math.cos(fall * Math.PI)) / 2),
+          rotate: fall < 1 ? 360 * clamp(fall / 0.6, 0, 1) * this.facing : 0 });
+      }
+      if (p > 0.18 && p < 0.26) {
+        this.trickFx(t, "ink_vanish", TRICK_SHOW, INK_CLOUD, 9, 0, 14, [-10, 10], [-16, -4], 1.0);
+        this.trickFx(t, "ink_vanish_wisp", TRICK_SHOW, INK_WISP, 6, 0, 18, [-16, 16], [-20, -6], 1.2);
+        this.trickFx(t, "ink_vanish_glow", TRICK_SHOW, DEEP_GLOW, 3, 0, 14, [-12, 12], [-12, -4], 0.9);
+      } else if (p > 0.42 && p < 0.5) {
+        this.trickFx(t, "ink_vanish_up", TRICK_SHOW, INK_CLOUD, 5, 0, GLIDES.abyssink + ABYSSINK_RISE + 4, [-10, 10], [-12, -4], 0.8);
+        this.trickFx(t, "ink_vanish_lights", TRICK_SHOW, DEEP_GLOW, 3, 0, ABYSSINK_RISE + 14, [-10, 10], [-8, -2], 0.8);
+      }
+    } else if (animation === "stone_still") {
+      // a deep bow, and it turns to stone in it, gray and still as a statue on a roof; then it wakes with a
+      // shake, chips of stone flying off it
+      const stone = clamp((p - 0.2) / 0.12, 0, 1) * (1 - clamp((p - 0.7) / 0.06, 0, 1));
+      const shake = p > 0.7 && p < 0.82;
+      Object.assign(pose, { stone, body: p > 0.08 && p < 0.7 ? "squash" : "idle", dx: shake ? Math.trunc(t * 20) % 2 * 2 - 1 : 0,
+        face: stone > 0.5 ? "blink" : p > 0.7 ? "laugh" : "smile" });
+      if (shake) {
+        this.trickFx(t, "stone_still", TRICK_SHOW, STONE_CHIP, 10, 0, 20, [-22, 22], [-28, -12], 1.0, 50);
+        this.trickFx(t, "stone_still_dust", TRICK_SHOW, DUST_PUFF, 4, 0, 6, [-14, 14], [-6, 0], 0.6);
+      }
+    } else if (animation === "water_arc") {
+      // a leap with a somersault, water pouring from its mouth all the way, so it leaves an arc of water in
+      // the air behind it, and a splash where it lands
+      const f = clamp((p - 0.12) / 0.5, 0, 1);
+      Object.assign(pose, { jump: f > 0 && f < 1 ? Math.sin(f * Math.PI) * 15 : 0, dx: Math.round((f - 0.5) * 16 * this.facing),
+        rotate: f > 0 && f < 1 ? -360 * f * this.facing : 0, body: f > 0 && f < 1 ? "idle" : "squash",
+        face: f > 0 && f < 1 ? "happy" : "laugh" });
+      if (f > 0 && f < 1) {
+        // the water runs from its mouth, wherever the somersault has turned it
+        const a = pose.rotate * Math.PI / 180;
+        const [u, v] = [(FOUNTAINGLE_MOUTH[0] - SPRITE / 2) * this.facing, FOUNTAINGLE_MOUTH[1] - FOUNTAINGLE_MIDDLE];
+        const [mx, my] = [pose.dx + Math.cos(a) * u + Math.sin(a) * v, -Math.sin(a) * u + Math.cos(a) * v];
+        const [ox, oy] = [Math.cos(a) * this.facing, -Math.sin(a) * this.facing]; // the way its mouth points
+        for (const [i, drop] of [WATER_DROP, SPRAY, WATER].entries()) {
+          this.trickFx(t, `water_arc${i}`, 0.02, drop, 1, mx * this.facing, GROUND - (GROUND - SPRITE + 1 + FOUNTAINGLE_MIDDLE + my - pose.jump),
+            [ox * this.facing * (4 + 4 * i) - 1, ox * this.facing * (4 + 4 * i) + 1], [oy * (4 + 4 * i) - 1, oy * (4 + 4 * i) + 1], 1.4, 5);
+        }
+      } else if (f >= 1 && p < 0.72) {
+        this.ringFx(t, "water_arc_splash", TRICK_SHOW, [WATER_DROP, SPRAY, WATER], 9, pose.dx * this.facing, 2, 20, 0.6, -Math.PI, 0);
+      }
+    } else if (animation === "bell_swing") {
+      // it swings itself like a bell in its tower, further and further out and back, and rings at the end of each swing
+      const env = Math.sin(clamp((p - 0.05) / 0.85, 0, 1) * Math.PI);
+      const swing = Math.sin(p * 3 * (2 * Math.PI));
+      Object.assign(pose, { rotate: swing * 26 * env, jump: env * 2, face: Math.abs(swing) > 0.9 && env > 0.3 ? "laugh" : "smile" });
+      const points: [Bitmap, number, number][] = [];
+      const beat = p * 6 + 0.25; // half a swing each
+      const ring = (beat % 1) / 0.35;
+      if (env > 0.3 && ring < 1) {
+        const r = Math.round(4 + ring * 11);
+        const side = Math.trunc(beat) % 2 ? -1 : 1;
+        points.push([CHIME_RINGS[r], this.x + SPRITE / 2 + side * 6 * this.facing - r, GROUND - SPRITE + BELL_MIDDLE[1] - r]);
+        this.trickFx(t, `bell_swing${Math.trunc(beat) % 2}`, 0.3, NOTE, 1, side * 12, 26, [side * 6, side * 12], [-14, -8], 0.8);
+      }
+      this.place(CHIME_RINGS, points);
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
       if (p < 0.1 || p > 0.9) {
@@ -3757,7 +3955,7 @@ export class PetScene {
           points.push([CLOCK_RINGS[r], x0 + (x1 - x0) * ring - r - 1, GROUND - 14 - r]);
         }
         if (q > 0.15 && q < 0.75) {
-          this.foeFrozen = true;
+          this.foeFrozen = "time";
           if (q > 0.34) {
             points.push([CLOCK_FACE, foeLeft(0.15) + 5, GROUND - 26], [PAUSE, foeLeft(0.15) + 6, GROUND - 32]);
           }
@@ -3847,6 +4045,151 @@ export class PetScene {
         this.place([KITE_STRING, LIGHTNING], points);
         if (q > 0.5 && q < 0.6) {
           this.ringFx(t, "sp_stormkite", once, [BOLT, SPARK], 10, at(foeLeft(0.5) + 6), 10, 26, 0.6);
+        }
+        break;
+      }
+      case "inkasso": { // it dips its brushes and flings blob after blob of paint at the opponent: splat!
+        const points: [Bitmap, number, number][] = [];
+        pose.face = q < 0.2 ? "smile" : "laugh";
+        for (let i = 0; i < 4; i++) {
+          const from = 0.18 + i * 0.07;
+          const f = (q - from) / 0.14;
+          if (f > -0.1 && f < 0.08) {
+            Object.assign(pose, { body: "stretch", dx: towards(1) });
+          }
+          const [tx, ty] = BRUSH_TIPS[i % BRUSH_TIPS.length];
+          const [x0, y0] = [this.x + (this.facing > 0 ? tx : SPRITE - 1 - tx), GROUND - SPRITE + 1 + ty];
+          const [x1, y1] = [foeLeft(from + 0.14) + 3 + (i % 2) * 4, GROUND - 12 + (i % 3) * 2];
+          if (f > 0 && f < 1) {
+            points.push([INK_BLOB[i % INK.length], x0 + (x1 - x0) * f - 2, y0 + (y1 - y0) * f - Math.sin(f * Math.PI) * 12 - 2]);
+          } else if (f >= 1) {
+            this.ringFx(t, `sp_inkasso${i}`, once, [INK_SPLAT[i % INK.length], INK_DRIP[i % INK.length]], 7, at(x1), GROUND - y1, 18,
+              0.6, -Math.PI, 0);
+          }
+        }
+        this.place(INK_BLOB, points);
+        break;
+      }
+      case "octavio": { // it throws its balls high up, out of sight, and they come down on the opponent from all
+        // directions at once
+        const points: [Bitmap, number, number][] = [];
+        const throwing = q > 0.06 && q < 0.32;
+        Object.assign(pose, { body: throwing && Math.trunc(t * 10) % 2 ? "stretch" : "idle", face: q < 0.32 ? "smile" : "laugh" });
+        const [cx, cy] = [foeLeft(0.5) + 6, GROUND - 10];
+        const count = 6;
+        for (let i = 0; i < count; i++) {
+          const up = (q - 0.08 - i * 0.035) / 0.12; // up and away out of the top
+          const [hx, hy] = [this.x + SPRITE / 2 + (i % 2 ? 10 : -10), GROUND - SPRITE + 6];
+          if (up > 0 && up < 1) {
+            points.push([JUGGLE_BALL[i % JUGGLE_BALL.length], hx - 2, hy - up * (hy + 6)]);
+          }
+          const a = -Math.PI + i * Math.PI / (count - 1); // from the left, from above, from the right
+          const come = (q - 0.36 - (count - 1 - i) * 0.015) / 0.12;
+          if (come > 0 && come < 1) {
+            const far = 40 * (1 - come);
+            points.push([JUGGLE_BALL[i % JUGGLE_BALL.length], cx + Math.cos(a) * far - 2, cy + Math.sin(a) * far - 2]);
+          }
+        }
+        this.place(JUGGLE_BALL, points);
+        if (q > 0.5 && q < 0.6) {
+          this.ringFx(t, "sp_octavio", once, JUGGLE_SPARK, 12, at(cx), GROUND - cy, 24, 0.6);
+        }
+        break;
+      }
+      case "abyssink": { // the lights of the deep: glowing dots drift over to the opponent and dance round its head,
+        // blinking, until it doesn't know which way to look
+        Object.assign(pose, { body: q < 0.3 ? "stretch" : "idle", face: q < 0.3 ? "smile" : "laugh" });
+        const [cx, cy] = [foeLeft(0.15) + 6, GROUND - 16];
+        const points: [Bitmap, number, number][] = [];
+        for (let i = 0; i < 9 && q > 0.08 && q < 0.82; i++) {
+          const go = (1 - Math.cos(clamp((q - 0.08 - i * 0.02) / 0.22, 0, 1) * Math.PI)) / 2;
+          const a = t * (i % 2 ? 5 : -4) + i * 0.7;
+          const [rx, ry] = [cx + Math.cos(a) * (6 + i % 3 * 2), cy + Math.sin(a) * (3 + i % 2 * 2)];
+          const [hx, hy] = [this.x + SPRITE / 2, GROUND - 14 - i % 4 * 3];
+          if (Math.trunc(t * 9 + i * 3) % 4) { // they blink
+            points.push([i % 3 ? DEEP_DOT[i % DEEP_DOT.length] : DEEP_GLOW, hx + (rx - hx) * go - 1,
+              hy + (ry - hy) * go - Math.sin(go * Math.PI) * 8 - 1]);
+          }
+        }
+        if (q > 0.3 && q < 0.75) {
+          this.foeFrozen = "dazed";
+          if (q > 0.4) {
+            points.push([QUESTION, cx - 1, cy - 12 - Math.round(Math.sin(t * 6))]);
+          }
+        }
+        this.place([...DEEP_DOT, DEEP_GLOW, QUESTION], points);
+        break;
+      }
+      case "gargard": { // a stare from its stone eyes: a glare runs over to the opponent, and the opponent turns to
+        // stone; it can't make its move this round, and its stone cracks when it is hit
+        Object.assign(pose, { body: q < 0.2 ? "squash" : q < 0.36 ? "stretch" : "idle", face: q < 0.4 ? "normal" : "laugh" });
+        const points: [Bitmap, number, number][] = [];
+        const glare = clamp((q - 0.16) / 0.14, 0, 1);
+        if (glare > 0 && q < 0.4) {
+          const [x0, y0] = [this.x + (this.facing > 0 ? GARGARD_EYES[0] : SPRITE - 1 - GARGARD_EYES[0]), GROUND - SPRITE + 1 + GARGARD_EYES[1]];
+          const [x1, y1] = [foeLeft(0.15) + 6, GROUND - 10];
+          const length = Math.hypot(x1 - x0, y1 - y0);
+          for (let k = 0; k < length * glare; k++) {
+            points.push([GAZE, x0 + (x1 - x0) * k / length, y0 + (y1 - y0) * k / length + (k + Math.trunc(t * 12)) % 3 - 1]);
+          }
+        }
+        this.place([GAZE], points);
+        if (q > 0.28 && q < 0.75) {
+          this.foeFrozen = "stone";
+        } else if (q >= 0.75 && q < 0.8) { // its stone cracks off
+          this.ringFx(t, "sp_gargard", once, [STONE_CHIP, DUST_PUFF], 10, at(foeLeft(0.15) + 6), 10, 22, 0.6, -Math.PI, 0);
+        }
+        break;
+      }
+      case "fountaingle": { // it spouts water into the ground; the water runs under the earth to the opponent and
+        // shoots up under it as a fountain
+        const points: [Bitmap, number, number][] = [];
+        Object.assign(pose, { body: q > 0.08 && q < 0.3 ? "squash" : "idle", face: q < 0.3 ? "smile" : "laugh" });
+        const [mx, my] = [this.x + (this.facing > 0 ? FOUNTAINGLE_MOUTH[0] : SPRITE - 1 - FOUNTAINGLE_MOUTH[0]),
+          GROUND - SPRITE + 1 + FOUNTAINGLE_MOUTH[1]];
+        const fx = foeLeft(0.5) + 6;
+        if (q > 0.08 && q < 0.3) { // the spout, down into the ground
+          for (let y = my; y < GROUND + 1; y++) {
+            points.push([(y + Math.trunc(t * 20)) % 3 ? WATER : SPRAY, mx + (y - my) * 0.3 * this.facing, y]);
+          }
+        }
+        const run = clamp((q - 0.2) / 0.18, 0, 1); // it runs along under the ground
+        if (run > 0 && run < 1) {
+          const x = mx + (fx - mx) * run;
+          points.push([SPRAY, x, GROUND + 2], [WATER, x - this.facing, GROUND + 2], [WATER, x - 2 * this.facing, GROUND + 3]);
+        }
+        const rise = Math.sin(clamp((q - 0.38) / 0.4, 0, 1) * Math.PI); // the fountain
+        if (rise > 0) {
+          const height = Math.round(rise * 26);
+          for (let y = 0; y < height; y += 2) {
+            points.push([FOUNTAIN, fx - 1 + Math.round(Math.sin(t * 20 + y) * 0.6), GROUND - y]);
+          }
+          points.push([FOUNTAIN_TOP, fx - 1, GROUND - height - 1]);
+          this.trickFx(t, "sp_fountaingle", 0.04, WATER_DROP, 2, at(fx), height + 2, [-14, 14], [-16, -6], 0.8, 50);
+        }
+        this.place([WATER, SPRAY, FOUNTAIN, FOUNTAIN_TOP], points);
+        break;
+      }
+      case "bellfry": { // it swings back and rings itself with all its might: a shock wave rolls along the ground to the
+        // opponent, ring after ring
+        const back = Math.sin(clamp((q - 0.04) / 0.24, 0, 1) * Math.PI / 2);
+        const strike = clamp((q - 0.28) / 0.06, 0, 1);
+        Object.assign(pose, { rotate: (-24 * back + 40 * strike - 16 * clamp((q - 0.34) / 0.2, 0, 1)) * this.facing,
+          white: q > 0.32 && q < 0.4 && Math.trunc(t * 16) % 2 === 0, face: q < 0.3 ? "smile" : "laugh" });
+        const points: [Bitmap, number, number][] = [];
+        const [cx, cy] = [this.x + SPRITE / 2, GROUND];
+        const reach = foeLeft(0.5) + 10 - cx;
+        for (let i = 0; i < 3; i++) {
+          const f = (q - 0.32 - i * 0.05) / 0.2;
+          if (f > 0 && f < 1) {
+            const r = Math.min(SHOCK_WAVES.length - 1, Math.round(4 + f * (reach - 4)));
+            points.push([(i ? SHOCK_DIM : SHOCK_WAVES)[r], cx - r, cy - r]);
+          }
+        }
+        this.place([...SHOCK_WAVES, ...SHOCK_DIM], points);
+        if (q > 0.32 && q < 0.4) {
+          this.ringFx(t, "sp_bellfry", once, [NOTE, SPARK], 6, 0, 26, 16, 0.7, -Math.PI, 0);
+          this.trickFx(t, "sp_bellfry_dust", once, DUST_PUFF, 6, 0, 1, [-20, 20], [-4, 0], 0.6);
         }
         break;
       }
@@ -4245,8 +4588,8 @@ export class PetScene {
         this.trick(pose, trick, q * BATTLE_ROUND, landed, t);
       }
       // the opponent's move carries it towards the pet and back to its place; while time stands still
-      // (Clockbeetle) it stays where it is and doesn't get to make its move
-      const frozen = this.foeFrozen;
+      // (Clockbeetle), it is stone (Gargard) or dazed (Abyssink) it stays where it is and doesn't get to make its move
+      const frozen = this.foeFrozen !== null;
       const reach = Math.sin(Math.min(1.0, (frozen ? Math.min(q, 0.15) : q) / 0.7) * Math.PI);
       x -= reach * (battle.isGuardian(name) ? GUARDIAN_REACH : FOE_REACH);
       if (move === "pounce") {
@@ -4254,6 +4597,9 @@ export class PetScene {
       } else if (move === "curl") {
         away = Math.trunc(t * 8) % 2 === 1; // rolls
         look = reach > 0.05 ? "curl" : null;
+      }
+      if (this.foeFrozen === "dazed") {
+        away = Math.trunc(t * 3) % 2 === 1; // it looks this way and that
       }
       if (q > 0.5 && !frozen) {
         if (landed) {
@@ -4774,7 +5120,8 @@ export class PetScene {
         lunaflap: [MOTH_UP, MOON_GLINT], owlbert: [PAGE_BIT, SMOKE], stargazer: [STAR, SPARK], ninjowl: [FEATHER, MOON_GLINT],
         palettino: PAINT_SPLASH, hidewell: [LEAFLET, GLINT], mirrorleon: LIGHT_SPOT, solroll: [SUN_SPARK, EMBER],
         clockbeetle: [COG, TICK], pharabug: [SAND, SAND_GRAIN], origrane: [PAPER_BIT, CREASE], lionkite: FIREWORK_SPARK,
-        stormkite: [BOLT, SPARK],
+        stormkite: [BOLT, SPARK], inkasso: INK_SPLAT, octavio: JUGGLE_SPARK, abyssink: [...DEEP_LIGHT, INK_WISP],
+        gargard: [STONE_CHIP, DUST_PUFF], fountaingle: [WATER, SPRAY, WATER_DROP], bellfry: [NOTE, SPARK],
       } as Record<string, Bitmap | readonly Bitmap[]>)[view.species] ?? SPARK;
       const many = (sprite as readonly unknown[]).every((part) => Array.isArray(part) && Array.isArray(part[0]));
       for (let i = 0; i < 10; i++) {
@@ -5180,13 +5527,16 @@ export class PetScene {
     const sprites = this.sheet("trip");
     // some have a look of their own while they curl up, or once they are beaten
     const tag = sprites.has(`foe_${name}_${look}`) ? `foe_${name}_${look}` : `foe_${name}`;
-    const frozen = this.foeFrozen; // time stands still for it: it doesn't move, and its colors fade to gray
+    // time stands still for it, or it is stone: it doesn't move, and its colors fade to gray
+    const frozen = this.foeFrozen === "time" || this.foeFrozen === "stone" ? this.foeFrozen : null;
     const [frame, index] = sprites.frame(tag, frozen ? 0 : t);
     const key = `${tag}|${index}|${away}|${frozen}`;
     let sprite = this.foeCache.get(key);
     if (!sprite) {
       sprite = outline(away ? frame.mirrored() : frame);
-      if (frozen) {
+      if (frozen === "stone") {
+        sprite = petrified(sprite, 0.9);
+      } else if (frozen) {
         sprite = sprite.copy();
         for (let i = 0; i < sprite.data.length; i += 4) {
           const light = 0.3 * sprite.data[i] + 0.59 * sprite.data[i + 1] + 0.11 * sprite.data[i + 2];

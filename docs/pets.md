@@ -2018,4 +2018,178 @@ and lightning yellow.
 
 </details>
 
+### The octopus line
+
+This is a line from the coast.
+
+<details>
+<summary>Show the octopus line</summary>
+
+| | Stage |
+|---|---|
+| ![Octopus egg](images/pets/octopus_egg.png) | **Octopus egg** – a pale coral egg held by a curve of cream suckers like an arm round it, an indigo ink splash dripping down from its top, lying in the sand by a strand of seaweed |
+| ![Octopus baby](images/pets/octopus_baby.png) | **Baby** – a round coral octopus with a tall soft mantle and an ink spot on it, four little arms curling at their ink-dark tips and one arm raised, waving |
+| ![Inklet](images/pets/inklet.png) | **Child: Inklet** – a taller young octopus with a painter's beret cocked on its mantle, a big ink blot with a drip on it, and one arm raised high like a brush, a drop of ink on its tip |
+
+The stages last as long as the slime's. What the adults keep is the ink.
+
+![Inkasso](images/pets/inkasso.png)
+
+**Inkasso**, an octopus that has become a painter. It sits on the ground with
+its mantle in front and fans five arms up behind itself like a peacock's tail;
+every arm tip is a brush soaked in its own color, the red one raised highest,
+and two more arms curl on the ground in front of it. Inklet's ink blot is now
+paint splashed in every color. With paint everywhere it gets dirty sooner, and
+any game is something to paint: playing means more to it. For its spin it
+turns round and round and paints a circle in the air all round itself, and in
+a scuffle it flings blobs of paint at the opponent.
+
+![Octavio](images/pets/octavio.png)
+
+**Octavio**, an octopus that has become a juggler. Tall and slim, it balances
+on the tip of a single arm, its mantle stretched up high and its other arms
+winding out in every direction; its suckers have become red and yellow
+juggling balls, and some of them are always flying in an arc over its head
+while it watches them, the tip of its tongue out. Eight arms keep it busy, so
+it tires faster, and anything can be juggled: playing means much more to it.
+For its dance it juggles with all its arms, and in a scuffle it throws its
+balls up out of sight and they come down on the opponent from all
+directions.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Octavio | it knows 3 tricks when it grows up |
+| Inkasso | everything else |
+
+From its second day on, Inklet's ink blot and drop show where it is heading:
+paint green and lilac for Inkasso, juggling red and gold for Octavio.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about its skills.*
+
+<details>
+<summary>Show this form</summary>
+
+![Abyssink](images/pets/abyssink.png)
+
+**Abyssink**, the octopus of the deep sea and the biggest of its line. It
+floats like a great bell, its arms joined by a webbing of ink into a wide
+umbrella, their tips curling out below its hem; rows of glowing dots run
+along every arm and round its mantle, a glowing lure hangs over its brow and
+bubbles rise round it. The line's ink has grown into the sea itself and curls
+away below it in wisps. It floats, needs no umbrella, and at night it glows.
+It drifts in the deep and saves its strength, so it tires more slowly, and it
+is soft and cool as the deep sea: petting cheers it up more. For its flip it
+vanishes in a cloud of ink and appears again on top of it, and in a scuffle
+the lights of the deep dance round the opponent's head until it doesn't know
+which way to look.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+Its smarts are 60 or more when it grows up. This rule goes before the others
+of the line. While the child is on its way there, its hint colors are deep-sea
+indigo and the cyan of its lights.
+
+</details>
+
+### The gargoyle line
+
+This is a line from the ruins.
+
+<details>
+<summary>Show the gargoyle line</summary>
+
+| | Stage |
+|---|---|
+| ![Gargoyle egg](images/pets/gargoyle_egg.png) | **Gargoyle egg** – an egg of old weathered stone, a crack zig-zagging down from its top, moss on its crown and ivy climbing up one side, on a broken flagstone |
+| ![Gargoyle baby](images/pets/gargoyle_baby.png) | **Baby** – a stone puppy sturdy like a carved block, with a broad pale muzzle, heavy floppy ears, horn nubs with a tuft of moss between them and stubby slate wings |
+| ![Gargit](images/pets/gargit.png) | **Child: Gargit** – a sturdy young gargoyle dog on four stumpy legs, a big square head, a block of a body with a crack, two little slate wings held up proudly and an arrow-tipped tail |
+
+The stages last as long as the slime's. What the adults keep is the small
+stone wings.
+
+![Gargard](images/pets/gargard.png)
+
+**Gargard**, a gargoyle that has become a piece of wall, a guardian on its
+plinth. It crouches square and blocky, its haunches and plinth one block of
+masonry; its stone wings are laid forward round its chest like a shield with
+iron rims, and it rests its paws on the shield's edge and peers over it under
+heavy brows, curled horns on its head. A stone guard lives on little, so it
+gets hungry more slowly, and being stone it gets sick less often. For its bow
+it turns to stone and wakes again with a shake, and in a scuffle its stony
+gaze turns the opponent to stone, so that it loses its move that round.
+
+![Fountaingle](images/pets/fountaingle.png)
+
+**Fountaingle**, a gargoyle that has become a waterspout. Its body is long and
+level like a spout leaning out from a roof, its back is a gutter with water
+running in it, and rain gushes out of its wide-open mouth in an arc; its two
+little wings are swept back, and its arrow-tipped tail curls up behind. It
+loves the rain and needs no umbrella. Rinsed all the time, it gets dirty more
+slowly, and a cool splash makes petting mean more to it. For its flip it
+leaps head over heels and leaves an arc of water in the air, and in a
+scuffle the water runs under the ground and shoots up under the opponent as a
+fountain.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Fountaingle | it is raining when it grows up |
+| Gargard | everything else |
+
+From its second day on, the edges of Gargit's wings show where they are
+heading: shield iron and brick red for Gargard, verdigris and water blue for
+Fountaingle.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the clock.*
+
+<details>
+<summary>Show this form</summary>
+
+![Bellfry](images/pets/bellfry.png)
+
+**Bellfry**, the gargoyle that has become the bell of its own tower, the
+legendary form of its line and the biggest. Its body is a bronze bell flared
+at the hem, with the dog's head on top where the bell hangs from; its stone
+wings have grown into two tall pointed tower roofs with slate tiles and a
+golden finial on each, and its tail is the clapper, swinging out under the
+hem. It needs no umbrella, and at night it glows warm. It sings to itself, so
+its mood sinks more slowly, and a heart makes it ring: hearts mean more to
+it. For its spin it swings itself like a bell and rings, and in a scuffle it
+strikes itself with all its might and a shock wave rolls to the opponent.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It grows up in the noon hour, between 12:00 and 12:59. This rule goes before
+the others of the line. While the child is on its way there, its hint colors
+are two shades of bronze.
+
+</details>
+
 More lines are ideas so far; the [issues](https://github.com/mLampir/blobling/issues) collect them.

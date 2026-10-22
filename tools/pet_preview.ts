@@ -30,7 +30,7 @@ const BASE: SceneView = {
 // The special forms, the secret third adult of a line
 const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
   "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake", "woolwhisk", "ursastra", "aurorapin", "lunaflap",
-  "ninjowl", "mirrorleon", "pharabug", "stormkite"];
+  "ninjowl", "mirrorleon", "pharabug", "stormkite", "abyssink", "bellfry"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -80,9 +80,13 @@ const PETS: Record<string, [string, string]> = {
   solroll: ["adult", "solroll"], clockbeetle: ["adult", "clockbeetle"],
   kite_egg: ["egg", "kite"], kite_baby: ["baby", "kite"], kitelet: ["child", "kite"],
   origrane: ["adult", "origrane"], lionkite: ["adult", "lionkite"],
+  octopus_egg: ["egg", "octopus"], octopus_baby: ["baby", "octopus"], inklet: ["child", "octopus"],
+  inkasso: ["adult", "inkasso"], octavio: ["adult", "octavio"],
+  gargoyle_egg: ["egg", "gargoyle"], gargoyle_baby: ["baby", "gargoyle"], gargit: ["child", "gargoyle"],
+  gargard: ["adult", "gargard"], fountaingle: ["adult", "fountaingle"],
   ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
-// The leaf, duck, hippo, beak, garden, water, Grandma's, adventure, festival and star lines: per line its line, child and adults, for the scenes below
+// The leaf, duck, hippo, beak, garden, water, Grandma's, adventure, festival, star, coast and ruins lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
   ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
   ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
@@ -93,6 +97,7 @@ const NEW_LINES: [string, string, string, string][] = [
   ["penguin", "waddlet", "tuxwaddle", "glidepin"], ["bat", "flapling", "umbrabat", "batbeat"],
   ["owl", "hootlet", "owlbert", "stargazer"], ["chameleon", "colorlet", "palettino", "hidewell"],
   ["scarab", "rollet", "solroll", "clockbeetle"], ["kite", "kitelet", "origrane", "lionkite"],
+  ["octopus", "inklet", "inkasso", "octavio"], ["gargoyle", "gargit", "gargard", "fountaingle"],
 ];
 const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
@@ -138,6 +143,12 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   origrane: "bow", // folds itself small and unfolds again
   lionkite: "dance", // a lion dance, pompoms flying
   stormkite: "flip", // torn up by the wind, it dives down
+  inkasso: "spin", // paints a circle in the air round itself
+  octavio: "dance", // juggles with all its arms
+  abyssink: "flip", // gone in an ink cloud, and it appears on top of it
+  gargard: "bow", // turns to stone and wakes again
+  fountaingle: "flip", // a somersault with an arc of water
+  bellfry: "spin", // swings itself like a bell and rings
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It

@@ -50,6 +50,10 @@ frameTags):
   owl (hootlet), chameleon (colorlet), scarab (rollet) and kite (kitelet) lines
 - owlbert, stargazer, ninjowl, palettino, hidewell, mirrorleon, solroll, clockbeetle, pharabug,
   origrane, lionkite, stormkite (_body / _faces) – their adults, the last of each three the secret one
+- <line>_baby_body / <line>_baby_faces, <child>_body / <line>_faces – baby and child of the
+  octopus (inklet) and gargoyle (gargit) lines
+- inkasso, octavio, abyssink, gargard, fountaingle, bellfry (_body / _faces) – their adults, the last
+  of each three the secret one
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine, and
                                      the app's things (sponge, baton, bag, whistle, training, rod)
 - trip                             – backpack, plants, decorations, hats, things along the path,
@@ -6960,6 +6964,579 @@ FESTIVAL_FORMS = (("owlbert", FACES), ("stargazer", FACES),
                   ("origrane", FACES), ("lionkite", FACES), ("stormkite", FACES))
 
 
+
+# ---------------------------------------------------------------- The coast and ruins lines
+
+# Two lines, each with its egg, baby, child, a basic adult, a second one and a secret one: the
+# octopus from the coast and the gargoyle from the ruins. What every form of a line keeps: the ink
+# (the octopus) and the small stone wings (the gargoyle). The child carries the colors the code may
+# recolor as a hint at its adult form: the ink blot and the drop on its raised arm, and the edges
+# of the wings.
+
+# The eggs: a pale coral egg held by a curve of cream suckers like an arm round it, an indigo ink
+# splash on its top that drips down, lying in the sand by a strand of seaweed; an egg of old
+# weathered stone, a crack zig-zagging down from its top, moss on its crown and ivy climbing up one
+# side, on a broken flagstone.
+OCTOPUS_EGG = [
+    "....oiio....",
+    "...oiIiio...",
+    "..ohiieieo..",
+    "..oheeeeio..",
+    ".oheeeeeeeo.",
+    ".oheeeeeeEo.",
+    ".oeeeeeeeEo.",
+    ".orrrreeeEo.",
+    ".osRsRrrreo.",
+    "g.oeeesRsRr.",
+    "Gg.oEEEEoRr.",
+    ".GgaoooooAa.",
+    "aaGgaAaaaaAa",
+    "AAAAAAAAAAAA",
+]
+GARGOYLE_EGG = [
+    "....oMmo....",
+    "...omMmMo...",
+    "..ohmMeEeo..",
+    "..oheceeeo..",
+    ".oheeeceeeo.",
+    ".oeeeceeeEo.",
+    ".oeeeecEeEo.",
+    ".oheeeceeEv.",
+    ".oeeeceeEvV.",
+    ".oeeeeceeVo.",
+    "..oeeecevV..",
+    "..oEeeeVvo..",
+    "pPpoEEEEoPpp",
+    "PPPPP.PPPPPP",
+]
+EGG_GRIDS |= {"octopus": OCTOPUS_EGG, "gargoyle": GARGOYLE_EGG}
+RARE_EGG_PALETTES |= {
+    "octopus": {"o": (110, 45, 55), "e": (245, 175, 155), "E": (205, 125, 115), "h": (255, 220, 205),
+                "s": (255, 240, 215), "r": (225, 110, 100), "R": (175, 70, 80), "i": (60, 55, 130),
+                "I": (110, 105, 200), "a": (235, 205, 150), "A": (195, 160, 105), "g": (90, 175, 95),
+                "G": (45, 120, 70), "x": (90, 30, 45)},
+    "gargoyle": {"o": (60, 58, 70), "e": (185, 182, 175), "E": (140, 138, 140), "h": (220, 218, 208),
+                 "c": (75, 72, 85), "m": (120, 175, 70), "M": (70, 125, 55), "v": (95, 160, 75),
+                 "V": (55, 110, 60), "p": (150, 145, 150), "P": (105, 100, 110), "x": (50, 48, 60)},
+}
+
+# ---- The octopus line: a little octopus that paints with its own ink
+
+OCTOPUS_PALETTE = {
+    "o": (110, 40, 60),    # outline
+    "d": (205, 100, 100),  # shadow
+    "b": (240, 140, 125),  # coral
+    "l": (250, 180, 160),  # lit
+    "h": (255, 215, 200),  # highlight
+    "c": (255, 235, 205),  # suckers
+    "i": (60, 55, 130),    # ink-dark arm tips
+    "I": (115, 110, 205),
+    "n": (62, 58, 138),    # the ink blot and the drop on its raised arm (the hint)
+    "N": (130, 125, 225),
+    "e": (55, 50, 95),     # the beret
+    "E": (75, 70, 125),
+}
+# Baby: a round coral octopus, a tall soft mantle with an ink spot on it, four little arms that
+# curl at their tips (cream suckers, ink-dark tips), and one arm raised at its side, waving, ink on
+# its tip
+OCTOPUS_BABY = [
+    "......ooooo.........",
+    "....oohhlbbo....oo..",
+    "...ohhllbbiio..oiIo.",
+    "..ohllbbiIiido.oiio.",
+    ".ohlbbbbbbiiddoobdo.",
+    "ohllbbbbbbbbbddobdo.",
+    "olbbbbbbbbbbbddobdo.",
+    "obbbbbbbbbbbbddbdo..",
+    "odbbbbbbbbbbbbbdo...",
+    ".odbbbbbbbbbbbdo....",
+    ".obbdbbbbbbdbbbo....",
+    ".obcobcoocbocbo.....",
+    ".ocbocboobcobco.....",
+    "obcoobcoocboocbo....",
+    "oiiooiiooiiooiio....",
+    ".oo..oo..oo..oo.....",
+]
+OCTOPUS_BABY_FACE_TOP, OCTOPUS_BABY_FACE_SHIFT = face_place(OCTOPUS_BABY, 5, 3, BABY_W)
+OCTOPUS_BABY_TAGS = body_tags(OCTOPUS_BABY, 7, 7, flat_rows=3)
+# Inklet, the child: the baby grown taller, a painter's beret cocked on its mantle, a big ink blot
+# splashed on it with a drip running down, four arms that curl at their tips, and a fifth arm raised
+# high like a brush, a drop of ink hanging from its tip
+INKLET = [
+    ".....oooeoo................o...",
+    "...ooeEEEeeoooooooo.......oioo.",
+    "..oeEEEEEeeeeeooddno.....oiinNo",
+    ".oeEEeeeeeeeeeeebNnno....obdnno",
+    ".eeeeeeeeeeeeeeoNnnnno...olcono",
+    ".eeeeeooooooooobnnnnddo..obdoo.",
+    "...ohlbbbbbbbbbbbnbnddo..olco..",
+    "...ohlbbbbbbbbbbbbbnbddo.obdo..",
+    "...ollbbbbbbbbbbbbbnbddo.olco..",
+    "...ollbbbbbbbbbbbbbnbddoobdo...",
+    "...ollbbbbbbbbbbbbbbbddoolco...",
+    "...obbbbbbbbbbbbbbbbbddobdo....",
+    "...obbbbbbbbbbbbbbbbbddlco.....",
+    "...obbbbbbbbbbbbbbbbbddoo......",
+    "....obbbbbbbbbbbbbbbddo........",
+    ".....obbbbbbbbbbbbbbddo........",
+    "....obbdbbbbdbbbbdbbbddo.......",
+    "...olbdoolbdoolbdoolbdo........",
+    "..olbco.olbcoocbdo.ocbdo.......",
+    ".olbdo..olbdooolbdo.olbdo......",
+    ".olbcio..olbcicbdo.oicbdo......",
+    "..oiiio...oiiiiio..oiiio.......",
+    "...ooo.....ooooo....ooo........",
+]
+INKLET_FACE_TOP, INKLET_FACE_SHIFT = face_place(INKLET, 8, 5, FACE_W)
+INKLET_TAGS = body_tags(INKLET, 12, 13, flat_rows=3)
+
+# ---- The gargoyle line: a puppy of stone with little stone wings
+
+GARGOYLE_PALETTE = {
+    "o": (60, 58, 72),     # outline
+    "d": (130, 126, 132),  # shadow
+    "b": (170, 166, 162),  # stone
+    "l": (200, 196, 188),  # lit
+    "h": (228, 224, 214),  # highlight
+    "c": (105, 100, 110),  # its floppy ears, chips and cracks
+    "C": (130, 124, 134),
+    "u": (222, 216, 200),  # muzzle and paws
+    "U": (195, 188, 172),
+    "n": (45, 42, 55),     # nose
+    "w": (125, 135, 165),  # slate wings
+    "W": (90, 98, 130),
+    "x": (160, 170, 200),
+    "q": (175, 190, 225),  # the edges of the wings (the hint)
+    "Q": (125, 140, 185),
+    "m": (125, 185, 75),   # a tuft of moss
+    "M": (75, 135, 55),
+}
+# Baby: a stone puppy, sturdy like a carved block: a broad pale muzzle with a dark nose, heavy
+# floppy stone ears, two horn nubs and a tuft of moss between them, stubby slate wings on its back
+# (one raised, one lowered), chips in the stone and an arrow-tipped tail wagging behind it
+GARGOYLE_BABY = [
+    "o........o..oo..o.......",
+    "xoo.....oxoommooxo......",
+    "xwxoo.oohlbbmMmbbbooo...",
+    "xwwWxoCchlbbbbbbbbbcCo..",
+    "owwWWoCchbbbbbbbbbbcCo..",
+    ".oWWoCcclbbbbbbbbbbccCo.",
+    "..oooCcclbbbbbbbbbbccCo.",
+    "....occcluuunnuuubbcccoo",
+    ".....occouuuuuuuubdccoox",
+    "......oobuuuuuuuubdowxxx",
+    ".....olbbbuuuuuubbbdwWxo",
+    ".....olbbcbbbbbbbbbdWWo.",
+    ".....odbbbbbbbbbcbbdoxo.",
+    ".....oddllddddddllddoo..",
+    "......olloooooollooo....",
+]
+GARGOYLE_BABY_FACE_TOP, GARGOYLE_BABY_FACE_SHIFT = face_place(GARGOYLE_BABY, 5, 7, BABY_W)
+GARGOYLE_BABY_TAGS = body_tags(GARGOYLE_BABY, 11, 13, flat_rows=3)
+# Gargit, the child: a sturdy young gargoyle dog on four stumpy legs: a big square head with a broad
+# pale muzzle, heavy floppy ears, horn nubs and the moss tuft, a block of a body with a crack, two
+# little slate wings it holds up proudly, and an arrow-tipped tail
+GARGIT = [
+    "..............................oqq.",
+    ".....o..omoo..o..............owqQ.",
+    "....oxoomMmmooxo............owWWQ.",
+    ".oCCCxooomMoooxCCCo........owWWWQ.",
+    "oCCcchhhhhhllllccCCo.....oqqWWWWQ.",
+    "CccccbbbbbbbbbbccccC....oxqQWWWWQ.",
+    "ccccobbbbbbbbbbocccc...oxwwQWWWWQ.",
+    "ccccobbbbbbbbbbocccc..oxwwWQWWWQo.",
+    "cccobbbbbbbbbbbbocccooxwwWwQQWQo..",
+    "cccobbbbbbbbbbbbocccoxwwWwWQQooxx.",
+    "occobbbbbnnbbbbboccoxwwWwwWQ.oxxx.",
+    ".olbbbuuuccuuUbbddoxwwWwwWQoo.odd.",
+    ".olbbbuuuuuuuUbbddowwWwQwQodo.odo.",
+    ".olbbbuuuuuuuUbbddoWQooQooddooddo.",
+    "..ocbbuuuuuuuUbbdobbbbbbcbddoddo..",
+    "...obbuuuuuuuUbbobbbbbbbbbddodo...",
+    "....odUUUUUUUUdobbbbbbbbbcddo.....",
+    ".....ooUUUUUUoobbbbbbbbbbbddo.....",
+    ".......oooooobcbbbbbbbbbbbdo......",
+    ".......ooo.oddddddddddddddo.......",
+    "......olbdo.olbdooolbdoolbdo......",
+    "......obbdo.obbdo.obbdoobbdo......",
+    "......ouuUo.ouuUo.ouuUoouuUo......",
+]
+GARGIT_FACE_TOP, GARGIT_FACE_SHIFT = face_place(GARGIT, 6, 2, FACE_W)
+GARGIT_TAGS = body_tags(GARGIT, 15, 17, flat_rows=3)
+
+
+def tongued(face, at):
+    """A face grid function with a puppy's tongue out under its smile, `at` = [left, row] of the tongue."""
+    def grid(eyes, mouth, blush):
+        out = [list(r) for r in face(eyes, mouth, blush)]
+        if mouth == "small":
+            out.append(list("." * len(out[0])))
+            for x in (at[0], at[0] + 1):
+                out[at[1]][x] = "t"
+        return ["".join(r) for r in out]
+    grid.width = getattr(face, "width", None)
+    return grid
+
+
+OCTOPUS_FACE_PALETTE = FACE_PALETTE | {"d": (205, 100, 100), "m": (110, 40, 60), "k": (255, 150, 170)}
+GARGOYLE_FACE_PALETTE = FACE_PALETTE | {"d": (130, 126, 132), "m": (60, 58, 72), "k": (240, 140, 160),
+                                        "t": (240, 120, 140)}
+
+OCTOPUS_EYES = {  # 4×4: a wide, low pupil, as a real octopus has (left, right)
+    "open": ([".ww.", "wppw", "wgpw", ".ww."],) * 2,
+    "proud": (["dddd", "wppw", "wgpw", ".ww."],) * 2,  # lids lowered, pleased with itself
+    "half": (["....", "dddd", "wppw", ".ww."],) * 2,
+    "closed": (["....", "....", "pppp", "...."],) * 2,
+    "happy": (["....", ".pp.", "p..p", "...."],) * 2,
+    "sad": (["p...", ".ww.", "wppw", ".ww."], ["...p", ".ww.", "wppw", ".ww."]),
+    "cross": (["...p", "..pw", "wppw", ".ww."], ["p...", "wp..", "wppw", ".ww."]),
+}
+OCTOPUS_MOUTHS = MOUTHS | {"tongue": [".mm.", "..t."]}  # the tip of its tongue out in concentration
+
+
+def eyed_face(eyes, gap, mouth_row, mouths=MOUTHS):
+    """A face grid function with eyes of its own (4 wide, all as tall), `gap` apart, rosy cheeks under
+    their outer sides and the mouth `mouth_row` rows below the top, centered (none for 0)."""
+    tall = len(eyes["open"][0])
+    width = 1 + gap + 4 + 1
+    height = max(tall, mouth_row + 2)
+
+    def grid(eye, mouth, blush):
+        rows = [list("." * width) for _ in range(height)]
+        for left, part in ((1, eyes[eye][0]), (1 + gap, eyes[eye][1])):
+            for y, line in enumerate(part):
+                for x, ch in enumerate(line):
+                    if ch != ".":
+                        rows[y][left + x] = ch
+        if mouth_row:
+            shape = mouths[mouth]
+            mx = (width - len(shape[0])) // 2
+            for y, line in enumerate(shape):
+                for x, ch in enumerate(line):
+                    if ch != ".":
+                        rows[mouth_row + y][mx + x] = ch
+        if blush:
+            rows[tall - 1][0] = rows[tall - 1][width - 1] = "k"
+        return ["".join(r) for r in rows]
+    grid.width = width
+    return grid
+
+
+# Inkasso: the octopus has become a painter. It sits on the ground, mantle in front, and fans five arms
+# up behind itself like a peacock's tail; every arm tip is a brush, a pointed tuft soaked in its own
+# color, the red one raised highest and flicking paint. Two more arms curl on the ground in front of
+# it, and paint is splashed on its mantle (Inklet's ink blot, now in every color). Pleased with itself.
+INKASSO_PALETTE = OCTOPUS_PALETTE | {
+    "C": (225, 190, 165), "m": (110, 40, 60),
+    "r": (255, 120, 110), "R": (230, 55, 65), "s": (140, 25, 45),     # red paint
+    "y": (255, 235, 130), "Y": (245, 195, 50), "t": (170, 115, 25),    # yellow
+    "g": (150, 230, 130), "G": (70, 185, 90), "j": (30, 105, 65),      # green
+    "u": (140, 200, 255), "U": (60, 130, 235), "v": (35, 65, 150),     # blue
+    "p": (215, 160, 245), "P": (160, 85, 210), "q": (90, 40, 135),     # violet
+    "i": (130, 125, 225), "I": (75, 70, 160), "n": (40, 35, 90),       # its own ink
+}
+INKASSO = [
+    "...........o.R..R..oo...........",
+    "..........oo......oo..o.........",
+    ".........ogo..R..oro..oo........",
+    "........ogjo....orso..oyo.......",
+    ".......ojjo....orRso..otyo......",
+    "...o..ogGjo....orRso..oyto......",
+    "..oo..ojGjo...orRsso..oyYyo..o..",
+    "..ouo.ogGjo...oorsso..oytto..o..",
+    "..ouo.oogoo...ooooo...oytto.opo.",
+    ".ouvoolboo....oldo.....oooo.opo.",
+    ".ouvoolbdc....olUo.....oldc.opo.",
+    "ouvUuolbdo.P.oooooo....oldoopPpo",
+    "ouUUvolbdoPpPlllllboYY.oldoopqqo",
+    ".ouvoolbdcoPPllllbbbYtolbdcopPqo",
+    ".ooooolbcohlllllbbbbbbolbdooqqqo",
+    ".oldoolbbolllllbbbbbbbobbdoooooo",
+    ".olco.olbollllbbbbbbbbobdc.olbdc",
+    ".oldo..oollbbbbbbbbbbbdoo..oldo.",
+    ".oldc..oollbbbbbbbbbbbdo...oldo.",
+    ".olblo..olbbbbbbbbbbbbdo...oldc.",
+    ".olbbco..obbbbbbbbbbbdo...olbdo.",
+    "..olbbloolbbbbbbbbddddoooolbboo.",
+    ".onobcbllobbbbbbbdddddolllbbono.",
+    ".ololddbolobbbbbbdddRolobbddolo.",
+    ".olloooolbcoobbddddoobclooooldo.",
+    ".oldclllcddo.oooooo.oldbclllcdo.",
+    "..ooldcddoo..........oolddcdoo..",
+    "....ooooo..............ooooo....",
+]
+INKASSO_FACE_TOP, INKASSO_FACE_SHIFT = face_place(INKASSO, 17, 9, 14)
+INKASSO_TAGS = species_tags([INKASSO, drop_rows(INKASSO, 20)], 20, 16)
+inkasso_face_grid = eyed_face(OCTOPUS_EYES, 8, 5)
+INKASSO_FACE_PALETTE = OCTOPUS_FACE_PALETTE
+
+# Octavio: the octopus has become a juggler. Tall and slim, it balances on the tip of a single arm, its
+# mantle stretched up high, its other arms long and winding out in every direction. Its suckers have
+# become juggling balls, red and yellow: some come loose and fly in an arc over its head, and the
+# empty spot on the arm waits for them. It watches the balls, the tip of its tongue out.
+OCTAVIO_PALETTE = {
+    "o": (85, 30, 75), "d": (180, 85, 150), "b": (220, 125, 185), "l": (240, 165, 210), "h": (252, 210, 238),
+    "c": (255, 235, 205), "r": (240, 70, 75), "R": (160, 30, 55), "y": (255, 215, 70), "Y": (200, 140, 30),
+    "m": (85, 30, 75), "k": (255, 130, 160), "a": (255, 240, 220),
+}
+OCTAVIO = [
+    ".......rr..a.a...ycyy...........",
+    "......rcrr.......yyyY.a.........",
+    "......rrrR........YY............",
+    ".......RR....oooooo.............",
+    "............ohllllbo....a.......",
+    "......ooo..ohllllbbbo...........",
+    "......olo..ollllbbbbo...........",
+    "......olo.ohlllbbbbbbo..........",
+    "......olo.ollllbbbbbbo..........",
+    "......olo.olllbbbbbbbo.....rr...",
+    "......olo.ollbbbbbbbbo....rcrr..",
+    "......olooolbbbbbbbbdo....rrrR..",
+    ".......ollolbbbbbbbbdo.....RR...",
+    ".......olyolbbbbbbbbdo.....oo...",
+    ".......olbobbbbbbbbbdo....olo...",
+    "........olbbbbbbbddddo....olo...",
+    "........oldobbbbbdddo...ooldo...",
+    ".........ooobbbbbdddoooolrdo....",
+    "...........oobbddddolllyddo.....",
+    ".........ooolooooooordddoo......",
+    ".......oolllbboldolldooo........",
+    "......olrbdyddoldobblo..........",
+    ".....olbddoooooldolbrlo.........",
+    "....olydoo....oldoolbdo.........",
+    "....oldo......oldo.olbyo........",
+    "...oldo.......oldo..olblo..oo...",
+    "...oydo.......oldo...olrloolo...",
+    "...olo.........olo....olblldo...",
+    "...ollo........olo.....oyddro...",
+    "....ollo.......olo......ooooo...",
+    ".....ooo.......olo..............",
+    "...............oo...............",
+]
+OCTAVIO_FACE_TOP, OCTAVIO_FACE_SHIFT = face_place(OCTAVIO, 11, 10, 12)
+OCTAVIO_TAGS = species_tags([OCTAVIO, drop_rows(OCTAVIO, 8)], 8, 16)
+octavio_face_grid = eyed_face(OCTOPUS_EYES, 6, 5, OCTOPUS_MOUTHS)
+OCTAVIO_FACE_PALETTE = FACE_PALETTE | {"d": (180, 85, 150), "m": (85, 30, 75), "k": (255, 130, 160),
+                                       "t": (255, 120, 150)}
+
+# Abyssink (secret): the octopus of the deep sea, the biggest of the line. It floats like a great bell,
+# its arms joined by a webbing of ink into a wide umbrella, their tips curling out below its hem. Rows
+# of glowing dots run along every arm and round the mantle, a glowing lure hangs over its brow and
+# bubbles rise round it; the line's ink has grown into the sea itself and curls away below it in
+# wisps. It glows at night.
+ABYSSINK_PALETTE = {
+    "o": (28, 18, 62), "d": (75, 55, 145), "b": (105, 85, 190), "l": (140, 120, 220), "h": (180, 165, 242),
+    "w": (70, 85, 185), "v": (100, 120, 215), "W": (52, 62, 148), "x": (45, 52, 130),   # its webbing of ink
+    "g": (110, 240, 255), "G": (50, 175, 230), "j": (225, 255, 255),                     # glowing dots and lure
+    "q": (120, 230, 255), "Q": (200, 250, 255),                                          # bubbles
+    "i": (75, 80, 175), "I": (48, 50, 125),                                              # the ink it lets out
+}
+ABYSSINK = [
+    ".........lll.............q......",
+    "........l...l.oooo..............",
+    ".......l....ollllloo........q...",
+    ".....gg...oolllGlbGboo.....qQq..",
+    "....gjjg.ollGlllbbbbbbo.....q...",
+    "....gjjgollllllbbbbbbGbo........",
+    ".....gg.olGlllbbbbbbbbbo........",
+    "........ollllbbbbbbbbbbo.....q..",
+    ".......ollllbbbbbbbbbbbGo.......",
+    ".......olllbbbbbbbbbbbddo.......",
+    ".......ollbbbbbbbbbbbdddo.......",
+    "..q....oobbbbbbbbbbbdddo......q.",
+    "......ovobbbbbbbbbbddddoo.......",
+    ".....ovvobbbbbbbbbdddddowo......",
+    "....ovvvvobbbbbbbdddddowwwo.....",
+    "..qovvvvvvoobbbbddddoowwwwwo....",
+    ".qQqvvvvvxgwoobdddooxwgxwwwwo...",
+    "..qvvvvgxwwxwgoogoxgwxwwxgwWo...",
+    "..ovvxxxwwgwwxwwxwwxwwgwwxxxWo..",
+    "..ooxGwwwxwwwgwwgwwgwwwxWWWGxo..",
+    ".ogxowwwwxwwwxwwxwwxwWWxWWWo.xgo",
+    "olbo.owwGwwwxwwwxwwWxWWWGWo..olb",
+    "olbo.owxowwwGwwwGWWWGWWooxo..olb",
+    "obdo..go.owwxowWxWoWxWo..ogo.obd",
+    "obdgoolbo.ogo.oWxo.oog...olbogbd",
+    ".odboolbo.ox...ogo..ox...olbobdo",
+    ".ioo.obdoolbo..olboolbo..obdoooi",
+    "i..i.obdgolbo..olboolbo.ogbdo..i",
+    "i...I.odbobdo..obdoobdo.obdoIIi.",
+    ".iII...ooobdgo.obdogbdo..oo.....",
+    "..........odbo.odoobdo..........",
+    "...........oo...o..oo...........",
+]
+ABYSSINK_FACE_TOP, ABYSSINK_FACE_SHIFT = face_place(ABYSSINK, 8, 9, 14)
+ABYSSINK_TAGS = species_tags([ABYSSINK, drop_rows(ABYSSINK, 13)], 13, 16)
+abyssink_face_grid = eyed_face(OCTOPUS_EYES, 8, 5)
+ABYSSINK_FACE_PALETTE = {"w": (150, 235, 255), "p": (28, 18, 62), "g": (225, 255, 255), "d": (75, 55, 145),
+                         "m": (28, 18, 62), "r": (200, 70, 120), "k": (200, 120, 230)}  # its eyes glow too
+
+GARGARD_EYES = {  # 4×4: a heavy brow over an amber eye, watchful (left, right)
+    "open": (["dd..", ".ddd", "wapw", ".ww."], ["..dd", "ddd.", "wpaw", ".ww."]),
+    "half": (["dd..", ".ddd", "dddd", "wapw"], ["..dd", "ddd.", "dddd", "wpaw"]),
+    "closed": (["dd..", ".ddd", "....", "pppp"], ["..dd", "ddd.", "....", "pppp"]),
+    "happy": (["dd..", "....", ".pp.", "p..p"], ["..dd", "....", ".pp.", "p..p"]),
+    "sad": (["..dd", ".d..", "wapw", ".ww."], ["dd..", "..d.", "wpaw", ".ww."]),
+    "cross": (["d...", ".dd.", "wapw", ".ww."], ["...d", ".dd.", "wpaw", ".ww."]),
+}
+BELLFRY_EYES = {  # 4×4: big round eyes with a golden glint, singing (left, right)
+    "open": ([".ww.", "wyyw", "wynw", ".ww."],) * 2,
+    "half": (["....", "dddd", "wynw", ".ww."],) * 2,
+    "closed": (["....", "....", "pppp", "...."],) * 2,
+    "happy": (["....", ".pp.", "p..p", "...."],) * 2,
+    "sad": (["p...", ".ww.", "wynw", ".ww."], ["...p", ".ww.", "wynw", ".ww."]),
+    "cross": (["...p", "..yw", "wynw", ".ww."], ["p...", "wy..", "wynw", ".ww."]),
+}
+
+# Gargard: the gargoyle has become a piece of wall, a guardian on its plinth. It crouches square and
+# blocky, its haunches and its plinth one block of masonry with joints running through both. Its stone
+# wings are laid forward round its chest like a shield with rims of iron; it rests its front paws on the
+# shield's edge and peers over it under heavy brows, curled horns on its head, its ears hanging heavy.
+# A crack runs down the shield, and moss grows on the plinth.
+GARGARD_PALETTE = GARGOYLE_PALETTE | {
+    "w": (120, 130, 160), "W": (88, 96, 128), "v": (150, 160, 190),    # the shield of its wings
+    "q": (185, 195, 225), "Q": (120, 132, 170),                          # its iron rims
+}
+GARGARD = [
+    "......oo.......mM.......oo....",
+    ".....ouo.....omMmo.....ouUo...",
+    ".....oUuo...ooooooo...oUuo....",
+    "......oUuoohhhlllllbboouo.....",
+    "......ooUohhllllllbbbbdoo.....",
+    ".....oCCohlllbbbbbbbbbdoCCo...",
+    "....oCccolbbbbbbbbbbbdoccCo...",
+    "....occcolbbbbbbbbbbbbdoccco..",
+    "....occcobbbbbbbbbbbbbdoccco..",
+    "....occcobbbbuuuuuubbbdoccco..",
+    "....occcobbbuunnnnuubbdoccco..",
+    "....occcobbbuuunnuuUbbdocco...",
+    ".....oocobbbuuuuuuUUbbdoo.....",
+    "....ooooohllouuUUUUohlbooooom.",
+    "...ooqvollbooooooooolbdowqo...",
+    "..ohoqvouoUowwoovvouoUoqobo...",
+    ".ohhhoqvwwwwwwoovvvWwwwqobbo..",
+    ".ohcloqWwWWwWWoovvWWWWWqobco..",
+    ".olcloqwwwwwWWoovwwwWwqobbco..",
+    ".olllloqwwwWWWoowwwwwWobbddo..",
+    ".ollllboqqqqWWoowwqqqobddddo..",
+    ".occccccooooqqoowqooocccccco..",
+    ".obbbbcbbbbboooooobcddddcddo..",
+    ".obbbbcbbbbbbcbobddcddddcddo..",
+    ".mMcccccccccccccccccccccccco..",
+    ".MmMbbbbbcbbbdddcdddddcddddo..",
+    ".Moooooooooooooooooooooooooo..",
+]
+GARGARD_FACE_TOP, GARGARD_FACE_SHIFT = face_place(GARGARD, 5, 9, 14)
+GARGARD_TAGS = species_tags([GARGARD, drop_rows(GARGARD, 22)], 22, 15)
+gargard_face_grid = eyed_face(GARGARD_EYES, 8, 7)
+GARGARD_FACE_PALETTE = GARGOYLE_FACE_PALETTE | {"d": (105, 100, 110), "a": (245, 175, 60), "k": (215, 150, 150)}
+
+# Fountaingle: the gargoyle has become a waterspout. Its body is long and level, stretched forward like a
+# spout leaning out from a roof, and its back is a gutter, water running in it and moss on its rim. Rain
+# gushes out of its wide-open mouth in an arc; its two little wings are swept back and spout water from
+# their tips too, and its arrow-tipped tail curls up behind. Four stubby legs grip the ledge, and its
+# eyes are squeezed shut with joy: it loves the rain.
+FOUNTAINGLE_PALETTE = GARGOYLE_PALETTE | {
+    "w": (95, 160, 140), "W": (60, 120, 110), "v": (140, 200, 175), "x": (45, 85, 80),  # verdigris wings
+    "e": (90, 170, 245), "E": (60, 120, 210), "f": (190, 230, 255), "F": (140, 205, 250),
+    "g": (150, 205, 255), "t": (240, 120, 140),                                          # water, its tongue
+}
+FOUNTAINGLE = [
+    "................................",
+    ".......g..f.....................",
+    "......fFf.Ff......o..mM..o......",
+    "..o....Foowwo....ooomMmmoo......",
+    ".olo..ovvoxwwo..ohhllllbbbo.....",
+    "olbbo.oWvvoxWwo.ooolllbbbbbo....",
+    "olbdo.oWWwvoxWwooccolbbbbbbo....",
+    ".ooo..oWwWwvoxWwoccobbbbbbbo....",
+    ".olo..oWWwWwvoWWoccobbbbbbdo....",
+    ".olo...oWwWwwvoxocdobbbbbddo....",
+    ".oloM...oWooWwmoooobbbbuuuuuuun.",
+    ".ooomMooooooomMmobbbbbbuUUUUUUo.",
+    ".oloEeEEEEeEEEEeobbbbbdottttoofF",
+    ".oloeeefeeefeeefobbbbdduuuuuuoef",
+    "..ooohhhhhhhlllllooooooUUUUUo.eE",
+    "...ollllbbbbbbbbbbbdo........eE.",
+    "...ollbbbbbbbbbbbdddo........eE.",
+    "...obbcbbbbbcbbdddcdo.........e.",
+    "...obbbcbbbbbcdddddco.........eg",
+    "...obbbbbbbddddddddo...........g",
+    "....ooooooooooooooodo.........g.",
+    "....obdo.obdoobdoobdo.......g..g",
+    "....obdo.obdoobdoobdo...........",
+    "...gouUo.ouUoouUoouUo...........",
+    "....oooo.oooooooooooo...........",
+]
+FOUNTAINGLE_FACE_TOP, FOUNTAINGLE_FACE_SHIFT = face_place(FOUNTAINGLE, 6, 19, 10)
+FOUNTAINGLE_TAGS = species_tags([FOUNTAINGLE, drop_rows(FOUNTAINGLE, 16)], 16, 12)
+FOUNTAINGLE_TAGS["walk"] = walk_tags(FOUNTAINGLE, 16, [*range(4, 8), *range(13, 17)], [*range(9, 13), *range(17, 21)], 20)
+fountaingle_face_grid = kit_face(4, mouth_row=0)  # its mouth is open all the time: that is its spout
+FOUNTAINGLE_FACE_PALETTE = GARGOYLE_FACE_PALETTE
+
+# Bellfry (secret): the gargoyle has become the bell of its own tower, the biggest of the line. Its body
+# is a bronze bell, flared at the hem, two raised bands round it; the dog's head sits on top where the
+# bell hangs from. Its stone wings have grown into two tall pointed tower roofs on either side, slate
+# tiles and a golden finial on each; its tail is the clapper, swinging out under the hem, and its paws
+# peek out in front. Rings of sound tremble round it and dust trickles down; it glows warm at night.
+BELLFRY_PALETTE = {
+    "o": (70, 38, 22), "d": (165, 100, 40), "b": (205, 140, 55), "l": (235, 180, 85), "h": (255, 222, 140),
+    "c": (130, 75, 30), "u": (245, 205, 130), "U": (215, 160, 85), "n": (60, 32, 20),     # bronze, muzzle
+    "m": (125, 185, 75), "M": (75, 135, 55), "x": (190, 125, 50),
+    "w": (115, 130, 180), "W": (80, 92, 140), "v": (155, 170, 215), "O": (55, 58, 90),    # slate roofs
+    "y": (255, 225, 110), "Y": (240, 170, 50), "j": (255, 245, 190),                      # golden finials
+    "r": (255, 220, 120), "R": (230, 175, 80), "s": (205, 190, 165), "S": (170, 155, 135),  # rings and dust
+}
+BELLFRY = [
+    "............................y...",
+    "....y......................yjY..",
+    "...yjY......o..mM..o.......OY...",
+    "....YO.....ooomMmmoo......OO....",
+    "....OO....ohhllllbbbo.....OO....",
+    "....OO.oooohllllbbbbboooo.OwO...",
+    "....OO.oddollbbbbbbbboddoOwwO...",
+    "...OvWOoddollbbbbbbbboddoOwWO...",
+    "...OwwOoddolbbuuuubddooo.OwwO.R.",
+    ".R.OwwOoddobbbunnudddoooOwwwO..R",
+    "R..OWwOodoobbbuuuudddoooOwWwO..R",
+    "R.OwwwwOo.obbbbbbdddo..oOwwwwOR.",
+    ".ROwwwwO..oooooooooobo.OwwwwWO..",
+    "..OWwWwO..ollllllbbbbo.OwWwWWO..",
+    ".OwwwwWWO.ollllbbbbbbo.OwwwWWO..",
+    ".OwwwwWWO.olllbbbbbbboOwwwwWWO..",
+    ".OWwWWWWO.ohllllllllxoOwWwWWWO..",
+    ".OwwwWWWOolddddddddddbowwwWWWWO.",
+    "OwwwWWWWWobbbbbbbbbbbbowwWWWWWO.",
+    "OOOOOOOOOobbbbbbbbbbbboOOOOOOOO.",
+    "..Rs.....obbbhbbbbbbbbo.S....R..",
+    ".r......sobbhbbbbbbbbdo.....s.r.",
+    "r.......obbbbbbbbbbddddo.......r",
+    "r.s.....obbbbbbbbbdddddo.......r",
+    "r......ohhhhllllllllxxxxo......r",
+    ".r....obdddddddddddddddddo....r.",
+    "..R..obbbbbbbbddddddddddddo..R..",
+    "....oooooooooooooooooooooooo....",
+    "......olllo.....ccc..olldo......",
+    "......ouoUo.....obo..ouoUo......",
+    "......S.........obo.......S.....",
+    "...........S...Sooo.............",
+]
+BELLFRY_FACE_TOP, BELLFRY_FACE_SHIFT = face_place(BELLFRY, 5, 11, 11)
+BELLFRY_TAGS = species_tags([BELLFRY, drop_rows(BELLFRY, 21)], 21, 16)
+bellfry_face_grid = eyed_face(BELLFRY_EYES, 5, 6)
+BELLFRY_FACE_PALETTE = {"w": (255, 250, 235), "y": (255, 210, 70), "n": (60, 32, 20), "p": (70, 38, 22),
+                        "d": (165, 100, 40), "m": (70, 38, 22), "r": (190, 60, 70), "k": (255, 150, 150)}
+
+COAST_LINES = (("octopus", "inklet", baby_face_grid, face_grid),
+               ("gargoyle", "gargit", tongued(baby_face_grid, (4, 5)), tongued(face_grid, (7, 8))))
+COAST_FORMS = (("inkasso", kit_faces(normal=("proud", "small", False), smile=("proud", "small", True))),  # pleased
+               ("octavio", kit_faces(normal=("open", "tongue", False))),  # concentrating on its balls
+               ("abyssink", FACES),
+               ("gargard", kit_faces(normal=("open", "flat", False))),  # watchful
+               ("fountaingle", kit_faces(normal=("happy", "none", True), smile=("happy", "none", True))),  # rain!
+               ("bellfry", kit_faces(normal=("open", "open", False), smile=("open", "open", True))))  # it sings
+
+
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
     "food_full": ["...fffff...", "..fffffFf..", ".fffffffFf."],
@@ -8183,7 +8760,7 @@ def main():
         write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
                     faceShift=globals()[f"{name}_FACE_SHIFT"])
         write_sheet(f"{line}_faces", face_sheet(face_grid, face_palette))
-    for line, child, baby_faces, child_faces in ADVENTURE_LINES + FESTIVAL_LINES:
+    for line, child, baby_faces, child_faces in ADVENTURE_LINES + FESTIVAL_LINES + COAST_LINES:
         upper, name = line.upper(), child.upper()
         palette, face_palette = globals()[f"{upper}_PALETTE"], globals()[f"{upper}_FACE_PALETTE"]
         write_sheet(f"{line}_baby_body", body_sheet(globals()[f"{upper}_BABY_TAGS"],
@@ -8193,7 +8770,7 @@ def main():
         write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
                     faceShift=globals()[f"{name}_FACE_SHIFT"])
         write_sheet(f"{line}_faces", face_sheet(child_faces, face_palette))
-    for name, faces in WATER_FORMS + GRANDMA_FORMS + ADVENTURE_FORMS + FESTIVAL_FORMS:
+    for name, faces in WATER_FORMS + GRANDMA_FORMS + ADVENTURE_FORMS + FESTIVAL_FORMS + COAST_FORMS:
         upper = name.upper()
         write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
                     faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])

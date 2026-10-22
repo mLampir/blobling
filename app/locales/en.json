@@ -68,7 +68,9 @@
     "owl": "Hootlet",
     "chameleon": "Colorlet",
     "scarab": "Rollet",
-    "kite": "Kitelet"
+    "kite": "Kitelet",
+    "octopus": "Inklet",
+    "gargoyle": "Gargit"
   },
   "species": {
     "blob": "Blob",
@@ -167,7 +169,15 @@
     "kite": "Paper kite",
     "origrane": "Origrane",
     "lionkite": "Lionkite",
-    "stormkite": "Stormkite"
+    "stormkite": "Stormkite",
+    "octopus": "Octopus",
+    "inkasso": "Inkasso",
+    "octavio": "Octavio",
+    "abyssink": "Abyssink",
+    "gargoyle": "Gargoyle",
+    "gargard": "Gargard",
+    "fountaingle": "Fountaingle",
+    "bellfry": "Bellfry"
   },
   "tricks": {
     "bow": "Bow",
@@ -293,6 +303,8 @@
     "egg_chameleon": "Chameleon egg",
     "egg_scarab": "Scarab egg",
     "egg_kite": "Paper kite egg",
+    "egg_octopus": "Octopus egg",
+    "egg_gargoyle": "Gargoyle egg",
     "earflap": "Earflap hat",
     "stripes": "Striped stocking cap",
     "cosy": "Tea cosy hat",

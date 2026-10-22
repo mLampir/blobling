@@ -1679,13 +1679,33 @@
     "h": 14
    },
    "duration": 1000
+  },
+  {
+   "filename": "trip egg_octopus 168",
+   "frame": {
+    "x": 1889,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_gargoyle 169",
+   "frame": {
+    "x": 1901,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "trip.png",
   "size": {
-   "w": 1889,
+   "w": 1913,
    "h": 24
   },
   "frameTags": [
@@ -2557,6 +2577,18 @@
     "name": "egg_kite",
     "from": 167,
     "to": 167,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_octopus",
+    "from": 168,
+    "to": 168,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_gargoyle",
+    "from": 169,
+    "to": 169,
     "direction": "forward"
    }
   ]
