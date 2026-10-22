@@ -183,11 +183,12 @@ the next, until you tap **brood** next to it.
 
 </details>
 
-## Eggs of its own
+## Eggs from friends
 
-An adult that has made friends with a wild pet lays an egg with it
-([gameplay.md](gameplay.md#friends) has the rules). That egg is of the pet's
-own line or of its friend's, half of the time each.
+A wild pet the pet has made friends with brings it an egg of its own family
+([gameplay.md](gameplay.md#friends) has the rules), so that egg is always of
+the friend's line. An adult that is close to you lays an egg of its own line
+as well ([gameplay.md](gameplay.md#its-own-egg)).
 
 <details>
 <summary>Show which wild pets live where</summary>
@@ -220,8 +221,8 @@ So the octopus and the gargoyle, whose eggs the two guardians behind the
 mountain sit on, can be found without them too.
 
 The ember, duck, beak, bear and penguin lines have no wild pets: their eggs
-come from guardians. A pet of one of them with a slime for a friend
-can still lay an egg of its own line, though.
+come from guardians. A grown-up pet of one of them can still lay an egg of its
+own line, though.
 
 The values are in `core/src/wild.ts`.
 
@@ -231,7 +232,8 @@ The values are in `core/src/wild.ts`.
 
 Four lines live nowhere on a trip: their pets come to the garden when
 something there draws them ([gameplay.md](gameplay.md#guests-in-the-garden)
-has how a guest comes in). A guest's egg is always of its own line.
+has how a guest comes in). A guest's egg is always of its own line, like any
+friend's.
 
 <details>
 <summary>Show which guest comes for what</summary>
@@ -307,6 +309,27 @@ find a seed more.
 
 The values are in `core/src/stars.ts`, `core/src/festival.ts` and
 `core/src/digging.ts`.
+
+</details>
+
+## The troublemaker
+
+One line hatches from an egg that a troublemaker leaves behind
+([gameplay.md](gameplay.md#a-troublemaker)).
+
+<details>
+<summary>Show who she is</summary>
+
+The troublemaker is **Glintrick**, the first adult of the magpie line (below),
+always in that form. She comes once the album has eggs of 15 lines, between
+9:00 and 17:00, two to five days after her last visit. To chase her off, the
+pet at home has to be an adult with a strength of 30 or more, and awake.
+
+After she has been chased off five times, she leaves her **top hat** in the
+nest with the **magpie egg** in it. After that she comes only every 10 to 18
+days.
+
+The values are in `core/src/magpie.ts`.
 
 </details>
 
@@ -2196,6 +2219,130 @@ strikes itself with all its might and a shock wave rolls to the opponent.
 It grows up in the noon hour, between 12:00 and 12:59. This rule goes before
 the others of the line. While the child is on its way there, its hint colors
 are two shades of bronze.
+
+</details>
+
+### The magpie line
+
+This is the troublemaker's line.
+
+<details>
+<summary>Show the magpie line</summary>
+
+| | Stage |
+|---|---|
+| ![Magpie egg](images/pets/magpie_egg.png) | **Magpie egg** – a white egg with black speckles and a band of blue and green sheen, with a glint of gold, lying in the crown of a top hat |
+| ![Magpie baby](images/pets/magpie_baby.png) | **Baby** – a round magpie chick, black cap and white front, a stubby beak, wings with a blue sheen and already a red bow tie |
+| ![Glintlet](images/pets/glintlet.png) | **Child: Glintlet** – an upright little magpie with its long tail cocked up behind, a white front, a red bow tie and a little wand with a star |
+
+The stages last as long as the slime's. Every form of the line is a magician
+and keeps the black and white plumage with its sheen of blue and green.
+
+![Glintrick](images/pets/glintrick.png)
+
+**Glintrick**, a stage magician: a tall top hat with a red band, a long cape
+lined in red, a white shirt front with gold buttons, a monocle that glints, a
+wand with a sparkling star and a long tail shimmering blue and green. It is
+pleased with every trick of its own, so its mood sinks more slowly, and a game
+is a show to it: games mean more to it. For its bow it lifts its top hat and
+stars and cards burst out of it, and in a scuffle a stream of stars flies from
+its wand to the opponent.
+
+![Cardwing](images/pets/cardwing.png)
+
+**Cardwing**, the magician of cards. Its wings and its tail have become fans
+of playing cards, the tail's showing their faces and the wings' their red
+backs, raised wide. Shuffling its cards all day tires it a little faster, and
+as the queen of hearts, hearts mean more to it. For its spin the cards of its
+wings fly round it in a ring, and in a scuffle it throws them at the opponent
+like darts.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Cardwing | the child practiced tricks 21 times (three times a day) |
+| Glintrick | everything else |
+
+From its second day on, the star on Glintlet's wand shows where it is
+heading: gold for Glintrick, red and white for Cardwing.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the stage.*
+
+<details>
+<summary>Show this form</summary>
+
+![Illusionna](images/pets/illusionna.png)
+
+**Illusionna**, the great illusionist, the legendary form of its line and the
+biggest. Her cape has grown into a stage curtain that rises behind her head
+and falls wide to the ground, with gold stars and a gold fringe; she wears a
+tall hat with a moon on it, and three glowing orbs circle the star of her
+raised wand. At night the orbs glow. A speck of dust and she makes it vanish,
+so she gets dirty more slowly, and she makes the sniffles disappear as well:
+she gets sick less often. For her flip she vanishes behind her curtain and
+appears again, and in a scuffle the orbs whirl round the opponent until it is
+dazed.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+As a child it won a first place at the trick festival. This rule goes before
+the others of the line. While the child is on its way there, its hint colors
+are the cyan and pink of the orbs.
+
+</details>
+
+## Keepsakes
+
+Once the home has had all three adult forms of a line, the next pet to come
+home from a trip brings the line's keepsake (see
+[Keepsakes](gameplay.md#keepsakes)). What each one does, while it is set out:
+
+<details>
+<summary>Show the keepsakes</summary>
+
+| Line | Keepsake | While it is set out |
+|---|---|---|
+| Slime | jelly lamp | its mood drops 15 % more slowly |
+| Ember | fire bowl | in its sleep its energy comes back 15 % faster |
+| Stone | moonstone | it gets sick 15 % less often |
+| Fox | signpost | 15 % more finds at the quiet stops of a trip |
+| Cloud | weather bell | it gets bored 25 % less often |
+| Leaf | cherry branch | the plant grows 20 % faster |
+| Duck | rubber duck in its tub | it stays clean 15 % longer |
+| Hippo | hippo fountain | hot afternoons don't bother it |
+| Beak | mailbox | friends come to visit 15 % more often |
+| Caterpillar | flower basket | the plant's fruits do 20 % more |
+| Dog | ball crate | a game cheers it up 20 % more |
+| Dragonfly | wind chime | speed training counts 15 % more |
+| Beaver | gnawed stump | strength training counts 15 % more |
+| Crab | shell lamp | at the pond something bites 20 % sooner |
+| Axolotl | herb tank | its health comes back 20 % faster |
+| Mouse | knitting basket | a child grows 10 % faster |
+| Bear | honey pot | it gets hungry 15 % more slowly |
+| Penguin | block of ice | cold mornings don't bother it |
+| Bat | gramophone | trick practice counts 15 % more |
+| Owl | telescope | shooting stars fall 20 % more often |
+| Chameleon | easel | smarts training counts 15 % more |
+| Scarab | hourglass | trips bring a treasure map 20 % more often |
+| Paper kite | windsock | trips tire it 15 % less |
+| Octopus | conch | 10 % more points at the trick festival |
+| Gargoyle | little guardian | it is knocked over 15 % less often in a scuffle |
+| Magpie | trinket box | a friend's visit brings a gift 25 % more often |
+
+The values are in `core/src/keepsake.ts`.
 
 </details>
 

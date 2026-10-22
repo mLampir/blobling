@@ -708,6 +708,18 @@ const BADGES = {
   heart: [svg("health"), "var(--mood)"], finder: ["✦", "var(--hygiene)"], fresh: [svg("energy"), "var(--energy)"],
   trick: ["×2" + svg("trick"), "var(--energy)"], train: ["×2" + svg("train"), "var(--satiety)"],
   growth: ["↑", "var(--health)"], snow: ["❄", "var(--hygiene)"],
+  // the keepsakes of the lines (core/src/keepsake.ts)
+  keep_mood: [svg("mood"), "var(--mood)"], keep_play: [svg("game"), "var(--mood)"], keep_bored: [svg("mood"), "var(--mood)"],
+  keep_satiety: [svg("satiety"), "var(--satiety)"], keep_fruit: [svg("satiety"), "var(--satiety)"],
+  keep_hygiene: [svg("hygiene"), "var(--hygiene)"], keep_rest: [svg("moon"), "var(--energy)"],
+  keep_hike: [svg("trip"), "var(--energy)"], keep_finds: ["✦", "var(--hygiene)"], keep_maps: ["✕", "var(--hygiene)"],
+  keep_heal: [svg("health"), "var(--health)"], keep_sick: [svg("health"), "var(--health)"],
+  keep_steady: [svg("health"), "var(--health)"], keep_plant: ["↑", "var(--health)"], keep_children: ["↑", "var(--health)"],
+  keep_heat: [svg("sun"), "var(--satiety)"], keep_cold: ["❄", "var(--hygiene)"], keep_stars: ["✦", "var(--energy)"],
+  keep_friends: ["♥", "var(--mood)"], keep_bite: ["~", "var(--hygiene)"],
+  keep_tricks: [svg("trick"), "var(--energy)"], keep_festival: [svg("trick"), "var(--energy)"],
+  keep_speed: [svg("train"), "var(--satiety)"], keep_strength: [svg("train"), "var(--satiety)"],
+  keep_smarts: [svg("train"), "var(--satiety)"], keep_gifts: ["✦", "var(--mood)"],
 };
 const PACKED = ["heart", "finder", "fresh"];  // what works from the backpack on a trip
 const ARROWS = { left: "←", right: "→", up: "↑", down: "↓" };
@@ -898,12 +910,15 @@ setInterval(() => { if (!document.hidden && view === "home") matchSky(); }, 2000
 
 // Switching to another pet with a Pi: the camera pans along the street from the house it showed
 // (on the phone, its own scene does that by itself). `before`: the ids of the pets, in the order
-// of their houses, before the switch.
+// of their houses, before the switch; `id` null: to the yard after the last house, `wasYard`:
+// from there.
 let panning = null, panFrame = null, previewGen = 0;
-function panTo(before, id) {
-  if (app.home() === "phone" || !current || id === current.id) return;
-  const from = before.indexOf(current.id), to = before.indexOf(id);
+function panTo(before, id, wasYard = false) {
+  if (app.home() === "phone" || !current || (id === current.id && !wasYard)) return;
+  const spot = (x) => (x === null ? before.length : before.indexOf(x));
+  const from = wasYard ? before.length : spot(current.id), to = spot(id);
   const steps = from >= 0 && to >= 0 ? to - from : 1;
+  if (!steps) return;
   const copy = document.createElement("canvas");
   copy.width = scene.width;
   copy.height = scene.height;
@@ -974,6 +989,18 @@ function onPlant(x, y) {
   if (!current || !current.plant || !current.plant.area || current.trip) return false;
   const [u, v] = inScene(x, y), [ax, ay, aw, ah] = current.plant.area;
   return u >= ax && u <= ax + aw && v >= ay && v <= ay + ah;
+}
+// What of the yard is at a point, while the scene shows it: "trough", "basin" or null
+function yardAt(x, y) {
+  if (!current || !app.atYard(current)) return null;
+  const [u, v] = inScene(x, y), m = 0.03;
+  const hit = ["trough", "basin"].find((what) => {
+    const part = current.yard[what];
+    if (!part) return false;
+    const [ax, ay, aw, ah] = part.area;
+    return u >= ax - m && u <= ax + aw + m && v >= ay - m && v <= ay + ah + m;
+  });
+  return hit || null;
 }
 // Whether a point is on the house (it stands at the same place on the phone and on the Pi)
 function onHouse(x, y) {
@@ -1455,6 +1482,7 @@ function renderBag(s) {
     bag.dataset.key = key;
     const fruits = [], foods = [], seeds = [], wear = [];
     for (const item of s.items) {
+      if (item.kind === "yard") continue; // it stands in the yard
       if (item.kind === "fruit" || item.kind === "food") {
         const b = bagTile(app.thing(item.id), item.label, [item.label, ...effectText(item.effects)].join(" · "));
         b.dataset.action = "feed";
@@ -1496,11 +1524,22 @@ function renderBag(s) {
         wear.push(b);
       }
     }
-    for (const egg of s.eggs) {
+    // the eggs of one line lie on one tile (×n); a tap broods the one a pet has passed on the most to
+    const lines = new Map();
+    for (const egg of s.eggs) lines.set(egg.line, [...lines.get(egg.line) ?? [], egg]);
+    const passed = (egg) => egg.skills.reduce((sum, k) => sum + k.value, 0);
+    for (const eggs of lines.values()) {
+      const egg = eggs.reduce((best, e) => passed(e) > passed(best) ? e : best);
       // what a pet has passed on to its egg
       const b = bagTile(app.icon("egg", egg.line), egg.label, [egg.label, t("page.bag.egg"),
         egg.from && t("page.bag.egg_from", { name: egg.from }), ...egg.skills.map((k) => `${k.label} ${k.value}`)]
         .filter(Boolean).join(" · "));
+      if (eggs.length > 1) {
+        const n = document.createElement("span");
+        n.className = "n";
+        n.textContent = `×${eggs.length}`;
+        b.append(n);
+      }
       pressable(b, () => newEgg(egg));
       wear.push(b);
     }
@@ -1696,6 +1735,7 @@ function dayLabel(d) {
 function eventText(e) {
   const labels = (current && current.item_labels) || {};
   return e.action === "evolve" && e.accepted ? evolveText(e.item)
+    : e.action === "fill" ? t(`page.events.fill_${e.item}`)
     : e.action === "learned" ? t("page.events.learned", { trick: trickLabel(e.item) })
     : e.action === "trick" ? t("page.events.practiced", { trick: trickLabel(e.item) })
     : e.action === "solo" ? (T[`page.events.solo_${e.item}`] ? t(`page.events.solo_${e.item}`)
@@ -1713,7 +1753,8 @@ function eventText(e) {
     : e.action === "copied" ? t("page.events.copied", {
       trick: trickLabel((e.item || "").split(":")[0]), pet: (e.item || "").split(":").slice(1).join(":") })
     : e.action === "gift" ? t("page.events.gift", { pet: T[`species.${e.item}`] || e.item })
-    : e.action === "nest" || e.action === "collect" ? t(`page.events.${e.action}`)
+    : e.action === "nest" || e.action === "laid" || e.action === "collect" ? t(`page.events.${e.action}`)
+    : e.action.startsWith("magpie_") ? t(`page.events.${e.action}`, { item: labels[e.item] || T[`items.${e.item}`] || e.item })
     : e.action === "unwrap" ? t("page.events.unwrap", { what: giftLabel(e.item) })
     : e.action === "found" || e.action === "pickup" ? t(`page.events.${e.action}`, { thing: giftLabel(e.item) })
     : e.action === "guardian" ? t("page.events.guardian", { foe: T[`foes.${e.item}`] || e.item })
@@ -2002,6 +2043,14 @@ async function loadGallery() {
       } else {
         page.append(...line.forms.map(slot));
       }
+      // the line's keepsake, once the home has it
+      if (line.keepsake) {
+        const li = document.createElement("li");
+        li.className = "keepsake";
+        const img = Object.assign(document.createElement("img"), { src: app.discovery(line.keepsake.id, true), alt: "" });
+        li.append(img, line.keepsake.label);
+        page.append(li);
+      }
       return page;
     }));
     $("ancestors-label").hidden = $("gallery").hidden = !ancestors.length;
@@ -2106,7 +2155,8 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
     const step = Math.hypot(e.clientX - stroke.x, e.clientY - stroke.y);
     stroke.x = e.clientX;
     stroke.y = e.clientY;
-    if (!onPet(e.clientX, e.clientY)) return;  // only the pet itself can be stroked
+    // only the pet itself can be stroked, and not while the scene shows the yard
+    if (app.atYard(current) || !onPet(e.clientX, e.clientY)) return;
     stroke.way += step;
     if (stroke.way - stroke.puffed > 50) {
       stroke.puffed = stroke.way;
@@ -2126,6 +2176,13 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
   });
   const end = (e) => {
     if (!stroke || e.pointerId !== stroke.id) return;
+    // in the yard: a tap on the trough or the basin fills it up
+    if (stroke.way < 8 && app.atYard(current)) {
+      const what = yardAt(e.clientX, e.clientY);
+      stroke = null;
+      if (what) act("fill", what);
+      return;
+    }
     // hide and seek: a tap looks behind the spot nearest to it
     if (stroke.way < 8 && current.game && current.game.active && current.game.spots) {
       stroke = null;
@@ -2382,11 +2439,21 @@ $("sleep").addEventListener("click", () => {
 
 // The other pets at home, next to the name: a tap switches to one of them. A dot: it needs
 // something; faded: it is away (on a trip, or at Grandma's).
+// With two pets or more, the last one is the yard after the last house; while the scene shows the
+// yard, all the pets are in the row.
 function renderNeighbours(s) {
-  const others = s.pets.filter((p) => p.id !== s.id);
+  const yard = app.atYard(s);
+  const others = s.pets.filter((p) => yard || p.id !== s.id);
   const row = $("neighbours");
-  if (row.dataset.ids !== others.map((p) => p.id + p.stage + p.species).join()) {
-    row.dataset.ids = others.map((p) => p.id + p.stage + p.species).join();
+  const key = others.map((p) => p.id + p.stage + p.species).join() + (s.yard && !yard ? ",yard" : "");
+  if (row.dataset.ids !== key) {
+    row.dataset.ids = key;
+    const toYard = document.createElement("button");
+    toYard.className = "pill neighbour";
+    toYard.dataset.id = "yard";
+    toYard.setAttribute("aria-label", t("page.look_yard"));
+    toYard.append(Object.assign(document.createElement("img"), { alt: "", src: app.thing("yard") }));
+    toYard.addEventListener("click", lookYard);
     row.replaceChildren(...others.map((p) => {
       const b = document.createElement("button");
       b.className = "pill neighbour";
@@ -2397,7 +2464,7 @@ function renderNeighbours(s) {
       b.append(img);
       b.addEventListener("click", () => look(p.id));
       return b;
-    }));
+    }), ...(s.yard && !yard ? [toYard] : []));
   }
   for (const p of others) {
     const b = row.querySelector(`[data-id="${p.id}"]`);
@@ -2410,10 +2477,23 @@ function renderNeighbours(s) {
 
 async function look(id) {
   if (!current) return;
-  const before = current.pets.map((p) => p.id);
+  const before = current.pets.map((p) => p.id), wasYard = app.atYard(current);
   try {
     const state = await app.look(id);
-    panTo(before, state.id);
+    panTo(before, state.id, wasYard);
+    render(state);
+    feel("tap");
+  } catch (err) {
+    fail(err);
+  }
+}
+
+async function lookYard() {
+  if (!current) return;
+  const before = current.pets.map((p) => p.id);
+  try {
+    const state = await app.lookYard();
+    panTo(before, null);
     render(state);
     feel("tap");
   } catch (err) {

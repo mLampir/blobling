@@ -4,6 +4,8 @@
 //   npm run preview -- --spoiler-free     one adult form and the first area only (for the docs)
 //   npm run preview -- play --gif         one animation as a GIF → pet_play.gif
 //   npm run preview -- --pets             one picture per form → docs/images/pets/
+//   npm run preview -- --yard             the yard: every size and level, pets at it → pet_yard.png,
+//                                         and a pet going over and back → pet_yard.gif
 //
 // For the clock, the temperature and the names in the overview, point LED_MATRIX_BDF_DIR at the
 // fonts folder of rpi-rgb-led-matrix (without it they are left out).
@@ -13,8 +15,10 @@ import { parseArgs } from "node:util";
 
 import { Image } from "../core/src/image";
 import { ACTIVITY_SECONDS } from "../core/src/model";
-import { PetScene, type SceneView, type TripView, type Weather } from "../core/src/scene";
+import { PetScene, type SceneView, type TripView, type Weather, type YardView } from "../core/src/scene";
+import { pan, panSeconds } from "../core/src/street";
 import { AREAS } from "../core/src/trip";
+import * as yards from "../core/src/yard";
 import { readAssets } from "../pi/src/assets";
 import { BDF_FONT_DIR } from "../pi/src/config";
 import { encodePng } from "../pi/src/png";
@@ -30,7 +34,7 @@ const BASE: SceneView = {
 // The special forms, the secret third adult of a line
 const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
   "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake", "woolwhisk", "ursastra", "aurorapin", "lunaflap",
-  "ninjowl", "mirrorleon", "pharabug", "stormkite", "abyssink", "bellfry"];
+  "ninjowl", "mirrorleon", "pharabug", "stormkite", "abyssink", "bellfry", "illusionna"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -84,9 +88,11 @@ const PETS: Record<string, [string, string]> = {
   inkasso: ["adult", "inkasso"], octavio: ["adult", "octavio"],
   gargoyle_egg: ["egg", "gargoyle"], gargoyle_baby: ["baby", "gargoyle"], gargit: ["child", "gargoyle"],
   gargard: ["adult", "gargard"], fountaingle: ["adult", "fountaingle"],
+  magpie_egg: ["egg", "magpie"], magpie_baby: ["baby", "magpie"], glintlet: ["child", "magpie"],
+  glintrick: ["adult", "glintrick"], cardwing: ["adult", "cardwing"],
   ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
-// The leaf, duck, hippo, beak, garden, water, Grandma's, adventure, festival, star, coast and ruins lines: per line its line, child and adults, for the scenes below
+// The leaf, duck, hippo, beak, garden, water, Grandma's, adventure, festival, star, coast, ruins and magpie lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
   ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
   ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
@@ -98,6 +104,7 @@ const NEW_LINES: [string, string, string, string][] = [
   ["owl", "hootlet", "owlbert", "stargazer"], ["chameleon", "colorlet", "palettino", "hidewell"],
   ["scarab", "rollet", "solroll", "clockbeetle"], ["kite", "kitelet", "origrane", "lionkite"],
   ["octopus", "inklet", "inkasso", "octavio"], ["gargoyle", "gargit", "gargard", "fountaingle"],
+  ["magpie", "glintlet", "glintrick", "cardwing"],
 ];
 const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
@@ -149,6 +156,9 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   gargard: "bow", // turns to stone and wakes again
   fountaingle: "flip", // a somersault with an arc of water
   bellfry: "spin", // swings itself like a bell and rings
+  glintrick: "bow", // stars and cards burst out of its hat
+  cardwing: "spin", // its cards fly round it and back
+  illusionna: "flip", // gone behind its curtain, and back on the other side
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
@@ -157,7 +167,7 @@ const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_ow
 // the first area only: the later areas, their opponents and their guardians are left out.
 const SHOWN_ADULT = "angloop";
 const SHOWN_AREA = AREAS[0];
-const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
+const SPOILERS = ["keepsakes", "keepsakes_night", "magpie_stole", "magpie_chased", "magpie_back", "magpie_egg", "hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
   "ember_hatch", "ember_baby", "cindlet", "cindlet_hint", "cindlet_sick", "ember_evolve", "lanternling",
   "lanternling_sleep", "lanternling_trick", "flarelet", "flarelet_hat", "egg_found", "wild_shrug", "visit_copy", "visit_bounce", "visit_night",
   "nest_ember", "stone_egg", "stone_baby", "pebblet", "pebblet_hint", "pebblet_hat", "pebblet_skip", "glimmerock",
@@ -314,6 +324,15 @@ const SCENES: Record<string, Scene> = {
   }, DAY, null],
   home_crystal: [{ hat: "batears", deco: ["crystal", "cattail"], stage: "adult", species: "angloop" }, NIGHT, null],
   home_boat: [{ hat: "lily", deco: ["boat", "crystal"] }, DAY, null],
+  // keepsakes of the lines (core/src/keepsake.ts): moving by day, glowing at night
+  keepsakes: [{ deco: ["windchime", "hippofountain"] }, DAY, null],
+  keepsakes_night: [{ deco: ["jellylamp", "shelllamp"] }, NIGHT, null],
+  // the troublemaker (core/src/magpie.ts): she flies off with the snowman, gets chased off, brings it back
+  magpie_stole: [{ deco: ["pond"], magpie: { deed: "stole", age: 3.5, item: "snowman", spot: 0 } }, DAY, null],
+  magpie_chased: [{ stage: "adult", species: "angloop", deco: ["snowman", "pond"], activity: "shoo",
+    magpie: { deed: "chased", age: 6, item: "snowman", spot: 0 } }, DAY, null, 6],
+  magpie_back: [{ deco: ["snowman", "pond"], magpie: { deed: "back", age: 4.5, item: "snowman", spot: 0 } }, DAY, null],
+  magpie_egg: [{ stage: "adult", species: "angloop", nest: "magpie", deco: ["pond"] }, DAY, null],
   trip_stream: [{ trip: trip("stream") }, DAY, null],
   trip_cave: [{ trip: trip("cave", { event: "find", item: "crystal" }) }, DAY, RAIN],
   trip_food: [{ trip: trip("meadow", { event: "find", item: "honeycomb", event_age: 2 }) }, DAY, null],
@@ -677,11 +696,72 @@ function frames(name: string, count: number, step = 0.1, spoilerFree = false): I
     if (view.trip) { // what happened on the trip gets older, the way it does on the Pi
       view.trip = { ...view.trip, event_age: changes.trip!.event_age + i * step };
     }
+    if (view.magpie) { // and so does the magpie's
+      view.magpie = { ...view.magpie, age: changes.magpie!.age + i * step };
+    }
     if (view.visitor) { // the friend's visit goes on as well
       const { age, left } = changes.visitor!;
       view.visitor = { ...view.visitor, age: age + i * step, left: left - i * step };
     }
     images.push(scene.render(view, weather, new Date(now.getTime() + Math.round(i * step * 1000)), 1 + i * step)[0]);
+  }
+  return images;
+}
+
+/** The yard: [label, view] for each size and level, and with pets eating and bathing. */
+function yardScenes(): [string, YardView][] {
+  const levels = ["empty", "low", "half", "full"];
+  const pet = (species: string, stage: string, item: string, e: number, slot: number) =>
+    ({ species, stage, item, e, slot, mood: "happy" });
+  return [
+    ...yards.SIZES.flatMap((size, i) => levels.map((level): [string, YardView] =>
+      [`${size} ${level}`, { size: i, trough: level, basin: level, pets: [] }])),
+    ["small no basin", { size: 0, trough: "full", basin: null, pets: [] }],
+    ["eating", { size: 1, trough: "half", basin: "full", pets: [pet("blob", "child", "eat", 12, 0)] }],
+    ["two eat", { size: 2, trough: "full", basin: "half", pets: [pet("angloop", "adult", "eat", 12, 0), pet("blob", "baby", "eat", 14, 1)] }],
+    ["bathing", { size: 1, trough: "low", basin: "half", pets: [pet("blob", "child", "bath", 12, 1)] }],
+    ["eat, bath", { size: 0, trough: "half", basin: "low", pets: [pet("angloop", "adult", "eat,bath", 36, 0)] }],
+    ["walks in", { size: 0, trough: "full", basin: "full", pets: [pet("blob", "child", "eat", 1.5, 0)] }],
+    ["at night", { size: 2, trough: "half", basin: "full", pets: [pet("blob", "child", "bath", 12, 0)] }],
+  ];
+}
+
+/**
+ * A pet goes over to the yard and back, the camera with it as on the Pi (pi/src/display.ts):
+ * the garden while it walks off, a pan to the yard, the yard while it eats, a pan back.
+ */
+function yardTrip(step = 0.1): Image[] {
+  const start = DAY.getTime() / 1000;
+  const item = "eat";
+  const view: SceneView = { ...BASE, activity: "yard", activity_item: item, activity_until: start + yards.seconds(item) };
+  const garden = new PetScene(64, 64, assets, { t: 0.0 });
+  const yardScene = new PetScene(64, 64, assets, { t: 0.0 });
+  const images: Image[] = [];
+  let shown = "garden", last: Image | null = null;
+  let panning: { from: Image; steps: number; start: number } | null = null;
+  for (let i = 0; i * step < yards.seconds(item) + 3; i++) {
+    const seconds = start + i * step, t = 1 + i * step, now = new Date(seconds * 1000);
+    const where = yards.phase(view.activity, view.activity_until, item, seconds);
+    const [own] = garden.render(view, null, now, t);
+    const there: YardView = { size: 1, trough: "full", basin: "half",
+      pets: where?.where === "there" ? [{ species: "blob", stage: "child", item, e: where.e, slot: 0, mood: "happy" }] : [] };
+    const [yardFrame] = yardScene.renderYard(there, null, now, t);
+    const at = where?.where === "there" ? "yard" : "garden";
+    let frame = at === "yard" ? yardFrame : own;
+    if (at !== shown && last) {
+      panning = { from: last, steps: at === "yard" ? 1 : -1, start: t };
+    }
+    shown = at;
+    last = frame;
+    if (panning) {
+      const progress = (t - panning.start) / panSeconds(panning.steps);
+      if (progress < 1) {
+        frame = pan(panning.from, frame, progress, panning.steps);
+      } else {
+        panning = null;
+      }
+    }
+    images.push(frame);
   }
   return images;
 }
@@ -702,6 +782,7 @@ function main(): void {
     options: {
       gif: { type: "boolean", default: false },
       pets: { type: "boolean", default: false }, // write the pictures for docs/pets.md
+      yard: { type: "boolean", default: false }, // the yard's sizes and levels, and a pet going over
       "spoiler-free": { type: "boolean", default: false }, // overview with one adult form and the first area only
       scale: { type: "string", default: "4" },
       frames: { type: "string", default: "50" }, // length of the GIF (10 frames per second)
@@ -726,6 +807,27 @@ function main(): void {
       writeFileSync(`${PETS_DIR}/${file}.png`, encodePng(scene.icon(160, stage, species)));
     }
     console.log(PETS_DIR);
+    return;
+  }
+  if (values.yard) {
+    const shown = yardScenes();
+    const cols = 4, rows = Math.ceil(shown.length / cols);
+    const sheet = Image.filled(cols * (64 * s + 8), rows * (64 * s + 20), [30, 30, 36]);
+    shown.forEach(([title, view], i) => {
+      const scene = new PetScene(64, 64, assets, { t: 0.0 });
+      const now = title === "at night" ? NIGHT : DAY;
+      let frame = scene.renderYard(view, null, now, 1)[0];
+      for (let k = 1; k <= 5; k++) { // a little later, the way it looks after a moment
+        frame = scene.renderYard({ ...view, pets: view.pets.map((p) => ({ ...p, e: p.e + k * 0.1 })) }, null,
+          new Date(now.getTime() + k * 100), 1 + k * 0.1)[0];
+      }
+      const x = (i % cols) * (64 * s + 8), y = Math.floor(i / cols) * (64 * s + 20);
+      sheet.paste(enlarged(frame), x + 4, y + 16);
+      label(sheet, x + 4, y + 2, title);
+    });
+    writeFileSync("pet_yard.png", encodePng(sheet));
+    writeFileSync("pet_yard.gif", encodeGif(yardTrip().map(enlarged), 0.1));
+    console.log("pet_yard.png pet_yard.gif");
     return;
   }
   let out: string;

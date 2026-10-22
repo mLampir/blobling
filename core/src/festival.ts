@@ -18,6 +18,7 @@
 import * as care from "./care";
 import * as grandma from "./grandma";
 import * as home from "./home";
+import * as keepsake from "./keepsake";
 import * as life from "./life";
 import { Random } from "./random";
 import type { PetState, Trip } from "./state";
@@ -163,13 +164,16 @@ export function perform(state: PetState, trip: Trip, areas: readonly string[], t
     const ok = rng.random() < care.trickProgress(state, trick);
     return [trick, ok, ok ? points(state, trick) : 0];
   });
-  const total = score(rounds);
+  const total = Math.round(score(rounds) * keepsake.factor(state, "festival"));
   const place = placeFor(total);
   const panel = jury(areas, dayOf(trip.start));
   const c = state.counters;
   c.festivals = (c.festivals ?? 0) + 1;
   if (place) {
     c[`festival_${place}`] = (c[`festival_${place}`] ?? 0) + 1;
+  }
+  if (place === 1) {
+    life.record(state, "festival_wins"); // a first place as a child (the magpie line)
   }
   return { rounds, points: total, place, prize: prize(state, place, panel, rng), jury: panel };
 }

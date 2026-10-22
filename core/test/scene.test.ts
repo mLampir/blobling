@@ -134,7 +134,7 @@ test("the status line: clock, temperature and what the pet needs", () => {
 test("every form of the pet can be drawn, in every state", () => {
   const forms = [...Object.keys(life.LINES).flatMap((line) => life.STAGES.map((stage) => [stage, line])),
     ...[...Object.values(life.LINES).flat(), ...life.WILD_ONLY].map((name) => ["adult", name])];
-  assert.equal(forms.length, 25 * 4 + 80);
+  assert.equal(forms.length, 26 * 4 + 83);
   const moods = ["normal", "happy", "sad", "hungry", "dirty", "sick", "tired"];
   for (const [stage, species] of forms) {
     for (const mood of moods) {
@@ -187,7 +187,7 @@ test("every activity can be drawn from its start to its end", () => {
     snack: "icecream", trick: "flip:learned", game_turn: "grass:pet", hatch: "egg:blob", evolve: "child:blob",
     plant: "cherry", pick: "cherry", trip_start: "meadow", unpack: "seed_berry,cap,egg_ember", collect: "egg_blob",
     train_strength: "0.80", train_ready: "2.00", train_speed: "0.90", train_show: "left,up,down,right",
-    train_smarts: "4/4",
+    train_smarts: "4/4", yard: "eat,bath",
   };
   for (const [activity, seconds] of Object.entries(ACTIVITY_SECONDS)) {
     const changes: Partial<SceneView> = { activity, activity_item: items[activity] ?? "", stage: "adult", species: "flicker" };
@@ -196,6 +196,27 @@ test("every activity can be drawn from its start to its end", () => {
     }
     assert.equal(frames(changes, Math.ceil(seconds * 10) + 10).length > 0, true, activity);
   }
+});
+
+test("the magpie swoops down for a decoration, flutters over the pet chasing her, and brings it back", () => {
+  const view = (magpie: SceneView["magpie"], extra: Partial<SceneView> = {}) =>
+    ({ ...BASE, stage: "adult", species: "angloop", deco: ["snowman", "pond"], magpie, ...extra });
+  const still = scene().render(view(null), null, DAY, 1)[0];
+  for (const deed of ["stole", "chased", "back"]) {
+    for (const age of [0.5, 2.5, 5, 10, 15, 19]) {
+      const deco = deed === "stole" ? ["pond"] : ["snowman", "pond"];
+      const shown = scene().render(view({ deed, age, item: "snowman", spot: 0 }, { deco }), null, DAY, 1)[0];
+      assert.ok(shown.width === still.width, `${deed} ${age}`);
+    }
+  }
+  // fluttering over the pet with the snowman in her beak: she is there, and the snowman isn't where it stood
+  const chased = scene().render(view({ deed: "chased", age: 8, item: "snowman", spot: 0 },
+    { activity: "shoo", activity_until: DAY.getTime() / 1000 + 12 }), null, DAY, 1)[0];
+  assert.ok(differing(still, chased) > 100);
+  // her egg lies in her top hat instead of the moss
+  const moss = frames({ nest: "kite" }, 1)[0];
+  const hat = frames({ nest: "magpie" }, 1)[0];
+  assert.ok(differing(moss, hat, GROUND - 8, GROUND + 3) > 0);
 });
 
 test("what it left behind lies in the scene, and what it builds grows while it builds it", () => {
@@ -302,7 +323,7 @@ test("the garden's and the water's adults have a trick and a special move of the
     lunaflap: "spin", owlbert: "bow", stargazer: "spin", ninjowl: "flip", palettino: "spin", hidewell: "bow",
     mirrorleon: "dance", solroll: "flip", clockbeetle: "dance", pharabug: "bow", origrane: "bow", lionkite: "dance",
     stormkite: "flip", inkasso: "spin", octavio: "dance", abyssink: "flip", gargard: "bow", fountaingle: "flip",
-    bellfry: "spin" };
+    bellfry: "spin", glintrick: "bow", cardwing: "spin", illusionna: "flip" };
   const animations = new Set<string>();
   for (const [species, trick] of Object.entries(own)) {
     const animation = trickAnimation("adult", species, trick);
@@ -362,7 +383,7 @@ test("a guest from the garden peeks over the fence at the right edge, only at ho
 });
 
 test("the newer lines' children show where they are heading", () => {
-  for (const [line, adults] of Object.entries(life.LINES).slice(-16)) {
+  for (const [line, adults] of Object.entries(life.LINES).slice(-17)) {
     const looks = adults.map((hint) => frames({ species: line, hint }, 1)[0]);
     assert.ok(differing(looks[0], looks[1]) > 0 && differing(looks[1], looks[2]) > 0
       && differing(looks[0], looks[2]) > 0, line);
@@ -551,9 +572,9 @@ test("the house: outside on the left, inside while the pet sleeps, and the way i
     // the app finds the house where the scene draws it
     const [x, y, w, h] = houseArea(step).map((part) => Math.round(part * 64));
     const sprite = sheets.house.image(`house_${step}`);
-    assert.deepEqual([x, y, w, h], [0, GROUND + 1 - sprite.height, sprite.width, sprite.height], `step ${step}`);
+    assert.deepEqual([x, y, w, h], [0, GROUND + 2 - sprite.height, sprite.width, sprite.height], `step ${step}`);
     const outside = frames({ house: step }, 1)[0];
-    assert.ok(differing(garden, outside, y, GROUND + 1) > w * h / 3, `step ${step}`);
+    assert.ok(differing(garden, outside, y, GROUND + 2) > w * h / 3, `step ${step}`);
 
     // asleep, the scene shows the room; its window (or the hut's doorway) shows the sky, as outside
     const sky = frames({ asleep: true }, 1, NIGHT)[0];

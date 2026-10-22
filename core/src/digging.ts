@@ -12,6 +12,7 @@
  */
 
 import * as home from "./home";
+import * as keepsake from "./keepsake";
 import * as life from "./life";
 import { Random } from "./random";
 import type { PetState, Trip } from "./state";
@@ -54,7 +55,7 @@ export function mapFrom(state: PetState, trip: Trip, trips: number): boolean {
     return false;
   }
   const sure = !state.counters.maps && trips >= MAP_SURE;
-  if (!sure && new Random(`map:${Math.trunc(trip.start)}`).random() >= MAP_CHANCE) {
+  if (!sure && new Random(`map:${Math.trunc(trip.start)}`).random() >= MAP_CHANCE * keepsake.factor(state, "maps")) {
     return false;
   }
   state.counters.maps = (state.counters.maps ?? 0) + 1;

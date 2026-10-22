@@ -4,6 +4,7 @@
  * All kept small on purpose so the basic game stays simple.
  */
 
+import * as keepsake from "./keepsake";
 import type { Stage } from "./life";
 import { Random } from "./random";
 import type { Game, PetState } from "./state";
@@ -261,6 +262,9 @@ export const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:gargard": { bow: "stone_still" }, // turns to stone in its bow, and wakes again with a shake
   "adult:fountaingle": { flip: "water_arc" }, // a somersault that leaves an arc of water in the air
   "adult:bellfry": { spin: "bell_swing" }, // swings itself like a bell, ringing at the end of each swing
+  "adult:glintrick": { bow: "hat_trick" }, // lifts its top hat in a bow, and stars burst out of it
+  "adult:cardwing": { spin: "card_spin" }, // turns, and the cards of its wings fly round it and back
+  "adult:illusionna": { flip: "curtain_vanish" }, // swirls its curtain, is gone, and appears on the other side
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };
@@ -282,7 +286,8 @@ export function learned(state: PetState): string[] {
 export function practice(state: PetState, trick: string, factor: number, now: number): "ok" | "fail" | "learned" {
   const before = trickProgress(state, trick);
   const ok = new Random(`${now}:${trick}`).random() < TRICK_LUCK + (1 - TRICK_LUCK) * before;
-  state.tricks[trick] = (state.tricks[trick] ?? 0.0) + factor * (1 + 0.5 * state.bond / 100);
+  state.tricks[trick] = (state.tricks[trick] ?? 0.0)
+    + factor * (1 + 0.5 * state.bond / 100) * keepsake.factor(state, "tricks");
   if (knows(state, trick)) {
     return "learned";
   }

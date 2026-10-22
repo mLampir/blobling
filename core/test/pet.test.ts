@@ -113,7 +113,7 @@ test("an ancestor comes home again, to a house of its own or in another pet's pl
   Object.assign(pet.state, { stage: "adult", species: "grumpcap", name: "Grumpy", hat: "bobble" });
   pet.state.items = { daisy: 1, bobble: 1 };
   pet.state.tricks = { bow: 3.0 };
-  pet.state.stats.satiety = 10;
+  pet.state.stats.satiety = 60; // above yard.GOES_AT: back with two others, it would go to the trough
   const grumpy = pet.current;
   const kid = pet.newEgg(null, now).id;
   Object.assign(pet.state, { stage: "child", name: "Kid" });
@@ -130,7 +130,7 @@ test("an ancestor comes home again, to a house of its own or in another pet's pl
   const loaded = disk.pet();
   assert.deepEqual([loaded.state.name, loaded.pets.map((p) => p.name), loaded.ancestors.length], ["Grumpy", ["Blobby", "Kid", "Grumpy"], 0]);
   assert.deepEqual([loaded.state.tricks, loaded.state.items, loaded.state.hat], [{ bow: 3.0 }, { daisy: 1, bobble: 1 }, ""]);
-  assert.equal(Math.round(loaded.state.stats.satiety), 10); // as it went to rest
+  assert.equal(Math.round(loaded.state.stats.satiety), 60); // as it went to rest
   assert.deepEqual(loaded.events(1)[0], { at: later, action: "bring_back", by: "app", accepted: true });
 
   // with the street full, Grumpy rests once more and then comes back into Kid's place and house

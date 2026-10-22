@@ -40,6 +40,7 @@ const STEP = 15 * 60; // the weather changes at most this often while time runs 
 const ACTIVE_FROM = 35; // the owner only plays, trains or practices with this much energy
 const FEED_BELOW = 70;
 const ADULT_DAYS = 2; // an adult in a house that changes hands stays this long before a new egg takes its place
+const FULL_BAG = 8; // from this many eggs in the bag, the owner broods one of a line it has had too
 // Decorations the owner sets out, the first ones first: what draws the garden guests and lets it
 // fish, then what glows at night, the ember stone and the snow globe
 const DECO_ORDER = ["pond", "woodpile", "lantern", "crystal", "glowshroom", "star_shard", "emberstone", "snowglobe"];
@@ -210,6 +211,7 @@ interface Run {
   hatched: Record<string, number>; // line -> day its first egg hatched
   grown: Grown[];
   guardians: Record<string, number>; // area -> day the keeper got past it first
+  /** Days on which some line had as many eggs in the bag as it may (home.MAX_EGGS), so that more of it waited. */
   storeFullDays: number;
   pets: number; // eggs brooded
   grandmaVisits: number;
@@ -298,7 +300,7 @@ class Home {
     for (const [line, n] of counts) {
       this.bag.set(line, n);
     }
-    if (store.length >= home.MAX_EGGS) {
+    if ([...counts.values()].some((n) => n >= home.MAX_EGGS)) {
       this.fullSince ??= this.now;
     } else if (this.fullSince !== null) {
       this.run.storeFullDays += (this.now - this.fullSince) / 86400;
@@ -370,7 +372,7 @@ function broodIfWorth(h: Home, houses: number): void {
   }
   // a line never had first, then (when the bag is about to overflow) the line with the fewest forms grown
   let index = eggs.findIndex((egg) => !h.had(egg.line));
-  if (index < 0 && eggs.length >= home.MAX_EGGS - 1) {
+  if (index < 0 && eggs.length >= FULL_BAG) {
     const grownOf = (line: string) => new Set(h.run.grown.filter((g) => g.line === line).map((g) => g.species)).size;
     index = eggs.map((egg, i) => [grownOf(egg.line), i] as const).sort((a, b) => a[0] - b[0])[0][1];
   }
@@ -631,6 +633,9 @@ function simulate(owner: Owner, month: number, seed: number, days: number, house
     for (const plan of owner.day(weekday, rng)) {
       h.runTo(at(day, plan.hour, plan.minute) + rng.randint(-15, 15) * 60);
       broodIfWorth(h, houses);
+      // the trough and the basin in the yard, once there is one (they belong to the home)
+      h.act(h.keeper, "fill", { item: "trough" });
+      h.act(h.keeper, "fill", { item: "basin" });
       for (const s of [...h.pet.pets]) {
         visitPet(h, owner, s.id, plan, rng, weekday);
       }
@@ -730,7 +735,7 @@ function report(owner: Owner, runs: Run[]): string {
       ["love", life.PURRLOOP_LOVE_PER_DAY, "purrloop"], ["love", life.NEEDLENUB_LOVE_PER_DAY, "needlenub"],
       ["plays", life.FLARELET_PLAYS_PER_DAY, "flarelet"], ["trips", life.ROAMTAIL_TRIPS_PER_DAY, "roamtail"],
       ["battles", life.DRAKWING_BATTLES_PER_DAY, "drakwing"], ["baths", life.STEAMO_BATHS_PER_DAY, "steamo"],
-      ["tricks", life.RAPIERRE_TRICKS_PER_DAY, "rapierre"],
+      ["tricks", life.RAPIERRE_TRICKS_PER_DAY, "rapierre"], ["tricks", life.CARDWING_TRICKS_PER_DAY, "cardwing"],
     ] as const).map(([kind, rule, form]) => [`${kind} per day`, fmt(perDay(kind), 1), `${rule} (${form})`,
       share((g) => (g.diary[kind] ?? 0) / (g.diary.minutes / 1440) >= rule)]),
     ...([
@@ -739,7 +744,7 @@ function report(owner: Owner, runs: Run[]): string {
       ["trips_forest", life.FOXFIRE_FOREST_TRIPS, "foxfire*"], ["plant_fruits", life.SAKURIN_PLANT_FRUITS, "sakurin*"],
       ["rain_trips", life.BUBBLEHELM_RAIN_TRIPS, "bubblehelm*"], ["tucked", life.HIPPULA_TUCKED, "hippula*"],
       ["guardians", life.ACEWING_GUARDIANS, "acewing*"], ["trips_coast", life.CASTLECRAB_COAST_TRIPS, "castlecrab*"],
-      ["clean_battles", life.NINJOWL_CLEAN_BATTLES, "ninjowl*"],
+      ["clean_battles", life.NINJOWL_CLEAN_BATTLES, "ninjowl*"], ["festival_wins", 1, "illusionna*"],
     ] as const).map(([kind, rule, form]) => [`${kind} as a child`, fmt(total(kind), 1), `${rule} (${form})`,
       share((g) => (g.diary[kind] ?? 0) >= rule)]),
   ]));
@@ -748,7 +753,7 @@ function report(owner: Owner, runs: Run[]): string {
   out.push(`Per run (average): eggs brooded ${fmt(avg(runs.map((r) => r.pets)), 1)}, at Grandma's ${fmt(avg(runs.map((r) => r.grandmaVisits)), 1)}, `
     + `festivals ${fmt(avg(runs.map((r) => r.festivals)), 1)}, digs ${fmt(avg(runs.map((r) => r.digs)), 1)}, `
     + `casts at the pond ${fmt(avg(runs.map((r) => r.casts)), 1)}, friends and guests ${fmt(avg(runs.map((r) => r.friends.length)), 1)}`);
-  out.push(`Days with the bag full of eggs (${home.MAX_EGGS}): ${fmt(avg(runs.map((r) => r.storeFullDays)), 1)} on average, `
+  out.push(`Days with a line at its ${home.MAX_EGGS} eggs in the bag: ${fmt(avg(runs.map((r) => r.storeFullDays)), 1)} on average, `
     + `${runs.filter((r) => r.storeFullDays > 0).length}/${runs.length} runs`);
   const duplicates = runs.map((r) => r.arrivals.length - new Set(r.arrivals.map((a) => a.line)).size);
   out.push(`Eggs of a line that had come before: ${fmt(avg(duplicates), 1)} per run`);

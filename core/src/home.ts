@@ -1,10 +1,11 @@
 /** Finds from trips and what they do at home: seeds and the plant, food, decorations, hats, eggs, warmth, the house. */
 
+import * as keepsake from "./keepsake";
 import * as life from "./life";
 import type { Random } from "./random";
 import type { PetState, Stat } from "./state";
 
-export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg" | "map";
+export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg" | "map" | "yard";
 
 // Name: kind
 export const ITEMS: Record<string, ItemKind> = {
@@ -66,6 +67,13 @@ export const ITEMS: Record<string, ItemKind> = {
   helmet: "hat",
   fossil: "deco",
   treasure_map: "map",
+  // the keepsakes of the lines (keepsake.ts)
+  ...Object.fromEntries(Object.values(keepsake.KEEPSAKES).map((item) => [item, "deco"])) as Record<string, ItemKind>,
+  // for the yard (yard.ts): the water basin from the stream, and planks from the coast and the ruins
+  // that make trough and basin bigger; they go there, not into the bag
+  basin: "yard",
+  planks_coast: "yard",
+  planks_ruins: "yard",
   egg_blob: "egg",
   egg_ember: "egg",
   egg_stone: "egg",
@@ -91,10 +99,11 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_kite: "egg",
   egg_octopus: "egg",
   egg_gargoyle: "egg",
+  egg_magpie: "egg",
 };
-export const MAX_SEEDS = 9; // per kind; decorations, hats and the treasure map exist only once
+export const MAX_SEEDS = 9; // per kind; decorations, hats, the treasure map and what is for the yard exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
-export const MAX_EGGS = 9; // this many are kept
+export const MAX_EGGS = 3; // this many of each line are kept (the bag shows them as one, ×n)
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus
 // what a pet has passed on to it (wild.ts), until it is brooded (model.nextPet).
 export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "ember", egg_stone: "stone", egg_fox: "fox",
@@ -102,7 +111,7 @@ export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "embe
   egg_caterpillar: "caterpillar", egg_dog: "dog", egg_dragonfly: "dragonfly", egg_beaver: "beaver",
   egg_crab: "crab", egg_axolotl: "axolotl", egg_mouse: "mouse", egg_bear: "bear", egg_penguin: "penguin",
   egg_bat: "bat", egg_owl: "owl", egg_chameleon: "chameleon", egg_scarab: "scarab", egg_kite: "kite",
-  egg_octopus: "octopus", egg_gargoyle: "gargoyle" };
+  egg_octopus: "octopus", egg_gargoyle: "gargoyle", egg_magpie: "magpie" };
 export const MAX_DECO = 2; // this many spots the scene has outside
 
 // Plant: [stat, effect of one fruit]
@@ -146,11 +155,12 @@ export const COOL_MOOD = 5; // what cooling it down is worth
 // next. The pet sleeps inside, and each step has room for more decorations.
 export const HOUSE_STEPS = 3;
 export const HOUSE_SPOTS = [0, 1, 2, 3]; // per step: spots for decorations inside
-export const OUTDOOR_DECO = ["snowman", "pond", "sandcastle"]; // would melt or crumble inside; a pond belongs in the garden
+export const OUTDOOR_DECO = ["snowman", "pond", "sandcastle", "iceblock", "hippofountain"]; // would melt or crumble inside; water belongs in the garden
 // The snow globe: set out at home, outside or in the house, it snows around the pet, and a pet of
 // the cloud line that grows up then counts it as snow (life.decideSpecies).
 export const SNOW_DECO = ["snowglobe"];
-export const GLOWING_DECO = ["lantern", "glowshroom", "crystal", "emberstone", "star_shard"]; // they light up at night
+export const GLOWING_DECO = ["lantern", "glowshroom", "crystal", "emberstone", "star_shard", "jellylamp", "brazier",
+  "moonstone", "shelllamp"]; // they light up at night
 
 export function kindOf(item: string): ItemKind {
   return ITEMS[item];
@@ -162,10 +172,15 @@ export function ids(kind: ItemKind): string[] {
 
 export function canAdd(state: PetState, item: string): boolean {
   if (kindOf(item) === "egg") {
-    return state.eggs.length < MAX_EGGS;
+    return eggsOf(state, EGGS[item]) < MAX_EGGS;
   }
   const most = kindOf(item) === "seed" ? MAX_SEEDS : kindOf(item) === "food" || kindOf(item) === "fruit" ? MAX_FOOD : 1;
   return (state.items[item] ?? 0) < most;
+}
+
+/** How many eggs of this line are kept. */
+export function eggsOf(state: PetState, line: string): number {
+  return state.eggs.filter((egg) => egg.line === line).length;
 }
 
 export function addItem(state: PetState, item: string): void {
@@ -221,7 +236,7 @@ export function grow(state: PetState, minutes: number, rain: boolean): void {
   if (!plant) {
     return;
   }
-  minutes *= rain ? RAIN_FACTOR : 1;
+  minutes *= (rain ? RAIN_FACTOR : 1) * keepsake.factor(state, "plant");
   if (plant.grown < GROW_MINUTES) {
     plant.grown = Math.min(GROW_MINUTES, plant.grown + minutes);
   } else {
@@ -251,7 +266,7 @@ export function wantsFruit(state: PetState): boolean {
 /** Eat a fruit of a plant's kind (from the plant, or a gift). */
 export function eat(state: PetState, kind: string): void {
   const [stat, amount] = PLANTS[kind];
-  state.stats[stat] += amount;
+  state.stats[stat] += amount * keepsake.factor(state, "fruit");
   if (CURES.includes(kind)) {
     state.sick = false;
   }
@@ -315,7 +330,8 @@ export function wakeInCold(state: PetState, temp: number | null, now: number): v
 /** Does it shiver? Only at home and awake, and never with something that keeps it warm. */
 export function cold(state: PetState, now: number): boolean {
   return now < state.cold_until && state.stage !== "egg" && !state.asleep && !state.trip
-    && !warmDeco(state) && !WARM_HATS.includes(state.hat) && !WARM_LINES.includes(life.lineOf(state.species));
+    && !warmDeco(state) && !keepsake.has(state, "cold") && !WARM_HATS.includes(state.hat)
+    && !WARM_LINES.includes(life.lineOf(state.species));
 }
 
 /** The local day of the time t, as a number (for "once a day"). */
@@ -341,7 +357,7 @@ export function noteHeat(state: PetState, temp: number | null, t: number): void 
 /** Does it sweat? Only at home and awake, and never with something that keeps the heat off. */
 export function hot(state: PetState, now: number): boolean {
   return now < state.hot_until && state.stage !== "egg" && !state.asleep && !state.trip
-    && !COOL_HATS.includes(state.hat) && !COOL_LINES.includes(life.lineOf(state.species));
+    && !keepsake.has(state, "heat") && !COOL_HATS.includes(state.hat) && !COOL_LINES.includes(life.lineOf(state.species));
 }
 
 /** A bath cools it down. */
@@ -361,6 +377,7 @@ export function snowDeco(state: PetState): boolean {
 export function effects(item: string): string[] {
   const plant = item.replace(/^(fruit|seed)_/, "");
   if (plant !== item && plant in PLANTS) return [PLANTS[plant][0], ...(CURES.includes(plant) ? ["cure"] : [])];
+  if (keepsake.isKeepsake(item)) return [`keep_${keepsake.EFFECTS[item][0]}`];
   return WARM_DECO.includes(item) ? ["growth"] : SNOW_DECO.includes(item) ? ["snow"] : [];
 }
 

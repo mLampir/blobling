@@ -12,6 +12,7 @@
  */
 
 import * as home from "./home";
+import * as keepsake from "./keepsake";
 import { Random } from "./random";
 import type { PetState } from "./state";
 
@@ -50,7 +51,7 @@ export function cast(state: PetState, now: number, factor: number): number | nul
   const lure = state.species === LURE ? LURE_BITE : 1;
   // two digits: the scene is told the same delay as the one that is kept
   const bite = rng.random() < BITE_CHANCE * factor * lure
-    ? Number(rng.uniform(...BITE_DELAY).toFixed(2)) : null;
+    ? Number((rng.uniform(...BITE_DELAY) * keepsake.factor(state, "bite")).toFixed(2)) : null;
   state.fishing = { at: now, bite };
   return bite;
 }
