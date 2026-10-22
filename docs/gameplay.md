@@ -796,6 +796,18 @@ five visits that count, brings an egg of its own line, like every friend. A gues
 doesn't take the place of a friend from a trip. A pet that is still a baby or
 a child gets guests too.
 
+### A troublemaker
+
+A home that has had many lines gets an uninvited visitor now and then. She
+comes by day, at most a few times a week and never two days in a row, and only
+when a decoration stands outside: she takes it and flies off with it. An hour
+later she brings it back, puts it where it stood and bows.
+
+A strong adult at home and awake doesn't let her: it chases her off, a
+scuffle you can watch, and she drops what she took. Who she is, and what she
+leaves after being chased off often enough, is in [pets.md](pets.md), folded
+shut.
+
 ### Guardians
 
 Every area has a guardian. It is twice the size of the others and waits at the
@@ -1042,6 +1054,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Wild pets, friends, visits, their gifts, the egg a friend brings and the heirloom | `core/src/wild.ts` |
 | The pet's own egg: good days, the egg in the morning, the rest after it | `core/src/brood.ts` |
 | Guests in the garden: what draws them, peeking over the fence | `core/src/garden.ts` |
+| The troublemaker: when she comes, what she takes, being chased off, her egg | `core/src/magpie.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | A scuffle (or a show at the trick festival) watched again in the app | `app/src/replay.ts` |
 | Keepsakes of the lines: which line has which, what each does, when one comes home | `core/src/keepsake.ts`, `Pet.completeLines` in `core/src/pet.ts` |

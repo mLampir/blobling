@@ -160,6 +160,11 @@ export const TASTES: Record<string, readonly [string, string]> = {
   gargard: ["hazelnut", "fruit_cherry"], // hard as stone
   fountaingle: ["watercress", "seagrass"], // what grows where water runs
   bellfry: ["honeycomb", "cake"], // bronze-gold and festive
+  // the troublemaker's line: it likes what glitters
+  magpie: ["fruit_cherry", "fruit_herb"],
+  glintrick: ["glowberry", "watercress"], // it shines
+  cardwing: ["fruit_cherry", "seagrass"], // red as its cards
+  illusionna: ["cake", "hazelnut"], // a treat after the show
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],

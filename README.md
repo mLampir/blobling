@@ -505,7 +505,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 |---|---|
 | `setup.sh` | Sets up the Pi completely (`--app`: update the app only) |
 | `CONTRIBUTING.md` | How to contribute, and the license (with the app store permission) a contribution comes under |
-| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications, `yard.ts` is the home's shared yard, `keepsake.ts` the keepsakes of the lines |
+| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications, `yard.ts` is the home's shared yard, `keepsake.ts` the keepsakes of the lines, `magpie.ts` the troublemaker who steals decorations |
 | `pi/src/main.ts` | Entry point on the Pi: panel driver, display loop, web server |
 | `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) and its camera: which pet it shows, panning along the street and over to the yard |
 | `pi/src/web.ts`, `pi/src/network.ts` | Web interface and API, and the check that a request comes from the home network |

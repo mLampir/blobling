@@ -59,6 +59,8 @@ export const LINES: Record<string, readonly string[]> = {
   // from the coast and the ruins
   octopus: ["inkasso", "octavio", "abyssink"],
   gargoyle: ["gargard", "fountaingle", "bellfry"],
+  // the troublemaker's: the magpie leaves her egg once she has been chased off often enough (magpie.ts)
+  magpie: ["glintrick", "cardwing", "illusionna"],
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
@@ -135,6 +137,8 @@ export const ABYSSINK_SMARTS = 60; // the octopus line: its smarts (battle.SKILL
 // The gargoyle line: it rains when it grows up → fountaingle, otherwise gargard; it grows up in the
 // noon hour (BELLFRY_HOUR) → bellfry
 export const BELLFRY_HOUR = 12;
+export const CARDWING_TRICKS_PER_DAY = 3; // the magpie line: tricks practiced → cardwing, otherwise glintrick
+// the magpie line: a first place at the trick festival as a child → illusionna
 export const MISSING_AFTER = 30; // days with pets before a line whose egg never came gets the quiet safety net (Pet.longMissing)
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
@@ -217,6 +221,9 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   gargard: { satiety: 0.85 }, // a stone guard lives on little
   fountaingle: { hygiene: 0.8 }, // it is rinsed all the time
   bellfry: { mood: 0.85 }, // it sings to itself
+  glintrick: { mood: 0.85 }, // pleased with every trick of its own
+  cardwing: { energy: 1.15 }, // shuffling its cards all day
+  illusionna: { hygiene: 0.85 }, // a speck of dust and it makes it vanish
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -278,6 +285,9 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   gargard: { sick: 0.6 }, // made of stone
   fountaingle: { pet: 1.25 }, // a cool splash when you stroke it
   bellfry: { heart: 1.25 }, // a heart makes it ring
+  glintrick: { play: 1.25 }, // a game is a show
+  cardwing: { heart: 1.25 }, // the queen of hearts
+  illusionna: { sick: 0.6 }, // it makes the sniffles disappear
 };
 
 /**
@@ -466,6 +476,7 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
     kite: Boolean(world.storm),
     octopus: (world.smarts ?? 0) >= ABYSSINK_SMARTS,
     gargoyle: world.minute !== undefined && Math.floor(world.minute / 60) === BELLFRY_HOUR,
+    magpie: done("festival_wins", 1),
   } as Record<string, boolean>)[line];
   if (special) {
     return LINES[line][2];
@@ -541,6 +552,9 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   }
   if (line === "gargoyle") {
     return world.raining ? "fountaingle" : "gargard";
+  }
+  if (line === "magpie") {
+    return enough("tricks", CARDWING_TRICKS_PER_DAY) ? "cardwing" : "glintrick";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if (enough("love", PURRLOOP_LOVE_PER_DAY)) {

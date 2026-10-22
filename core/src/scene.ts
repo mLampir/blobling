@@ -23,6 +23,7 @@ import * as fishing from "./fishing";
 import * as home from "./home";
 import { Image, lerp, type Color } from "./image";
 import * as life from "./life";
+import * as magpie from "./magpie";
 import { ACTIVITY_SECONDS, THROW_SECONDS } from "./model";
 import { Random } from "./random";
 import * as sky from "./sky";
@@ -76,7 +77,7 @@ const SPECIAL_MOVES = ["angloop", "gemperor", "purrloop", "lanternling", "flarel
   "sirthimble", "cogsqueak", "woolwhisk", "hivebear", "snorbear", "ursastra", "tuxwaddle", "glidepin", "aurorapin",
   "umbrabat", "batbeat", "lunaflap", "owlbert", "stargazer", "ninjowl", "palettino", "hidewell", "mirrorleon", "solroll",
   "clockbeetle", "pharabug", "origrane", "lionkite", "stormkite", "inkasso", "octavio", "abyssink", "gargard",
-  "fountaingle", "bellfry"];
+  "fountaingle", "bellfry", "glintrick", "cardwing", "illusionna"];
 // How fast an opponent is carried back after a special move has struck (pixels per second, roughly)
 const FOE_DRIFT = 22;
 // Special moves that knock the opponent further back than others: by this many pixels more
@@ -122,6 +123,15 @@ const FOOTPRINT: Color = [205, 215, 235];
 const VISITOR_X = 33;
 const VISIT_PET_X = 2;
 const NEST_X = 40;
+// The magpie's visit (magpie.ts), in seconds since it began: she swoops down to the decoration and
+// takes it in her beak; when she is chased, the scuffle lasts until she drops it and flees; when she
+// brings it back, she puts it down and bows before she flies off
+const MAGPIE_LANDED = 2;
+const MAGPIE_GRABBED = 3;
+const MAGPIE_DROPS = 14;
+const MAGPIE_GONE = 8; // with what she took, or after bringing it back
+const MAGPIE_BOW = [4, 6] as const;
+const MAGPIE_BEAK: readonly [number, number] = [16, 14]; // under her beak, in her frame
 const GIFT_X = 53; // what a friend has brought lies here, in front of the decorations, until it is unwrapped
 // The house, per step: the center of its door. It goes in to sleep: it hops to the door, gets
 // smaller as it goes in (further back into the picture), the door shuts and the light goes on;
@@ -399,6 +409,8 @@ const STAGE_SHEETS: Record<string, Record<string, readonly [string, string]>> = 
   // the coast and ruins lines
   octopus: { baby: ["octopus_baby_body", "octopus_baby_faces"], child: ["inklet_body", "octopus_faces"] },
   gargoyle: { baby: ["gargoyle_baby_body", "gargoyle_baby_faces"], child: ["gargit_body", "gargoyle_faces"] },
+  // the troublemaker's line
+  magpie: { baby: ["magpie_baby_body", "magpie_baby_faces"], child: ["glintlet_body", "magpie_faces"] },
 };
 // The egg of a line: the tags in the items sheet start with this
 const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", fox: "fox_egg", cloud: "cloud_egg",
@@ -406,7 +418,7 @@ const EGGS: Record<string, string> = { ember: "ember_egg", stone: "stone_egg", f
   dragonfly: "dragonfly_egg", beaver: "beaver_egg", crab: "crab_egg", axolotl: "axolotl_egg",
   mouse: "mouse_egg", bear: "bear_egg", penguin: "penguin_egg", bat: "bat_egg",
   owl: "owl_egg", chameleon: "chameleon_egg", scarab: "scarab_egg", kite: "kite_egg",
-  octopus: "octopus_egg", gargoyle: "gargoyle_egg" };
+  octopus: "octopus_egg", gargoyle: "gargoyle_egg", magpie: "magpie_egg" };
 // Color per adult species: hue shift (0–255) starting from teal.
 // Fallback for a species without pixel art of its own.
 const SPECIES_HUE: Record<string, number> = {
@@ -445,7 +457,7 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
     "cogsqueak", "woolwhisk", "hivebear", "snorbear", "ursastra", "tuxwaddle", "glidepin", "aurorapin", "umbrabat",
     "batbeat", "lunaflap", "owlbert", "stargazer", "ninjowl", "palettino", "hidewell", "mirrorleon", "solroll",
     "clockbeetle", "pharabug", "origrane", "lionkite", "stormkite", "inkasso", "octavio", "abyssink", "gargard",
-    "fountaingle", "bellfry"]
+    "fountaingle", "bellfry", "glintrick", "cardwing", "illusionna"]
     .map((species) => [species, [`${species}_body`, `${species}_faces`, 0] as const])),
 };
 // What grows on a child's head hints at the adult form it is heading for. Per line, the three
@@ -461,8 +473,8 @@ const SPECIES_SHEETS: Record<string, readonly [string, string, number]> = {
 // earmuffs (muff, shadow, shine), the young bat's wing membrane (membrane, shadow), the rims of the young
 // owl's glasses (rim, shadow), the young chameleon's tail spiral (stripe, shadow, light), the young
 // scarab's ball (sand, shadow, light), the young kite's bows (bow, shadow), the young octopus's ink
-// blot and drop (ink, shine) and the edges of the young gargoyle's wings (edge, shadow) – as in the palettes of
-// tools/build_blob_sprites.py.
+// blot and drop (ink, shine), the edges of the young gargoyle's wings (edge, shadow) and the star on the
+// young magpie's wand (star, sparkle) – as in the palettes of tools/build_blob_sprites.py.
 const LURES: Record<string, readonly Color[]> = {
   blob: [[255, 235, 150], [240, 190, 90], [255, 255, 255]],
   ember: [[225, 60, 30], [250, 130, 30], [255, 200, 60]],
@@ -489,6 +501,7 @@ const LURES: Record<string, readonly Color[]> = {
   kite: [[90, 170, 235], [50, 110, 190]],
   octopus: [[62, 58, 138], [130, 125, 225]],
   gargoyle: [[175, 190, 225], [125, 140, 185]],
+  magpie: [[255, 235, 140], [255, 250, 215]],
 };
 const LURE_HINT: Record<string, readonly Color[]> = {
   sneezle: [[125, 220, 105], [60, 170, 70], [235, 255, 205]],
@@ -571,6 +584,9 @@ const LURE_HINT: Record<string, readonly Color[]> = {
   gargard: [[120, 132, 170], [190, 95, 70]], // shield iron and brick
   fountaingle: [[95, 160, 140], [90, 170, 245]], // verdigris and water
   bellfry: [[235, 180, 85], [165, 100, 40]], // bronze
+  glintrick: [[250, 205, 70], [255, 250, 210]], // a gold star
+  cardwing: [[205, 40, 55], [242, 242, 248]], // a playing card
+  illusionna: [[110, 240, 220], [255, 140, 180]], // its glowing orbs
 };
 // Forms that walk and now and then hop: how many seconds a round of walking and one hop takes
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
@@ -607,8 +623,8 @@ const BUD: readonly (readonly [Color, Color])[] = [
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals,
 // Gemperor's crystals and core, the bulb of Angloop's lure, Prismfly's glass and wings, Archibeaver's blueprint,
 // Ursastra's stars, Aurorapin's aurora, Lunaflap's moon, Ninjowl's blades, Mirrorleon's prism and rainbow,
-// Pharabug's sun, Stormkite's lightning, Abyssink's lure, dots and bubbles, and Bellfry's bronze and gold
-// (it glows warm in the evening)
+// Pharabug's sun, Stormkite's lightning, Abyssink's lure, dots and bubbles, Bellfry's bronze and gold
+// (it glows warm in the evening), and Illusionna's orbs, moon and stars
 const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   lumoth: [
     [[250, 160, 215], [150, 255, 235]], [[255, 215, 110], [255, 255, 200]], [[240, 200, 120], [190, 255, 240]],
@@ -667,6 +683,10 @@ const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   abyssink: [ // its lure, the dots along its arms, and the bubbles
     [[110, 240, 255], [170, 255, 255]], [[50, 175, 230], [110, 225, 255]], [[225, 255, 255], [250, 255, 255]],
     [[120, 230, 255], [180, 250, 255]],
+  ],
+  illusionna: [ // its orbs, and the gold of its moon and stars
+    [[110, 240, 220], [170, 255, 240]], [[40, 150, 140], [90, 220, 200]], [[255, 140, 180], [255, 195, 220]],
+    [[200, 80, 130], [255, 130, 180]], [[250, 205, 70], [255, 235, 140]],
   ],
   bellfry: [ // its bronze warms up, the finials shine and its rings of sound glow
     [[205, 140, 55], [235, 160, 60]], [[235, 180, 85], [255, 200, 95]], [[255, 222, 140], [255, 235, 165]],
@@ -1050,6 +1070,19 @@ const CHIME_RINGS: Bitmap[] = Array.from({ length: 16 }, (_, radius) => ringBitm
 const SHOCK_WAVES: Bitmap[] = Array.from({ length: 44 }, (_, radius) => halfRing(radius, CHIME));
 const SHOCK_DIM: Bitmap[] = Array.from({ length: 44 }, (_, radius) => halfRing(radius, [215, 160, 85]));
 const BELL_MIDDLE: readonly [number, number] = [16, 18]; // in its frame
+// The magpie line's magic: stars from the wand, playing cards, the stage curtain and the glowing orbs
+const MAGIC_SPARKLE: Bitmap = [[255, 250, 210], ["X"]];
+const CARD: Bitmap = [[242, 242, 248], ["XX", "XX", "XX"]]; // a card seen from the front
+const CARD_BACK: Bitmap = [[205, 40, 55], ["XX", "XX", "XX"]]; // and from behind
+const CARD_FLAT: Bitmap = [[242, 242, 248], ["XXX"]]; // a card flying edge on, like a dart
+const CURTAIN_BIT: Bitmap = [[205, 40, 55], ["X", "X"]];
+const CURTAIN_GOLD: Bitmap = [[250, 205, 70], ["X"]];
+const ORBS: Bitmap[] = ([[110, 240, 220], [255, 140, 180], [175, 110, 235]] as Color[])
+  .map((color) => [color, [".X.", "XXX", ".X."]]);
+const ORB_GLOW: Bitmap = [[225, 255, 250], ["X"]];
+const WAND_TIPS: Record<string, readonly [number, number]> = { glintrick: [30, 3], illusionna: [29, 7] }; // in their frames
+const CARD_WINGS: readonly (readonly [number, number])[] = [[2, 13], [29, 13]]; // Cardwing's wings, in its frame
+const MAGPIE_FEATHER: Bitmap = [[40, 42, 58], ["X.", ".X"]]; // off the magpie in a scuffle
 
 /** The upper half of a ring of the given radius (Bellfry's shock wave, rolling along the ground). */
 function halfRing(radius: number, color: Color): Bitmap {
@@ -1195,6 +1228,12 @@ export interface SceneView {
     species: string; left: number; age: number; stage?: string; asleep?: boolean; tricks?: readonly string[];
   } | null;
   nest?: string | null;
+  /**
+   * The troublemaker (magpie.ts): she flies off with a decoration from outside ("stole"), is chased
+   * off by the pet ("chased"), or brings it back ("back"): seconds since, the decoration, and its spot
+   * outside.
+   */
+  magpie?: { deed: string; age: number; item: string; spot: number } | null;
   /** A guest from the garden (garden.ts) peeking over the fence, before it comes in: its species. */
   peeking?: string | null;
   gift?: boolean;
@@ -1798,6 +1837,9 @@ export class PetScene {
     if (guest) {
       this.drawGuest(img, guest, t);
     }
+    if (view.magpie && !trip && !indoors) {
+      this.drawMagpie(img, view.magpie, t);
+    }
     for (const gx of this.tallGrass) {
       this.drawTallGrass(img, gx, t);
     }
@@ -2038,6 +2080,8 @@ export class PetScene {
       this.targetX = this.x;
     } else if (activity === "dig") {
       this.dig(pose, view, t, dt, now);
+    } else if (activity === "shoo") {
+      this.shoo(pose, view, t, dt, now);
     } else if (activity === "unpack") {
       // shows off one find after the other
       this.cheer(pose, t);
@@ -3019,6 +3063,51 @@ export class PetScene {
         this.trickFx(t, `bell_swing${Math.trunc(beat) % 2}`, 0.3, NOTE, 1, side * 12, 26, [side * 6, side * 12], [-14, -8], 0.8);
       }
       this.place(CHIME_RINGS, points);
+    } else if (animation === "hat_trick") {
+      // a deep bow, it lifts its top hat, and stars and cards burst out of the hat into the air; then it
+      // straightens up, pleased with itself
+      const bow = Math.sin(clamp((p - 0.08) / 0.5, 0, 1) * Math.PI);
+      Object.assign(pose, { body: bow > 0.4 ? "squash" : "idle", jump: p > 0.6 && p < 0.72 ? Math.sin((p - 0.6) / 0.12 * Math.PI) * 4 : 0,
+        face: bow > 0.4 ? "blink" : p > 0.6 ? "laugh" : "smile" });
+      if (p > 0.3 && p < 0.38) {
+        this.ringFx(t, "hat_trick", TRICK_SHOW, [STAR, MAGIC_SPARKLE, CARD, CARD_BACK], 12, 0, 30, 22, 1.0, -Math.PI * 0.9, -Math.PI * 0.1);
+      }
+      if (p > 0.36 && p < 0.7) {
+        this.trickFx(t, "hat_trick_sparkle", 0.1, MAGIC_SPARKLE, 1, 0, 32, [-12, 12], [-10, -2], 0.6);
+      }
+    } else if (animation === "card_spin") {
+      // it turns round and round, and the cards of its wings come loose and fly round it in a ring, faces
+      // and backs flashing, until they snap back into its wings
+      const q = clamp((p - 0.08) / 0.7, 0, 1);
+      Object.assign(pose, { turn: q > 0 && q < 1 ? Math.cos(q * 3 * (2 * Math.PI)) : null, jump: Math.sin(q * Math.PI) * 4,
+        face: q > 0 && q < 1 ? "laugh" : "smile" });
+      const points: [Bitmap, number, number][] = [];
+      const out = Math.sin(q * Math.PI); // out from the wings and back in
+      if (out > 0.05) {
+        const [cx, cy] = [this.x + SPRITE / 2, GROUND - SPRITE / 2 - pose.jump];
+        for (let i = 0; i < 8; i++) {
+          const a = q * 4 * Math.PI + i * Math.PI / 4;
+          const card = Math.trunc(t * 6 + i) % 2 ? CARD : CARD_BACK;
+          points.push([card, cx + Math.cos(a) * (6 + 14 * out) - 1, cy + Math.sin(a) * (4 + 9 * out) - 1]);
+        }
+      }
+      this.place([CARD, CARD_BACK], points);
+    } else if (animation === "curtain_vanish") {
+      // it swirls its curtain round itself and is gone in a shower of stars; it appears again on the other
+      // side with a flourish, and glides back to its place
+      const behind = -18 * this.facing;
+      const back = clamp((p - 0.8) / 0.14, 0, 1);
+      Object.assign(pose, { hidden: p > 0.26 && p < 0.52, face: p < 0.26 ? "smile" : "laugh",
+        body: p > 0.12 && p < 0.26 ? "squash" : p > 0.52 && p < 0.58 ? "stretch" : "idle",
+        turn: p > 0.12 && p < 0.26 ? Math.cos((p - 0.12) / 0.14 * 2 * Math.PI) : null });
+      if (p >= 0.52) {
+        Object.assign(pose, { dx: Math.round(behind * (1 - back)), jump: p < 0.62 ? Math.sin((p - 0.52) / 0.1 * Math.PI) * 6 : 0 });
+      }
+      if (p > 0.24 && p < 0.32) {
+        this.ringFx(t, "curtain_vanish", TRICK_SHOW, [CURTAIN_BIT, CURTAIN_GOLD, STAR], 12, 0, 16, 18, 0.9);
+      } else if (p > 0.5 && p < 0.58) {
+        this.ringFx(t, "curtain_vanish_in", TRICK_SHOW, [STAR, MAGIC_SPARKLE, ...ORBS], 10, behind * this.facing, 16, 16, 0.8);
+      }
     } else if (animation === "lure") {
       // the line goes out, the bulb dangles and flashes (the "lure" frames), then it lunges and snaps
       if (p < 0.1 || p > 0.9) {
@@ -4257,6 +4346,67 @@ export class PetScene {
         }
         break;
       }
+      case "glintrick": { // a flick of its wand: a stream of stars arcs over and rains down on the opponent
+        Object.assign(pose, { body: q > 0.1 && q < 0.2 ? "stretch" : "idle", face: q < 0.2 ? "smile" : "laugh" });
+        const points: [Bitmap, number, number][] = [];
+        const [tx, ty] = WAND_TIPS.glintrick;
+        const [x0, y0] = [this.x + (this.facing > 0 ? tx : SPRITE - 1 - tx), GROUND - SPRITE + 1 + ty];
+        const [x1, y1] = [foeLeft(0.5) + 6, GROUND - 16];
+        for (let i = 0; i < 6; i++) {
+          const f = (q - 0.16 - i * 0.04) / 0.22;
+          if (f > 0 && f < 1) {
+            points.push([i % 2 ? MAGIC_SPARKLE : STAR, x0 + (x1 - x0) * f - 1, y0 + (y1 - y0) * f - Math.sin(f * Math.PI) * 14 - 1]);
+          }
+        }
+        this.place([STAR, MAGIC_SPARKLE], points);
+        if (q > 0.42 && q < 0.66) {
+          this.trickFx(t, "sp_glintrick", 0.05, STAR, 1, at(x1), GROUND - y1 + 6, [-6, 6], [4, 10], 0.6, 40);
+        }
+        break;
+      }
+      case "cardwing": { // it flings the cards of its wings like darts, one after the other: thock, thock, thock
+        const points: [Bitmap, number, number][] = [];
+        pose.face = q < 0.2 ? "smile" : "laugh";
+        for (let i = 0; i < 4; i++) {
+          const from = 0.16 + i * 0.07;
+          const f = (q - from) / 0.12;
+          if (f > -0.1 && f < 0.06) {
+            Object.assign(pose, { body: "stretch", dx: towards(1) });
+          }
+          const [wx, wy] = CARD_WINGS[i % 2];
+          const [x0, y0] = [this.x + (this.facing > 0 ? wx : SPRITE - 1 - wx), GROUND - SPRITE + 1 + wy];
+          const [x1, y1] = [foeLeft(from + 0.12) + 4 + (i % 2) * 4, GROUND - 10 - (i % 3) * 2];
+          if (f > 0 && f < 1) {
+            points.push([CARD_FLAT, x0 + (x1 - x0) * f - 1, y0 + (y1 - y0) * f]);
+          } else if (f >= 1) {
+            this.ringFx(t, `sp_cardwing${i}`, once, [MAGIC_SPARKLE, CARD_BACK], 5, at(x1), GROUND - y1, 14, 0.5, -Math.PI, 0);
+          }
+        }
+        this.place([CARD_FLAT], points);
+        break;
+      }
+      case "illusionna": { // the orbs leave its wand, float over and circle the opponent's head, and it can't
+        // take its eyes off them; then they flash
+        Object.assign(pose, { body: q < 0.2 ? "stretch" : "idle", face: q < 0.3 ? "smile" : "laugh" });
+        const [tx, ty] = WAND_TIPS.illusionna;
+        const [hx, hy] = [this.x + (this.facing > 0 ? tx : SPRITE - 1 - tx), GROUND - SPRITE + 1 + ty];
+        const [cx, cy] = [foeLeft(0.15) + 6, GROUND - 18];
+        const points: [Bitmap, number, number][] = [];
+        for (let i = 0; i < ORBS.length && q > 0.06 && q < 0.8; i++) {
+          const go = (1 - Math.cos(clamp((q - 0.06 - i * 0.03) / 0.22, 0, 1) * Math.PI)) / 2;
+          const a = t * 5 + i * 2 * Math.PI / ORBS.length;
+          const [rx, ry] = [cx + Math.cos(a) * 8, cy + Math.sin(a) * 3];
+          points.push([ORBS[i], hx + (rx - hx) * go - 1, hy + (ry - hy) * go - Math.sin(go * Math.PI) * 6 - 1]);
+        }
+        if (q > 0.3 && q < 0.75) {
+          this.foeFrozen = "dazed";
+        }
+        this.place(ORBS, points);
+        if (q > 0.74 && q < 0.8) {
+          this.ringFx(t, "sp_illusionna", once, [ORB_GLOW, MAGIC_SPARKLE, ...ORBS], 12, at(cx), GROUND - cy, 22, 0.6);
+        }
+        break;
+      }
       case "bouldergrin": // throws its top stone at the opponent; a new one grows back
         if (q < 0.15) {
           Object.assign(pose, { body: "squash", face: "normal" });
@@ -5120,6 +5270,54 @@ export class PetScene {
     }
   }
 
+  /**
+   * The magpie (magpie.ts), Glintrick in her top hat: she swoops down from the right to the decoration,
+   * and flies off with it in her beak; chased, she flutters over the pet with it until she drops it and
+   * flees; bringing it back, she puts it down where it stood, bows and flies off.
+   */
+  private drawMagpie(img: Image, m: NonNullable<SceneView["magpie"]>, t: number): void {
+    const decoration = this.dimmedSprite(m.item, t, true);
+    // where she lands: by the decoration, but on the panel (it stands at the edge)
+    const spot = Math.min(this.decoX(m.spot, decoration.width), this.width - 14);
+    const away = this.width + 24; // her middle, off the panel on the right
+    const flap = Math.trunc(t * 8) % 2 ? "stretch" : "squash";
+    const swoop = (f: number, from: number, to: number) => from + (to - from) * (1 - (1 - clamp(f, 0, 1)) ** 2);
+    let [x, lift, body, face, carrying, left] = [spot, 0, "idle", "smile", false, true];
+    const e = m.age;
+    if (m.deed === "back") {
+      if (e < MAGPIE_GRABBED) { // in from the right with it in her beak
+        [x, lift, body, carrying] = [swoop(e / MAGPIE_GRABBED, away, spot), swoop(e / MAGPIE_GRABBED, 26, 0), flap, true];
+      } else if (e < MAGPIE_BOW[1]) { // she sets it down, and bows
+        const bowing = e >= MAGPIE_BOW[0];
+        [body, face] = [bowing ? "squash" : "idle", bowing ? "blink" : "smile"];
+      } else {
+        const f = (e - MAGPIE_BOW[1]) / (MAGPIE_GONE - MAGPIE_GRABBED);
+        [x, lift, body, left] = [swoop(f, spot, away), swoop(f, 0, 30), flap, false];
+      }
+    } else if (e < MAGPIE_LANDED) { // down from the right to the decoration
+      [x, lift, body] = [swoop(e / MAGPIE_LANDED, away, spot), swoop(e / MAGPIE_LANDED, 26, 0), flap];
+    } else if (e < MAGPIE_GRABBED) {
+      [body, face] = ["squash", "laugh"];
+    } else if (m.deed === "stole") { // off with it, up and away to the right
+      const f = (e - MAGPIE_GRABBED) / (MAGPIE_GONE - MAGPIE_GRABBED);
+      [x, lift, body, face, carrying, left] = [swoop(f, spot, away), swoop(f, 0, 30), flap, "laugh", true, false];
+    } else if (e < MAGPIE_DROPS) { // the pet is after her: she flutters up and down with it, out of its reach
+      [lift, body, face, carrying] = [12 + Math.sin(e * 3 + 1) * 4, flap, "no", true];
+      x = spot + Math.sin(e * 1.7) * 3;
+    } else { // she drops it and flees
+      const f = (e - MAGPIE_DROPS) / (MAGPIE_GONE - MAGPIE_GRABBED);
+      [x, lift, body, face, left] = [swoop(f, spot, away), swoop(f, 12, 34), flap, "sad", false];
+    }
+    const [sprite, top] = this.pet("adult", "glintrick", body, t, face, { lookLeft: left, glow: this.night > 0.5 });
+    const px = Math.round(x - sprite.width / 2);
+    const py = GROUND - SPRITE - Math.round(lift);
+    img.paste(sprite, px, py);
+    if (carrying) {
+      const bx = px + (left ? sprite.width - 1 - MAGPIE_BEAK[0] : MAGPIE_BEAK[0]);
+      img.paste(decoration, bx - Math.floor(decoration.width / 2), py + top + MAGPIE_BEAK[1]);
+    }
+  }
+
   /** Prismfly's light, broken into seven rays in the colors of the rainbow, fanning out towards where it looks. */
   private drawRays(img: Image, cx: number, cy: number): void {
     PRISM.forEach((color, i) => {
@@ -5187,6 +5385,7 @@ export class PetScene {
         clockbeetle: [COG, TICK], pharabug: [SAND, SAND_GRAIN], origrane: [PAPER_BIT, CREASE], lionkite: FIREWORK_SPARK,
         stormkite: [BOLT, SPARK], inkasso: INK_SPLAT, octavio: JUGGLE_SPARK, abyssink: [...DEEP_LIGHT, INK_WISP],
         gargard: [STONE_CHIP, DUST_PUFF], fountaingle: [WATER, SPRAY, WATER_DROP], bellfry: [NOTE, SPARK],
+        glintrick: [STAR, MAGIC_SPARKLE], cardwing: [CARD, CARD_BACK], illusionna: [...ORBS, ORB_GLOW],
       } as Record<string, Bitmap | readonly Bitmap[]>)[view.species] ?? SPARK;
       const many = (sprite as readonly unknown[]).every((part) => Array.isArray(part) && Array.isArray(part[0]));
       for (let i = 0; i < 10; i++) {
@@ -5789,8 +5988,12 @@ export class PetScene {
     this.drawStarThings(img, view, t);
     this.drawDig(img, view, now);
     const deco = (view.deco ?? []).slice(0, DECO_X.length);
+    const m = view.magpie;
+    if (m && (m.deed === "back" ? m.age < MAGPIE_GRABBED : m.deed === "chased" && m.age >= MAGPIE_GRABBED && m.age < MAGPIE_DROPS)) {
+      deco[m.spot] = ""; // the magpie has it in her beak
+    }
     // what lies flat on the ground (the pond) first, so that the other decoration stands in front of it
-    [...deco.keys()].sort((a, b) => Number(deco[b] === "pond") - Number(deco[a] === "pond")).forEach((i) => {
+    [...deco.keys()].filter((i) => deco[i]).sort((a, b) => Number(deco[b] === "pond") - Number(deco[a] === "pond")).forEach((i) => {
       const sprite = this.dimmedSprite(deco[i], t, true);
       this.stand(img, sprite, this.decoX(i, sprite.width));
       this.covers.set(`deco${i}`, GROUND + 2 - sprite.height);
@@ -5799,8 +6002,10 @@ export class PetScene {
     if (view.nest) {
       // the egg sits in the nest: the rim covers its bottom rows. It isn't dimmed at night,
       // so that it can't be overlooked.
-      this.stand(img, this.sheet("trip").image(`egg_${view.nest}`), NEST_X, 2);
-      this.stand(img, this.dimmedSprite("nest"), NEST_X);
+      // the magpie's egg lies in her top hat instead (magpie.ts)
+      const hat = view.nest === magpie.LINE;
+      this.stand(img, this.sheet("trip").image(`egg_${view.nest}`), NEST_X, hat ? 1 : 2);
+      this.stand(img, this.dimmedSprite(hat ? "tophat" : "nest"), NEST_X);
     }
     if (view.gift) {
       // not dimmed either, like the egg
@@ -5983,6 +6188,30 @@ export class PetScene {
   }
 
   /** Digging at the cross: it hops over, digs with earth flying, and holds up one find after the other. */
+  /**
+   * It chases off the magpie (magpie.ts): over to the decoration she has in her beak, and up at her
+   * again and again, in a cloud of dust and feathers, until she drops it and flees.
+   */
+  private shoo(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
+    const e = this.elapsed(view, now);
+    const spot = view.magpie ? Math.min(this.decoX(view.magpie.spot, 9), this.width - 14) - SPRITE - 2 : this.x;
+    if (e < MAGPIE_GRABBED) {
+      pose.face = "no";
+      if (this.moveTowards(spot, THROW_SPEED, dt)) {
+        this.hop(pose, t, 3.5);
+      }
+    } else if (e < MAGPIE_DROPS) {
+      this.moveTowards(spot, THROW_SPEED, dt);
+      const leap = Math.abs(Math.sin((e - MAGPIE_GRABBED) * 3));
+      Object.assign(pose, { jump: leap * 9, body: leap > 0.5 ? "stretch" : "squash", face: leap > 0.5 ? "laugh" : "no",
+        dx: Math.trunc(t * 8) % 2 ? 1 : -1 });
+      this.trickFx(t, "shoo_dust", 0.25, DUST_PUFF, 2, SPRITE / 2, 4, [-10, 10], [-8, -2], 0.5);
+      this.trickFx(t, "shoo_feather", 0.6, MAGPIE_FEATHER, 1, SPRITE / 2, 16, [-6, 6], [-6, 2], 1.2, 15);
+    } else {
+      this.cheer(pose, t);
+    }
+  }
+
   private dig(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
     const { e, seconds, found } = this.digging(view, now);
     const hole = DIG_X[view.house ?? 0];

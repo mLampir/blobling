@@ -34,7 +34,7 @@ const BASE: SceneView = {
 // The special forms, the secret third adult of a line
 const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
   "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake", "woolwhisk", "ursastra", "aurorapin", "lunaflap",
-  "ninjowl", "mirrorleon", "pharabug", "stormkite", "abyssink", "bellfry"];
+  "ninjowl", "mirrorleon", "pharabug", "stormkite", "abyssink", "bellfry", "illusionna"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -88,9 +88,11 @@ const PETS: Record<string, [string, string]> = {
   inkasso: ["adult", "inkasso"], octavio: ["adult", "octavio"],
   gargoyle_egg: ["egg", "gargoyle"], gargoyle_baby: ["baby", "gargoyle"], gargit: ["child", "gargoyle"],
   gargard: ["adult", "gargard"], fountaingle: ["adult", "fountaingle"],
+  magpie_egg: ["egg", "magpie"], magpie_baby: ["baby", "magpie"], glintlet: ["child", "magpie"],
+  glintrick: ["adult", "glintrick"], cardwing: ["adult", "cardwing"],
   ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
-// The leaf, duck, hippo, beak, garden, water, Grandma's, adventure, festival, star, coast and ruins lines: per line its line, child and adults, for the scenes below
+// The leaf, duck, hippo, beak, garden, water, Grandma's, adventure, festival, star, coast, ruins and magpie lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
   ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
   ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
@@ -102,6 +104,7 @@ const NEW_LINES: [string, string, string, string][] = [
   ["owl", "hootlet", "owlbert", "stargazer"], ["chameleon", "colorlet", "palettino", "hidewell"],
   ["scarab", "rollet", "solroll", "clockbeetle"], ["kite", "kitelet", "origrane", "lionkite"],
   ["octopus", "inklet", "inkasso", "octavio"], ["gargoyle", "gargit", "gargard", "fountaingle"],
+  ["magpie", "glintlet", "glintrick", "cardwing"],
 ];
 const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
@@ -153,6 +156,9 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   gargard: "bow", // turns to stone and wakes again
   fountaingle: "flip", // a somersault with an arc of water
   bellfry: "spin", // swings itself like a bell and rings
+  glintrick: "bow", // stars and cards burst out of its hat
+  cardwing: "spin", // its cards fly round it and back
+  illusionna: "flip", // gone behind its curtain, and back on the other side
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
@@ -161,7 +167,7 @@ const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_ow
 // the first area only: the later areas, their opponents and their guardians are left out.
 const SHOWN_ADULT = "angloop";
 const SHOWN_AREA = AREAS[0];
-const SPOILERS = ["keepsakes", "keepsakes_night", "hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
+const SPOILERS = ["keepsakes", "keepsakes_night", "magpie_stole", "magpie_chased", "magpie_back", "magpie_egg", "hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
   "ember_hatch", "ember_baby", "cindlet", "cindlet_hint", "cindlet_sick", "ember_evolve", "lanternling",
   "lanternling_sleep", "lanternling_trick", "flarelet", "flarelet_hat", "egg_found", "wild_shrug", "visit_copy", "visit_bounce", "visit_night",
   "nest_ember", "stone_egg", "stone_baby", "pebblet", "pebblet_hint", "pebblet_hat", "pebblet_skip", "glimmerock",
@@ -321,6 +327,12 @@ const SCENES: Record<string, Scene> = {
   // keepsakes of the lines (core/src/keepsake.ts): moving by day, glowing at night
   keepsakes: [{ deco: ["windchime", "hippofountain"] }, DAY, null],
   keepsakes_night: [{ deco: ["jellylamp", "shelllamp"] }, NIGHT, null],
+  // the troublemaker (core/src/magpie.ts): she flies off with the snowman, gets chased off, brings it back
+  magpie_stole: [{ deco: ["pond"], magpie: { deed: "stole", age: 3.5, item: "snowman", spot: 0 } }, DAY, null],
+  magpie_chased: [{ stage: "adult", species: "angloop", deco: ["snowman", "pond"], activity: "shoo",
+    magpie: { deed: "chased", age: 6, item: "snowman", spot: 0 } }, DAY, null, 6],
+  magpie_back: [{ deco: ["snowman", "pond"], magpie: { deed: "back", age: 4.5, item: "snowman", spot: 0 } }, DAY, null],
+  magpie_egg: [{ stage: "adult", species: "angloop", nest: "magpie", deco: ["pond"] }, DAY, null],
   trip_stream: [{ trip: trip("stream") }, DAY, null],
   trip_cave: [{ trip: trip("cave", { event: "find", item: "crystal" }) }, DAY, RAIN],
   trip_food: [{ trip: trip("meadow", { event: "find", item: "honeycomb", event_age: 2 }) }, DAY, null],
@@ -683,6 +695,9 @@ function frames(name: string, count: number, step = 0.1, spoilerFree = false): I
   for (let i = 0; i < count; i++) {
     if (view.trip) { // what happened on the trip gets older, the way it does on the Pi
       view.trip = { ...view.trip, event_age: changes.trip!.event_age + i * step };
+    }
+    if (view.magpie) { // and so does the magpie's
+      view.magpie = { ...view.magpie, age: changes.magpie!.age + i * step };
     }
     if (view.visitor) { // the friend's visit goes on as well
       const { age, left } = changes.visitor!;

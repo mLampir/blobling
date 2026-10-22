@@ -2009,13 +2009,83 @@
     "h": 15
    },
    "duration": 1000
+  },
+  {
+   "filename": "items magpie_egg 201",
+   "frame": {
+    "x": 2411,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items magpie_egg_wobble 202",
+   "frame": {
+    "x": 2423,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items magpie_egg_wobble 203",
+   "frame": {
+    "x": 2435,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items magpie_egg_wobble 204",
+   "frame": {
+    "x": 2447,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items magpie_egg_wobble 205",
+   "frame": {
+    "x": 2459,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items magpie_egg_crack 206",
+   "frame": {
+    "x": 2471,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items magpie_egg_open 207",
+   "frame": {
+    "x": 2483,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 2411,
+   "w": 2495,
    "h": 15
   },
   "frameTags": [
@@ -2773,6 +2843,30 @@
     "name": "gargoyle_egg_open",
     "from": 200,
     "to": 200,
+    "direction": "forward"
+   },
+   {
+    "name": "magpie_egg",
+    "from": 201,
+    "to": 201,
+    "direction": "forward"
+   },
+   {
+    "name": "magpie_egg_wobble",
+    "from": 202,
+    "to": 205,
+    "direction": "forward"
+   },
+   {
+    "name": "magpie_egg_crack",
+    "from": 206,
+    "to": 206,
+    "direction": "forward"
+   },
+   {
+    "name": "magpie_egg_open",
+    "from": 207,
+    "to": 207,
     "direction": "forward"
    }
   ]

@@ -134,7 +134,7 @@ test("the status line: clock, temperature and what the pet needs", () => {
 test("every form of the pet can be drawn, in every state", () => {
   const forms = [...Object.keys(life.LINES).flatMap((line) => life.STAGES.map((stage) => [stage, line])),
     ...[...Object.values(life.LINES).flat(), ...life.WILD_ONLY].map((name) => ["adult", name])];
-  assert.equal(forms.length, 25 * 4 + 80);
+  assert.equal(forms.length, 26 * 4 + 83);
   const moods = ["normal", "happy", "sad", "hungry", "dirty", "sick", "tired"];
   for (const [stage, species] of forms) {
     for (const mood of moods) {
@@ -196,6 +196,27 @@ test("every activity can be drawn from its start to its end", () => {
     }
     assert.equal(frames(changes, Math.ceil(seconds * 10) + 10).length > 0, true, activity);
   }
+});
+
+test("the magpie swoops down for a decoration, flutters over the pet chasing her, and brings it back", () => {
+  const view = (magpie: SceneView["magpie"], extra: Partial<SceneView> = {}) =>
+    ({ ...BASE, stage: "adult", species: "angloop", deco: ["snowman", "pond"], magpie, ...extra });
+  const still = scene().render(view(null), null, DAY, 1)[0];
+  for (const deed of ["stole", "chased", "back"]) {
+    for (const age of [0.5, 2.5, 5, 10, 15, 19]) {
+      const deco = deed === "stole" ? ["pond"] : ["snowman", "pond"];
+      const shown = scene().render(view({ deed, age, item: "snowman", spot: 0 }, { deco }), null, DAY, 1)[0];
+      assert.ok(shown.width === still.width, `${deed} ${age}`);
+    }
+  }
+  // fluttering over the pet with the snowman in her beak: she is there, and the snowman isn't where it stood
+  const chased = scene().render(view({ deed: "chased", age: 8, item: "snowman", spot: 0 },
+    { activity: "shoo", activity_until: DAY.getTime() / 1000 + 12 }), null, DAY, 1)[0];
+  assert.ok(differing(still, chased) > 100);
+  // her egg lies in her top hat instead of the moss
+  const moss = frames({ nest: "kite" }, 1)[0];
+  const hat = frames({ nest: "magpie" }, 1)[0];
+  assert.ok(differing(moss, hat, GROUND - 8, GROUND + 3) > 0);
 });
 
 test("what it left behind lies in the scene, and what it builds grows while it builds it", () => {
@@ -302,7 +323,7 @@ test("the garden's and the water's adults have a trick and a special move of the
     lunaflap: "spin", owlbert: "bow", stargazer: "spin", ninjowl: "flip", palettino: "spin", hidewell: "bow",
     mirrorleon: "dance", solroll: "flip", clockbeetle: "dance", pharabug: "bow", origrane: "bow", lionkite: "dance",
     stormkite: "flip", inkasso: "spin", octavio: "dance", abyssink: "flip", gargard: "bow", fountaingle: "flip",
-    bellfry: "spin" };
+    bellfry: "spin", glintrick: "bow", cardwing: "spin", illusionna: "flip" };
   const animations = new Set<string>();
   for (const [species, trick] of Object.entries(own)) {
     const animation = trickAnimation("adult", species, trick);
@@ -362,7 +383,7 @@ test("a guest from the garden peeks over the fence at the right edge, only at ho
 });
 
 test("the newer lines' children show where they are heading", () => {
-  for (const [line, adults] of Object.entries(life.LINES).slice(-16)) {
+  for (const [line, adults] of Object.entries(life.LINES).slice(-17)) {
     const looks = adults.map((hint) => frames({ species: line, hint }, 1)[0]);
     assert.ok(differing(looks[0], looks[1]) > 0 && differing(looks[1], looks[2]) > 0
       && differing(looks[0], looks[2]) > 0, line);

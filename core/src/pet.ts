@@ -23,6 +23,7 @@ import * as habits from "./habits";
 import * as home from "./home";
 import * as keepsake from "./keepsake";
 import * as life from "./life";
+import * as magpie from "./magpie";
 import * as model from "./model";
 import * as notify from "./notify";
 import { hideX, houseArea, plantArea, starArea, thingArea, yardArea, type SceneView, type TripView,
@@ -379,6 +380,8 @@ export class Pet {
         ? { species: guest.species, left: guest.until! - now, age: now - guest.until! + wild.VISIT_SECONDS }
         : this.neighbourView(s, now),
       nest: s.nest ? s.nest.line : null,
+      // the troublemaker, while she steals something, is chased off or brings it back (magpie.ts)
+      magpie: s.trip || s.grandma ? null : magpie.seen(s, now),
       // a guest from the garden peeking over the fence before it comes in (garden.ts)
       peeking: s.trip || s.grandma ? null : garden.peeking(s, now),
       gift: !!s.gift,
@@ -1034,9 +1037,11 @@ export class Pet {
   private advanceAll(now: number): void {
     const missing = this.longMissing(now);
     const complete = this.completeLines();
+    const had = Object.keys(life.LINES).filter((line) => this.album.includes(`egg:${line}`)).length;
     for (const s of this.pets) {
       s.missing_lines = [...missing];
       s.complete_lines = [...complete];
+      s.lines_had = had;
     }
     // all of them minute by minute together, for what they share in the yard
     model.advanceTogether(this.pets, now, this.bedtime(), this.weather(), this.temperature(), this.location,

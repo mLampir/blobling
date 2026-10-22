@@ -70,7 +70,8 @@
     "scarab": "Rollet",
     "kite": "Kitelet",
     "octopus": "Inklet",
-    "gargoyle": "Gargit"
+    "gargoyle": "Gargit",
+    "magpie": "Glintlet"
   },
   "species": {
     "blob": "Blob",
@@ -177,7 +178,11 @@
     "gargoyle": "Wasserspeier",
     "gargard": "Gargard",
     "fountaingle": "Fountaingle",
-    "bellfry": "Bellfry"
+    "bellfry": "Bellfry",
+    "magpie": "Elster",
+    "glintrick": "Glintrick",
+    "cardwing": "Cardwing",
+    "illusionna": "Illusionna"
   },
   "tricks": {
     "bow": "Verbeugen",
@@ -369,7 +374,9 @@
     "hourglass": "Sanduhr",
     "windsock": "Windsack",
     "conch": "Muschelhorn",
-    "guardianstatue": "Kleine Wächterfigur"
+    "guardianstatue": "Kleine Wächterfigur",
+    "egg_magpie": "Elstern-Ei",
+    "trinketbox": "Schatzkästchen"
   },
   "pack": {
     "ball": "Ball"
@@ -614,7 +621,11 @@
         "knit": "Ich habe {name} einen kleinen Schal gestrickt.",
         "garden": "Wir haben in meinem Garten Unkraut gejätet und Erdbeeren genascht.",
         "tea": "Wir haben Tee getrunken und alte Fotos angeschaut."
-      }
+      },
+      "magpie_stole": "Eine Elster mit Zylinder ist heruntergeflogen und hat etwas von uns mitgenommen: {item}!",
+      "magpie_chased": "Eine Elster mit Zylinder wollte etwas von uns stehlen ({item}), aber ich habe sie verjagt!",
+      "magpie_back": "Die Elster hat zurückgebracht, was sie genommen hatte ({item}), und sich sogar verbeugt.",
+      "magpie_egg": "Die Elster hat aufgegeben: Sie hat ihren Zylinder dagelassen, und darin liegt ein Ei!"
     },
     "tabs": {
       "history": "Verlauf",
@@ -789,7 +800,11 @@
       "show_3": "ist beim Trickfest Dritter geworden 🥉",
       "dig": "hat am roten Kreuz gegraben: {what}",
       "fill_trough": "Trog aufgefüllt 🌾",
-      "fill_basin": "Wasserbecken aufgefüllt 💧"
+      "fill_basin": "Wasserbecken aufgefüllt 💧",
+      "magpie_stole": "eine Elster ist mit etwas davongeflogen: {item}",
+      "magpie_chased": "hat eine Elster verjagt, die etwas mitnehmen wollte: {item} 💪",
+      "magpie_back": "die Elster hat es zurückgebracht, mit einer Verbeugung: {item}",
+      "magpie_egg": "die Elster hat ihren Zylinder dagelassen, mit einem Ei darin 🎩🥚"
     },
     "statistics": {
       "meals": "Mahlzeiten",
@@ -982,7 +997,8 @@
         "keep_maps": "Ausflüge bringen öfter Schatzkarten",
         "keep_hike": "Ausflüge machen weniger müde",
         "keep_festival": "mehr Punkte beim Trickfest",
-        "keep_steady": "fällt bei Raufereien seltener um"
+        "keep_steady": "fällt bei Raufereien seltener um",
+        "keep_gifts": "Besuche von Freunden bringen öfter ein Geschenk"
       }
     },
     "unwrapped_bag": "Drin war: {thing}. Liegt jetzt in deiner Tasche",

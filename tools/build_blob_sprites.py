@@ -7537,6 +7537,299 @@ COAST_FORMS = (("inkasso", kit_faces(normal=("proud", "small", False), smile=("p
                ("bellfry", kit_faces(normal=("open", "open", False), smile=("open", "open", True))))  # it sings
 
 
+# ---------------------------------------------------------------- The magpie line
+
+# The troublemaker's line: the magpie that comes to steal what stands outside and leaves her top hat
+# with an egg in it once she has been chased off often enough (core/src/magpie.ts). Every form of the
+# line is a magician, and keeps the black and white plumage with its sheen of blue and green and the
+# red of a magician's things. The child carries the colors the code may recolor as a hint at its
+# adult form: the star on its wand.
+
+# The egg: white with black speckles and a band of blue and green sheen, a glint of gold, in the
+# crown of a top hat
+MAGPIE_EGG = [
+    "....oooo....",
+    "...ohheEo...",
+    "..ohekeeEo..",
+    "..oheeeyEo..",
+    ".ohekeeeeEo.",
+    ".oeeeeekeEo.",
+    ".ojjjjjjjjo.",
+    ".oJJJJJJJJo.",
+    ".oeekeeeeEo.",
+    ".oeeeeekEEo.",
+    "..oekeeEEo..",
+    "kkkkkkkkkkkk",
+    "rrrRrrrRrrrR",
+    "kkkkkkkkkkkk",
+]
+EGG_GRIDS |= {"magpie": MAGPIE_EGG}
+RARE_EGG_PALETTES |= {
+    "magpie": {"o": (14, 14, 24), "e": (240, 240, 246), "E": (195, 200, 215), "h": (255, 255, 255),
+               "k": (40, 42, 58), "j": (70, 120, 215), "J": (40, 150, 145), "y": (250, 205, 70),
+               "r": (205, 40, 55), "R": (140, 25, 40), "x": (14, 14, 24)},
+}
+
+MAGPIE_PALETTE = {
+    "o": (14, 14, 24),     # outline
+    "k": (40, 42, 58),     # black plumage
+    "K": (26, 27, 38),     # its shadow
+    "j": (70, 120, 215),   # the blue sheen on wings and tail
+    "J": (40, 150, 145),   # and the green one
+    "w": (242, 242, 248),  # white
+    "W": (190, 195, 212),
+    "r": (205, 40, 55),    # red: bow tie, hat band, the lining of the cape
+    "R": (140, 25, 40),
+    "y": (250, 205, 70),   # gold: whatever glitters
+    "Y": (190, 140, 40),
+    "n": (85, 85, 100),    # beak and feet
+    "s": (255, 250, 210),  # a sparkle
+    "t": (255, 235, 140),  # the star on the child's wand (the hint)
+    "T": (255, 250, 215),
+}
+MAGPIE_FACE_PALETTE = {"p": (10, 10, 14), "g": (255, 255, 255), "l": (205, 210, 225), "d": (26, 27, 38),
+                       "k": (255, 130, 150), "w": (242, 242, 248), "m": (14, 14, 24), "r": (205, 40, 55)}
+MAGPIE_EYES = {  # 3×3: a beady black eye with a glint, its light lids show when it shuts (left, right)
+    "open": (["...", "pg.", "pp."],) * 2,
+    "closed": (["...", "...", "ll."],) * 2,
+    "happy": (["...", ".l.", "l.l"],) * 2,
+    "half": (["...", "ll.", "pp."],) * 2,
+    "sad": (["l..", "pg.", "pp."], [".l.", "pg.", "pp."]),
+    "cross": ([".l.", "pg.", "pp."], ["l..", "pg.", "pp."]),
+}
+
+
+def magpie_face(gap):
+    """The magpies' faces: two beady eyes `gap` apart, a pink cheek beside each and no mouth (the beak
+    is part of the body)."""
+    width = gap + 5
+
+    def grid(eyes, mouth, blush):
+        rows = [list("." * width) for _ in range(3)]
+        for left, part in ((1, MAGPIE_EYES[eyes][0]), (1 + gap, MAGPIE_EYES[eyes][1])):
+            for y, line in enumerate(part):
+                for x, ch in enumerate(line):
+                    if ch != ".":
+                        rows[y][left + x] = ch
+        if blush:
+            rows[2][0] = rows[2][width - 1] = "k"
+        return ["".join(r) for r in rows]
+    grid.width = width
+    return grid
+
+
+# Baby: a round magpie chick, black cap and white front, a stubby beak, wings with a blue sheen, and
+# already a red bow tie
+MAGPIE_BABY = [
+    "................",
+    ".....oooooo.....",
+    "....okkkkkko....",
+    "...okkkkkkkko...",
+    "..okkkkkkkkkko..",
+    "..okkkknnkkkko..",
+    "..okkknnnnkkko..",
+    ".ojkwwwwwwwwkjo.",
+    "ojjwwwrRRrwwwjjo",
+    "ojjwwwwwwwwwwjjo",
+    "oJjwwwwwwwwwwjJo",
+    ".oJwwwwwwwwwwJo.",
+    "..oWWWWWWWWWWo..",
+    "...oooooooooo...",
+    "....nn....nn....",
+]
+MAGPIE_BABY_FACE_TOP, MAGPIE_BABY_FACE_SHIFT = face_place(MAGPIE_BABY, 3, 4, 9)
+MAGPIE_BABY_TAGS = body_tags(MAGPIE_BABY, 10, 8, flat_rows=3)
+# Glintlet, the child: upright, the long tail cocked up behind it, a white front, a red bow tie and a
+# little wand with a star
+GLINTLET = dots([
+    "oo........................",
+    "ojjo......................",
+    "oJjjo.....oooooo.......s..",
+    ".oJjjo..ookkkkkkoo....sys.",
+    "..oJjjookkkkkkkkkko....s..",
+    "...oJjokkkkkkkkkkkko...Y..",
+    "....oJokkkkkkkkkkkko...Y..",
+    ".....ookkkkkkkkkkkko...Y..",
+    "......okkkknnnnkkkko..nY..",
+    ".......okkkknnkkkko..onn..",
+    "......ookkkkkkkkkkoo.on...",
+    ".....owwkwwrRRrwwkwwoo....",
+    "....owwjowwwwwwwwojwwo....",
+    "....ojjjowwwwwwwwojjjo....",
+    "....ojJjowwwwwwwwojJjo....",
+    "....ojJJowwwwwwwwoJJjo....",
+    "....oJJJowwwwwwwwoJJJo....",
+    ".....oJJoWWWWWWWWoJJo.....",
+    "......oooooooooooooo......",
+    ".........nn....nn.........",
+], {(23, 2): "T", (22, 3): "T", (23, 3): "t", (24, 3): "T", (23, 4): "T"})
+GLINTLET_FACE_TOP, GLINTLET_FACE_SHIFT = face_place(GLINTLET, 5, 8, 11)
+GLINTLET_TAGS = body_tags(GLINTLET, 14, 13, flat_rows=3)
+
+# Glintrick: a stage magician. A tall top hat with a red band, a long cape lined in red, a white shirt
+# front with gold buttons, a monocle that glints, a wand with a sparkling star and a long tail
+# shimmering blue and green. She is the troublemaker who comes to steal.
+GLINTRICK_PALETTE = MAGPIE_PALETTE
+GLINTRICK = [
+    "............oooooooo............",
+    "............okkkkkKo............",
+    "............okkkkkKo.........s..",
+    "............okkkkkKo........sys.",
+    "............okkkkkKo.........s..",
+    "............orrrrrRo.........Y..",
+    "..........oookkkkkkooo.......Y..",
+    "oo........oooooooooooo.......Y..",
+    "ojjo.....okkkkkkkkkkkko......Y..",
+    "oJjjo...okkkkkkkkkkyykko.....Y..",
+    ".oJjjo..okkkkkkkkkykkyko....nY..",
+    "..oJjjo.okkkkkkkkkykkyko...onn..",
+    "...oJjjookkkkknnnnkyyYko..on....",
+    "....oJJo.okkkkknnkkkkYo..on.....",
+    "......oorrokkkkkkkkkkorron......",
+    ".....orrRRowwwwwwwwwwoRRrro.....",
+    "....orrRRojjwwwwwwwwjjoRRrro....",
+    "...orrRRRojjwwwyywwwjjoRRRrro...",
+    "...orRRRRojjwwwwwwwwjjoRRRRro...",
+    "..orrRRRRojJwwwwwwwwJjoRRRRrro..",
+    "..orRRRRRoJJwwwyywwwJJoRRRRRro..",
+    "..orRRRRRoJJwwwwwwwwJJoRRRRRro..",
+    ".orrRRRRRoJJwwwwwwwwJJoRRRRRrro.",
+    ".orRRRRRRoJJWWWWWWWWJJoRRRRRRro.",
+    ".oRRRRRRRooJWWWWWWWWJooRRRRRRRo.",
+    "..ooooooo.oooooooooooo.ooooooo..",
+    "............nn....nn............",
+    "...........nnn....nnn...........",
+]
+GLINTRICK_FACE_TOP, GLINTRICK_FACE_SHIFT = face_place(GLINTRICK, 9, 10, 13)
+GLINTRICK_TAGS = species_tags([GLINTRICK, drop_rows(GLINTRICK, 18)], 18, 16)
+glintrick_face_grid = magpie_face(8)
+GLINTRICK_FACE_PALETTE = MAGPIE_FACE_PALETTE
+
+
+def magpie_card(pip):
+    """A playing card seen from the front, with its pip."""
+    return ["ooooo", "owwwo", "ow" + pip + "wo", "owwwo", "owwWo", "ooooo"]
+
+
+# Cardwing: the magician of cards. The line's idea has changed its body: its wings and its tail are
+# fans of playing cards, the tail's showing their faces and the wings' their red backs, raised wide.
+CARDWING_PALETTE = MAGPIE_PALETTE
+MAGPIE_CARD_BACK = ["ooooo", "orRro", "oRrRo", "orRro", "oRrRo", "orRro", "ooooo"]
+CARDWING = ["." * 32] * 26
+for _x, _y, _pip in ((5, 5, "k"), (22, 5, "k"), (9, 2, "r"), (18, 2, "r"), (12, 0, "k"), (15, 0, "r")):  # the tail
+    CARDWING = overlay(CARDWING, magpie_card(_pip), (_x, _y))
+for _x, _y in ((0, 10), (27, 10), (2, 12), (25, 12), (4, 14), (23, 14)):  # the wings
+    CARDWING = overlay(CARDWING, MAGPIE_CARD_BACK, (_x, _y))
+CARDWING = overlay(CARDWING, [
+    "....oooooooo....",
+    "..ookkkkkkkkoo..",
+    ".okkkkkkkkkkkko.",
+    "okkkkkkkkkkkkkko",
+    "okkkkkkkkkkkkkko",
+    "okkkkkkkkkkkkkko",
+    "okkkkknnnnkkkkko",
+    ".okkkkknnkkkkko.",
+    "..okkkkkkkkkko..",
+    ".owwwwrRRrwwwwo.",
+    "owwwwwwwwwwwwwwo",
+    "owwwwwwwwwwwwwwo",
+    "owwwwwwwwwwwwwwo",
+    "owwwwwwwwwwwwwwo",
+    ".oWWWWWWWWWWWWo.",
+    "..oooooooooooo..",
+    "....nn....nn....",
+    "...nnn....nnn...",
+], (8, 8))
+CARDWING_FACE_TOP, CARDWING_FACE_SHIFT = face_place(CARDWING, 11, 10, 13)
+CARDWING_TAGS = species_tags([CARDWING, drop_rows(CARDWING, 20)], 20, 16)
+cardwing_face_grid = magpie_face(8)
+CARDWING_FACE_PALETTE = MAGPIE_FACE_PALETTE
+
+# Illusionna (secret): the great illusionist, the biggest of the line. Her cape has grown into a stage
+# curtain that rises behind her head and falls wide to the ground, with gold stars and a gold fringe;
+# a tall hat with a moon on it, and three glowing orbs circling the star of her raised wand. The orbs
+# glow at night.
+ILLUSIONNA_PALETTE = MAGPIE_PALETTE | {"v": (110, 50, 160), "V": (70, 30, 110), "c": (110, 240, 220),
+                                       "C": (40, 150, 140), "p": (255, 140, 180), "P": (200, 80, 130),
+                                       "f": (255, 255, 255)}
+ILLUSIONNA = ["." * 32] * 32
+ILLUSIONNA = overlay(ILLUSIONNA, [  # the curtain
+    "........oooooooooooooooo........",
+    "......oorRrRrRrRrRrRrRrRoo......",
+    ".....orRrRrRrRrRrRrRrRrRrRo.....",
+    "....orRrRyRrRrRrRrRrRrRyRrRo....",
+    "...orRrRrRrRrRrRrRrRrRrRrRrRo...",
+    "...orRrRrRrRrRrRrRrRrRrRrRrRo...",
+    "..orRyRrRrRrRrRrRrRrRrRrRrRyRo..",
+    "..orRrRrRrRrRrRrRrRrRrRrRrRrRo..",
+    "..orRrRrRrRrRrRrRrRrRrRrRrRrRo..",
+    ".orRrRrRrRrRrRrRrRrRrRrRrRrRrRo.",
+    ".orRrRrRrRrRrRrRrRrRrRrRrRrRrRo.",
+    ".oyYyYrRrRrRrRrRrRrRrRrRrRyYyYo.",
+    ".orRyRrRrRrRrRrRrRrRrRrRrRrRyRo.",
+    "orRrRrRrRrRrRrRrRrRrRrRrRrRrRrRo",
+    "orRrRrRyRrRrRrRrRrRrRrRrRyRrRrRo",
+    "orRrRrRrRrRrRrRrRrRrRrRrRrRrRrRo",
+    "orRrRrRrRrRrRrRrRrRrRrRrRrRrRrRo",
+    "oyRrRrRrRrRrRrRrRrRrRrRrRrRrRrYo",
+    "oyYyYyYyYyYyYyYyYyYyYyYyYyYyYyYo",
+    ".y.Y.y.Y.y.Y.y.Y.y.Y.y.Y.y.Y.y..",
+], (0, 11))
+ILLUSIONNA = overlay(ILLUSIONNA, [  # the hat, with a moon
+    "....oooooooo....",
+    "....okkkkkKo....",
+    "....okkkyyKo....",
+    "....okkykkKo....",
+    "....okkykkKo....",
+    "....okkkyyKo....",
+    "....okkkkkKo....",
+    "....orrrrrRo....",
+    "..ookkkkkkkkoo..",
+    "..oooooooooooo..",
+], (8, 0))
+ILLUSIONNA = overlay(ILLUSIONNA, [  # head, white front, wings
+    ".okkkkkkkkkkkko.",
+    "okkkkkkkkkkkkkko",
+    "okkkkkkkkkkkkkko",
+    "okkkkkkkkkkkkkko",
+    "okkkkknnnnkkkkko",
+    ".okkkkknnkkkkko.",
+    "..okkkkkkkkkko..",
+    "ojowwwrRRrwwwojo",
+    "ojjowwwwwwwwojjo",
+    "ojjowwwyywwwojjo",
+    "oJjowwwwwwwwojJo",
+    "oJJowwwyywwwoJJo",
+    "oJJowwwwwwwwoJJo",
+    "oJJowwwwwwwwoJJo",
+    ".oJoWWWWWWWWoJo.",
+    "..oooooooooooo..",
+    "....nn....nn....",
+    "...nnn....nnn...",
+], (8, 10))
+ILLUSIONNA = overlay(ILLUSIONNA, [  # the wand, raised, the three orbs going round its star
+    "...cc.....",
+    "..cfcC....",
+    "..cCCC.yy.",
+    "...CC.yfyY",
+    ".pp...yYYY",
+    "pfpP.s.YY.",
+    "pPPPsys...",
+    ".PP..s....",
+    ".....Y....",
+    "....nY....",
+    "...onn....",
+    "..on......",
+], (21, 0))
+ILLUSIONNA_FACE_TOP, ILLUSIONNA_FACE_SHIFT = face_place(ILLUSIONNA, 11, 10, 13)
+ILLUSIONNA_TAGS = species_tags([ILLUSIONNA, drop_rows(ILLUSIONNA, 23)], 23, 16)
+illusionna_face_grid = magpie_face(8)
+ILLUSIONNA_FACE_PALETTE = MAGPIE_FACE_PALETTE
+
+MAGPIE_LINES = (("magpie", "glintlet", magpie_face(4), magpie_face(6)),)
+MAGPIE_FORMS = (("glintrick", FACES), ("cardwing", FACES), ("illusionna", FACES))
+
+
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
     "food_full": ["...fffff...", "..fffffFf..", ".fffffffFf."],
@@ -7685,6 +7978,8 @@ TRIP_TAGS = {
     "seed": [(["..l.", ".tt.", "tTTt", ".tt."], 1000)],
     # a bed of moss with a few leaves tucked in at the edges; the egg sits in it (scene.NEST_X)
     "nest": [(["ll.............l", "GglgGgglgGglgglG", ".GgGglGgGgGlgGG.", "..GGtGGGGGGtGG.."], 1000)],
+    # the magpie's top hat, upturned, with her egg in it, in place of the nest (core/src/magpie.ts)
+    "tophat": [(["xxxxxxxxxxxxxx", ".XxxxxxxxxxxX.", ".rrrrrrrrrrrR.", ".XxxxxxxxxxxX.", "..XXXXXXXXXX.."], 1000)],
     # a friend's gift, wrapped, until it is unwrapped (scene.GIFT_X); then what was in it, held up
     "gift": [(["..y.y..", "...Y...", "rrryrrr", "yyyyyyy", "rrryrrr", "RRRyRRR"], 1000)],
     # What the pet eats is a mouthful it can be seen eating: 6–8 pixels (docs/gameplay.md, *Sizes of things next to the pet*)
@@ -8245,6 +8540,7 @@ FOE_TAGS = {
 # The two areas behind the mountain (core/src/trip.ts): what stands along the path, the finds, the
 # opponents and the guardians. Sand for the coast; the ruins are built of the stone grays.
 TRIP_PALETTE |= {"z": (230, 205, 145), "Z": (185, 150, 95)}
+TRIP_PALETTE |= {"x": (40, 42, 58), "X": (26, 27, 38)}  # the magpie's top hat
 
 
 def pad_top(grid, height):
@@ -9040,6 +9336,16 @@ KEEPSAKES = {
         "..sssss..",
         ".SSSSSSS.",
         "SSSSSSSSS"],
+    # magpie: a little box of treasures, its lid open: gold, a pearl and a red stone
+    "trinketbox": [
+        ".TTTTTTT.",
+        "TtttttttT",
+        ".TyYfrRT.",
+        "TYyywfryT",
+        "TTTTyTTTT",
+        "TtttYtttT",
+        "TtttttttT",
+        "TTTTTTTTT"],
 }
 
 TRIP_TAGS |= {name: [(grid, 1000)] for name, grid in KEEPSAKES.items()}
@@ -9586,7 +9892,7 @@ def main():
         write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
                     faceShift=globals()[f"{name}_FACE_SHIFT"])
         write_sheet(f"{line}_faces", face_sheet(face_grid, face_palette))
-    for line, child, baby_faces, child_faces in ADVENTURE_LINES + FESTIVAL_LINES + COAST_LINES:
+    for line, child, baby_faces, child_faces in ADVENTURE_LINES + FESTIVAL_LINES + COAST_LINES + MAGPIE_LINES:
         upper, name = line.upper(), child.upper()
         palette, face_palette = globals()[f"{upper}_PALETTE"], globals()[f"{upper}_FACE_PALETTE"]
         write_sheet(f"{line}_baby_body", body_sheet(globals()[f"{upper}_BABY_TAGS"],
@@ -9596,7 +9902,7 @@ def main():
         write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
                     faceShift=globals()[f"{name}_FACE_SHIFT"])
         write_sheet(f"{line}_faces", face_sheet(child_faces, face_palette))
-    for name, faces in WATER_FORMS + GRANDMA_FORMS + ADVENTURE_FORMS + FESTIVAL_FORMS + COAST_FORMS:
+    for name, faces in WATER_FORMS + GRANDMA_FORMS + ADVENTURE_FORMS + FESTIVAL_FORMS + COAST_FORMS + MAGPIE_FORMS:
         upper = name.upper()
         write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
                     faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])
