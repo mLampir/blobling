@@ -171,6 +171,8 @@ Every guardian has been sitting on a rare egg:
 | Stream | Ripplesprite | **duck egg** |
 | Cave | Gloompeep | **ember egg** |
 | Mountain | Frostfluff | **penguin egg** |
+| Coast | Barkguard | **octopus egg** |
+| Ruins | Rustknight | **gargoyle egg** |
 
 A guardian leaves its egg behind the first time a pet gets past it, so every
 pet can earn each of them once. A pet that got past a guardian before that
@@ -210,6 +212,12 @@ is the only way to a cloud egg.
 
 In the cave live the two adults of the bat line (below): Umbrabat, and more
 rarely Batbeat. A friend of theirs is the only way to a bat egg.
+
+At the coast lives Teacrab, the first adult of the crab line, and more rarely
+Inkasso of the octopus line; in the ruins Sir Thimble of the mouse line, a
+knight at home in the castle, and more rarely Gargard of the gargoyle line.
+So the octopus and the gargoyle, whose eggs the two guardians behind the
+mountain sit on, can be found without them too.
 
 The ember, duck, beak, bear and penguin lines have no wild pets: their eggs
 come from guardians. A pet of one of them with a slime for a friend
@@ -252,7 +260,7 @@ Two lines hatch from eggs that come up on the fishing line
 
 | Water | Egg |
 |---|---|
-| The pond in the garden, and the stream | **crab egg** |
+| The pond in the garden, the stream and the sea at the coast | **crab egg** |
 | The lake in the cave | **axolotl egg** |
 
 An egg is a rare catch, but it can't be missed: after fifteen catches at a
@@ -1283,8 +1291,7 @@ rolls over the opponent while the towers fire sand.
 <details>
 <summary>Show how to get it</summary>
 
-Three trips to the coast while it is a child. The coast is an area still to
-come; until then this form can't be reached. This rule goes before the others
+Three trips to the coast while it is a child. This rule goes before the others
 of the line. While the child is on its way there, its hint color is sandstone.
 
 </details>

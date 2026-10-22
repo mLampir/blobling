@@ -1,10 +1,12 @@
 // Sprite sheets, and what the scene does to a sprite: recolor, tint, outline.
 
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import { Image } from "../src/image";
 import { Sheet, faceAnchor, outline, recolor, swapColors, tint } from "../src/sprites";
+import { FOES, MOVES } from "../src/battle";
 import { EDIBLE } from "../src/food";
 import { ITEMS } from "../src/home";
 import { readSheets } from "../../pi/src/assets";
@@ -124,5 +126,22 @@ test("sheets: things next to the pet keep their sizes (docs/gameplay.md)", () =>
   for (const hat of hats) {
     assert.ok(trip.has(`${hat}_small`), hat);
     assert.ok(trip.image(hat).width >= 10 && trip.image(hat).width > trip.image(`${hat}_small`).width, hat);
+  }
+});
+
+test("sheets: every opponent and every find can be drawn, and a look of its own is for a move it makes", () => {
+  const trip = sheets["trip"];
+  for (const foe of Object.keys(FOES)) {
+    assert.ok(trip.has(`foe_${foe}`), foe);
+  }
+  const tags: string[] = JSON.parse(readFileSync("app/pet/assets/trip.json", "utf-8")).meta.frameTags
+    .map(({ name }: { name: string }) => name);
+  for (const tag of tags.filter((name) => name.startsWith("foe_"))) {
+    const [, foe, look] = tag.split("_");
+    assert.ok(foe in FOES, tag);
+    assert.ok(look === undefined || look === "beaten" || look in MOVES, tag);
+  }
+  for (const item of Object.keys(ITEMS).filter((name) => ["deco", "hat", "food"].includes(ITEMS[name]))) {
+    assert.ok(trip.has(item) || trip.has(`hat_${item}`), item);
   }
 });

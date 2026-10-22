@@ -438,7 +438,9 @@ function visit(sim: Sim, profile: Profile, plan: Planned, rng: Random, weekday: 
   }
   if (c.trip > 0 && s.stage !== "baby" && rng.random() < c.trip) {
     // a trip first, while it is fit for one; the games wait until it is back
-    const area = [...trip.AREAS].reverse().find((name) => trip.unlocked(s, name))!;
+    // the furthest area whose guardian is still waiting (behind the mountain the path forks), else the furthest
+    const open = trip.AREAS.filter((name) => trip.unlocked(s, name));
+    const area = [...open].reverse().find((name) => !s.guardians.includes(name)) ?? open.at(-1)!;
     if (s.stats.satiety < 70) {
       sim.act("feed", { item: "meal" });
     }

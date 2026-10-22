@@ -29,6 +29,7 @@ import * as sky from "./sky";
 import { faceAnchor, outline, recolor, swapColors, tint, wideRow, type Sheet } from "./sprites";
 import * as stars from "./stars";
 import { moonPhase, sunTimes } from "./sun";
+import { lowTide, tide } from "./trip";
 
 export const FPS = 10;
 export const SLEEP_FPS = 4;
@@ -251,6 +252,26 @@ const HAT_SPOTS: Record<string, HatSpot> = {
   "adult:mirrorleon": [-8, 3, 0, true], "adult:pharabug": [5, 10, 1],
   "child:octopus": [-4, 3, 0], "adult:inkasso": [0, 6, 0, true], "adult:fountaingle": [5, 1, 0],
 };
+const LIT_NEAR = ["torch"]; // things along the path that glow by themselves at night
+// The coast: sand, the sea in front, the dunes behind; at low tide the beach is wider (trip.tide)
+const BEACH: Color = [228, 202, 140];
+const WET_SAND: Color = [185, 160, 110];
+const SEA: Color = [40, 105, 175];
+const SURF: Color = [225, 240, 250];
+const DUNE: readonly [Color, Color] = [[205, 180, 120], [120, 150, 70]]; // the sand of the dunes, their grass
+const SHORE_ROWS = [1, 5] as const; // rows of beach in front of the path at high and at low water
+const BEACH_MUSSEL: Color = [65, 80, 140];
+const MUSSEL_LIP: Color = [235, 225, 245];
+const GULL: Color = [235, 235, 240];
+const GULLS = 3;
+// The ruins: an old castle wall with battlements behind the path, a tower with its bell now and
+// then, and torches that glimmer in the evening
+const CASTLE: readonly [Color, Color] = [[110, 106, 118], [82, 78, 92]]; // stone, and the joints and shadows
+const CASTLE_IVY: Color = [55, 115, 60];
+const TOWER_BELL: Color = [235, 185, 60];
+const COBBLE: Color = [52, 47, 45];
+const TORCH_LIT = 0.3; // from this much dark on, the torches on the wall burn
+const FLAME: readonly [Color, Color] = [[255, 150, 40], [255, 225, 110]];
 // Trip: grass, soil, what stands along the path (null = nothing) and what passes by behind it, per area
 const TRAVEL: Record<string, readonly [Color, Color, readonly (string | null)[], string]> = {
   meadow: [GRASS, SOIL, ["tuft", "flower_red", "tuft", "flower_white", "flower_blue", null, null], "bushes"],
@@ -261,6 +282,10 @@ const TRAVEL: Record<string, readonly [Color, Color, readonly (string | null)[],
     "bushes"],
   cave: [[95, 95, 115], [45, 45, 60], ["stalagmite", "rock", "gem", "rock", null, null], "cave"],
   mountain: [[225, 235, 245], [120, 125, 140], ["pine", "snowrock", "drift", "pine", null, null], "peaks"],
+  // the sea washes up where the soil is elsewhere, as far as the tide brings it (drawShore)
+  coast: [BEACH, SEA, ["beachgrass", "shell", "pebble", "beachgrass", "driftwood", null, null], "dunes"],
+  // moss between the cobbles of the old castle yard
+  ruins: [[95, 125, 70], [72, 66, 62], ["rubble", "ivy", "torch", "column", "rubble", null, null], "castle"],
 };
 TRAVEL[festival.AREA] = TRAVEL.meadow; // the festival is on the meadow
 // The trick festival (festival.ts): pennants on a string across the sky, the stage the pet stands
@@ -309,7 +334,7 @@ const FOE_X = 41; // left edge of the opponent
 const GUARDIAN_X = 37; // a guardian is twice as wide
 const FOE_REACH = 14; // how far its move carries it towards the pet
 const GUARDIAN_REACH = 8;
-const FOE_HOVER: Record<string, number> = { bumblebop: 6, echoflit: 7, duskwisp: 5 }; // opponents that fly
+const FOE_HOVER: Record<string, number> = { bumblebop: 6, echoflit: 7, duskwisp: 5, jellybrella: 3, drapeghost: 3 }; // opponents that fly or float
 const BALL_SECONDS = 6; // how long an opponent takes to run after the ball
 const SMALL_HEART: Bitmap = [[255, 70, 110], ["X.X", "XXX", ".X."]];
 const WILD_X = 33; // left edge of a wild pet the pet shows its tricks to (played back like a scuffle)
@@ -1505,6 +1530,7 @@ export class PetScene {
   private readonly cloudCache = new Map<string, Image>();
   private readonly dimCache = new Map<string, Image>();
   private scroll = 0.0; // how far the landscape has scrolled past on the trip so far
+  private water = GROUND; // where the pet's line goes into the water on a trip: the bank, or at the coast the sea as far as the tide is out
   private arriveFor: number | null = null;
   private readonly foeCache = new Map<string, Image>();
   private moon = 0.5; // the phase of the moon right now (Lunarock's moonstone)
@@ -1577,7 +1603,7 @@ export class PetScene {
     if (trip) {
       const [grass, soil] = TRAVEL[trip.area];
       this.drawGround(img, grass, soil);
-      this.drawTravel(img, trip, dt);
+      this.drawTravel(img, trip, dt, t, seconds);
     } else if (indoors) {
       this.drawRoom(img, view, t);
     } else {
@@ -4596,11 +4622,11 @@ export class PetScene {
         lift = reach * 16;
       } else if (move === "curl") {
         away = Math.trunc(t * 8) % 2 === 1; // rolls
-        look = reach > 0.05 ? "curl" : null;
       }
       if (this.foeFrozen === "dazed") {
         away = Math.trunc(t * 3) % 2 === 1; // it looks this way and that
       }
+      look = reach > 0.05 ? move : null; // some have a look of their own for a move (foe_<name>_<move>)
       if (q > 0.5 && !frozen) {
         if (landed) {
           const own = result === "special" ? pose.form[1] : "";
@@ -5185,10 +5211,10 @@ export class PetScene {
       this.facing = 1;
       if (trip.event_age < FISH_BITE) {
         pose.face = Math.trunc(t) % 4 === 0 ? "blink" : "smile";
-        pose.rod = [Math.round(this.x) + SPRITE + 4, GROUND, false];
+        pose.rod = [Math.round(this.x) + SPRITE + 4, this.water, false];
       } else if (trip.event_age < FISH_BITE + 0.6) {
         Object.assign(pose, { face: "eat_open", body: "stretch" });
-        pose.rod = [Math.round(this.x) + SPRITE + 4, GROUND, true];
+        pose.rod = [Math.round(this.x) + SPRITE + 4, this.water, true];
       } else {
         this.cheer(pose, t);
         pose.found = trip.item;
@@ -6050,7 +6076,7 @@ export class PetScene {
   }
 
   /** Landscape on a trip: trees or bushes in the back, whatever lines the path in front. */
-  private drawTravel(img: Image, trip: TripView, dt: number): void {
+  private drawTravel(img: Image, trip: TripView, dt: number, t: number, seconds: number): void {
     if (!PetScene.pausing(trip)) {
       this.scroll += TRAVEL_SPEED * dt * (trip.returning ? -1 : 1);
     }
@@ -6063,13 +6089,34 @@ export class PetScene {
     const dim = 0.45 + 0.55 * (1 - this.night);
     const area = trip.area;
     const [, , near, far] = TRAVEL[area];
+    this.water = GROUND;
     const offset = this.scroll / 2;
+    if (area === "coast" && this.night < 0.5) {
+      this.drawGulls(img, t);
+    }
     let first = Math.floor(offset / FAR_STEP) - 1;
     for (let slot = first; slot < first + Math.floor(this.width / FAR_STEP) + 3; slot++) {
       // what stands where is the same every time the pet comes past
       const rng = new Random(slot * 7919 + 1);
       let x = Math.round(slot * FAR_STEP - offset) + rng.randint(-5, 5);
-      if (far === "trees") {
+      if (far === "castle") {
+        this.drawCastle(img, Math.round(slot * FAR_STEP - offset), rng, dim, t);
+      } else if (far === "dunes") {
+        // low dunes of sand, beach grass on their tops
+        const h = rng.randint(6, 11);
+        const w = rng.randint(28, 40);
+        const height = (cx: number) => Math.round(h * Math.sqrt(Math.max(0, 1 - ((cx - x - w / 2) / (w / 2)) ** 2)));
+        for (let cx = x; cx <= x + w; cx++) {
+          img.rectangle(cx, GROUND - height(cx), cx, GROUND, dimmed(DUNE[0], dim));
+        }
+        for (let i = 0; i < 3; i++) {
+          const gx = x + rng.randint(6, w - 6);
+          const top = GROUND - height(gx);
+          img.point(gx, top - 1, dimmed(DUNE[1], dim));
+          img.point(gx - 1, top - 2, dimmed(DUNE[1], dim));
+          img.point(gx + 1, top - 2, dimmed(DUNE[1], dim));
+        }
+      } else if (far === "trees") {
         const h = rng.randint(22, 30);
         const w = rng.randint(11, 15);
         const trunk = Math.floor(w / 2);
@@ -6108,13 +6155,136 @@ export class PetScene {
         img.hline(x + 5, x + 6, GROUND + 7, light);
       }
     }
+    if (area === "coast") {
+      this.drawShore(img, dim, t, seconds);
+    } else if (area === "ruins") {
+      // the cobbles of the castle yard, passing with the path
+      const joint = dimmed(COBBLE, dim);
+      for (let row = 0; GROUND + 3 + 3 * row < this.height; row++) {
+        const y = GROUND + 3 + 3 * row;
+        img.hline(0, this.width - 1, y, joint);
+        for (let x = mod(-Math.round(this.scroll) + 3 * row, 6) - 6; x < this.width; x += 6) {
+          img.point(x, y - 1, joint);
+          img.point(x, y - 2, joint);
+        }
+      }
+    }
     first = Math.floor(this.scroll / NEAR_STEP) - 1;
     for (let slot = first; slot < first + Math.floor(this.width / NEAR_STEP) + 3; slot++) {
       const rng = new Random(slot * 104729 + 2);
       const name = rng.choice(near);
       if (name) {
-        this.stand(img, this.dimmedSprite(name), Math.round(slot * NEAR_STEP - this.scroll) + rng.randint(0, 5),
-          -(FLOATING[name] ?? 0));
+        this.stand(img, this.dimmedSprite(name, t, LIT_NEAR.includes(name)),
+          Math.round(slot * NEAR_STEP - this.scroll) + rng.randint(0, 5), -(FLOATING[name] ?? 0));
+      }
+    }
+  }
+
+  /**
+   * The beach in front of the path at the coast: as much of it is dry as the tide leaves (trip.tide),
+   * a line of foam where the waves run up, and mussels on the wet sand at low tide.
+   */
+  private drawShore(img: Image, dim: number, t: number, seconds: number): void {
+    const water = tide(seconds); // 1 at high water
+    const dry = Math.round(SHORE_ROWS[0] + (1 - water) * (SHORE_ROWS[1] - SHORE_ROWS[0]));
+    const edge = GROUND + 2 + dry; // the first row of the sea
+    this.water = edge + 1;
+    img.rectangle(0, GROUND + 2, this.width - 1, edge - 1, dimmed(BEACH, dim));
+    img.hline(0, this.width - 1, edge - 1, dimmed(WET_SAND, dim));
+    const wave = Math.round(Math.sin(t * 1.3)); // the waves run up and back
+    const foam = dimmed(SURF, dim);
+    const scroll = Math.round(this.scroll);
+    for (let x = 0; x < this.width; x++) {
+      const k = mod(x + scroll, 11);
+      if (k < 7) {
+        img.point(x, edge + (k < 2 || k > 5 ? 1 : 0) - (wave > 0 && k > 1 && k < 6 ? 1 : 0), foam);
+      }
+    }
+    const light = dimmed(WATER_LIGHT, dim);
+    for (let x = mod(-scroll, 9) - 9; x < this.width; x += 9) {
+      if (edge + 3 < this.height) {
+        img.hline(x + 2, x + 4, edge + 3, light);
+      }
+    }
+    if (lowTide(seconds)) {
+      // the sea has gone out: mussels lie on the wet sand
+      const mussel = dimmed(BEACH_MUSSEL, dim);
+      const pearl = dimmed(MUSSEL_LIP, dim);
+      for (let x = mod(-scroll, 17) - 17; x < this.width; x += 17) {
+        img.hline(x + 5, x + 7, edge - 2, mussel);
+        img.point(x + 5, edge - 2, pearl);
+        img.hline(x + 12, x + 13, edge - 1, mussel);
+      }
+    }
+  }
+
+  /** Gulls sailing over the coast, flapping now and then. */
+  private drawGulls(img: Image, t: number): void {
+    const color = GULL;
+    for (let i = 0; i < GULLS; i++) {
+      const x = mod(Math.round(t * (3 + i) + i * 29), this.width + 12) - 6;
+      const y = STATUS_HEIGHT + 6 + i * 5 + Math.round(Math.sin(t * 0.7 + i) * 2);
+      const up = Math.trunc(t * 3 + i) % 3 === 0;
+      img.point(x, y, color);
+      img.point(x - 1, y - (up ? 1 : 0), color);
+      img.point(x + 1, y - (up ? 1 : 0), color);
+      img.point(x - 2, y - (up ? 2 : 1), color);
+      img.point(x + 2, y - (up ? 2 : 1), color);
+    }
+  }
+
+  /**
+   * A stretch of the old castle wall behind the path, starting at x: battlements on top or broken
+   * off, ivy hanging down, now and then a tower with its bell, and a torch that burns in the evening.
+   */
+  private drawCastle(img: Image, x: number, rng: Random, dim: number, t: number): void {
+    const [stone, joint] = [dimmed(CASTLE[0], dim), dimmed(CASTLE[1], dim)];
+    const h = rng.randint(13, 19);
+    const top = GROUND - h;
+    const broken = rng.random() < 0.3; // a stretch whose battlements have fallen: a jagged top
+    for (let jx = x; jx < x + FAR_STEP; jx++) {
+      img.rectangle(jx, top + (broken ? mod(jx * 7 + h, 5) % 3 : 0), jx, GROUND, stone);
+    }
+    for (let y = top + 3; y < GROUND; y += 4) { // the joints between the stones
+      img.hline(x, x + FAR_STEP - 1, y, joint);
+      for (let jx = x + ((y - top) % 8 === 3 ? 2 : 6); jx < x + FAR_STEP; jx += 8) {
+        img.point(jx, y + 1, joint);
+        img.point(jx, y + 2, joint);
+      }
+    }
+    if (!broken) {
+      for (let mx = x; mx < x + FAR_STEP; mx += 6) { // battlements
+        img.rectangle(mx, top - 3, mx + 2, top - 1, stone);
+      }
+    }
+    if (rng.random() < 0.3) { // a tower, with the bell in its window
+      const tx = x + rng.randint(6, 12);
+      const tt = GROUND - rng.randint(28, 32);
+      img.rectangle(tx, tt, tx + 10, GROUND, stone);
+      for (let mx = tx; mx <= tx + 10; mx += 4) {
+        img.rectangle(mx, tt - 3, mx + 2, tt - 1, stone);
+      }
+      img.rectangle(tx + 4, tt + 3, tx + 6, tt + 7, joint);
+      img.point(tx + 5, tt + 2, joint);
+      img.hline(tx + 4, tx + 6, tt + 6, dimmed(TOWER_BELL, dim));
+      img.point(tx + 5, tt + 5, dimmed(TOWER_BELL, dim));
+    }
+    if (rng.random() < 0.6) { // ivy hanging over the top
+      const ix = x + rng.randint(1, FAR_STEP - 6);
+      const ivy = dimmed(CASTLE_IVY, dim);
+      for (let i = 0; i < 4; i++) {
+        img.rectangle(ix + i, top - 1, ix + i, top + [3, 6, 2, 4][i], ivy);
+      }
+    }
+    if (rng.random() < 0.5) { // a torch on the wall
+      const fx = x + rng.randint(4, FAR_STEP - 4);
+      const fy = top + 5;
+      img.rectangle(fx, fy, fx, fy + 3, dimmed([90, 60, 35], dim));
+      if (this.night >= TORCH_LIT) {
+        const flicker = Math.trunc(t * 6 + fx) % 2;
+        img.point(fx, fy - 1, FLAME[0]);
+        img.point(fx, fy - 2 - flicker, FLAME[1]);
+        img.point(fx - 1 + flicker * 2, fy - 1, FLAME[0]);
       }
     }
   }

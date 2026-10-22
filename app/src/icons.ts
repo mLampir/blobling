@@ -72,6 +72,7 @@ const THINGS: Record<string, string[]> = {
   watercress: ["trip:watercress"],
   glowberry: ["trip:glowberry"],
   pinenut: ["trip:pinenut"],
+  bread: ["trip:bread"],
   // food from fishing
   mussel: ["trip:mussel"],
   seagrass: ["trip:seagrass"],

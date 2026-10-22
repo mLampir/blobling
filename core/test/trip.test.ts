@@ -106,13 +106,46 @@ test("trip refused", () => {
   assert.deepEqual(pet.recent.trip ?? [], []);
 });
 
-test("areas open one after the other", () => {
-  assert.deepEqual(trip.AREAS.map((area) => trip.unlocked(pet, area)), [true, false, false, false, false]);
+test("areas open one after the other, and behind the mountain the path forks", () => {
+  assert.deepEqual(trip.AREAS.map((area) => trip.unlocked(pet, area)), [true, false, false, false, false, false, false]);
   pet.guardians = ["meadow", "forest"];
-  assert.deepEqual(trip.AREAS.map((area) => trip.unlocked(pet, area)), [true, true, true, false, false]);
+  assert.deepEqual(trip.AREAS.map((area) => trip.unlocked(pet, area)), [true, true, true, false, false, false, false]);
   assert.deepEqual(act(pet, "trip", start, { item: "cave" }), [false, "locked"]);
   assert.deepEqual(act(pet, "trip", start, { item: "stream" }), [true, null]);
   assert.equal(pet.trip!.guardian, "ripplesprite");
+  // past the mountain both the coast and the ruins are open, and neither one needs the other
+  pet.guardians = ["meadow", "forest", "stream", "cave", "mountain"];
+  assert.deepEqual(trip.AREAS.map((area) => trip.unlocked(pet, area)), Array(7).fill(true));
+  assert.deepEqual([trip.blockedBy("coast"), trip.blockedBy("ruins")], ["mountain", "mountain"]);
+  pet.guardians.push("ruins");
+  assert.equal(trip.guardianWaiting(pet, "coast"), "barkguard");
+  assert.equal(trip.guardianWaiting(pet, "ruins"), null);
+  assert.equal(trip.discoveries(pet, "coast")[0].id, "egg_octopus"); // Barkguard sits on the octopus egg
+  assert.equal(trip.discoveries(pet, "ruins")[0].id, "egg_gargoyle"); // and Rustknight on the gargoyle's
+});
+
+test("the tide at the coast comes and goes with the clock, and low tide brings more mussels", () => {
+  const high = Math.ceil(start / trip.TIDE_PERIOD) * trip.TIDE_PERIOD; // high water
+  assert.ok(trip.tide(high) > 0.99 && !trip.lowTide(high));
+  assert.ok(trip.lowTide(high + trip.TIDE_PERIOD / 2)); // about six hours later
+  assert.ok(!trip.lowTide(high + trip.TIDE_PERIOD)); // and high again after about twelve
+  const share = (t: number) => {
+    let mussels = 0;
+    let finds = 0;
+    for (let i = 0; i < 400; i++) {
+      pet.items = {};
+      Object.assign(pet.stats, { satiety: 100, energy: 100 });
+      const planned = trip.plan(pet, "coast", t + i * 7);
+      pet.trip = { ...planned, factor: 1 };
+      const [events] = trip.step(pet, planned.stations[0], null);
+      for (const [action, item] of events) {
+        finds += action === "find" ? 1 : 0;
+        mussels += action === "find" && item === "mussel" ? 1 : 0;
+      }
+    }
+    return mussels / finds;
+  };
+  assert.ok(share(high + trip.TIDE_PERIOD / 2 - 3000) > 1.4 * share(high - 3000));
 });
 
 test("each area shows what is still to discover there once", () => {

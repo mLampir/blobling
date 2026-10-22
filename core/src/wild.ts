@@ -13,8 +13,9 @@
  * Some visits bring a gift. It lies in one spot until somebody unwraps it, and no new one comes
  * while it is there. Mostly it is a fruit for the bag; rarely a seed.
  *
- * Lines whose egg a guardian gives (trip.GUARDIAN_EGGS) have no wild pets, so that egg stays
- * special.
+ * Lines whose egg one of the first five guardians gives (trip.GUARDIAN_EGGS) have no wild pets, so
+ * that egg stays special. Behind the mountain it is the other way round: the octopus and the
+ * gargoyle live where their guardian is, rarely, so that their lines can be found without it too.
  */
 
 import * as care from "./care";
@@ -32,6 +33,8 @@ export const WILD: Record<string, readonly (readonly [string, number, sky.Precip
   stream: [["bouldergrin", 3, null], ["glimmerock", 1, null], ["lillypot", 2, null], ["steamo", 1, null]],
   cave: [["umbrabat", 3, null], ["batbeat", 1, null]],
   mountain: [["rumblefluff", 3, "rain"], ["prismist", 1, null]], // the thundercloud only comes out in the rain
+  coast: [["teacrab", 3, null], ["inkasso", 1, null]],
+  ruins: [["sirthimble", 3, null], ["gargard", 1, null]], // the little knight is at home in the castle
 };
 export const MISSING_WEIGHT = 3; // a line the home has long been missing (state.missing_lines): its wild pets come this much more often
 export const MEET_CHANCE = 0.2; // how often a wild pet is at a station, while the pet is looking for a friend

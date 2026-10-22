@@ -216,6 +216,16 @@
       "away": "out on the mountain",
       "trip": "Trip to the mountain 🎒"
     },
+    "coast": {
+      "name": "Coast",
+      "away": "out at the coast",
+      "trip": "Trip to the coast 🎒"
+    },
+    "ruins": {
+      "name": "Ruins",
+      "away": "out in the ruins",
+      "trip": "Trip to the ruins 🎒"
+    },
     "festival": {
       "name": "Trick festival",
       "away": "at the trick festival",
@@ -240,7 +250,15 @@
     "mosswart": "Mosswart",
     "ripplesprite": "Ripplesprite",
     "gloompeep": "Gloompeep",
-    "frostfluff": "Frostfluff"
+    "frostfluff": "Frostfluff",
+    "snatchgull": "Snatchgull",
+    "jellybrella": "Jellybrella",
+    "starcurl": "Starcurl",
+    "ratwatch": "Ratwatch",
+    "drapeghost": "Drapeghost",
+    "ivycurl": "Ivycurl",
+    "barkguard": "Barkguard",
+    "rustknight": "Rustknight"
   },
   "items": {
     "seed_berry": "Berry seed",
@@ -256,6 +274,7 @@
     "watercress": "Watercress",
     "glowberry": "Glow berry",
     "pinenut": "Pine cone",
+    "bread": "Castle bread",
     "flag": "Pennant",
     "windmill": "Pinwheel",
     "lantern": "Lantern",
@@ -277,6 +296,8 @@
     "lily": "Water lily",
     "batears": "Bat ears",
     "edelweiss": "Edelweiss",
+    "sailor": "Sailor cap",
+    "knight": "Knight's helmet",
     "egg_blob": "Slime egg",
     "egg_ember": "Ember egg",
     "egg_stone": "Stone egg",
@@ -293,6 +314,12 @@
     "mussel": "Mussel",
     "seagrass": "Seagrass",
     "boot": "Old boot",
+    "lifering": "Life ring",
+    "sandcastle": "Sandcastle",
+    "bottle": "Message in a bottle",
+    "banner": "Banner",
+    "arch": "Stone arch",
+    "bell": "Bell",
     "egg_crab": "Crab egg",
     "egg_axolotl": "Axolotl egg",
     "egg_mouse": "Mouse egg",
@@ -714,6 +741,7 @@
       "house_3": "made the cabin into a real house 🏠",
       "mussel": "Mussel 🐚",
       "seagrass": "Seagrass 🌿",
+      "bread": "Castle bread 🍞",
       "fish_cast": "went fishing at the pond 🎣",
       "fish_catch": "caught something: {item} 🎣",
       "fish_early": "pulled the line in too early",

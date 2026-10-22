@@ -115,16 +115,26 @@ export const FOES: Record<string, readonly [string, string, number, Comes]> = {
   tumblesnow: ["mountain", "curl", 4, null],
   craghorn: ["mountain", "charge", 4, null],
   duskwisp: ["mountain", "pounce", 5, "dusk"],
-  // Guardians: one per area, waiting at the end of the path. They get tougher from area to area.
+  snatchgull: ["coast", "pounce", 4, null],
+  jellybrella: ["coast", "curl", 5, "rain"],
+  starcurl: ["coast", "curl", 4, null],
+  ratwatch: ["ruins", "charge", 4, null],
+  drapeghost: ["ruins", "pounce", 5, "dusk"],
+  ivycurl: ["ruins", "curl", 4, null],
+  // Guardians: one per area, waiting at the end of the path. They get tougher from area to area;
+  // the two behind the mountain are as tough as each other.
   crowcomb: ["meadow", "pounce", 4, null],
   mosswart: ["forest", "curl", 5, null],
   ripplesprite: ["stream", "charge", 6, null],
   gloompeep: ["cave", "pounce", 7, null],
   frostfluff: ["mountain", "charge", 8, null],
+  barkguard: ["coast", "charge", 9, null],
+  rustknight: ["ruins", "curl", 9, null],
 };
-// Area: its guardian. Only getting past it opens the way to the next area.
+// Area: its guardian. Only getting past it opens the way to the areas behind it (trip.BEHIND).
 export const GUARDIANS: Record<string, string> = {
   meadow: "crowcomb", forest: "mosswart", stream: "ripplesprite", cave: "gloompeep", mountain: "frostfluff",
+  coast: "barkguard", ruins: "rustknight",
 };
 export const FAVORITE_MOVE = 0.6; // how often an opponent makes its favorite move
 export const WEATHER_FOE = 2; // an opponent that only comes out in some weather or at dusk is this much more likely then
