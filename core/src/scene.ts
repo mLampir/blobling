@@ -1607,8 +1607,10 @@ export class PetScene {
     if (pose.rod && !pose.hidden) {
       this.drawRod(img, x, y + top, pose.rod, t);
     }
-    if (!pose.hidden && !pose.cover && pose.fade === 1 && (pose.pack || (view.backpack && !pose.egg && pose.body !== "sleep" && pose.scale === 1))) {
-      // Backpack: hangs at the pet's lower back – at home until it has been unpacked
+    const onStage = trip?.area === festival.AREA && PetScene.meeting(trip);
+    if (!pose.hidden && !pose.cover && pose.fade === 1 && !onStage
+        && (pose.pack || (view.backpack && !pose.egg && pose.body !== "sleep" && pose.scale === 1))) {
+      // Backpack: hangs at the pet's lower back – at home until it has been unpacked; off on the festival stage
       const [left, right] = this.reach(...pose.form);
       const size = PACKS.find(([narrower]) => right - left < narrower)?.[1] ?? "backpack_11";
       const pack = this.sheet("trip").image(size);
