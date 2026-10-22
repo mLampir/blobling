@@ -1,4 +1,4 @@
-// Wild pets: making friends, visits, gifts, and the nest.
+// Wild pets: making friends, visits, gifts, and the egg a friend brings.
 
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
@@ -55,8 +55,7 @@ test("only an adult without a friend is looking", () => {
   // a friend that hasn't built a nest yet, or as many friends as it can have
   const old = { species: "sneezle", visits: 0, next: 0, nests: 1 };
   const changes = [{ stage: "child" }, { friends: [{ species: "sneezle", visits: 0, next: 0 }] },
-    { friends: Array(wild.MAX_FRIENDS).fill(old) }, { nest: { line: "blob" } },
-    { eggs: Array(home.MAX_EGGS).fill({ line: "blob" }) }];
+    { friends: Array(wild.MAX_FRIENDS).fill(old) }, { nest: { line: "blob" } }];
   for (const change of changes) {
     const other = copy(change);
     assert.equal(wild.looking(other), false, JSON.stringify(change));
@@ -212,7 +211,8 @@ test("after the nest the friend stays, comes less often, and after a rest there 
   wild.step(pet, resting, true);
   assert.deepEqual([friend.visits, pet.nest], [wild.VISITS_FOR_NEST - 1, null]);
   assert.ok(pet.stats.mood > mood);
-  // after it, they do again
+  // after it, they do again (once the first egg has left the bag)
+  pet.eggs = [];
   const later = start + wild.NEST_REST;
   friend.until = later;
   assert.deepEqual(wild.step(pet, later, true), [["nest", pet.nest!.line]]);
@@ -259,56 +259,38 @@ test("a pet saved with one friend keeps it", () => {
   assert.deepEqual(fromDict({ ...saved, friend: null }).friends, []);
 });
 
-test("the egg is of either line", () => {
+test("the egg a friend brings is always of its own line", () => {
   pet.species = "flarelet";
-  const lines = new Set<string>();
-  for (let i = 0; i < 40; i++) {
-    const other = copy();
-    other.friends = [{ species: "sneezle", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
-    wild.step(other, start + i * 60, true);
-    lines.add(other.nest!.line);
-  }
-  assert.deepEqual(lines, new Set(["blob", "ember"]));
-});
-
-test("a friend of the stone line can bring its egg into the home", () => {
-  const lines = new Set<string>();
-  for (let i = 0; i < 40; i++) {
-    const other = copy();
-    other.friends = [{ species: "bouldergrin", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
-    wild.step(other, start + i * 60, true);
-    lines.add(other.nest!.line);
-    if (other.nest!.line === "stone") {
-      act(other, "collect", start + i * 60 + 60);
-      assert.deepEqual(other.eggs.at(-1)!.line, "stone");
-      assert.equal(home.eggOf("stone"), "egg_stone");
+  for (const [species, line] of [["sneezle", "blob"], ["bouldergrin", "stone"], ["filchfox", "fox"],
+    ["rumblefluff", "cloud"]]) {
+    const lines = new Set<string>();
+    for (let i = 0; i < 20; i++) {
+      const other = copy();
+      other.friends = [{ species, visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
+      wild.step(other, start + i * 60, true);
+      lines.add(other.nest!.line);
     }
+    assert.deepEqual(lines, new Set([line]), species);
   }
-  assert.deepEqual(lines, new Set(["blob", "stone"]));
+  // and it goes into the home like any other egg
+  const other = copy();
+  other.friends = [{ species: "bouldergrin", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start }];
+  wild.step(other, start, true);
+  act(other, "collect", start + 60);
+  assert.deepEqual([other.eggs.at(-1)!.line, other.eggs.at(-1)!.from], ["stone", "Puff"]);
 });
 
-test("a friend of the fox line can bring its egg into the home", () => {
-  const lines = new Set<string>();
-  for (let i = 0; i < 40; i++) {
-    const other = copy();
-    other.friends = [{ species: "filchfox", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
-    wild.step(other, start + i * 60, true);
-    lines.add(other.nest!.line);
-  }
-  assert.deepEqual(lines, new Set(["blob", "fox"]));
-  assert.equal(home.eggOf("fox"), "egg_fox");
-});
-
-test("a friend of the cloud line can bring its egg into the home", () => {
-  const lines = new Set<string>();
-  for (let i = 0; i < 40; i++) {
-    const other = copy();
-    other.friends = [{ species: "rumblefluff", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
-    wild.step(other, start + i * 60, true);
-    lines.add(other.nest!.line);
-  }
-  assert.deepEqual(lines, new Set(["blob", "cloud"]));
-  assert.equal(home.eggOf("cloud"), "egg_cloud");
+test("while the bag holds as many eggs of the friend's line as there may be, its egg waits", () => {
+  const other = copy();
+  other.eggs = Array(home.MAX_EGGS).fill({ line: "stone" });
+  other.friends = [{ species: "bouldergrin", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start }];
+  wild.step(other, start, true);
+  assert.equal(other.nest, null);
+  assert.equal(other.friends[0].visits, wild.VISITS_FOR_NEST);
+  other.eggs = [{ line: "blob" }, { line: "blob" }, { line: "blob" }]; // other lines don't take its room
+  other.friends[0].until = start + 3600;
+  wild.step(other, start + 3600, true);
+  assert.equal(other.nest!.line, "stone");
 });
 
 test("some visits bring a gift, and only one lies there at a time", () => {

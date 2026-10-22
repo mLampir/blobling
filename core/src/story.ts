@@ -147,8 +147,10 @@ function piece(event: PetEvent, t: Translate): Piece | null {
     case "found":
       // something small it found at home: a fruit or a seed
       return make("found", 3, { thing: item.startsWith("fruit_") ? t(`fruits.${item.slice(6)}`) : t(`items.${item}`) });
-    case "nest":
+    case "nest": // a friend brought its egg (wild.ts)
       return make("nest", 8);
+    case "laid": // its own egg (brood.ts)
+      return make("laid", 8);
     case "wild":
       return make(`wild_${outcome}`, 6, { pet: t(`species.${name}`) });
     case "battle":

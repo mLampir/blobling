@@ -219,25 +219,43 @@ which adult it becomes. Everything else works the same for it.
 Some lines have no guardian's egg: the only way to them is a friend of that
 line (see [Friends](#friends)). [pets.md](pets.md) has the lines, folded shut.
 
-An adult can also lay an egg of its own, once it has made a friend (see
-[Friends](#friends)). Such an egg carries an **heirloom**: a quarter of each
-battle stat its parent had when the egg was laid. Whatever hatches from it
-starts with that instead of zero.
+An adult can also come by an egg itself: a friend brings one of its family
+(see [Friends](#friends)), and an adult that is close to you lays one of its
+own (see [Its own egg](#its-own-egg)). Such an egg carries an **heirloom**: a
+quarter of each battle stat of the pet that watched over it, as they were
+when the egg came. Whatever hatches from it starts with that instead of zero.
 
 There are two ways to a new egg:
 
 - **Brood** an egg: a tap on it in the bag. That works at any time,
   whatever stage the current pet is in. An egg is kept until you do; it is
-  never lost, and up to nine are kept.
+  never lost, and up to three of each line are kept. Eggs of one line lie
+  on one tile (×2, ×3); a tap broods the one a pet has passed on the most to.
 - **Start over with a usual egg**, with a tap on the pet's name. There is always one of
   those, and it starts from zero.
 
 **What stays, and what doesn't.** Everything the pets have found belongs to
 the home and stays: seeds, decorations, hats and eggs, the decorations that
 are set out, the plant and the house. That includes what is still in the backpack, an
-egg in the nest and a gift that hasn't been unwrapped. The new pet itself starts from zero: its stats, tricks, bond,
+egg in the bed of moss and a gift that hasn't been unwrapped. The new pet itself starts from zero: its stats, tricks, bond,
 friend and the areas it knows the way to; and its training too, apart from
 the heirloom of its egg.
+
+### Its own egg
+
+An adult with a strong bond (four hearts or more) counts its **good days**:
+a day counts if its mood, over the time it was awake at home that day, was
+60 or more on average (and it was at home for an hour at least). The days
+need not follow each other. A day at Grandma's or on a trip all day doesn't
+count.
+
+After five good days, the next morning it wakes up at home, an **egg of its
+own line** lies in the bed of moss next to it, where a friend's egg lies too,
+with its heirloom. It is collected the same way. While an egg is still lying
+there, or there are three eggs of its line in the bag already, it waits for a
+later morning. After an
+egg it rests for two weeks (time at Grandma's doesn't count); then the good
+days count again from nothing.
 
 ### Several pets at home
 
@@ -312,6 +330,41 @@ with the display out of reach, the app shows only the phone's own pets.
 - **Copies from before pets could move** (the same pet on the phone and at the
   display) are asked about once: you pick the real one, and the other moves
   into the album.
+
+### The yard
+
+With two pets or more at home, the street ends in a yard, right of the last
+house. It belongs to the home, like the store, and the pictures at the top get
+one more for it; a tap there pans over, a tap on a pet pans back.
+
+- **A trough** comes with the yard, full. **A water basin** is found once at
+  the stream and comes full as well. Both hold portions, not time.
+- **The pets go by themselves.** When a pet's satiety is down to 50 and the
+  trough has a portion, or its hygiene is down to 50 and the basin has water,
+  it hops off at the edge of its garden, as soon as it is awake, at home and
+  not busy (no trip, no game, no training, not at Grandma's). In the yard it
+  eats one portion (+30 satiety) or splashes about once (+30 hygiene), or
+  both, and comes home again: a minute or two. If the camera is on
+  that pet, it pans along to the yard and back; two pets there at the same
+  time eat or bathe side by side.
+- **About three portions a day** is what a pet takes from each. The sizes
+  are meant for: small, 2 pets for 2 days (12 portions); medium, 3 pets for
+  4 days (36); large, 4 pets for a week (84). Trough and basin show how full
+  they are (empty, low, half, full), and a bigger size is a bigger trough.
+- **A tap on the trough or the basin** in the yard fills it up.
+- **While the trough has portions**, satiety doesn't drop below 50; **while
+  the basin has water**, hygiene doesn't; **while both have something**, mood
+  doesn't drop below 40. Looked after, not happy: what was already lower isn't
+  lifted.
+- **It isn't feeding.** Eating at the trough doesn't count as being fed by
+  you: no care diary, no bond, no favorite food.
+- **Bigger:** once the guardian of the coast has been got past and its egg
+  brought home, driftwood planks can be found there, and old castle planks in
+  the ruins after the same. Each makes the yard one size bigger; the basin
+  comes at the size the yard has when it is found.
+
+It all follows the simulation, minute by minute for all pets together, so who
+gets the last portion is the same whether anybody is looking or not.
 
 ## Tricks
 
@@ -578,6 +631,11 @@ cave and on the mountain. Inside the cave there is no sky and no weather.
 - **The ruins:** an old castle with ivy on its walls, battlements and a bell
   in its tower. In the evening the torches burn.
 
+Three finds are for the [yard](#the-yard): the water basin at the stream, and
+the planks at the coast and in the ruins, which only turn up once the area's
+guardian has been got past and its egg has been brought home. The guardian
+itself only gives the egg.
+
 ## Opponents
 
 At roughly every third stop on a trip, somebody is in the way:
@@ -648,7 +706,7 @@ a ▶.
 ### Friends
 
 Not everybody on a trip is in the way. An adult that has no friend yet, or
-whose friends have all built a nest with it (see below), sometimes meets a
+whose friends have all brought it an egg (see below), sometimes meets a
 **wild pet**, a grown-up of some line that lives out there.
 There is no scuffle: the pet shows three of its tricks, and the wild pet
 watches.
@@ -684,22 +742,23 @@ the ground, wrapped, and it stays there until you tap it; no
 new one comes while it is lying there. Mostly there is a fruit in it, of the
 same kinds as the plant's, and it goes into the bag (if there are three of it
 already, the pet eats it straight away). Rarely it is a seed, as long as there are fewer than nine of that
-kind. The visit that builds the nest brings no gift; the egg is the present
-then.
+kind. The visit that brings the egg brings nothing else; the egg is the
+present then.
 
-After five visits that counted, the two build a **nest**, and an egg lies in
-it. The egg is of the pet's own line or of the friend's, and it carries the
-pet's heirloom (see [Growing up](#growing-up)). The egg waits in the nest until
-you tap it; then it is in the bag, to be brooded whenever
-you like. While the nest is full, or there are nine eggs already, the next nest
-waits.
+After five visits that counted, the friend **brings an egg** of its own
+family and entrusts it to the pet: it lays it in a **bed of moss** and leaves.
+The egg is always of the friend's line. The pet watches over it, and so the
+egg carries the pet's heirloom (see [Growing up](#growing-up)). The egg waits
+in its bed of moss until you tap it; then it is in the bag, to be brooded
+whenever you like. While an egg is still lying there, or there are three eggs
+of the friend's line in the bag already, the next one waits.
 
 The friend **stays** after that. It comes less often, about once a day, still
-plays and still brings a gift now and then. For two weeks after a nest its
-visits don't count; after that, five more that count build the next nest. So a
+plays and still brings a gift now and then. For two weeks after an egg its
+visits don't count; after that, five more that count bring the next egg. So a
 friend brings an egg about every three weeks at most.
 
-Once all its friends have built a nest with it, the pet can make another friend
+Once all its friends have brought it an egg, the pet can make another friend
 on a trip, up to three. They come one at a time, never straight after each
 other.
 
@@ -716,8 +775,7 @@ Which guest comes for what is in [pets.md](pets.md), folded shut.
 Once something draws a guest, it first **peeks over the fence** for a few
 hours, at the right edge of the garden. Then it comes in, and from then on it
 is a friend like one from a trip: it visits, plays, brings gifts and, after
-five visits that count, builds a nest. Its egg is always of its own line;
-that is what it came for. A guest comes to a pet only once, one at a time, and
+five visits that count, brings an egg of its own line, like every friend. A guest comes to a pet only once, one at a time, and
 doesn't take the place of a friend from a trip. A pet that is still a baby or
 a child gets guests too.
 
@@ -814,7 +872,7 @@ counts too, so it also has something to tell in the morning.
 
 The pet tells it as a little story in its own words, a paragraph for each
 day (the last three at most): up to three sentences, the things that matter
-most (growing up, a nest, a new way, a friend, a scuffle) before the small
+most (growing up, an egg, a new way, a friend, a scuffle) before the small
 ones (a fruit, the ball), told in the order they happened. Rain or snow while
 it was alone opens the day ("It rained in the morning, so I sat under my
 umbrella"). If it was at Grandma's, her postcard says how long it stayed
@@ -857,6 +915,10 @@ pet on the phone, it is the same as if it had been running.
   fetched.
 - After that it stays at least a day and a half again, even if nobody does
   anything with it.
+- **The yard** keeps the pets at home: none of them goes while the trough and
+  the basin both have something and no need is critical. Once one of them has
+  run empty, the day and a half counts from then, if that is later than the
+  last time somebody did something with it.
 
 You can also take it there yourself, before a holiday or a busy week: the
 *Trip* tab has **Take to Grandma's** (from the baby on, while it is awake, at
@@ -960,7 +1022,8 @@ keep its own pet or connect to a Pi; the README explains how.
 | The trick festival: its days, the show, the points, the jury, the prizes | `core/src/festival.ts` |
 | Treasure maps and digging, the diggers by nature (`DIGGERS`) | `core/src/digging.ts` |
 | What is eaten from the bag, each form's favorite and dislike, and what food from trips leaves in the pet | `core/src/food.ts` |
-| Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
+| Wild pets, friends, visits, their gifts, the egg a friend brings and the heirloom | `core/src/wild.ts` |
+| The pet's own egg: good days, the egg in the morning, the rest after it | `core/src/brood.ts` |
 | Guests in the garden: what draws them, peeking over the fence | `core/src/garden.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | A scuffle (or a show at the trick festival) watched again in the app | `app/src/replay.ts` |
@@ -974,12 +1037,13 @@ keep its own pet or connect to a Pi; the README explains how.
 | Catching up, the state for the app, what is saved, pets in the album (kept frozen, and coming home again), the album (seen, had, mastered) and its safety net (`longMissing`) | `core/src/pet.ts`, `core/src/state.ts` |
 | Several pets at home: the houses, the shared store, places for a new egg | `core/src/pet.ts` (`PLACES`, `newEgg`, `bringBack`) |
 | Neighbours getting together, sleeping side by side, copying tricks | `core/src/companion.ts` |
+| The yard: trough and basin, portions, sizes and upgrades, the visits and the floors; all pets stepped together | `core/src/yard.ts`, `core/src/model.ts` (`advanceTogether`), `renderYard` in `core/src/scene.ts` |
 | Moving between a phone and a display: move numbers, the sealed copy, fetching back | `core/src/pet.ts` (`release`, `adopt`, `handOver`, `takeIn`, `fetchBack`), `app/src/main.ts` |
 | The camera panning along the street (panel and app), and which pet the panel shows | `core/src/street.ts`, `pi/src/display.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
-| Preview of the scene on a PC, pictures for [pets.md](pets.md) | `tools/pet_preview.ts` (`npm run preview`) |
-| Checking the values: pets played for weeks with owners of different kinds | `tools/balance.ts` (`npm run balance`) |
+| Preview of the scene on a PC, pictures for [pets.md](pets.md), the yard | `tools/pet_preview.ts` (`npm run preview`, `-- --yard`) |
+| Checking the values: pets played for weeks with owners of different kinds; pets left alone with the yard | `tools/balance.ts` (`npm run balance`, `-- --yard`) |
 | The phone app: the page, and where its pet lives (on the phone or on the Pi) | `app/pet.html`, `app/src/` |
 | The Pi's side: web server, display loop, save file | `pi/src/` |
 
@@ -1134,7 +1198,7 @@ next to the same things looks small and sweet, which is fine.
 | What it carries over itself | at least as wide as its body: chosen per form | the umbrella (`UMBRELLAS` in `core/src/scene.ts`) |
 | What it carries on its back | about a third of its width: chosen per form | the backpack (`PACKS`) |
 | What it wears | about half the child's width (13–17 pixels); a baby wears a small one (`hat_*_small`) | hats |
-| What it sits at or goes into | about as wide as the child | the pond |
+| What it sits at or goes into | about as wide as the child | the pond; the trough and the water basin (16, 20 and 24 pixels by size) |
 | What grows | a bush or a herb below the child, a tree or a sunflower above it | the plant |
 | Decorations | 7–12 pixels: things in the garden, not furniture for the pet | the windmill, the snow globe |
 

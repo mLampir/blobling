@@ -29,6 +29,7 @@ import * as sky from "./sky";
 import type { PetState, Replay, Travel, TravelStop, Trip, TripEvent } from "./state";
 import * as sun from "./sun";
 import * as wild from "./wild";
+import * as yards from "./yard";
 
 // The areas in the order in which they open up: each one once the pet has got past the guardian
 // of the area it lies behind (BEHIND, battle.GUARDIANS). Up to the mountain they form one path;
@@ -46,16 +47,16 @@ export const FINDS: Record<string, readonly (readonly [string, number, sky.Preci
   forest: [["seed_cherry", 4, null], ["seed_berry", 2, null], ["glowshroom", 2, null], ["lantern", 1, null],
     ["cap", 2, null], ["hazelnut", 3, null], ["woodpile", 1, null], ["snailshell", 4, "rain"]],
   stream: [["seed_berry", 3, null], ["seed_sunflower", 3, null], ["seed_cherry", 2, null], ["cattail", 2, null],
-    ["lily", 2, null], ["watercress", 3, null], ["pond", 1, null], ["boat", 4, "rain"]],
+    ["lily", 2, null], ["watercress", 3, null], ["pond", 1, null], ["boat", 4, "rain"], ["basin", 2, null]],
   cave: [["seed_cherry", 4, null], ["seed_berry", 3, null], ["seed_herb", 1, null], ["crystal", 2, null],
     ["batears", 2, null], ["emberstone", 2, null], ["glowberry", 3, null]],
   mountain: [["seed_sunflower", 4, null], ["seed_berry", 3, null], ["seed_herb", 1, null], ["cairn", 2, null],
     ["edelweiss", 2, null], ["pinenut", 3, null], ["snowglobe", 1, null], ["snowman", 4, "snow"]],
   // mussels lie on the beach more often at low tide (LOW_TIDE_MUSSELS)
   coast: [["seed_sunflower", 3, null], ["seed_berry", 3, null], ["mussel", 3, null], ["lifering", 2, null],
-    ["sandcastle", 1, null], ["sailor", 2, null], ["bottle", 4, "rain"]],
+    ["sandcastle", 1, null], ["sailor", 2, null], ["bottle", 4, "rain"], ["planks_coast", 2, null]],
   ruins: [["seed_cherry", 4, null], ["seed_berry", 3, null], ["bread", 3, null], ["banner", 2, null], ["arch", 1, null],
-    ["knight", 2, null], ["bell", 4, "rain"]],
+    ["knight", 2, null], ["bell", 4, "rain"], ["planks_ruins", 2, null]],
 };
 // The tide at the coast follows the clock, as it does by the sea: high and low water about every
 // six hours (tide). At low tide more of the beach is dry, and mussels are found this much more often.
@@ -132,13 +133,14 @@ export function guardianWaiting(state: PetState, area: string): string | null {
 }
 
 /**
- * What there is to discover in this area once and for all: the guardian's egg, and the hats and
- * decorations along the path (seeds and food come again and again). `found`: it is at home, so the
- * area won't bring it any more; a thing that moved away with a pet can be found again.
+ * What there is to discover in this area once and for all: the guardian's egg, and the hats,
+ * decorations and things for the yard along the path (seeds and food come again and again).
+ * `found`: it is at home, so the area won't bring it any more; a thing that moved away with a pet
+ * can be found again.
  */
 export function discoveries(state: PetState, area: string): { id: string; found: boolean }[] {
   const egg = GUARDIAN_EGGS[area];
-  const once = FINDS[area].map(([item]) => item).filter((item) => ["hat", "deco"].includes(home.kindOf(item)));
+  const once = FINDS[area].map(([item]) => item).filter((item) => ["hat", "deco", "yard"].includes(home.kindOf(item)));
   return [
     ...(egg ? [{ id: egg, found: state.guardian_eggs.includes(area) }] : []),
     ...once.map((item) => ({ id: item, found: (state.items[item] ?? 0) > 0 })),
@@ -302,6 +304,14 @@ export function putBack(state: PetState, trip: Trip): void {
 }
 
 /**
+ * An upgrade for the yard lies along the path only once the area's guardian has been got past and
+ * has left its egg: the guardian itself gives only the egg.
+ */
+export function canFind(state: PetState, area: string, item: string): boolean {
+  return yards.UPGRADES[area] !== item || (state.guardians.includes(area) && state.guardian_eggs.includes(area));
+}
+
+/**
  * What it finds at this station (or null). Decorations and hats exist only once.
  * `sure`: an opponent it chased off always leaves something behind, if there is anything left.
  */
@@ -312,7 +322,7 @@ function find(state: PetState, trip: Trip, rng: Random, weather: sky.WeatherCode
   }
   const skyNow = sky.precipitation(weather);
   const options = FINDS[trip.area].filter(([item, , only]) =>
-    (only === null || only === skyNow) && home.canAdd(state, item)
+    (only === null || only === skyNow) && home.canAdd(state, item) && canFind(state, trip.area, item)
     && !(trip.found.includes(item) && home.kindOf(item) !== "seed"));
   if (!options.length) {
     return null;

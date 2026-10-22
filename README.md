@@ -36,9 +36,11 @@ a day and also tells you the time and the weather.
   hut of thatch to a whole house, where it sleeps and keeps more decorations.
 - **It makes friends.** A grown-up pet can impress a wild pet with its tricks.
   The friend comes to visit and plays with it, brings a gift now and then, and
-  in time the two lay an egg that passes a part of your pet's training on to
-  the next one. Some guests come to the garden by themselves, when something
-  there draws them; they peek over the fence first.
+  in time entrusts it with an egg of its own family; your pet watches over it
+  and passes a part of its training on to the next one. An adult that is close
+  to you and has had good days lays an egg of its own. Some guests come to the
+  garden by themselves, when something there draws them; they peek over the
+  fence first.
 - **Something going on.** On clear evenings a shooting star falls now and then
   and leaves something in the garden; every second Saturday there is a trick
   festival with a jury of wild pets; and a treasure map from a trip shows
@@ -46,7 +48,9 @@ a day and also tells you the time and the weather.
 - **Up to four live at home.** A new egg doesn't take your favorite away:
   each pet has a house of its own along a street, a tap switches between them,
   and the neighbours get together to play, copy a trick from each other and
-  sleep side by side at night.
+  sleep side by side at night. At the end of the street their shared yard
+  has a trough and, once found, a water basin: the pets go over by themselves
+  when they are hungry or dirty, and a tap fills them up.
 - **It is forgiving.** The pet never dies. Neglect makes it hungry, sad or
   sick, and that can always be fixed. Away for longer, it stays at Grandma's
   until you fetch it, and if you take it there yourself before a busy week,
@@ -364,6 +368,7 @@ npm run build    # the server for the Pi (dist/pi/server.mjs), the app (dist/app
 export LED_MATRIX_BDF_DIR=<path-to>/rpi-rgb-led-matrix/fonts
 npm run preview -- --spoiler-free   # → pet_preview.png
 npm run preview -- play --gif       # → pet_play.gif
+npm run preview -- --yard           # the yard's sizes and levels, and a pet going over → pet_yard.png, pet_yard.gif
 npm run sounds                      # the sound files, from the recipes in tools/sfx.ts → app/pet/sounds/
 npm run balance                     # owners of different kinds play pets for three weeks → the values checked (names forms)
 ```
@@ -498,9 +503,9 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 |---|---|
 | `setup.sh` | Sets up the Pi completely (`--app`: update the app only) |
 | `CONTRIBUTING.md` | How to contribute, and the license (with the app store permission) a contribution comes under |
-| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications |
+| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications, `yard.ts` is the home's shared yard |
 | `pi/src/main.ts` | Entry point on the Pi: panel driver, display loop, web server |
-| `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) and its camera: which pet it shows, panning along the street |
+| `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) and its camera: which pet it shows, panning along the street and over to the yard |
 | `pi/src/web.ts`, `pi/src/network.ts` | Web interface and API, and the check that a request comes from the home network |
 | `pi/src/config.ts`, `pi/src/storage.ts` | `config.ini` and the paths; the pet's save file and the language files |
 | `pi/src/settings.ts` | Language and location as the settings page sets them (`settings.json`), over `config.ini` |
@@ -517,7 +522,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `pi/src/update.ts` | Looks for a newer release and starts the update unit (only on a Pi installed from a release) |
 | `tools/deploy.mjs` | `npm run deploy`: builds the app on the PC, copies it to the Pi and runs the setup there |
 | `tools/serve.mjs` | `npm run app`: the app in the browser of the PC |
-| `tools/balance.ts` | `npm run balance`: plays pets for three weeks in fast-forward with owners of different kinds, through the core, and prints what came of it (stats, calls, stages, trips, guardians, friends); its output names the adult forms |
+| `tools/balance.ts` | `npm run balance`: plays pets for three weeks in fast-forward with owners of different kinds, through the core, and prints what came of it (stats, calls, stages, trips, guardians, friends); its output names the adult forms. `-- --yard`: pets left alone with the yard, what they use up a day and how long each size lasts |
 | `tools/store_shots.ts`, `store/` | `npm run store`: the screenshots for the stores, and their headlines per language |
 | `install.sh` | Downloads a release on the Pi and runs its `setup.sh` (attached to every release) |
 | `tools/package.mjs`, `tools/bundle.mjs` | `npm run package`: the release package; `bundle.mjs` lists the files that go to the Pi, for the package and for `npm run deploy` |

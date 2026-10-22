@@ -187,7 +187,7 @@ test("every activity can be drawn from its start to its end", () => {
     snack: "icecream", trick: "flip:learned", game_turn: "grass:pet", hatch: "egg:blob", evolve: "child:blob",
     plant: "cherry", pick: "cherry", trip_start: "meadow", unpack: "seed_berry,cap,egg_ember", collect: "egg_blob",
     train_strength: "0.80", train_ready: "2.00", train_speed: "0.90", train_show: "left,up,down,right",
-    train_smarts: "4/4",
+    train_smarts: "4/4", yard: "eat,bath",
   };
   for (const [activity, seconds] of Object.entries(ACTIVITY_SECONDS)) {
     const changes: Partial<SceneView> = { activity, activity_item: items[activity] ?? "", stage: "adult", species: "flicker" };
@@ -551,9 +551,9 @@ test("the house: outside on the left, inside while the pet sleeps, and the way i
     // the app finds the house where the scene draws it
     const [x, y, w, h] = houseArea(step).map((part) => Math.round(part * 64));
     const sprite = sheets.house.image(`house_${step}`);
-    assert.deepEqual([x, y, w, h], [0, GROUND + 1 - sprite.height, sprite.width, sprite.height], `step ${step}`);
+    assert.deepEqual([x, y, w, h], [0, GROUND + 2 - sprite.height, sprite.width, sprite.height], `step ${step}`);
     const outside = frames({ house: step }, 1)[0];
-    assert.ok(differing(garden, outside, y, GROUND + 1) > w * h / 3, `step ${step}`);
+    assert.ok(differing(garden, outside, y, GROUND + 2) > w * h / 3, `step ${step}`);
 
     // asleep, the scene shows the room; its window (or the hut's doorway) shows the sky, as outside
     const sky = frames({ asleep: true }, 1, NIGHT)[0];

@@ -341,7 +341,10 @@
     "ribbon_red": "Rote Rosette",
     "fossil": "Fossil",
     "helmet": "Forscherhelm",
-    "treasure_map": "Schatzkarte"
+    "treasure_map": "Schatzkarte",
+    "basin": "Wasserbecken",
+    "planks_coast": "Treibholzbretter",
+    "planks_ruins": "Alte Burgbretter"
   },
   "pack": {
     "ball": "Ball"
@@ -397,6 +400,9 @@
       "inside": "{name} schläft im Haus.",
       "boost_waiting": "{name} hat das letzte noch im Bauch.",
       "nothing_found": "Da liegt nichts.",
+      "no_yard": "Den Hof gibt es erst mit einem zweiten Pet.",
+      "no_basin": "Es gibt noch kein Wasserbecken.",
+      "yard_full": "Das ist schon voll.",
       "dislikes": "{name} dreht den Kopf weg – das bitte nicht!",
       "not_in_bag": "Das ist nicht mehr in der Tasche.",
       "pack_full": "In den Rucksack passen nur zwei Sachen.",
@@ -461,6 +467,7 @@
     "place_replace": "Kommt ins Album",
     "place_replace_egg": "Das Ei macht Platz",
     "look": "Zu {name} wechseln",
+    "look_yard": "Hinüber zum Hof",
     "new_egg_done": "Ein neues Ei liegt bereit 🥚",
     "retire": "📖 Ins Album",
     "retire_which": "Wer soll ins Album?",
@@ -548,7 +555,8 @@
       "guest": "{pet} ist aus dem Garten hereingekommen, jetzt sind wir Freunde.",
       "gift": "{pet} hat mir ein Geschenk mitgebracht!",
       "found": "Ich habe im Gras etwas gefunden und für dich aufgehoben: {thing}.",
-      "nest": "Wir haben zu zweit ein Nest gebaut – und jetzt liegt ein Ei darin!",
+      "nest": "Mein Freund hat mir ein Ei aus seiner Familie gebracht und es in ein Bett aus Moos gelegt, damit ich darauf aufpasse.",
+      "laid": "Ich war in den letzten Tagen so glücklich – und heute Morgen lag ein eigenes Ei im Moos!",
       "wild_friend": "Ich habe {pet} meine Tricks gezeigt, und jetzt sind wir Freunde.",
       "wild_shrug": "Ich habe {pet} meine Tricks gezeigt, aber {pet} war nicht beeindruckt.",
       "battle_win": "{foe} wollte mit mir raufen, aber ich war stärker!",
@@ -689,7 +697,8 @@
       "visit": "{pet} kam zu Besuch",
       "peek": "{pet} schaute über den Zaun 👀",
       "guest": "{pet} kam aus dem Garten und wurde ein Freund 💛",
-      "nest": "hat mit seinem Freund ein Nest gebaut – darin liegt ein Ei 🥚",
+      "nest": "hat von seinem Freund ein Ei bekommen, in einem Bett aus Moos 🥚",
+      "laid": "hat ein eigenes Ei gelegt 🥚",
       "collect": "Ei eingesammelt",
       "gift": "{pet} hat ein Geschenk mitgebracht 🎁",
       "unwrap": "Geschenk ausgepackt: {what}",
@@ -753,7 +762,9 @@
       "show_1": "hat das Trickfest gewonnen 🏆",
       "show_2": "ist beim Trickfest Zweiter geworden 🥈",
       "show_3": "ist beim Trickfest Dritter geworden 🥉",
-      "dig": "hat am roten Kreuz gegraben: {what}"
+      "dig": "hat am roten Kreuz gegraben: {what}",
+      "fill_trough": "Trog aufgefüllt 🌾",
+      "fill_basin": "Wasserbecken aufgefüllt 💧"
     },
     "statistics": {
       "meals": "Mahlzeiten",

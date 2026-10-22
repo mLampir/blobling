@@ -8,6 +8,7 @@
  */
 
 import * as battle from "./battle";
+import * as brood from "./brood";
 import * as care from "./care";
 import * as digging from "./digging";
 import * as festival from "./festival";
@@ -26,6 +27,7 @@ import { STATS, newState, type Egg, type PetState, type Trip } from "./state";
 import { isDark, isFullMoon, sunTimes, type Location } from "./sun";
 import * as trip from "./trip";
 import * as wild from "./wild";
+import * as yards from "./yard";
 
 export const TICK = 60;
 // After a break the simulation catches up at most this far; by then a pet that somebody had
@@ -67,7 +69,7 @@ export const EVENT_LIMIT = 100;
 
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
   "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in", "grandma", "fish",
-  "visit_grandma", "festival", "dig"];
+  "visit_grandma", "festival", "dig", "fill"];
 export const FOODS = ["meal", ...food.EDIBLE];
 export const GAME_MOVES = ["start", ...care.SPOTS]; // start, or look behind a spot
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
@@ -85,6 +87,8 @@ export const ACTIVITY_SECONDS: Record<string, number> = {
   trick: 4, build: 10, throw_meal: THROW_SECONDS + 6, throw_snack: THROW_SECONDS + 4,
   trip_start: 4, trip_home: 4, unpack: 6, plant: 3, pick: 4, collect: 4, unwrap: 4,
   discover: 4, pickup: 4, grandma_go: 5, grandma_home: 4,
+  // off to the yard for a portion; a visit for two takes longer (yard.seconds)
+  yard: yards.seconds("eat"),
   wish: stars.WISH_SECONDS, // a shooting star: it looks up and wishes
   // over to the cross, digging (a digger by nature sooner, see dig), and holding up what it found
   dig: digging.WALK_SECONDS + digging.DIG_SECONDS + digging.SHOW_SECONDS,
@@ -269,11 +273,12 @@ export function wakeUp(state: PetState, t: number, temp: number | null = null): 
 
 /**
  * One minute of simulation, ending at time t. `weather`: WMO code from Open-Meteo, or null;
- * `temp`: the temperature in °C, or null; `location`: where the sun rises and sets.
+ * `temp`: the temperature in °C, or null; `location`: where the sun rises and sets; `yard`: the
+ * home's yard (yard.ts), or null while there is none.
  */
 export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.WeatherCode = null,
-    temp: number | null = null, location: Location = null): void {
-  if (!state.grandma && leavesForGrandma(state, t)) {
+    temp: number | null = null, location: Location = null, yard: yards.Yard | null = null): void {
+  if (!state.grandma && leavesForGrandma(state, t, yard)) {
     goToGrandma(state, t);
   }
   if (state.grandma) {
@@ -295,6 +300,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     return;
   }
 
+  const before = { ...s }; // the yard's floors only stop a need from dropping further
   for (const key of Object.keys(RATES) as (keyof typeof RATES)[]) {
     let rate: number = RATES[key][asleep ? 1 : 0];
     if (rate < 0) {
@@ -388,6 +394,18 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     const napping = !isBedtime(state.sleep_since, bedtime);
     if (!bed && (s.energy >= 95 || (napping && s.energy >= 60 && t - state.sleep_since >= 30 * 60))) {
       wakeUp(state, t, temp);
+      if (!napping) {
+        morning(state, t);
+      }
+    }
+  }
+  if (yard && !state.asleep && !state.trip && t >= state.activity_until && !wild.visiting(state, t)
+      && !care.gameActive(state, t) && !battle.trainingActive(state, t) && !fishing.active(state, t)) {
+    // hungry or dirty enough, and there is something in the yard: it goes over by itself
+    const done = yards.visit(state, yard, t);
+    if (done) {
+      setActivity(state, "yard", t, done);
+      state.activity_until = t + yards.seconds(done);
     }
   }
   if (!state.asleep && !state.trip && t >= state.activity_until && home.wantsFruit(state)) {
@@ -409,7 +427,11 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
       logEvent(state, t, action, "system", { item });
     }
   }
+  if (yard && !state.trip) {
+    yards.floors(state, yard, before);
+  }
   clamp(state);
+  brood.step(state, t, !state.asleep && !state.trip);
 
   life.recordMinute(state, !state.sick && s.satiety >= CRITICAL && s.hygiene >= CRITICAL && s.mood >= CRITICAL);
   const due = life.dueAt(state);
@@ -418,41 +440,81 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   }
 }
 
+/** It has woken up at home after a night: after its good days, its own egg lies in the nest (brood.ts). */
+function morning(state: PetState, t: number): void {
+  const egg = brood.wake(state, t);
+  if (egg) {
+    logEvent(state, t, "laid", "system", { item: egg.line });
+  }
+}
+
 /** Catch the simulation up to `now`. Returns true if anything changed. */
 export function advance(state: PetState, now: number, bedtime: Bedtime, weather: sky.WeatherCode = null,
-    temp: number | null = null, location: Location = null): boolean {
-  if (now < state.updated_at) {
-    // The clock jumped back: don't calculate backwards
-    state.updated_at = now;
-    return true;
-  }
-  let changed = false;
-  const until = Math.min(now, state.updated_at + MAX_CATCH_UP);
-  while (!state.grandma && state.updated_at + TICK <= until) {
+    temp: number | null = null, location: Location = null, yard: yards.Yard | null = null): boolean {
+  const [from, grandma] = [state.updated_at, state.grandma];
+  advanceTogether([state], now, bedtime, weather, temp, location, yard);
+  return state.updated_at !== from || !!state.grandma || state.grandma !== grandma;
+}
+
+/**
+ * Catch all the pets of a home up to `now`, minute by minute in the order of the time (and of their
+ * houses within the same second): what they share in the yard is used up in the order it would
+ * be if they ran non-stop, however often somebody looks. Each catches up at most MAX_CATCH_UP.
+ */
+export function advanceTogether(states: readonly PetState[], now: number, bedtime: Bedtime,
+    weather: sky.WeatherCode = null, temp: number | null = null, location: Location = null,
+    yard: yards.Yard | null = null): void {
+  const ends = states.map((state) => {
+    if (now < state.updated_at) {
+      // The clock jumped back: don't calculate backwards
+      state.updated_at = now;
+      return null;
+    }
+    return Math.min(now, state.updated_at + MAX_CATCH_UP);
+  });
+  for (;;) {
+    let next = -1;
+    states.forEach((state, i) => {
+      if (ends[i] !== null && !state.grandma && state.updated_at + TICK <= ends[i]!
+          && (next < 0 || state.updated_at < states[next].updated_at)) {
+        next = i;
+      }
+    });
+    if (next < 0) {
+      break;
+    }
+    const state = states[next];
     state.updated_at += TICK;
-    tick(state, state.updated_at, bedtime, weather, temp, location);
-    changed = true;
+    tick(state, state.updated_at, bedtime, weather, temp, location, yard);
   }
-  if (!state.grandma && now > until) {
-    // caught up as far as it goes, and still nobody there: Grandma takes it in
-    state.trip = null;
-    goToGrandma(state, state.updated_at);
-  }
-  if (state.grandma) {
-    stayAtGrandmas(state, now);
-    return true;
-  }
-  return changed;
+  states.forEach((state, i) => {
+    if (ends[i] === null) {
+      return;
+    }
+    if (!state.grandma && now > ends[i]!) {
+      // caught up as far as it goes, and still nobody there: Grandma takes it in
+      state.trip = null;
+      goToGrandma(state, state.updated_at);
+    }
+    if (state.grandma) {
+      stayAtGrandmas(state, now);
+    }
+  });
 }
 
 // ---------- At Grandma's ----------
 
 /**
  * Does it go to Grandma's at the time t? When nobody has done anything with it for GRANDMA_AFTER
- * (and it hasn't just come back from her), as soon as it is awake and at home.
+ * (and it hasn't just come back from her), as soon as it is awake and at home. Not while the yard
+ * looks after it (both trough and basin have something, and no need is critical); once one of
+ * them has run empty, the time counts from then if that is later.
  */
-export function leavesForGrandma(state: PetState, t: number): boolean {
-  const since = Math.max(state.seen_at, state.recent.grandma?.at(-1) ?? 0.0);
+export function leavesForGrandma(state: PetState, t: number, yard: yards.Yard | null = null): boolean {
+  if (yard && yards.supplied(yard) && criticalCount(state) === 0) {
+    return false;
+  }
+  const since = Math.max(state.seen_at, state.recent.grandma?.at(-1) ?? 0.0, yard?.empty_at ?? 0.0);
   return since > 0 && t - since >= GRANDMA_AFTER && !state.asleep && !state.trip;
 }
 
@@ -486,6 +548,9 @@ export function stayAtGrandmas(state: PetState, now: number): void {
     if (friend.rest_until !== undefined) {
       friend.rest_until += gap;
     }
+  }
+  if (state.brood.rest_until > state.updated_at) {
+    state.brood.rest_until += gap; // and so does the rest after its own egg
   }
   state.updated_at = Math.max(state.updated_at, now);
 }
@@ -778,6 +843,8 @@ export interface ActionOptions {
   guest?: boolean;
   /** What else belongs to the action (see checkValue). */
   value?: unknown;
+  /** The home's yard (yard.ts), for "fill"; null while there is none. */
+  yard?: yards.Yard | null;
 }
 
 export interface ActionResult {
@@ -797,6 +864,7 @@ const ITEM_CHECKS: Record<string, [() => readonly string[], string]> = {
   deco: [() => home.ids("deco"), "unknown_deco"],
   train: [() => TRAIN_MOVES, "unknown_exercise"],
   fish: [() => FISH_MOVES, "unknown_move"],
+  fill: [() => ["trough", "basin"], "unknown_move"],
 };
 
 /** Carries out an action. An invalid request throws a RequestError. */
@@ -831,6 +899,16 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
     } else {
       logEvent(state, now, action, by, { accepted: false, reason });
     }
+    return { accepted: reason === null, reason };
+  }
+  if (action === "fill") {
+    // the trough or the basin in the yard: it belongs to the home, whatever the pet is doing
+    const yard = options.yard ?? null;
+    const reason = yard ? yards.fill(yard, state.items, item as yards.What) : "no_yard";
+    if (!state.grandma && reason === null) {
+      state.seen_at = now; // somebody is there
+    }
+    logEvent(state, now, action, by, { item, accepted: reason === null, reason });
     return { accepted: reason === null, reason };
   }
   if (state.grandma && !["plant", "wear", "deco", "look_in"].includes(action)) {
@@ -1344,7 +1422,11 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     if (!state.asleep) {
       return "awake";
     }
+    const night = isBedtime(state.sleep_since, bedtime);
     wakeUp(state, now, temp);
+    if (night && !isLateEvening(now, bedtime)) {
+      morning(state, now); // woken in the morning half of the night, or after it
+    }
     if (isBedtime(now, bedtime)) {
       s.mood -= 15; // woken in the middle of the night: grumpy
       state.stay_awake_until = now + STAY_AWAKE_AFTER_WAKE;

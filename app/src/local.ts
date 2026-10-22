@@ -4,7 +4,8 @@
  *
  * The page talks to it with the same requests it sends to the Pi (core/src/api.ts), so it does
  * not need to know which of the two keeps its pet. With several pets, each has a scene of its
- * own, and switching pans along the street to it (core/src/street.ts), as on the panel.
+ * own, and switching pans along the street to it (core/src/street.ts), as on the panel. The yard
+ * after the last house is drawn the same way, when the page looks at it or the pet goes over.
  *
  * While the app is in the background, the pet calls with a notification when it needs somebody
  * (notify.ts).
@@ -22,9 +23,10 @@ import { RequestError } from "../../core/src/model";
 import { MAX_NAME, PLACES, Pet, VERSION, readSave, type Ancestor, type Moving, type Sighting } from "../../core/src/pet";
 import { PetScene } from "../../core/src/scene";
 import { fromDict, type Egg, type PetState } from "../../core/src/state";
-import { pan, panSeconds } from "../../core/src/street";
+import { YARD, pan, panSeconds, place } from "../../core/src/street";
 import { checkLocation, type Location } from "../../core/src/sun";
 import { Weather } from "../../core/src/weather";
+import { readYard, type Yard } from "../../core/src/yard";
 import { sceneAssets } from "./assets";
 import { imageData } from "./canvas";
 import { reminders, type Reminders } from "./notify";
@@ -43,7 +45,10 @@ function savedLocation(): Location {
   }
 }
 
-/** The ancestors and the album, which a home keeps even while it is empty, and the store (finds and eggs) for the next pet. */
+/**
+ * The ancestors and the album, which a home keeps even while it is empty, and the store (finds and
+ * eggs) and the yard for the next pet.
+ */
 interface Album {
   ancestors: Ancestor[];
   album: string[];
@@ -51,6 +56,7 @@ interface Album {
   mastered: string[];
   items?: Record<string, number>;
   eggs?: Egg[];
+  yard?: Yard;
 }
 
 /** What an empty home keeps (Album). */
@@ -63,6 +69,7 @@ interface EmptyHome {
   eggs?: Egg[];
   seen?: Record<string, Sighting>;
   mastered?: string[];
+  yard?: Yard;
 }
 
 export class LocalPet {
@@ -71,8 +78,10 @@ export class LocalPet {
   private rest: Album = { ancestors: [], album: [], seen: {}, mastered: [] };
   private readonly scenes = new Map<string, PetScene>();
   private sceneLocation: Location;
-  /** The pet the scene showed last, and its last frame: where a switch pans from. */
+  /** The pet the scene showed last (or YARD), and its last frame: where a switch pans from. */
   private shown: { id: string; frame: Image } | null = null;
+  /** The page looks at the yard: the scene stays there until it goes to a pet. */
+  private yardOpen = false;
   private panning: { from: Image; steps: number; start: number; seconds: number } | null = null;
   private readonly weather: Weather;
   private timer: ReturnType<typeof setTimeout> | undefined;
@@ -89,6 +98,7 @@ export class LocalPet {
       this.rest = {
         ancestors: [...empty.ancestors ?? []], album: [...empty.album ?? []], seen: { ...empty.seen },
         mastered: [...empty.mastered ?? []], items: { ...empty.items }, eggs: [...empty.eggs ?? []],
+        yard: readYard(empty.yard),
       };
     } else if (saved !== undefined) {
       try {
@@ -182,8 +192,8 @@ export class LocalPet {
       }
       const pet = fromDict({ ...moving.pet, items, eggs: [...this.rest.eggs ?? []] } as unknown as Record<string, unknown>);
       pet.seen_at = Date.now() / 1000;
-      const { ancestors, album, seen, mastered } = this.rest;
-      this.home = this.newHome({ state: pet, ancestors, album, seen, mastered });
+      const { ancestors, album, seen, mastered, yard } = this.rest;
+      this.home = this.newHome({ state: pet, ancestors, album, seen, mastered, yard });
       this.home.save();
     }
     this.draw();
@@ -201,6 +211,7 @@ export class LocalPet {
     this.home.mastered.push(...this.rest.mastered);
     Object.assign(this.home.state.items, this.rest.items);
     this.home.state.eggs.push(...this.rest.eggs ?? []);
+    this.home.yard = readYard(this.rest.yard);
     this.home.save();
     this.draw();
   }
@@ -226,8 +237,8 @@ export class LocalPet {
   private emptied(store: PetState): void {
     if (this.home && !this.home.pets.length) {
       // with the last one gone, the pet that comes next finds the store as it was
-      const { ancestors, album, seen, mastered } = this.home;
-      this.rest = { ancestors, album, seen, mastered, items: store.items, eggs: store.eggs };
+      const { ancestors, album, seen, mastered, yard } = this.home;
+      this.rest = { ancestors, album, seen, mastered, items: store.items, eggs: store.eggs, yard };
       this.home = null;
       const file: EmptyHome = { version: VERSION, pet: null, ...this.rest };
       void this.store.put(PET_KEY, file).catch((error) => console.error("Could not save the pet", error));
@@ -245,7 +256,22 @@ export class LocalPet {
     const store = this.home.state; // finds and eggs, shared by all pets here
     let answer: unknown;
     try {
-      answer = await petRequest(ownTarget(this.pet), method, new URL(path, "http://app"), async () => body ?? null);
+      const pet = this.pet;
+      const target = {
+        ...ownTarget(pet),
+        look: (id: unknown) => {
+          pet.select(id);
+          this.yardOpen = false;
+        },
+        lookYard: () => {
+          this.yardOpen = true;
+        },
+      };
+      const asked = body as { action?: unknown } | undefined;
+      if (path === "/api/pet/action" && asked?.action !== "fill") {
+        this.yardOpen = false; // something done with a pet: the scene goes back to it
+      }
+      answer = await petRequest(target, method, new URL(path, "http://app"), async () => body ?? null);
     } catch (error) {
       if (error instanceof RequestError) {
         throw new Error(this.i18n.t(`error.${error.message}`, { max: MAX_NAME }));
@@ -314,13 +340,15 @@ export class LocalPet {
       if (this.weather.configured && this.weather.needsRefresh()) {
         void this.weather.refresh();
       }
-      const id = this.pet.current;
-      let [frame, next] = this.sceneFor(id).render(this.pet.view(), this.weather.current());
+      const yard = this.atYard() ? this.pet.yardView() : null;
+      const id = yard ? YARD : this.pet.current;
+      let [frame, next] = yard ? this.sceneFor(YARD).renderYard(yard, this.weather.current())
+        : this.sceneFor(id).render(this.pet.view(), this.weather.current());
       if (this.shown && this.shown.id !== id) {
-        // switched: the camera pans along the street from the house it showed
+        // switched: the camera pans along the street from the house it showed (the yard is after the last one)
         const ids = this.pet.pets.map((pet) => pet.id);
-        const from = ids.indexOf(this.shown.id);
-        const steps = from >= 0 ? ids.indexOf(id) - from : 1;
+        const from = place(ids, this.shown.id);
+        const steps = from >= 0 ? place(ids, id) - from : 1;
         this.panning = { from: this.shown.frame, steps, start: performance.now() / 1000, seconds: panSeconds(steps) };
       }
       this.shown = { id, frame };
@@ -343,13 +371,21 @@ export class LocalPet {
     this.timer = setTimeout(() => this.draw(), delay * 1000);
   }
 
-  /** The scene of the pet with this id; the ones of pets that no longer live here go. */
+  /**
+   * Whether the scene shows the yard: the page looks at it, or the pet the camera is on is over
+   * there; only while there is a yard.
+   */
+  atYard(): boolean {
+    return !!this.home && (this.yardOpen || this.home.inYard()) && this.home.yardView() !== null;
+  }
+
+  /** The scene of the pet with this id (or of the yard); the ones of pets that no longer live here go. */
   private sceneFor(id: string): PetScene {
     let scene = this.scenes.get(id);
     if (!scene) {
       const ids = new Set(this.pet.pets.map((pet) => pet.id));
       for (const old of this.scenes.keys()) {
-        if (!ids.has(old)) {
+        if (!ids.has(old) && old !== YARD) {
           this.scenes.delete(old);
         }
       }

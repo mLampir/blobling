@@ -183,11 +183,12 @@ the next, until you tap **brood** next to it.
 
 </details>
 
-## Eggs of its own
+## Eggs from friends
 
-An adult that has made friends with a wild pet lays an egg with it
-([gameplay.md](gameplay.md#friends) has the rules). That egg is of the pet's
-own line or of its friend's, half of the time each.
+A wild pet the pet has made friends with brings it an egg of its own family
+([gameplay.md](gameplay.md#friends) has the rules), so that egg is always of
+the friend's line. An adult that is close to you lays an egg of its own line
+as well ([gameplay.md](gameplay.md#its-own-egg)).
 
 <details>
 <summary>Show which wild pets live where</summary>
@@ -220,8 +221,8 @@ So the octopus and the gargoyle, whose eggs the two guardians behind the
 mountain sit on, can be found without them too.
 
 The ember, duck, beak, bear and penguin lines have no wild pets: their eggs
-come from guardians. A pet of one of them with a slime for a friend
-can still lay an egg of its own line, though.
+come from guardians. A grown-up pet of one of them can still lay an egg of its
+own line, though.
 
 The values are in `core/src/wild.ts`.
 
@@ -231,7 +232,8 @@ The values are in `core/src/wild.ts`.
 
 Four lines live nowhere on a trip: their pets come to the garden when
 something there draws them ([gameplay.md](gameplay.md#guests-in-the-garden)
-has how a guest comes in). A guest's egg is always of its own line.
+has how a guest comes in). A guest's egg is always of its own line, like any
+friend's.
 
 <details>
 <summary>Show which guest comes for what</summary>

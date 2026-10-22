@@ -3,12 +3,21 @@
  * between them moves the camera along the street instead of cutting: the picture of one house
  * slides out and the next one slides in. The Pi does it on the panel (pi/src/display.ts), the app
  * on the phone with the same timing.
+ *
+ * After the last house comes the yard all of them share (yard.ts): the camera goes there and back
+ * the same way, as if it were one more house.
  */
 
 import { Image } from "./image";
 
 export const PAN_SECONDS = 0.8; // to the house next door
 export const PAN_PER_HOUSE = 0.25; // and this much longer for every house it passes on the way
+export const YARD = "yard"; // where the camera is when it shows the yard, in place of a pet's id
+
+/** Where along the street `id` is: the place of its house in `ids`, or the yard after the last one (YARD). */
+export function place(ids: readonly string[], id: string): number {
+  return id === YARD ? ids.length : ids.indexOf(id);
+}
 
 /** How long the camera takes for `steps` houses along the street (negative: back along it). */
 export function panSeconds(steps: number): number {
