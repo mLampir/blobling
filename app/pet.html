@@ -1713,7 +1713,7 @@ function eventText(e) {
     : e.action === "copied" ? t("page.events.copied", {
       trick: trickLabel((e.item || "").split(":")[0]), pet: (e.item || "").split(":").slice(1).join(":") })
     : e.action === "gift" ? t("page.events.gift", { pet: T[`species.${e.item}`] || e.item })
-    : e.action === "nest" || e.action === "collect" ? t(`page.events.${e.action}`)
+    : e.action === "nest" || e.action === "laid" || e.action === "collect" ? t(`page.events.${e.action}`)
     : e.action === "unwrap" ? t("page.events.unwrap", { what: giftLabel(e.item) })
     : e.action === "found" || e.action === "pickup" ? t(`page.events.${e.action}`, { thing: giftLabel(e.item) })
     : e.action === "guardian" ? t("page.events.guardian", { foe: T[`foes.${e.item}`] || e.item })

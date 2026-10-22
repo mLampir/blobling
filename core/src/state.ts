@@ -135,7 +135,7 @@ export interface Egg {
 
 /**
  * A wild pet it has made friends with; `until` is set while it is visiting. `visits` count
- * towards the next nest; `nests`: how many the two have built, `rest_until`: till when visits
+ * towards the next egg it brings; `nests`: how many eggs it has brought, `rest_until`: till when visits
  * don't count yet after the last one (wild.ts).
  */
 export interface Friend {
@@ -147,6 +147,20 @@ export interface Friend {
   rest_until?: number;
   /** A guest the garden drew (garden.ts), not met on a trip. */
   guest?: boolean;
+}
+
+/**
+ * Towards its own egg (brood.ts): the local day being counted (festival.dayOf), its minutes awake
+ * at home and their mood added up, the good days so far, whether the egg is due, and till when it
+ * rests after the last one.
+ */
+export interface Brood {
+  day: number;
+  minutes: number;
+  mood: number;
+  days: number;
+  ready: boolean;
+  rest_until: number;
 }
 
 /** Shooting stars (stars.ts): evenings it has seen one fall, and when the last one did (0 = none yet). */
@@ -276,8 +290,10 @@ export interface PetState {
   friends: Friend[];
   /** What draws guests to the garden (garden.ts). */
   garden: Garden;
-  /** The egg the two have laid, until it is collected. */
+  /** The egg in the bed of moss, brought by a friend (wild.ts) or its own (brood.ts), until it is collected. */
   nest: Egg | null;
+  /** Towards its own egg (brood.ts). */
+  brood: Brood;
   /** What a friend has left behind (wild.giftFrom), until it is unwrapped. */
   gift: string | null;
   /** What it found at home by itself (idle.ts), until somebody picks it up. */
@@ -364,6 +380,7 @@ export function newState(): PetState {
     friends: [],
     garden: { plants_done: 0, play_days: [], rain_at: 0.0, peeking: null },
     nest: null,
+    brood: { day: 0, minutes: 0, mood: 0, days: 0, ready: false, rest_until: 0.0 },
     gift: null,
     found: null,
     boosts: [],

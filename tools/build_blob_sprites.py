@@ -7683,8 +7683,8 @@ TRIP_TAGS = {
     "backpack_11": [(["..TT...TT..", ".TT.....TT.", ".ooooooooo.", "ooooooooooo", "oYYYYYYYYYo", "ooooooooooo",
                       "ooTTTTTTToo", "ooTtttYttoo", "ooTtttttToo", "ooooooooooo", ".OOOOOOOOO."], 1000)],
     "seed": [(["..l.", ".tt.", "tTTt", ".tt."], 1000)],
-    # woven twigs and straw; the egg sits in it (scene.NEST_X)
-    "nest": [(["t..............t", "TtdTtdtDdtdTtdtT", ".TdtDdtTDtdDtdT.", "..TTtTTtTtTTtT.."], 1000)],
+    # a bed of moss with a few leaves tucked in at the edges; the egg sits in it (scene.NEST_X)
+    "nest": [(["ll.............l", "GglgGgglgGglgglG", ".GgGglGgGgGlgGG.", "..GGtGGGGGGtGG.."], 1000)],
     # a friend's gift, wrapped, until it is unwrapped (scene.GIFT_X); then what was in it, held up
     "gift": [(["..y.y..", "...Y...", "rrryrrr", "yyyyyyy", "rrryrrr", "RRRyRRR"], 1000)],
     # What the pet eats is a mouthful it can be seen eating: 6–8 pixels (docs/gameplay.md, *Sizes of things next to the pet*)

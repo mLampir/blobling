@@ -8,6 +8,7 @@
  */
 
 import * as battle from "./battle";
+import * as brood from "./brood";
 import * as care from "./care";
 import * as digging from "./digging";
 import * as festival from "./festival";
@@ -388,6 +389,9 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     const napping = !isBedtime(state.sleep_since, bedtime);
     if (!bed && (s.energy >= 95 || (napping && s.energy >= 60 && t - state.sleep_since >= 30 * 60))) {
       wakeUp(state, t, temp);
+      if (!napping) {
+        morning(state, t);
+      }
     }
   }
   if (!state.asleep && !state.trip && t >= state.activity_until && home.wantsFruit(state)) {
@@ -410,11 +414,20 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     }
   }
   clamp(state);
+  brood.step(state, t, !state.asleep && !state.trip);
 
   life.recordMinute(state, !state.sick && s.satiety >= CRITICAL && s.hygiene >= CRITICAL && s.mood >= CRITICAL);
   const due = life.dueAt(state);
   if (due !== null && t >= due + life.AUTO_EVOLVE_AFTER && !state.asleep && !state.trip && !isBedtime(t, bedtime)) {
     evolve(state, t, "system", weather, location, temp);
+  }
+}
+
+/** It has woken up at home after a night: after its good days, its own egg lies in the nest (brood.ts). */
+function morning(state: PetState, t: number): void {
+  const egg = brood.wake(state, t);
+  if (egg) {
+    logEvent(state, t, "laid", "system", { item: egg.line });
   }
 }
 
@@ -486,6 +499,9 @@ export function stayAtGrandmas(state: PetState, now: number): void {
     if (friend.rest_until !== undefined) {
       friend.rest_until += gap;
     }
+  }
+  if (state.brood.rest_until > state.updated_at) {
+    state.brood.rest_until += gap; // and so does the rest after its own egg
   }
   state.updated_at = Math.max(state.updated_at, now);
 }
@@ -1344,7 +1360,11 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     if (!state.asleep) {
       return "awake";
     }
+    const night = isBedtime(state.sleep_since, bedtime);
     wakeUp(state, now, temp);
+    if (night && !isLateEvening(now, bedtime)) {
+      morning(state, now); // woken in the morning half of the night, or after it
+    }
     if (isBedtime(now, bedtime)) {
       s.mood -= 15; // woken in the middle of the night: grumpy
       state.stay_awake_until = now + STAY_AWAKE_AFTER_WAKE;

@@ -1120,7 +1120,7 @@ export class Pet {
         skills: Object.entries(egg.skills ?? {}).filter(([, v]) => Math.round(v) !== 0)
           .map(([k, v]) => ({ id: k, label: t(`skills.${k}`), value: Math.round(v) })),
       })),
-      // its friends; `resting`: they have just built a nest, and visits don't count towards the next one yet
+      // its friends; `resting`: they have just brought an egg, and visits don't count towards the next one yet
       friends: s.friends.map(friendView),
       // one of them, the one visiting or else the latest, for apps from before there could be several
       friend: s.friends.length ? friendView(wild.visitor(s, now) ?? s.friends.at(-1)!) : null,

@@ -17,6 +17,7 @@
  */
 
 import * as battle from "../core/src/battle";
+import * as brood from "../core/src/brood";
 import * as care from "../core/src/care";
 import * as home from "../core/src/home";
 import * as idle from "../core/src/idle";
@@ -212,6 +213,9 @@ interface Run {
   visitsCounted: number;
   nestAt: number | null;
   nests: number;
+  laidAt: number | null; // its own egg (brood.ts)
+  laid: number;
+  bondedAt: number | null; // an adult with the bond its own egg takes
   eggsCollected: number;
   skillsAtAdult: Record<string, number> | null;
   skillsAtEnd: Record<string, number>;
@@ -247,7 +251,8 @@ class Sim {
       profile, line, start, end: start, arrivals: [], calls: new Map(), days: new Map(),
       criticalMinutes: {}, stageMinutes: {}, sickCount: {}, naps: {}, minHealth: {}, stages: { egg: start },
       adult: null, diary: null, trips: [], guardianTries: {}, guardianTrips: {}, guardianBeatenAt: {},
-      emberstoneAt: null, friendAt: null, friendVisits: 0, visitsCounted: 0, nestAt: null, nests: 0, eggsCollected: 0,
+      emberstoneAt: null, friendAt: null, friendVisits: 0, visitsCounted: 0, nestAt: null, nests: 0, laidAt: null, laid: 0, bondedAt: null,
+      eggsCollected: 0,
       skillsAtAdult: null, skillsAtEnd: {}, tricksKnown: [], rejected: {}, shivering: 0, mornings: 0,
     };
   }
@@ -299,9 +304,15 @@ class Sim {
           r.visitsCounted += 1;
         }
       }
-      if (s.nest && !nestBefore) {
+      if (s.nest && !nestBefore && s.events.some((e) => e.at === now && e.action === "laid")) {
+        r.laidAt ??= now;
+        r.laid += 1;
+      } else if (s.nest && !nestBefore) {
         r.nestAt ??= now;
         r.nests += 1;
+      }
+      if (s.stage === "adult" && care.bondLevel(s) >= brood.BOND) {
+        r.bondedAt ??= now;
       }
     }
     this.now = Math.max(this.now, t);
@@ -701,6 +712,14 @@ function reportProfile(profile: Profile, runs: Run[]): string {
       + `nests per adult with a friend ${fmt(avg(withFriend.map((run) => run.nests)), 1)}; `
       + `wild pets met per trip ${fmt(avg(adults.map((run) =>
         run.trips.reduce((a, t) => a + t.wild, 0) / Math.max(1, run.trips.length))), 2)} (wild pets live in ${Object.keys(wild.WILD).join(", ")})`);
+  }
+  if (adults.length) {
+    const bonded = adults.filter((run) => run.bondedAt !== null);
+    const laid = adults.filter((run) => run.laidAt !== null);
+    out.push(`Own eggs: ${bonded.length}/${adults.length} adults had the bond for one (${brood.BOND} hearts), `
+      + `after ${fmt(avg(bonded.map((run) => days(run.bondedAt! - run.stages.adult))), 1)} days as an adult; `
+      + `${laid.length} laid one, ${fmt(avg(laid.map((run) => days(run.laidAt! - run.bondedAt!))), 1)} days after that; `
+      + `eggs per bonded adult ${fmt(avg(bonded.map((run) => run.laid)), 1)}`);
   }
   const ember = runs.filter((run) => run.emberstoneAt !== null);
   out.push(`Ember stone found in ${ember.length}/${runs.length} runs, on day ${fmt(avg(ember.map((run) => days(run.emberstoneAt! - run.start))), 1)}`);

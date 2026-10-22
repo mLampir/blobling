@@ -59,7 +59,7 @@ test("too much for one day: what matters most is told", () => {
   model.logEvent(pet, start + 2 * HOUR, "nest", "system", { item: "blob" });
   const [day] = pages();
   assert.equal(day.text.split(/(?<=[.!]) /).length, story.SENTENCES);
-  assert.match(day.text, /built a nest/);
+  assert.match(day.text, /bed of moss/);
 });
 
 test("the rain while it was alone opens the day, once", () => {
@@ -106,7 +106,7 @@ test("fetched from Grandma's, the story ends with her postcard", () => {
 
 test("every kind of thing it can tell has a text in English", () => {
   const told: [string, string][] = [
-    ["solo", "spin"], ["gift", "blob"], ["nest", "blob"], ["wild", "blob:friend"], ["wild", "blob:shrug"],
+    ["solo", "spin"], ["gift", "blob"], ["nest", "blob"], ["laid", "blob"], ["wild", "blob:friend"], ["wild", "blob:shrug"],
     ["battle", "diggle:win"], ["battle", "diggle:lose"], ["battle", "diggle:draw"], ["battle", "diggle:ball"],
     ["guardian", "diggle"], ["unlock", "forest"], ["trip", "home"], ["trip", "tired"], ["trip", "beaten"],
     ["trip", "snack"], ["evolve", "baby:blob"], ["evolve", "child:blob"], ["evolve", "child:ember"],

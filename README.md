@@ -36,9 +36,11 @@ a day and also tells you the time and the weather.
   hut of thatch to a whole house, where it sleeps and keeps more decorations.
 - **It makes friends.** A grown-up pet can impress a wild pet with its tricks.
   The friend comes to visit and plays with it, brings a gift now and then, and
-  in time the two lay an egg that passes a part of your pet's training on to
-  the next one. Some guests come to the garden by themselves, when something
-  there draws them; they peek over the fence first.
+  in time entrusts it with an egg of its own family; your pet watches over it
+  and passes a part of its training on to the next one. An adult that is close
+  to you and has had good days lays an egg of its own. Some guests come to the
+  garden by themselves, when something there draws them; they peek over the
+  fence first.
 - **Something going on.** On clear evenings a shooting star falls now and then
   and leaves something in the garden; every second Saturday there is a trick
   festival with a jury of wild pets; and a treasure map from a trip shows

@@ -1,4 +1,4 @@
-// Wild pets: making friends, visits, gifts, and the nest.
+// Wild pets: making friends, visits, gifts, and the egg a friend brings.
 
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
@@ -259,56 +259,25 @@ test("a pet saved with one friend keeps it", () => {
   assert.deepEqual(fromDict({ ...saved, friend: null }).friends, []);
 });
 
-test("the egg is of either line", () => {
+test("the egg a friend brings is always of its own line", () => {
   pet.species = "flarelet";
-  const lines = new Set<string>();
-  for (let i = 0; i < 40; i++) {
-    const other = copy();
-    other.friends = [{ species: "sneezle", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
-    wild.step(other, start + i * 60, true);
-    lines.add(other.nest!.line);
-  }
-  assert.deepEqual(lines, new Set(["blob", "ember"]));
-});
-
-test("a friend of the stone line can bring its egg into the home", () => {
-  const lines = new Set<string>();
-  for (let i = 0; i < 40; i++) {
-    const other = copy();
-    other.friends = [{ species: "bouldergrin", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
-    wild.step(other, start + i * 60, true);
-    lines.add(other.nest!.line);
-    if (other.nest!.line === "stone") {
-      act(other, "collect", start + i * 60 + 60);
-      assert.deepEqual(other.eggs.at(-1)!.line, "stone");
-      assert.equal(home.eggOf("stone"), "egg_stone");
+  for (const [species, line] of [["sneezle", "blob"], ["bouldergrin", "stone"], ["filchfox", "fox"],
+    ["rumblefluff", "cloud"]]) {
+    const lines = new Set<string>();
+    for (let i = 0; i < 20; i++) {
+      const other = copy();
+      other.friends = [{ species, visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
+      wild.step(other, start + i * 60, true);
+      lines.add(other.nest!.line);
     }
+    assert.deepEqual(lines, new Set([line]), species);
   }
-  assert.deepEqual(lines, new Set(["blob", "stone"]));
-});
-
-test("a friend of the fox line can bring its egg into the home", () => {
-  const lines = new Set<string>();
-  for (let i = 0; i < 40; i++) {
-    const other = copy();
-    other.friends = [{ species: "filchfox", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
-    wild.step(other, start + i * 60, true);
-    lines.add(other.nest!.line);
-  }
-  assert.deepEqual(lines, new Set(["blob", "fox"]));
-  assert.equal(home.eggOf("fox"), "egg_fox");
-});
-
-test("a friend of the cloud line can bring its egg into the home", () => {
-  const lines = new Set<string>();
-  for (let i = 0; i < 40; i++) {
-    const other = copy();
-    other.friends = [{ species: "rumblefluff", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start + i * 60 }];
-    wild.step(other, start + i * 60, true);
-    lines.add(other.nest!.line);
-  }
-  assert.deepEqual(lines, new Set(["blob", "cloud"]));
-  assert.equal(home.eggOf("cloud"), "egg_cloud");
+  // and it goes into the home like any other egg
+  const other = copy();
+  other.friends = [{ species: "bouldergrin", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start }];
+  wild.step(other, start, true);
+  act(other, "collect", start + 60);
+  assert.deepEqual([other.eggs.at(-1)!.line, other.eggs.at(-1)!.from], ["stone", "Puff"]);
 });
 
 test("some visits bring a gift, and only one lies there at a time", () => {
