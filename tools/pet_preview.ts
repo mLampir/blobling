@@ -30,7 +30,7 @@ const BASE: SceneView = {
 // The special forms, the secret third adult of a line
 const SPECIAL_FORMS = ["salamber", "lunarock", "foxfire", "flurrbleat", "sakurin", "bubblehelm", "hippula", "acewing",
   "jesterwing", "pawdini", "prismfly", "archibeaver", "castlecrab", "axodrake", "woolwhisk", "ursastra", "aurorapin", "lunaflap",
-  "ninjowl", "mirrorleon", "pharabug", "stormkite"];
+  "ninjowl", "mirrorleon", "pharabug", "stormkite", "abyssink", "bellfry"];
 // The pictures for docs/pets.md: file name → [stage, species]
 const PETS: Record<string, [string, string]> = {
   egg: ["egg", "blob"], baby: ["baby", "blob"], child: ["child", "blob"],
@@ -80,9 +80,13 @@ const PETS: Record<string, [string, string]> = {
   solroll: ["adult", "solroll"], clockbeetle: ["adult", "clockbeetle"],
   kite_egg: ["egg", "kite"], kite_baby: ["baby", "kite"], kitelet: ["child", "kite"],
   origrane: ["adult", "origrane"], lionkite: ["adult", "lionkite"],
+  octopus_egg: ["egg", "octopus"], octopus_baby: ["baby", "octopus"], inklet: ["child", "octopus"],
+  inkasso: ["adult", "inkasso"], octavio: ["adult", "octavio"],
+  gargoyle_egg: ["egg", "gargoyle"], gargoyle_baby: ["baby", "gargoyle"], gargit: ["child", "gargoyle"],
+  gargard: ["adult", "gargard"], fountaingle: ["adult", "fountaingle"],
   ...Object.fromEntries(SPECIAL_FORMS.map((species) => [species, ["adult", species]])),
 };
-// The leaf, duck, hippo, beak, garden, water, Grandma's, adventure, festival and star lines: per line its line, child and adults, for the scenes below
+// The leaf, duck, hippo, beak, garden, water, Grandma's, adventure, festival, star, coast and ruins lines: per line its line, child and adults, for the scenes below
 const NEW_LINES: [string, string, string, string][] = [
   ["leaf", "sproutlet", "twiggle", "needlenub"], ["duck", "paddlet", "quill", "drakwing"],
   ["hippo", "soakling", "lillypot", "steamo"], ["beak", "crestling", "parcelbeak", "rapierre"],
@@ -93,6 +97,7 @@ const NEW_LINES: [string, string, string, string][] = [
   ["penguin", "waddlet", "tuxwaddle", "glidepin"], ["bat", "flapling", "umbrabat", "batbeat"],
   ["owl", "hootlet", "owlbert", "stargazer"], ["chameleon", "colorlet", "palettino", "hidewell"],
   ["scarab", "rollet", "solroll", "clockbeetle"], ["kite", "kitelet", "origrane", "lionkite"],
+  ["octopus", "inklet", "inkasso", "octavio"], ["gargoyle", "gargit", "gargard", "fountaingle"],
 ];
 const NEW_SCENES = (["egg", "hatch", "baby", "child", "hint", "evolve"] as const).flatMap((what) =>
   NEW_LINES.map(([line]) => `${line}_${what}`)).concat(NEW_LINES.flatMap(([, , a, b]) =>
@@ -138,6 +143,12 @@ const OWN_TRICK_FORMS: Record<string, string> = {
   origrane: "bow", // folds itself small and unfolds again
   lionkite: "dance", // a lion dance, pompoms flying
   stormkite: "flip", // torn up by the wind, it dives down
+  inkasso: "spin", // paints a circle in the air round itself
+  octavio: "dance", // juggles with all its arms
+  abyssink: "flip", // gone in an ink cloud, and it appears on top of it
+  gargard: "bow", // turns to stone and wakes again
+  fountaingle: "flip", // a somersault with an arc of water
+  bellfry: "spin", // swings itself like a bell and rings
 };
 const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_own`, `${adult}_special`]);
 // The spoiler-free overview shows one adult form only, the one docs/pets.md shows openly. It
@@ -166,6 +177,9 @@ const PETS_DIR = "docs/images/pets";
 const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
 const DUSK = new Date(2026, 9, 12, 18, 10);
+// the tide at the coast follows the clock (trip.tide): high water in the morning, low in the afternoon
+const HIGH_TIDE = new Date(2026, 9, 12, 10, 0);
+const LOW_TIDE = new Date(2026, 9, 12, 16, 0);
 const RAIN = { temp: 12.4, code: 63 }; // WMO weather codes, as Open-Meteo sends them
 const STORM = { temp: 16.0, code: 95 };
 
@@ -304,11 +318,29 @@ const SCENES: Record<string, Scene> = {
   trip_cave: [{ trip: trip("cave", { event: "find", item: "crystal" }) }, DAY, RAIN],
   trip_food: [{ trip: trip("meadow", { event: "find", item: "honeycomb", event_age: 2 }) }, DAY, null],
   trip_mountain: [{ hat: "bobble", trip: trip("mountain") }, DAY, { temp: -4, code: 71 }],
+  trip_coast: [{ hat: "sailor", trip: trip("coast") }, HIGH_TIDE, null],
+  trip_coast_low: [{ trip: trip("coast", { event: "find", item: "mussel", event_age: 2 }) }, LOW_TIDE, null],
+  trip_coast_fish: [{ trip: trip("coast", { event: "fish", item: "seagrass", event_age: 1 }) }, LOW_TIDE, null],
+  trip_coast_bottle: [{ trip: trip("coast", { event: "find", item: "bottle", event_age: 2 }) }, HIGH_TIDE, RAIN],
+  trip_ruins: [{ hat: "knight", trip: trip("ruins") }, DAY, null],
+  trip_ruins_dusk: [{ trip: trip("ruins", { event: "find", item: "bread", event_age: 2 }) }, DUSK, null],
+  trip_ruins_night: [{ trip: trip("ruins", { event: "find", item: "banner", event_age: 2 }) }, NIGHT, null],
+  battle_jellybrella: [{
+    trip: trip("coast", { event: "battle", event_age: 1.2, foe: "jellybrella", outcome: "draw",
+      rounds: [["curl", "spin", "hit"], ["curl", "spin", "hit"]] }),
+  }, HIGH_TIDE, RAIN],
+  battle_drapeghost: [{
+    trip: trip("ruins", { event: "battle", event_age: 1.2, foe: "drapeghost", outcome: "draw",
+      rounds: [["pounce", "bow", "hit"], ["pounce", "bow", "hit"]] }),
+  }, DUSK, null],
   // the opponents of the later areas, each in the middle of its favorite move
   ...Object.fromEntries(([
     ["ribbop", "stream", "pounce", "bow"], ["sidleclaw", "stream", "charge", "flip"],
     ["echoflit", "cave", "pounce", "bow"], ["glintbug", "cave", "curl", "spin"],
     ["tumblesnow", "mountain", "curl", "spin"], ["craghorn", "mountain", "charge", "flip"],
+    ["snatchgull", "coast", "pounce", "bow"], ["starcurl", "coast", "curl", "spin"],
+    ["ratwatch", "ruins", "charge", "flip"], ["ivycurl", "ruins", "curl", "spin"],
+    ["barkguard", "coast", "charge", "flip"], ["rustknight", "ruins", "curl", "spin"],
   ]).map(([foe, area, move, trick]): [string, Scene] => [`battle_${foe}`, [{
     trip: trip(area, {
       event: "battle", event_age: 1.2, foe, outcome: "draw", rounds: [[move, trick, "hit"], [move, trick, "hit"]],
@@ -317,7 +349,7 @@ const SCENES: Record<string, Scene> = {
   // the guardians, as they come in
   ...Object.fromEntries(([
     ["crowcomb", "meadow"], ["mosswart", "forest"], ["ripplesprite", "stream"], ["gloompeep", "cave"],
-    ["frostfluff", "mountain"],
+    ["frostfluff", "mountain"], ["barkguard", "coast"], ["rustknight", "ruins"],
   ]).map(([foe, area]): [string, Scene] => [`guardian_${foe}`, [{
     trip: trip(area, {
       returning: true, event: "battle", foe, outcome: "draw",

@@ -255,6 +255,12 @@ export const OWN_TRICKS: Record<string, Record<string, string>> = {
   "adult:origrane": { bow: "fold_up" }, // folds itself up small and unfolds again
   "adult:lionkite": { dance: "lion_dance" }, // a lion dance, its head rearing and shaking, pompoms flying
   "adult:stormkite": { flip: "storm_dive" }, // torn up high by the wind, it turns over and dives down
+  "adult:inkasso": { spin: "ink_circle" }, // turns round and round, and its brush paints a circle in the air round it
+  "adult:octavio": { dance: "arm_juggle" }, // juggles with all its arms
+  "adult:abyssink": { flip: "ink_vanish" }, // gone in a cloud of ink, and it appears on top of it
+  "adult:gargard": { bow: "stone_still" }, // turns to stone in its bow, and wakes again with a shake
+  "adult:fountaingle": { flip: "water_arc" }, // a somersault that leaves an arc of water in the air
+  "adult:bellfry": { spin: "bell_swing" }, // swings itself like a bell, ringing at the end of each swing
   "adult:angloop": { bow: "lure" }, // it casts out its lure, lets the bulb dangle and flash, and snaps
   "child:stone": { flip: "skip" }, // Pebblet gets over an opponent like a flat stone skipping across water
 };

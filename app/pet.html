@@ -342,6 +342,9 @@
   #pack-areas img { height: 22px; image-rendering: pixelated; }
   #pack-areas .area > img { height: 30px; }
   #pack-areas .tracks.left { filter: grayscale(1); opacity: 0.45; }
+  /* where the path forks: the areas that lie behind the same one, set in under it */
+  #pack-areas .area.branch { margin-left: 1.4em; }
+  #pack-areas .area.branch::before { content: "↳"; margin-right: -4px; opacity: 0.6; }
   .steps button { width: 52px; height: 52px; border-radius: 12px; border: 2px dashed var(--line); font-size: 26px; }
   .steps button.on { border-style: solid; border-color: var(--accent); }
   .link { color: var(--muted); text-decoration: underline; padding: 10px; font-size: 14px; }
@@ -1254,9 +1257,11 @@ function renderPack() {
   // An area opens up once the pet has got past the guardian of the one before
   const going = area && s.areas.find((a) => a.id === area[0]);
   $("pack-say").textContent = going && going.guardian ? t("page.pack.guardian") : "";
+  const fork = (a) => a.behind && s.areas.filter((other) => other.behind === a.behind).length > 1;
   $("pack-areas").replaceChildren(...s.areas.map((a) => {
     const b = document.createElement("button");
     b.className = "area";
+    b.classList.toggle("branch", !!fork(a));
     const name = document.createElement("span");
     name.textContent = a.unlocked ? a.label : `🔒 ${a.label}`;
     b.append(name);

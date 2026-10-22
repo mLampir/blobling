@@ -134,7 +134,7 @@ test("the status line: clock, temperature and what the pet needs", () => {
 test("every form of the pet can be drawn, in every state", () => {
   const forms = [...Object.keys(life.LINES).flatMap((line) => life.STAGES.map((stage) => [stage, line])),
     ...[...Object.values(life.LINES).flat(), ...life.WILD_ONLY].map((name) => ["adult", name])];
-  assert.equal(forms.length, 23 * 4 + 74);
+  assert.equal(forms.length, 25 * 4 + 80);
   const moods = ["normal", "happy", "sad", "hungry", "dirty", "sick", "tired"];
   for (const [stage, species] of forms) {
     for (const mood of moods) {
@@ -219,7 +219,7 @@ test("what it left behind lies in the scene, and what it builds grows while it b
 
 test("a trip: the landscape of every area, a scuffle, a wild pet and the ball", () => {
   const trip = { area: "meadow", returning: false, event: null, item: null, event_age: 0 };
-  for (const area of ["meadow", "forest", "stream", "cave", "mountain"]) {
+  for (const area of ["meadow", "forest", "stream", "cave", "mountain", "coast", "ruins"]) {
     for (const returning of [false, true]) {
       const run = frames({ trip: { ...trip, area, returning } }, 60, returning ? NIGHT : DAY, { temp: 1, code: 71 });
       assert.ok(differing(run[0], run.at(-1)!, GROUND - 30, 64) > 0, area); // it scrolls past
@@ -227,7 +227,8 @@ test("a trip: the landscape of every area, a scuffle, a wild pet and the ball", 
   }
   const rounds = [["pounce", "bow", "hit"], ["curl", "spin", "special"], ["charge", "flip", "ouch"],
     ["charge", "dance", "dodge"], ["curl", "bow", "hold"], ["pounce", "flip", "strong"]];
-  for (const [foe, area] of [["bumblebop", "meadow"], ["glintbug", "cave"], ["gloompeep", "cave"], ["frostfluff", "mountain"]]) {
+  for (const [foe, area] of [["bumblebop", "meadow"], ["glintbug", "cave"], ["gloompeep", "cave"], ["frostfluff", "mountain"],
+    ["snatchgull", "coast"], ["barkguard", "coast"], ["ratwatch", "ruins"], ["rustknight", "ruins"]]) {
     for (const outcome of ["win", "lose", "draw"]) {
       frames({ stage: "adult", species: "sneezle",
         trip: { ...trip, area, event: "battle", foe, rounds, outcome, item: outcome === "win" ? "egg_ember" : null } }, 250);
@@ -237,6 +238,7 @@ test("a trip: the landscape of every area, a scuffle, a wild pet and the ball", 
     frames({ trip: { ...trip, event: "wild", wild: "grumpcap", outcome, rounds: [["spin", true], ["flip", false]] } }, 150);
   }
   frames({ trip: { ...trip, event: "ball", foe: "diggle" } }, 80);
+  frames({ trip: { ...trip, area: "coast", event: "fish", item: "mussel" } }, 120); // fishing in the sea
   for (const event of ["find", "rest", "tired"]) {
     frames({ trip: { ...trip, event, item: event === "find" ? "glowshroom" : null } }, 100, DAY, { temp: 9, code: 61 });
   }
@@ -299,7 +301,8 @@ test("the garden's and the water's adults have a trick and a special move of the
     ursastra: "dance", tuxwaddle: "bow", glidepin: "spin", aurorapin: "dance", umbrabat: "flip", batbeat: "dance",
     lunaflap: "spin", owlbert: "bow", stargazer: "spin", ninjowl: "flip", palettino: "spin", hidewell: "bow",
     mirrorleon: "dance", solroll: "flip", clockbeetle: "dance", pharabug: "bow", origrane: "bow", lionkite: "dance",
-    stormkite: "flip" };
+    stormkite: "flip", inkasso: "spin", octavio: "dance", abyssink: "flip", gargard: "bow", fountaingle: "flip",
+    bellfry: "spin" };
   const animations = new Set<string>();
   for (const [species, trick] of Object.entries(own)) {
     const animation = trickAnimation("adult", species, trick);
@@ -359,7 +362,7 @@ test("a guest from the garden peeks over the fence at the right edge, only at ho
 });
 
 test("the newer lines' children show where they are heading", () => {
-  for (const [line, adults] of Object.entries(life.LINES).slice(-14)) {
+  for (const [line, adults] of Object.entries(life.LINES).slice(-16)) {
     const looks = adults.map((hint) => frames({ species: line, hint }, 1)[0]);
     assert.ok(differing(looks[0], looks[1]) > 0 && differing(looks[1], looks[2]) > 0
       && differing(looks[0], looks[2]) > 0, line);

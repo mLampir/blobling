@@ -29,12 +29,15 @@ test("trip in snapshot and view", () => {
   const view = pet.view(now + 1).trip!;
   assert.deepEqual([view.foe, view.rounds, view.outcome], [null, null, null]);
   assert.deepEqual(state.areas.map((a) => [a.id, a.unlocked]),
-    [["meadow", true], ["forest", false], ["stream", false], ["cave", false], ["mountain", false]]);
+    [["meadow", true], ["forest", false], ["stream", false], ["cave", false], ["mountain", false], ["coast", false],
+      ["ruins", false]]);
   assert.deepEqual(state.areas[1],
-    { id: "forest", label: "Mushroom forest", unlocked: false, blocked_by: "Meadow", guardian: true, keeper: "mosswart",
+    { id: "forest", label: "Mushroom forest", unlocked: false, behind: "meadow", blocked_by: "Meadow", guardian: true, keeper: "mosswart",
       finds: ["egg_bear", "glowshroom", "lantern", "cap", "woodpile", "snailshell"].map((id) => ({ id, found: false })), wild_left: true });
   assert.equal(state.areas[0].wild_left, null); // only wild pets of no line live on the meadow
-  assert.deepEqual(state.guardians, { passed: 0, all: 5 });
+  assert.deepEqual(state.guardians, { passed: 0, all: 7 });
+  // behind the mountain the path forks: both lie behind it
+  assert.deepEqual(state.areas.slice(-2).map((a) => [a.behind, a.blocked_by]), [["mountain", "Mountain"], ["mountain", "Mountain"]]);
   assert.deepEqual(state.items[0], { id: "seed_berry", label: "Berry seed", kind: "seed", count: 2, active: false, place: null, effects: ["satiety"] });
   assert.equal(view.area, "meadow");
   assert.deepEqual(disk.pet().state.trip, pet.state.trip);

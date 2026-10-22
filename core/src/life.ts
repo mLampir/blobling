@@ -55,6 +55,9 @@ export const LINES: Record<string, readonly string[]> = {
   chameleon: ["palettino", "hidewell", "mirrorleon"],
   scarab: ["solroll", "clockbeetle", "pharabug"],
   kite: ["origrane", "lionkite", "stormkite"],
+  // from the coast and the ruins
+  octopus: ["inkasso", "octavio", "abyssink"],
+  gargoyle: ["gargard", "fountaingle", "bellfry"],
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
@@ -126,6 +129,11 @@ export const CLOCKBEETLE_MINUTES = 5; // the scarab line: it grows up within thi
 export const PHARABUG_HEAT = 27; // the scarab line: °C or more when it grows up → pharabug
 // The kite line: it has learned the dance when it grows up → lionkite, otherwise origrane; a
 // thunderstorm when it grows up → stormkite
+export const OCTAVIO_TRICKS = 3; // the octopus line: tricks it knows when it grows up → octavio, otherwise inkasso
+export const ABYSSINK_SMARTS = 60; // the octopus line: its smarts (battle.SKILLS) when it grows up → abyssink
+// The gargoyle line: it rains when it grows up → fountaingle, otherwise gargard; it grows up in the
+// noon hour (BELLFRY_HOUR) → bellfry
+export const BELLFRY_HOUR = 12;
 export const MISSING_AFTER = 30; // days with pets before a line whose egg never came gets the quiet safety net (Pet.longMissing)
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
 
@@ -202,6 +210,12 @@ export const DECAY_FACTORS: Record<string, Record<string, number>> = {
   origrane: { hygiene: 0.85 }, // crisp, clean paper
   lionkite: { energy: 1.15 }, // dancing through the festival
   stormkite: { mood: 1.15 }, // as changeable as the weather
+  inkasso: { hygiene: 1.15 }, // ink and paint everywhere
+  octavio: { energy: 1.15 }, // eight arms to keep busy
+  abyssink: { energy: 0.85 }, // it drifts in the deep and saves its strength
+  gargard: { satiety: 0.85 }, // a stone guard lives on little
+  fountaingle: { hygiene: 0.8 }, // it is rinsed all the time
+  bellfry: { mood: 0.85 }, // it sings to itself
 };
 export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   flicker: { play: 1.25 },
@@ -257,6 +271,12 @@ export const BONUS_FACTORS: Record<string, Record<string, number>> = {
   origrane: { heart: 1.25 }, // a folded crane brings luck
   lionkite: { play: 1.5 }, // a festival every day
   stormkite: { sick: 0.6 }, // nothing gets through storm paper
+  inkasso: { play: 1.25 }, // a game is something to paint
+  octavio: { play: 1.5 }, // anything to juggle with
+  abyssink: { pet: 1.25 }, // soft and cool as the deep sea
+  gargard: { sick: 0.6 }, // made of stone
+  fountaingle: { pet: 1.25 }, // a cool splash when you stroke it
+  bellfry: { heart: 1.25 }, // a heart makes it ring
 };
 
 /**
@@ -373,6 +393,10 @@ export interface World {
   dance?: boolean;
   /** whether it has a friend (a wild pet or a guest from the garden), */
   friend?: boolean;
+  /** how many tricks it knows, */
+  tricks?: number;
+  /** its smarts (battle.SKILLS), */
+  smarts?: number;
   /** its highest battle stat, */
   strongest?: string;
   /** a decoration that glows stands outside (home.GLOWING_DECO), */
@@ -439,6 +463,8 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
     chameleon: Boolean(world.friend),
     scarab: (world.temp ?? -Infinity) >= PHARABUG_HEAT,
     kite: Boolean(world.storm),
+    octopus: (world.smarts ?? 0) >= ABYSSINK_SMARTS,
+    gargoyle: world.minute !== undefined && Math.floor(world.minute / 60) === BELLFRY_HOUR,
   } as Record<string, boolean>)[line];
   if (special) {
     return LINES[line][2];
@@ -508,6 +534,12 @@ export function decideSpecies(diary: Record<string, number>, line = "blob", worl
   }
   if (line === "kite") {
     return world.dance ? "lionkite" : "origrane";
+  }
+  if (line === "octopus") {
+    return (world.tricks ?? 0) >= OCTAVIO_TRICKS ? "octavio" : "inkasso";
+  }
+  if (line === "gargoyle") {
+    return world.raining ? "fountaingle" : "gargard";
   }
   const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
   if (enough("love", PURRLOOP_LOVE_PER_DAY)) {

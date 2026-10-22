@@ -11,6 +11,7 @@ import * as model from "../src/model";
 import { Random } from "../src/random";
 import { fromDict, toDict, type Friend, type PetState } from "../src/state";
 import * as trip from "../src/trip";
+
 import * as wild from "../src/wild";
 import { ALL_TRICKS, BEDTIME, act, at, grown, withRules } from "./helpers";
 
@@ -61,15 +62,19 @@ test("only an adult without a friend is looking", () => {
     assert.equal(wild.looking(other), false, JSON.stringify(change));
     assert.deepEqual(met(other, "meadow"), new Set([null]));
   }
-  // no line whose egg a guardian gives lives in the wild
-  const guarded = Object.values(trip.GUARDIAN_EGGS).map((egg) => home.EGGS[egg]);
+  // no line whose egg one of the first five guardians gives lives in the wild; behind the mountain,
+  // the octopus and the gargoyle live where their guardian is
+  const branches = trip.AREAS.filter((area) => trip.blockedBy(area) === trip.HOUSE_AREA);
+  const guarded = Object.entries(trip.GUARDIAN_EGGS).filter(([area]) => !branches.includes(area))
+    .map(([, egg]) => home.EGGS[egg]);
   for (const [area, pets] of Object.entries(wild.WILD)) {
     assert.ok(trip.AREAS.includes(area));
     for (const [species] of pets) {
-      assert.ok(life.SPECIES.includes(species));
+      assert.ok(life.SPECIES.includes(species), species);
       assert.ok(!guarded.includes(life.lineOf(species)));
     }
   }
+  assert.deepEqual(branches.map((area) => home.EGGS[trip.GUARDIAN_EGGS[area]]), ["octopus", "gargoyle"]);
 });
 
 test("tricks that work make a friend", () => {

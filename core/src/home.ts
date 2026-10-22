@@ -21,6 +21,7 @@ export const ITEMS: Record<string, ItemKind> = {
   watercress: "food",
   glowberry: "food",
   pinenut: "food",
+  bread: "food",
   mussel: "food",
   seagrass: "food",
   flag: "deco",
@@ -38,6 +39,12 @@ export const ITEMS: Record<string, ItemKind> = {
   pond: "deco",
   woodpile: "deco",
   boot: "deco",
+  lifering: "deco",
+  sandcastle: "deco",
+  bottle: "deco",
+  banner: "deco",
+  arch: "deco",
+  bell: "deco",
   daisy: "hat",
   leaf: "hat",
   cap: "hat",
@@ -45,6 +52,8 @@ export const ITEMS: Record<string, ItemKind> = {
   lily: "hat",
   batears: "hat",
   edelweiss: "hat",
+  sailor: "hat",
+  knight: "hat",
   // knitted by Grandma (grandma.ts)
   earflap: "hat",
   stripes: "hat",
@@ -80,6 +89,8 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_chameleon: "egg",
   egg_scarab: "egg",
   egg_kite: "egg",
+  egg_octopus: "egg",
+  egg_gargoyle: "egg",
 };
 export const MAX_SEEDS = 9; // per kind; decorations, hats and the treasure map exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
@@ -90,7 +101,8 @@ export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "embe
   egg_cloud: "cloud", egg_leaf: "leaf", egg_duck: "duck", egg_hippo: "hippo", egg_beak: "beak",
   egg_caterpillar: "caterpillar", egg_dog: "dog", egg_dragonfly: "dragonfly", egg_beaver: "beaver",
   egg_crab: "crab", egg_axolotl: "axolotl", egg_mouse: "mouse", egg_bear: "bear", egg_penguin: "penguin",
-  egg_bat: "bat", egg_owl: "owl", egg_chameleon: "chameleon", egg_scarab: "scarab", egg_kite: "kite" };
+  egg_bat: "bat", egg_owl: "owl", egg_chameleon: "chameleon", egg_scarab: "scarab", egg_kite: "kite",
+  egg_octopus: "octopus", egg_gargoyle: "gargoyle" };
 export const MAX_DECO = 2; // this many spots the scene has outside
 
 // Plant: [stat, effect of one fruit]
@@ -130,11 +142,11 @@ export const HOT_SECONDS = 3600; // it sweats this long, unless somebody gives i
 export const COOL_MOOD = 5; // what cooling it down is worth
 
 // The house: a hut, then a cabin, then the whole house (state.house, 0 = none yet). Every pet that
-// gets past the last guardian adds a step, so it grows from one pet to the next. The pet sleeps
-// inside, and each step has room for more decorations.
+// gets past the mountain's guardian (trip.HOUSE_AREA) adds a step, so it grows from one pet to the
+// next. The pet sleeps inside, and each step has room for more decorations.
 export const HOUSE_STEPS = 3;
 export const HOUSE_SPOTS = [0, 1, 2, 3]; // per step: spots for decorations inside
-export const OUTDOOR_DECO = ["snowman", "pond"]; // would melt inside; a pond belongs in the garden
+export const OUTDOOR_DECO = ["snowman", "pond", "sandcastle"]; // would melt or crumble inside; a pond belongs in the garden
 // The snow globe: set out at home, outside or in the house, it snows around the pet, and a pet of
 // the cloud line that grows up then counts it as snow (life.decideSpecies).
 export const SNOW_DECO = ["snowglobe"];
@@ -405,7 +417,7 @@ export function toggleDeco(state: PetState, item: string): string | null {
   return null;
 }
 
-/** The pet has got past the last guardian for the first time: the house grows by a step. Returns the new step, or null. */
+/** The pet has got past the mountain's guardian for the first time: the house grows by a step. Returns the new step, or null. */
 export function buildHouse(state: PetState): number | null {
   if (state.house >= HOUSE_STEPS) {
     return null;

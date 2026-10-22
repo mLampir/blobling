@@ -303,6 +303,40 @@ test("the world says whether the sky is clear, and the pet whether it knows the 
   assert.equal(model.worldAt(start, null, null, null, pet).friend, true);
 });
 
+test("the octopus and gargoyle lines grow up by tricks, smarts, the rain and the noon bell", () => {
+  const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
+  // the octopus: tricks make an Octavio, smarts the Abyssink
+  assert.equal(life.decideSpecies(week, "octopus"), "inkasso");
+  assert.equal(life.decideSpecies(week, "octopus", { tricks: life.OCTAVIO_TRICKS - 1 }), "inkasso");
+  assert.equal(life.decideSpecies(week, "octopus", { tricks: life.OCTAVIO_TRICKS }), "octavio");
+  assert.equal(life.decideSpecies(week, "octopus", { smarts: life.ABYSSINK_SMARTS - 1 }), "inkasso");
+  assert.equal(life.decideSpecies(week, "octopus", { tricks: life.OCTAVIO_TRICKS, smarts: life.ABYSSINK_SMARTS }),
+    "abyssink");
+  // the gargoyle: rain makes a Fountaingle, the noon hour the Bellfry
+  assert.equal(life.decideSpecies(week, "gargoyle"), "gargard");
+  assert.equal(life.decideSpecies(week, "gargoyle", { raining: true }), "fountaingle");
+  assert.equal(life.decideSpecies(week, "gargoyle", { minute: life.BELLFRY_HOUR * 60 - 1 }), "gargard");
+  assert.equal(life.decideSpecies(week, "gargoyle", { minute: life.BELLFRY_HOUR * 60, raining: true }), "bellfry");
+  assert.equal(life.decideSpecies(week, "gargoyle", { minute: life.BELLFRY_HOUR * 60 + 59 }), "bellfry");
+  assert.equal(life.decideSpecies(week, "gargoyle", { minute: life.BELLFRY_HOUR * 60 + 60 }), "gargard");
+  for (const line of ["octopus", "gargoyle"]) {
+    assert.ok(life.LINES[line].every((adult) => food.TASTES[adult]?.length === 2), line);
+    assert.ok(food.TASTES[line], line);
+  }
+});
+
+test("the world says how many tricks the pet knows and how smart it is", () => {
+  const pet = model.newPet(start, "", "octopus");
+  assert.equal(model.worldAt(start, null, null, null, pet).tricks, 0);
+  assert.equal(model.worldAt(start, null, null, null, pet).smarts, 0);
+  for (const trick of ["bow", "spin", "dance"]) {
+    pet.tricks[trick] = 1000;
+  }
+  pet.skills.smarts = 70;
+  assert.equal(model.worldAt(start, null, null, null, pet).tricks, 3);
+  assert.equal(model.worldAt(start, null, null, null, pet).smarts, 70);
+});
+
 test("the snow globe makes it snow for the cloud line", () => {
   const cloud = model.newPet(start, "", "cloud");
   assert.equal(model.worldAt(start, null, null, null, cloud).snowing, false);

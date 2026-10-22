@@ -32,13 +32,15 @@ export const FOODS: Record<string, string> = {
   watercress: "train",
   glowberry: "finder",
   pinenut: "fresh",
+  bread: "fresh", // castle bread from the ruins: the same as the pine cone
   // caught when fishing (fishing.ts)
   mussel: "heart",
   seagrass: "trick",
   // from Grandma's (grandma.ts)
   cake: "comfort",
 };
-export const PACKED: Record<string, string> = { honeycomb: "heart", glowberry: "finder", pinenut: "fresh", mussel: "heart" };
+export const PACKED: Record<string, string> = { honeycomb: "heart", glowberry: "finder", pinenut: "fresh", mussel: "heart",
+  bread: "fresh" };
 export const FRUITS = Object.keys(home.PLANTS).map((kind) => `fruit_${kind}`);
 export const EDIBLE = [...FRUITS, ...Object.keys(FOODS)];
 export const SATIETY = 10; // food from trips
@@ -149,6 +151,15 @@ export const TASTES: Record<string, readonly [string, string]> = {
   origrane: ["seagrass", "honeycomb"], // honey would glue its folds
   lionkite: ["cake", "mussel"], // festival food
   stormkite: ["glowberry", "fruit_sunflower"], // lightning, and no sunshine
+  // the lines from the coast and the ruins
+  octopus: ["fruit_berry", "fruit_sunflower"],
+  inkasso: ["fruit_berry", "fruit_cherry"], // the colors of its paint
+  octavio: ["fruit_cherry", "honeycomb"], // round things to juggle, and energy
+  abyssink: ["mussel", "glowberry"], // food from the deep, and its own light
+  gargoyle: ["fruit_herb", "fruit_cherry"],
+  gargard: ["hazelnut", "fruit_cherry"], // hard as stone
+  fountaingle: ["watercress", "seagrass"], // what grows where water runs
+  bellfry: ["honeycomb", "cake"], // bronze-gold and festive
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],

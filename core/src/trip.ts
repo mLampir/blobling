@@ -6,7 +6,7 @@
  * seeded. That way, catching up after a break gives the same result as running non-stop.
  *
  * Every area has a guardian. It waits at the last station of a trip until the pet has got past
- * it once; only then does the pet know the way to the next area. A guardian may have been
+ * it once; only then does the pet know the way to the areas behind it. A guardian may have been
  * sitting on a rare egg, which it leaves behind then.
  *
  * An adult that is looking for a friend may meet a wild pet instead of an opponent (wild.ts): it
@@ -31,8 +31,14 @@ import * as sun from "./sun";
 import * as wild from "./wild";
 
 // The areas in the order in which they open up: each one once the pet has got past the guardian
-// of the one before (battle.GUARDIANS).
-export const AREAS = ["meadow", "forest", "stream", "cave", "mountain"];
+// of the area it lies behind (BEHIND, battle.GUARDIANS). Up to the mountain they form one path;
+// behind the mountain it forks, and the coast and the ruins open up together, in either order.
+export const AREAS = ["meadow", "forest", "stream", "cave", "mountain", "coast", "ruins"];
+// Area: the area whose guardian stands between the pet and it (the meadow is open from the start)
+export const BEHIND: Record<string, string> = { forest: "meadow", stream: "forest", cave: "stream", mountain: "cave",
+  coast: "mountain", ruins: "mountain" };
+// Getting past this area's guardian adds a step to the house; the branches behind it don't
+export const HOUSE_AREA = "mountain";
 // What can be found where: [find, weight, only in this weather]
 export const FINDS: Record<string, readonly (readonly [string, number, sky.Precipitation])[]> = {
   meadow: [["seed_berry", 4, null], ["seed_sunflower", 4, null], ["flag", 2, null], ["windmill", 1, null],
@@ -45,7 +51,16 @@ export const FINDS: Record<string, readonly (readonly [string, number, sky.Preci
     ["batears", 2, null], ["emberstone", 2, null], ["glowberry", 3, null]],
   mountain: [["seed_sunflower", 4, null], ["seed_berry", 3, null], ["seed_herb", 1, null], ["cairn", 2, null],
     ["edelweiss", 2, null], ["pinenut", 3, null], ["snowglobe", 1, null], ["snowman", 4, "snow"]],
+  // mussels lie on the beach more often at low tide (LOW_TIDE_MUSSELS)
+  coast: [["seed_sunflower", 3, null], ["seed_berry", 3, null], ["mussel", 3, null], ["lifering", 2, null],
+    ["sandcastle", 1, null], ["sailor", 2, null], ["bottle", 4, "rain"]],
+  ruins: [["seed_cherry", 4, null], ["seed_berry", 3, null], ["bread", 3, null], ["banner", 2, null], ["arch", 1, null],
+    ["knight", 2, null], ["bell", 4, "rain"]],
 };
+// The tide at the coast follows the clock, as it does by the sea: high and low water about every
+// six hours (tide). At low tide more of the beach is dry, and mussels are found this much more often.
+export const TIDE_PERIOD = 12 * 3600 + 25 * 60; // from one high water to the next
+export const LOW_TIDE_MUSSELS = 3;
 export const STATIONS = [4, 6] as const;
 export const STEP = [10 * 60, 16 * 60] as const; // seconds from one station to the next
 export const WAY_HOME = 10 * 60;
@@ -67,7 +82,7 @@ export const FESTIVAL_MOOD = [20, 15, 10]; // a place at the trick festival make
 // there was no room for it, or the pet got past before the guardian had an egg, it leaves it at
 // the end of the path on a later trip.
 export const GUARDIAN_EGGS: Record<string, string> = { meadow: "egg_beak", forest: "egg_bear", stream: "egg_duck",
-  cave: "egg_ember", mountain: "egg_penguin" };
+  cave: "egg_ember", mountain: "egg_penguin", coast: "egg_octopus", ruins: "egg_gargoyle" };
 // What goes into the backpack: the pet's own ball, and things to eat from the bag (food.EDIBLE).
 // Nothing comes out of thin air, so what is packed is taken from the bag, and what isn't used
 // goes back into it.
@@ -87,8 +102,17 @@ export const rules = { encounterChance: ENCOUNTER_CHANCE, fight: battle.fight };
 
 /** The area whose guardian stands between the pet and this one (null for the first). */
 export function blockedBy(area: string): string | null {
-  const index = AREAS.indexOf(area);
-  return index > 0 ? AREAS[index - 1] : null;
+  return BEHIND[area] ?? null;
+}
+
+/** The water at the coast at the time t: 1 at high water, 0 at low water. */
+export function tide(t: number): number {
+  return 0.5 + 0.5 * Math.cos(2 * Math.PI * t / TIDE_PERIOD);
+}
+
+/** Is the tide out at the time t (half of the time, about six hours each)? */
+export function lowTide(t: number): boolean {
+  return tide(t) < 0.5;
 }
 
 export function unlocked(state: PetState, area: string): boolean {
@@ -281,7 +305,8 @@ export function putBack(state: PetState, trip: Trip): void {
  * What it finds at this station (or null). Decorations and hats exist only once.
  * `sure`: an opponent it chased off always leaves something behind, if there is anything left.
  */
-function find(state: PetState, trip: Trip, rng: Random, weather: sky.WeatherCode, sure = false): string | null {
+function find(state: PetState, trip: Trip, rng: Random, weather: sky.WeatherCode, t: number, sure = false):
+    string | null {
   if (!sure && rng.random() >= FIND_CHANCE * trip.factor) {
     return null;
   }
@@ -292,7 +317,9 @@ function find(state: PetState, trip: Trip, rng: Random, weather: sky.WeatherCode
   if (!options.length) {
     return null;
   }
-  return rng.weighted(options.map(([item]) => item), options.map(([, weight]) => weight));
+  const ebb = trip.area === "coast" && lowTide(t);
+  return rng.weighted(options.map(([item]) => item),
+    options.map(([item, weight]) => (ebb && item === "mussel" ? weight * LOW_TIDE_MUSSELS : weight)));
 }
 
 /** An opponent is in the way, and they scuffle. Getting past a guardian opens the way to the next area. */
@@ -329,12 +356,12 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
         events.push(["unlock", area]);
       }
       egg = guardianEgg(state, trip.area);
-      const step = trip.area === AREAS.at(-1) ? home.buildHouse(state) : null;
+      const step = trip.area === HOUSE_AREA ? home.buildHouse(state) : null;
       if (step !== null) {
-        events.push(["house", String(step)]); // past the last guardian: the house grows
+        events.push(["house", String(step)]); // past the mountain's guardian: the house grows
       }
     }
-    let item = find(state, trip, rng, weather, true);
+    let item = find(state, trip, rng, weather, t, true);
     if (egg) {
       item = egg; // what it was sitting on, instead of something from along the path
       state.guardian_eggs.push(trip.area);
@@ -438,7 +465,7 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
     }
     // a treasure map lies by the path at the first quiet stop of a trip that brings one (decided per trip)
     const map = digging.mapFrom(state, trip, (state.counters.trips ?? 0) + 1) ? digging.MAP : null;
-    const item = map ?? find(state, trip, rng, weather, trip.boosts?.includes("finder"));
+    const item = map ?? find(state, trip, rng, weather, t, trip.boosts?.includes("finder"));
     if (item) {
       trip.found.push(item);
       events.push(["find", item]);

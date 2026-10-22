@@ -1869,13 +1869,153 @@
     "h": 15
    },
    "duration": 1000
+  },
+  {
+   "filename": "items octopus_egg 187",
+   "frame": {
+    "x": 2243,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items octopus_egg_wobble 188",
+   "frame": {
+    "x": 2255,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items octopus_egg_wobble 189",
+   "frame": {
+    "x": 2267,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items octopus_egg_wobble 190",
+   "frame": {
+    "x": 2279,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items octopus_egg_wobble 191",
+   "frame": {
+    "x": 2291,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items octopus_egg_crack 192",
+   "frame": {
+    "x": 2303,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items octopus_egg_open 193",
+   "frame": {
+    "x": 2315,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items gargoyle_egg 194",
+   "frame": {
+    "x": 2327,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items gargoyle_egg_wobble 195",
+   "frame": {
+    "x": 2339,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items gargoyle_egg_wobble 196",
+   "frame": {
+    "x": 2351,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items gargoyle_egg_wobble 197",
+   "frame": {
+    "x": 2363,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items gargoyle_egg_wobble 198",
+   "frame": {
+    "x": 2375,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items gargoyle_egg_crack 199",
+   "frame": {
+    "x": 2387,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items gargoyle_egg_open 200",
+   "frame": {
+    "x": 2399,
+    "y": 0,
+    "w": 12,
+    "h": 15
+   },
+   "duration": 1000
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 2243,
+   "w": 2411,
    "h": 15
   },
   "frameTags": [
@@ -2585,6 +2725,54 @@
     "name": "kite_egg_open",
     "from": 186,
     "to": 186,
+    "direction": "forward"
+   },
+   {
+    "name": "octopus_egg",
+    "from": 187,
+    "to": 187,
+    "direction": "forward"
+   },
+   {
+    "name": "octopus_egg_wobble",
+    "from": 188,
+    "to": 191,
+    "direction": "forward"
+   },
+   {
+    "name": "octopus_egg_crack",
+    "from": 192,
+    "to": 192,
+    "direction": "forward"
+   },
+   {
+    "name": "octopus_egg_open",
+    "from": 193,
+    "to": 193,
+    "direction": "forward"
+   },
+   {
+    "name": "gargoyle_egg",
+    "from": 194,
+    "to": 194,
+    "direction": "forward"
+   },
+   {
+    "name": "gargoyle_egg_wobble",
+    "from": 195,
+    "to": 198,
+    "direction": "forward"
+   },
+   {
+    "name": "gargoyle_egg_crack",
+    "from": 199,
+    "to": 199,
+    "direction": "forward"
+   },
+   {
+    "name": "gargoyle_egg_open",
+    "from": 200,
+    "to": 200,
     "direction": "forward"
    }
   ]

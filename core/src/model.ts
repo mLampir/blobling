@@ -697,6 +697,8 @@ function petWorld(state: PetState, t: number): life.World {
     spin: care.knows(state, "spin"),
     dance: care.knows(state, "dance"),
     friend: state.friends.length > 0,
+    tricks: care.learned(state).length,
+    smarts: state.skills.smarts ?? 0,
     strongest: strongest.length === 1 && top > 0 ? strongest[0] : undefined,
     houseBuilt: state.house >= home.HOUSE_STEPS,
     glowOutside: home.placeDeco(state).outside.some((item) => home.GLOWING_DECO.includes(item)),
