@@ -187,7 +187,7 @@ test("every activity can be drawn from its start to its end", () => {
     snack: "icecream", trick: "flip:learned", game_turn: "grass:pet", hatch: "egg:blob", evolve: "child:blob",
     plant: "cherry", pick: "cherry", trip_start: "meadow", unpack: "seed_berry,cap,egg_ember", collect: "egg_blob",
     train_strength: "0.80", train_ready: "2.00", train_speed: "0.90", train_show: "left,up,down,right",
-    train_smarts: "4/4",
+    train_smarts: "4/4", yard: "eat,bath",
   };
   for (const [activity, seconds] of Object.entries(ACTIVITY_SECONDS)) {
     const changes: Partial<SceneView> = { activity, activity_item: items[activity] ?? "", stage: "adult", species: "flicker" };

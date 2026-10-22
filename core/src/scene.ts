@@ -30,6 +30,7 @@ import { faceAnchor, outline, recolor, swapColors, tint, wideRow, type Sheet } f
 import * as stars from "./stars";
 import { moonPhase, sunTimes } from "./sun";
 import { lowTide, tide } from "./trip";
+import * as yards from "./yard";
 
 export const FPS = 10;
 export const SLEEP_FPS = 4;
@@ -196,6 +197,24 @@ export function starArea(house: number, item: string): [number, number, number, 
  * Where something waiting to be taken lies (the egg in the nest, a friend's gift, what the pet
  * found), as parts of the scene [x, y, width, height], for a tap in the app.
  */
+// The yard (renderYard): the middle of the trough and of the basin. The right end stays free for
+// what may come there later.
+const YARD_X = { trough: 15, basin: 40 } as const;
+export const YARD_WIDTH = [16, 20, 24]; // trough and basin per size: up to about as wide as a child
+const YARD_HEIGHT = [7, 8, 9];
+const YARD_HEAP = 3; // rows a full trough heaps up over its rim
+const YARD_SIDE = [0, 12, -8, 6]; // where each house's pet stands next to the others, from the middle
+const YARD_COVER = 0.45; // a trough or basin hides at most this much of a small pet (it stands on tiptoe)
+const YARD_WALK = 2.5; // seconds from the trough over to the basin
+
+/** Where the trough or the basin stands in the yard, at a size: [x, y, width, height] as parts of the scene (64 × 64). */
+export function yardArea(what: "trough" | "basin", size: number): [number, number, number, number] {
+  const width = YARD_WIDTH[size];
+  const height = YARD_HEIGHT[size] + YARD_HEAP;
+  const area = [YARD_X[what] - width / 2, GROUND + 1 - height, width, height];
+  return area.map((v) => Number((v / 64).toFixed(3))) as [number, number, number, number];
+}
+
 export function thingArea(kind: "nest" | "gift" | "found", house: number): [number, number, number, number] {
   const middle = { nest: NEST_X, gift: GIFT_X, found: FOUND_X[house] }[kind];
   const part = (n: number) => Number((n / 64).toFixed(3));
@@ -1202,6 +1221,22 @@ export interface SceneView {
   friend?: string | null;
 }
 
+/**
+ * The yard at the end of the street (yard.ts), as Pet.yardView() describes it: its size (0 =
+ * small), how full the trough and the basin look ("empty", "low", "half", "full"; the basin null
+ * until it is found), and the pets over there now, each with how long it has been there and its
+ * house along the street (`slot`), which keeps two of them side by side.
+ */
+export interface YardView {
+  size: number;
+  trough: string;
+  basin: string | null;
+  pets: readonly {
+    species: string; stage: string; hat?: string | null; sick?: boolean; mood?: string; heavy?: boolean;
+    item: string; e: number; slot: number;
+  }[];
+}
+
 /** The weather as the weather service reports it: temperature in °C and a WMO code. */
 export type Weather = { temp?: number | null; code?: number | null } | null;
 
@@ -1776,7 +1811,7 @@ export class PetScene {
     }
 
     this.updateParticles(img, view, pose, t, dt);
-    this.drawStatus(img, view, weather, now, t);
+    this.drawStatus(img, view.needs, weather, now, t);
     return [img, 1 / (view.asleep && view.activity === "idle" ? SLEEP_FPS : FPS)];
   }
 
@@ -1828,6 +1863,9 @@ export class PetScene {
     }
     if (activity === "trip_home" || activity === "grandma_home") {
       return this.arrive(pose, view, t, dt, activity === "trip_home" || !!view.backpack);
+    }
+    if (activity === "yard") {
+      return this.toYard(pose, view, t, dt, now);
     }
     if (activity === "go_in" && view.house) {
       return this.goIn(pose, view, t, dt, now);
@@ -5244,6 +5282,125 @@ export class PetScene {
     return pose;
   }
 
+  /**
+   * Off to the yard (yard.ts) and back: it hops off at the right edge of its garden, is away while
+   * it is over there (the yard has it: renderYard), and comes back in from the right.
+   */
+  private toYard(pose: Pose, view: SceneView, t: number, dt: number, now: number): Pose {
+    const where = yards.phase(view.activity, view.activity_until, view.activity_item, now);
+    const home = (this.width - SPRITE) / 2;
+    if (where?.where === "out") {
+      this.facing = 1;
+      this.x = Math.min(this.width, this.x + THROW_SPEED * dt);
+      this.hop(pose, t, 3.5);
+    } else if (where?.where === "there") {
+      this.x = this.width;
+      pose.hidden = true;
+    } else {
+      this.facing = -1;
+      // (at its very end, back home)
+      this.x = Math.max(home, Math.min(this.x, this.width - (where?.e ?? yards.BACK) * THROW_SPEED));
+      if (this.x > home + 0.5) {
+        this.hop(pose, t, 3.5);
+      }
+    }
+    pose.face = "happy";
+    this.targetX = this.x;
+    return pose;
+  }
+
+  /**
+   * One frame of the yard at the end of the street (yard.ts): the trough and the basin as full as
+   * they are, and the pets that are over there, coming in from the left, eating at the trough or
+   * splashing in the basin, and going home again. Returns [image, seconds until the next frame].
+   * The scene's own pet has nothing to do with it; any scene can draw the yard.
+   */
+  renderYard(yard: YardView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    const dt = clamp(t - this.last, 0.0, 0.5);
+    this.last = t;
+    this.moon = moonPhase(now.getTime() / 1000);
+    const img = this.skyImage(now, sky.clouds(sky.codeOf(weather))[0] >= 2).copy();
+    this.drawWeather(img, weather, t, dt);
+    const code = sky.codeOf(weather);
+    this.skyLook = sky.isThunder(code) ? "storm" : sky.precipitation(code) === "rain" ? "rain" : null;
+    this.drawGround(img);
+    const size = clamp(yard.size, 0, YARD_WIDTH.length - 1);
+    const trough = this.dimmedSprite(`trough_${size}_${yard.trough}`);
+    const basin = yard.basin ? this.dimmedSprite(`basin_${size}_${yard.basin}`) : null;
+    const cover = YARD_HEIGHT[size];
+    // the bigger ones behind the smaller ones, and of the same size the one further along the street
+    const behind = (stage: string) => ["adult", "child", "baby"].indexOf(stage);
+    for (const pet of [...yard.pets].sort((a, b) => behind(a.stage) - behind(b.stage) || b.slot - a.slot)) {
+      const [x, facing, doing] = this.inYard(pet);
+      const local = t + pet.slot * 0.37; // not all in step
+      let body = "idle";
+      let face = "happy";
+      let jump = 0;
+      if (doing === "walk") {
+        [body, jump] = this.stride(pet.stage, pet.species, local, 3.5) ?? ["idle", 0];
+      } else if (doing === "eat") {
+        const chewing = Math.trunc(local * 3) % 2;
+        [body, face] = chewing ? ["squash", "eat_closed"] : ["idle", "eat_open"];
+      } else {
+        body = Math.trunc(local * 4) % 2 ? "squash" : "idle"; // splashing about, as when it is cleaned
+      }
+      const [image, top] = this.pet(pet.stage, pet.species, body, local, face, {
+        sick: pet.sick, heavy: pet.heavy, hat: pet.hat, glow: this.night > 0.5, lookLeft: facing < 0, sky: this.skyLook,
+      });
+      const room = image.height - SPRITE - 2;
+      const height = SPRITE - top;
+      // at the trough, over the heap of food in it as well
+      const rim = cover + (doing === "eat" && yard.trough !== "empty" ? YARD_HEAP : 0);
+      const lift = doing === "walk" ? 0 : Math.max(0, Math.round(rim - YARD_COVER * height));
+      const px = Math.round(x) - Math.floor((image.width - SPRITE) / 2);
+      const py = GROUND - SPRITE - room - Math.round(jump) - lift;
+      img.paste(image, px, py);
+      if (doing === "bath") {
+        // drops flying up out of the basin
+        for (let k = 0; k < 4; k++) {
+          const p = (local * 1.4 + k / 4) % 1;
+          const dx = (k - 1.5) * 6 + Math.round(Math.sin(k * 2.1) * 2);
+          img.point(Math.round(x + SPRITE / 2 + dx), Math.round(GROUND - cover - 1 - Math.sin(p * Math.PI) * 7),
+            p < 0.5 ? WATER_DROP[0] : SPRAY[0]);
+        }
+      }
+    }
+    this.stand(img, trough, YARD_X.trough);
+    if (basin) {
+      this.stand(img, basin, YARD_X.basin);
+    }
+    this.drawStatus(img, [], weather, now, t);
+    return [img, 1 / FPS];
+  }
+
+  /**
+   * Where a pet in the yard is (its left edge), which way it looks, and what it does there: walking,
+   * eating at the trough or bathing in the basin. It all follows from how long it has been there.
+   */
+  private inYard(pet: YardView["pets"][number]): [number, number, "walk" | "eat" | "bath"] {
+    const parts = pet.item.split(",") as ("eat" | "bath")[];
+    const side = YARD_SIDE[pet.slot % YARD_SIDE.length];
+    const spot = (part: "eat" | "bath") => YARD_X[part === "eat" ? "trough" : "basin"] - SPRITE / 2 + side;
+    const outside = -SPRITE; // just past the left edge, towards the street
+    const towards = (from: number, to: number, f: number) => from + (to - from) * clamp(f, 0, 1);
+    let e = pet.e;
+    if (e < yards.IN) {
+      return [towards(outside, spot(parts[0]), e / yards.IN), 1, "walk"];
+    }
+    e -= yards.IN;
+    for (const [i, part] of parts.entries()) {
+      if (e < yards.PART) {
+        if (i > 0 && e < YARD_WALK) {
+          const [from, to] = [spot(parts[i - 1]), spot(part)];
+          return [towards(from, to, e / YARD_WALK), to >= from ? 1 : -1, "walk"];
+        }
+        return [spot(part), 1, part];
+      }
+      e -= yards.PART;
+    }
+    return [towards(spot(parts.at(-1)!), outside, e / yards.LEAVE), -1, "walk"];
+  }
+
   /** Comes hopping home from the left; from a trip, it keeps the backpack on until it is unpacked. */
   private arrive(pose: Pose, view: SceneView, t: number, dt: number, pack = true): Pose {
     if (this.arriveFor !== view.activity_until) {
@@ -6520,7 +6677,7 @@ export class PetScene {
     }
   }
 
-  private drawStatus(img: Image, view: SceneView, weather: Weather, now: Date, t: number): void {
+  private drawStatus(img: Image, needs: readonly string[], weather: Weather, now: Date, t: number): void {
     const font = this.assets.font;
     const color: Color = [170, 170, 190];
     const two = (value: number) => String(value).padStart(2, "0");
@@ -6533,7 +6690,7 @@ export class PetScene {
       font.draw(img, this.width - 1 - width, 0, temp, color);
     }
     const pulse = 0.75 + 0.25 * Math.sin(t * Math.PI); // pulse gently, don't blink frantically
-    for (const need of view.needs.slice(0, 2)) {
+    for (const need of needs.slice(0, 2)) {
       right -= 8;
       bitmap(img, Math.round(right), 0, ICONS[need], pulse);
     }

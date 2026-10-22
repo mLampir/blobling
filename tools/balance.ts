@@ -12,6 +12,7 @@
  *   npm run balance -- --only=workday        some owners (ids in PROFILES)
  *   npm run balance -- --lines=blob,fox      some lines (life.LINES)
  *   npm run balance -- --alone               the energy of a pet left alone from morning to evening, hour by hour
+ *   npm run balance -- --yard                pets left alone with the yard: portions a day, how long each size lasts
  *
  * The output names adult forms: it is meant for working on the values, not for the docs.
  */
@@ -29,6 +30,7 @@ import { Random } from "../core/src/random";
 import type { PetState, Trip } from "../core/src/state";
 import * as trip from "../core/src/trip";
 import * as wild from "../core/src/wild";
+import * as yards from "../core/src/yard";
 
 const BEDTIME = DEFAULT_BEDTIME;
 const GAP = 150; // seconds between two things the owner does on a visit (petting counts every two minutes)
@@ -780,6 +782,92 @@ function alone(): string {
   return out.join("\n");
 }
 
+/** Adults that have just been fed and cleaned at 8:00, the store shared like at home. */
+function yardPets(count: number, seed: number, items: Record<string, number>): { states: PetState[]; start: number } {
+  const base = new Date(2026, 9, 5 + seed);
+  const lines = Object.keys(life.LINES);
+  const states: PetState[] = [];
+  for (let i = 0; i < count; i++) {
+    const sim = new Sim(lines[(seed * 4 + i) % lines.length], at(base, 0, 6, 0), "yard", null);
+    while (sim.s.stage !== "adult") {
+      sim.s.egg_warmth = 1e9;
+      sim.act("evolve");
+    }
+    model.fallAsleep(sim.s, at(base, -1, 22, 30));
+    sim.runTo(at(base, 0, 8, 0));
+    sim.now = at(base, 0, 8, 0);
+    sim.act("feed", { item: "meal" });
+    sim.act("clean");
+    Object.assign(sim.s.stats, { satiety: 90, mood: 90, energy: 100, hygiene: 100, health: 100 });
+    sim.s.items = items;
+    states.push(sim.s);
+  }
+  return { states, start: at(base, 0, 8, 0) };
+}
+
+/**
+ * Pets left alone with the yard (nobody comes, no trips): what a pet uses up in a day, and how long
+ * the trough and the basin of each size last with as many pets as the size is meant for.
+ */
+function yardCheck(seeds: number): string {
+  const out = ["## The yard: pets left alone (nobody comes after 8:00 on the first day)", ""];
+  const DAY = 86400;
+  const upgrades = Object.values(yards.UPGRADES);
+  const sized = (size: number) => ({ [yards.BASIN_ITEM]: 1, ...Object.fromEntries(upgrades.slice(0, size).map((u) => [u, 1])) });
+
+  // What one pet takes a day, with more than it can eat: over 6 days, from the second on
+  const rows: string[][] = [];
+  const per = { eat: [] as number[], bath: [] as number[] };
+  for (const count of [2, 3, 4]) {
+    for (let seed = 0; seed < seeds; seed++) {
+      const { states, start } = yardPets(count, seed, sized(2));
+      const yard: yards.Yard = { trough: 1e6, basin: 1e6, empty_at: 0 };
+      for (let t = start + 3600; t <= start + DAY; t += 3600) {
+        model.advanceTogether(states, t, BEDTIME, null, null, null, yard);
+      }
+      const [trough, basin] = [yard.trough!, yard.basin!];
+      for (let t = start + DAY + 3600; t <= start + 6 * DAY; t += 3600) {
+        model.advanceTogether(states, t, BEDTIME, null, null, null, yard);
+      }
+      const eat = (trough - yard.trough!) / count / 5, bath = (basin - yard.basin!) / count / 5;
+      per.eat.push(eat);
+      per.bath.push(bath);
+      const low = (key: "satiety" | "hygiene" | "mood") => fmt(Math.min(...states.map((s) => s.stats[key])));
+      rows.push([`${count} pets #${seed + 1}`, fmt(eat, 2), fmt(bath, 2), low("satiety"), low("hygiene"), low("mood"),
+        String(states.filter((s) => s.grandma).length)]);
+    }
+  }
+  out.push("A pet a day, with more in the yard than it can use (days 2–6):", "",
+    table(["pets", "portions", "baths", "satiety at the end (min)", "hygiene", "mood", "at Grandma's"], rows), "",
+    `On average ${fmt(avg(per.eat), 2)} portions and ${fmt(avg(per.bath), 2)} baths a pet a day; `
+    + `sizes ${yards.LASTS.map(([pets, days]) => `${pets} pets × ${days} days = ${fmt(avg(per.eat) * pets * days, 1)} / ${fmt(avg(per.bath) * pets * days, 1)}`).join(", ")}`
+    + ` (now ${yards.TROUGH.join(", ")} / ${yards.BASIN.join(", ")})`, "");
+
+  // Each size, full, with as many pets as it is meant for: when it runs empty, and when they leave
+  const sizeRows: string[][] = [];
+  yards.LASTS.forEach(([count, meant], size) => {
+    for (let seed = 0; seed < seeds; seed++) {
+      const items = sized(size);
+      const { states, start } = yardPets(count, seed, items);
+      const yard = yards.newYard();
+      yards.settle(yard, items);
+      let troughAt: number | null = null, basinAt: number | null = null, grandmaAt: number | null = null;
+      for (let t = start + 3600; t <= start + (meant + 4) * DAY; t += 3600) {
+        model.advanceTogether(states, t, BEDTIME, null, null, null, yard);
+        troughAt ??= yard.trough === 0 ? t : null;
+        basinAt ??= yard.basin === 0 ? t : null;
+        grandmaAt ??= states.some((s) => s.grandma) ? t : null;
+      }
+      const when = (t: number | null) => (t === null ? "–" : fmt((t - start) / DAY, 1));
+      sizeRows.push([`${yards.SIZES[size]} #${seed + 1}`, `${count} × ${meant} d`, when(troughAt), when(basinAt), when(grandmaAt)]);
+    }
+  });
+  out.push("Each size, full at the start, with the pets it is meant for (days after 8:00 on the first day):", "",
+    table(["size", "meant for", "trough empty", "basin empty", "first at Grandma's"], sizeRows), "",
+    `Grandma's: ${model.GRANDMA_AFTER / 3600} h after the later of the last visit and the yard running empty.`, "");
+  return out.join("\n");
+}
+
 function main(): void {
   const args = new Map(process.argv.slice(2).map((arg) => {
     const [key, value] = arg.replace(/^--/, "").split("=");
@@ -791,6 +879,10 @@ function main(): void {
   const lines = args.get("lines")?.split(",") ?? Object.keys(life.LINES);
   console.log(`# Balance check: ${numDays} days, ${seeds} starts per owner and line, lines: ${lines.join(", ")}`);
   console.log(`Bedtime ${BEDTIME.join("–")}, no weather. Times are local (Europe/Berlin).\n`);
+  if (args.has("yard")) {
+    console.log(yardCheck(seeds));
+    return;
+  }
   console.log(alone());
   if (args.has("alone")) {
     return;

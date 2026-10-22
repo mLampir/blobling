@@ -341,7 +341,10 @@
     "ribbon_red": "Red rosette",
     "fossil": "Fossil",
     "helmet": "Explorer's helmet",
-    "treasure_map": "Treasure map"
+    "treasure_map": "Treasure map",
+    "basin": "Water basin",
+    "planks_coast": "Driftwood planks",
+    "planks_ruins": "Old castle planks"
   },
   "pack": {
     "ball": "Ball"
@@ -397,6 +400,9 @@
       "inside": "{name} is asleep in the house.",
       "boost_waiting": "{name} still has the last one in its tummy.",
       "nothing_found": "There's nothing lying there.",
+      "no_yard": "The yard only comes with a second pet.",
+      "no_basin": "There's no water basin yet.",
+      "yard_full": "It's full already.",
       "dislikes": "{name} turns its head away – not that one!",
       "not_in_bag": "That isn't in the bag any more.",
       "pack_full": "Only two things fit into the backpack.",
@@ -461,6 +467,7 @@
     "place_replace": "Goes into the album",
     "place_replace_egg": "The egg makes room",
     "look": "Switch to {name}",
+    "look_yard": "Over to the yard",
     "new_egg_done": "A new egg is waiting 🥚",
     "retire": "📖 Move to the album",
     "retire_which": "Who goes into the album?",
@@ -755,7 +762,9 @@
       "show_1": "won the trick festival 🏆",
       "show_2": "came second at the trick festival 🥈",
       "show_3": "came third at the trick festival 🥉",
-      "dig": "dug at the red cross: {what}"
+      "dig": "dug at the red cross: {what}",
+      "fill_trough": "trough filled 🌾",
+      "fill_basin": "water basin filled 💧"
     },
     "statistics": {
       "meals": "Meals",

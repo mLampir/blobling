@@ -151,6 +151,8 @@ function forPet(method: string, path: string, body: unknown, id: string | null):
 
 /** With a Pi: the pet this phone looks at, or null for the one the panel shows. */
 let camera = remote ? stored(CAMERA_KEY) : null;
+/** The page asked to look at the yard (lookYard), until it looks at a pet or does something with one. */
+let yardLooked = false;
 
 function setCamera(id: string | null): void {
   camera = id;
@@ -207,6 +209,9 @@ const app = {
    * with the text for the page.
    */
   async request(method: string, path: string, body?: unknown): Promise<any> {
+    if (path === "/api/pet/action" && (body as { action?: unknown } | undefined)?.action !== "fill") {
+      yardLooked = false; // something done with a pet: the camera goes back to it
+    }
     if (!remote) {
       return (await local!).request(method, path, body);
     }
@@ -333,11 +338,35 @@ const app = {
    * unless a pet is pinned there). Returns its state, like GET /api/pet.
    */
   async look(id: string): Promise<any> {
+    yardLooked = false;
     if (remote) {
       // on the phone's own pet, the display goes on showing what it shows
       setCamera(id);
     }
     return app.request("POST", "/api/pet/look", { pet: id });
+  },
+
+  /**
+   * Looks at the yard after the last house (there with two pets or more), until it switches to a
+   * pet again. Returns the state of the pet looked at, like GET /api/pet.
+   */
+  async lookYard(): Promise<any> {
+    yardLooked = true;
+    return app.request("POST", "/api/pet/look", { yard: true });
+  },
+
+  /**
+   * Whether the scene shows the yard right now, for a tap on the trough or the basin: it was asked
+   * for, or the pet `state` (as GET /api/pet has it) is over there.
+   */
+  atYard(state: any): boolean {
+    if (!state?.yard) {
+      return false;
+    }
+    if (phone && app.home() === "phone") {
+      return phone.atYard();
+    }
+    return yardLooked || state.yard.there.includes(state.id);
   },
 
   /** How long the camera takes along the street, and how far it has come (core/src/street.ts). */

@@ -295,6 +295,7 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
           {
             pet, action: display.petAction.bind(display), newEgg: display.petNewEgg.bind(display),
             bringBack: display.petBringBack.bind(display), look: display.look.bind(display),
+            lookYard: display.lookYard.bind(display),
             handOver: display.petHandOver.bind(display), takeIn: display.petTakeIn.bind(display),
             retire: display.petRetire.bind(display),
           },

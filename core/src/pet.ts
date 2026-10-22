@@ -24,7 +24,8 @@ import * as home from "./home";
 import * as life from "./life";
 import * as model from "./model";
 import * as notify from "./notify";
-import { hideX, houseArea, plantArea, starArea, thingArea, type SceneView, type TripView } from "./scene";
+import { hideX, houseArea, plantArea, starArea, thingArea, yardArea, type SceneView, type TripView,
+  type YardView } from "./scene";
 import * as sky from "./sky";
 import * as stars from "./stars";
 import { fromDict, toDict, type Friend, type PetState } from "./state";
@@ -32,6 +33,7 @@ import * as story from "./story";
 import { isDark, type Location } from "./sun";
 import * as trip from "./trip";
 import * as wild from "./wild";
+import * as yards from "./yard";
 
 export const SAVE_INTERVAL = 300;
 export const DEFAULT_BEDTIME: model.Bedtime = ["22:30", "07:00"];
@@ -108,6 +110,8 @@ export interface SaveFile {
   moved?: Record<string, number>;
   /** On a display: the pets phones took along. */
   away?: AwayPet[];
+  /** What is in the yard's trough and basin (yard.ts). Older files have none. */
+  yard?: yards.Yard;
 }
 
 /** Where and when a pet saw a form: the area of the trip, and whether the sun was down. */
@@ -127,6 +131,7 @@ export interface Saved {
   mastered?: string[];
   moved?: Record<string, number>;
   away?: AwayPet[];
+  yard?: yards.Yard;
 }
 
 /** The pets, their ancestors and the album from what was saved. Throws if it cannot be read. */
@@ -160,7 +165,7 @@ export function readSave(data: unknown): Saved {
     }));
   return {
     state: fromDict(file.pet as unknown as Record<string, unknown>), others, place,
-    ancestors: [...(file.ancestors ?? [])], album, seen, mastered, moved, away,
+    ancestors: [...(file.ancestors ?? [])], album, seen, mastered, moved, away, yard: yards.readYard(file.yard),
   };
 }
 
@@ -226,6 +231,8 @@ export class Pet {
   moved: Record<string, number> = {};
   /** On a display: the pets phones took along, sealed (handOver). */
   away: AwayPet[] = [];
+  /** The yard at the end of the street, which all of them share (yard.ts); it is there with two pets or more. */
+  yard: yards.Yard = yards.newYard();
   private currentId = "";
   private readonly t: PetOptions["t"];
   private readonly saveFile: (file: SaveFile) => void;
@@ -252,6 +259,7 @@ export class Pet {
       this.mastered = [...options.saved.mastered ?? []];
       this.moved = { ...options.saved.moved };
       this.away = [...options.saved.away ?? []];
+      this.yard = { ...options.saved.yard ?? yards.newYard() };
       this.take(options.saved);
     } else {
       this.ancestors = [];
@@ -409,7 +417,7 @@ export class Pet {
     this.advance(now);
     let next: notify.Reminder | null = null;
     for (const pet of this.pets) {
-      const reminder = notify.nextReminder(pet, now, this.bedtime(), this.location);
+      const reminder = notify.nextReminder(pet, now, this.bedtime(), this.location, this.openYard());
       if (reminder && (!next || reminder.at < next.at)) {
         next = reminder;
       }
@@ -436,8 +444,10 @@ export class Pet {
       this.advance(now);
       result = model.applyAction(s, action, now, this.bedtime(),
         { item: request.item, by, throw: request.throw, weather: this.weather(), temp: this.temperature(),
-          location: this.location, value: request.value, guest: action === "game" && this.guestThere(s, now) });
+          location: this.location, value: request.value, guest: action === "game" && this.guestThere(s, now),
+          yard: this.openYard() });
       this.share(s);
+      this.openYard(); // what was unpacked may have been for the yard
       if (result.accepted && (action === "wear" || action === "deco")) {
         this.onlyHere(s, String(request.item));
       }
@@ -889,6 +899,7 @@ export class Pet {
       seen: structuredClone(this.seen), mastered: [...this.mastered],
       ...Object.keys(this.moved).length ? { moved: { ...this.moved } } : {},
       ...this.away.length ? { away: structuredClone(this.away) } : {},
+      yard: { ...this.yard },
     };
   }
 
@@ -905,6 +916,7 @@ export class Pet {
     this.album = startAlbum(saved);
     this.seen = { ...saved.seen };
     this.mastered = [...saved.mastered ?? []];
+    this.yard = { ...saved.yard ?? yards.newYard() };
     this.take(saved);
     this.requestIds.clear();
     this.write(this.clock());
@@ -1011,8 +1023,72 @@ export class Pet {
     const missing = this.longMissing(now);
     for (const s of this.pets) {
       s.missing_lines = [...missing];
-      model.advance(s, now, this.bedtime(), this.weather(), this.temperature(), this.location);
     }
+    // all of them minute by minute together, for what they share in the yard
+    model.advanceTogether(this.pets, now, this.bedtime(), this.weather(), this.temperature(), this.location,
+      this.openYard());
+  }
+
+  /**
+   * The yard, while it is there (two pets or more at home), or null. A trough or basin that has
+   * just come comes full (yard.settle).
+   */
+  openYard(): yards.Yard | null {
+    if (!this.pets.length) {
+      return null;
+    }
+    yards.settle(this.yard, this.state.items);
+    return this.pets.length >= yards.MIN_PETS ? this.yard : null;
+  }
+
+  /**
+   * The yard for the scene (PetScene.renderYard): how big and how full it is, and the pets that are
+   * over there right now, in the order of their houses.
+   */
+  yardView(now = this.clock()): YardView | null {
+    this.advance(now);
+    const yard = this.openYard();
+    if (!yard) {
+      return null;
+    }
+    const items = this.state.items;
+    return {
+      size: yards.sizeOf(items),
+      trough: yards.level(yards.portions(yard, "trough"), yards.capacity(items, "trough")),
+      basin: yards.hasBasin(items) ? yards.level(yards.portions(yard, "basin"), yards.capacity(items, "basin")) : null,
+      pets: this.pets.flatMap((pet, slot) => {
+        const where = yards.phase(pet.activity, pet.activity_until, pet.activity_item, now);
+        return where?.where === "there" ? [{
+          species: pet.species, stage: pet.stage, hat: pet.hat, sick: pet.sick, mood: model.moodOf(pet),
+          heavy: care.weightStatus(pet) === "heavy", item: pet.activity_item, e: where.e, slot,
+        }] : [];
+      }),
+    };
+  }
+
+  /** Is the pet with this id (without one: the camera's) over in the yard right now? Then the camera goes along. */
+  inYard(now = this.clock(), id?: unknown): boolean {
+    const pet = this.find(id);
+    return yards.phase(pet.activity, pet.activity_until, pet.activity_item, now)?.where === "there";
+  }
+
+  /** The yard for the app: how big, how full the trough and the basin are, and where they stand (for a tap). */
+  private yardInfo(now: number) {
+    const yard = this.openYard();
+    if (!yard) {
+      return null;
+    }
+    const items = this.state.items;
+    const size = yards.sizeOf(items);
+    const part = (what: yards.What) => ({
+      portions: yards.portions(yard, what), capacity: yards.capacity(items, what),
+      level: yards.level(yards.portions(yard, what), yards.capacity(items, what)), area: yardArea(what, size),
+    });
+    return {
+      size: yards.SIZES[size], trough: part("trough"), basin: yards.hasBasin(items) ? part("basin") : null,
+      // the pets over there right now (their ids)
+      there: this.pets.filter((pet) => this.inYard(now, pet.id)).map((pet) => pet.id),
+    };
   }
 
   /** A time together has just ended (at `end`): the pairs that could play, did. */
@@ -1060,7 +1136,7 @@ export class Pet {
       hot: home.hot(s, now), // it sweats: a bath cools it down
       asleep: s.asleep, sick: s.sick, poops: s.poops,
       needs: model.needs(s),
-      actions: model.availableActions(s, now),
+      actions: { ...model.availableActions(s, now), fill: this.openYard() !== null } as Record<string, boolean>,
       bedtime: { start: bedtime[0], end: bedtime[1] },
       weight: Number(s.weight.toFixed(1)), ideal_weight: care.ideal(s), weight_status: care.weightStatus(s),
       bond: Math.round(s.bond), bond_level: care.bondLevel(s),
@@ -1152,6 +1228,9 @@ export class Pet {
       } : null,
       // What happened while nobody was there, told as a little story (story.tell), or null
       welcome: story.tell(s, now, t),
+      // The yard at the end of the street (with two pets or more), or null: a tap on the trough or
+      // the basin fills it ("fill")
+      yard: this.yardInfo(now),
       // All the pets at home, in the order of their houses: for switching the camera between them
       // (grandma: it is at Grandma's; away: on a trip; needs: something it needs is running low)
       ...this.street(now),

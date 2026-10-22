@@ -8666,6 +8666,88 @@ FOE_TAGS |= {
 TRIP_TAGS |= COAST_NEAR | RUINS_NEAR | COAST_FINDS
 
 
+# ---------------------------------------------------------------- The yard (core/src/yard.ts)
+
+# Trough and basin come in three sizes (scene.YARD_WIDTH, YARD_HEIGHT), each as empty, low, half
+# and full; the biggest is about as wide as a child, the size of what a pet sits at or goes into.
+# Above the rim are YARD_HEAP rows for a full trough's heap of hay and grain.
+YARD_SIZES = [(16, 7), (20, 8), (24, 9)]
+YARD_HEAP = 3
+YARD_LEVELS = ["empty", "low", "half", "full"]
+
+
+def trough(width, height, level):
+    """A wooden trough on two short legs, a little seen from above; the food heaps up over its rim."""
+    heap = {"empty": 0, "low": 0, "half": 1, "full": 3}[level]
+    rows = []
+    for above in range(YARD_HEAP, 0, -1):  # the top row first
+        row = ["."] * width
+        if heap >= above:
+            margin = 1 + 2 * above
+            for x in range(margin, width - margin):
+                row[x] = "Y" if (x * 3 + above) % 5 == 0 else "e" if above == heap and x % 4 == 1 else "y"
+        rows.append("".join(row))
+    inner = width - 2
+    if level == "empty":
+        inside = "T" * inner
+    elif level == "low":
+        inside = "".join("Y" if x % 5 == 2 else "T" for x in range(inner))
+    else:
+        inside = "".join("Y" if x % 3 == 0 else "y" for x in range(inner))
+    rows.append("." + "T" * inner + ".")  # the back edge
+    rows.append("T" + inside + "T")
+    rows.append("T" + "d" * inner + "T")  # the front edge in the light
+    for plank in range(height - 4):
+        rows.append("".join("T" if x in (0, width - 1) else "S" if plank == 0 and x in (2, width - 3) else
+                            "D" if plank % 2 else "t" for x in range(width)))
+    rows.append(".TT" + "." * (width - 6) + "TT.")  # the legs
+    return rows
+
+
+def basin(width, height, level):
+    """A basin of stones; the water inside stands up to three rows high."""
+    water = {"empty": 0, "low": 1, "half": 2, "full": 3}[level]
+    inner = width - 2
+    rows = ["." + "W" * inner + "."]  # the back rim
+    for depth in range(3):  # the top row of the inside first
+        wet = 3 - depth <= water
+        if not wet:
+            inside = "S" * inner
+        elif level == "low":
+            inside = "".join("B" if inner // 4 <= x < inner - inner // 4 else "S" for x in range(inner))
+        elif depth == 3 - water:
+            inside = "".join("i" if x % 6 == 2 else "b" for x in range(inner))  # the surface catches the light
+        else:
+            inside = "".join("B" if (x + depth) % 5 == 0 else "b" for x in range(inner))
+        rows.append("s" + inside + "s")
+    rows.append("W" * width)  # the front rim
+    for course in range(height - 6):
+        rows.append("".join("S" if (x + 3 * course) % 6 == 0 else "s" for x in range(width)))
+    rows.append("." + "S" * inner + ".")
+    return rows
+
+
+TRIP_TAGS |= {f"trough_{size}_{level}": [(trough(w, h, level), 1000)]
+              for size, (w, h) in enumerate(YARD_SIZES) for level in YARD_LEVELS}
+TRIP_TAGS |= {f"basin_{size}_{level}": [(basin(w, h, level), 1000)]
+              for size, (w, h) in enumerate(YARD_SIZES) for level in YARD_LEVELS}
+# The finds for the yard, held up like other finds: the water basin from the stream, and the
+# planks from the coast and the ruins that make trough and basin a size bigger
+PLANKS = [
+    ".ddddadddddd.",
+    "dtttttatttttT",
+    ".TTTTTaTTTTT.",
+    ".dddddaddddd.",
+    "dtttttatttttT",
+    ".TTTTTaTTTTT.",
+]
+TRIP_TAGS |= {
+    "basin": [([".WWWWWWWW.", "sbbibbbbbs", "sBbbbbBbbs", "WWWWWWWWWW", "sSsssSsssS", ".SSSSSSSS."], 1000)],
+    "planks_coast": [(PLANKS, 1000)],
+    "planks_ruins": [(PLANKS, 1000)],
+}
+
+
 # ---------------------------------------------------------------- The house
 
 # The house grows in three steps (core/src/home.ts): a hut of thatch, a wooden cabin with a window,

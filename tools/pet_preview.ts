@@ -4,6 +4,8 @@
 //   npm run preview -- --spoiler-free     one adult form and the first area only (for the docs)
 //   npm run preview -- play --gif         one animation as a GIF → pet_play.gif
 //   npm run preview -- --pets             one picture per form → docs/images/pets/
+//   npm run preview -- --yard             the yard: every size and level, pets at it → pet_yard.png,
+//                                         and a pet going over and back → pet_yard.gif
 //
 // For the clock, the temperature and the names in the overview, point LED_MATRIX_BDF_DIR at the
 // fonts folder of rpi-rgb-led-matrix (without it they are left out).
@@ -13,8 +15,10 @@ import { parseArgs } from "node:util";
 
 import { Image } from "../core/src/image";
 import { ACTIVITY_SECONDS } from "../core/src/model";
-import { PetScene, type SceneView, type TripView, type Weather } from "../core/src/scene";
+import { PetScene, type SceneView, type TripView, type Weather, type YardView } from "../core/src/scene";
+import { pan, panSeconds } from "../core/src/street";
 import { AREAS } from "../core/src/trip";
+import * as yards from "../core/src/yard";
 import { readAssets } from "../pi/src/assets";
 import { BDF_FONT_DIR } from "../pi/src/config";
 import { encodePng } from "../pi/src/png";
@@ -686,6 +690,64 @@ function frames(name: string, count: number, step = 0.1, spoilerFree = false): I
   return images;
 }
 
+/** The yard: [label, view] for each size and level, and with pets eating and bathing. */
+function yardScenes(): [string, YardView][] {
+  const levels = ["empty", "low", "half", "full"];
+  const pet = (species: string, stage: string, item: string, e: number, slot: number) =>
+    ({ species, stage, item, e, slot, mood: "happy" });
+  return [
+    ...yards.SIZES.flatMap((size, i) => levels.map((level): [string, YardView] =>
+      [`${size} ${level}`, { size: i, trough: level, basin: level, pets: [] }])),
+    ["small no basin", { size: 0, trough: "full", basin: null, pets: [] }],
+    ["eating", { size: 1, trough: "half", basin: "full", pets: [pet("blob", "child", "eat", 12, 0)] }],
+    ["two eat", { size: 2, trough: "full", basin: "half", pets: [pet("angloop", "adult", "eat", 12, 0), pet("blob", "baby", "eat", 14, 1)] }],
+    ["bathing", { size: 1, trough: "low", basin: "half", pets: [pet("blob", "child", "bath", 12, 1)] }],
+    ["eat, bath", { size: 0, trough: "half", basin: "low", pets: [pet("angloop", "adult", "eat,bath", 36, 0)] }],
+    ["walks in", { size: 0, trough: "full", basin: "full", pets: [pet("blob", "child", "eat", 1.5, 0)] }],
+    ["at night", { size: 2, trough: "half", basin: "full", pets: [pet("blob", "child", "bath", 12, 0)] }],
+  ];
+}
+
+/**
+ * A pet goes over to the yard and back, the camera with it as on the Pi (pi/src/display.ts):
+ * the garden while it walks off, a pan to the yard, the yard while it eats, a pan back.
+ */
+function yardTrip(step = 0.1): Image[] {
+  const start = DAY.getTime() / 1000;
+  const item = "eat";
+  const view: SceneView = { ...BASE, activity: "yard", activity_item: item, activity_until: start + yards.seconds(item) };
+  const garden = new PetScene(64, 64, assets, { t: 0.0 });
+  const yardScene = new PetScene(64, 64, assets, { t: 0.0 });
+  const images: Image[] = [];
+  let shown = "garden", last: Image | null = null;
+  let panning: { from: Image; steps: number; start: number } | null = null;
+  for (let i = 0; i * step < yards.seconds(item) + 3; i++) {
+    const seconds = start + i * step, t = 1 + i * step, now = new Date(seconds * 1000);
+    const where = yards.phase(view.activity, view.activity_until, item, seconds);
+    const [own] = garden.render(view, null, now, t);
+    const there: YardView = { size: 1, trough: "full", basin: "half",
+      pets: where?.where === "there" ? [{ species: "blob", stage: "child", item, e: where.e, slot: 0, mood: "happy" }] : [] };
+    const [yardFrame] = yardScene.renderYard(there, null, now, t);
+    const at = where?.where === "there" ? "yard" : "garden";
+    let frame = at === "yard" ? yardFrame : own;
+    if (at !== shown && last) {
+      panning = { from: last, steps: at === "yard" ? 1 : -1, start: t };
+    }
+    shown = at;
+    last = frame;
+    if (panning) {
+      const progress = (t - panning.start) / panSeconds(panning.steps);
+      if (progress < 1) {
+        frame = pan(panning.from, frame, progress, panning.steps);
+      } else {
+        panning = null;
+      }
+    }
+    images.push(frame);
+  }
+  return images;
+}
+
 /** A text in the panel font, twice its size, with its top left corner at (x, y). */
 function label(image: Image, x: number, y: number, text: string): void {
   const font = assets.font;
@@ -702,6 +764,7 @@ function main(): void {
     options: {
       gif: { type: "boolean", default: false },
       pets: { type: "boolean", default: false }, // write the pictures for docs/pets.md
+      yard: { type: "boolean", default: false }, // the yard's sizes and levels, and a pet going over
       "spoiler-free": { type: "boolean", default: false }, // overview with one adult form and the first area only
       scale: { type: "string", default: "4" },
       frames: { type: "string", default: "50" }, // length of the GIF (10 frames per second)
@@ -726,6 +789,27 @@ function main(): void {
       writeFileSync(`${PETS_DIR}/${file}.png`, encodePng(scene.icon(160, stage, species)));
     }
     console.log(PETS_DIR);
+    return;
+  }
+  if (values.yard) {
+    const shown = yardScenes();
+    const cols = 4, rows = Math.ceil(shown.length / cols);
+    const sheet = Image.filled(cols * (64 * s + 8), rows * (64 * s + 20), [30, 30, 36]);
+    shown.forEach(([title, view], i) => {
+      const scene = new PetScene(64, 64, assets, { t: 0.0 });
+      const now = title === "at night" ? NIGHT : DAY;
+      let frame = scene.renderYard(view, null, now, 1)[0];
+      for (let k = 1; k <= 5; k++) { // a little later, the way it looks after a moment
+        frame = scene.renderYard({ ...view, pets: view.pets.map((p) => ({ ...p, e: p.e + k * 0.1 })) }, null,
+          new Date(now.getTime() + k * 100), 1 + k * 0.1)[0];
+      }
+      const x = (i % cols) * (64 * s + 8), y = Math.floor(i / cols) * (64 * s + 20);
+      sheet.paste(enlarged(frame), x + 4, y + 16);
+      label(sheet, x + 4, y + 2, title);
+    });
+    writeFileSync("pet_yard.png", encodePng(sheet));
+    writeFileSync("pet_yard.gif", encodeGif(yardTrip().map(enlarged), 0.1));
+    console.log("pet_yard.png pet_yard.gif");
     return;
   }
   let out: string;

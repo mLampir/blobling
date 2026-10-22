@@ -38,6 +38,8 @@ export interface PetTarget {
   bringBack: (bornAt: unknown, place: unknown) => ReturnType<Pet["bringBack"]>;
   /** Somebody switched to the pet with this id: on the phone, the camera goes there. */
   look: (id: unknown) => void;
+  /** Somebody looks at the yard at the end of the street (yard.ts): the camera goes there, until it goes to a pet. */
+  lookYard: () => void;
   /** A phone takes the pet with this id along (Pet.handOver). */
   handOver: (id: unknown) => ReturnType<Pet["handOver"]>;
   /** A pet from a phone moves in (Pet.takeIn). */
@@ -50,7 +52,7 @@ export interface PetTarget {
 export function ownTarget(pet: Pet): PetTarget {
   return {
     pet, action: pet.action.bind(pet), newEgg: (egg, place) => pet.newEgg(egg, undefined, place),
-    bringBack: (bornAt, place) => pet.bringBack(bornAt, place), look: (id) => pet.select(id),
+    bringBack: (bornAt, place) => pet.bringBack(bornAt, place), look: (id) => pet.select(id), lookYard: () => {},
     handOver: (id) => pet.handOver(id), takeIn: (moving, place) => pet.takeIn(moving, place),
     retire: (id) => pet.retire(id),
   };
@@ -105,8 +107,13 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
     }
 
     case "POST /api/pet/look": {
-      // switched to another pet (its id): the camera follows
+      // switched to another pet (its id): the camera follows; with "yard": true, to the yard, for
+      // the pet the request is for (or the camera's)
       const request = fields(await body());
+      if (request.yard === true) {
+        target.lookYard();
+        return pet.snapshot(undefined, request.pet);
+      }
       target.look(request.pet);
       return pet.snapshot(undefined, request.pet);
     }

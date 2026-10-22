@@ -78,6 +78,8 @@ const THINGS: Record<string, string[]> = {
   seagrass: ["trip:seagrass"],
   // baked by Grandma
   cake: ["trip:cake"],
+  // the yard at the end of the street
+  yard: ["trip:trough_0_full"],
 };
 
 /** A thing the player hands the pet (food, the ball, the sponge, the baton, …) as a picture, or "" if there is none. */

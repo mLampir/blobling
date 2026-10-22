@@ -329,6 +329,41 @@ with the display out of reach, the app shows only the phone's own pets.
   display) are asked about once: you pick the real one, and the other moves
   into the album.
 
+### The yard
+
+With two pets or more at home, the street ends in a yard, right of the last
+house. It belongs to the home, like the store, and the pictures at the top get
+one more for it; a tap there pans over, a tap on a pet pans back.
+
+- **A trough** comes with the yard, full. **A water basin** is found once at
+  the stream and comes full as well. Both hold portions, not time.
+- **The pets go by themselves.** When a pet's satiety is down to 50 and the
+  trough has a portion, or its hygiene is down to 50 and the basin has water,
+  it hops off at the edge of its garden, as soon as it is awake, at home and
+  not busy (no trip, no game, no training, not at Grandma's). In the yard it
+  eats one portion (+30 satiety) or splashes about once (+30 hygiene), or
+  both, and comes home again: a minute or two. If the camera is on
+  that pet, it pans along to the yard and back; two pets there at the same
+  time eat or bathe side by side.
+- **About three portions a day** is what a pet takes from each. The sizes
+  are meant for: small, 2 pets for 2 days (12 portions); medium, 3 pets for
+  4 days (36); large, 4 pets for a week (84). Trough and basin show how full
+  they are (empty, low, half, full), and a bigger size is a bigger trough.
+- **A tap on the trough or the basin** in the yard fills it up.
+- **While the trough has portions**, satiety doesn't drop below 50; **while
+  the basin has water**, hygiene doesn't; **while both have something**, mood
+  doesn't drop below 40. Looked after, not happy: what was already lower isn't
+  lifted.
+- **It isn't feeding.** Eating at the trough doesn't count as being fed by
+  you: no care diary, no bond, no favorite food.
+- **Bigger:** once the guardian of the coast has been got past and its egg
+  brought home, driftwood planks can be found there, and old castle planks in
+  the ruins after the same. Each makes the yard one size bigger; the basin
+  comes at the size the yard has when it is found.
+
+It all follows the simulation, minute by minute for all pets together, so who
+gets the last portion is the same whether anybody is looking or not.
+
 ## Tricks
 
 The pet can learn four tricks. A tap on the baton in the app's tray opens the
@@ -593,6 +628,11 @@ cave and on the mountain. Inside the cave there is no sky and no weather.
   lie on it; the pet finds them more often then.
 - **The ruins:** an old castle with ivy on its walls, battlements and a bell
   in its tower. In the evening the torches burn.
+
+Three finds are for the [yard](#the-yard): the water basin at the stream, and
+the planks at the coast and in the ruins, which only turn up once the area's
+guardian has been got past and its egg has been brought home. The guardian
+itself only gives the egg.
 
 ## Opponents
 
@@ -873,6 +913,10 @@ pet on the phone, it is the same as if it had been running.
   fetched.
 - After that it stays at least a day and a half again, even if nobody does
   anything with it.
+- **The yard** keeps the pets at home: none of them goes while the trough and
+  the basin both have something and no need is critical. Once one of them has
+  run empty, the day and a half counts from then, if that is later than the
+  last time somebody did something with it.
 
 You can also take it there yourself, before a holiday or a busy week: the
 *Trip* tab has **Take to Grandma's** (from the baby on, while it is awake, at
@@ -991,12 +1035,13 @@ keep its own pet or connect to a Pi; the README explains how.
 | Catching up, the state for the app, what is saved, pets in the album (kept frozen, and coming home again), the album (seen, had, mastered) and its safety net (`longMissing`) | `core/src/pet.ts`, `core/src/state.ts` |
 | Several pets at home: the houses, the shared store, places for a new egg | `core/src/pet.ts` (`PLACES`, `newEgg`, `bringBack`) |
 | Neighbours getting together, sleeping side by side, copying tricks | `core/src/companion.ts` |
+| The yard: trough and basin, portions, sizes and upgrades, the visits and the floors; all pets stepped together | `core/src/yard.ts`, `core/src/model.ts` (`advanceTogether`), `renderYard` in `core/src/scene.ts` |
 | Moving between a phone and a display: move numbers, the sealed copy, fetching back | `core/src/pet.ts` (`release`, `adopt`, `handOver`, `takeIn`, `fetchBack`), `app/src/main.ts` |
 | The camera panning along the street (panel and app), and which pet the panel shows | `core/src/street.ts`, `pi/src/display.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
-| Preview of the scene on a PC, pictures for [pets.md](pets.md) | `tools/pet_preview.ts` (`npm run preview`) |
-| Checking the values: pets played for weeks with owners of different kinds | `tools/balance.ts` (`npm run balance`) |
+| Preview of the scene on a PC, pictures for [pets.md](pets.md), the yard | `tools/pet_preview.ts` (`npm run preview`, `-- --yard`) |
+| Checking the values: pets played for weeks with owners of different kinds; pets left alone with the yard | `tools/balance.ts` (`npm run balance`, `-- --yard`) |
 | The phone app: the page, and where its pet lives (on the phone or on the Pi) | `app/pet.html`, `app/src/` |
 | The Pi's side: web server, display loop, save file | `pi/src/` |
 
@@ -1151,7 +1196,7 @@ next to the same things looks small and sweet, which is fine.
 | What it carries over itself | at least as wide as its body: chosen per form | the umbrella (`UMBRELLAS` in `core/src/scene.ts`) |
 | What it carries on its back | about a third of its width: chosen per form | the backpack (`PACKS`) |
 | What it wears | about half the child's width (13–17 pixels); a baby wears a small one (`hat_*_small`) | hats |
-| What it sits at or goes into | about as wide as the child | the pond |
+| What it sits at or goes into | about as wide as the child | the pond; the trough and the water basin (16, 20 and 24 pixels by size) |
 | What grows | a bush or a herb below the child, a tree or a sunflower above it | the plant |
 | Decorations | 7–12 pixels: things in the garden, not furniture for the pet | the windmill, the snow globe |
 

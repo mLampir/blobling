@@ -13,6 +13,7 @@
 import * as model from "./model";
 import type { PetState } from "./state";
 import type { Location } from "./sun";
+import type { Yard } from "./yard";
 
 export const HORIZON = 24 * 3600; // a day ahead at most (a little later it is at Grandma's anyway)
 // The needs it calls for, in order of priority
@@ -37,14 +38,16 @@ export function calls(state: PetState): Call[] {
  * The next moment a new need comes up while it is awake, at home and not at bedtime, if nobody
  * does anything until then; null if none does within HORIZON. `state` must be caught up to `now`
  * and is not changed. Weather is left out: it only changes trips, plants and waking in the cold.
+ * `yard`: the home's yard, which looks after it for a while (as if this pet were the only one to use it).
  */
 export function nextReminder(state: PetState, now: number, bedtime: model.Bedtime,
-    location: Location = null): Reminder | null {
+    location: Location = null, yard: Yard | null = null): Reminder | null {
   const s = structuredClone(state);
+  const supply = yard && { ...yard };
   const seen = new Set(calls(s));
   while (s.updated_at + model.TICK <= now + HORIZON) {
     s.updated_at += model.TICK;
-    model.tick(s, s.updated_at, bedtime, null, null, location);
+    model.tick(s, s.updated_at, bedtime, null, null, location, supply);
     const current = calls(s);
     for (const need of seen) {
       if (!current.includes(need)) {

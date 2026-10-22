@@ -4,7 +4,7 @@ import * as life from "./life";
 import type { Random } from "./random";
 import type { PetState, Stat } from "./state";
 
-export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg" | "map";
+export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg" | "map" | "yard";
 
 // Name: kind
 export const ITEMS: Record<string, ItemKind> = {
@@ -66,6 +66,11 @@ export const ITEMS: Record<string, ItemKind> = {
   helmet: "hat",
   fossil: "deco",
   treasure_map: "map",
+  // for the yard (yard.ts): the water basin from the stream, and planks from the coast and the ruins
+  // that make trough and basin bigger; they go there, not into the bag
+  basin: "yard",
+  planks_coast: "yard",
+  planks_ruins: "yard",
   egg_blob: "egg",
   egg_ember: "egg",
   egg_stone: "egg",
@@ -92,7 +97,7 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_octopus: "egg",
   egg_gargoyle: "egg",
 };
-export const MAX_SEEDS = 9; // per kind; decorations, hats and the treasure map exist only once
+export const MAX_SEEDS = 9; // per kind; decorations, hats, the treasure map and what is for the yard exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
 export const MAX_EGGS = 9; // this many are kept
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus
