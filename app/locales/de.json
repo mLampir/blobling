@@ -206,6 +206,16 @@
       "away": "unterwegs auf dem Berg",
       "trip": "Ausflug auf den Berg 🎒"
     },
+    "coast": {
+      "name": "Küste",
+      "away": "unterwegs an der Küste",
+      "trip": "Ausflug an die Küste 🎒"
+    },
+    "ruins": {
+      "name": "Ruinen",
+      "away": "unterwegs in den Ruinen",
+      "trip": "Ausflug zu den Ruinen 🎒"
+    },
     "festival": {
       "name": "Trickfest",
       "away": "auf dem Trickfest",
@@ -230,7 +240,15 @@
     "mosswart": "Mosswart",
     "ripplesprite": "Ripplesprite",
     "gloompeep": "Gloompeep",
-    "frostfluff": "Frostfluff"
+    "frostfluff": "Frostfluff",
+    "snatchgull": "Snatchgull",
+    "jellybrella": "Jellybrella",
+    "starcurl": "Starcurl",
+    "ratwatch": "Ratwatch",
+    "drapeghost": "Drapeghost",
+    "ivycurl": "Ivycurl",
+    "barkguard": "Barkguard",
+    "rustknight": "Rustknight"
   },
   "items": {
     "seed_berry": "Beerensamen",
@@ -246,6 +264,7 @@
     "watercress": "Brunnenkresse",
     "glowberry": "Leuchtbeere",
     "pinenut": "Zirbenzapfen",
+    "bread": "Burgbrot",
     "flag": "Wimpel",
     "windmill": "Windrad",
     "lantern": "Laterne",
@@ -267,6 +286,8 @@
     "lily": "Seerose",
     "batears": "Fledermausohren",
     "edelweiss": "Edelweiß",
+    "sailor": "Matrosenmütze",
+    "knight": "Ritterhelm",
     "egg_blob": "Schleim-Ei",
     "egg_ember": "Glut-Ei",
     "egg_stone": "Stein-Ei",
@@ -283,6 +304,12 @@
     "mussel": "Muschel",
     "seagrass": "Seegras",
     "boot": "Alter Stiefel",
+    "lifering": "Rettungsring",
+    "sandcastle": "Sandburg",
+    "bottle": "Flaschenpost",
+    "banner": "Banner",
+    "arch": "Steinbogen",
+    "bell": "Glocke",
     "egg_crab": "Krebs-Ei",
     "egg_axolotl": "Axolotl-Ei",
     "egg_mouse": "Mäuse-Ei",
@@ -293,6 +320,8 @@
     "egg_chameleon": "Chamäleon-Ei",
     "egg_scarab": "Skarabäus-Ei",
     "egg_kite": "Papierdrachen-Ei",
+    "egg_octopus": "Oktopus-Ei",
+    "egg_gargoyle": "Wasserspeier-Ei",
     "earflap": "Ohrenmütze",
     "stripes": "Ringelzipfelmütze",
     "cosy": "Teewärmermütze",
@@ -702,6 +731,7 @@
       "house_3": "hat aus dem Häuschen ein richtiges Haus gemacht 🏠",
       "mussel": "Muschel 🐚",
       "seagrass": "Seegras 🌿",
+      "bread": "Burgbrot 🍞",
       "fish_cast": "hat am Teich geangelt 🎣",
       "fish_catch": "hat etwas gefangen: {item} 🎣",
       "fish_early": "hat die Angel zu früh eingeholt",

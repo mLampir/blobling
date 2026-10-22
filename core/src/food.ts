@@ -32,13 +32,15 @@ export const FOODS: Record<string, string> = {
   watercress: "train",
   glowberry: "finder",
   pinenut: "fresh",
+  bread: "fresh", // castle bread from the ruins: the same as the pine cone
   // caught when fishing (fishing.ts)
   mussel: "heart",
   seagrass: "trick",
   // from Grandma's (grandma.ts)
   cake: "comfort",
 };
-export const PACKED: Record<string, string> = { honeycomb: "heart", glowberry: "finder", pinenut: "fresh", mussel: "heart" };
+export const PACKED: Record<string, string> = { honeycomb: "heart", glowberry: "finder", pinenut: "fresh", mussel: "heart",
+  bread: "fresh" };
 export const FRUITS = Object.keys(home.PLANTS).map((kind) => `fruit_${kind}`);
 export const EDIBLE = [...FRUITS, ...Object.keys(FOODS)];
 export const SATIETY = 10; // food from trips

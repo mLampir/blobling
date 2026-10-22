@@ -7,7 +7,7 @@
  * shows the dip at the same moment the tap is judged against.
  *
  * Mostly it catches something to eat, now and then an old boot, and rarely an egg: at the pond the
- * crab's, in the lake of the cave the axolotl's. Angloop is a fisher by nature: with its lure
+ * crab's (and by the sea, at the coast), in the lake of the cave the axolotl's. Angloop is a fisher by nature: with its lure
  * something bites more often, and the rare things too.
  */
 
@@ -30,13 +30,14 @@ export const CATCHES: Record<string, readonly (readonly [string, number])[]> = {
   pond: [["mussel", 10], ["seagrass", 8], ["boot", 2], ["egg", 1]],
   stream: [["mussel", 10], ["seagrass", 8], ["boot", 2], ["egg", 1]],
   cave: [["mussel", 6], ["seagrass", 4], ["glowberry", 3], ["egg", 1]],
+  coast: [["mussel", 10], ["seagrass", 8], ["boot", 2], ["egg", 1]],
 };
-export const EGGS: Record<string, string> = { pond: "egg_crab", stream: "egg_crab", cave: "egg_axolotl" };
+export const EGGS: Record<string, string> = { pond: "egg_crab", stream: "egg_crab", cave: "egg_axolotl", coast: "egg_crab" };
 // A water the pet has fished this often without ever bringing up its egg gives it the next time,
 // so the egg can't be missed with good play.
 export const SURE_AFTER = 15;
 export const TRIP_CHANCE = 0.5; // on a trip: at a rest by the water, how often it fishes
-export const TRIP_WATERS = ["stream", "cave"];
+export const TRIP_WATERS = ["stream", "cave", "coast"];
 
 /** The pond is set out in the garden: the pet can fish at home. */
 export function canFish(state: PetState): boolean {

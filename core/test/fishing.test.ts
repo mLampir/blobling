@@ -93,6 +93,10 @@ test("what comes up: food, the boot once, and sooner or later the crab's egg", (
   pet.counters = {};
   const cave = Array.from({ length: fishing.SURE_AFTER }, () => fishing.catchFrom(pet, "cave", rng));
   assert.ok(cave.includes("egg_axolotl"));
+  // and by the sea, the crab's again
+  pet.counters = {};
+  const coast = Array.from({ length: fishing.SURE_AFTER }, () => fishing.catchFrom(pet, "coast", rng));
+  assert.ok(coast.includes("egg_crab") && fishing.TRIP_WATERS.includes("coast"));
 });
 
 test("Angloop is a fisher by nature: something bites more often", () => {

@@ -146,7 +146,8 @@ sky shows, with the weather, the moon and the stars; at night the candle or
 the lamp keeps the room just bright enough to make out.
 
 Each step has spots for decorations inside. Decorations go outside first, and
-what doesn't fit there goes into the house; the snowman always stays outside.
+what doesn't fit there goes into the house; the snowman and the sandcastle
+always stay outside.
 A tap on the house in the app looks in for a moment, so what stands inside
 can be seen in the daytime too.
 
@@ -401,10 +402,10 @@ fish bite (the same falling-off as for playing). Angloop is a fisher by nature:
 with its lure something bites more often, and the rare things come up more
 often too.
 
-On a trip to the stream or into the cave, a rest by the water is a fishing
-break half of the time: the pet sits down with its rod and brings the catch
-home in its backpack. The lake in the cave has other things in it than the
-pond and the stream.
+On a trip to the stream, into the cave or to the coast, a rest by the water is
+a fishing break half of the time: the pet sits down with its rod and brings
+the catch home in its backpack. The lake in the cave has other things in it
+than the pond, the stream and the sea.
 
 ## Shooting stars
 
@@ -494,8 +495,9 @@ set off with.
   [Friends](#friends)).
 - **The ball:** the pet plays a game of ball with a wild pet. It doesn't get
   the pet out of a scuffle; that takes training and tricks.
-- **Honeycomb, glow berry and pine cone** work on the trip they are packed
-  for (see the food below), and are used up when the pet sets off.
+- **Honeycomb, glow berry, pine cone, castle bread and mussel** work on the
+  trip they are packed for (see the food below), and are used up when the pet
+  sets off.
 
 A trip takes one to one and a half hours. The panel shows the pet hopping
 through the landscape, stopping now and then to rest or to hold up something
@@ -530,9 +532,12 @@ there to see what it brought:
   | Stream | Watercress | the next training exercise counts double |
   | Cave | Glow berry | packed: it finds something at every stop where nothing else happens |
   | Mountain | Pine cone | packed: the trip doesn't tire it or make it hungry, and brings as much as the first trip of the day |
+  | Coast | Mussel | packed: one more heart on the trip, like honeycomb |
+  | Ruins | Castle bread | packed: like the pine cone |
 
-  Two more come out of the water ([Fishing](#fishing)): a mussel works like
-  honeycomb, seagrass like a hazelnut.
+  The mussel also comes out of the water ([Fishing](#fishing)), and so does
+  seagrass, which works like a hazelnut. On the beach the pet finds mussels
+  more often at low tide.
 
   Hazelnut and watercress don't add up: while one is still waiting, the pet
   won't eat the same food again. Nothing is combined or cooked, and the plant stays the one that
@@ -557,11 +562,21 @@ still waiting. Seeds and food come again and again and don't show there.
 Where wild pets of a line live, pawprints show whether one of a line the home
 has never had is still out there (gray) or not any more (in color).
 
-**Areas.** There are five, and they open up one after the other: the meadow,
-the mushroom forest, the stream, the cave and the mountain. Only the meadow is
-open from the start. Each area has a guardian, and the way to the next one
-leads past it (see [Guardians](#guardians)). The healing herb only grows in
-the cave and on the mountain. Inside the cave there is no sky and no weather.
+**Areas.** There are seven. Five open up one after the other: the meadow,
+the mushroom forest, the stream, the cave and the mountain. Behind the
+mountain the path forks: the coast and the ruins open up together, and the
+pet can go to either first; neither one stands in the way of the other. Only
+the meadow is open from the start. Each area has a guardian, and the way on
+leads past it (see [Guardians](#guardians)); when packing, the two areas
+behind the mountain are set in under it. The healing herb only grows in the
+cave and on the mountain. Inside the cave there is no sky and no weather.
+
+- **The coast:** sand, waves and gulls. The sea comes and goes with the real
+  clock, as it does by the sea: high water and low water follow each other
+  about every six hours. At low tide more of the beach is dry, and mussels
+  lie on it; the pet finds them more often then.
+- **The ruins:** an old castle with ivy on its walls, battlements and a bell
+  in its tower. In the evening the torches burn.
 
 ## Opponents
 
@@ -582,6 +597,12 @@ At roughly every third stop on a trip, somebody is in the way:
 | Mountain | Tumblesnow, a mountain hare with a lost mitten pulled over one ear: curled up, it is a snowball | curls up |
 | Mountain | Craghorn, an ibex with a big cowbell | charges along the ground |
 | Mountain | Duskwisp, a dandelion seed that glows and drifts (only around sunset; tougher than the others) | pounces |
+| Coast | Snatchgull, a gull that has snatched a carton of chips | pounces |
+| Coast | Starcurl, a starfish that walks on two arms; it rolls up into a ball | curls up |
+| Coast | Jellybrella, a jellyfish that is an umbrella (only in rain; tougher than the others) | curls up |
+| Ruins | Ratwatch, a rat on guard with a kettle helmet and a halberd | charges along the ground |
+| Ruins | Ivycurl, a creeping ivy whose first leaf has a face; it rolls up into a wreath | curls up |
+| Ruins | Drapeghost, a ghost made of an old velvet curtain (only around sunset; tougher than the others) | pounces |
 
 Some only come out in the real weather, or in the three quarters of an hour
 before and after the real sunset. When they can come out, they are twice as
@@ -614,7 +635,8 @@ each one the opponent makes a move, and the pet answers with a trick:
   has a move of its own for it: Angloop flashes its lure, for example.
 
 An opponent gives in after three hits (Drizzleshell, Puddlin and the ones in
-the cave and on the mountain after four, Duskwisp after five) and leaves
+the cave, on the mountain, at the coast and in the ruins after four;
+Duskwisp, Jellybrella and Drapeghost after five) and leaves
 something behind, if there is anything left to find. The pet gives in when it has been knocked over three
 times. If neither happens within five rounds, they go their own ways.
 
@@ -682,7 +704,7 @@ on a trip, up to three. They come one at a time, never straight after each
 other.
 
 Which wild pets live where is in [pets.md](pets.md), folded shut. A line
-whose egg a guardian gives is never among them.
+whose egg one of the guardians up to the mountain gives is never among them.
 
 ### Guests in the garden
 
@@ -713,8 +735,10 @@ up to seven rounds, a ball doesn't distract it, and it takes more hits.
 | Stream | Ripplesprite, a cocky water drop with a breaking wave for a quiff, surfing on its own wave and twirling a hoop | charges along the ground | 6 hits |
 | Cave | Gloompeep, two big glowing eyes in the dark | pounces | 7 hits |
 | Mountain | Frostfluff, a yeti that is a giant bobble hat | charges along the ground | 8 hits |
+| Coast | Barkguard, a sea lion on lifeguard duty, with a red cap, a whistle and a life ring | charges along the ground | 9 hits |
+| Ruins | Rustknight, an empty suit of armour; a snail lives in it and now and then looks out of the visor | curls up | 9 hits |
 
-Once the pet has got past a guardian, it knows the way to the next area, and
+Once the pet has got past a guardian, it knows the way to the areas behind it, and
 that guardian lets it pass from then on. A draw or a lost scuffle changes
 nothing: the guardian is there again on the next trip. A child with two tricks
 can get past Crowcomb with some luck; for the later ones the pet needs its
@@ -725,7 +749,7 @@ Every guardian has been sitting on a rare egg. A guardian leaves its
 egg behind the first time a pet gets past it, so every pet can earn it once.
 If the pet got past it before (or there was no room for another egg), the egg
 waits at the end of the path on a later trip to that area. Getting
-past the last one, on the mountain, adds a step to the house (see
+past the mountain's guardian adds a step to the house (see
 [The house](#the-house)).
 
 **Hearts.** The pet sets off with one to three hearts, depending on its
@@ -930,7 +954,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Stats, decay, actions, sleep | `core/src/model.ts` |
 | Life cycle, lines and adult forms, the album's forms (`FORMS`) | `core/src/life.ts` |
 | Weight, bond, hide and seek, tricks | `core/src/care.ts` |
-| Trips, areas, what is found where | `core/src/trip.ts` |
+| Trips, areas and where the path forks, what is found where, the tide at the coast | `core/src/trip.ts` |
 | Fishing: the bite, the tap, what comes up where | `core/src/fishing.ts` |
 | Shooting stars, what they leave, the owl | `core/src/stars.ts` |
 | The trick festival: its days, the show, the points, the jury, the prizes | `core/src/festival.ts` |

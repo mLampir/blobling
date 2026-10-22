@@ -166,6 +166,9 @@ const PETS_DIR = "docs/images/pets";
 const DAY = new Date(2026, 9, 12, 13, 0);
 const NIGHT = new Date(2026, 9, 12, 23, 30);
 const DUSK = new Date(2026, 9, 12, 18, 10);
+// the tide at the coast follows the clock (trip.tide): high water in the morning, low in the afternoon
+const HIGH_TIDE = new Date(2026, 9, 12, 10, 0);
+const LOW_TIDE = new Date(2026, 9, 12, 16, 0);
 const RAIN = { temp: 12.4, code: 63 }; // WMO weather codes, as Open-Meteo sends them
 const STORM = { temp: 16.0, code: 95 };
 
@@ -304,11 +307,29 @@ const SCENES: Record<string, Scene> = {
   trip_cave: [{ trip: trip("cave", { event: "find", item: "crystal" }) }, DAY, RAIN],
   trip_food: [{ trip: trip("meadow", { event: "find", item: "honeycomb", event_age: 2 }) }, DAY, null],
   trip_mountain: [{ hat: "bobble", trip: trip("mountain") }, DAY, { temp: -4, code: 71 }],
+  trip_coast: [{ hat: "sailor", trip: trip("coast") }, HIGH_TIDE, null],
+  trip_coast_low: [{ trip: trip("coast", { event: "find", item: "mussel", event_age: 2 }) }, LOW_TIDE, null],
+  trip_coast_fish: [{ trip: trip("coast", { event: "fish", item: "seagrass", event_age: 1 }) }, LOW_TIDE, null],
+  trip_coast_bottle: [{ trip: trip("coast", { event: "find", item: "bottle", event_age: 2 }) }, HIGH_TIDE, RAIN],
+  trip_ruins: [{ hat: "knight", trip: trip("ruins") }, DAY, null],
+  trip_ruins_dusk: [{ trip: trip("ruins", { event: "find", item: "bread", event_age: 2 }) }, DUSK, null],
+  trip_ruins_night: [{ trip: trip("ruins", { event: "find", item: "banner", event_age: 2 }) }, NIGHT, null],
+  battle_jellybrella: [{
+    trip: trip("coast", { event: "battle", event_age: 1.2, foe: "jellybrella", outcome: "draw",
+      rounds: [["curl", "spin", "hit"], ["curl", "spin", "hit"]] }),
+  }, HIGH_TIDE, RAIN],
+  battle_drapeghost: [{
+    trip: trip("ruins", { event: "battle", event_age: 1.2, foe: "drapeghost", outcome: "draw",
+      rounds: [["pounce", "bow", "hit"], ["pounce", "bow", "hit"]] }),
+  }, DUSK, null],
   // the opponents of the later areas, each in the middle of its favorite move
   ...Object.fromEntries(([
     ["ribbop", "stream", "pounce", "bow"], ["sidleclaw", "stream", "charge", "flip"],
     ["echoflit", "cave", "pounce", "bow"], ["glintbug", "cave", "curl", "spin"],
     ["tumblesnow", "mountain", "curl", "spin"], ["craghorn", "mountain", "charge", "flip"],
+    ["snatchgull", "coast", "pounce", "bow"], ["starcurl", "coast", "curl", "spin"],
+    ["ratwatch", "ruins", "charge", "flip"], ["ivycurl", "ruins", "curl", "spin"],
+    ["barkguard", "coast", "charge", "flip"], ["rustknight", "ruins", "curl", "spin"],
   ]).map(([foe, area, move, trick]): [string, Scene] => [`battle_${foe}`, [{
     trip: trip(area, {
       event: "battle", event_age: 1.2, foe, outcome: "draw", rounds: [[move, trick, "hit"], [move, trick, "hit"]],
@@ -317,7 +338,7 @@ const SCENES: Record<string, Scene> = {
   // the guardians, as they come in
   ...Object.fromEntries(([
     ["crowcomb", "meadow"], ["mosswart", "forest"], ["ripplesprite", "stream"], ["gloompeep", "cave"],
-    ["frostfluff", "mountain"],
+    ["frostfluff", "mountain"], ["barkguard", "coast"], ["rustknight", "ruins"],
   ]).map(([foe, area]): [string, Scene] => [`guardian_${foe}`, [{
     trip: trip(area, {
       returning: true, event: "battle", foe, outcome: "draw",

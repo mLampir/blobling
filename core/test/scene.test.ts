@@ -219,7 +219,7 @@ test("what it left behind lies in the scene, and what it builds grows while it b
 
 test("a trip: the landscape of every area, a scuffle, a wild pet and the ball", () => {
   const trip = { area: "meadow", returning: false, event: null, item: null, event_age: 0 };
-  for (const area of ["meadow", "forest", "stream", "cave", "mountain"]) {
+  for (const area of ["meadow", "forest", "stream", "cave", "mountain", "coast", "ruins"]) {
     for (const returning of [false, true]) {
       const run = frames({ trip: { ...trip, area, returning } }, 60, returning ? NIGHT : DAY, { temp: 1, code: 71 });
       assert.ok(differing(run[0], run.at(-1)!, GROUND - 30, 64) > 0, area); // it scrolls past
@@ -227,7 +227,8 @@ test("a trip: the landscape of every area, a scuffle, a wild pet and the ball", 
   }
   const rounds = [["pounce", "bow", "hit"], ["curl", "spin", "special"], ["charge", "flip", "ouch"],
     ["charge", "dance", "dodge"], ["curl", "bow", "hold"], ["pounce", "flip", "strong"]];
-  for (const [foe, area] of [["bumblebop", "meadow"], ["glintbug", "cave"], ["gloompeep", "cave"], ["frostfluff", "mountain"]]) {
+  for (const [foe, area] of [["bumblebop", "meadow"], ["glintbug", "cave"], ["gloompeep", "cave"], ["frostfluff", "mountain"],
+    ["snatchgull", "coast"], ["barkguard", "coast"], ["ratwatch", "ruins"], ["rustknight", "ruins"]]) {
     for (const outcome of ["win", "lose", "draw"]) {
       frames({ stage: "adult", species: "sneezle",
         trip: { ...trip, area, event: "battle", foe, rounds, outcome, item: outcome === "win" ? "egg_ember" : null } }, 250);
@@ -237,6 +238,7 @@ test("a trip: the landscape of every area, a scuffle, a wild pet and the ball", 
     frames({ trip: { ...trip, event: "wild", wild: "grumpcap", outcome, rounds: [["spin", true], ["flip", false]] } }, 150);
   }
   frames({ trip: { ...trip, event: "ball", foe: "diggle" } }, 80);
+  frames({ trip: { ...trip, area: "coast", event: "fish", item: "mussel" } }, 120); // fishing in the sea
   for (const event of ["find", "rest", "tired"]) {
     frames({ trip: { ...trip, event, item: event === "find" ? "glowshroom" : null } }, 100, DAY, { temp: 9, code: 61 });
   }

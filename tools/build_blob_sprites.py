@@ -7663,6 +7663,432 @@ FOE_TAGS = {
     "foe_frostfluff": [(FROSTFLUFF, 1800), (FROSTFLUFF_PEEK, 500)],
 }
 
+# ---------------------------------------------------------------- The coast and the ruins
+
+# The two areas behind the mountain (core/src/trip.ts): what stands along the path, the finds, the
+# opponents and the guardians. Sand for the coast; the ruins are built of the stone grays.
+TRIP_PALETTE |= {"z": (230, 205, 145), "Z": (185, 150, 95)}
+
+
+def pad_top(grid, height):
+    """Empty rows on top, so that a frame stands on the ground like the others of its sprite."""
+    return ["." * len(grid[0])] * (height - len(grid)) + grid
+
+
+# ---- Along the path
+COAST_NEAR = {
+    "beachgrass": [(["l...l..", ".l.ly.l", ".gl.gl.", "..ggG.y", ".zzgzz.", "zzzzzZZ"], 1000)],
+    "shell": [(["..pP.", ".pfpP", "pPpPP", ".ZZZ."], 1000)],
+    "driftwood": [([".t.......", "dddddddd.", "TtTTTtdTt", ".zz.zzz.."], 1000)],
+}
+# a torch on a post: it glimmers once the evening comes (scene: "_lit")
+TORCH = ["..o..", ".oyo.", ".oyo.", "TtttT", ".TtT.", "..t..", "..t..", "..t..", "..T..", ".sSs."]
+RUINS_NEAR = {
+    "rubble": [(["...WWs..", "..WssS..", ".WsS.Ws.", "WssSWssS", "sSSSsSSS"], 1000)],
+    "ivy": [(["..l..l.", ".lgGlg.", "lg.gGgl", ".gGg.Gg", "..gGg..", "...G..."], 1000)],
+    "column": [(["WWWWWW", ".WssS.", ".WsSS.", ".W.sS.", ".WssS.", ".Wsss.", ".WssS.", "WWsssS", "sSSSSS"], 1000)],
+    "torch": [([r.translate(str.maketrans("yo", "TT")) for r in TORCH], 1000)],
+    "torch_lit": [(TORCH, 300), (dots(TORCH, {(2, 0): ".", (1, 1): "y", (3, 1): "o", (2, 1): "f"}), 300)],
+}
+
+# ---- Finds: food, decorations, hats
+LIFERING = [  # a life ring hung on a post by the water
+    "...rrrrr...",
+    "..rrwwwrr..",
+    ".wwR.t.Rww.",
+    ".ww..t..ww.",
+    ".wR..t..Rw.",
+    ".rrR.t.Rrr.",
+    "..rrwwwrR..",
+    "....rtR....",
+    ".....t.....",
+    ".....t.....",
+    "....tTT....",
+]
+SANDCASTLE = [  # two towers and a wall, a flag on top and a shell over the gate
+    "...r.......",
+    "...rr......",
+    "...T.......",
+    "..zZz...z.z",
+    "..zzZ...zzZ",
+    "z.zzZz.zzzZ",
+    "zzzzZzzzzzZ",
+    "zzzzpzzzzZZ",
+    "zzzZTTzzzZZ",
+    "zzzTTTTzzZZ",
+    "ZZZZZZZZZZZ",
+]
+BOTTLE = [  # a message in a bottle, stuck in the sand: a rolled-up letter behind the glass
+    "...t...",
+    "...T...",
+    "...c...",
+    "..cic..",
+    ".ciwwC.",
+    ".cwwhC.",
+    ".cwwhC.",
+    ".ciwhC.",
+    ".ccCCC.",
+    "zzZzzzz",
+    ".zzzZZ.",
+]
+BREAD = [  # castle bread: a round loaf with battlements on top
+    "d.d.d.d",
+    "dddddDd",
+    "hdhdddD",
+    "dddddDD",
+    "DdhddDT",
+    ".TTTTT.",
+]
+BANNER = [  # a banner on a pole, red with a yellow tower, a tail cut into points
+    "yTTTTTTT",
+    "..t.....",
+    "..rrrrr.",
+    "..ryryr.",
+    "..ryyyr.",
+    "..ryyyR.",
+    "..ryRyR.",
+    "..rrrRR.",
+    "..rR.rR.",
+    "..t.....",
+    "..t.....",
+    ".TtT....",
+]
+ARCH = [  # a stone arch left standing, ivy growing over it
+    "..lgWWWWs..",
+    ".gWsGgsSsS.",
+    "WsGg...SsSS",
+    "Wsg.....SsS",
+    "WsS.....lS.",
+    "Wss.....gSS",
+    "Wss.....SgS",
+    "WsS.....SsS",
+    "Wss.....Ssl",
+    "sSS.....SSS",
+]
+BELL = [  # a bronze bell in a little wooden frame
+    "TtttttttT",
+    "T...Y...T",
+    "T..yyY..T",
+    "T.yyyYY.T",
+    "T.yyyYY.T",
+    "T.yfyYY.T",
+    "TyyyyyYYT",
+    "T...O...T",
+    "T.......T",
+    "T.......T",
+    "TT.....TT",
+]
+COAST_FINDS = {
+    "bread": [(BREAD, 1000)],
+    "lifering": [(LIFERING, 1000)],
+    "sandcastle": [(SANDCASTLE, 1000)],
+    "bottle": [(BOTTLE, 1000)],
+    "banner": [(BANNER, 1000)],
+    "arch": [(ARCH, 1000)],
+    "bell": [(BELL, 1000)],
+    # a sailor's cap: navy, a white band, two ribbons fluttering at the back
+    "hat_sailor": [(["..bbbbbbbbbbb....", ".bbbbbbbbbbbbbB..", "BBBBBBBBBBBBBBBB.", "..wwwwwwywwwww.B.",
+                     "..BBBBBBBBBBBB..B"], 1000)],
+    "hat_sailor_small": [([".bbbbbbbbb..", "BBBBBBBBBBB.", ".wwwwywwww.B", ".BBBBBBBBB.B"], 1000)],
+    # a knight's helmet: steel, a slit to look out of, a red plume
+    "hat_knight": [(["..........uu...", ".........uuUu..", "....WWWWWuU....", "..WWsWsssWWs...",
+                     ".WssssssssssS..", ".WSSSSSSSSSSS..", "WsssWsssWsssSS.", "WWsssssssssSSS."], 1000)],
+    "hat_knight_small": [([".......uu..", "......uuU..", "...WWWWuU..", ".WsssssWs..", "WsSSSSSSsS.",
+                           "WsssssssSS."], 1000)],
+}
+
+# ---- Opponents at the coast
+SNATCHGULL = [  # a gull that has snatched a carton of chips and won't let go of it
+    ".....wwww.......",
+    "....wSSwww......",
+    "...wwBwwwww.....",
+    "yyyywwwwwwwW....",
+    ".rYYwwwwwwwWss..",
+    "rhhrwwwwwwwsssss",
+    "rhhrwwwwwwssssSS",
+    "rRRrwwwwwwwsssSS",
+    ".RR..wwwwwwwW.S.",
+    "......wwwwwW....",
+    "......o...o.....",
+    ".....oo..oo.....",
+]
+SNATCHGULL_POUNCE = [  # crouched, wings up: about to jump
+    "..........ss....",
+    "..........sssS..",
+    ".....wwww.ssssS.",
+    "....wSSwwwwsssSS",
+    "...wwBwwwwwwsssS",
+    "yyyywwwwwwwwwssS",
+    ".rYYwwwwwwwwwwsS",
+    "rhhrwwwwwwwwwW..",
+    "rhhrwwwwwwwwW...",
+    "rRRr.wwwwwwW....",
+    ".RR.oo....oo....",
+    "...oo....oo.....",
+]
+JELLYBRELLA = [  # a jellyfish whose bell is an umbrella; its handle is one long tentacle (only in rain)
+    ".......c.......",
+    ".....vpppv.....",
+    "....vvpppvv....",
+    "...vvvpppvvv...",
+    "..pvvvpppvvvp..",
+    ".ppwBvpppwBvpp.",
+    "pppvvvpVpvvvppp",
+    "PPPVVVPPPVVVPPP",
+    ".P..V..v..V..P.",
+    ".P..V..v..V..P.",
+    "..P..V.v.V..P..",
+    "..P..V.v.V..P..",
+    ".P..V..v..V..P.",
+    ".......v..v....",
+    "........vv.....",
+]
+JELLYBRELLA_CURL = pad_top([  # folded shut like a closed umbrella, its tentacles wrapped round it
+    ".......c.......",
+    "......vpv......",
+    "......vpv......",
+    ".....vvpvv.....",
+    ".....wBpwB.....",
+    ".....vvpvv.....",
+    ".....PvpvP.....",
+    ".....vPvPv.....",
+    ".....PvpvP.....",
+    "......PvP......",
+    ".......v.......",
+    ".......v..v....",
+    "........vv.....",
+], 15)
+STARCURL = [  # a starfish that walks on two of its arms and waves with another
+    "......o......",
+    ".....ooo.....",
+    ".....oyo.....",
+    "....ooooO....",
+    "oooyoooooOyOO",
+    ".owBowBoooOO.",
+    "..oooppooOO..",
+    "...oooooOO...",
+    "...ooyOooO...",
+    "..ooO..ooyO..",
+    "..oO....oOO..",
+    ".oO......OO..",
+    "OO........OO.",
+]
+STARCURL_CURL = pad_top([  # rolled up into a ball, the five arm tips still poking out round it
+    "......o......",
+    ".....ooO.....",
+    "...ooyooOO...",
+    "..oyooOoyoO..",
+    "ooooOoOoOooOO",
+    ".ooyoOOOoyOO.",
+    ".oOoOoOoOoOO.",
+    "..ooyoOoyOO..",
+    "..oOOoooOOO..",
+    ".oO.OOOOO.OO.",
+    "OO.........OO",
+], 13)
+
+# ---- Opponents in the ruins
+RATWATCH = [  # a rat on guard at the castle gate: a kettle helmet and a halberd taller than itself
+    "..W.............",
+    ".WWt............",
+    "WWWt.....ww.....",
+    "WWWt....wWWW....",
+    ".WWt...WWWWWW...",
+    "...t..sssssssss.",
+    "...t..dddddddpp.",
+    "..pdddwBdddddDp.",
+    "...tddddddddD...",
+    "...ddrrrrrrD....",
+    "...t.rryrrrD....",
+    "...t.rrrrrrD..pp",
+    "...t.ddddddD.p..",
+    "...t.dd..dd.p...",
+    "...t.DD..DDpp...",
+]
+RATWATCH_CHARGE = [  # halberd lowered, running at the pet
+    "................",
+    "................",
+    ".........ww.....",
+    "........wWWW....",
+    ".......WWWWWW...",
+    "......sssssssss.",
+    "......dddddddpp.",
+    ".....pdwBddddDp.",
+    "W.....dddddddD..",
+    "WWWttttttrrrrD..",
+    "WW....rryrrrD..p",
+    ".W....rrrrrrD.p.",
+    "......ddddddD.p.",
+    ".....dd....dd.p.",
+    "....DD......DD..",
+]
+DRAPEGHOST = [  # a ghost made of an old velvet curtain, still on its rings, fringe at the hem (only in the evening)
+    "...a.a.a.a.a..",
+    "...kkKkkKkkK..",
+    "..kkkKkkKkkKk.",
+    ".kkkkKkkKkkKkk",
+    ".keEkKeEkkKkkK",
+    "kkEEkKEEkkKkkK",
+    "kkkkkKkkkkKkkK",
+    "kkkKKKkkKkKkkK",
+    ".kkKKKkkKkKkkK",
+    ".kkkkKkkKkKkkK",
+    "..kkkKkkKkKkKK",
+    "..kkkKkkKkKkKK",
+    "..aAaAkkKkKkK.",
+    "...a.aAakKkKK.",
+    "......a.aAaAa.",
+    ".........a.a..",
+]
+DRAPEGHOST_POUNCE = [  # it throws its folds wide: boo!
+    "....a.a.a.a.a.",
+    "....kkKkkKkkK.",
+    "k..kkkKkkKkkKk",
+    "kk.kkkKkkKkkKk",
+    "kkkeEkKeEkkKkK",
+    "kkkEEkKEEkkKkK",
+    ".kkkkKKKkkkKkK",
+    "..kkkKKKkKkKkK",
+    "..kkkkKkkKkKkK",
+    "...kkkKkkKkKKK",
+    "...kkkKkkKkKKK",
+    "...aAaAkkKkKK.",
+    "....a.aAaKkKK.",
+    ".......a.aAaA.",
+    "..........a.a.",
+    "..............",
+]
+IVYCURL = [  # a creeping ivy: its first leaf has a face, the rest follow along the stem, the tail curls up
+    "..l...l.........",
+    ".lgg.ggl........",
+    ".gggggggG...lg..",
+    "lgwBgwBgG..lggG.",
+    ".ggggggGG.lgggG.",
+    "..gGgGGG..ggGG..",
+    "...gGG..lgtGG..l",
+    "....tt.lggtt..l.",
+    ".....ttgGGG.tl..",
+    "......ttGG.tt...",
+    "........ttt.....",
+]
+IVYCURL_CURL = pad_top([  # rolled up into a wreath of leaves, the face leaf in front
+    ".....lggl.......",
+    "...lgggggGG.....",
+    "..lgGt..tgGG....",
+    ".lgGt.....tGG...",
+    ".lgwBgwBgg.gG...",
+    ".lggggggGG.gG...",
+    "..gGgGGG..tGG...",
+    "...ggGttttGG....",
+    ".....GGGGG......",
+], 11)
+
+# ---- The guardians
+BARKGUARD = [  # a sea lion on lifeguard duty: a red cap, the whistle in its mouth, the ring under its flipper
+    ".....rrrr...............",
+    "....rrwrrrr.............",
+    "...rrrwrrrrR............",
+    ".RRRRRRRRRRR............",
+    "...dhhhdddD.............",
+    "..dhSSddddD.............",
+    "..dhwBddddD.............",
+    "Tddddddddddd............",
+    "dwddddddddDD............",
+    ".wyYhhdddddD............",
+    "..YYhhddddddD...........",
+    "...Yhhhddddddd..........",
+    "...Yhhhhddddddd.........",
+    "..rrrwwhhddddddDD.......",
+    ".rrrrwwwhdddddddD.......",
+    "rrR...wwwhdddddddD......",
+    "rRddddddhhhddddddD......",
+    "wwdDDDDDhhhddddddDD.....",
+    "ww...DDrrhhddddddDD.....",
+    "rR.....wwhhdddddddD.....",
+    "rrR...wwwhhddddddddD....",
+    ".rrrrwwwhhhddddddddDD.DD",
+    "..rrrwwhhhdddddddddDDDD.",
+    "....ddddd.ddddddddDDD...",
+    "...dddDD...DDDDDDDD.....",
+]
+BARKGUARD_BLINK = dots(BARKGUARD, {(4, 6): "d", (5, 6): "D"})
+BARKGUARD_BLOW = dots(BARKGUARD, {(1, 5): "c", (0, 6): "c", (0, 10): "c", (1, 11): "c", (4, 8): "h", (3, 9): "h"})  # tweeet!
+RUSTKNIGHT = [  # an empty suit of armour; a snail lives in it and now and then looks out of the visor
+    "............uu..........",
+    "ww.ww......uuUu.........",
+    "wB.wB......uU...........",
+    ".P..P..wwWWWWWs.........",
+    ".P..P..WWWWWWWss........",
+    ".PP.P.WSSSSSSSsS........",
+    "PPPPPPPPPSSSSSsS........",
+    "PkPPPPPPPSSSSSsS........",
+    ".pppppPWSSSSSssS........",
+    "......WWWWWWWssS........",
+    "......WWsWWWsssS........",
+    ".....WWWWWWWWsSSS.......",
+    ".sssssssssssssSSS.......",
+    "sWWWWWWWsWWWsssSSS......",
+    "sWhhhhhWsWWOWssSSs......",
+    "sWhHHHhWsWWWWsSSSs......",
+    "sWhHhhHWssWWOsSSSs......",
+    "sWhHhHhWssWWWsSS........",
+    "sWhhHHhWsSSSSSSS........",
+    ".sWhhhWs.sWWss..........",
+    "..sWWWs..sWOs.sWs.......",
+    "...sss...sWWs.sWOs......",
+    "........WWWWs.sWWWs.....",
+    "......iiSSSSSiSSSSSii...",
+]
+RUSTKNIGHT_SHUT = [  # visor down: nobody home
+    "............uu..........",
+    "...........uuUu.........",
+    "...........uU...........",
+    ".......wwWWWWWs.........",
+    "......wWWWWWWWss........",
+    "......WWWWWWWWsS........",
+    "......WSSSSSSSsS........",
+    "......WWWWWWWWsS........",
+    "......WWsWsWsssS........",
+] + RUSTKNIGHT[9:]
+RUSTKNIGHT_CURL = pad_top([  # hunkered down behind its shield, helmet pulled into its shoulders
+    "........uu..............",
+    ".......uuUu.............",
+    ".......uU...............",
+    ".....wWWWWWss...........",
+    "....WWSSSSSSsSS.........",
+    "...sssssssssssSS........",
+    "sWWWWWWWsWWWsssSS.......",
+    "sWhhhhhWsWWOWssSSs......",
+    "sWhHHHhWsWWWWsSSSs......",
+    "sWhHhhHWssWWOsSSSs......",
+    "sWhHhHhWssWWWsSSSs......",
+    "sWhhHHhWsSSSSSSSs.......",
+    ".sWhhhWssWWss.sWs.......",
+    "..sWWWs.sWWWssWWWs......",
+    "......iiSSSSSiSSSSSii...",
+], 24)
+# "_<move>": shown while it makes that move (scene.ts)
+FOE_TAGS |= {
+    "foe_snatchgull": [(SNATCHGULL, 400), (dots(SNATCHGULL, {(4, 5): "h", (1, 6): "y"}), 400)],
+    "foe_snatchgull_pounce": [(SNATCHGULL_POUNCE, 1000)],
+    "foe_jellybrella": [(JELLYBRELLA, 500), (drop_rows(JELLYBRELLA, 9), 500)],
+    "foe_jellybrella_curl": [(JELLYBRELLA_CURL, 1000)],
+    "foe_starcurl": [(STARCURL, 600), (dots(STARCURL, {(0, 4): ".", (1, 3): "o", (11, 4): "O", (12, 4): ".", (12, 3): "O"}), 600)],
+    "foe_starcurl_curl": [(STARCURL_CURL, 1000)],
+    "foe_ratwatch": [(RATWATCH, 600), (drop_rows(RATWATCH, 12), 600)],
+    "foe_ratwatch_charge": [(RATWATCH_CHARGE, 1000)],
+    "foe_drapeghost": [(DRAPEGHOST, 600), (dots(DRAPEGHOST, {(6, 14): ".", (8, 14): ".", (9, 15): "a", (11, 15): "."}), 600)],
+    "foe_drapeghost_pounce": [(DRAPEGHOST_POUNCE, 1000)],
+    "foe_ivycurl": [(IVYCURL, 700), (dots(IVYCURL, {(15, 6): ".", (14, 7): ".", (13, 8): "l", (14, 6): "l"}), 700)],
+    "foe_ivycurl_curl": [(IVYCURL_CURL, 1000)],
+    "foe_barkguard": [(BARKGUARD, 2400), (BARKGUARD_BLINK, 200)],
+    "foe_barkguard_charge": [(BARKGUARD_BLOW, 1000)],
+    "foe_rustknight": [(RUSTKNIGHT_SHUT, 1800), (RUSTKNIGHT, 1400)],
+    "foe_rustknight_curl": [(RUSTKNIGHT_CURL, 1000)],
+}
+TRIP_TAGS |= COAST_NEAR | RUINS_NEAR | COAST_FINDS
+
+
 # ---------------------------------------------------------------- The house
 
 # The house grows in three steps (core/src/home.ts): a hut of thatch, a wooden cabin with a window,

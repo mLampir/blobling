@@ -18,27 +18,32 @@ beforeEach(() => {
   pet = grown(start);
 });
 
-test("every pet that gets past the last guardian adds a step", () => {
+test("every pet that gets past the mountain's guardian adds a step; the coast's doesn't", () => {
   // a pet that has trained a lot, on its way to the mountain
   pet.stage = "adult";
   pet.species = "angloop";
-  pet.guardians = trip.AREAS.slice(0, -1);
+  pet.guardians = trip.AREAS.slice(0, trip.AREAS.indexOf(trip.HOUSE_AREA));
   pet.tricks = Object.fromEntries(Object.entries(care.TRICKS).map(([k, needed]) => [k, needed]));
   pet.skills = { strength: 100, speed: 100, smarts: 100 };
   pet.bond = 100;
   let when = start;
-  for (let i = 0; i < 20 && !pet.guardians.includes("mountain"); i++) {
-    Object.assign(pet.stats, { satiety: 100, energy: 100, health: 100, mood: 100 });
-    pet.recent = {};
-    assert.deepEqual(act(pet, "trip", when, { item: "mountain" }), [true, null]);
-    model.advance(pet, pet.trip!.end + 60, BEDTIME);
-    pet.backpack = [];
-    when = pet.updated_at + 24 * HOUR;
-    pet.updated_at = when;
-  }
-  assert.ok(pet.guardians.includes("mountain"));
+  const pastGuardian = (area: string) => {
+    for (let i = 0; i < 20 && !pet.guardians.includes(area); i++) {
+      Object.assign(pet.stats, { satiety: 100, energy: 100, health: 100, mood: 100 });
+      pet.recent = {};
+      assert.deepEqual(act(pet, "trip", when, { item: area }), [true, null]);
+      model.advance(pet, pet.trip!.end + 60, BEDTIME);
+      pet.backpack = [];
+      when = pet.updated_at + 24 * HOUR;
+      pet.updated_at = when;
+    }
+    assert.ok(pet.guardians.includes(area), area);
+  };
+  pastGuardian("mountain");
   assert.equal(pet.house, 1);
   assert.ok(pet.events.some((e) => e.action === "house" && e.item === "1"));
+  pastGuardian("coast"); // a branch behind the mountain: the house stays as it is
+  assert.equal(pet.house, 1);
 
   // the next pet keeps the house; getting past the guardian again adds the next step
   const next = model.nextPet(pet, when, "Next");

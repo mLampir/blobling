@@ -119,6 +119,10 @@ test("who lives where", () => {
   assert.deepEqual(met("stream", 63), new Set(["ribbop", "sidleclaw", "puddlin"]));
   assert.deepEqual(met("mountain", null, true), new Set(["tumblesnow", "craghorn", "duskwisp"]));
   assert.deepEqual(met("meadow", null, true), new Set(["bumblebop", "diggle"]));
+  assert.deepEqual(met("coast"), new Set(["snatchgull", "starcurl"]));
+  assert.deepEqual(met("coast", 63), new Set(["snatchgull", "starcurl", "jellybrella"])); // the jellyfish umbrella in the rain
+  assert.deepEqual(met("ruins"), new Set(["ratwatch", "ivycurl"]));
+  assert.deepEqual(met("ruins", null, true), new Set(["ratwatch", "ivycurl", "drapeghost"])); // the curtain ghost in the evening
   // every area has a guardian, who lives there and is tougher than the others
   assert.deepEqual(Object.keys(battle.GUARDIANS), trip.AREAS);
   for (const [area, guardian] of Object.entries(battle.GUARDIANS)) {
