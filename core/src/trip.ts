@@ -441,6 +441,12 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
       trip.found.push(item);
       events.push(["find", item]);
       happened(trip, { kind: "find", item, at: t });
+      if (digging.mapFrom(state, trip, (state.counters.trips ?? 0) + 1)) {
+        // a treasure map by the path too, at the first stop where it finds something (decided per trip)
+        trip.found.push(digging.MAP);
+        events.push(["find", digging.MAP]);
+        happened(trip, { kind: "find", item: digging.MAP, at: t });
+      }
     } else if (fishing.TRIP_WATERS.includes(trip.area) && rng.random() < fishing.TRIP_CHANCE) {
       // a rest by the water: it fishes, and what it catches comes home with it
       const caught = fishing.catchFrom(state, trip.area, rng);
@@ -458,7 +464,7 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
   }
   if (trip.next) { // called straight back home doesn't count
     if (trip.area !== festival.AREA && digging.mapFrom(state, trip, (state.counters.trips ?? 0) + 1)) {
-      trip.found.push(digging.MAP); // a treasure map, among what it brings home
+      trip.found.push(digging.MAP); // its map, if it found nothing on the way to find it with
       events.push(["find", digging.MAP]);
       note(trip, { kind: "find", item: digging.MAP, at: t });
     }

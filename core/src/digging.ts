@@ -44,8 +44,9 @@ function hasMap(state: PetState, trip: Trip | null = null): boolean {
 }
 
 /**
- * The trip `trip` is over (the pet's `trips`-th, counted from 1): does it bring a map home? Seeded
- * by when it set off.
+ * Does the trip `trip` (the pet's `trips`-th, counted from 1) bring a map home? Asked where it finds
+ * something, so that it finds the map by the path along with it, and once more at the end, if it
+ * found nothing on the way. Seeded by when it set off, so the answer is the same all trip long.
  */
 export function mapFrom(state: PetState, trip: Trip, trips: number): boolean {
   if (hasMap(state, trip) || !home.canAdd(state, MAP)) {

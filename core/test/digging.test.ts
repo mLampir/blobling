@@ -19,6 +19,8 @@ beforeEach(() => {
 
 /** One trip to the meadow, unpacked afterwards; returns when it is over. */
 function trip(from: number): number {
+  model.advance(pet, from, BEDTIME); // (the night before would leave it hungry and tired otherwise)
+  pet.backpack = []; // (a festival Saturday on the way brings its prize home in the backpack)
   Object.assign(pet.stats, { satiety: 100, energy: 100, mood: 100, hygiene: 100, health: 100 });
   assert.deepEqual(act(pet, "trip", from, { item: "meadow" }), [true, null]);
   const end = pet.trip!.end + 60;
@@ -37,6 +39,11 @@ test("the first map comes for sure on the third trip, and there is only ever one
   assert.equal(pet.items[digging.MAP], 1);
   const note = pet.events.filter((e) => e.action === "find" && e.item === digging.MAP);
   assert.equal(note.length, 1);
+  // found by the path along with something else, and held up there, not just in the bag at the end
+  const travel = pet.travels.find((tr) => tr.stops.some((stop) => stop.item === digging.MAP))!;
+  const stop = travel.stops.find((s) => s.item === digging.MAP)!;
+  assert.equal(stop.kind, "find");
+  assert.ok(stop.at < travel.end - 60, "the map is found on the way, before the trip is over");
   for (let day = 4; day < 16; day++) {
     trip(start + day * 86400);
   }
