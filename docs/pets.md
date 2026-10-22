@@ -2237,6 +2237,7 @@ home from a trip brings the line's keepsake (see
 | Paper kite | windsock | trips tire it 15 % less |
 | Octopus | conch | 10 % more points at the trick festival |
 | Gargoyle | little guardian | it is knocked over 15 % less often in a scuffle |
+| Magpie | trinket box | a friend's visit brings a gift 25 % more often |
 
 The values are in `core/src/keepsake.ts`.
 

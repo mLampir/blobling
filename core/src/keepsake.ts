@@ -4,7 +4,7 @@
  *
  * A keepsake is a decoration with a small effect of its own. It works for the pet that has it set
  * out, outside or in the house (like the ember stone), and only while it is set out; with at most
- * five spots and 25 keepsakes, which ones stand there is a real choice. The scene shows what each
+ * five spots and 26 keepsakes, which ones stand there is a real choice. The scene shows what each
  * one does (the pet stands in the fountain's spray, the bell rings), and the bag names it in a
  * short line (home.effects).
  *
@@ -22,6 +22,7 @@ export const KEEPSAKES: Record<string, string> = {
   dog: "ballcrate", dragonfly: "windchime", beaver: "gnawedstump", crab: "shelllamp", axolotl: "herbtank",
   mouse: "knitbasket", bear: "honeypot", penguin: "iceblock", bat: "gramophone", owl: "telescope",
   chameleon: "easel", scarab: "hourglass", kite: "windsock", octopus: "conch", gargoyle: "guardianstatue",
+  magpie: "trinketbox",
 };
 
 // Keepsake: [what it does, by this factor]. An effect without a factor (0) is on or off.
@@ -51,6 +52,7 @@ export const EFFECTS: Record<string, readonly [string, number]> = {
   windsock: ["hike", 0.85], // trips tire it less (trip.step)
   conch: ["festival", 1.1], // more points at the trick festival (festival.score)
   guardianstatue: ["steady", 0.85], // it is knocked over less often in a scuffle (battle.fight)
+  trinketbox: ["gifts", 1.25], // a friend's visit brings a gift more often (wild.step)
 };
 
 /** Is this find a keepsake? */

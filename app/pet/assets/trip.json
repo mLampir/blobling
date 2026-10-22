@@ -1831,9 +1831,19 @@
    "duration": 1000
   },
   {
-   "filename": "trip jellylamp_lit 183",
+   "filename": "trip trinketbox 183",
    "frame": {
     "x": 1942,
+    "y": 0,
+    "w": 9,
+    "h": 8
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip jellylamp_lit 184",
+   "frame": {
+    "x": 1951,
     "y": 0,
     "w": 9,
     "h": 10
@@ -1841,9 +1851,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip moonstone_lit 184",
+   "filename": "trip moonstone_lit 185",
    "frame": {
-    "x": 1951,
+    "x": 1960,
     "y": 0,
     "w": 9,
     "h": 9
@@ -1851,24 +1861,14 @@
    "duration": 1000
   },
   {
-   "filename": "trip shelllamp_lit 185",
-   "frame": {
-    "x": 1960,
-    "y": 0,
-    "w": 9,
-    "h": 10
-   },
-   "duration": 1000
-  },
-  {
-   "filename": "trip brazier_lit 186",
+   "filename": "trip shelllamp_lit 186",
    "frame": {
     "x": 1969,
     "y": 0,
     "w": 9,
     "h": 10
    },
-   "duration": 400
+   "duration": 1000
   },
   {
    "filename": "trip brazier_lit 187",
@@ -1881,19 +1881,19 @@
    "duration": 400
   },
   {
-   "filename": "trip foe_bumblebop 188",
+   "filename": "trip brazier_lit 188",
    "frame": {
     "x": 1987,
     "y": 0,
-    "w": 16,
-    "h": 9
+    "w": 9,
+    "h": 10
    },
-   "duration": 120
+   "duration": 400
   },
   {
    "filename": "trip foe_bumblebop 189",
    "frame": {
-    "x": 2003,
+    "x": 1996,
     "y": 0,
     "w": 16,
     "h": 9
@@ -1901,9 +1901,19 @@
    "duration": 120
   },
   {
-   "filename": "trip foe_diggle 190",
+   "filename": "trip foe_bumblebop 190",
    "frame": {
-    "x": 2019,
+    "x": 2012,
+    "y": 0,
+    "w": 16,
+    "h": 9
+   },
+   "duration": 120
+  },
+  {
+   "filename": "trip foe_diggle 191",
+   "frame": {
+    "x": 2028,
     "y": 0,
     "w": 12,
     "h": 9
@@ -1911,9 +1921,9 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_diggle 191",
+   "filename": "trip foe_diggle 192",
    "frame": {
-    "x": 2031,
+    "x": 2040,
     "y": 0,
     "w": 12,
     "h": 8
@@ -1921,9 +1931,9 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_prickleroll 192",
+   "filename": "trip foe_prickleroll 193",
    "frame": {
-    "x": 2043,
+    "x": 2052,
     "y": 0,
     "w": 13,
     "h": 10
@@ -1931,29 +1941,19 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_prickleroll 193",
+   "filename": "trip foe_prickleroll 194",
    "frame": {
-    "x": 2056,
+    "x": 2065,
     "y": 0,
     "w": 13,
     "h": 9
    },
    "duration": 600
-  },
-  {
-   "filename": "trip foe_drizzleshell 194",
-   "frame": {
-    "x": 2069,
-    "y": 0,
-    "w": 13,
-    "h": 7
-   },
-   "duration": 700
   },
   {
    "filename": "trip foe_drizzleshell 195",
    "frame": {
-    "x": 2082,
+    "x": 2078,
     "y": 0,
     "w": 13,
     "h": 7
@@ -1961,9 +1961,19 @@
    "duration": 700
   },
   {
-   "filename": "trip foe_puddlin 196",
+   "filename": "trip foe_drizzleshell 196",
    "frame": {
-    "x": 2095,
+    "x": 2091,
+    "y": 0,
+    "w": 13,
+    "h": 7
+   },
+   "duration": 700
+  },
+  {
+   "filename": "trip foe_puddlin 197",
+   "frame": {
+    "x": 2104,
     "y": 0,
     "w": 14,
     "h": 10
@@ -1971,9 +1981,9 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_puddlin 197",
+   "filename": "trip foe_puddlin 198",
    "frame": {
-    "x": 2109,
+    "x": 2118,
     "y": 0,
     "w": 14,
     "h": 9
@@ -1981,19 +1991,9 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_carrotnose 198",
-   "frame": {
-    "x": 2123,
-    "y": 0,
-    "w": 15,
-    "h": 15
-   },
-   "duration": 500
-  },
-  {
    "filename": "trip foe_carrotnose 199",
    "frame": {
-    "x": 2138,
+    "x": 2132,
     "y": 0,
     "w": 15,
     "h": 15
@@ -2001,12 +2001,12 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_duskwisp 200",
+   "filename": "trip foe_carrotnose 200",
    "frame": {
-    "x": 2153,
+    "x": 2147,
     "y": 0,
-    "w": 9,
-    "h": 10
+    "w": 15,
+    "h": 15
    },
    "duration": 500
   },
@@ -2021,9 +2021,19 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_ribbop 202",
+   "filename": "trip foe_duskwisp 202",
    "frame": {
     "x": 2171,
+    "y": 0,
+    "w": 9,
+    "h": 10
+   },
+   "duration": 500
+  },
+  {
+   "filename": "trip foe_ribbop 203",
+   "frame": {
+    "x": 2180,
     "y": 0,
     "w": 15,
     "h": 10
@@ -2031,9 +2041,9 @@
    "duration": 900
   },
   {
-   "filename": "trip foe_ribbop 203",
+   "filename": "trip foe_ribbop 204",
    "frame": {
-    "x": 2186,
+    "x": 2195,
     "y": 0,
     "w": 15,
     "h": 10
@@ -2041,19 +2051,9 @@
    "duration": 300
   },
   {
-   "filename": "trip foe_sidleclaw 204",
-   "frame": {
-    "x": 2201,
-    "y": 0,
-    "w": 16,
-    "h": 10
-   },
-   "duration": 250
-  },
-  {
    "filename": "trip foe_sidleclaw 205",
    "frame": {
-    "x": 2217,
+    "x": 2210,
     "y": 0,
     "w": 16,
     "h": 10
@@ -2061,19 +2061,19 @@
    "duration": 250
   },
   {
-   "filename": "trip foe_echoflit 206",
+   "filename": "trip foe_sidleclaw 206",
    "frame": {
-    "x": 2233,
+    "x": 2226,
     "y": 0,
-    "w": 17,
+    "w": 16,
     "h": 10
    },
-   "duration": 200
+   "duration": 250
   },
   {
    "filename": "trip foe_echoflit 207",
    "frame": {
-    "x": 2250,
+    "x": 2242,
     "y": 0,
     "w": 17,
     "h": 10
@@ -2081,19 +2081,19 @@
    "duration": 200
   },
   {
-   "filename": "trip foe_glintbug 208",
+   "filename": "trip foe_echoflit 208",
    "frame": {
-    "x": 2267,
+    "x": 2259,
     "y": 0,
-    "w": 14,
-    "h": 7
+    "w": 17,
+    "h": 10
    },
-   "duration": 500
+   "duration": 200
   },
   {
    "filename": "trip foe_glintbug 209",
    "frame": {
-    "x": 2281,
+    "x": 2276,
     "y": 0,
     "w": 14,
     "h": 7
@@ -2101,9 +2101,19 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_glintbug_curl 210",
+   "filename": "trip foe_glintbug 210",
    "frame": {
-    "x": 2295,
+    "x": 2290,
+    "y": 0,
+    "w": 14,
+    "h": 7
+   },
+   "duration": 500
+  },
+  {
+   "filename": "trip foe_glintbug_curl 211",
+   "frame": {
+    "x": 2304,
     "y": 0,
     "w": 13,
     "h": 6
@@ -2111,9 +2121,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_tumblesnow 211",
+   "filename": "trip foe_tumblesnow 212",
    "frame": {
-    "x": 2308,
+    "x": 2317,
     "y": 0,
     "w": 16,
     "h": 14
@@ -2121,9 +2131,9 @@
    "duration": 1400
   },
   {
-   "filename": "trip foe_tumblesnow 212",
+   "filename": "trip foe_tumblesnow 213",
    "frame": {
-    "x": 2324,
+    "x": 2333,
     "y": 0,
     "w": 16,
     "h": 14
@@ -2131,9 +2141,9 @@
    "duration": 300
   },
   {
-   "filename": "trip foe_tumblesnow_curl 213",
+   "filename": "trip foe_tumblesnow_curl 214",
    "frame": {
-    "x": 2340,
+    "x": 2349,
     "y": 0,
     "w": 16,
     "h": 10
@@ -2141,19 +2151,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_craghorn 214",
-   "frame": {
-    "x": 2356,
-    "y": 0,
-    "w": 16,
-    "h": 13
-   },
-   "duration": 500
-  },
-  {
    "filename": "trip foe_craghorn 215",
    "frame": {
-    "x": 2372,
+    "x": 2365,
     "y": 0,
     "w": 16,
     "h": 13
@@ -2161,19 +2161,19 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_crowcomb 216",
+   "filename": "trip foe_craghorn 216",
    "frame": {
-    "x": 2388,
+    "x": 2381,
     "y": 0,
-    "w": 24,
-    "h": 23
+    "w": 16,
+    "h": 13
    },
    "duration": 500
   },
   {
    "filename": "trip foe_crowcomb 217",
    "frame": {
-    "x": 2412,
+    "x": 2397,
     "y": 0,
     "w": 24,
     "h": 23
@@ -2181,9 +2181,19 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_mosswart 218",
+   "filename": "trip foe_crowcomb 218",
    "frame": {
-    "x": 2436,
+    "x": 2421,
+    "y": 0,
+    "w": 24,
+    "h": 23
+   },
+   "duration": 500
+  },
+  {
+   "filename": "trip foe_mosswart 219",
+   "frame": {
+    "x": 2445,
     "y": 0,
     "w": 24,
     "h": 19
@@ -2191,9 +2201,9 @@
    "duration": 2600
   },
   {
-   "filename": "trip foe_mosswart 219",
+   "filename": "trip foe_mosswart 220",
    "frame": {
-    "x": 2460,
+    "x": 2469,
     "y": 0,
     "w": 24,
     "h": 19
@@ -2201,19 +2211,9 @@
    "duration": 400
   },
   {
-   "filename": "trip foe_ripplesprite 220",
-   "frame": {
-    "x": 2484,
-    "y": 0,
-    "w": 24,
-    "h": 22
-   },
-   "duration": 300
-  },
-  {
    "filename": "trip foe_ripplesprite 221",
    "frame": {
-    "x": 2508,
+    "x": 2493,
     "y": 0,
     "w": 24,
     "h": 22
@@ -2221,9 +2221,19 @@
    "duration": 300
   },
   {
-   "filename": "trip foe_gloompeep 222",
+   "filename": "trip foe_ripplesprite 222",
    "frame": {
-    "x": 2532,
+    "x": 2517,
+    "y": 0,
+    "w": 24,
+    "h": 22
+   },
+   "duration": 300
+  },
+  {
+   "filename": "trip foe_gloompeep 223",
+   "frame": {
+    "x": 2541,
     "y": 0,
     "w": 24,
     "h": 9
@@ -2231,9 +2241,9 @@
    "duration": 2400
   },
   {
-   "filename": "trip foe_gloompeep 223",
+   "filename": "trip foe_gloompeep 224",
    "frame": {
-    "x": 2556,
+    "x": 2565,
     "y": 0,
     "w": 24,
     "h": 9
@@ -2241,9 +2251,9 @@
    "duration": 200
   },
   {
-   "filename": "trip foe_gloompeep_beaten 224",
+   "filename": "trip foe_gloompeep_beaten 225",
    "frame": {
-    "x": 2580,
+    "x": 2589,
     "y": 0,
     "w": 10,
     "h": 7
@@ -2251,9 +2261,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_frostfluff 225",
+   "filename": "trip foe_frostfluff 226",
    "frame": {
-    "x": 2590,
+    "x": 2599,
     "y": 0,
     "w": 24,
     "h": 24
@@ -2261,9 +2271,9 @@
    "duration": 1800
   },
   {
-   "filename": "trip foe_frostfluff 226",
+   "filename": "trip foe_frostfluff 227",
    "frame": {
-    "x": 2614,
+    "x": 2623,
     "y": 0,
     "w": 24,
     "h": 24
@@ -2271,19 +2281,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_snatchgull 227",
-   "frame": {
-    "x": 2638,
-    "y": 0,
-    "w": 16,
-    "h": 12
-   },
-   "duration": 400
-  },
-  {
    "filename": "trip foe_snatchgull 228",
    "frame": {
-    "x": 2654,
+    "x": 2647,
     "y": 0,
     "w": 16,
     "h": 12
@@ -2291,29 +2291,39 @@
    "duration": 400
   },
   {
-   "filename": "trip foe_snatchgull_pounce 229",
+   "filename": "trip foe_snatchgull 229",
    "frame": {
-    "x": 2670,
+    "x": 2663,
+    "y": 0,
+    "w": 16,
+    "h": 12
+   },
+   "duration": 400
+  },
+  {
+   "filename": "trip foe_snatchgull_pounce 230",
+   "frame": {
+    "x": 2679,
     "y": 0,
     "w": 16,
     "h": 12
    },
    "duration": 1000
-  },
-  {
-   "filename": "trip foe_jellybrella 230",
-   "frame": {
-    "x": 2686,
-    "y": 0,
-    "w": 15,
-    "h": 15
-   },
-   "duration": 500
   },
   {
    "filename": "trip foe_jellybrella 231",
    "frame": {
-    "x": 2701,
+    "x": 2695,
+    "y": 0,
+    "w": 15,
+    "h": 15
+   },
+   "duration": 500
+  },
+  {
+   "filename": "trip foe_jellybrella 232",
+   "frame": {
+    "x": 2710,
     "y": 0,
     "w": 15,
     "h": 14
@@ -2321,9 +2331,9 @@
    "duration": 500
   },
   {
-   "filename": "trip foe_jellybrella_curl 232",
+   "filename": "trip foe_jellybrella_curl 233",
    "frame": {
-    "x": 2716,
+    "x": 2725,
     "y": 0,
     "w": 15,
     "h": 15
@@ -2331,19 +2341,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_starcurl 233",
-   "frame": {
-    "x": 2731,
-    "y": 0,
-    "w": 13,
-    "h": 13
-   },
-   "duration": 600
-  },
-  {
    "filename": "trip foe_starcurl 234",
    "frame": {
-    "x": 2744,
+    "x": 2740,
     "y": 0,
     "w": 13,
     "h": 13
@@ -2351,9 +2351,19 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_starcurl_curl 235",
+   "filename": "trip foe_starcurl 235",
    "frame": {
-    "x": 2757,
+    "x": 2753,
+    "y": 0,
+    "w": 13,
+    "h": 13
+   },
+   "duration": 600
+  },
+  {
+   "filename": "trip foe_starcurl_curl 236",
+   "frame": {
+    "x": 2766,
     "y": 0,
     "w": 13,
     "h": 13
@@ -2361,9 +2371,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_ratwatch 236",
+   "filename": "trip foe_ratwatch 237",
    "frame": {
-    "x": 2770,
+    "x": 2779,
     "y": 0,
     "w": 16,
     "h": 15
@@ -2371,9 +2381,9 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_ratwatch 237",
+   "filename": "trip foe_ratwatch 238",
    "frame": {
-    "x": 2786,
+    "x": 2795,
     "y": 0,
     "w": 16,
     "h": 14
@@ -2381,9 +2391,9 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_ratwatch_charge 238",
+   "filename": "trip foe_ratwatch_charge 239",
    "frame": {
-    "x": 2802,
+    "x": 2811,
     "y": 0,
     "w": 16,
     "h": 15
@@ -2391,19 +2401,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_drapeghost 239",
-   "frame": {
-    "x": 2818,
-    "y": 0,
-    "w": 14,
-    "h": 16
-   },
-   "duration": 600
-  },
-  {
    "filename": "trip foe_drapeghost 240",
    "frame": {
-    "x": 2832,
+    "x": 2827,
     "y": 0,
     "w": 14,
     "h": 16
@@ -2411,29 +2411,29 @@
    "duration": 600
   },
   {
-   "filename": "trip foe_drapeghost_pounce 241",
+   "filename": "trip foe_drapeghost 241",
    "frame": {
-    "x": 2846,
+    "x": 2841,
+    "y": 0,
+    "w": 14,
+    "h": 16
+   },
+   "duration": 600
+  },
+  {
+   "filename": "trip foe_drapeghost_pounce 242",
+   "frame": {
+    "x": 2855,
     "y": 0,
     "w": 14,
     "h": 16
    },
    "duration": 1000
-  },
-  {
-   "filename": "trip foe_ivycurl 242",
-   "frame": {
-    "x": 2860,
-    "y": 0,
-    "w": 16,
-    "h": 11
-   },
-   "duration": 700
   },
   {
    "filename": "trip foe_ivycurl 243",
    "frame": {
-    "x": 2876,
+    "x": 2869,
     "y": 0,
     "w": 16,
     "h": 11
@@ -2441,9 +2441,19 @@
    "duration": 700
   },
   {
-   "filename": "trip foe_ivycurl_curl 244",
+   "filename": "trip foe_ivycurl 244",
    "frame": {
-    "x": 2892,
+    "x": 2885,
+    "y": 0,
+    "w": 16,
+    "h": 11
+   },
+   "duration": 700
+  },
+  {
+   "filename": "trip foe_ivycurl_curl 245",
+   "frame": {
+    "x": 2901,
     "y": 0,
     "w": 16,
     "h": 11
@@ -2451,9 +2461,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_barkguard 245",
+   "filename": "trip foe_barkguard 246",
    "frame": {
-    "x": 2908,
+    "x": 2917,
     "y": 0,
     "w": 24,
     "h": 25
@@ -2461,9 +2471,9 @@
    "duration": 2400
   },
   {
-   "filename": "trip foe_barkguard 246",
+   "filename": "trip foe_barkguard 247",
    "frame": {
-    "x": 2932,
+    "x": 2941,
     "y": 0,
     "w": 24,
     "h": 25
@@ -2471,9 +2481,9 @@
    "duration": 200
   },
   {
-   "filename": "trip foe_barkguard_charge 247",
+   "filename": "trip foe_barkguard_charge 248",
    "frame": {
-    "x": 2956,
+    "x": 2965,
     "y": 0,
     "w": 24,
     "h": 25
@@ -2481,9 +2491,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip foe_rustknight 248",
+   "filename": "trip foe_rustknight 249",
    "frame": {
-    "x": 2980,
+    "x": 2989,
     "y": 0,
     "w": 24,
     "h": 24
@@ -2491,9 +2501,9 @@
    "duration": 1800
   },
   {
-   "filename": "trip foe_rustknight 249",
+   "filename": "trip foe_rustknight 250",
    "frame": {
-    "x": 3004,
+    "x": 3013,
     "y": 0,
     "w": 24,
     "h": 24
@@ -2501,9 +2511,9 @@
    "duration": 1400
   },
   {
-   "filename": "trip foe_rustknight_curl 250",
+   "filename": "trip foe_rustknight_curl 251",
    "frame": {
-    "x": 3028,
+    "x": 3037,
     "y": 0,
     "w": 24,
     "h": 24
@@ -2511,9 +2521,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_blob 251",
+   "filename": "trip egg_blob 252",
    "frame": {
-    "x": 3052,
+    "x": 3061,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2521,9 +2531,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_ember 252",
+   "filename": "trip egg_ember 253",
    "frame": {
-    "x": 3064,
+    "x": 3073,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2531,9 +2541,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_stone 253",
+   "filename": "trip egg_stone 254",
    "frame": {
-    "x": 3076,
+    "x": 3085,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2541,9 +2551,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_fox 254",
+   "filename": "trip egg_fox 255",
    "frame": {
-    "x": 3088,
+    "x": 3097,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2551,9 +2561,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_cloud 255",
+   "filename": "trip egg_cloud 256",
    "frame": {
-    "x": 3100,
+    "x": 3109,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2561,9 +2571,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_leaf 256",
+   "filename": "trip egg_leaf 257",
    "frame": {
-    "x": 3112,
+    "x": 3121,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2571,9 +2581,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_duck 257",
+   "filename": "trip egg_duck 258",
    "frame": {
-    "x": 3124,
+    "x": 3133,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2581,9 +2591,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_hippo 258",
+   "filename": "trip egg_hippo 259",
    "frame": {
-    "x": 3136,
+    "x": 3145,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2591,9 +2601,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_beak 259",
+   "filename": "trip egg_beak 260",
    "frame": {
-    "x": 3148,
+    "x": 3157,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2601,9 +2611,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_caterpillar 260",
+   "filename": "trip egg_caterpillar 261",
    "frame": {
-    "x": 3160,
+    "x": 3169,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2611,9 +2621,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_dog 261",
+   "filename": "trip egg_dog 262",
    "frame": {
-    "x": 3172,
+    "x": 3181,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2621,9 +2631,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_dragonfly 262",
+   "filename": "trip egg_dragonfly 263",
    "frame": {
-    "x": 3184,
+    "x": 3193,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2631,9 +2641,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_beaver 263",
+   "filename": "trip egg_beaver 264",
    "frame": {
-    "x": 3196,
+    "x": 3205,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2641,9 +2651,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_crab 264",
+   "filename": "trip egg_crab 265",
    "frame": {
-    "x": 3208,
+    "x": 3217,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2651,9 +2661,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_axolotl 265",
+   "filename": "trip egg_axolotl 266",
    "frame": {
-    "x": 3220,
+    "x": 3229,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2661,9 +2671,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_mouse 266",
+   "filename": "trip egg_mouse 267",
    "frame": {
-    "x": 3232,
+    "x": 3241,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2671,9 +2681,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_bear 267",
+   "filename": "trip egg_bear 268",
    "frame": {
-    "x": 3244,
+    "x": 3253,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2681,9 +2691,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_penguin 268",
+   "filename": "trip egg_penguin 269",
    "frame": {
-    "x": 3256,
+    "x": 3265,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2691,9 +2701,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_bat 269",
+   "filename": "trip egg_bat 270",
    "frame": {
-    "x": 3268,
+    "x": 3277,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2701,9 +2711,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_owl 270",
+   "filename": "trip egg_owl 271",
    "frame": {
-    "x": 3280,
+    "x": 3289,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2711,9 +2721,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_chameleon 271",
+   "filename": "trip egg_chameleon 272",
    "frame": {
-    "x": 3292,
+    "x": 3301,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2721,9 +2731,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_scarab 272",
+   "filename": "trip egg_scarab 273",
    "frame": {
-    "x": 3304,
+    "x": 3313,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2731,9 +2741,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_kite 273",
+   "filename": "trip egg_kite 274",
    "frame": {
-    "x": 3316,
+    "x": 3325,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2741,9 +2751,9 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_octopus 274",
+   "filename": "trip egg_octopus 275",
    "frame": {
-    "x": 3328,
+    "x": 3337,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2751,9 +2761,19 @@
    "duration": 1000
   },
   {
-   "filename": "trip egg_gargoyle 275",
+   "filename": "trip egg_gargoyle 276",
    "frame": {
-    "x": 3340,
+    "x": 3349,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "trip egg_magpie 277",
+   "frame": {
+    "x": 3361,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2765,7 +2785,7 @@
   "app": "tools/build_blob_sprites.py",
   "image": "trip.png",
   "size": {
-   "w": 3352,
+   "w": 3373,
    "h": 25
   },
   "frameTags": [
@@ -3802,399 +3822,411 @@
     "direction": "forward"
    },
    {
-    "name": "jellylamp_lit",
+    "name": "trinketbox",
     "from": 183,
     "to": 183,
     "direction": "forward"
    },
    {
-    "name": "moonstone_lit",
+    "name": "jellylamp_lit",
     "from": 184,
     "to": 184,
     "direction": "forward"
    },
    {
-    "name": "shelllamp_lit",
+    "name": "moonstone_lit",
     "from": 185,
     "to": 185,
     "direction": "forward"
    },
    {
-    "name": "brazier_lit",
+    "name": "shelllamp_lit",
     "from": 186,
-    "to": 187,
+    "to": 186,
+    "direction": "forward"
+   },
+   {
+    "name": "brazier_lit",
+    "from": 187,
+    "to": 188,
     "direction": "forward"
    },
    {
     "name": "foe_bumblebop",
-    "from": 188,
-    "to": 189,
+    "from": 189,
+    "to": 190,
     "direction": "forward"
    },
    {
     "name": "foe_diggle",
-    "from": 190,
-    "to": 191,
+    "from": 191,
+    "to": 192,
     "direction": "forward"
    },
    {
     "name": "foe_prickleroll",
-    "from": 192,
-    "to": 193,
+    "from": 193,
+    "to": 194,
     "direction": "forward"
    },
    {
     "name": "foe_drizzleshell",
-    "from": 194,
-    "to": 195,
+    "from": 195,
+    "to": 196,
     "direction": "forward"
    },
    {
     "name": "foe_puddlin",
-    "from": 196,
-    "to": 197,
+    "from": 197,
+    "to": 198,
     "direction": "forward"
    },
    {
     "name": "foe_carrotnose",
-    "from": 198,
-    "to": 199,
+    "from": 199,
+    "to": 200,
     "direction": "forward"
    },
    {
     "name": "foe_duskwisp",
-    "from": 200,
-    "to": 201,
+    "from": 201,
+    "to": 202,
     "direction": "forward"
    },
    {
     "name": "foe_ribbop",
-    "from": 202,
-    "to": 203,
+    "from": 203,
+    "to": 204,
     "direction": "forward"
    },
    {
     "name": "foe_sidleclaw",
-    "from": 204,
-    "to": 205,
+    "from": 205,
+    "to": 206,
     "direction": "forward"
    },
    {
     "name": "foe_echoflit",
-    "from": 206,
-    "to": 207,
+    "from": 207,
+    "to": 208,
     "direction": "forward"
    },
    {
     "name": "foe_glintbug",
-    "from": 208,
-    "to": 209,
-    "direction": "forward"
-   },
-   {
-    "name": "foe_glintbug_curl",
-    "from": 210,
+    "from": 209,
     "to": 210,
     "direction": "forward"
    },
    {
-    "name": "foe_tumblesnow",
+    "name": "foe_glintbug_curl",
     "from": 211,
-    "to": 212,
+    "to": 211,
     "direction": "forward"
    },
    {
-    "name": "foe_tumblesnow_curl",
-    "from": 213,
+    "name": "foe_tumblesnow",
+    "from": 212,
     "to": 213,
     "direction": "forward"
    },
    {
-    "name": "foe_craghorn",
+    "name": "foe_tumblesnow_curl",
     "from": 214,
-    "to": 215,
+    "to": 214,
+    "direction": "forward"
+   },
+   {
+    "name": "foe_craghorn",
+    "from": 215,
+    "to": 216,
     "direction": "forward"
    },
    {
     "name": "foe_crowcomb",
-    "from": 216,
-    "to": 217,
+    "from": 217,
+    "to": 218,
     "direction": "forward"
    },
    {
     "name": "foe_mosswart",
-    "from": 218,
-    "to": 219,
+    "from": 219,
+    "to": 220,
     "direction": "forward"
    },
    {
     "name": "foe_ripplesprite",
-    "from": 220,
-    "to": 221,
+    "from": 221,
+    "to": 222,
     "direction": "forward"
    },
    {
     "name": "foe_gloompeep",
-    "from": 222,
-    "to": 223,
-    "direction": "forward"
-   },
-   {
-    "name": "foe_gloompeep_beaten",
-    "from": 224,
+    "from": 223,
     "to": 224,
     "direction": "forward"
    },
    {
-    "name": "foe_frostfluff",
+    "name": "foe_gloompeep_beaten",
     "from": 225,
-    "to": 226,
+    "to": 225,
+    "direction": "forward"
+   },
+   {
+    "name": "foe_frostfluff",
+    "from": 226,
+    "to": 227,
     "direction": "forward"
    },
    {
     "name": "foe_snatchgull",
-    "from": 227,
-    "to": 228,
-    "direction": "forward"
-   },
-   {
-    "name": "foe_snatchgull_pounce",
-    "from": 229,
+    "from": 228,
     "to": 229,
     "direction": "forward"
    },
    {
-    "name": "foe_jellybrella",
+    "name": "foe_snatchgull_pounce",
     "from": 230,
-    "to": 231,
+    "to": 230,
     "direction": "forward"
    },
    {
-    "name": "foe_jellybrella_curl",
-    "from": 232,
+    "name": "foe_jellybrella",
+    "from": 231,
     "to": 232,
     "direction": "forward"
    },
    {
-    "name": "foe_starcurl",
+    "name": "foe_jellybrella_curl",
     "from": 233,
-    "to": 234,
+    "to": 233,
     "direction": "forward"
    },
    {
-    "name": "foe_starcurl_curl",
-    "from": 235,
+    "name": "foe_starcurl",
+    "from": 234,
     "to": 235,
     "direction": "forward"
    },
    {
-    "name": "foe_ratwatch",
+    "name": "foe_starcurl_curl",
     "from": 236,
-    "to": 237,
+    "to": 236,
     "direction": "forward"
    },
    {
-    "name": "foe_ratwatch_charge",
-    "from": 238,
+    "name": "foe_ratwatch",
+    "from": 237,
     "to": 238,
     "direction": "forward"
    },
    {
-    "name": "foe_drapeghost",
+    "name": "foe_ratwatch_charge",
     "from": 239,
-    "to": 240,
+    "to": 239,
     "direction": "forward"
    },
    {
-    "name": "foe_drapeghost_pounce",
-    "from": 241,
+    "name": "foe_drapeghost",
+    "from": 240,
     "to": 241,
     "direction": "forward"
    },
    {
-    "name": "foe_ivycurl",
+    "name": "foe_drapeghost_pounce",
     "from": 242,
-    "to": 243,
+    "to": 242,
     "direction": "forward"
    },
    {
-    "name": "foe_ivycurl_curl",
-    "from": 244,
+    "name": "foe_ivycurl",
+    "from": 243,
     "to": 244,
     "direction": "forward"
    },
    {
-    "name": "foe_barkguard",
+    "name": "foe_ivycurl_curl",
     "from": 245,
-    "to": 246,
+    "to": 245,
     "direction": "forward"
    },
    {
-    "name": "foe_barkguard_charge",
-    "from": 247,
+    "name": "foe_barkguard",
+    "from": 246,
     "to": 247,
     "direction": "forward"
    },
    {
-    "name": "foe_rustknight",
+    "name": "foe_barkguard_charge",
     "from": 248,
-    "to": 249,
+    "to": 248,
     "direction": "forward"
    },
    {
-    "name": "foe_rustknight_curl",
-    "from": 250,
+    "name": "foe_rustknight",
+    "from": 249,
     "to": 250,
     "direction": "forward"
    },
    {
-    "name": "egg_blob",
+    "name": "foe_rustknight_curl",
     "from": 251,
     "to": 251,
     "direction": "forward"
    },
    {
-    "name": "egg_ember",
+    "name": "egg_blob",
     "from": 252,
     "to": 252,
     "direction": "forward"
    },
    {
-    "name": "egg_stone",
+    "name": "egg_ember",
     "from": 253,
     "to": 253,
     "direction": "forward"
    },
    {
-    "name": "egg_fox",
+    "name": "egg_stone",
     "from": 254,
     "to": 254,
     "direction": "forward"
    },
    {
-    "name": "egg_cloud",
+    "name": "egg_fox",
     "from": 255,
     "to": 255,
     "direction": "forward"
    },
    {
-    "name": "egg_leaf",
+    "name": "egg_cloud",
     "from": 256,
     "to": 256,
     "direction": "forward"
    },
    {
-    "name": "egg_duck",
+    "name": "egg_leaf",
     "from": 257,
     "to": 257,
     "direction": "forward"
    },
    {
-    "name": "egg_hippo",
+    "name": "egg_duck",
     "from": 258,
     "to": 258,
     "direction": "forward"
    },
    {
-    "name": "egg_beak",
+    "name": "egg_hippo",
     "from": 259,
     "to": 259,
     "direction": "forward"
    },
    {
-    "name": "egg_caterpillar",
+    "name": "egg_beak",
     "from": 260,
     "to": 260,
     "direction": "forward"
    },
    {
-    "name": "egg_dog",
+    "name": "egg_caterpillar",
     "from": 261,
     "to": 261,
     "direction": "forward"
    },
    {
-    "name": "egg_dragonfly",
+    "name": "egg_dog",
     "from": 262,
     "to": 262,
     "direction": "forward"
    },
    {
-    "name": "egg_beaver",
+    "name": "egg_dragonfly",
     "from": 263,
     "to": 263,
     "direction": "forward"
    },
    {
-    "name": "egg_crab",
+    "name": "egg_beaver",
     "from": 264,
     "to": 264,
     "direction": "forward"
    },
    {
-    "name": "egg_axolotl",
+    "name": "egg_crab",
     "from": 265,
     "to": 265,
     "direction": "forward"
    },
    {
-    "name": "egg_mouse",
+    "name": "egg_axolotl",
     "from": 266,
     "to": 266,
     "direction": "forward"
    },
    {
-    "name": "egg_bear",
+    "name": "egg_mouse",
     "from": 267,
     "to": 267,
     "direction": "forward"
    },
    {
-    "name": "egg_penguin",
+    "name": "egg_bear",
     "from": 268,
     "to": 268,
     "direction": "forward"
    },
    {
-    "name": "egg_bat",
+    "name": "egg_penguin",
     "from": 269,
     "to": 269,
     "direction": "forward"
    },
    {
-    "name": "egg_owl",
+    "name": "egg_bat",
     "from": 270,
     "to": 270,
     "direction": "forward"
    },
    {
-    "name": "egg_chameleon",
+    "name": "egg_owl",
     "from": 271,
     "to": 271,
     "direction": "forward"
    },
    {
-    "name": "egg_scarab",
+    "name": "egg_chameleon",
     "from": 272,
     "to": 272,
     "direction": "forward"
    },
    {
-    "name": "egg_kite",
+    "name": "egg_scarab",
     "from": 273,
     "to": 273,
     "direction": "forward"
    },
    {
-    "name": "egg_octopus",
+    "name": "egg_kite",
     "from": 274,
     "to": 274,
     "direction": "forward"
    },
    {
-    "name": "egg_gargoyle",
+    "name": "egg_octopus",
     "from": 275,
     "to": 275,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_gargoyle",
+    "from": 276,
+    "to": 276,
+    "direction": "forward"
+   },
+   {
+    "name": "egg_magpie",
+    "from": 277,
+    "to": 277,
     "direction": "forward"
    }
   ]

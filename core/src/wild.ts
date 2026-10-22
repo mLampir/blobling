@@ -183,7 +183,7 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
     });
     return [["nest", line]];
   }
-  const gift = !state.gift && rng.random() < GIFT_CHANCE ? giftFrom(state, rng) : null;
+  const gift = !state.gift && rng.random() < GIFT_CHANCE * keepsake.factor(state, "gifts") ? giftFrom(state, rng) : null;
   if (gift) {
     state.gift = gift;
     return [["gift", friend.species]]; // what is in it stays a surprise

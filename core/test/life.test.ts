@@ -325,6 +325,24 @@ test("the octopus and gargoyle lines grow up by tricks, smarts, the rain and the
   }
 });
 
+test("the magpie line grows up by its tricks and the trick festival", () => {
+  const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
+  const days = Math.min(7, life.STAGE_SECONDS.child! / 86400);
+  assert.equal(life.decideSpecies(week, "magpie"), "glintrick");
+  assert.equal(life.decideSpecies({ ...week, tricks: life.CARDWING_TRICKS_PER_DAY * days - 1 }, "magpie"), "glintrick");
+  assert.equal(life.decideSpecies({ ...week, tricks: life.CARDWING_TRICKS_PER_DAY * days }, "magpie"), "cardwing");
+  assert.equal(life.decideSpecies({ ...week, festival_wins: 1 }, "magpie"), "illusionna");
+  assert.ok(life.LINES.magpie.every((adult) => food.TASTES[adult]?.length === 2));
+  // a first place counts for the child only
+  const pet = model.newPet(start, "", "magpie");
+  pet.stage = "child";
+  life.record(pet, "festival_wins");
+  assert.equal(pet.diary.festival_wins, 1);
+  pet.stage = "adult";
+  life.record(pet, "festival_wins");
+  assert.equal(pet.diary.festival_wins, 1);
+});
+
 test("the world says how many tricks the pet knows and how smart it is", () => {
   const pet = model.newPet(start, "", "octopus");
   assert.equal(model.worldAt(start, null, null, null, pet).tricks, 0);

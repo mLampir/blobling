@@ -172,6 +172,9 @@ export function perform(state: PetState, trip: Trip, areas: readonly string[], t
   if (place) {
     c[`festival_${place}`] = (c[`festival_${place}`] ?? 0) + 1;
   }
+  if (place === 1) {
+    life.record(state, "festival_wins"); // a first place as a child (the magpie line)
+  }
   return { rounds, points: total, place, prize: prize(state, place, panel, rng), jury: panel };
 }
 

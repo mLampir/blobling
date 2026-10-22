@@ -70,7 +70,8 @@
     "scarab": "Rollet",
     "kite": "Kitelet",
     "octopus": "Inklet",
-    "gargoyle": "Gargit"
+    "gargoyle": "Gargit",
+    "magpie": "Glintlet"
   },
   "species": {
     "blob": "Blob",
@@ -177,7 +178,11 @@
     "gargoyle": "Gargoyle",
     "gargard": "Gargard",
     "fountaingle": "Fountaingle",
-    "bellfry": "Bellfry"
+    "bellfry": "Bellfry",
+    "magpie": "Magpie",
+    "glintrick": "Glintrick",
+    "cardwing": "Cardwing",
+    "illusionna": "Illusionna"
   },
   "tricks": {
     "bow": "Bow",
@@ -369,7 +374,9 @@
     "hourglass": "Hourglass",
     "windsock": "Windsock",
     "conch": "Conch",
-    "guardianstatue": "Little guardian"
+    "guardianstatue": "Little guardian",
+    "egg_magpie": "Magpie egg",
+    "trinketbox": "Trinket box"
   },
   "pack": {
     "ball": "Ball"
@@ -982,7 +989,8 @@
         "keep_maps": "trips bring treasure maps more often",
         "keep_hike": "trips tire it less",
         "keep_festival": "more points at the trick festival",
-        "keep_steady": "it is knocked over less often in a scuffle"
+        "keep_steady": "it is knocked over less often in a scuffle",
+        "keep_gifts": "a friend's visit brings a gift more often"
       }
     },
     "unwrapped_bag": "Inside: {thing}. It's in your bag now",
