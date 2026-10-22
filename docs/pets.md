@@ -1895,7 +1895,7 @@ into one lid, swung open on a hinge at its side, its horns are the clock's
 hands, and the ball is now a brass cog it keeps beside it. Wound up, it keeps
 going and tires more slowly, and well oiled as it is, it gets sick less often.
 For its dance its cog ticks round to the beat, and its special move stops the
-time: the opponent stands frozen and gray and loses its move that round.
+time: the opponent stands frozen and gray until the blow lands.
 
 </details>
 
@@ -2137,7 +2137,7 @@ iron rims, and it rests its paws on the shield's edge and peers over it under
 heavy brows, curled horns on its head. A stone guard lives on little, so it
 gets hungry more slowly, and being stone it gets sick less often. For its bow
 it turns to stone and wakes again with a shake, and in a scuffle its stony
-gaze turns the opponent to stone, so that it loses its move that round.
+gaze turns the opponent to stone until the blow cracks it.
 
 ![Fountaingle](images/pets/fountaingle.png)
 

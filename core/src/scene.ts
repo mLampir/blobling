@@ -1515,7 +1515,7 @@ export class PetScene {
   private readonly mirrors = new Map<Bitmap, Bitmap>(); // particles in Mirrorleon's colors (mirrorSprite)
   private readonly mirrored = new Map<Bitmap, Bitmap>(); // and what each of them was
   private friend: string | null = null; // the friend Mirrorleon copies (SceneView.friend)
-  // the opponent can't make its move: Clockbeetle has stopped time, Gargard's gaze has turned it to stone,
+  // the opponent stays where it is: Clockbeetle has stopped time, Gargard's gaze has turned it to stone,
   // or Abyssink's lights have it looking this way and that
   private foeFrozen: "time" | "stone" | "dazed" | null = null;
   private petTop = GROUND - 20; // top row of the pet on the panel (for particles)
@@ -3969,7 +3969,7 @@ export class PetScene {
         break;
       }
       case "clockbeetle": { // its cog whirrs and its dial flashes; a ring of time spreads out to the opponent, and
-        // time stands still for it: frozen, it can't make its move this round, and it takes the hit as time runs on
+        // time stands still for it: frozen, it stays where it is, and it takes the hit as time runs on
         Object.assign(pose, { body: q < 0.3 ? "stretch" : "idle", white: q > 0.2 && q < 0.3 && Math.trunc(t * 14) % 2 === 0,
           face: q < 0.3 ? "smile" : "laugh" });
         pose.piece = { box: CLOCKBEETLE_COG, dx: 0, up: 0, turn: null, rotate: q < 0.3 ? -t * 720 : -Math.trunc(t * 2) * 45 };
@@ -4147,7 +4147,7 @@ export class PetScene {
         break;
       }
       case "gargard": { // a stare from its stone eyes: a glare runs over to the opponent, and the opponent turns to
-        // stone; it can't make its move this round, and its stone cracks when it is hit
+        // stone and stays where it is, and its stone cracks when it is hit
         Object.assign(pose, { body: q < 0.2 ? "squash" : q < 0.36 ? "stretch" : "idle", face: q < 0.4 ? "normal" : "laugh" });
         const points: [Bitmap, number, number][] = [];
         const glare = clamp((q - 0.16) / 0.14, 0, 1);
@@ -4614,7 +4614,8 @@ export class PetScene {
         this.trick(pose, trick, q * BATTLE_ROUND, landed, t);
       }
       // the opponent's move carries it towards the pet and back to its place; while time stands still
-      // (Clockbeetle), it is stone (Gargard) or dazed (Abyssink) it stays where it is and doesn't get to make its move
+      // (Clockbeetle), it is stone (Gargard) or dazed (Abyssink) it stays where it is (only a look: in a
+      // round the pet wins, the opponent's move can't hurt it anyway)
       const frozen = this.foeFrozen !== null;
       const reach = Math.sin(Math.min(1.0, (frozen ? Math.min(q, 0.15) : q) / 0.7) * Math.PI);
       x -= reach * (battle.isGuardian(name) ? GUARDIAN_REACH : FOE_REACH);
