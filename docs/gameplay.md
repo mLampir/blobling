@@ -461,8 +461,8 @@ travel diary and can be watched again like a scuffle.
 
 ## Digging
 
-Now and then the pet finds a **treasure map** by the path, along with the
-first thing it finds on the way (one trip in ten; the first one for sure on the pet's
+Now and then the pet finds a **treasure map** by the path, at the first stop
+without a scuffle (one trip in ten; the first one for sure on the pet's
 third trip). There is only ever one at a time. While
 it is in the bag, a small red cross is marked in the garden. Drag the map onto
 the pet: it hops over to the cross and digs (costs energy like playing), then

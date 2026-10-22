@@ -39,7 +39,7 @@ test("the first map comes for sure on the third trip, and there is only ever one
   assert.equal(pet.items[digging.MAP], 1);
   const note = pet.events.filter((e) => e.action === "find" && e.item === digging.MAP);
   assert.equal(note.length, 1);
-  // found by the path along with something else, and held up there, not just in the bag at the end
+  // found by the path at a quiet stop, and held up there
   const travel = pet.travels.find((tr) => tr.stops.some((stop) => stop.item === digging.MAP))!;
   const stop = travel.stops.find((s) => s.item === digging.MAP)!;
   assert.equal(stop.kind, "find");

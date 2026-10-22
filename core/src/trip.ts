@@ -436,17 +436,13 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
       encounter(state, trip, foe, rng, weather, t, events);
       continue;
     }
-    const item = find(state, trip, rng, weather, trip.boosts?.includes("finder"));
+    // a treasure map lies by the path at the first quiet stop of a trip that brings one (decided per trip)
+    const map = digging.mapFrom(state, trip, (state.counters.trips ?? 0) + 1) ? digging.MAP : null;
+    const item = map ?? find(state, trip, rng, weather, trip.boosts?.includes("finder"));
     if (item) {
       trip.found.push(item);
       events.push(["find", item]);
       happened(trip, { kind: "find", item, at: t });
-      if (digging.mapFrom(state, trip, (state.counters.trips ?? 0) + 1)) {
-        // a treasure map by the path too, at the first stop where it finds something (decided per trip)
-        trip.found.push(digging.MAP);
-        events.push(["find", digging.MAP]);
-        happened(trip, { kind: "find", item: digging.MAP, at: t });
-      }
     } else if (fishing.TRIP_WATERS.includes(trip.area) && rng.random() < fishing.TRIP_CHANCE) {
       // a rest by the water: it fishes, and what it catches comes home with it
       const caught = fishing.catchFrom(state, trip.area, rng);
@@ -463,11 +459,6 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
     return [events, null];
   }
   if (trip.next) { // called straight back home doesn't count
-    if (trip.area !== festival.AREA && digging.mapFrom(state, trip, (state.counters.trips ?? 0) + 1)) {
-      trip.found.push(digging.MAP); // its map, if it found nothing on the way to find it with
-      events.push(["find", digging.MAP]);
-      note(trip, { kind: "find", item: digging.MAP, at: t });
-    }
     state.counters.trips = (state.counters.trips ?? 0) + 1;
     life.record(state, "trips"); // in a child's care diary too (the fox line)
     life.record(state, `trips_${trip.area}`);
