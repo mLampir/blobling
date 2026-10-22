@@ -8,14 +8,13 @@
  * such minutes, and doesn't count. After DAYS of them, the next morning it wakes up at home, an
  * egg of its own line lies in the nest (state.nest, the bed of moss a friend's egg lies in too;
  * wild.ts), with a part of its battle stats as its heirloom, the same part a friend's egg gets.
- * While the nest is taken, there is no room for another egg or an egg of its line is kept already,
- * it waits for a later morning.
+ * While the nest is taken or there is no room for another egg of its line, it waits for a later
+ * morning.
  *
  * Then it rests (REST); after that the counting starts again from nothing.
  */
 
 import * as care from "./care";
-import * as home from "./home";
 import { dayOf } from "./festival";
 import * as life from "./life";
 import type { Egg, PetState } from "./state";
@@ -58,7 +57,7 @@ export function step(state: PetState, t: number, atHome: boolean): void {
  */
 export function wake(state: PetState, t: number): Egg | null {
   const brood = state.brood;
-  if (!brood.ready || state.nest || !wild.roomForEgg(state) || home.hasEggOf(state, life.lineOf(state.species))) {
+  if (!brood.ready || state.nest || !wild.roomForEgg(state, life.lineOf(state.species))) {
     return null;
   }
   state.nest = { line: life.lineOf(state.species), from: state.name, skills: wild.heirloom(state) };

@@ -99,7 +99,7 @@ export const ITEMS: Record<string, ItemKind> = {
 };
 export const MAX_SEEDS = 9; // per kind; decorations, hats, the treasure map and what is for the yard exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
-export const MAX_EGGS = 9; // this many are kept
+export const MAX_EGGS = 3; // this many of each line are kept (the bag shows them as one, ×n)
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus
 // what a pet has passed on to it (wild.ts), until it is brooded (model.nextPet).
 export const EGGS: Record<string, string> = { egg_blob: "blob", egg_ember: "ember", egg_stone: "stone", egg_fox: "fox",
@@ -167,15 +167,15 @@ export function ids(kind: ItemKind): string[] {
 
 export function canAdd(state: PetState, item: string): boolean {
   if (kindOf(item) === "egg") {
-    return state.eggs.length < MAX_EGGS;
+    return eggsOf(state, EGGS[item]) < MAX_EGGS;
   }
   const most = kindOf(item) === "seed" ? MAX_SEEDS : kindOf(item) === "food" || kindOf(item) === "fruit" ? MAX_FOOD : 1;
   return (state.items[item] ?? 0) < most;
 }
 
-/** Is an egg of this line kept already? Then a friend's or the pet's own egg of it waits (wild.ts, brood.ts). */
-export function hasEggOf(state: PetState, line: string): boolean {
-  return state.eggs.some((egg) => egg.line === line);
+/** How many eggs of this line are kept. */
+export function eggsOf(state: PetState, line: string): number {
+  return state.eggs.filter((egg) => egg.line === line).length;
 }
 
 export function addItem(state: PetState, item: string): void {

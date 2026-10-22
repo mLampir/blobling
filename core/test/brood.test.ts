@@ -84,10 +84,12 @@ test("without room for the egg it waits for a later morning", () => {
   pet.nest = { line: "ember" };
   assert.equal(brood.wake(pet, start), null);
   pet.nest = null;
-  pet.eggs = Array(home.MAX_EGGS).fill({ line: "stone" });
-  assert.equal(wild.roomForEgg(pet), false);
-  assert.equal(brood.wake(pet, start), null);
-  pet.eggs = [{ line: "blob" }]; // one of its own line is kept already
+  pet.eggs = Array(home.MAX_EGGS).fill({ line: "stone" }); // other lines don't take its room
+  assert.ok(brood.wake(pet, start));
+  Object.assign(pet.brood, { days: brood.DAYS, ready: true, rest_until: 0 });
+  pet.nest = null;
+  pet.eggs = Array(home.MAX_EGGS).fill({ line: "blob" }); // as many of its own line as there may be
+  assert.equal(wild.roomForEgg(pet, "blob"), false);
   assert.equal(brood.wake(pet, start), null);
   pet.eggs = [];
   assert.equal(brood.wake(pet, start + 86400)!.line, "blob");

@@ -55,8 +55,7 @@ test("only an adult without a friend is looking", () => {
   // a friend that hasn't built a nest yet, or as many friends as it can have
   const old = { species: "sneezle", visits: 0, next: 0, nests: 1 };
   const changes = [{ stage: "child" }, { friends: [{ species: "sneezle", visits: 0, next: 0 }] },
-    { friends: Array(wild.MAX_FRIENDS).fill(old) }, { nest: { line: "blob" } },
-    { eggs: Array(home.MAX_EGGS).fill({ line: "blob" }) }];
+    { friends: Array(wild.MAX_FRIENDS).fill(old) }, { nest: { line: "blob" } }];
   for (const change of changes) {
     const other = copy(change);
     assert.equal(wild.looking(other), false, JSON.stringify(change));
@@ -281,14 +280,14 @@ test("the egg a friend brings is always of its own line", () => {
   assert.deepEqual([other.eggs.at(-1)!.line, other.eggs.at(-1)!.from], ["stone", "Puff"]);
 });
 
-test("while an egg of the friend's line is in the bag, its egg waits for a later visit", () => {
+test("while the bag holds as many eggs of the friend's line as there may be, its egg waits", () => {
   const other = copy();
-  other.eggs.push({ line: "stone" });
+  other.eggs = Array(home.MAX_EGGS).fill({ line: "stone" });
   other.friends = [{ species: "bouldergrin", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start }];
   wild.step(other, start, true);
   assert.equal(other.nest, null);
   assert.equal(other.friends[0].visits, wild.VISITS_FOR_NEST);
-  other.eggs.pop();
+  other.eggs = [{ line: "blob" }, { line: "blob" }, { line: "blob" }]; // other lines don't take its room
   other.friends[0].until = start + 3600;
   wild.step(other, start + 3600, true);
   assert.equal(other.nest!.line, "stone");

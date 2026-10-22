@@ -229,7 +229,8 @@ There are two ways to a new egg:
 
 - **Brood** an egg: a tap on it in the bag. That works at any time,
   whatever stage the current pet is in. An egg is kept until you do; it is
-  never lost, and up to nine are kept.
+  never lost, and up to three of each line are kept. Eggs of one line lie
+  on one tile (×2, ×3); a tap broods the one a pet has passed on the most to.
 - **Start over with a usual egg**, with a tap on the pet's name. There is always one of
   those, and it starts from zero.
 
@@ -251,8 +252,8 @@ count.
 After five good days, the next morning it wakes up at home, an **egg of its
 own line** lies in the bed of moss next to it, where a friend's egg lies too,
 with its heirloom. It is collected the same way. While an egg is still lying
-there, there are nine eggs already, or an egg of its line is in the bag, it
-waits for a later morning. After an
+there, or there are three eggs of its line in the bag already, it waits for a
+later morning. After an
 egg it rests for two weeks (time at Grandma's doesn't count); then the good
 days count again from nothing.
 
@@ -749,9 +750,8 @@ family and entrusts it to the pet: it lays it in a **bed of moss** and leaves.
 The egg is always of the friend's line. The pet watches over it, and so the
 egg carries the pet's heirloom (see [Growing up](#growing-up)). The egg waits
 in its bed of moss until you tap it; then it is in the bag, to be brooded
-whenever you like. While an egg is still lying there, there are nine eggs
-already, or an egg of the friend's line is in the bag, the next one waits, so
-that the bag keeps room for rarer eggs.
+whenever you like. While an egg is still lying there, or there are three eggs
+of the friend's line in the bag already, the next one waits.
 
 The friend **stays** after that. It comes less often, about once a day, still
 plays and still brings a gift now and then. For two weeks after an egg its

@@ -48,8 +48,10 @@ export function gifts(state: PetState, now: number, rng: Random): string[] {
   }
   packed.push(CAKE);
   const misses = c.attic_misses ?? 0;
-  if (state.eggs.length < home.MAX_EGGS && (misses + 1 >= ATTIC_SURE || rng.random() < ATTIC_CHANCE)) {
-    const line = c.attic_eggs ? rng.choice(knownLines(state)) : ATTIC_FIRST;
+  // only lines of which there is room for one more egg
+  const lines = (c.attic_eggs ? knownLines(state) : [ATTIC_FIRST]).filter((line) => home.canAdd(state, home.eggOf(line)));
+  if (lines.length && (misses + 1 >= ATTIC_SURE || rng.random() < ATTIC_CHANCE)) {
+    const line = rng.choice(lines);
     packed.push(home.eggOf(line));
     c.attic_eggs = (c.attic_eggs ?? 0) + 1;
     c.attic_misses = 0;

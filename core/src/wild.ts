@@ -67,17 +67,17 @@ export type Happened = [string, string];
 
 /**
  * Is the pet looking for a friend? Only an adult whose friends have all brought it an egg
- * (or that has none yet), with room for another friend and another egg.
+ * (or that has none yet), with room for another friend.
  */
 export function looking(state: PetState): boolean {
   const met = state.friends.filter((f) => !f.guest); // a guest from the garden doesn't take a friend's place
   return state.stage === "adult" && met.length < MAX_FRIENDS && met.every((f) => f.nests)
-    && !state.nest && roomForEgg(state);
+    && !state.nest;
 }
 
-/** Is there room for one more egg among the eggs that are kept? */
-export function roomForEgg(state: PetState): boolean {
-  return home.canAdd(state, home.eggOf(life.lineOf(state.species)));
+/** Is there room for one more egg of this line among the eggs that are kept? */
+export function roomForEgg(state: PetState, line: string): boolean {
+  return home.canAdd(state, home.eggOf(line));
 }
 
 /** The wild pet waiting at the station reached at `at`, or null. */
@@ -166,9 +166,8 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
   if (!resting(friend, t)) {
     friend.visits = Math.min(friend.visits + 1, VISITS_FOR_NEST);
   }
-  // while an egg of its line is kept already, the egg waits for a later visit, so that the eggs kept
-  // leave room for lines that are rarer
-  if (friend.visits >= VISITS_FOR_NEST && !state.nest && roomForEgg(state) && !home.hasEggOf(state, life.lineOf(friend.species))) {
+  // while the eggs of its line that are kept are as many as there may be, the egg waits for a later visit
+  if (friend.visits >= VISITS_FOR_NEST && !state.nest && roomForEgg(state, life.lineOf(friend.species))) {
     // the friend brings an egg of its own family, and the pet watches over it
     const line = life.lineOf(friend.species);
     state.nest = {
