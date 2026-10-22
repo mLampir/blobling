@@ -1,5 +1,5 @@
 {
-  "api": 8,
+  "api": 9,
   "oldest": 5,
   "routes": [
     "GET /api/pet",
@@ -94,6 +94,7 @@
     "GET /api/pet evolution.due_at": "number",
     "GET /api/pet evolution.next": "string",
     "GET /api/pet favorite_food": "null",
+    "GET /api/pet festival.area": "array",
     "GET /api/pet festival.day": "number",
     "GET /api/pet festival.max_tricks": "number",
     "GET /api/pet festival.message": "null",
