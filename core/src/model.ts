@@ -21,10 +21,11 @@ import * as home from "./home";
 import * as idle from "./idle";
 import * as keepsake from "./keepsake";
 import * as life from "./life";
+import * as magpie from "./magpie";
 import { Random } from "./random";
 import * as sky from "./sky";
 import * as stars from "./stars";
-import { STATS, newState, type Egg, type PetState, type Trip } from "./state";
+import { STATS, newMagpie, newState, type Egg, type PetState, type Trip } from "./state";
 import { isDark, isFullMoon, sunTimes, type Location } from "./sun";
 import * as trip from "./trip";
 import * as wild from "./wild";
@@ -91,6 +92,7 @@ export const ACTIVITY_SECONDS: Record<string, number> = {
   // off to the yard for a portion; a visit for two takes longer (yard.seconds)
   yard: yards.seconds("eat"),
   wish: stars.WISH_SECONDS, // a shooting star: it looks up and wishes
+  shoo: magpie.SEEN_SECONDS, // it chases off the magpie (magpie.ts)
   // over to the cross, digging (a digger by nature sooner, see dig), and holding up what it found
   dig: digging.WALK_SECONDS + digging.DIG_SECONDS + digging.SHOW_SECONDS,
   train_strength: 5, train_speed: 3, train_smarts: 3,
@@ -169,6 +171,7 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
   state.gift = old.gift; // a friend's gift still lies there
   state.found = old.found; // and so does what the pet found at home
   state.fallen = old.fallen; // and what a shooting star left
+  state.magpie = old.magpie; // the magpie knows the home
   return state;
 }
 
@@ -188,7 +191,7 @@ export function moveHome(from: PetState, to: PetState): void {
   }
   Object.assign(to, {
     deco: from.deco, house: from.house, plant: from.plant, gift: from.gift, found: from.found, nest: from.nest,
-    trace: from.trace, fallen: from.fallen,
+    trace: from.trace, fallen: from.fallen, magpie: from.magpie,
   });
   clearHome(from);
 }
@@ -197,7 +200,7 @@ export function moveHome(from: PetState, to: PetState): void {
 export function clearHome(state: PetState): void {
   Object.assign(state, {
     items: {}, eggs: [], backpack: [], deco: [], house: 0, plant: null, gift: null, found: null, nest: null, trace: null,
-    trip: null, hat: "", fallen: null,
+    trip: null, hat: "", fallen: null, magpie: newMagpie(),
   });
 }
 
@@ -358,6 +361,12 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     for (const [action, item] of wild.step(state, t, !asleep && !state.trip)) {
       logEvent(state, t, action, "system", { item });
     }
+  }
+  for (const [action, item] of magpie.step(state, t, !asleep && !state.trip)) {
+    if (action === "magpie_chased") {
+      setActivity(state, "shoo", t, item); // the scuffle with her, until she drops it and flies off
+    }
+    logEvent(state, t, action, "system", { item });
   }
 
   if (!asleep && minutesUntilBed(t, bedtime) <= TIRED_BEFORE_BED) {

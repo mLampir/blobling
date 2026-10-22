@@ -23,6 +23,7 @@ import * as fishing from "./fishing";
 import * as home from "./home";
 import { Image, lerp, type Color } from "./image";
 import * as life from "./life";
+import * as magpie from "./magpie";
 import { ACTIVITY_SECONDS, THROW_SECONDS } from "./model";
 import { Random } from "./random";
 import * as sky from "./sky";
@@ -122,6 +123,15 @@ const FOOTPRINT: Color = [205, 215, 235];
 const VISITOR_X = 33;
 const VISIT_PET_X = 2;
 const NEST_X = 40;
+// The magpie's visit (magpie.ts), in seconds since it began: she swoops down to the decoration and
+// takes it in her beak; when she is chased, the scuffle lasts until she drops it and flees; when she
+// brings it back, she puts it down and bows before she flies off
+const MAGPIE_LANDED = 2;
+const MAGPIE_GRABBED = 3;
+const MAGPIE_DROPS = 14;
+const MAGPIE_GONE = 8; // with what she took, or after bringing it back
+const MAGPIE_BOW = [4, 6] as const;
+const MAGPIE_BEAK: readonly [number, number] = [16, 14]; // under her beak, in her frame
 const GIFT_X = 53; // what a friend has brought lies here, in front of the decorations, until it is unwrapped
 // The house, per step: the center of its door. It goes in to sleep: it hops to the door, gets
 // smaller as it goes in (further back into the picture), the door shuts and the light goes on;
@@ -1072,6 +1082,7 @@ const ORBS: Bitmap[] = ([[110, 240, 220], [255, 140, 180], [175, 110, 235]] as C
 const ORB_GLOW: Bitmap = [[225, 255, 250], ["X"]];
 const WAND_TIPS: Record<string, readonly [number, number]> = { glintrick: [30, 3], illusionna: [29, 7] }; // in their frames
 const CARD_WINGS: readonly (readonly [number, number])[] = [[2, 13], [29, 13]]; // Cardwing's wings, in its frame
+const MAGPIE_FEATHER: Bitmap = [[40, 42, 58], ["X.", ".X"]]; // off the magpie in a scuffle
 
 /** The upper half of a ring of the given radius (Bellfry's shock wave, rolling along the ground). */
 function halfRing(radius: number, color: Color): Bitmap {
@@ -1217,6 +1228,12 @@ export interface SceneView {
     species: string; left: number; age: number; stage?: string; asleep?: boolean; tricks?: readonly string[];
   } | null;
   nest?: string | null;
+  /**
+   * The troublemaker (magpie.ts): she flies off with a decoration from outside ("stole"), is chased
+   * off by the pet ("chased"), or brings it back ("back"): seconds since, the decoration, and its spot
+   * outside.
+   */
+  magpie?: { deed: string; age: number; item: string; spot: number } | null;
   /** A guest from the garden (garden.ts) peeking over the fence, before it comes in: its species. */
   peeking?: string | null;
   gift?: boolean;
@@ -1820,6 +1837,9 @@ export class PetScene {
     if (guest) {
       this.drawGuest(img, guest, t);
     }
+    if (view.magpie && !trip && !indoors) {
+      this.drawMagpie(img, view.magpie, t);
+    }
     for (const gx of this.tallGrass) {
       this.drawTallGrass(img, gx, t);
     }
@@ -2060,6 +2080,8 @@ export class PetScene {
       this.targetX = this.x;
     } else if (activity === "dig") {
       this.dig(pose, view, t, dt, now);
+    } else if (activity === "shoo") {
+      this.shoo(pose, view, t, dt, now);
     } else if (activity === "unpack") {
       // shows off one find after the other
       this.cheer(pose, t);
@@ -5248,6 +5270,54 @@ export class PetScene {
     }
   }
 
+  /**
+   * The magpie (magpie.ts), Glintrick in her top hat: she swoops down from the right to the decoration,
+   * and flies off with it in her beak; chased, she flutters over the pet with it until she drops it and
+   * flees; bringing it back, she puts it down where it stood, bows and flies off.
+   */
+  private drawMagpie(img: Image, m: NonNullable<SceneView["magpie"]>, t: number): void {
+    const decoration = this.dimmedSprite(m.item, t, true);
+    // where she lands: by the decoration, but on the panel (it stands at the edge)
+    const spot = Math.min(this.decoX(m.spot, decoration.width), this.width - 14);
+    const away = this.width + 24; // her middle, off the panel on the right
+    const flap = Math.trunc(t * 8) % 2 ? "stretch" : "squash";
+    const swoop = (f: number, from: number, to: number) => from + (to - from) * (1 - (1 - clamp(f, 0, 1)) ** 2);
+    let [x, lift, body, face, carrying, left] = [spot, 0, "idle", "smile", false, true];
+    const e = m.age;
+    if (m.deed === "back") {
+      if (e < MAGPIE_GRABBED) { // in from the right with it in her beak
+        [x, lift, body, carrying] = [swoop(e / MAGPIE_GRABBED, away, spot), swoop(e / MAGPIE_GRABBED, 26, 0), flap, true];
+      } else if (e < MAGPIE_BOW[1]) { // she sets it down, and bows
+        const bowing = e >= MAGPIE_BOW[0];
+        [body, face] = [bowing ? "squash" : "idle", bowing ? "blink" : "smile"];
+      } else {
+        const f = (e - MAGPIE_BOW[1]) / (MAGPIE_GONE - MAGPIE_GRABBED);
+        [x, lift, body, left] = [swoop(f, spot, away), swoop(f, 0, 30), flap, false];
+      }
+    } else if (e < MAGPIE_LANDED) { // down from the right to the decoration
+      [x, lift, body] = [swoop(e / MAGPIE_LANDED, away, spot), swoop(e / MAGPIE_LANDED, 26, 0), flap];
+    } else if (e < MAGPIE_GRABBED) {
+      [body, face] = ["squash", "laugh"];
+    } else if (m.deed === "stole") { // off with it, up and away to the right
+      const f = (e - MAGPIE_GRABBED) / (MAGPIE_GONE - MAGPIE_GRABBED);
+      [x, lift, body, face, carrying, left] = [swoop(f, spot, away), swoop(f, 0, 30), flap, "laugh", true, false];
+    } else if (e < MAGPIE_DROPS) { // the pet is after her: she flutters up and down with it, out of its reach
+      [lift, body, face, carrying] = [12 + Math.sin(e * 3 + 1) * 4, flap, "no", true];
+      x = spot + Math.sin(e * 1.7) * 3;
+    } else { // she drops it and flees
+      const f = (e - MAGPIE_DROPS) / (MAGPIE_GONE - MAGPIE_GRABBED);
+      [x, lift, body, face, left] = [swoop(f, spot, away), swoop(f, 12, 34), flap, "sad", false];
+    }
+    const [sprite, top] = this.pet("adult", "glintrick", body, t, face, { lookLeft: left, glow: this.night > 0.5 });
+    const px = Math.round(x - sprite.width / 2);
+    const py = GROUND - SPRITE - Math.round(lift);
+    img.paste(sprite, px, py);
+    if (carrying) {
+      const bx = px + (left ? sprite.width - 1 - MAGPIE_BEAK[0] : MAGPIE_BEAK[0]);
+      img.paste(decoration, bx - Math.floor(decoration.width / 2), py + top + MAGPIE_BEAK[1]);
+    }
+  }
+
   /** Prismfly's light, broken into seven rays in the colors of the rainbow, fanning out towards where it looks. */
   private drawRays(img: Image, cx: number, cy: number): void {
     PRISM.forEach((color, i) => {
@@ -5918,8 +5988,12 @@ export class PetScene {
     this.drawStarThings(img, view, t);
     this.drawDig(img, view, now);
     const deco = (view.deco ?? []).slice(0, DECO_X.length);
+    const m = view.magpie;
+    if (m && (m.deed === "back" ? m.age < MAGPIE_GRABBED : m.deed === "chased" && m.age >= MAGPIE_GRABBED && m.age < MAGPIE_DROPS)) {
+      deco[m.spot] = ""; // the magpie has it in her beak
+    }
     // what lies flat on the ground (the pond) first, so that the other decoration stands in front of it
-    [...deco.keys()].sort((a, b) => Number(deco[b] === "pond") - Number(deco[a] === "pond")).forEach((i) => {
+    [...deco.keys()].filter((i) => deco[i]).sort((a, b) => Number(deco[b] === "pond") - Number(deco[a] === "pond")).forEach((i) => {
       const sprite = this.dimmedSprite(deco[i], t, true);
       this.stand(img, sprite, this.decoX(i, sprite.width));
       this.covers.set(`deco${i}`, GROUND + 2 - sprite.height);
@@ -5928,8 +6002,10 @@ export class PetScene {
     if (view.nest) {
       // the egg sits in the nest: the rim covers its bottom rows. It isn't dimmed at night,
       // so that it can't be overlooked.
-      this.stand(img, this.sheet("trip").image(`egg_${view.nest}`), NEST_X, 2);
-      this.stand(img, this.dimmedSprite("nest"), NEST_X);
+      // the magpie's egg lies in her top hat instead (magpie.ts)
+      const hat = view.nest === magpie.LINE;
+      this.stand(img, this.sheet("trip").image(`egg_${view.nest}`), NEST_X, hat ? 1 : 2);
+      this.stand(img, this.dimmedSprite(hat ? "tophat" : "nest"), NEST_X);
     }
     if (view.gift) {
       // not dimmed either, like the egg
@@ -6112,6 +6188,30 @@ export class PetScene {
   }
 
   /** Digging at the cross: it hops over, digs with earth flying, and holds up one find after the other. */
+  /**
+   * It chases off the magpie (magpie.ts): over to the decoration she has in her beak, and up at her
+   * again and again, in a cloud of dust and feathers, until she drops it and flees.
+   */
+  private shoo(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
+    const e = this.elapsed(view, now);
+    const spot = view.magpie ? Math.min(this.decoX(view.magpie.spot, 9), this.width - 14) - SPRITE - 2 : this.x;
+    if (e < MAGPIE_GRABBED) {
+      pose.face = "no";
+      if (this.moveTowards(spot, THROW_SPEED, dt)) {
+        this.hop(pose, t, 3.5);
+      }
+    } else if (e < MAGPIE_DROPS) {
+      this.moveTowards(spot, THROW_SPEED, dt);
+      const leap = Math.abs(Math.sin((e - MAGPIE_GRABBED) * 3));
+      Object.assign(pose, { jump: leap * 9, body: leap > 0.5 ? "stretch" : "squash", face: leap > 0.5 ? "laugh" : "no",
+        dx: Math.trunc(t * 8) % 2 ? 1 : -1 });
+      this.trickFx(t, "shoo_dust", 0.25, DUST_PUFF, 2, SPRITE / 2, 4, [-10, 10], [-8, -2], 0.5);
+      this.trickFx(t, "shoo_feather", 0.6, MAGPIE_FEATHER, 1, SPRITE / 2, 16, [-6, 6], [-6, 2], 1.2, 15);
+    } else {
+      this.cheer(pose, t);
+    }
+  }
+
   private dig(pose: Pose, view: SceneView, t: number, dt: number, now: number): void {
     const { e, seconds, found } = this.digging(view, now);
     const hole = DIG_X[view.house ?? 0];

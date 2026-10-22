@@ -621,7 +621,11 @@
         "knit": "I knitted {name} a tiny scarf.",
         "garden": "We pulled weeds in my garden and ate strawberries.",
         "tea": "We drank tea and looked at old photos."
-      }
+      },
+      "magpie_stole": "A magpie in a top hat swooped down and flew off with something of ours: {item}!",
+      "magpie_chased": "A magpie in a top hat tried to steal something of ours ({item}), but I chased her off!",
+      "magpie_back": "The magpie brought back what she took ({item}) and even bowed.",
+      "magpie_egg": "The magpie has given up: she left her top hat behind, and there's an egg in it!"
     },
     "tabs": {
       "history": "History",
@@ -796,7 +800,11 @@
       "show_3": "came third at the trick festival 🥉",
       "dig": "dug at the red cross: {what}",
       "fill_trough": "trough filled 🌾",
-      "fill_basin": "water basin filled 💧"
+      "fill_basin": "water basin filled 💧",
+      "magpie_stole": "a magpie flew off with something: {item}",
+      "magpie_chased": "chased off a magpie that wanted to take something: {item} 💪",
+      "magpie_back": "the magpie brought it back, with a bow: {item}",
+      "magpie_egg": "the magpie left her top hat behind, with an egg in it 🎩🥚"
     },
     "statistics": {
       "meals": "Meals",

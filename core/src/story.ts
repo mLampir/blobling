@@ -151,6 +151,12 @@ function piece(event: PetEvent, t: Translate): Piece | null {
       return make("nest", 8);
     case "laid": // its own egg (brood.ts)
       return make("laid", 8);
+    case "magpie_stole": // the troublemaker (magpie.ts)
+    case "magpie_chased":
+    case "magpie_back":
+      return make(event.action, event.action === "magpie_back" ? 5 : 7, { item: t(`items.${item}`) });
+    case "magpie_egg":
+      return make("magpie_egg", 9);
     case "wild":
       return make(`wild_${outcome}`, 6, { pet: t(`species.${name}`) });
     case "battle":

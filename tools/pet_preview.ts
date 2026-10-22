@@ -167,7 +167,7 @@ const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_ow
 // the first area only: the later areas, their opponents and their guardians are left out.
 const SHOWN_ADULT = "angloop";
 const SHOWN_AREA = AREAS[0];
-const SPOILERS = ["keepsakes", "keepsakes_night", "hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
+const SPOILERS = ["keepsakes", "keepsakes_night", "magpie_stole", "magpie_chased", "magpie_back", "magpie_egg", "hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
   "ember_hatch", "ember_baby", "cindlet", "cindlet_hint", "cindlet_sick", "ember_evolve", "lanternling",
   "lanternling_sleep", "lanternling_trick", "flarelet", "flarelet_hat", "egg_found", "wild_shrug", "visit_copy", "visit_bounce", "visit_night",
   "nest_ember", "stone_egg", "stone_baby", "pebblet", "pebblet_hint", "pebblet_hat", "pebblet_skip", "glimmerock",
@@ -327,6 +327,12 @@ const SCENES: Record<string, Scene> = {
   // keepsakes of the lines (core/src/keepsake.ts): moving by day, glowing at night
   keepsakes: [{ deco: ["windchime", "hippofountain"] }, DAY, null],
   keepsakes_night: [{ deco: ["jellylamp", "shelllamp"] }, NIGHT, null],
+  // the troublemaker (core/src/magpie.ts): she flies off with the snowman, gets chased off, brings it back
+  magpie_stole: [{ deco: ["pond"], magpie: { deed: "stole", age: 3.5, item: "snowman", spot: 0 } }, DAY, null],
+  magpie_chased: [{ stage: "adult", species: "angloop", deco: ["snowman", "pond"], activity: "shoo",
+    magpie: { deed: "chased", age: 6, item: "snowman", spot: 0 } }, DAY, null, 6],
+  magpie_back: [{ deco: ["snowman", "pond"], magpie: { deed: "back", age: 4.5, item: "snowman", spot: 0 } }, DAY, null],
+  magpie_egg: [{ stage: "adult", species: "angloop", nest: "magpie", deco: ["pond"] }, DAY, null],
   trip_stream: [{ trip: trip("stream") }, DAY, null],
   trip_cave: [{ trip: trip("cave", { event: "find", item: "crystal" }) }, DAY, RAIN],
   trip_food: [{ trip: trip("meadow", { event: "find", item: "honeycomb", event_age: 2 }) }, DAY, null],
@@ -689,6 +695,9 @@ function frames(name: string, count: number, step = 0.1, spoilerFree = false): I
   for (let i = 0; i < count; i++) {
     if (view.trip) { // what happened on the trip gets older, the way it does on the Pi
       view.trip = { ...view.trip, event_age: changes.trip!.event_age + i * step };
+    }
+    if (view.magpie) { // and so does the magpie's
+      view.magpie = { ...view.magpie, age: changes.magpie!.age + i * step };
     }
     if (view.visitor) { // the friend's visit goes on as well
       const { age, left } = changes.visitor!;

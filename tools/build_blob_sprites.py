@@ -7978,6 +7978,8 @@ TRIP_TAGS = {
     "seed": [(["..l.", ".tt.", "tTTt", ".tt."], 1000)],
     # a bed of moss with a few leaves tucked in at the edges; the egg sits in it (scene.NEST_X)
     "nest": [(["ll.............l", "GglgGgglgGglgglG", ".GgGglGgGgGlgGG.", "..GGtGGGGGGtGG.."], 1000)],
+    # the magpie's top hat, upturned, with her egg in it, in place of the nest (core/src/magpie.ts)
+    "tophat": [(["xxxxxxxxxxxxxx", ".XxxxxxxxxxxX.", ".rrrrrrrrrrrR.", ".XxxxxxxxxxxX.", "..XXXXXXXXXX.."], 1000)],
     # a friend's gift, wrapped, until it is unwrapped (scene.GIFT_X); then what was in it, held up
     "gift": [(["..y.y..", "...Y...", "rrryrrr", "yyyyyyy", "rrryrrr", "RRRyRRR"], 1000)],
     # What the pet eats is a mouthful it can be seen eating: 6–8 pixels (docs/gameplay.md, *Sizes of things next to the pet*)
@@ -8538,6 +8540,7 @@ FOE_TAGS = {
 # The two areas behind the mountain (core/src/trip.ts): what stands along the path, the finds, the
 # opponents and the guardians. Sand for the coast; the ruins are built of the stone grays.
 TRIP_PALETTE |= {"z": (230, 205, 145), "Z": (185, 150, 95)}
+TRIP_PALETTE |= {"x": (40, 42, 58), "X": (26, 27, 38)}  # the magpie's top hat
 
 
 def pad_top(grid, height):

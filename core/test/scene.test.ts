@@ -198,6 +198,27 @@ test("every activity can be drawn from its start to its end", () => {
   }
 });
 
+test("the magpie swoops down for a decoration, flutters over the pet chasing her, and brings it back", () => {
+  const view = (magpie: SceneView["magpie"], extra: Partial<SceneView> = {}) =>
+    ({ ...BASE, stage: "adult", species: "angloop", deco: ["snowman", "pond"], magpie, ...extra });
+  const still = scene().render(view(null), null, DAY, 1)[0];
+  for (const deed of ["stole", "chased", "back"]) {
+    for (const age of [0.5, 2.5, 5, 10, 15, 19]) {
+      const deco = deed === "stole" ? ["pond"] : ["snowman", "pond"];
+      const shown = scene().render(view({ deed, age, item: "snowman", spot: 0 }, { deco }), null, DAY, 1)[0];
+      assert.ok(shown.width === still.width, `${deed} ${age}`);
+    }
+  }
+  // fluttering over the pet with the snowman in her beak: she is there, and the snowman isn't where it stood
+  const chased = scene().render(view({ deed: "chased", age: 8, item: "snowman", spot: 0 },
+    { activity: "shoo", activity_until: DAY.getTime() / 1000 + 12 }), null, DAY, 1)[0];
+  assert.ok(differing(still, chased) > 100);
+  // her egg lies in her top hat instead of the moss
+  const moss = frames({ nest: "kite" }, 1)[0];
+  const hat = frames({ nest: "magpie" }, 1)[0];
+  assert.ok(differing(moss, hat, GROUND - 8, GROUND + 3) > 0);
+});
+
 test("what it left behind lies in the scene, and what it builds grows while it builds it", () => {
   const empty = frames({}, 1)[0];
   for (const kind of ["ball", "tower", "drawing", "snowman"]) {
