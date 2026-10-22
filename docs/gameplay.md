@@ -251,7 +251,8 @@ count.
 After five good days, the next morning it wakes up at home, an **egg of its
 own line** lies in the bed of moss next to it, where a friend's egg lies too,
 with its heirloom. It is collected the same way. While an egg is still lying
-there, or there are nine eggs already, it waits for a later morning. After an
+there, there are nine eggs already, or an egg of its line is in the bag, it
+waits for a later morning. After an
 egg it rests for two weeks (time at Grandma's doesn't count); then the good
 days count again from nothing.
 
@@ -748,8 +749,9 @@ family and entrusts it to the pet: it lays it in a **bed of moss** and leaves.
 The egg is always of the friend's line. The pet watches over it, and so the
 egg carries the pet's heirloom (see [Growing up](#growing-up)). The egg waits
 in its bed of moss until you tap it; then it is in the bag, to be brooded
-whenever you like. While an egg is still lying there, or there are nine eggs
-already, the next one waits.
+whenever you like. While an egg is still lying there, there are nine eggs
+already, or an egg of the friend's line is in the bag, the next one waits, so
+that the bag keeps room for rarer eggs.
 
 The friend **stays** after that. It comes less often, about once a day, still
 plays and still brings a gift now and then. For two weeks after an egg its

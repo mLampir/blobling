@@ -166,7 +166,9 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
   if (!resting(friend, t)) {
     friend.visits = Math.min(friend.visits + 1, VISITS_FOR_NEST);
   }
-  if (friend.visits >= VISITS_FOR_NEST && !state.nest && roomForEgg(state)) {
+  // while an egg of its line is kept already, the egg waits for a later visit, so that the eggs kept
+  // leave room for lines that are rarer
+  if (friend.visits >= VISITS_FOR_NEST && !state.nest && roomForEgg(state) && !home.hasEggOf(state, life.lineOf(friend.species))) {
     // the friend brings an egg of its own family, and the pet watches over it
     const line = life.lineOf(friend.species);
     state.nest = {

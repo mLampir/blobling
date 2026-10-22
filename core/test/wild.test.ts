@@ -212,7 +212,8 @@ test("after the nest the friend stays, comes less often, and after a rest there 
   wild.step(pet, resting, true);
   assert.deepEqual([friend.visits, pet.nest], [wild.VISITS_FOR_NEST - 1, null]);
   assert.ok(pet.stats.mood > mood);
-  // after it, they do again
+  // after it, they do again (once the first egg has left the bag)
+  pet.eggs = [];
   const later = start + wild.NEST_REST;
   friend.until = later;
   assert.deepEqual(wild.step(pet, later, true), [["nest", pet.nest!.line]]);
@@ -278,6 +279,19 @@ test("the egg a friend brings is always of its own line", () => {
   wild.step(other, start, true);
   act(other, "collect", start + 60);
   assert.deepEqual([other.eggs.at(-1)!.line, other.eggs.at(-1)!.from], ["stone", "Puff"]);
+});
+
+test("while an egg of the friend's line is in the bag, its egg waits for a later visit", () => {
+  const other = copy();
+  other.eggs.push({ line: "stone" });
+  other.friends = [{ species: "bouldergrin", visits: wild.VISITS_FOR_NEST - 1, next: 0, until: start }];
+  wild.step(other, start, true);
+  assert.equal(other.nest, null);
+  assert.equal(other.friends[0].visits, wild.VISITS_FOR_NEST);
+  other.eggs.pop();
+  other.friends[0].until = start + 3600;
+  wild.step(other, start + 3600, true);
+  assert.equal(other.nest!.line, "stone");
 });
 
 test("some visits bring a gift, and only one lies there at a time", () => {

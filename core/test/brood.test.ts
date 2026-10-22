@@ -87,6 +87,8 @@ test("without room for the egg it waits for a later morning", () => {
   pet.eggs = Array(home.MAX_EGGS).fill({ line: "stone" });
   assert.equal(wild.roomForEgg(pet), false);
   assert.equal(brood.wake(pet, start), null);
+  pet.eggs = [{ line: "blob" }]; // one of its own line is kept already
+  assert.equal(brood.wake(pet, start), null);
   pet.eggs = [];
   assert.equal(brood.wake(pet, start + 86400)!.line, "blob");
 });

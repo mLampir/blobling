@@ -173,6 +173,11 @@ export function canAdd(state: PetState, item: string): boolean {
   return (state.items[item] ?? 0) < most;
 }
 
+/** Is an egg of this line kept already? Then a friend's or the pet's own egg of it waits (wild.ts, brood.ts). */
+export function hasEggOf(state: PetState, line: string): boolean {
+  return state.eggs.some((egg) => egg.line === line);
+}
+
 export function addItem(state: PetState, item: string): void {
   if (!canAdd(state, item)) {
     return;
