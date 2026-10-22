@@ -601,6 +601,7 @@ there to see what it brought:
   faster, and the pet snuggles up to it now and then; the snow globe from the
   mountain makes it snow a little around the house, and a pet that grows up
   then counts it as snow.
+- **Keepsakes** – one for every line (see [Keepsakes](#keepsakes) below).
 - **Hats** – it wears one at a time.
 - **A rare egg** is kept until you brood it (see [Growing up](#growing-up)),
   like an egg your pet has laid itself.
@@ -635,6 +636,22 @@ Three finds are for the [yard](#the-yard): the water basin at the stream, and
 the planks at the coast and in the ruins, which only turn up once the area's
 guardian has been got past and its egg has been brought home. The guardian
 itself only gives the egg.
+
+### Keepsakes
+
+Every line has a keepsake. Once the home has had all three adult forms of a
+line, the next pet to come home from a trip finds that line's keepsake in its
+backpack, once per home. The slime line's is the jelly lamp; which keepsake
+belongs to which line is in [pets.md](pets.md#keepsakes).
+
+A keepsake is a decoration that does one small thing for the pet that has it
+set out, outside or in the house, and only while it is set out: a need drops
+about 15 % more slowly, a training counts 15 % more, a chance comes up 20 %
+more often, and so on. The jelly lamp, for one, makes the mood drop more
+slowly. In the bag a keepsake carries a sign for what it does and names it in
+a few words. With two spots outside and at most three in the house, which
+ones stand there is a real choice. The block of ice and the fountain only
+stand outside.
 
 ## Opponents
 
@@ -1027,6 +1044,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Guests in the garden: what draws them, peeking over the fence | `core/src/garden.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
 | A scuffle (or a show at the trick festival) watched again in the app | `app/src/replay.ts` |
+| Keepsakes of the lines: which line has which, what each does, when one comes home | `core/src/keepsake.ts`, `Pet.completeLines` in `core/src/pet.ts` |
 | Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), hot afternoons, the house and its spots | `core/src/home.ts` |
 | What it does by itself, what it leaves behind or finds at home, and what it tells when you come back | `core/src/idle.ts` |
 | Going to Grandma's, staying there frozen, and being fetched | `core/src/model.ts` (`GRANDMA_AFTER`, `comeBack`) |

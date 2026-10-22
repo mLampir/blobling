@@ -708,6 +708,18 @@ const BADGES = {
   heart: [svg("health"), "var(--mood)"], finder: ["✦", "var(--hygiene)"], fresh: [svg("energy"), "var(--energy)"],
   trick: ["×2" + svg("trick"), "var(--energy)"], train: ["×2" + svg("train"), "var(--satiety)"],
   growth: ["↑", "var(--health)"], snow: ["❄", "var(--hygiene)"],
+  // the keepsakes of the lines (core/src/keepsake.ts)
+  keep_mood: [svg("mood"), "var(--mood)"], keep_play: [svg("game"), "var(--mood)"], keep_bored: [svg("mood"), "var(--mood)"],
+  keep_satiety: [svg("satiety"), "var(--satiety)"], keep_fruit: [svg("satiety"), "var(--satiety)"],
+  keep_hygiene: [svg("hygiene"), "var(--hygiene)"], keep_rest: [svg("moon"), "var(--energy)"],
+  keep_hike: [svg("trip"), "var(--energy)"], keep_finds: ["✦", "var(--hygiene)"], keep_maps: ["✕", "var(--hygiene)"],
+  keep_heal: [svg("health"), "var(--health)"], keep_sick: [svg("health"), "var(--health)"],
+  keep_steady: [svg("health"), "var(--health)"], keep_plant: ["↑", "var(--health)"], keep_children: ["↑", "var(--health)"],
+  keep_heat: [svg("sun"), "var(--satiety)"], keep_cold: ["❄", "var(--hygiene)"], keep_stars: ["✦", "var(--energy)"],
+  keep_friends: ["♥", "var(--mood)"], keep_bite: ["~", "var(--hygiene)"],
+  keep_tricks: [svg("trick"), "var(--energy)"], keep_festival: [svg("trick"), "var(--energy)"],
+  keep_speed: [svg("train"), "var(--satiety)"], keep_strength: [svg("train"), "var(--satiety)"],
+  keep_smarts: [svg("train"), "var(--satiety)"],
 };
 const PACKED = ["heart", "finder", "fresh"];  // what works from the backpack on a trip
 const ARROWS = { left: "←", right: "→", up: "↑", down: "↓" };
@@ -2029,6 +2041,14 @@ async function loadGallery() {
         page.append(slot(null));
       } else {
         page.append(...line.forms.map(slot));
+      }
+      // the line's keepsake, once the home has it
+      if (line.keepsake) {
+        const li = document.createElement("li");
+        li.className = "keepsake";
+        const img = Object.assign(document.createElement("img"), { src: app.discovery(line.keepsake.id, true), alt: "" });
+        li.append(img, line.keepsake.label);
+        page.append(li);
       }
       return page;
     }));

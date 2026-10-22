@@ -21,6 +21,7 @@
 
 import * as care from "./care";
 import * as home from "./home";
+import * as keepsake from "./keepsake";
 import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
@@ -155,7 +156,7 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
   }
   const rng = new Random(`visit:${Math.trunc(t)}`);
   delete friend.until;
-  friend.next = t + Math.round(rng.uniform(...(friend.nests ? OLD_VISIT_EVERY : VISIT_EVERY)));
+  friend.next = t + Math.round(rng.uniform(...(friend.nests ? OLD_VISIT_EVERY : VISIT_EVERY)) / keepsake.factor(state, "friends"));
   for (const other of state.friends) {
     other.next = Math.max(other.next, t + BETWEEN_VISITS); // one at a time, and not straight after each other
   }
@@ -178,7 +179,7 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
     // the friend stays, and comes less often from now on
     Object.assign(friend, {
       visits: 0, nests: (friend.nests ?? 0) + 1, rest_until: t + NEST_REST,
-      next: t + Math.round(rng.uniform(...OLD_VISIT_EVERY)),
+      next: t + Math.round(rng.uniform(...OLD_VISIT_EVERY) / keepsake.factor(state, "friends")),
     });
     return [["nest", line]];
   }

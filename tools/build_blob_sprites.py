@@ -8748,6 +8748,324 @@ TRIP_TAGS |= {
 }
 
 
+# ---------------------------------------------------------------- Keepsakes
+
+# The keepsake of every line (core/src/keepsake.ts): a decoration, 7–11 pixels like the others,
+# that the home gets once it has had all three adult forms of the line
+KEEPSAKES = {
+    # blob: a wobbly jelly lamp on a little stand, a bubble rising inside
+    "jellylamp": [
+        "...ccc...",
+        "..cfccc..",
+        ".cfcccCc.",
+        ".ccciccC.",
+        "cccccccCC",
+        "ccicccCCC",
+        ".cCCCCCC.",
+        "..SSSSS..",
+        ".SsssssS.",
+        "SSSSSSSSS"],
+    # ember: a fire bowl on three legs
+    "brazier": [
+        "....r....",
+        "...ror...",
+        "..royor..",
+        ".royyyor.",
+        "SSSSSSSSS",
+        ".SsssssS.",
+        "..SSSSS..",
+        "..S.S.S..",
+        ".S..S..S.",
+        "S...S...S"],
+    # stone: a pale moonstone with a crescent, on a stone foot
+    "moonstone": [
+        "...nnn...",
+        "..nqqqn..",
+        ".nqqqNqn.",
+        ".nqqqNNn.",
+        ".nqqqNqn.",
+        "..nnnnn..",
+        "...SsS...",
+        "..SSsSS..",
+        ".SSSSSSS."],
+    # fox: a signpost, one arrow each way
+    "signpost": [
+        "....t.....",
+        ".oooooo...",
+        ".oOOOOOoo.",
+        ".oooooo...",
+        "....t.....",
+        "..wwwwwww.",
+        ".wwWWWWWw.",
+        "..wwwwwww.",
+        "....t.....",
+        "....t.....",
+        "...TtT...."],
+    # cloud: a bell under a little cloud on a post
+    "weatherbell": [
+        ".nnn......",
+        "nnnnnn....",
+        ".NtNNttt..",
+        "..t....Y..",
+        "..t...yyY.",
+        "..t...yyY.",
+        "..t..yyyyY",
+        "..t..YYYYY",
+        "..t....Y..",
+        "..t.......",
+        ".TTT......"],
+    # leaf: a cherry branch in a clay pot
+    "cherrybranch": [
+        ".p...p...",
+        "pwp.pwp..",
+        ".p.t.p.p.",
+        "...t..pwp",
+        "..tt.t.p.",
+        "...tt....",
+        "....t....",
+        ".ooooooo.",
+        ".oOOOOOo.",
+        "..ooooo..",
+        "..OOOOO.."],
+    # duck: a rubber duck in a wooden tub
+    "bathduck": [
+        ".....yy...",
+        "....yTyy..",
+        "....yyyoo.",
+        "..y.yyy...",
+        "..yyyyyY..",
+        "tibbibbbit",
+        "TtTtTtTtTt",
+        ".TtttttttT",
+        "..TTTTTTT."],
+    # hippo: a stone hippo head, from the front, water running from its mouth into the basin
+    "hippofountain": [
+        ".s.....s.",
+        "sSs...sSs",
+        "sssssssss",
+        "ssMsssMss",
+        ".sssssss.",
+        "sssssssss",
+        "ssSsssSss",
+        ".sssisss.",
+        "....i....",
+        "SSSSiSSSS",
+        "SbbbibbbS",
+        ".SSSSSSS."],
+    # beak: a mailbox with its little flag
+    "mailbox": [
+        ".........R",
+        "..bbbbbb.R",
+        ".bbbbbbbbr",
+        ".bMMMMMbbr",
+        ".bbbbbbbBr",
+        ".BBBBBBBB.",
+        "....t.....",
+        "....t.....",
+        "....t.....",
+        "...TTT...."],
+    # caterpillar: a basket full of flowers
+    "flowerbasket": [
+        "..p...v..",
+        ".pyp.vyv.",
+        "..p.y.v..",
+        ".l.yfy.l.",
+        ".gl.y.lg.",
+        "hHhHhHhHh",
+        "HhHhHhHhH",
+        ".hHhHhHh.",
+        "..HHHHH.."],
+    # dog: a crate of balls
+    "ballcrate": [
+        "..rr.bb...",
+        ".rrRbbBy..",
+        ".RRRBByyY.",
+        "tttttttttt",
+        "tTttTttTtT",
+        "tttttttttt",
+        "tTttTttTtT",
+        "TTTTTTTTTT"],
+    # dragonfly: a wind chime on a hook, a little dragonfly at the bottom
+    "windchime": [
+        ".ttttttttt",
+        ".t..W.W.W.",
+        ".t..W.W.W.",
+        ".t..i.W.i.",
+        ".t..i.i.i.",
+        ".t....i...",
+        ".t...cCc..",
+        ".t....c...",
+        ".t........",
+        "TTT......."],
+    # beaver: a stump gnawed thin in the middle
+    "gnawedstump": [
+        ".ttttttt.",
+        "tdDdDdDdt",
+        ".ttTtttT.",
+        "..tTttt..",
+        "...tTt...",
+        "..tTttt..",
+        ".ttTttTt.",
+        "tttTtttTt",
+        "d.TT.TT.d"],
+    # crab: a lamp shaped like a scallop, on a stake
+    "shelllamp": [
+        "..p.p.p..",
+        ".ppPpPpp.",
+        "pPpPpPpPp",
+        "pPpyyyPpp",
+        ".PPyyyPP.",
+        "..PPPPP..",
+        "....t....",
+        "....t....",
+        "....t....",
+        "...TTT..."],
+    # axolotl: a little tank with water weed and bubbles
+    "herbtank": [
+        "WWWWWWWWWWW",
+        "W.....f...W",
+        "WbbbbibbbbW",
+        "WbgbbbbblbW",
+        "WbglbbibgbW",
+        "WbgbbbbbgbW",
+        "WGgGbbbbgGW",
+        "WWWWWWWWWWW"],
+    # mouse: a knitting basket, balls of wool and two needles
+    "knitbasket": [
+        "....W.W..",
+        "...W...W.",
+        "..kkWaWa.",
+        ".kkKkaaAa",
+        "hHhHhHhHh",
+        "HhHhHhHhH",
+        ".hHhHhHh.",
+        "..HHHHH.."],
+    # bear: a honey pot with a dipper, honey running down
+    "honeypot": [
+        "......t..",
+        ".yyyyyty.",
+        "DyyyyyyyD",
+        "DdyddddDD",
+        "ddyddddDD",
+        "dddddddDD",
+        "ddddddDDD",
+        ".dddddDD.",
+        "..DDDDD.."],
+    # penguin: a block of ice with a fish frozen inside
+    "iceblock": [
+        ".IIIIIIII.",
+        "IiifiiiiII",
+        "IifiiiiiiI",
+        "IiiooOiiiI",
+        "IioooooOiI",
+        "IiiooOiiiI",
+        "IiiiiiiifI",
+        ".IIIIIIII."],
+    # bat: a gramophone with its horn
+    "gramophone": [
+        ".......YY.",
+        "......YyyY",
+        ".....Yyy.Y",
+        "....Yyy..Y",
+        "...Yy..YY.",
+        "..tY......",
+        "SSSSSSSS..",
+        "tttttttt..",
+        "tTtttTtt..",
+        "TTTTTTTT.."],
+    # owl: a telescope on a tripod
+    "telescope": [
+        "........YY",
+        "......YYyY",
+        "....YYyyY.",
+        "..YYyyYY..",
+        ".YyyYY....",
+        "..YY.t....",
+        "....ttt...",
+        "...t.t.t..",
+        "..t..t..t.",
+        ".t...t...t"],
+    # chameleon: an easel with a painting
+    "easel": [
+        "....t....",
+        ".wwwwwww.",
+        ".wrrgbbw.",
+        ".wryggbw.",
+        ".wyyggbw.",
+        ".wwwwwww.",
+        "..t.t.t..",
+        ".t..t..t.",
+        ".t..t..t.",
+        "t...t...t"],
+    # scarab: an hourglass in a golden frame
+    "hourglass": [
+        "YYYYYYYYY",
+        ".tiiiiit.",
+        ".t.izi.t.",
+        ".t..z..t.",
+        ".t.izi.t.",
+        ".tizzzit.",
+        "YYYYYYYYY"],
+    # paper kite: a striped windsock on a pole
+    "windsock": [
+        "s..........",
+        "srrwwrrww..",
+        "srrwwrrwwrr",
+        "srrwwrrww..",
+        "s..........",
+        "s..........",
+        "s..........",
+        "s..........",
+        "s..........",
+        "S.........."],
+    # octopus: a conch on a stone
+    "conch": [
+        "......pp.",
+        "...ppppPp",
+        ".ppqqqpPP",
+        "pqqqqqqPP",
+        ".ppqqpPP.",
+        "...PPPP..",
+        ".SSSSSSS.",
+        "SsssssssS"],
+    # gargoyle: a little guardian statue with wings, scowling, on its plinth
+    "guardianstatue": [
+        "s.......s",
+        "ss.sss.ss",
+        ".sSsssSs.",
+        ".sRsssRs.",
+        "..sSSSs..",
+        ".sssssss.",
+        "ssSsssSss",
+        "..sssss..",
+        ".SSSSSSS.",
+        "SSSSSSSSS"],
+}
+
+TRIP_TAGS |= {name: [(grid, 1000)] for name, grid in KEEPSAKES.items()}
+TRIP_TAGS |= {
+    # at night the lamps glow: the jelly from inside, the moonstone pale blue, the shell lamp and the fire bowl warm
+    "jellylamp_lit": [(swap(swap(KEEPSAKES["jellylamp"], "C", "c"), "i", "f"), 1000)],
+    "moonstone_lit": [([r.translate(str.maketrans("nqN", "ifI")) for r in KEEPSAKES["moonstone"]], 1000)],
+    "shelllamp_lit": [([r.translate(str.maketrans("yP", "fp")) for r in KEEPSAKES["shelllamp"]], 1000)],
+    "brazier": [(KEEPSAKES["brazier"], 400), (["....o....", "...ror...", "..royrr..", ".rroyyor."] + KEEPSAKES["brazier"][4:], 400)],
+    "brazier_lit": [([r.translate(str.maketrans("ro", "oy")) for r in KEEPSAKES["brazier"]], 400),
+                    ([r.translate(str.maketrans("ro", "oy")) for r in
+                      ["....o....", "...ror...", "..royrr..", ".rroyyor."] + KEEPSAKES["brazier"][4:]], 400)],
+    # the wind chime and the windsock move in the wind, the duck bobs, the bell swings
+    "windchime": [(KEEPSAKES["windchime"], 700),
+                  ([".ttttttttt", ".t.W..W.W.", ".t.W..W.W.", ".t.i..W.i.", ".t.i..i.i.", ".t....i...",
+                    ".t...cCc..", ".t....c...", ".t........", "TTT......."], 700)],
+    "windsock": [(KEEPSAKES["windsock"], 600),
+                 (["s..........", "srrwwrrw...", "srrwwrrwwr.", "srrwwrrwwrr", "s..........", "s..........",
+                   "s..........", "s..........", "s..........", "S.........."], 600)],
+    "bathduck": [(KEEPSAKES["bathduck"], 800), (["." * 10] + KEEPSAKES["bathduck"][:4] + KEEPSAKES["bathduck"][5:], 800)],
+    "weatherbell": [(KEEPSAKES["weatherbell"], 2400),
+                    ([".nnn......", "nnnnnn....", ".NtNNttt..", "..t.....Y.", "..t....yyY", "..t....yyY",
+                      "..t...yyyy", "..t...YYYY", "..t.....Y.", "..t.......", ".TTT......"], 300)],
+}
+
+
 # ---------------------------------------------------------------- The house
 
 # The house grows in three steps (core/src/home.ts): a hut of thatch, a wooden cabin with a window,

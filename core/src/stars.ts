@@ -14,6 +14,7 @@
 
 import * as grandma from "./grandma";
 import * as home from "./home";
+import * as keepsake from "./keepsake";
 import { Random } from "./random";
 import * as sky from "./sky";
 import type { PetState } from "./state";
@@ -67,12 +68,12 @@ export function candidate(day: number, bedStart: string, location: Location): nu
 }
 
 /** Does a shooting star fall on the evening of the day starting at `day`? Clear sky only. */
-function falls(day: number, weather: sky.WeatherCode): boolean {
+function falls(day: number, weather: sky.WeatherCode, more: number): boolean {
   if (sky.precipitation(weather) !== null || sky.clouds(weather)[0] >= 2) {
     return false; // rain, snow or a sky full of clouds
   }
   const [, number] = midnight(day + 12 * 3600);
-  return new Random(`stars:${number}:falls`).random() < (weather === null ? CHANCE_UNKNOWN : CHANCE);
+  return new Random(`stars:${number}:falls`).random() < (weather === null ? CHANCE_UNKNOWN : CHANCE) * more;
 }
 
 /**
@@ -95,7 +96,7 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode, bedSt
     const when = candidate(d, bedStart, location);
     return t - 60 < when && when <= t;
   });
-  if (day === undefined || !falls(day, weather)) {
+  if (day === undefined || !falls(day, weather, keepsake.factor(state, "stars"))) {
     return false;
   }
   fall(state, t);
