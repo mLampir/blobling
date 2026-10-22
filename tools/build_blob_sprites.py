@@ -46,6 +46,10 @@ frameTags):
   bear (cubble), penguin (waddlet) and bat (flapling) lines
 - hivebear, snorbear, ursastra, tuxwaddle, glidepin, aurorapin, umbrabat, batbeat, lunaflap
   (_body / _faces) – their adults, the last of each three the secret one
+- <line>_baby_body / <line>_baby_faces, <child>_body / <line>_faces – baby and child of the
+  owl (hootlet), chameleon (colorlet), scarab (rollet) and kite (kitelet) lines
+- owlbert, stargazer, ninjowl, palettino, hidewell, mirrorleon, solroll, clockbeetle, pharabug,
+  origrane, lionkite, stormkite (_body / _faces) – their adults, the last of each three the secret one
 - items                            – eggs, bowl, food, poop, ball, umbrella, clouds, medicine, and
                                      the app's things (sponge, baton, bag, whistle, training, rod)
 - trip                             – backpack, plants, decorations, hats, things along the path,
@@ -6050,6 +6054,912 @@ ADVENTURE_FORMS = (("hivebear", FACES), ("snorbear", kit_faces(normal=("closed",
                                                               smile=("happy", "laugh", True))),
                    ("lunaflap", FACES))
 
+
+# ---------------------------------------------------------------- The festival and star lines
+
+# Four lines, each with its egg, baby, child, a basic adult, a second one and a secret one: the owl
+# that a shooting star brings, the chameleon and the paper kite from the trick festival, and the
+# scarab that is dug up. What every form of a line keeps: the too-big glasses (the owl), the curled
+# tail and the changing colors (the chameleon), the ball it pushes (the scarab) and the tail with
+# its bows (the paper kite). The child carries the colors the code may recolor as a hint at its
+# adult form: the rims of the glasses, the tail spiral, the ball and the bows.
+
+# The eggs: a night-blue egg with two feather tufts and stars on it, a shooting star falling across
+# it, lying on red roof tiles; a speckled leaf-green egg turning yellow and orange at its bottom, a
+# blue first-prize rosette pinned to its side; a red festival-paper egg folded like a kite with a
+# gold frame, a string tail with two blue bows off its point; a scarab-green egg split by the gold
+# seam of wing cases, half dug out of a sand heap marked with a red cross.
+OWL_EGG = [
+    "..o......o..",
+    "..oho..oho..",
+    "..oheooeEo..",
+    "..oheeeseo..",
+    ".oheeeeeqEo.",
+    ".oeseeeqeEo.",
+    ".oeeeeseeEo.",
+    ".oeeeSeeeEo.",
+    ".oeeeeeesEo.",
+    ".oeseeeeeEo.",
+    "..oeeeeeEo..",
+    "rRroEEEEoRrR",
+    "RrrRrrRrrRrr",
+    "RRRRRRRRRRRR",
+]
+CHAMELEON_EGG = [
+    "....oooo....",
+    "...oheeEo...",
+    "..oheEeeEo..",
+    "..oeeeeeEo..",
+    ".oheeEeeeEo.",
+    ".oeeeeeEebb.",
+    ".oeEeyeebjjb",
+    ".oyeyeyybjjb",
+    ".oyyyyyyYbb.",
+    ".oryyryyYBo.",
+    "..orrrrrRBo.",
+    "..orrrrRRoB.",
+    "...oRRRRo...",
+    "....oooo....",
+]
+SCARAB_EGG = [
+    "....oyyo....",
+    "...ohyYEo...",
+    "..oheyYeEo..",
+    "..ohhyYeEo..",
+    ".ohheeyYeEo.",
+    ".ohheeyYeEo.",
+    ".oheeeyYeEo.",
+    ".oeeeeyYEEo.",
+    ".oeeeeyYEEo.",
+    ".oeeeeyYEEo.",
+    "..nnoeyYonn.",
+    ".rarAnnnnaa.",
+    "aaraaAaaAaaa",
+    "ArArAAAAAAAA",
+]
+KITE_EGG = [
+    "....oyyo....",
+    "...ohyyEo...",
+    "..ohyhEyEo..",
+    "..oyhhEEyo..",
+    ".oyhhhEEEyo.",
+    ".yhhhhyEEEy.",
+    ".oyhhhEEEyo.",
+    "..oyhhEEyo..",
+    "..ohyhEyEo..",
+    "...ohyyEo...",
+    "....oyyo....",
+    "uu.uukk.....",
+    ".uUuk...kuUu",
+    "uu.uu..uu.uu",
+]
+EGG_GRIDS |= {"owl": OWL_EGG, "chameleon": CHAMELEON_EGG, "scarab": SCARAB_EGG, "kite": KITE_EGG}
+RARE_EGG_PALETTES |= {
+    "owl": {"o": (25, 25, 55), "e": (65, 72, 140), "E": (45, 50, 105), "h": (110, 120, 185), "s": (255, 230, 120),
+            "S": (255, 252, 230), "q": (150, 150, 175), "r": (205, 95, 60), "R": (140, 55, 40), "x": (20, 20, 45)},
+    "chameleon": {"o": (30, 60, 35), "e": (110, 190, 80), "E": (70, 140, 60), "h": (175, 230, 130), "y": (245, 215, 80),
+                  "Y": (215, 170, 50), "r": (240, 130, 60), "R": (195, 85, 45), "b": (80, 135, 230),
+                  "B": (45, 80, 170), "j": (255, 225, 100), "x": (25, 50, 30)},
+    "scarab": {"o": (20, 45, 50), "e": (40, 160, 140), "E": (25, 110, 105), "h": (130, 220, 190), "y": (240, 195, 70),
+               "Y": (185, 140, 45), "a": (225, 190, 125), "A": (175, 135, 85), "n": (105, 70, 40), "r": (215, 45, 45),
+               "x": (15, 35, 40)},
+    "kite": {"o": (90, 20, 30), "e": (225, 70, 60), "E": (175, 40, 45), "h": (250, 140, 120), "y": (250, 200, 70),
+             "k": (130, 95, 60), "u": (90, 170, 235), "U": (50, 110, 190), "x": (90, 20, 30)},
+}
+
+# ---- The owl line: an owl whose glasses are far too big for it
+
+OWL_PALETTE = {
+    "o": (55, 35, 25),     # outline
+    "d": (125, 82, 50),    # shadow
+    "b": (165, 112, 70),   # tawny
+    "l": (200, 155, 105),  # lit
+    "h": (230, 200, 150),  # highlight, its chest
+    "e": (100, 62, 38),    # the bars on its chest
+    "f": (245, 230, 200),  # the face disc
+    "F": (220, 200, 165),
+    "g": (240, 195, 60),   # the rims of its glasses (the hint)
+    "G": (185, 135, 35),
+    "S": (255, 255, 255),  # a glint on the glass
+    "a": (240, 165, 55),   # talons and beak
+    "A": (190, 110, 30),
+}
+# Baby: a round tawny owlet with feather tufts, a cream face disc and far too big gold glasses, two
+# talons
+OWL_BABY = overlay(overlay([
+    ".o............o.",
+    ".oo..........oo.",
+    ".olo........olo.",
+    ".oloolhllbboolo.",
+    ".oolhhlbbbbbdoo.",
+    ".offffbbbbffffo.",
+    ".ffffffffffffff.",
+    "offffffffffffffo",
+    "offffffffffffffo",
+    "obffffffffffffdo",
+    "odbffffffffffddo",
+    "odddbdbddddbdbdd",
+    ".oooooooooooooo.",
+    "..oaao....oaao..",
+    "..a.a......a.a..",
+], [".gggg.", "g....G", "g....G", "g....G", "gG..GG", ".GGGG."], (1, 6)),
+    [".gggg.", "g....G", "g....G", "g....G", "gG..GG", ".GGGG."], (8, 6))
+OWL_BABY_FACE_TOP, OWL_BABY_FACE_SHIFT = face_place(OWL_BABY, 7, 3, BABY_W)
+OWL_BABY_TAGS = body_tags(OWL_BABY, 9, 8, flat_rows=3)
+# Hootlet, the child: upright, long ear tufts, a cream face disc, the glasses even more too big
+# (two huge round rims with a glint, ear pieces poking out), folded wings with feather tips, a
+# barred chest and orange talons
+HOOTLET = [
+    "..o....................o..",
+    "..oo..................oo..",
+    "..olo................olo..",
+    "..olbo..............oblo..",
+    "..oldbo..oooooooo..obdlo..",
+    "..oddbooolllllbbbooobddo..",
+    "..obdoolffllllbbffboodbo..",
+    "....ohggggggbbggggggdo....",
+    "...olgSffffgggSffffggdo...",
+    "...ofgffffffggfffffFGFo...",
+    "..GGggffffffggfffffFGGGG..",
+    "..ooGGffffffGGfffffFGGoo..",
+    "..odoGffffffGGfffffFGodo..",
+    ".oddoGGffffGGGGffffGGoddo.",
+    "oddbobGGGGGGbbGGGGGGdobddo",
+    "odbdobbbFFbbbbbbFFbbdodbdo",
+    "oddbobbbbbbbhhbbbbbbdobddo",
+    "odbdoddddhhehhhehddddodbdo",
+    ".oddodddhhhhhhhhhhdddoddo.",
+    "o.ododdhhehhhehhhehddodo.o",
+    "...oooooooooooooooooooo...",
+    ".....aa.aa.....aa.aa......",
+    ".....a.a.a.....a.a.a......",
+]
+HOOTLET_FACE_TOP, HOOTLET_FACE_SHIFT = face_place(HOOTLET, 8, 5, FACE_W)
+HOOTLET_TAGS = body_tags(HOOTLET, 16, 13, flat_rows=3)
+
+# ---- The chameleon line: a chameleon whose colors roll over it, its tail curled up
+
+CHAMELEON_PALETTE = {
+    "o": (30, 60, 35),     # outline
+    "d": (60, 130, 55),    # shadow
+    "b": (100, 180, 75),   # leaf green
+    "l": (150, 215, 105),  # lit
+    "h": (195, 240, 150),  # highlight
+    "y": (245, 215, 80),   # its colors turning
+    "Y": (210, 165, 50),
+    "r": (240, 135, 60),
+    "R": (195, 90, 45),
+    "t": (245, 125, 55),   # the tail spiral (the hint)
+    "T": (190, 80, 40),
+    "q": (255, 190, 110),
+}
+# Baby: a leaf-green slime with a helmet crest, its bottom turning yellow and orange, its tail rolled
+# into a curl
+CHAMELEON_BABY = [
+    ".....ooo...............",
+    "....oldbo..............",
+    "...olhdbbo.............",
+    "...olhldbbdoo..........",
+    "..olhhlbbbbbdo...oooo..",
+    ".ollhbbbbbbbbdo.orrrRo.",
+    ".olbbbbbbbbbbdoorooooRo",
+    "olbbbbbbbbbbbyyoroyyoRo",
+    "olbbbbbbbbbbyyrorooyoRo",
+    "obbbbbbbbbbbyrrrrRooRo.",
+    "odbybbbbbbybyrRRRRRRo..",
+    "oyyyyrryyyyrrRRooooo...",
+    ".oodbooooooRrRo........",
+    "..o.o......o.o.........",
+]
+CHAMELEON_BABY_FACE_TOP, CHAMELEON_BABY_FACE_SHIFT = face_place(CHAMELEON_BABY, 6, 3, BABY_W)
+CHAMELEON_BABY_TAGS = body_tags(CHAMELEON_BABY, 7, 7, flat_rows=3)
+# Colorlet, the child: a taller helmet crest, turret eyes ringed in green, its colors rolling over it
+# (green head, yellow back and belly, orange spots), four gripping legs and a much bigger tail rolled
+# into a tight spiral
+COLORLET = [
+    "........oo......................",
+    ".......olbo.....................",
+    "......olhdbo....................",
+    ".....olhhldbo...................",
+    "....olhhlbbbdo..................",
+    "...olhhoooooooo.................",
+    "....ooolllllbbbooo..............",
+    "...ohlllllllbbbbbbo.............",
+    "..ollllllbbbbllllbdo............",
+    ".ollllbbbdbblbbbbdddo..oooooo...",
+    "olllllbbbbbbbbbbbbdYdooqqqqqqo..",
+    "obblbbbbbbdlbbbbybddYoqttttttqo.",
+    "obbbbbbbbbbbbbbybydYYotooooootTo",
+    "obbblbbbbdbblbybydYYYotoqqYyotTo",
+    "obbbbddddbbybddddyYYrotottYyotTo",
+    "obbbbbbbybybyyyyryYYYotoqtYyotTo",
+    "obbbbbbybybyyyyyyyYrYotoqtoootTo",
+    ".oddYdYdYYYYYYYrYYYYoytoqtoootTo",
+    ".odYdYdYYYYrYYYYYYrYoytoqttttTo.",
+    "..ooooooooooooooooooottoqtTTTo..",
+    "...oYyo........oyro.oytoooooo...",
+    "..oyyyo.......oyyyo..oo.........",
+    "..o.o.o.......o.o.o.............",
+]
+COLORLET_FACE_TOP, COLORLET_FACE_SHIFT = face_place(COLORLET, 9, 3, FACE_W)
+COLORLET_TAGS = body_tags(COLORLET, 15, 10, flat_rows=3)
+
+# ---- The scarab line: a beetle that rolls a ball in front of it
+
+SCARAB_PALETTE = {
+    "o": (15, 40, 45),     # outline
+    "d": (30, 110, 105),   # shadow
+    "b": (45, 160, 140),   # scarab green
+    "l": (100, 205, 175),  # lit
+    "h": (170, 240, 210),  # highlight
+    "y": (240, 195, 70),   # the gold seam of its wing cases
+    "Y": (190, 140, 45),
+    "a": (230, 200, 140),  # its ball of sand (the hint)
+    "A": (185, 150, 95),
+    "s": (250, 230, 185),
+    "t": (25, 75, 75),     # legs
+    "T": (60, 130, 125),
+}
+# Baby: a domed metallic-green beetle with a gold seam, club antennae and six short legs, a sand ball
+# in front of it
+SCARAB_BABY = [
+    "..........Yy.....yY.......",
+    "..........yY.....Yy.......",
+    "...........o.....o........",
+    "............o.ooyyoo......",
+    "............oolhyYbboo....",
+    "...........olhhlyYbbbdo...",
+    "..oooo....ollhbbyYbbbbdo..",
+    ".osaaao...olbbbbyYbbbbdo..",
+    "osaaaAAo.olbbbbbyYbbbbddo.",
+    "oaaaAaAo.olbbbbbbbbbbbddo.",
+    "oaaaaAAooobbbbbbbbbbbbddoo",
+    "oaAaAAAo.odbbbbbbbbbbdddo.",
+    ".oAAAAo.ooddddddddddddddoo",
+    "..oooo....oooooooooooooo..",
+    "...........o..o....o..o...",
+]
+SCARAB_BABY_FACE_TOP, SCARAB_BABY_FACE_SHIFT = face_place(SCARAB_BABY, 9, 12, BABY_W)
+SCARAB_BABY_TAGS = body_tags(SCARAB_BABY, 10, 17, flat_rows=3)
+# Rollet, the child: a sturdier scarab, its domed wing cases split by the gold seam, a darker head
+# plate, club antennae and six legs, the front pair pressing on the bigger sand ball it rolls ahead
+ROLLET = [
+    "...............Yy........yY.....",
+    "...............yY........Yy.....",
+    "................o........o......",
+    ".................o......o.......",
+    ".................o......o.......",
+    ".................oooooooo.......",
+    "...............oolllyYbbboo.....",
+    "..............olllllyYbbbbbo....",
+    ".............ollbbbbyYbbbbbdo...",
+    "...ooooo....olllbbbbyYbbbbbddo..",
+    "..ossaAao..ollllboooooooobbdddo.",
+    ".ossaaaaao.obbboobbbbbbbboodddo.",
+    "ossaaaaaaAooboobbbbbbbbbbbboodo.",
+    "osaaaaAaaaTTobbbbbbbbbbbbbbddooT",
+    "oaaAaaaaaAoobbbbbbbbbbbbbbbdddo.",
+    "oaaaaaaaAAoobbbbbbbbbbbbbbbdddoT",
+    "oaaaaaAAAATobbbbbbbbbbbbbbbdddo.",
+    ".oaAaaAAAo.Toddddddddddddddddo.T",
+    "..oaaAAAo...oddddddddddddddddo..",
+    "...ooooo....oooTooooooooooTooo..",
+    "..............T............T....",
+    ".............T..............T...",
+]
+ROLLET_FACE_TOP, ROLLET_FACE_SHIFT = face_place(ROLLET, 11, 13, FACE_W)
+ROLLET_TAGS = body_tags(ROLLET, 15, 21, flat_rows=3)
+
+# ---- The paper kite line: a living paper dragon with bows on its tail
+
+KITE_PALETTE = {
+    "o": (90, 20, 30),     # outline
+    "d": (175, 40, 45),    # shadow
+    "b": (215, 62, 55),    # festival red
+    "l": (240, 105, 85),   # lit
+    "h": (255, 165, 140),  # highlight
+    "c": (140, 28, 38),    # a crease
+    "P": (250, 232, 200),  # the back of the paper
+    "y": (250, 200, 70),   # gold antlers and whiskers
+    "Y": (205, 150, 45),
+    "u": (90, 170, 235),   # the bows (the hint)
+    "U": (50, 110, 190),
+}
+# Baby: a little paper dragon, its head a folded sheet like an origami mask (a light and a dark half
+# meeting in the centre fold, one corner dog-eared to show the back of the paper), gold antlers and
+# whiskers; its pleated paper body waves behind it and ends in a blue bow
+KITE_BABY = [
+    "...y.y......y.y.................",
+    "....yY......Yy..................",
+    ".....yY....Yy...................",
+    ".....ooooooooooooo..............",
+    "....ochhhhlllllldo........uu.uu.",
+    "...oPcllllbbbbbbdo..ooo...uUyUu.",
+    "..occcllllbbbbbbdooohlbooouu.uu.",
+    "...ohlllllbbbbbdoobdllddhlo.....",
+    "....ohllllbbbbdohlddccddllo.....",
+    ".....ohlllbbbdo.lldooooocco.....",
+    "..yy..ohllbbdo..cyy.....oo......",
+    ".y.....oooooo...oo.y............",
+    "Y...................Y...........",
+]
+KITE_BABY_FACE_TOP, KITE_BABY_FACE_SHIFT = face_place(KITE_BABY, 6, 6, BABY_W)
+KITE_BABY_TAGS = body_tags(KITE_BABY, 6, 10, flat_rows=3)
+# Kitelet, the child: grown into a long paper snake, its folded head bigger with branching gold
+# antlers and whiskers, a pleated body arching behind it on two little folded paper feet, a bow on
+# its tail and a bigger one at the tip
+KITELET = [
+    ".....y...y......y...y...uu...uu.",
+    "......y..y......y..y...uuUu.uUuu",
+    "......yy.y......y.yy...uuUUyUUuu",
+    ".......yyY......Yyy....uuUu.uUuu",
+    "........yY......Yy......uuooouu.",
+    ".......oooooooooooooo....oUlUdo.",
+    "......ochhhhllllllldo....occcdo.",
+    ".....oPcllllbbbbbbbdo....olbddo.",
+    "....oPPcllllbbbbbbbdo....uucuuo.",
+    "...occccllllbbbbbbbdo....uUyUuo.",
+    "...ohlllllllbbbbbbbdo....uucuuo.",
+    "...ohlllllllbbbbbbbdo....olbddo.",
+    "....ohllllllbbbbbbdooooooocccdo.",
+    "...yyyhlllllbbbbbdollcbbcllcbbo.",
+    "..y...ohllllbbbbdoollcbbcllcbbo.",
+    ".y.....ohlllbbbdo.obbcddcbbcddo.",
+    "..Y.....oooooooo..odddddddddddo.",
+    "...................ooooooooooo..",
+    "...................obdo...obdo..",
+    "....................odo....odo..",
+    "...................oddo...oddo..",
+    "...................yoyy...yoyy..",
+]
+KITELET_FACE_TOP, KITELET_FACE_SHIFT = face_place(KITELET, 9, 5, FACE_W)
+KITELET_TAGS = body_tags(KITELET, 11, 12, flat_rows=3)
+
+# Owlbert: the owl has become a book. Its body stands square and upright like a book's spine, gold
+# bands across it and a little title plate; its ear tufts are the spine's top corners pulled up into
+# feathers, and its wings are the open pages fanned out at its sides, written all over in lines of
+# feathers. It raises the left page as if to turn it, and a red bookmark hangs from the other. The
+# too-big glasses (tortoiseshell rims) sit on its beak.
+OWLBERT_PALETTE = OWL_PALETTE | {
+    "o": (55, 32, 22), "d": (110, 55, 35), "b": (150, 80, 45), "l": (185, 110, 65), "h": (215, 150, 95),
+    "p": (250, 244, 225), "P": (220, 208, 180), "t": (120, 100, 85),  # the pages, and the lines on them
+    "y": (240, 195, 70), "Y": (185, 135, 40),  # gold bands
+    "g": (225, 140, 55), "G": (70, 32, 18),  # tortoiseshell rims
+    "r": (200, 50, 55), "R": (140, 30, 40),  # the bookmark
+}
+OWLBERT = [
+    "......o.................o......",
+    "......oo...............oo......",
+    ".o....olo.............obo......",
+    "opo...oldooooooooooooodbo......",
+    "oto...ohlbbbfffffffbbbddo......",
+    "oppo..ohlggggfffffggggddo......",
+    "ottto.ohgSfffgfffgSfffgdo......",
+    "oppppGogffffffGggffffffGoG.....",
+    "optttpogffffffGfgffffffGo......",
+    "opppppogffffffGfgffffffGo......",
+    "otptttofGffffGfffGfffFGFo......",
+    "opppppolfGGGGffaAfGGGGFdo..ooo.",
+    "ottpttolfffffffaAffffFFdoootpto",
+    "oppppPollbFFFFFFAFFFFbddopppppo",
+    "opttptollbbbFFFFFFFbbbddoptttpo",
+    "opppPPollbbbbbbbbbbbbbddopppppo",
+    ".opttPollbbbbbbbbbbbbbddoppttto",
+    "..ooPPollbbbbbbbbbbbbbddopppppo",
+    "....otoyyyyyyyyyyyyyyyyyoptptto",
+    ".....ooYYYYYYYYYYYYYYYYYoppppPo",
+    "......ollbbbooooooobbbddopttpto",
+    "......ollbbboyttyYobbbddopppPPo",
+    "......ollbbboYYYYYobbbddoppttPo",
+    "......ollbbbooooooobbbddoppPPPo",
+    "......oyyyyyyyyyyyyyyyyyoptoooo",
+    "......oYYYYYYYYYYYYYYYYYooo....",
+    "......ollbbbbbbbbbbbbbddo..R...",
+    "......ooooooooooooooooooo..r...",
+    ".........a.a.a...a.a.a.....R...",
+]
+OWLBERT_FACE_TOP, OWLBERT_FACE_SHIFT = face_place(OWLBERT, 7, 8, 15)
+OWLBERT_TAGS = species_tags([OWLBERT, drop_rows(OWLBERT, 16)], 16, 15)
+
+
+def owl_face(gap):
+    """The owls' faces: eyes behind the big glasses, no mouth (the beak is part of the body) and no cheeks
+    (the rims are there)."""
+    face = kit_face(gap, mouth_row=0)
+
+    def grid(eyes, mouth, blush):
+        return face(eyes, mouth, False)
+    grid.width = face.width
+    return grid
+
+
+owlbert_face_grid = owl_face(9)
+OWLBERT_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (220, 200, 165)}
+
+# Stargazer: the owl has become a telescope. It sits ducked low, wings folded flat, and its neck pulls
+# out in brass tubes, each thinner than the last, up and to the side; the head at the top looks up
+# into the sky, and the too-big glasses are the telescope's lenses, brass-rimmed. A star sparkles
+# where it is looking.
+STARGAZER_PALETTE = OWL_PALETTE | {
+    "o": (25, 25, 55), "d": (45, 52, 105), "b": (65, 75, 140), "l": (95, 110, 180), "h": (140, 155, 215),
+    "f": (230, 225, 245), "F": (190, 190, 220),  # its face disc
+    "g": (255, 215, 110), "G": (175, 125, 40),  # brass rims
+    "x": (95, 60, 25), "j": (255, 235, 150), "k": (220, 170, 65), "K": (160, 110, 35),  # the brass tubes
+    "s": (255, 245, 190),  # the star
+}
+STARGAZER = [
+    "...........o............o..s..",
+    "...........oo.oooooooo.oo.sjs.",
+    "...........olohlllllbbobosjjjs",
+    "..........olgggggffgggggbosjs.",
+    "..........ogfffffGgfffffGo.s..",
+    "..........ogfffffGgfffffGo....",
+    "..........ogfffffGgfffffGo....",
+    "..........ogfffffGgffFFFGo...j",
+    "..........ofGGGGGaAGGGGGFo....",
+    "...........offfffaAFFFFFo..s..",
+    "............ooffffAFFFoo......",
+    "..............oooooooo........",
+    "...............xjkkKx.........",
+    "...............xjkkKx.........",
+    "...............xjkkKx.........",
+    ".............xxxxxxxx.........",
+    ".............xjkkkkKx.........",
+    ".............xjkkkkKx.........",
+    ".............xjkkkkKx.........",
+    "...........xxxxxxxxxx.........",
+    "o.........oxjkkkkkkKx.........",
+    ".....ooooooxjkkkkkkKxooo......",
+    "o..oohlllllllbbbbbbbbbbddo....",
+    "oo.olooooooooobbbbbbbbbbbdo...",
+    ".oolodddddddddobbbbbbbbbbddo..",
+    "..olodddddddddobbbbbbbbbbbdo..",
+    "...obododododobbbbbbbbbbbdo...",
+    "....oobbbbbbbbbdddddddddoo....",
+    "......oooooooooooooooooo......",
+    ".......a.a.a.....a.a.a........",
+]
+STARGAZER_FACE_TOP, STARGAZER_FACE_SHIFT = face_place(STARGAZER, 4, 12, 13)
+STARGAZER_TAGS = species_tags([STARGAZER, drop_rows(STARGAZER, 25)], 25, 12)
+stargazer_face_grid = owl_face(7)
+STARGAZER_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (190, 190, 220)}
+
+# Ninjowl (secret): the owl of shadow, a ninja. Its wings spread into a wide fan of feathers behind it,
+# each ending in a steel blade tip; its slim body is wound in a red sash, a red band is knotted round
+# its brow with the ends flying out, and its glasses have gone soot-black round its narrowed eyes.
+# It stands on one foot, the other drawn up, perfectly still. Its blades glint at night.
+NINJOWL_PALETTE = OWL_PALETTE | {
+    "o": (25, 18, 42), "d": (55, 45, 90), "b": (80, 68, 125), "l": (110, 98, 160), "h": (145, 132, 195),
+    "m": (35, 26, 55),  # the dark mask round its eyes
+    "k": (215, 225, 240), "K": (140, 150, 175),  # steel
+    "G": (12, 10, 20),  # soot-black rims
+    "r": (215, 50, 60), "R": (150, 30, 45),  # its headband and sash
+}
+NINJOWL = [
+    "........o..............o........",
+    "........oo............oo........",
+    ".....o..olo..........obo..o.....",
+    ".....oo.ohlo........oblo.oo.....",
+    ".....okoohllo......obblooko.....",
+    ".....olboolbbooooooddboollo.....",
+    ".ooooldbboorrrrrrrrrrRrrlbdoooo.",
+    "..okKlbdbboRRRRRRRRRRRRrRdbKko..",
+    "...olbbbdbohhhhllllllolrRbbbo...",
+    "...olbbbdboGGGGmmGGGGolldbbbo...",
+    "....obbbbdGmmmmGGmmmmGldbbbo....",
+    "..ooKdbbbbGmmmmGGmmmmGdbbbbKKo..",
+    ".okkkbdddbGommmGGmmmoGdbdddkkko.",
+    "..ookbbbbddGGGGaaGGGGdddbbbkoo..",
+    "....obbbbddddoooooooddbbbbbo....",
+    ".....obdddddrRhhhlo.odddddo.....",
+    "....okdbddddorRhllloodbbbbkK....",
+    "...okkbbdddohhrRllllobdbbbkko...",
+    ".ooooooodddohhrRllllobbdoooooo..",
+    "........oddohhlrRlllobbk........",
+    ".......okkoohhllrRlbookkk.......",
+    ".......ooo.ohllllrRbo.ooo.......",
+    "......o....ollllllrRo....o......",
+    "...........olllllbrRo...........",
+    "...........orrrrrrrrro..........",
+    "...........oRRRRRRRRRo..........",
+    "............olbbbbdo............",
+    ".............ooooooo.K.K........",
+    "..............o...oo............",
+    "..............o.................",
+    "............K.K.K...............",
+]
+NINJOWL_FACE_TOP, NINJOWL_FACE_SHIFT = face_place(NINJOWL, 10, 10, 12)
+NINJOWL_TAGS = species_tags([NINJOWL, drop_rows(NINJOWL, 18)], 18, 16)
+ninjowl_face_grid = owl_face(6)
+NINJOWL_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (30, 22, 48)}
+
+# Palettino: the chameleon has become a painter's palette. Its body is flat and round like a palette,
+# with the thumb hole near its back and a bay cut into its belly; blobs of paint sit on its back. Its
+# curled tail is striped in paint colors and ends in a brush, which it holds over its back to dab the
+# paint. One turret eye watches the brush.
+PALETTINO_PALETTE = CHAMELEON_PALETTE | {
+    "r": (230, 70, 70), "R": (170, 40, 50), "u": (70, 130, 230), "U": (40, 80, 170),
+    "y": (250, 210, 60), "Y": (200, 150, 30), "p": (190, 90, 210), "P": (130, 55, 150),  # paint
+    "s": (225, 230, 240), "S": (160, 165, 180),  # white paint, and the brush's ferrule
+    "v": (235, 200, 145), "W": (160, 115, 70),  # its bristles
+}
+PALETTINO = [
+    ".....................ooooooo....",
+    "....................oYYYYYUUo...",
+    "...................oYYyyyyuUUo..",
+    ".....o............oPPyyyyyuuUUo.",
+    "....olo...........oPppooooouuUo.",
+    "....olo..........oPPpo.....ouUUo",
+    "...ollbo.........oPPpo.....ouUUo",
+    "...ollbo.........oPPpo.....orRRo",
+    "...ollbdo.........osSo.....orRRo",
+    "..olllbdoo........osSo....orrRo.",
+    ".ohlllbdllo.......ovWo...orrRRo.",
+    ".ollllllllooooooooovWooooooRRo..",
+    "ollllllllllllluubbbbbbbbbbrRo...",
+    "ollllllllbrrbbUUbbbbbbbbbdRo....",
+    "olllbbbbbbRRbbbbbyybbbdrrdo.....",
+    ".obbbbbbbbbbbbbbbYYddooRRddo....",
+    "..obbbbbbbbbppddddddo..odddo....",
+    "..obbbbdddddPPddssdddooddddo....",
+    "...oddddddoooooodSSdddddoo......",
+    "....oddddo......oddddddoo.......",
+    "....odo.odo.....odo..odo........",
+    "....ooo.ooo.....ooo..ooo........",
+]
+PALETTINO_FACE_TOP, PALETTINO_FACE_SHIFT = face_place(PALETTINO, 11, 2, 6)
+PALETTINO_TAGS = species_tags([PALETTINO, drop_rows(PALETTINO, 14)], 14, 17)
+palettino_face_grid = kit_face(0, mouth_row=4, single=True)
+PALETTINO_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (60, 130, 55)}
+
+# Hidewell: the chameleon has hidden so well that it has become a twig. Its body is a stick of bark on
+# legs like twigs, ivy has grown all over its back and a sprout on its head, and it grips a branch with
+# its feet and winds its tail once round it. Only its big turret eye gives it away.
+HIDEWELL_PALETTE = CHAMELEON_PALETTE | {
+    "o": (40, 28, 18), "d": (95, 65, 40), "b": (130, 92, 55), "l": (165, 125, 80), "h": (200, 165, 115),
+    "g": (110, 175, 60), "G": (55, 115, 40), "e": (175, 220, 95),  # leaves
+    "w": (150, 120, 85), "n": (105, 80, 55), "N": (75, 55, 38),    # the branch
+}
+HIDEWELL = [
+    "....oego........................",
+    "...oeGGo........................",
+    "...olGlo....o..o..o..o..o..o....",
+    "...olllloooogoogoogoogoogoogo...",
+    "..olllllllleooeooeooeooeooeo....",
+    ".ohhhhllllleeegggeeegggeeeoo....",
+    ".ohhlllllgggGgggggGgggggGgggo...",
+    "ohhlllllbbGGGGGGGGGGGGGGGGGo....",
+    "ohlllllbbbbbdbbbbbbbbbbbbbbo....",
+    ".olllbbbbbbdbbbbbbbbbbbbbdbdo...",
+    ".ollbbbbbdddbdddddddddddddobdo..",
+    "..obbbbbdddoodddddddddooddoobdo.",
+    "...ooobddoooddoooooooddooddoobdo",
+    "......odo.oddo......odo.odo.obdo",
+    ".oooooddooddooooooooddooddooobdo",
+    "owwwwwwwwwwwwwwwwwwwwwwwwwwwwbdo",
+    "onnNNnnnnNNnnnnnNNnnnnNNnbnnbddo",
+    "oNNNNNNNNNNNNwNNNNNNNNNNNbddddNo",
+    ".ooooooooooooooooooooooooobddoo.",
+    "..........................ooo...",
+]
+HIDEWELL_FACE_TOP, HIDEWELL_FACE_SHIFT = face_place(HIDEWELL, 6, 2, 6)
+HIDEWELL_TAGS = species_tags([HIDEWELL, drop_rows(HIDEWELL, 9)], 9, 16)
+hidewell_face_grid = kit_face(0, mouth_row=4, single=True)
+HIDEWELL_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (95, 65, 40)}
+
+# Mirrorleon (secret): the legendary chameleon, reared up tall. Its skin is all mirror facets, a tall
+# prism casque on its lizard head splits the light into a rainbow, one front foot is raised, and its
+# tail rolls into one huge round spiral beside it.
+MIRRORLEON_PALETTE = CHAMELEON_PALETTE | {
+    "o": (35, 40, 62), "d": (120, 130, 165), "b": (165, 175, 205), "l": (205, 212, 236), "h": (248, 250, 255),
+    "c": (200, 240, 250), "C": (140, 205, 230),  # the prism
+    "k": (255, 160, 205),                        # a pink glint
+    "R": (245, 110, 110), "Y": (250, 220, 90), "E": (120, 225, 130), "U": (110, 160, 245), "V": (180, 120, 235),
+}
+MIRRORLEON = [
+    "..............oCo......oooRRRRoo",
+    "..............oCo..ooooRRRooYYYY",
+    ".............ocCCooRRYYYYYYYoooo",
+    ".............ocCCVVVUEEEEEEEEEEE",
+    "............occCCloVVVVUUUUUoooo",
+    "..........oocccCCllooooVVVooUUUU",
+    ".........ollcccCCllo...oooVVVVoo",
+    "........olllbbddbbddo.....oooVVV",
+    ".......olllbddbbdddddo.......ooo",
+    "....ooobddbbddbbdddddo..........",
+    "..oobbddbdddbbdddddddo..........",
+    ".oddbhddddddbbdddddddo..........",
+    ".oboooooddbbddddddddo..o........",
+    "..o....ooooddddddddoooobooo.....",
+    "........oollldddboobbbbbbbbo....",
+    ".......ollllbbddbbdbbbbbbbbbo...",
+    ".......olllbddbbdddbboooobbbdo..",
+    "......oldlhbddbbddddo.oo.ohdddo.",
+    "......odbbddbbddddddoobbo.ooddo.",
+    ".....oldbbddbbkddddddbbbo..oddo.",
+    ".....obbdddbdddddddddboo...oddo.",
+    ".....obbddbbdddddddddbo....oddo.",
+    ".....oddddddddddhddddbo...odddo.",
+    "......oddkddddddddddbddooodddo..",
+    "......obddddddddddddoddddddkdo..",
+    ".......oddddhddddddo.odddddoo...",
+    ".......odddddddddddo..ooooo.....",
+    ".......obbdddddddbdo............",
+    "......obddbbdddbddbbo...........",
+    "......obddbboobbddbdo...........",
+    ".......obbdo..odbbdo............",
+    "........ooo....oooo.............",
+]
+MIRRORLEON_FACE_TOP, MIRRORLEON_FACE_SHIFT = face_place(MIRRORLEON, 8, 9, 11)
+MIRRORLEON_TAGS = species_tags([MIRRORLEON, drop_rows(MIRRORLEON, 20)], 20, 14)
+mirrorleon_face_grid = kit_face(5, mouth_row=0)
+MIRRORLEON_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (120, 130, 165)}
+
+# Solroll: the scarab works like a real dung beetle. Head down on the ground, its rear raised high, it
+# braces its front legs and pushes the ball along with its hind legs; its shell has turned gold with a
+# pattern of sun rays, and the ball it pushes is a small warm sun.
+SOLROLL_PALETTE = SCARAB_PALETTE | {
+    "g": (255, 225, 120), "y": (240, 185, 60), "G": (200, 130, 40), "n": (130, 75, 25),  # the gold shell
+    "S": (255, 248, 210), "s": (255, 215, 90), "r": (245, 140, 45), "R": (205, 80, 35),  # its sun
+}
+SOLROLL = [
+    "...............oooooo...........",
+    ".............ooggggggo..........",
+    "...........ooggggyynnyo.........",
+    "..........oggyyyyynnyyyo........",
+    ".........oynyyyynnyyyyyo........",
+    "..o.....oynnyyynnyyyyyo.........",
+    ".oyo...oyynyynnyyGGGGGto...s....",
+    ".oto..oynnntnnGGGGGGGoto.......s",
+    ".otto.oynnGtGGGGGnnGooto.ooo....",
+    "..ottolbbntGGnnnnnGo.otoosssoo..",
+    "..oltbbbbbtdnnGGGGto..osSSsssro.",
+    ".olbbbbbbddddGGGooto..oSSSSsrrro",
+    ".obbbbbbddddddoo.oto.osSSSSrrrro",
+    "obbbbbddddddddo..oto.ossSSrrrrro",
+    "obbbddddddddddo..oto.osssrrrrrRo",
+    ".oddddddddddddo..oto.ossrrrrrRRo",
+    ".odddddddddddo...oto..orrrrrRRRo",
+    "..odddddddddto...oto..orrrrRRRo.",
+    ".otooodddoooto...oto...oorRRoo..",
+    ".oto..ooo..oto...oto.....ooo....",
+]
+SOLROLL_FACE_TOP, SOLROLL_FACE_SHIFT = face_place(SOLROLL, 12, 2, 11)
+SOLROLL_TAGS = species_tags([SOLROLL, drop_rows(SOLROLL, 12)], 12, 9)
+solroll_face_grid = kit_face(5)
+SOLROLL_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (30, 110, 105)}
+
+# Clockbeetle: the scarab has become a pocket watch. It stands upright, its body flat and round as a
+# dial in a gold case; its two wing cases have grown into one lid, swung open on a hinge at the side;
+# its two horns are the clock's hands, a long and a short one; the ball is now a brass cog it keeps
+# beside it. It ticks.
+CLOCKBEETLE_PALETTE = SCARAB_PALETTE | {
+    "y": (245, 200, 80), "Y": (190, 135, 45),   # the gold case and the cog
+    "c": (250, 242, 220), "C": (220, 205, 175), # the dial
+    "n": (40, 35, 45), "r": (220, 70, 60),      # its marks and hands
+}
+CLOCKBEETLE = [
+    ".........o........onno..........",
+    "........ono......onno...........",
+    ".........onoooooonno............",
+    "..........onhlllnno.............",
+    ".........ohlllllbbo.............",
+    "........olllllbbbbbo............",
+    ".......ollllbbbbbbddo...........",
+    ".......ollbbbbbbddddo...........",
+    "........obbbbbdddddo............",
+    ".........obbddddddo.............",
+    "..........ooddddoo.......ooo....",
+    ".........oyyyyyyyyo.....olllo...",
+    "........oyyccrcccyyo...ollYllo..",
+    ".......oyycnccccncYYo..olyyylo..",
+    "......oyyccccccccccYYoolyyyyylo.",
+    "......oycnccccccccnCYoolYYYYYlo.",
+    "......oyccccccccccCCYyyyyyyyybo.",
+    ".....oyycccccccccCCCYyyyyyyyybo.",
+    ".....oyyrcccccccCCCrYYYYYYYYYbo.",
+    "......oycccccccCCCCCYyyyyyyyybo.",
+    "......oycnccccCCCCnCYoobyyyyybo.",
+    "...ooooyyccccCCCCCCYYoodYYYYYdo.",
+    "..oyyyooyYcnCCCCnCYYo..odyyydo..",
+    "..oyyyo.oYYCCCrCCYYo...oddyddo..",
+    ".oyyyyYootYYYYYYYYo.....odddo...",
+    "oyyyyYYYotoooYYoto.......ooo....",
+    "oyyyYYYYtto..oootto.............",
+    ".oyYYYYoto......oto.............",
+    "..oYYYooto......otto............",
+    "..oYYYo.o........oo.............",
+    "...ooo..........................",
+]
+CLOCKBEETLE_FACE_TOP, CLOCKBEETLE_FACE_SHIFT = face_place(CLOCKBEETLE, 5, 9, 10)
+CLOCKBEETLE_TAGS = species_tags([CLOCKBEETLE, drop_rows(CLOCKBEETLE, 18)], 18, 14)
+clockbeetle_face_grid = kit_face(4, mouth_row=0)
+CLOCKBEETLE_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (30, 110, 105)}
+
+# Pharabug (secret): the legendary scarab, as on an old wall painting. Its wings spread wide to both
+# sides in rows of feathers; its wing cases are gold with turquoise stripes and frame its head like a
+# pharaoh's headdress; above its head it holds up a big glowing sun with its front legs, and sand
+# trickles down from it.
+PHARABUG_PALETTE = SCARAB_PALETTE | {
+    "U": (50, 80, 190), "c": (70, 205, 195), "C": (35, 140, 140),       # lapis and turquoise
+    "g": (250, 210, 90), "y": (235, 180, 60), "G": (200, 140, 45), "n": (110, 65, 25),  # gold
+    "S": (255, 250, 220), "s": (255, 220, 100), "r": (250, 150, 50), "R": (215, 85, 35),  # the sun
+}
+PHARABUG = [
+    ".............osssso.............",
+    "............osssssso............",
+    ".........s.osSSSSssso..s........",
+    "..........ossSSSSssrro..........",
+    "..........ossSSSSsrrro..........",
+    "..........osssSSsrrrRo..........",
+    "........s..ossssrrrRo...s.......",
+    "...........osssrrrRRo...........",
+    ".o........otosrrrRRoto........o.",
+    "oUooo.....otooooooooto.....oooUo",
+    "oUUUUooo..ottoolbootto..oooUUUUo",
+    "occcUUUUoocclllbbbbbccooUUUUccco",
+    "oCCccccUUUglllbbbbdddgUUUccccCCo",
+    "oggCCCccccclbbbbbddddcccccCCCggo",
+    "ogngggCCCcgbbbbbdddddgcCCCggggno",
+    "oGngnggggCccbbddddddccCgggngnGno",
+    "oGnGnGngngggggddddggggggngnGnGno",
+    "oGnGnGnGngccccccccccccnGnGnGnGno",
+    "oGoGnGnGnGggggggggggggnGnGnGnGo.",
+    ".ooGoGoGnGnggggynyGGGGnGnGoGoGo.",
+    "...o.ooGoooggggynyGGGooGoGoo.o..",
+    ".......o..occcccnCCCCo.o.o......",
+    "..........oggggynyGGGo..........",
+    "...........ogggynyGGo...........",
+    "...........occccnCCCo...........",
+    "............oggynyGo............",
+    "...........ottoonotto...........",
+    "...........oto..o.oto...........",
+    "...........oto....oto...........",
+    "............o...a..o............",
+    "...........a.......a............",
+    ".............a.......a..........",
+]
+PHARABUG_FACE_TOP, PHARABUG_FACE_SHIFT = face_place(PHARABUG, 11, 11, 10)
+PHARABUG_TAGS = species_tags([PHARABUG, drop_rows(PHARABUG, 20)], 20, 16)
+pharabug_face_grid = kit_face(4, mouth_row=0)
+PHARABUG_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (30, 110, 105)}
+
+# Origrane: the paper dragon folded sharp like an origami crane. It sits as a triangle on its folded
+# base, its two wings are pointed folded faces standing straight up behind it (the far one darker),
+# its head is the folded mask with little gold antlers, and its bow tail is a strip folded into a
+# zigzag, crane-white bows on it.
+ORIGRANE_PALETTE = KITE_PALETTE | {"w": (250, 250, 245), "P": (235, 230, 220)}
+ORIGRANE = [
+    ".......................o........",
+    "......................olo.......",
+    "...............o.....oblo.......",
+    ".o.........o..odo....oblo.......",
+    "oyoo......oyo.odo....oblo.......",
+    "oyyyo....oyyo.odo....oblo.......",
+    ".oyo.....oyo..odo...obllo.......",
+    ".oyoooooooyo..odo...obllo.......",
+    "oPPlllcbbbbboocddo.olbllo.......",
+    "oPllllcbbbbboocddo.obbllo.......",
+    "olllllcbbbbboocddoolblllo...o.o.",
+    "olllllcbbbbboocddoolblllo..oPoPo",
+    "olllllcbbbbbocclcdhbblllo..oPwPo",
+    "olllllcbbbbbocllcdhbllllo..oPoPo",
+    "olllllcbbbbbocllcdhbllllo.obdoo.",
+    "olllllcbbbbbolllcddbllllPoPdo...",
+    "olllllcbboooclllcdddllllPwPo....",
+    ".oooooooo..ollllcdddllllPoPo....",
+    "..........olllllcddddllloobdo...",
+    "..........olllllcdddddoo..obdoo.",
+    ".........ollllllcddddddo..oPoPdo",
+    "........olllllllcddddddo..oPwPo.",
+    "........olllllllcdddddddo.oPoPo.",
+    ".......ollllllllcddddddddobdoo..",
+    ".......ollllllllcddddddddbdo....",
+    "......olllllllllcdddddddddo.....",
+    ".....ollllllllllcddddddddddo....",
+    "......ooooooooooooooooooooo.....",
+]
+ORIGRANE_FACE_TOP, ORIGRANE_FACE_SHIFT = face_place(ORIGRANE, 11, 2, 10)
+ORIGRANE_TAGS = species_tags([ORIGRANE, drop_rows(ORIGRANE, 20)], 20, 16)
+origrane_face_grid = kit_face(4)
+ORIGRANE_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (170, 40, 45)}
+
+# Lionkite: the paper dragon has become a festival lion dance. Its body is a long band of paper and
+# cloth flowing in waves, red paper and gold cloth by turns, on little feet; in front a big lion head
+# with a fringe of mane, pompoms on its brow and cheeks, big eyes and a wide grin full of teeth; behind,
+# the tail with its bow.
+LIONKITE_PALETTE = KITE_PALETTE | {
+    "k": (255, 130, 170), "K": (210, 80, 120), "g": (90, 200, 120),  # pompoms and a jewel
+    "w": (255, 250, 235), "m": (70, 15, 25),                          # its teeth and mouth
+}
+LIONKITE = [
+    ".....oo..oo..oo.................",
+    "....okkooggookko..........oo.oo.",
+    "....okKyYyYyokKo.........oyyoyyo",
+    "...ooYyYyYyYyYoo.........oyYcYyo",
+    "..oyYylllllbbyYyo........oyyoyyo",
+    "..oYyllllbbbbbyYo.........ooooo.",
+    ".oYyllllbbbbbbdyYo......ooobdo..",
+    ".oylllbbbbbbddddyo....oollobdo..",
+    "oyYllbbbbbbdddddYyo.ooyllllbdo..",
+    "okkbbbbbbdddddddykkolyylbblbdo..",
+    "okKbbbbbddddddddYkKllyybbbbbdo..",
+    ".oybcccccccccccdylllbYYbddbYYo..",
+    ".oYywwwwwwwwwwwyYlbbbYYddddYYo..",
+    "..oYmmmmmmmmmmmYYbbbdYooooooYo..",
+    "..oyYydddmdddyYyYbddoo......o...",
+    "...ooYyYyYyYyYdYYdoo..oo..oo....",
+    ".....ooyYyYyooooooddooddooddo...",
+    ".......ooooo.....oddooddooddo...",
+    ".................oyyooyyooyyo...",
+    "..................oo..oo..oo....",
+]
+LIONKITE_FACE_TOP, LIONKITE_FACE_SHIFT = face_place(LIONKITE, 6, 4, 11)
+LIONKITE_TAGS = species_tags([LIONKITE, drop_rows(LIONKITE, 12)], 12, 22)
+lionkite_face_grid = kit_face(5, mouth_row=0)
+LIONKITE_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (170, 40, 45)}
+
+# Stormkite (secret): the legendary kite, stretched like a big diamond stunt kite of dark thunderstorm
+# paper, its spars crossing behind it, lightning-yellow horns and whiskers; its long tail zigzags down
+# and its bows twitch as bolts of lightning, and sparks crackle round it.
+STORMKITE_PALETTE = KITE_PALETTE | {
+    "o": (15, 18, 35), "l": (100, 115, 165), "b": (68, 80, 128), "d": (42, 50, 88),  # storm paper
+    "S": (190, 200, 225),                                                          # its spars
+    "y": (255, 225, 60), "Y": (255, 245, 150),                                     # lightning
+}
+STORMKITE = [
+    ".........oyo.......oyo..........",
+    "........oyyo..oo...oyyo.........",
+    ".........ooyoolSo.oyoo..........",
+    "..........oyollSbooyo...........",
+    "..Y........oyllSbbyo............",
+    "..........olyllSbbyo........Y...",
+    "........oolllllSbbbboo..........",
+    ".......olllllllSbbbbbbo.........",
+    "......ollllllllSbbbbbbbo........",
+    ".....olllllllllSbbbbbbbbo.......",
+    "....ollllllllllSbbbbbbbbbo......",
+    "...olllllllllllSbbbbbbbbbbo.....",
+    "..ollllllllllllSbbbbbbbbbbbo....",
+    "..obbbbbbbbbbbbSdddddddddddo....",
+    "...oyybbbbbbbbbSddddddddyyo.....",
+    "..oyySSSSSSSSSSSSSSSSSSSSyyo....",
+    ".oyyoobbbbbbbbbSddddddddooyyo...",
+    "oyyo..obbbbbbbbSdddddddo..oyyo..",
+    ".oo....obbbbbbbSddddddo....oo...",
+    "........oobbbbbSddddoo..........",
+    "..........obbbbSdddo............",
+    "...........obbbSddo.............",
+    "............obbSdo...........Y..",
+    ".............obdo...............",
+    ".Y...........oSSSoo.............",
+    "..............ooSSyo............",
+    "................oSyyo...........",
+    "...............oSooyoo..........",
+    ".......Y.......oSSSSSyo.........",
+    "................ooooSyyo.o......",
+    ".................oSSooyooyo.....",
+    "..................oSSSSSSyyo....",
+]
+STORMKITE_FACE_TOP, STORMKITE_FACE_SHIFT = face_place(STORMKITE, 10, 9, 12)
+STORMKITE_TAGS = species_tags([STORMKITE, drop_rows(STORMKITE, 18)], 18, 15)
+stormkite_face_grid = kit_face(6)
+STORMKITE_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (42, 50, 88)}
+
+OWL_FACE_PALETTE = FACE_PALETTE | {"d": (190, 115, 30), "m": (240, 160, 50), "k": (255, 150, 170)}
+CHAMELEON_FACE_PALETTE = FACE_PALETTE | {"d": (60, 130, 55), "m": (30, 70, 35), "k": (255, 150, 170)}
+SCARAB_FACE_PALETTE = FACE_PALETTE | {"d": (30, 110, 105), "m": (15, 45, 50), "k": (255, 150, 170)}
+KITE_FACE_PALETTE = FACE_PALETTE | {"d": (170, 40, 45), "m": (100, 20, 30), "k": (255, 150, 170)}
+
+FESTIVAL_LINES = (("owl", "hootlet", baby_face_grid, face_grid), ("chameleon", "colorlet", baby_face_grid, face_grid),
+                  ("scarab", "rollet", baby_face_grid, face_grid), ("kite", "kitelet", baby_face_grid, face_grid))
+FESTIVAL_FORMS = (("owlbert", FACES), ("stargazer", FACES),
+                  ("ninjowl", kit_faces(normal=("half", "small", False))),  # always on the lookout
+                  ("palettino", FACES), ("hidewell", FACES), ("mirrorleon", FACES),
+                  ("solroll", FACES), ("clockbeetle", FACES), ("pharabug", FACES),
+                  ("origrane", FACES), ("lionkite", FACES), ("stormkite", FACES))
+
+
 ITEMS = {
     "bowl": ["BBBBBBBBBBB", ".bbbbbbbbD.", "..bbbbbbD..", "...DDDDD..."],
     "food_full": ["...fffff...", "..fffffFf..", ".fffffffFf."],
@@ -6177,6 +7087,17 @@ GLOWSHROOM = ["..ccc..", ".cCccc.", "cccccCc", "ccCcccc", "..www..", "..wWw..", 
 # Ember stone: a stone with cracks that glow from inside. At night the whole stone glows, and
 # the cracks pulse.
 EMBERSTONE = ["...sSSs..", "..sSoSSS.", ".sSSOoSSS", "sSSoSSOSS", "SSOSSSoSS", "SSSoSSSSS", ".SSSSSSS."]
+# A shard of a shooting star, in the little crater it made ("n": pale, glowing as "y" at night)
+STAR_SHARD = ["...n.....", "...nn..n.", "..nqnn.n.", "..nqqnnN.", ".nnqqnNN.", ".nqqnNNN.", "WsnnNNNsW", ".WsssssS."]
+# The owl on the roof: brown, a light belly, eyes that shine at night, sitting on its talons
+OWL = ["D.......D", "DDdddddDD", "DeeedeeeD", "DeTedeTeD", "DdeeYeedD", "DddhYhddD", "DdhhhhhdD", ".DhHhHhD.",
+       "..DDDDD..", "..Y...Y.."]
+OWL_BLINK = OWL[:2] + ["DdddddddD", "DTTTdTTTD"] + OWL[4:]
+# A rosette on a stake, with two tails
+ROSETTE = ["...bbb...", ".bbBbBbb.", ".bBwwwBb.", "bbwyyywbb", ".bBwwwBb.", ".bbBbBbb.", "...bbb...", "..BbtbB..",
+           "..b.t.b..", "..B.t.B..", "....t...."]
+# The jury's table: a cloth in stripes of the festival's colors, scalloped at the hem
+JURY_TABLE = ['tttttttttttttttttttttttttttttt', 'rrrrryyyyybbbbbrrrrryyyyybbbbb', 'rrrrryyyyybbbbbrrrrryyyyybbbbb', 'RrrrRYyyyYBbbbBRrrrRYyyyYBbbbB', '.rrr..yyy..bbb..rrr..yyy..bbb.', '.T..........................T.', '.T..........................T.']
 TRIP_TAGS = {
     "backpack": [([".TT.TT.", ".ooooo.", "ooooooo", "oYYYYYo", "ooTTToo", "ooooooo", ".OOOOO."], 1000)],
     # bigger ones for bigger pets (scene.PACKS): it should look like a backpack, not a purse
@@ -6268,6 +7189,27 @@ TRIP_TAGS = {
                "..TttttdTT.", "..TttttttdT", "..TtttttttT", ".iSSSSSSSSS", "i.........."], 1000)],
     # the float: red on top, white below
     "bobber": [([".R.", "rrR", "wwW", ".W."], 1000)],
+    # Shooting stars (core/src/stars.ts): a shard of the star in its little crater, pale by day and
+    # glowing at night (a decoration), and the owl that comes to sit on the roof and blinks
+    "star_shard": [(STAR_SHARD, 1000)],
+    "star_shard_lit": [(swap(swap(STAR_SHARD, "n", "y"), "N", "Y"), 1200),
+                       (dots(swap(swap(STAR_SHARD, "n", "y"), "N", "Y"), {(3, 0): "f", (4, 2): "f"}), 400)],
+    "owl": [(OWL, 2600), (OWL_BLINK, 200)],
+    # The trick festival (core/src/festival.ts): its poster on a stake, the jury's table under a
+    # cloth in the colors of the pennants, and the rosettes for second and third place (decorations)
+    "poster": [(["wwwwwwww", "wrrrrrrw", "wwwyywww", "wwyyyyww", "wwwyywww", "wwywwyww", "wbbbbbbw", "wwwwwwwW",
+                 "...tT...", "...tT..."], 1000)],
+    "jury_table": [(JURY_TABLE, 1000)],
+    "ribbon_blue": [(ROSETTE, 1000)],
+    "ribbon_red": [(swap(swap(ROSETTE, "b", "r"), "B", "R"), 1000)],
+    # Digging (core/src/digging.ts): the treasure map, a dashed path to its red cross; what only the
+    # digging turns up: a khaki helmet with a band (a hat) and an ammonite in its stone (a decoration)
+    "treasure_map": [(["HhhhhhhH", "hDDhhrhr", "hhhDhhrh", "hhhhDrhr", "hDhhhDhh", "hhDDhhhh", "HHhhhhHH"], 1000)],
+    "hat_helmet": [(["......hhh......", "....hhhhhhh....", "...hhwhhhhhH...", "..hhhhhhhhhHH..", "..aaaaaaaaaaA..",
+                     ".hhhhhhhhhhhhH.", "HHHHHHHHHHHHHHH"], 1000)],
+    "hat_helmet_small": [(["....hhh....", "..hhwhhhH..", "..aaaaaaA..", ".hhhhhhhhH.", "HHHHHHHHHHH"], 1000)],
+    "fossil": [(["..sWsss..", ".sWhhhsS.", "sWhHHHhsS", "shHhhhHhS", "shHhHhHhS", "shhHhHhSS", ".shhhHhS.", "..SSSSS.."],
+                1000)],
     # Hats: the bottom two rows sit on the head. A child or an adult wears the big one, a baby the small
     # one (docs/gameplay.md, *Sizes of things next to the pet*)
     "hat_daisy": [([".w......p......w.", "wywg...pyp...gwyw", "gwgggggpgpgggggwg"], 1000)],
@@ -7241,7 +8183,7 @@ def main():
         write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
                     faceShift=globals()[f"{name}_FACE_SHIFT"])
         write_sheet(f"{line}_faces", face_sheet(face_grid, face_palette))
-    for line, child, baby_faces, child_faces in ADVENTURE_LINES:
+    for line, child, baby_faces, child_faces in ADVENTURE_LINES + FESTIVAL_LINES:
         upper, name = line.upper(), child.upper()
         palette, face_palette = globals()[f"{upper}_PALETTE"], globals()[f"{upper}_FACE_PALETTE"]
         write_sheet(f"{line}_baby_body", body_sheet(globals()[f"{upper}_BABY_TAGS"],
@@ -7251,7 +8193,7 @@ def main():
         write_sheet(f"{child}_body", body_sheet(globals()[f"{name}_TAGS"], palette), faceTop=globals()[f"{name}_FACE_TOP"],
                     faceShift=globals()[f"{name}_FACE_SHIFT"])
         write_sheet(f"{line}_faces", face_sheet(child_faces, face_palette))
-    for name, faces in WATER_FORMS + GRANDMA_FORMS + ADVENTURE_FORMS:
+    for name, faces in WATER_FORMS + GRANDMA_FORMS + ADVENTURE_FORMS + FESTIVAL_FORMS:
         upper = name.upper()
         write_sheet(f"{name}_body", body_sheet(globals()[f"{upper}_TAGS"], globals()[f"{upper}_PALETTE"]),
                     faceTop=globals()[f"{upper}_FACE_TOP"], faceShift=globals()[f"{upper}_FACE_SHIFT"])

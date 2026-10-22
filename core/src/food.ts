@@ -132,6 +132,23 @@ export const TASTES: Record<string, readonly [string, string]> = {
   umbrabat: ["watercress", "fruit_sunflower"], // it grows in the rain
   batbeat: ["honeycomb", "watercress"], // energy for the dance floor
   lunaflap: ["fruit_cherry", "glowberry"], // it has light enough
+  // the lines from the festival and the stars
+  owl: ["fruit_berry", "fruit_cherry"],
+  owlbert: ["hazelnut", "fruit_sunflower"], // brain food, and it reads by night
+  stargazer: ["glowberry", "mussel"], // a little starlight
+  ninjowl: ["pinenut", "cake"], // lean, and never anything sweet
+  chameleon: ["fruit_herb", "fruit_berry"],
+  palettino: ["fruit_berry", "pinenut"], // the colors of its paint
+  hidewell: ["watercress", "honeycomb"], // green, like its leaves
+  mirrorleon: ["glowberry", "hazelnut"], // all that light
+  scarab: ["fruit_sunflower", "fruit_cherry"],
+  solroll: ["fruit_sunflower", "seagrass"], // a sun for a sun
+  clockbeetle: ["hazelnut", "honeycomb"], // honey would gum up its works
+  pharabug: ["honeycomb", "watercress"], // dates and honey in the desert
+  kite: ["fruit_cherry", "fruit_herb"],
+  origrane: ["seagrass", "honeycomb"], // honey would glue its folds
+  lionkite: ["cake", "mussel"], // festival food
+  stormkite: ["glowberry", "fruit_sunflower"], // lightning, and no sunshine
   // the old slime forms, which live on as wild pets
   sneezle: ["fruit_herb", "pinenut"],
   flicker: ["honeycomb", "watercress"],

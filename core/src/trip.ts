@@ -11,10 +11,15 @@
  *
  * An adult that is looking for a friend may meet a wild pet instead of an opponent (wild.ts): it
  * shows its tricks, and nobody gets knocked over.
+ *
+ * The trick festival (festival.ts) is a trip too, with a single station: the show. And now and then
+ * a trip brings a treasure map home (digging.ts).
  */
 
 import * as battle from "./battle";
 import * as care from "./care";
+import * as digging from "./digging";
+import * as festival from "./festival";
 import * as fishing from "./fishing";
 import * as food from "./food";
 import * as home from "./home";
@@ -57,6 +62,7 @@ export const HEARTS = [45, 75]; // the day's condition (satiety, energy, health)
 export const WIN_MOOD = 5;
 export const LOSE_MOOD = -3;
 export const GUARDIAN_MOOD = 15; // getting past a guardian makes it proud
+export const FESTIVAL_MOOD = [20, 15, 10]; // a place at the trick festival makes it proud
 // Area: the rare egg its guardian leaves behind the first time the pet gets past it (home.EGGS). If
 // there was no room for it, or the pet got past before the guardian had an egg, it leaves it at
 // the end of the path on a later trip.
@@ -211,13 +217,16 @@ function happened(trip: Trip, event: TripEvent): TravelStop {
 
 /** A line for the travel diary, without the rounds of a scuffle. */
 function note(trip: Trip, event: { kind: TravelStop["kind"]; at: number; item?: string | null; foe?: string;
-    wild?: string; outcome?: string }): TravelStop {
+    wild?: string; outcome?: string; jury?: string[] }): TravelStop {
   const stop: TravelStop = { kind: event.kind, at: Math.round(event.at) };
   for (const key of ["item", "foe", "wild", "outcome"] as const) {
     const value = event[key];
     if (value) {
       stop[key] = value;
     }
+  }
+  if (event.jury) {
+    stop.jury = [...event.jury];
   }
   trip.log = [...(trip.log ?? []), stop];
   return stop;
@@ -354,6 +363,25 @@ function encounter(state: PetState, trip: Trip, foe: string, rng: Random, weathe
 }
 
 /**
+ * The show at the trick festival (festival.perform): kept like a scuffle to be watched again, and
+ * the prize goes into the backpack.
+ */
+function show(state: PetState, trip: Trip, t: number, events: wild.Happened[]): void {
+  const done = festival.perform(state, trip, AREAS.filter((area) => unlocked(state, area)), t);
+  const outcome = String(done.place);
+  happened(trip, { kind: "festival", rounds: done.rounds, outcome, item: done.prize, jury: done.jury, at: t });
+  const replay: Replay = {
+    kind: "festival", jury: done.jury, at: Math.round(t), trip: trip.start, area: trip.area, foe: festival.AREA,
+    rounds: done.rounds, outcome, item: done.prize, species: state.species, stage: state.stage, hat: state.hat,
+    weather: null,
+  };
+  state.replays = [...state.replays, replay].slice(-REPLAYS);
+  trip.found.push(done.prize);
+  events.push(["show", outcome], ["find", done.prize]); // (the history line of the show, not of setting off)
+  state.stats.mood += done.place ? FESTIVAL_MOOD[done.place - 1] : WIN_MOOD; // proud, and it was fun anyway
+}
+
+/**
  * One minute on the road, ending at t. Returns what happened, for the history, and the trip:
  * null while the pet is still away, and the finished trip (with `found`) once it is home.
  * `location`: where the sun sets, for whoever only comes out at dusk.
@@ -366,6 +394,10 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
   while (!returning(trip) && t >= trip.stations[trip.next]) {
     const at = trip.stations[trip.next];
     trip.next += 1;
+    if (trip.area === festival.AREA) { // the festival is just up the meadow: it doesn't tire it on the way
+      show(state, trip, t, events);
+      continue;
+    }
     if (sky.precipitation(weather) === "rain") {
       trip.rained = true;
     }
@@ -404,7 +436,9 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
       encounter(state, trip, foe, rng, weather, t, events);
       continue;
     }
-    const item = find(state, trip, rng, weather, trip.boosts?.includes("finder"));
+    // a treasure map lies by the path at the first quiet stop of a trip that brings one (decided per trip)
+    const map = digging.mapFrom(state, trip, (state.counters.trips ?? 0) + 1) ? digging.MAP : null;
+    const item = map ?? find(state, trip, rng, weather, trip.boosts?.includes("finder"));
     if (item) {
       trip.found.push(item);
       events.push(["find", item]);

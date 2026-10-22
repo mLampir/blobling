@@ -13,6 +13,8 @@ import { API_OLDEST, API_VERSION } from "./api";
 import * as battle from "./battle";
 import * as care from "./care";
 import * as companion from "./companion";
+import * as digging from "./digging";
+import * as festival from "./festival";
 import * as fishing from "./fishing";
 import * as food from "./food";
 import * as garden from "./garden";
@@ -22,8 +24,9 @@ import * as home from "./home";
 import * as life from "./life";
 import * as model from "./model";
 import * as notify from "./notify";
-import { hideX, houseArea, plantArea, thingArea, type SceneView, type TripView } from "./scene";
+import { hideX, houseArea, plantArea, starArea, thingArea, type SceneView, type TripView } from "./scene";
 import * as sky from "./sky";
+import * as stars from "./stars";
 import { fromDict, toDict, type Friend, type PetState } from "./state";
 import * as story from "./story";
 import { isDark, type Location } from "./sun";
@@ -375,6 +378,15 @@ export class Pet {
       trace: s.trace ? { ...s.trace } : null,
       waiting: habits.waiting(s, now),
       resting: !s.asleep && model.restLeft(s, ["trick", ...battle.SKILLS.map((k) => `train_${k}`)], now) > 0,
+      // a shooting star streaking over the sky (seconds since it fell), the owl on the roof, and what a star left
+      star: s.stars.at && now - s.stars.at < stars.SEEN_SECONDS && !s.trip && !s.grandma ? now - s.stars.at : null,
+      owl: stars.owl(s),
+      fallen: stars.lying(s),
+      // the trick festival is coming (festival.ts), and a treasure map is in the bag (digging.ts)
+      poster: festival.announced(s, now) !== null,
+      cross: (s.items[digging.MAP] ?? 0) > 0,
+      // the friend it made last: Mirrorleon copies its dance and its special move
+      friend: s.friends.at(-1)?.species ?? null,
     };
   }
 
@@ -951,10 +963,13 @@ export class Pet {
         }
       }
       for (const travel of pet.travels ?? []) {
-        for (const stop of travel.stops.filter((s) => s.kind === "wild" && s.wild)) {
-          const form = `adult:${stop.wild}`;
-          if (life.FORMS.includes(form) && !this.seen[form]) {
-            this.seen[form] = { area: travel.area, night: isDark(stop.at, this.location) };
+        // the wild pets it met, and the jury of the trick festival
+        for (const stop of travel.stops) {
+          for (const wildForm of [...stop.kind === "wild" && stop.wild ? [stop.wild] : [], ...stop.jury ?? []]) {
+            const form = `adult:${wildForm}`;
+            if (life.FORMS.includes(form) && !this.seen[form]) {
+              this.seen[form] = { area: travel.area, night: isDark(stop.at, this.location) };
+            }
           }
         }
       }
@@ -1113,9 +1128,14 @@ export class Pet {
       gift: !!s.gift,
       // what it found at home by itself ("fruit_<plant>" or "seed_<plant>"), until it is picked up
       found: s.found,
-      // where the egg, the gift and what it found lie, for a tap on them
-      lying: Object.fromEntries((["nest", "gift", "found"] as const).filter((k) => s[k])
-        .map((k) => [k, thingArea(k, s.house)])) as Record<string, number[]>,
+      // where the egg, the gift, what it found and what a shooting star left lie, for a tap on them
+      lying: {
+        ...Object.fromEntries((["nest", "gift", "found"] as const).filter((k) => s[k]).map((k) => [k, thingArea(k, s.house)])),
+        ...stars.lying(s) ? { star: starArea(s.house, stars.lying(s)!) } : {},
+      } as Record<string, number[]>,
+      // The trick festival coming up within a few days, or null: its day (local midnight), whether
+      // that is today, why it can't go right now (null: it can), and the tricks it would show by itself
+      festival: this.festivalView(s, now),
       // what found food has left in it and is still waiting to be used (food.FOODS)
       boosts: [...s.boosts],
       item_labels: Object.fromEntries(Object.keys(home.ITEMS).map((k) => [k, t(`items.${k}`)])),
@@ -1134,6 +1154,20 @@ export class Pet {
       // All the pets at home, in the order of their houses: for switching the camera between them
       // (grandma: it is at Grandma's; away: on a trip; needs: something it needs is running low)
       ...this.street(now),
+    };
+  }
+
+  /** The trick festival, as describe tells the app of it. */
+  private festivalView(s: PetState, now: number) {
+    const day = festival.announced(s, now);
+    if (day === null) {
+      return null;
+    }
+    const reason = festival.today(now) && s.backpack.length ? "unpack_first" : festival.canGo(s, now);
+    return {
+      day: Math.round(festival.midnightOf(day)), today: festival.today(now), max_tricks: festival.MAX_TRICKS,
+      reason, message: reason && reason !== "no_festival" ? this.t(`pet.rejected.${reason}`, { name: s.name }) : null,
+      tricks: festival.sequence(s),
     };
   }
 
@@ -1174,6 +1208,7 @@ function tripView(s: PetState, now: number): TripView | null {
     wild: last?.wild ?? null, // a wild pet: the tricks it is shown are in "rounds"
     // an opponent: who it is, and the rounds of the scuffle to play back
     foe: last?.foe ?? null, rounds: last?.rounds ?? null, outcome: last?.outcome ?? null,
+    jury: last?.jury ?? null, // the trick festival: who sits in the jury
   };
 }
 

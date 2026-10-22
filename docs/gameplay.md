@@ -406,6 +406,75 @@ break half of the time: the pet sits down with its rod and brings the catch
 home in its backpack. The lake in the cave has other things in it than the
 pond and the stream.
 
+## Shooting stars
+
+On a clear evening, somewhere between dusk and a little before bedtime, a
+shooting star now and then streaks over the sky: on about every third clear
+evening, and on every fifth without weather data. Rain, snow and a sky full of
+clouds have none. Whether one falls, and when, is decided by the day alone, so
+a Pi that was off or a phone app that was closed catches up the same evenings.
+If the pet is still up and at home, it looks up after it, shuts its eyes and
+makes a wish, with a sparkle over its head.
+
+Nobody has to watch: the morning after (once a night has passed, or sixteen
+hours), what the star left lies in the garden, glinting now and then, until
+a tap picks it up.
+
+- Mostly a **seed**.
+- Sometimes a **star shard**, a decoration that glows at night. One per home;
+  after that it is a seed again.
+- Rarely an **egg** of a line the pet knows.
+
+From the second evening with a shooting star on, an **owl** sits on the roof at
+night (without a house, on the fence) and watches with the pet. After the fifth
+evening it leaves a rare egg up on the roof, once for every pet, and is gone.
+
+## The trick festival
+
+Every second Saturday is the **trick festival**, all day. Three days before,
+its poster hangs on the fence, and the *Trip* tab shows the date, also while
+the pet is away. On the day, the tab has four slots: tap tricks into them in
+the order it is to show them (it starts with its best ones), and **To the
+festival** sends it off, at any time of the day. Nobody sends it by six in the
+evening, it goes by itself with its best tricks. The festival is the day's
+trip and takes about an hour. Babies and sick pets stay home, and a pet that
+is away on a trip or at Grandma's misses it.
+
+On the stage it shows its tricks one after the other to a jury of three wild
+pets from the areas it knows (from the meadow always). A trick works as often
+as it has been practiced (learned: always), and brings points:
+
+| Trick | Points |
+|---|---|
+| Bow | 1 |
+| Spin | 2 |
+| Dance | 3 |
+| Flip | 4 |
+
+Every other trick that works brings one more, and a form's own trick (see
+*Tricks*) counts double. 10 points are first place, 6 second, 3 third. The
+first two first places win a rare egg each; after that, the first place wins
+an egg of one of the jury's lines. Second place brings a **blue rosette**,
+third a **red rosette** (decorations, one of each per home); everybody else,
+and whoever has its prize already, gets a honeycomb. The show is kept in the
+travel diary and can be watched again like a scuffle.
+
+## Digging
+
+Now and then the pet finds a **treasure map** by the path, at the first stop
+without a scuffle (one trip in ten; the first one for sure on the pet's
+third trip). There is only ever one at a time. While
+it is in the bag, a small red cross is marked in the garden. Drag the map onto
+the pet: it hops over to the cross and digs (costs energy like playing), then
+holds up what it found. The map is used up.
+
+- The first time, for every pet, a rare egg.
+- After that mostly a seed, and now and then something found nowhere else: an
+  **explorer's helmet** (a hat) and a **fossil** (a decoration), one of each per
+  home.
+- A digger by nature (some lines are, see [pets.md](pets.md)) digs twice as
+  fast and finds a seed more.
+
 ## Trips and finds
 
 From the child stage on, the pet can go on a trip: the app's *Trip* tab is the
@@ -818,11 +887,12 @@ Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
 - **Trip** is the packing: the hearts it would set off with, where to, and
   what goes into the backpack, with the button to send it off at the bottom.
   While the pet can't go for a while (still an egg or a baby, away, back with
-  a full backpack), that is what the tab says.
+  a full backpack), that is what the tab says. Above it, from the poster on,
+  the date of the trick festival, and on the day the tricks to show there.
 - **Diary** has one tab each for the history, the album and the values. In the
   history a trip opens with a tap into what happened on the way (where a
-  scuffle can be watched again). The album has the forms met so far, the pets
-  kept in it, each one that can come home with a button for it, and the
+  scuffle or a show at the trick festival can be watched again). The album
+  has the forms met so far, the pets kept in it, each one that can come home with a button for it, and the
   pet's friends. The values are weight, bond and what the pet has done so far.
   The album shows up once the first egg has hatched.
 - **More**: sound on or off, the weather (off, a fixed place, or following the
@@ -862,11 +932,14 @@ keep its own pet or connect to a Pi; the README explains how.
 | Weight, bond, hide and seek, tricks | `core/src/care.ts` |
 | Trips, areas, what is found where | `core/src/trip.ts` |
 | Fishing: the bite, the tap, what comes up where | `core/src/fishing.ts` |
+| Shooting stars, what they leave, the owl | `core/src/stars.ts` |
+| The trick festival: its days, the show, the points, the jury, the prizes | `core/src/festival.ts` |
+| Treasure maps and digging, the diggers by nature (`DIGGERS`) | `core/src/digging.ts` |
 | What is eaten from the bag, each form's favorite and dislike, and what food from trips leaves in the pet | `core/src/food.ts` |
 | Wild pets, friends, visits, their gifts, the nest and the heirloom | `core/src/wild.ts` |
 | Guests in the garden: what draws them, peeking over the fence | `core/src/garden.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
-| A scuffle watched again in the app | `app/src/replay.ts` |
+| A scuffle (or a show at the trick festival) watched again in the app | `app/src/replay.ts` |
 | Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), hot afternoons, the house and its spots | `core/src/home.ts` |
 | What it does by itself, what it leaves behind or finds at home, and what it tells when you come back | `core/src/idle.ts` |
 | Going to Grandma's, staying there frozen, and being fetched | `core/src/model.ts` (`GRANDMA_AFTER`, `comeBack`) |
@@ -1014,7 +1087,7 @@ For an adult form with pixel art of its own:
 | Body and face sheet | `SPECIES_SHEETS` in `core/src/scene.ts` |
 | A face that is not to sit in the middle of its row (`faceTop`, `faceCenter`, `faceShift` in `write_sheet`) | `tools/build_blob_sprites.py`, `faceAnchor` in `core/src/sprites.ts` |
 | Colors of the child's lure, walking and hopping, umbrella, where its hat sits, special move | `LURE_HINT`, `WALK_HOPS`, `NO_UMBRELLA`, `HAT_SPOTS`, `special` and `hit` in `core/src/scene.ts` |
-| A trick in its own way: the same gesture and effect, another animation | `OWN_TRICKS` and `trick` in `core/src/scene.ts`, frames of its own if it needs them |
+| A trick in its own way: the same gesture and effect, another animation | `OWN_TRICKS` in `core/src/care.ts` and `trick` in `core/src/scene.ts`, frames of its own if it needs them |
 | Tests: every form in every state, how it moves, where the face sits | `core/test/scene.test.ts`, `core/test/sprites.test.ts` |
 | Text and picture, spoilers folded shut | [pets.md](pets.md), `npm run preview -- --pets` |
 

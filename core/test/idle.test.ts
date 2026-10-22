@@ -119,6 +119,7 @@ test("now and then it finds something small, one at a time, and keeps it until s
   }
   assert.ok(found.size >= 3, [...found].join()); // mostly a fruit, rarely a seed
   assert.ok([...found].every((thing) => thing.startsWith("fruit_") || thing.startsWith("seed_")));
+  pet.fallen = null; // (nor what a shooting star left there, stars.test.ts)
   assert.deepEqual(act(pet, "pickup", start + 30 * 86400), [false, "nothing_found"]);
 });
 

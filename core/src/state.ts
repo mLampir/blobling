@@ -43,17 +43,25 @@ export interface Fishing {
 
 /** What happened at the last station of a trip. */
 export interface TripEvent {
-  kind: "find" | "rest" | "tired" | "ball" | "battle" | "wild" | "fish";
+  kind: "find" | "rest" | "tired" | "ball" | "battle" | "wild" | "fish" | "festival";
   at: number;
   item?: string | null;
   foe?: string;
   wild?: string;
   rounds?: unknown[][];
   outcome?: string;
+  /** At the trick festival: the wild pets in the jury (festival.ts). */
+  jury?: string[];
 }
 
-/** A scuffle on a trip, kept to be watched again (trip.REPLAYS). */
+/**
+ * A scuffle on a trip, kept to be watched again (trip.REPLAYS); or the show at the trick festival
+ * (`kind` "festival": `rounds` are [trick, worked, points], `outcome` the place, `item` the prize).
+ */
 export interface Replay {
+  kind?: "festival";
+  /** At the festival: the wild pets in the jury. */
+  jury?: string[];
   at: number;
   /** When the trip it happened on set off (Trip.start). */
   trip: number;
@@ -83,6 +91,8 @@ export interface TravelStop {
   foe?: string;
   wild?: string;
   outcome?: string;
+  /** At the trick festival: the jury (they count as seen in the album). */
+  jury?: string[];
 }
 
 /** A trip that is over, for the travel diary (trip.remember). */
@@ -112,6 +122,8 @@ export interface Trip {
   log?: TravelStop[];
   /** It rained at one of the stations so far. */
   rained?: boolean;
+  /** To the trick festival (festival.AREA): the tricks it shows, in order. */
+  tricks?: string[];
 }
 
 /** An egg that is kept: its line, and what a pet has passed on to it (wild.ts). */
@@ -135,6 +147,23 @@ export interface Friend {
   rest_until?: number;
   /** A guest the garden drew (garden.ts), not met on a trip. */
   guest?: boolean;
+}
+
+/** Shooting stars (stars.ts): evenings it has seen one fall, and when the last one did (0 = none yet). */
+export interface Stars {
+  evenings: number;
+  at: number;
+}
+
+/**
+ * What a shooting star left (stars.ts): it lies in the garden the morning after (`lies`) until it is
+ * picked up. `night`: the night after it fell has begun.
+ */
+export interface Fallen {
+  item: string;
+  at: number;
+  night?: boolean;
+  lies?: boolean;
 }
 
 /** What draws guests to the garden (garden.ts). */
@@ -282,6 +311,10 @@ export interface PetState {
   grandma: number;
   /** It was taken there on purpose (grandma.ts): a visit, not because nobody came. */
   grandma_visit: boolean;
+  /** The shooting stars it has seen (stars.ts). */
+  stars: Stars;
+  /** What a shooting star left in the garden, until it is picked up (stars.ts). */
+  fallen: Fallen | null;
 }
 
 /** A state with every field at its starting value. */
@@ -349,6 +382,8 @@ export function newState(): PetState {
     habits: [],
     grandma: 0.0,
     grandma_visit: false,
+    stars: { evenings: 0, at: 0.0 },
+    fallen: null,
   };
 }
 

@@ -257,6 +257,52 @@ test("the bear, penguin and bat lines grow up by what they ate, where they went 
   }
 });
 
+test("the owl, chameleon, scarab and kite lines grow up by the sky, games, the clock and the weather", () => {
+  const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
+  // the owl: a clear night sky makes a Stargazer, clean scuffles the Ninjowl
+  assert.equal(life.decideSpecies(week, "owl"), "owlbert");
+  assert.equal(life.decideSpecies(week, "owl", { dark: true, clear: true }), "stargazer");
+  assert.equal(life.decideSpecies(week, "owl", { dark: true, clear: false }), "owlbert"); // clouds
+  assert.equal(life.decideSpecies(week, "owl", { dark: false, clear: true }), "owlbert"); // by day
+  assert.equal(life.decideSpecies({ ...week, clean_battles: life.NINJOWL_CLEAN_BATTLES - 1 }, "owl"), "owlbert");
+  assert.equal(life.decideSpecies({ ...week, clean_battles: life.NINJOWL_CLEAN_BATTLES }, "owl",
+    { dark: true, clear: true }), "ninjowl");
+  // the chameleon: hide and seek makes a Hidewell, a friend the Mirrorleon
+  assert.equal(life.decideSpecies(week, "chameleon"), "palettino");
+  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES - 1 }, "chameleon"), "palettino");
+  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon"), "hidewell");
+  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true }), "mirrorleon");
+  // the scarab: just after a full hour makes a Clockbeetle, the heat the Pharabug
+  assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 + 30 }), "solroll");
+  assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 }), "clockbeetle");
+  assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 + life.CLOCKBEETLE_MINUTES - 1 }), "clockbeetle");
+  assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 + life.CLOCKBEETLE_MINUTES }), "solroll");
+  assert.equal(life.decideSpecies(week, "scarab"), "solroll"); // no clock
+  assert.equal(life.decideSpecies(week, "scarab", { temp: life.PHARABUG_HEAT }), "pharabug");
+  assert.equal(life.decideSpecies(week, "scarab", { temp: life.PHARABUG_HEAT - 1 }), "solroll");
+  assert.equal(life.decideSpecies(week, "scarab", { temp: null }), "solroll"); // no weather data
+  // the kite: the dance makes a Lionkite, a thunderstorm the Stormkite
+  assert.equal(life.decideSpecies(week, "kite"), "origrane");
+  assert.equal(life.decideSpecies(week, "kite", { dance: true }), "lionkite");
+  assert.equal(life.decideSpecies(week, "kite", { dance: true, storm: true }), "stormkite");
+  for (const line of ["owl", "chameleon", "scarab", "kite"]) {
+    assert.ok(life.LINES[line].every((adult) => food.TASTES[adult]?.length === 2), line);
+    assert.ok(food.TASTES[line], line);
+  }
+});
+
+test("the world says whether the sky is clear, and the pet whether it knows the dance and has a friend", () => {
+  const pet = model.newPet(start, "", "kite");
+  assert.equal(model.worldAt(start, 0, null, null, pet).clear, true);
+  assert.equal(model.worldAt(start, 1, null, null, pet).clear, true);
+  assert.equal(model.worldAt(start, 3, null, null, pet).clear, false);
+  assert.equal(model.worldAt(start, null, null, null, pet).clear, false);
+  assert.equal(model.worldAt(start, null, null, null, pet).dance, false);
+  assert.equal(model.worldAt(start, null, null, null, pet).friend, false);
+  pet.friends.push({ species: "mothmuff", visits: 0, next: start, guest: true });
+  assert.equal(model.worldAt(start, null, null, null, pet).friend, true);
+});
+
 test("the snow globe makes it snow for the cloud line", () => {
   const cloud = model.newPet(start, "", "cloud");
   assert.equal(model.worldAt(start, null, null, null, cloud).snowing, false);

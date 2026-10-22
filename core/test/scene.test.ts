@@ -134,7 +134,7 @@ test("the status line: clock, temperature and what the pet needs", () => {
 test("every form of the pet can be drawn, in every state", () => {
   const forms = [...Object.keys(life.LINES).flatMap((line) => life.STAGES.map((stage) => [stage, line])),
     ...[...Object.values(life.LINES).flat(), ...life.WILD_ONLY].map((name) => ["adult", name])];
-  assert.equal(forms.length, 19 * 4 + 62);
+  assert.equal(forms.length, 23 * 4 + 74);
   const moods = ["normal", "happy", "sad", "hungry", "dirty", "sick", "tired"];
   for (const [stage, species] of forms) {
     for (const mood of moods) {
@@ -297,7 +297,9 @@ test("the garden's and the water's adults have a trick and a special move of the
     archibeaver: "bow", teacrab: "bow", lightclaw: "spin", castlecrab: "bow", mossolotl: "spin", medilotl: "dance",
     axodrake: "flip", sirthimble: "bow", cogsqueak: "spin", woolwhisk: "spin", hivebear: "bow", snorbear: "spin",
     ursastra: "dance", tuxwaddle: "bow", glidepin: "spin", aurorapin: "dance", umbrabat: "flip", batbeat: "dance",
-    lunaflap: "spin" };
+    lunaflap: "spin", owlbert: "bow", stargazer: "spin", ninjowl: "flip", palettino: "spin", hidewell: "bow",
+    mirrorleon: "dance", solroll: "flip", clockbeetle: "dance", pharabug: "bow", origrane: "bow", lionkite: "dance",
+    stormkite: "flip" };
   const animations = new Set<string>();
   for (const [species, trick] of Object.entries(own)) {
     const animation = trickAnimation("adult", species, trick);
@@ -316,6 +318,18 @@ test("the garden's and the water's adults have a trick and a special move of the
       trip: { ...trip, rounds: [["charge", "flip", "hit"]] } }, 50);
     assert.ok(fight.slice(20).some((image, i) => differing(image, plain[20 + i]) > 10), species);
   }
+});
+
+test("Mirrorleon dances its friend's dance in its friend's colors, and makes its friend's special move", () => {
+  const dance = { stage: "adult", species: "mirrorleon", activity: "trick", activity_item: "dance:ok" };
+  const alone = frames(dance, 20);
+  const copying = frames({ ...dance, friend: "sakurin" }, 20);
+  assert.ok(copying.some((image, i) => differing(image, alone[i]) > 50));
+  const trip = { area: "meadow", returning: false, event: "battle", item: null, event_age: 0, foe: "bumblebop",
+    rounds: [["charge", "flip", "special"]], outcome: "win" };
+  const prism = frames({ stage: "adult", species: "mirrorleon", trip }, 50);
+  const copied = frames({ stage: "adult", species: "mirrorleon", friend: "lunaflap", trip }, 50);
+  assert.ok(copied.slice(20).some((image, i) => differing(image, prism[20 + i]) > 10));
 });
 
 test("a guest from the garden peeks over the fence at the right edge, only at home and outside", () => {
@@ -345,7 +359,7 @@ test("a guest from the garden peeks over the fence at the right edge, only at ho
 });
 
 test("the newer lines' children show where they are heading", () => {
-  for (const [line, adults] of Object.entries(life.LINES).slice(-10)) {
+  for (const [line, adults] of Object.entries(life.LINES).slice(-14)) {
     const looks = adults.map((hint) => frames({ species: line, hint }, 1)[0]);
     assert.ok(differing(looks[0], looks[1]) > 0 && differing(looks[1], looks[2]) > 0
       && differing(looks[0], looks[2]) > 0, line);

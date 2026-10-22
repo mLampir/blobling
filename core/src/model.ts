@@ -9,6 +9,8 @@
 
 import * as battle from "./battle";
 import * as care from "./care";
+import * as digging from "./digging";
+import * as festival from "./festival";
 import * as fishing from "./fishing";
 import * as grandma from "./grandma";
 import * as food from "./food";
@@ -19,6 +21,7 @@ import * as idle from "./idle";
 import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
+import * as stars from "./stars";
 import { STATS, newState, type Egg, type PetState, type Trip } from "./state";
 import { isDark, isFullMoon, sunTimes, type Location } from "./sun";
 import * as trip from "./trip";
@@ -64,7 +67,7 @@ export const EVENT_LIMIT = 100;
 
 export const ACTIONS = ["feed", "play", "sleep", "wake", "clean", "pet", "medicine", "evolve", "game", "trick",
   "trip", "plant", "wear", "deco", "unpack", "train", "collect", "unwrap", "pickup", "look_in", "grandma", "fish",
-  "visit_grandma"];
+  "visit_grandma", "festival", "dig"];
 export const FOODS = ["meal", ...food.EDIBLE];
 export const GAME_MOVES = ["start", ...care.SPOTS]; // start, or look behind a spot
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
@@ -82,6 +85,9 @@ export const ACTIVITY_SECONDS: Record<string, number> = {
   trick: 4, build: 10, throw_meal: THROW_SECONDS + 6, throw_snack: THROW_SECONDS + 4,
   trip_start: 4, trip_home: 4, unpack: 6, plant: 3, pick: 4, collect: 4, unwrap: 4,
   discover: 4, pickup: 4, grandma_go: 5, grandma_home: 4,
+  wish: stars.WISH_SECONDS, // a shooting star: it looks up and wishes
+  // over to the cross, digging (a digger by nature sooner, see dig), and holding up what it found
+  dig: digging.WALK_SECONDS + digging.DIG_SECONDS + digging.SHOW_SECONDS,
   train_strength: 5, train_speed: 3, train_smarts: 3,
   // the line in the water: as long as it can be until something bites and is gone again
   fish_wait: fishing.EMPTY_WAIT, fish_catch: 4, fish_empty: 2.5,
@@ -157,6 +163,7 @@ export function nextPet(old: PetState, now: number, name = "", egg: unknown = nu
   state.plant = old.plant;
   state.gift = old.gift; // a friend's gift still lies there
   state.found = old.found; // and so does what the pet found at home
+  state.fallen = old.fallen; // and what a shooting star left
   return state;
 }
 
@@ -176,7 +183,7 @@ export function moveHome(from: PetState, to: PetState): void {
   }
   Object.assign(to, {
     deco: from.deco, house: from.house, plant: from.plant, gift: from.gift, found: from.found, nest: from.nest,
-    trace: from.trace,
+    trace: from.trace, fallen: from.fallen,
   });
   clearHome(from);
 }
@@ -185,7 +192,7 @@ export function moveHome(from: PetState, to: PetState): void {
 export function clearHome(state: PetState): void {
   Object.assign(state, {
     items: {}, eggs: [], backpack: [], deco: [], house: 0, plant: null, gift: null, found: null, nest: null, trace: null,
-    trip: null, hat: "",
+    trip: null, hat: "", fallen: null,
   });
 }
 
@@ -310,6 +317,11 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   idle.noteWeather(state, t, sky.precipitation(weather));
   idle.melt(state, temp);
   home.noteHeat(state, temp, t);
+  if (festival.alone(state, t)) {
+    // the festival day, and nobody has sent it: it goes by itself and shows its best tricks
+    goToFestival(state, t);
+    logEvent(state, t, "festival", "system");
+  }
   if (state.trip) {
     const [events, done] = trip.step(state, t, weather, location);
     for (const [action, item] of events) {
@@ -321,6 +333,13 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   }
   for (const [action, item] of garden.step(state, t, !asleep && !state.trip)) {
     logEvent(state, t, action, "system", { item });
+  }
+  if (stars.step(state, t, weather, bedtime[0], isBedtime(t, bedtime), location)) {
+    // a shooting star: still up and at home, it looks up and makes a wish
+    if (!asleep && !state.trip && t >= state.activity_until) {
+      setActivity(state, "wish", t);
+    }
+    logEvent(state, t, "star", "system");
   }
   if (state.friends.length) {
     for (const [action, item] of wild.step(state, t, !asleep && !state.trip)) {
@@ -578,7 +597,9 @@ export function availableActions(state: PetState, now: number): Record<string, b
     unpack: packed && !asleep,
     collect: !!state.nest && !asleep,
     unwrap: !!state.gift && !asleep,
-    pickup: !!state.found && !asleep,
+    pickup: (!!state.found || !!stars.lying(state)) && !asleep,
+    festival: festival.canGo(state, now) === null && !packed,
+    dig: digging.canDig(state) === null,
     plant: true,
     wear: true,
     deco: true,
@@ -658,7 +679,7 @@ export function worldAt(t: number, weather: sky.WeatherCode, location: Location,
   return {
     raining: sky.precipitation(weather) === "rain",
     snowing: sky.precipitation(weather) === "snow" || (state !== null && home.snowDeco(state)),
-    storm: sky.isThunder(weather), temp, dark: isDark(t, location),
+    storm: sky.isThunder(weather), clear: weather !== null && weather <= 1, temp, dark: isDark(t, location),
     minute: date.getHours() * 60 + date.getMinutes(), sunrise: Math.round(sunrise), sunset: Math.round(sunset),
     fullMoon: isFullMoon(t),
     ...(state && petWorld(state, t)),
@@ -674,6 +695,8 @@ function petWorld(state: PetState, t: number): life.World {
     bond: care.bondLevel(state),
     allTricks: Object.keys(care.TRICKS).every((trick) => care.knows(state, trick)),
     spin: care.knows(state, "spin"),
+    dance: care.knows(state, "dance"),
+    friend: state.friends.length > 0,
     strongest: strongest.length === 1 && top > 0 ? strongest[0] : undefined,
     houseBuilt: state.house >= home.HOUSE_STEPS,
     glowOutside: home.placeDeco(state).outside.some((item) => home.GLOWING_DECO.includes(item)),
@@ -698,7 +721,7 @@ function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCo
 
 /** Back from the trip. The finds stay in the backpack until someone is watching (action "unpack"). */
 function comeHome(state: PetState, now: number, done: Trip): void {
-  state.backpack = [...done.found];
+  state.backpack = [...state.backpack, ...done.found]; // (off to the festival by itself, it may not have unpacked)
   trip.putBack(state, done); // what it took along and didn't need
   state.stats.mood += 10 * done.factor;
   care.addBond(state, "trip");
@@ -726,6 +749,8 @@ function checkValue(action: string, item: string | null, value: unknown): unknow
     // what goes into the backpack (checked in startTrip); "snack" comes from an app of API 7 or
     // older, from before nothing to eat came out of thin air, and is left out
     ok = isList(value, [trip.BALL, "snack", ...food.EDIBLE], trip.MAX_PACK);
+  } else if (action === "festival" && value != null) {
+    ok = isList(value, Object.keys(care.TRICKS), festival.MAX_TRICKS); // the tricks to show, in order
   } else {
     return null;
   }
@@ -854,7 +879,7 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
   clamp(state);
   // what was in it, what it picked up, and what came out of the pond
   const told = (action === "unwrap" || action === "pickup" || (action === "fish" && item === "pull")) && reason === null
-    ? state.activity_item || "nothing" : item;
+    ? state.activity_item || "nothing" : action === "dig" && reason === null ? digFound(state) : item;
   logEvent(state, now, action, by, { item: told, accepted: reason === null, reason });
   if (reason === null && by !== "system") {
     habits.record(state, action, now);
@@ -1080,6 +1105,46 @@ function trained(state: PetState, now: number, skill: battle.Skill, score: numbe
   return null;
 }
 
+/** Off to the trick festival (festival.ts), now: it is the trip of the day. `picked`: the tricks to show. */
+function goToFestival(state: PetState, now: number, picked: readonly string[] = []): void {
+  state.recent.trip = [...(state.recent.trip ?? []).filter((t) => now - t < trip.DAY_WINDOW), now];
+  state.counters.festival_day = festival.dayOf(now);
+  state.trip = festival.plan(state, now, picked);
+  state.game = state.training = state.fishing = null;
+  setActivity(state, "trip_start", now, festival.AREA);
+}
+
+/** What it dug up, as the history tells it: "egg_scarab,seed_berry". */
+function digFound(state: PetState): string {
+  return state.activity_item.split(":")[1] ?? "";
+}
+
+/**
+ * Digging at the red cross (digging.ts): the map is used up, it walks over and digs, and holds up
+ * what it found. Costs energy like playing; a digger by nature is done sooner.
+ */
+function dig(state: PetState, now: number): string | null {
+  const reason = digging.canDig(state);
+  if (reason) {
+    return reason;
+  }
+  const s = state.stats;
+  state.game = state.training = state.fishing = null;
+  const found = digging.dig(state, new Random(`dig:${now}`));
+  s.mood += 15 * life.bonusFactor(state, "play");
+  s.energy -= digging.COST.energy;
+  s.satiety -= digging.COST.satiety;
+  care.addWeight(state, care.PLAY_WEIGHT);
+  care.addBond(state, "play");
+  count(state, "plays");
+  life.record(state, "plays");
+  const seconds = digging.seconds(state);
+  // activity_item: how long it digs, and what it finds
+  setActivity(state, "dig", now, `${seconds}:${found.join(",")}`);
+  state.activity_until = now + digging.WALK_SECONDS + seconds + digging.SHOW_SECONDS;
+  return null;
+}
+
 /** Set off on a trip, or call the pet home (area = "recall"). */
 function startTrip(state: PetState, now: number, bedtime: Bedtime, area: string, weather: sky.WeatherCode,
     pack: readonly string[]): string | null {
@@ -1199,14 +1264,32 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
   }
 
   if (action === "pickup") {
-    if (!state.found) {
+    // what it found at home, or (item "star", or when nothing else lies there) what a shooting star left
+    const star = stars.lying(state);
+    const fromStar = !!star && (item === "star" || !state.found);
+    if (!state.found && !star) {
       return "nothing_found";
     }
     if (state.asleep) {
       return "asleep";
     }
-    setActivity(state, "pickup", now, idle.pickUp(state));
+    if (fromStar && !home.canAdd(state, star!) && !star!.startsWith("fruit_")) {
+      return "no_room";
+    }
+    setActivity(state, "pickup", now, fromStar ? stars.pickUp(state) : idle.pickUp(state));
     return null;
+  }
+
+  if (action === "festival") {
+    const reason = state.backpack.length ? "unpack_first" : festival.canGo(state, now);
+    if (reason === null) {
+      goToFestival(state, now, (value as string[] | null) ?? []);
+    }
+    return reason;
+  }
+
+  if (action === "dig") {
+    return dig(state, now);
   }
 
   if (action === "feed") {

@@ -279,6 +279,29 @@ The values are in `core/src/grandma.ts`.
 
 </details>
 
+## Under the stars, on the stage and in the ground
+
+Four lines hatch from eggs that come from the shooting stars, the trick
+festival and digging ([gameplay.md](gameplay.md#shooting-stars)).
+
+<details>
+<summary>Show which eggs they are</summary>
+
+| Where | Egg |
+|---|---|
+| On the roof, after the fifth evening with a shooting star: the owl that sat there left it | **owl egg** |
+| The first first place at the trick festival | **chameleon egg** |
+| The second first place at the trick festival | **kite egg** |
+| The first dig at a treasure map's cross, for every pet | **scarab egg** |
+
+The dog and the beaver lines are diggers by nature: they dig twice as fast and
+find a seed more.
+
+The values are in `core/src/stars.ts`, `core/src/festival.ts` and
+`core/src/digging.ts`.
+
+</details>
+
 ### The ember line
 
 <details>
@@ -1664,6 +1687,334 @@ moths flies at the opponent.
 It grows up at night under a full moon. This rule goes before the others of
 the line. While the child is on its way there, its hint color is moonlight
 silver.
+
+</details>
+
+### The owl line
+
+This is the line a shooting star brings.
+
+<details>
+<summary>Show the owl line</summary>
+
+| | Stage |
+|---|---|
+| ![Owl egg](images/pets/owl_egg.png) | **Owl egg** – a night-blue egg with two feather tufts and stars on it, a shooting star falling across it, lying on red roof tiles |
+| ![Owl baby](images/pets/owl_baby.png) | **Baby** – a round tawny owlet with feather tufts, a cream face disc and far too big gold glasses |
+| ![Hootlet](images/pets/hootlet.png) | **Child: Hootlet** – an upright young owl with long ear tufts and folded wings, its glasses even more too big: two huge round rims with a glint |
+
+The stages last as long as the slime's. What the adults keep is the glasses
+that are far too big for them.
+
+![Owlbert](images/pets/owlbert.png)
+
+**Owlbert**, an owl that has become a book. Its body stands square and upright
+like a book's spine with gold bands and a title plate, its ear tufts are the
+spine's corners pulled up into feathers, and its wings are the open pages
+fanned out at its sides, written all over; a red bookmark hangs from one of
+them, and the glasses have tortoiseshell rims. There is always another book,
+so its mood sinks more slowly, and a quiz is a game too: playing means more to
+it. For its bow it shuts its book and nods, and in a scuffle pages fly at the
+opponent.
+
+![Stargazer](images/pets/stargazer.png)
+
+**Stargazer**, an owl that has become a telescope. It sits ducked low, wings
+folded flat, and its neck pulls out in brass tubes, each thinner than the
+last; the head at the top looks up into the sky, the glasses are the lenses,
+and a star sparkles where it is looking. It sleeps the day away and watches
+the sky at night, so it tires more slowly, and it wishes on every star for
+you: hearts mean more to it. For its spin its head turns all the way round,
+and its special move is a constellation that lights up.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Stargazer | it grows up after sunset under a clear sky |
+| Owlbert | everything else |
+
+From its second day on, the rims of Hootlet's glasses show where it is
+heading: tortoiseshell brown for Owlbert, brass for Stargazer.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about its scuffles.*
+
+<details>
+<summary>Show this form</summary>
+
+![Ninjowl](images/pets/ninjowl.png)
+
+**Ninjowl**, the owl of shadow, a ninja, and the biggest of its line. Its
+wings spread into a wide fan of feathers behind it, each ending in a steel
+blade tip, a red band is knotted round its brow and a red sash round its slim
+body, and its glasses have gone soot-black round its narrowed eyes. It stands
+on one foot, perfectly still, and at night its blades glint. A ninja lives on
+little, so it gets hungry more slowly, and nothing catches it: it gets sick
+less often. For its flip it vanishes and lands behind itself, and in a
+scuffle it throws stars made of feathers.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It got through 3 scuffles as a child without being knocked over once. This rule goes
+before the others of the line. While the child is on its way there, its hint
+colors are its red band and soot.
+
+</details>
+
+### The chameleon line
+
+This is a line from the trick festival.
+
+<details>
+<summary>Show the chameleon line</summary>
+
+| | Stage |
+|---|---|
+| ![Chameleon egg](images/pets/chameleon_egg.png) | **Chameleon egg** – a speckled leaf-green egg turning yellow and orange at its bottom, a blue first-prize rosette pinned to its side |
+| ![Chameleon baby](images/pets/chameleon_baby.png) | **Baby** – a leaf-green slime with a helmet crest, its bottom turning yellow and orange, its tail rolled into a curl |
+| ![Colorlet](images/pets/colorlet.png) | **Child: Colorlet** – a young chameleon with a taller helmet crest and turret eyes, its colors rolling over it, four gripping legs and a big tail rolled into a tight spiral |
+
+The stages last as long as the slime's. What the adults keep is the curled
+tail and the changing colors.
+
+![Palettino](images/pets/palettino.png)
+
+**Palettino**, a chameleon that has become a painter's palette. Its body is
+flat and round like a palette, with the thumb hole near its back and a bay cut
+into its belly, and blobs of paint sit on its back. Its curled tail is striped
+in paint colors and ends in a brush, which it holds over its back to dab the
+paint. With paint everywhere it gets dirty sooner, and anything can be
+painted: playing means more to it. For its spin colors run round its body, and
+in a scuffle its tongue flicks a blob of paint.
+
+![Hidewell](images/pets/hidewell.png)
+
+**Hidewell**, a chameleon that has hidden so well it has become a twig. Its
+body is a stick of bark on legs like twigs, ivy has grown all over its back,
+and it grips a branch with its feet and winds its tail once round it; only its
+big turret eye gives it away. It keeps still for hours, so it tires more
+slowly, and hide and seek means more to it than anything. It likes the rain
+and needs no umbrella. For its bow it almost vanishes into the scene, and its
+special move is to turn up unseen and give the opponent a nudge.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Hidewell | it played hide and seek 7 times as a child |
+| Palettino | everything else |
+
+From its second day on, Colorlet's tail spiral shows where it is heading:
+paint colors for Palettino, ivy green and bark for Hidewell.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about friends.*
+
+<details>
+<summary>Show this form</summary>
+
+![Mirrorleon](images/pets/mirrorleon.png)
+
+**Mirrorleon**, the legendary chameleon and the biggest of its line. It rears
+up tall, its skin all mirror facets, a tall prism casque on its lizard head
+splits the light into a rainbow, and its tail rolls into one huge round spiral
+beside it. At night its prism and the rainbow glow. A mirror wipes clean, so it
+gets dirty more slowly, and it grew out of a friendship: hearts mean more to
+it. For its dance it copies its friend's dance in its friend's colors, and in
+a scuffle it uses its friend's special move in its own colors. Without a
+friend, the rainbow runs over its mirrors when it dances, and in a scuffle its
+prism breaks a beam of light into the rainbow.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It has a friend when it grows up. This rule goes before the others of the
+line. While the child is on its way there, its hint color is mirror silver.
+
+</details>
+
+### The scarab line
+
+This is the line that is dug up.
+
+<details>
+<summary>Show the scarab line</summary>
+
+| | Stage |
+|---|---|
+| ![Scarab egg](images/pets/scarab_egg.png) | **Scarab egg** – a scarab-green egg split by the gold seam of wing cases, half dug out of a sand heap marked with a red cross |
+| ![Scarab baby](images/pets/scarab_baby.png) | **Baby** – a domed metallic-green beetle with a gold seam, club antennae and six short legs, a sand ball in front of it |
+| ![Rollet](images/pets/rollet.png) | **Child: Rollet** – a sturdier scarab with a darker head plate, its front legs pressing on the bigger sand ball it rolls ahead |
+
+The stages last as long as the slime's. What the adults keep is the ball they
+push.
+
+![Solroll](images/pets/solroll.png)
+
+**Solroll**, a scarab that works like a real dung beetle. Head down on the
+ground and its rear raised high, it pushes its ball along; its shell has
+turned gold with a pattern of sun rays, and the ball is a small warm sun.
+Always pushing, it tires faster, and its sun keeps it warm: petting cheers it
+up more. For its flip it jumps over its ball, and in a scuffle it rolls the
+sun at the opponent.
+
+![Clockbeetle](images/pets/clockbeetle.png)
+
+**Clockbeetle**, a scarab that has become a pocket watch. It stands upright,
+its body flat and round as a dial in a gold case; its wing cases have grown
+into one lid, swung open on a hinge at its side, its horns are the clock's
+hands, and the ball is now a brass cog it keeps beside it. Wound up, it keeps
+going and tires more slowly, and well oiled as it is, it gets sick less often.
+For its dance its cog ticks round to the beat, and its special move stops the
+time: the opponent stands frozen and gray and loses its move that round.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Clockbeetle | it grows up within 5 minutes after a full hour |
+| Solroll | everything else |
+
+From its second day on, Rollet's ball shows where it is heading: sun orange
+for Solroll, the cream of a watch dial for Clockbeetle.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the weather.*
+
+<details>
+<summary>Show this form</summary>
+
+![Pharabug](images/pets/pharabug.png)
+
+**Pharabug**, the legendary scarab, as on an old wall painting, and the
+biggest of its line. Its wings spread wide to both sides in rows of feathers,
+its wing cases are gold with turquoise stripes and frame its head like a
+pharaoh's headdress, and above its head it holds up a big sun with its front
+legs; sand trickles down from it, and at night the sun glows. Used to the
+desert, it gets hungry more slowly, and the sun keeps it healthy: it gets sick
+less often. For its bow it greets you as a pharaoh, raising its sun high, and
+in a scuffle it sends a sandstorm.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+It is 27 °C or warmer when it grows up. This rule goes before the others of
+the line. While the child is on its way there, its hint colors are lapis,
+gold and turquoise.
+
+</details>
+
+### The paper kite line
+
+This is a line from the trick festival.
+
+<details>
+<summary>Show the paper kite line</summary>
+
+| | Stage |
+|---|---|
+| ![Paper kite egg](images/pets/kite_egg.png) | **Paper kite egg** – a red festival-paper egg folded like a kite with a gold frame, a string tail with two blue bows off its point |
+| ![Paper kite baby](images/pets/kite_baby.png) | **Baby** – a little paper dragon, its head a folded sheet like an origami mask with one corner dog-eared, gold antlers and whiskers, its pleated body ending in a blue bow |
+| ![Kitelet](images/pets/kitelet.png) | **Child: Kitelet** – a long paper dragon with a bigger folded head and branching antlers, its pleated body on two little folded paper feet, a bow on its tail and a bigger one at the tip |
+
+The stages last as long as the slime's. What the adults keep is the tail with
+its bows.
+
+![Origrane](images/pets/origrane.png)
+
+**Origrane**, a paper dragon folded sharp like an origami crane. It sits as a
+triangle on its folded base, its two wings are pointed folded faces standing
+up behind it, its head is the folded mask with little gold antlers, and its
+tail is a strip folded into a zigzag with crane-white bows. Crisp, clean paper
+gets dirty more slowly, and a folded crane brings luck: hearts mean more to
+it. For its bow it folds itself small and unfolds again, and in a scuffle it
+sends a swarm of paper planes.
+
+![Lionkite](images/pets/lionkite.png)
+
+**Lionkite**, a paper dragon that has become a festival lion dance. Its body is
+a long band of paper and cloth flowing in waves, red and gold by turns, on
+little feet; in front a big lion head with a fringe of mane, pompoms on its
+brow and cheeks and a wide grin full of teeth. Dancing through the festival,
+it tires faster, and every day is a festival: playing means more to it. For
+its dance it does the lion dance with its pompoms flying, and its special move
+is fireworks.
+
+</details>
+
+<details>
+<summary>Show how to get them</summary>
+
+| Form | Rule |
+|---|---|
+| Lionkite | it has learned the dance when it grows up |
+| Origrane | everything else |
+
+From its second day on, Kitelet's bows show where it is heading: crane white
+for Origrane, festival gold and pink for Lionkite.
+
+The values are in `core/src/life.ts`.
+
+</details>
+
+#### The secret form
+
+*It is about the weather.*
+
+<details>
+<summary>Show this form</summary>
+
+![Stormkite](images/pets/stormkite.png)
+
+**Stormkite**, the legendary kite and the biggest of its line. It is stretched
+like a big diamond stunt kite of dark thunderstorm paper, its spars crossing
+behind it, with lightning-yellow horns and whiskers; its long tail zigzags
+down and its bows twitch as bolts of lightning. It flies, and at night its
+lightning glows. It is as changeable as the weather, so its mood sinks
+faster, but nothing gets through storm paper: it gets sick less often, and it
+needs no umbrella. For its flip it shoots up in the wind and dives, and in a
+scuffle lightning runs down its string.
+
+</details>
+
+<details>
+<summary>Show how to get it</summary>
+
+There is a thunderstorm when it grows up. This rule goes before the others of
+the line. While the child is on its way there, its hint colors are storm blue
+and lightning yellow.
 
 </details>
 
