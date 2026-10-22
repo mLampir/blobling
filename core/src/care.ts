@@ -4,6 +4,7 @@
  * All kept small on purpose so the basic game stays simple.
  */
 
+import * as keepsake from "./keepsake";
 import type { Stage } from "./life";
 import { Random } from "./random";
 import type { Game, PetState } from "./state";
@@ -282,7 +283,8 @@ export function learned(state: PetState): string[] {
 export function practice(state: PetState, trick: string, factor: number, now: number): "ok" | "fail" | "learned" {
   const before = trickProgress(state, trick);
   const ok = new Random(`${now}:${trick}`).random() < TRICK_LUCK + (1 - TRICK_LUCK) * before;
-  state.tricks[trick] = (state.tricks[trick] ?? 0.0) + factor * (1 + 0.5 * state.bond / 100);
+  state.tricks[trick] = (state.tricks[trick] ?? 0.0)
+    + factor * (1 + 0.5 * state.bond / 100) * keepsake.factor(state, "tricks");
   if (knows(state, trick)) {
     return "learned";
   }

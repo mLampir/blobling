@@ -21,6 +21,7 @@ import * as garden from "./garden";
 import * as grandma from "./grandma";
 import * as habits from "./habits";
 import * as home from "./home";
+import * as keepsake from "./keepsake";
 import * as life from "./life";
 import * as model from "./model";
 import * as notify from "./notify";
@@ -833,6 +834,7 @@ export class Pet {
    * The album by lines, one page each with its egg, baby, child and adult forms. A slot is null
    * for a form not met yet; a form only seen has its picture for an outline and where it was seen
    * (no name); one that one of the pets has been has its name, and a star once it was mastered.
+   * The page also shows the line's keepsake once the home has it.
    */
   albumLines() {
     this.collect();
@@ -845,6 +847,9 @@ export class Pet {
         const seen = this.seen[form];
         return seen ? { stage, species, seen: { ...seen } } : null;
       }),
+      // the line's keepsake (keepsake.ts), once the home has it
+      keepsake: this.state.items[keepsake.KEEPSAKES[line]]
+        ? { id: keepsake.KEEPSAKES[line], label: this.t(`items.${keepsake.KEEPSAKES[line]}`) } : null,
     }));
   }
 
@@ -859,6 +864,13 @@ export class Pet {
       return [];
     }
     return Object.keys(life.LINES).filter((line) => !this.album.includes(`egg:${line}`));
+  }
+
+  /** The lines the home has had every adult form of (their keepsakes come home, keepsake.ts). */
+  completeLines(): string[] {
+    this.collect();
+    return Object.entries(life.LINES).filter(([, adults]) => adults.every((adult) => this.album.includes(`adult:${adult}`)))
+      .map(([line]) => line);
   }
 
   /**
@@ -1021,8 +1033,10 @@ export class Pet {
 
   private advanceAll(now: number): void {
     const missing = this.longMissing(now);
+    const complete = this.completeLines();
     for (const s of this.pets) {
       s.missing_lines = [...missing];
+      s.complete_lines = [...complete];
     }
     // all of them minute by minute together, for what they share in the yard
     model.advanceTogether(this.pets, now, this.bedtime(), this.weather(), this.temperature(), this.location,

@@ -19,6 +19,7 @@ import * as garden from "./garden";
 import * as habits from "./habits";
 import * as home from "./home";
 import * as idle from "./idle";
+import * as keepsake from "./keepsake";
 import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
@@ -292,6 +293,9 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   if (state.stage !== "adult") {
     state.egg_warmth += home.growthBonus(state, TICK);
   }
+  if (state.stage === "child") {
+    state.egg_warmth += TICK * (keepsake.factor(state, "children") - 1); // the knitting basket
+  }
   if (state.stage === "egg") {
     // Nothing happens inside the egg, except that it eventually hatches by itself
     if (t >= life.dueAt(state)! + life.AUTO_EVOLVE_AFTER) {
@@ -303,6 +307,9 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   const before = { ...s }; // the yard's floors only stop a need from dropping further
   for (const key of Object.keys(RATES) as (keyof typeof RATES)[]) {
     let rate: number = RATES[key][asleep ? 1 : 0];
+    if (rate > 0 && key === "energy") {
+      rate *= keepsake.factor(state, "rest");
+    }
     if (rate < 0) {
       rate *= life.decayFactor(state, key);
       if (key === "energy") {
@@ -363,7 +370,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   if (critical >= 2 || state.sick) {
     s.health -= 2 * h;
   } else if (NEEDS.every((k) => s[k] > 50)) {
-    s.health += 1 * h;
+    s.health += 1 * h * keepsake.factor(state, "heal");
   }
   if (state.sick) {
     s.mood -= 1 * h;
@@ -379,7 +386,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     }
     state.next_poop_at = null;
   }
-  if (!asleep && rng.random() < 1 / 360) {
+  if (!asleep && rng.random() < keepsake.factor(state, "bored") / 360) {
     s.mood -= 5; // boredom
   }
 
@@ -789,6 +796,10 @@ function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCo
 /** Back from the trip. The finds stay in the backpack until someone is watching (action "unpack"). */
 function comeHome(state: PetState, now: number, done: Trip): void {
   state.backpack = [...state.backpack, ...done.found]; // (off to the festival by itself, it may not have unpacked)
+  const keep = keepsake.due(state);
+  if (keep) {
+    state.backpack.push(keep); // the home has had all three adults of a line: its keepsake
+  }
   trip.putBack(state, done); // what it took along and didn't need
   state.stats.mood += 10 * done.factor;
   care.addBond(state, "trip");

@@ -7,6 +7,7 @@
  */
 
 import * as care from "./care";
+import * as keepsake from "./keepsake";
 import { Random } from "./random";
 import * as sky from "./sky";
 import type { PetState } from "./state";
@@ -27,7 +28,8 @@ export function newSkills(): Record<string, number> {
 /** Add what a session was worth (score 0–1, already scaled for repeats). Returns the gain. */
 export function train(state: PetState, skill: Skill, score: number): number {
   const before = state.skills[skill] ?? 0.0;
-  state.skills[skill] = Number(Math.min(MAX_SKILL, before + TRAIN_GAIN * score).toFixed(3));
+  const gain = TRAIN_GAIN * score * keepsake.factor(state, skill);
+  state.skills[skill] = Number(Math.min(MAX_SKILL, before + gain).toFixed(3));
   return state.skills[skill] - before;
 }
 
@@ -233,6 +235,8 @@ export function fight(state: PetState, foe: string, rng: Random): Fight {
       hearts -= damageOf(result);
     } else if (rng.random() < DODGE_BASE + DODGE_SPEED * speed / MAX_SKILL) {
       result = "dodge";
+    } else if (keepsake.has(state, "steady") && rng.random() >= keepsake.factor(state, "steady")) {
+      result = "dodge"; // it stands firm, like the little guardian figure at home
     } else if (canHold && knocks === KNOCKS - 1) {
       result = "hold";
       canHold = false;

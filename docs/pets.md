@@ -2201,4 +2201,45 @@ are two shades of bronze.
 
 </details>
 
+## Keepsakes
+
+Once the home has had all three adult forms of a line, the next pet to come
+home from a trip brings the line's keepsake (see
+[Keepsakes](gameplay.md#keepsakes)). What each one does, while it is set out:
+
+<details>
+<summary>Show the keepsakes</summary>
+
+| Line | Keepsake | While it is set out |
+|---|---|---|
+| Slime | jelly lamp | its mood drops 15 % more slowly |
+| Ember | fire bowl | in its sleep its energy comes back 15 % faster |
+| Stone | moonstone | it gets sick 15 % less often |
+| Fox | signpost | 15 % more finds at the quiet stops of a trip |
+| Cloud | weather bell | it gets bored 25 % less often |
+| Leaf | cherry branch | the plant grows 20 % faster |
+| Duck | rubber duck in its tub | it stays clean 15 % longer |
+| Hippo | hippo fountain | hot afternoons don't bother it |
+| Beak | mailbox | friends come to visit 15 % more often |
+| Caterpillar | flower basket | the plant's fruits do 20 % more |
+| Dog | ball crate | a game cheers it up 20 % more |
+| Dragonfly | wind chime | speed training counts 15 % more |
+| Beaver | gnawed stump | strength training counts 15 % more |
+| Crab | shell lamp | at the pond something bites 20 % sooner |
+| Axolotl | herb tank | its health comes back 20 % faster |
+| Mouse | knitting basket | a child grows 10 % faster |
+| Bear | honey pot | it gets hungry 15 % more slowly |
+| Penguin | block of ice | cold mornings don't bother it |
+| Bat | gramophone | trick practice counts 15 % more |
+| Owl | telescope | shooting stars fall 20 % more often |
+| Chameleon | easel | smarts training counts 15 % more |
+| Scarab | hourglass | trips bring a treasure map 20 % more often |
+| Paper kite | windsock | trips tire it 15 % less |
+| Octopus | conch | 10 % more points at the trick festival |
+| Gargoyle | little guardian | it is knocked over 15 % less often in a scuffle |
+
+The values are in `core/src/keepsake.ts`.
+
+</details>
+
 More lines are ideas so far; the [issues](https://github.com/mLampir/blobling/issues) collect them.

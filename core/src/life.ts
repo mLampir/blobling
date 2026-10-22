@@ -13,6 +13,7 @@
  * its species is simply the name of its line.
  */
 
+import * as keepsake from "./keepsake";
 import type { PetState } from "./state";
 
 export const STAGES = ["egg", "baby", "child", "adult"] as const;
@@ -315,11 +316,11 @@ export function formsOf(stage: string, species: string): string[] {
 }
 
 export function decayFactor(state: PetState, stat: string): number {
-  return DECAY_FACTORS[key(state)]?.[stat] ?? 1.0;
+  return (DECAY_FACTORS[key(state)]?.[stat] ?? 1.0) * keepsake.factor(state, stat);
 }
 
 export function bonusFactor(state: PetState, kind: string): number {
-  return BONUS_FACTORS[key(state)]?.[kind] ?? 1.0;
+  return (BONUS_FACTORS[key(state)]?.[kind] ?? 1.0) * keepsake.factor(state, kind);
 }
 
 /** When the next stage is due (null = adult). */

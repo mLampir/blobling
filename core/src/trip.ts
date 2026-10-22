@@ -23,6 +23,7 @@ import * as festival from "./festival";
 import * as fishing from "./fishing";
 import * as food from "./food";
 import * as home from "./home";
+import * as keepsake from "./keepsake";
 import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
@@ -317,7 +318,7 @@ export function canFind(state: PetState, area: string, item: string): boolean {
  */
 function find(state: PetState, trip: Trip, rng: Random, weather: sky.WeatherCode, t: number, sure = false):
     string | null {
-  if (!sure && rng.random() >= FIND_CHANCE * trip.factor) {
+  if (!sure && rng.random() >= FIND_CHANCE * trip.factor * keepsake.factor(state, "finds")) {
     return null;
   }
   const skyNow = sky.precipitation(weather);
@@ -439,7 +440,7 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
       trip.rained = true;
     }
     if (!trip.boosts?.includes("fresh")) {
-      s.energy -= STATION_COST.energy;
+      s.energy -= STATION_COST.energy * keepsake.factor(state, "hike");
       s.satiety -= STATION_COST.satiety;
     }
     care.addWeight(state, care.HIKE_WEIGHT);

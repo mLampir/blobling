@@ -262,6 +262,8 @@ export interface PetState {
   hot_day: number;
   /** Lines the home has long been missing (set by the home, see Pet.longMissing): their wild pets come more often. */
   missing_lines: string[];
+  /** Lines the home has had all adult forms of (set by the home): their keepsakes come home (keepsake.ts). */
+  complete_lines: string[];
   counters: Record<string, number>;
   weight: number;
   bond: number;
@@ -362,6 +364,7 @@ export function newState(): PetState {
     hot_until: 0.0,
     hot_day: 0,
     missing_lines: [],
+    complete_lines: [],
     counters: {},
     weight: care.IDEAL_WEIGHT.baby,
     bond: 20.0,

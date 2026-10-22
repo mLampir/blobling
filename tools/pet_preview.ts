@@ -161,7 +161,7 @@ const OWN_SCENES = Object.keys(OWN_TRICK_FORMS).flatMap((adult) => [`${adult}_ow
 // the first area only: the later areas, their opponents and their guardians are left out.
 const SHOWN_ADULT = "angloop";
 const SHOWN_AREA = AREAS[0];
-const SPOILERS = ["hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
+const SPOILERS = ["keepsakes", "keepsakes_night", "hint", "evolve", "cyclopuff", "angloop_hint", "sneezle", "flicker", "flicker_sad", "grumpcap", "lumoth", "ember_egg",
   "ember_hatch", "ember_baby", "cindlet", "cindlet_hint", "cindlet_sick", "ember_evolve", "lanternling",
   "lanternling_sleep", "lanternling_trick", "flarelet", "flarelet_hat", "egg_found", "wild_shrug", "visit_copy", "visit_bounce", "visit_night",
   "nest_ember", "stone_egg", "stone_baby", "pebblet", "pebblet_hint", "pebblet_hat", "pebblet_skip", "glimmerock",
@@ -318,6 +318,9 @@ const SCENES: Record<string, Scene> = {
   }, DAY, null],
   home_crystal: [{ hat: "batears", deco: ["crystal", "cattail"], stage: "adult", species: "angloop" }, NIGHT, null],
   home_boat: [{ hat: "lily", deco: ["boat", "crystal"] }, DAY, null],
+  // keepsakes of the lines (core/src/keepsake.ts): moving by day, glowing at night
+  keepsakes: [{ deco: ["windchime", "hippofountain"] }, DAY, null],
+  keepsakes_night: [{ deco: ["jellylamp", "shelllamp"] }, NIGHT, null],
   trip_stream: [{ trip: trip("stream") }, DAY, null],
   trip_cave: [{ trip: trip("cave", { event: "find", item: "crystal" }) }, DAY, RAIN],
   trip_food: [{ trip: trip("meadow", { event: "find", item: "honeycomb", event_age: 2 }) }, DAY, null],
