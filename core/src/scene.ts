@@ -221,6 +221,22 @@ const BARREL_X = 58; // the middle of the rain barrel, right of the basin
 const FIRE_X = 32; // the middle of the campfire
 const FIRE_GAP = 4; // from its middle to the pets sitting in front, left and right of it (they lean in over its edge)
 const HILL_SEATS = [[32], [18, 46]]; // the middles of one or two pets standing on the hill
+// The training ground (ground.ts): a running track in place of the garden, and the equipment the
+// home has where it stands (middles); the pet trains between the barbell and the board
+const TRACK: Color = [178, 78, 58];
+const TRACK_SHADE: Color = [150, 62, 46];
+const TRACK_LINE: Color = [235, 230, 220];
+const GROUND_PET = 30; // the middle of a pet over there
+const RACK_X = 10;
+const CONES_X = [36, 58];
+const BOARD_X = 54;
+const BOARD_ARROW: Color = [40, 140, 255]; // the hop being shown, drawn on the coach's board
+const BAR_REST = 4; // the bar's row that lies in the rack's cradles
+// Over at the training ground, nothing of its garden is there
+const AWAY_FROM_GARDEN: Partial<SceneView> = {
+  poops: 0, deco: [], house: 0, house_deco: [], look_in: false, visitor: null, nest: null, magpie: null, peeking: null,
+  gift: false, found: null, plant: null, trace: null, waiting: false, owl: false, fallen: null, poster: false, cross: false,
+};
 
 /** Where the trough or the basin stands in the yard, at a size: [x, y, width, height] as parts of the scene (64 × 64). */
 export function yardArea(what: "trough" | "basin", size: number): [number, number, number, number] {
@@ -1272,6 +1288,16 @@ export interface SceneView {
   cross?: boolean;
   /** The friend it made last (its species): Mirrorleon dances its dance and makes its special move. */
   friend?: string | null;
+  /**
+   * It is over at the training ground (ground.ts): the scene shows the track with the equipment the
+   * home has ("barbell", "cones", "coach_board") in place of its garden.
+   */
+  ground?: readonly string[] | null;
+}
+
+/** The training ground with nobody on it (Pet.groundView): the equipment the home has. */
+export interface GroundView {
+  equipment: readonly string[];
 }
 
 /**
@@ -1672,6 +1698,11 @@ export class PetScene {
     this.last = t;
     const seconds = now.getTime() / 1000;
     this.moon = moonPhase(seconds);
+    const training = !!view.ground && !view.trip;
+    if (training) {
+      view = { ...view, ...AWAY_FROM_GARDEN };
+      this.x = this.targetX = GROUND_PET - SPRITE / 2;
+    }
 
     const img = this.skyImage(now, sky.clouds(sky.codeOf(weather))[0] >= 2).copy();
     const items = this.sheet("items");
@@ -1699,6 +1730,10 @@ export class PetScene {
       const [grass, soil] = TRAVEL[trip.area];
       this.drawGround(img, grass, soil);
       this.drawTravel(img, trip, dt, t, seconds);
+    } else if (training) {
+      this.drawGround(img);
+      this.drawTrack(img);
+      this.drawEquipment(img, view.ground!, this.barLifted(view, seconds), this.boardArrow(view, seconds));
     } else if (indoors) {
       this.drawRoom(img, view, t);
     } else {
@@ -2074,6 +2109,8 @@ export class PetScene {
       }
     } else if (activity === "train_show") {
       this.trainShow(pose, view, now);
+    } else if (activity === "train_solo") {
+      this.trainSolo(pose, view, t, now);
     } else if (activity === "train_smarts") {
       const [right, steps] = view.activity_item.split("/");
       if (right === (steps ?? "")) {
@@ -4725,6 +4762,22 @@ export class PetScene {
     const ballX = Math.round(this.x) + SPRITE / 2 - 2;
     const onHead = GROUND - this.petTop + 1;
     const flight = 0.8 + 1.6 * power;
+    if (view.ground?.includes("barbell")) {
+      // at the training ground with the barbell: it lifts that instead, overhead if it was strong
+      // enough, and holds it up as long as the stone would have flown
+      const barX = Math.round(this.x) + SPRITE / 2 - 9;
+      if (e < 0.8) {
+        Object.assign(pose, { body: "squash", face: "happy", thrown: ["ground_bar", barX, Math.round(onHead / 2) - 4] });
+      } else if (e < 0.8 + flight) {
+        const up = power >= 0.5 ? onHead - 2 : Math.round(onHead / 2) + Math.round(Math.sin(e * 9) * 2);
+        Object.assign(pose, { body: power >= 0.5 ? "stretch" : "squash", face: "eat_open", thrown: ["ground_bar", barX, up] });
+      } else if (power >= 0.5) {
+        this.cheer(pose, t);
+      } else {
+        pose.face = "smile";
+      }
+      return;
+    }
     if (e < 0.8) { // winds up
       Object.assign(pose, { body: "squash", face: "happy", thrown: ["stone", ballX, onHead - 3] });
     } else if (e < 0.8 + flight) {
@@ -4736,6 +4789,68 @@ export class PetScene {
     } else {
       pose.face = "smile";
     }
+  }
+
+  /**
+   * Practicing a stat alone at the training ground (ground.ts): it lifts the barbell up and down,
+   * runs back and forth by the cones, or hops after the arrows on the coach's board.
+   */
+  private trainSolo(pose: Pose, view: SceneView, t: number, now: number): void {
+    const e = this.elapsed(view, now);
+    const onHead = GROUND - this.petTop + 1;
+    if (view.activity_item === "strength") {
+      const up = Math.sin(((e % 3) / 3) * Math.PI);
+      const low = Math.round(onHead / 2) - 4;
+      Object.assign(pose, {
+        body: up > 0.6 ? "stretch" : "squash", face: up > 0.6 ? "eat_open" : "happy",
+        thrown: ["ground_bar", Math.round(this.x) + SPRITE / 2 - 9, low + Math.round(up * (onHead - 2 - low))],
+      });
+    } else if (view.activity_item === "speed") {
+      this.facing = Math.cos(e * 1.5) >= 0 ? 1 : -1;
+      Object.assign(pose, {
+        dx: Math.round(Math.sin(e * 1.5) * 10), body: Math.trunc(t * 6) % 2 ? "stretch" : "idle", face: "happy",
+      });
+    } else {
+      const step = PetScene.soloArrow(e);
+      const q = e % 1;
+      const hop = q < 0.7 ? Math.sin((q / 0.7) * Math.PI) : 0;
+      Object.assign(pose, {
+        body: hop > 0.3 ? "stretch" : "idle", face: "happy", jump: hop * (step === "up" ? 6 : 2),
+        dx: step === "left" ? -Math.round(hop * 3) : step === "right" ? Math.round(hop * 3) : 0,
+      });
+    }
+  }
+
+  /** The arrow the coach's board shows `e` seconds into practicing smarts alone: a new one every second. */
+  private static soloArrow(e: number): string {
+    return battle.DIRECTIONS[(Math.floor(e) * 3 + 1) % battle.DIRECTIONS.length];
+  }
+
+  /** Is the barbell off its rack: lifted in an exercise, or while it practices strength alone? */
+  private barLifted(view: SceneView, now: number): boolean {
+    if (now >= view.activity_until) {
+      return false;
+    }
+    const e = this.elapsed(view, now);
+    return (view.activity === "train_strength" && e < 1.6 + 1.6 * Number(view.activity_item || 0))
+      || (view.activity === "train_solo" && view.activity_item === "strength");
+  }
+
+  /** The hop the coach's board shows right now, or null: the one the pet is showing, or one to practice alone. */
+  private boardArrow(view: SceneView, now: number): string | null {
+    if (now >= view.activity_until) {
+      return null;
+    }
+    const e = this.elapsed(view, now);
+    if (view.activity === "train_solo" && view.activity_item === "smarts") {
+      return PetScene.soloArrow(e);
+    }
+    if (view.activity === "train_show") {
+      const position = e / battle.SHOW_STEP;
+      const q = position - Math.floor(position);
+      return q >= 0.1 && q <= 0.8 ? view.activity_item.split(",")[Math.floor(position)] ?? null : null;
+    }
+    return null;
   }
 
   /** Hops the sequence to remember, one direction after the other, then waits for the answer. */
@@ -5968,6 +6083,67 @@ export class PetScene {
     for (let x = 3 - mod(Math.round(this.scroll), 7); x < this.width; x += 7) {
       img.point(x, GROUND, dimmed(grass, dim));
     }
+  }
+
+  /** The running track of the training ground, in place of the soil (ground.ts). */
+  private drawTrack(img: Image): void {
+    const dim = 0.45 + 0.55 * (1 - this.night);
+    img.rectangle(0, GROUND + 2, this.width - 1, this.height - 1, dimmed(TRACK, dim));
+    for (let x = 0; x < this.width; x++) {
+      if ((x + 1) % 4) {
+        img.point(x, GROUND + 5, dimmed(TRACK_LINE, dim)); // a dashed line between two lanes
+      }
+    }
+    for (let x = 1; x < this.width; x += 5) {
+      img.point(x, GROUND + 7, dimmed(TRACK_SHADE, dim));
+    }
+    img.hline(0, this.width - 1, GROUND + 9, dimmed(TRACK_LINE, dim));
+  }
+
+  /**
+   * The equipment of the training ground, where it stands: the barbell on its rack (unless it is
+   * lifted), the coach's board with the hop it shows (`arrow`), and the cones in front of it.
+   */
+  private drawEquipment(img: Image, equipment: readonly string[], lifted: boolean, arrow: string | null): void {
+    if (equipment.includes("barbell")) {
+      const rack = this.dimmedSprite("ground_rack");
+      this.stand(img, rack, RACK_X);
+      if (!lifted) {
+        const bar = this.dimmedSprite("ground_bar");
+        img.paste(bar, RACK_X - Math.floor(bar.width / 2), GROUND + 2 - rack.height - BAR_REST);
+      }
+    }
+    if (equipment.includes("coach_board")) {
+      const board = this.dimmedSprite("ground_board");
+      this.stand(img, board, BOARD_X);
+      if (arrow) {
+        const shape = ARROWS[arrow];
+        bitmap(img, BOARD_X - Math.floor(shape[0].length / 2), GROUND + 2 - board.height + 4, [BOARD_ARROW, shape]);
+      }
+    }
+    if (equipment.includes("cones")) {
+      const cone = this.dimmedSprite("ground_cone");
+      for (const x of CONES_X) {
+        this.stand(img, cone, x);
+      }
+    }
+  }
+
+  /**
+   * One frame of the training ground with nobody on it (ground.ts): the track and the equipment the
+   * home has. Returns [image, seconds until the next frame]. Any scene can draw it.
+   */
+  renderGround(ground: GroundView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    const dt = clamp(t - this.last, 0.0, 0.5);
+    this.last = t;
+    this.moon = moonPhase(now.getTime() / 1000);
+    const img = this.skyImage(now, sky.clouds(sky.codeOf(weather))[0] >= 2).copy();
+    this.drawWeather(img, weather, t, dt);
+    this.drawGround(img);
+    this.drawTrack(img);
+    this.drawEquipment(img, ground.equipment, false, null);
+    this.drawStatus(img, [], weather, now, t);
+    return [img, 1 / FPS];
   }
 
   /**

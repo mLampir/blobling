@@ -41,6 +41,8 @@ test("the pet is described, acted on, renamed and started over", async () => {
   assert.equal((await ask(pet, "GET", `/api/pet?pet=${mimi.id}`)).name, "Mimi Mau");
   assert.equal((await ask(pet, "POST", "/api/pet/look", { pet: mimi.id })).id, mimi.id);
   assert.equal((await ask(pet, "GET", "/api/pet")).id, mimi.id);
+  // or to a place after the houses: the training ground every home has
+  assert.deepEqual((await ask(pet, "POST", "/api/pet/look", { place: "ground" })).ground, { equipment: [], there: [] });
   assert.equal((await ask(pet, "POST", "/api/pet/settings", { name: "Egg", pet: egg.id })).name, "Egg");
   assert.equal((await ask(pet, "GET", `/api/pet/events?pet=${egg.id}`)).events[0].action, "new_egg");
 });
@@ -54,6 +56,7 @@ test("an invalid request throws the key of its text, and other paths are not the
     ["/api/pet/new_egg", null, "confirm"],
     ["/api/pet/new_egg", { confirm: true, place: "nobody" }, "no_pet"],
     ["/api/pet/look", { pet: "nobody" }, "no_pet"],
+    ["/api/pet/look", { place: "moon" }, "unknown_place"],
     ["/api/pet/action", { action: "pet", pet: "nobody" }, "no_pet"],
     ["/api/pet/settings", { name: "  " }, "name_length"],
   ];

@@ -7,6 +7,7 @@
  */
 
 import * as care from "./care";
+import * as ground from "./ground";
 import * as home from "./home";
 import { Random } from "./random";
 import * as sky from "./sky";
@@ -61,7 +62,7 @@ export function practicable(state: PetState): string[] {
 /** Can it get busy by itself at the time t? (The model checks sleep, trips and the activity.) */
 function free(state: PetState, t: number): boolean {
   return state.stage !== "egg" && !state.sick && state.game === null && state.training === null
-    && state.stats.energy >= ENERGY && t - state.seen_at >= QUIET;
+    && !ground.there(state, t) && state.stats.energy >= ENERGY && t - state.seen_at >= QUIET;
 }
 
 /**
@@ -89,6 +90,13 @@ export function step(state: PetState, t: number, busy: boolean,
   if (state.found === null && look.random() < FIND_CHANCE) {
     state.found = home.smallThing(state, look);
     return ["discover", state.found, "found", state.found];
+  }
+  const workouts = ground.practicable(state);
+  if (workouts.length > 0 && rng.random() < ground.SOLO_CHANCE) {
+    // over to the training ground, with the equipment for a stat (ground.ts)
+    const skill = rng.choice(workouts);
+    ground.practiceAlone(state, skill, t);
+    return ["train_solo", skill, "solo", skill];
   }
   const tricks = practicable(state);
   const pastime: Pastime = tricks.length > 0 && rng.random() < 0.5 ? "practice" : "ball";

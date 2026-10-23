@@ -300,12 +300,13 @@ favorite can stay while new eggs are raised for the album.
   nobody does anything with for a day and a half goes to Grandma's, like a
   single pet (see [At Grandma's](#at-grandmas)).
 - **Switching only moves the camera.** A strip under the scene shows the
-  street: every pet at home, in the order of their houses, then the yard. A
+  street: every pet at home, in the order of their houses, then the yard and
+  the [training ground](#the-training-ground). A
   frame marks the one the camera is on; a tap on another looks at it, and the
   picture pans along the street to its house. Nobody moves: each pet keeps its
   own house, plant and decorations. A small dot on a pet says it needs
   something, a faded one is away (on a trip, at Grandma's), and a dot on the
-  yard says somebody is there.
+  yard or the training ground says somebody is there.
 - **One store for all.** The finds, the food and the eggs belong to the whole
   home. A hat or a decoration exists once: put it on one pet, and it comes off
   the other. A pet that moves to another home takes its hat and the
@@ -378,7 +379,8 @@ it; a tap there pans over, a tap on a pet pans back.
 - **The pets go by themselves.** When a pet's satiety is down to 50 and the
   trough has a portion, or its hygiene is down to 50 and the basin has water,
   it hops off at the edge of its garden, as soon as it is awake, at home and
-  not busy (no trip, no game, no training, not at Grandma's). In the yard it
+  not busy (no trip, no game, no training, not at Grandma's or at the
+  training ground). In the yard it
   eats one portion (+30 satiety) or splashes about once (+30 hygiene), or
   both, and comes home again: a minute or two. If the camera is on
   that pet, it pans along to the yard and back; two pets there at the same
@@ -483,6 +485,30 @@ diary, costs energy and a little satiety. Between two exercises, whichever they 
 the pet needs the same growing break as between tricks (two, ten, thirty
 minutes, an hour, two hours); after it, an exercise counts in full again. A tap before the signal, or a sequence that is all wrong, brings
 nothing and costs nothing, not even a break.
+
+### The training ground
+
+Every home has a training ground from the start, after the houses and the
+yard: a red running track instead of the garden. Training happens there.
+
+- **Over and back.** Opening the training in the app takes the pet over, and
+  the camera goes along (it pans as to the yard); closing it brings the pet
+  home. Left there, it comes home five minutes after the last exercise.
+  Anything else you do with it (feeding, petting, a trip, …) brings it home
+  too; dressing it up or setting out a decoration doesn't.
+- **Equipment** is found once on trips, one piece for each stat, and stands
+  there from then on: training cones on the meadow (speed), a coach's board
+  in the mushroom forest (smarts) and a barbell on a rack on the mountain
+  (strength). With the piece for a stat, a perfect exercise of that stat is
+  worth 5 points instead of 4. The pet lifts the barbell over its head (or
+  only halfway on a weak swipe), and the board lights up the hop the pet
+  shows.
+- **Practicing alone.** With a piece of equipment, the pet now and then goes
+  over by itself for a minute and practices that stat: 1 point, a little
+  mood, a little energy, and no more than 2 points per stat until somebody
+  trains it in that stat again, like practicing a trick alone.
+- With two pets or more, the street strip shows the training ground after
+  the yard; a tap there looks at it, also while nobody is over there.
 
 ## Fishing
 
@@ -682,6 +708,10 @@ cave and on the mountain. Inside the cave there is no sky and no weather.
   lie on it; the pet finds them more often then.
 - **The ruins:** an old castle with ivy on its walls, battlements and a bell
   in its tower. In the evening the torches burn.
+
+Three finds are for the [training ground](#the-training-ground): the training
+cones on the meadow, the coach's board in the mushroom forest and the barbell
+on the mountain.
 
 Four finds are for the [yard](#the-yard): the water basin at the stream, the
 rain barrel there too (only while it rains), and the planks at the coast and in the ruins, which only turn up once the area's
@@ -1112,6 +1142,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Guests in the garden: what draws them, peeking over the fence | `core/src/garden.ts` |
 | The troublemaker: when she comes, what she takes, being chased off, her egg | `core/src/magpie.ts` |
 | Battle stats, training, opponents, guardians, scuffles | `core/src/battle.ts` |
+| The training ground: going over and back, the equipment, practicing alone | `core/src/ground.ts`, `renderGround` in `core/src/scene.ts` |
 | A scuffle (or a show at the trick festival) watched again in the app | `app/src/replay.ts` |
 | Keepsakes of the lines: which line has which, what each does, when one comes home | `core/src/keepsake.ts`, `Pet.completeLines` in `core/src/pet.ts` |
 | Seeds, plant, food, decorations, hats, eggs, warmth (the ember stone, cold mornings), hot afternoons, the house and its spots | `core/src/home.ts` |
@@ -1126,7 +1157,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Neighbours getting together, sleeping side by side, copying tricks | `core/src/companion.ts` |
 | The yard: trough and basin, portions, sizes and upgrades, the visits and the floors; all pets stepped together | `core/src/yard.ts`, `core/src/model.ts` (`advanceTogether`), `renderYard` in `core/src/scene.ts` |
 | Moving between a phone and a display: move numbers, the sealed copy, fetching back | `core/src/pet.ts` (`release`, `adopt`, `handOver`, `takeIn`, `fetchBack`), `app/src/main.ts` |
-| The camera panning along the street (panel and app), and which pet the panel shows | `core/src/street.ts`, `pi/src/display.ts` |
+| The camera panning along the street (panel and app), the places after the houses (`PLACES`), and which pet the panel shows | `core/src/street.ts`, `pi/src/display.ts` |
 | Everything drawn on the panel | `core/src/scene.ts`, sprites in `app/pet/assets/` |
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
 | Preview of the scene on a PC, pictures for [pets.md](pets.md), the yard | `tools/pet_preview.ts` (`npm run preview`, `-- --yard`) |
@@ -1289,6 +1320,7 @@ next to the same things looks small and sweet, which is fine.
 | What it sits at or goes into | about as wide as the child | the pond; the trough and the water basin (16, 20 and 24 pixels by size) |
 | What grows | a bush or a herb below the child, a tree or a sunflower above it | the plant |
 | Decorations | 7–12 pixels: things in the garden, not furniture for the pet | the windmill, the snow globe |
+| What it trains with | made for the pet, not a doll's toy: up to the child's width, or taller than it | the barbell on its rack (19 wide), the coach's board (16 wide, 27 high), the cones (7) |
 
 A hat sits on the head, never on what makes the form: the lure, a crown,
 a flame or a rotor stays visible. Where the top of a form is such a thing,

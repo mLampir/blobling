@@ -1000,14 +1000,13 @@ setInterval(() => { if (!document.hidden && view === "home") matchSky(); }, 2000
 
 // Switching to another pet with a Pi: the camera pans along the street from the house it showed
 // (on the phone, its own scene does that by itself). `before`: the ids of the pets, in the order
-// of their houses, before the switch; `id` null: to the yard after the last house, `wasYard`:
-// from there.
+// of their houses, before the switch; `to`, `from`: a pet's id or a place after the last house
+// ("yard", "ground"); `from` defaults to the camera's pet.
 let panning = null, panFrame = null, previewGen = 0;
-function panTo(before, id, wasYard = false) {
-  if (app.home() === "phone" || !current || (id === current.id && !wasYard)) return;
-  const spot = (x) => (x === null ? before.length : before.indexOf(x));
-  const from = wasYard ? before.length : spot(current.id), to = spot(id);
-  const steps = from >= 0 && to >= 0 ? to - from : 1;
+function panTo(before, to, from = current && current.id) {
+  if (app.home() === "phone" || !current || to === from) return;
+  const a = app.place(before, from), b = app.place(before, to);
+  const steps = a >= 0 && b >= 0 ? b - a : 1;
   if (!steps) return;
   const copy = document.createElement("canvas");
   copy.width = scene.width;
@@ -1268,6 +1267,7 @@ function picked(s, action) {
 // Sheets: one at a time, in the place of the tray, with the scene and what it needs in sight
 function openSheet(id) {
   if (id !== "trick-mode" && !$("trick-mode").hidden) holdBaton(false); // the tricks hand the baton back
+  if (id !== "train-mode" && !$("train-mode").hidden) goToGround(false); // from the training ground back home
   document.querySelectorAll(".sheet").forEach((sheet) => { sheet.hidden = sheet.id !== id; });
   $("view-home").classList.toggle("busy", !!id);
   if (id) showView("home");
@@ -1609,7 +1609,7 @@ function renderBag(s) {
     bag.dataset.key = key;
     const fruits = [], foods = [], seeds = [], wear = [];
     for (const item of s.items) {
-      if (item.kind === "yard") continue; // it stands in the yard
+      if (item.kind === "yard" || item.kind === "ground") continue; // it stands in the yard or on the training ground
       if (item.kind === "fruit" || item.kind === "food") {
         const b = bagTile(app.thing(item.id), item.label, [item.label, ...effectText(item.effects)].join(" · "));
         b.dataset.action = "feed";
@@ -2592,23 +2592,27 @@ $("sleep").addEventListener("click", () => {
   if (current) act(current.asleep ? "wake" : "sleep");
 });
 
-// The street under the scene, with two pets or more: every house in its order and then the yard.
-// A tap pans there; the place the scene shows is framed. A dot: that pet needs something, or a pet
-// is over in the yard; faded: it is away (on a trip, or at Grandma's).
+// The street under the scene, with two pets or more: every house in its order, then the yard and
+// the training ground. A tap pans there; the place the scene shows is framed. A dot: that pet needs
+// something, or a pet is over at that place; faded: it is away (on a trip, or at Grandma's).
 function renderStreet(s) {
   const row = $("street");
   row.hidden = s.pets.length < 2;
   if (row.hidden) return;
-  const yard = app.atYard(s);
-  const key = s.pets.map((p) => p.id + p.stage + p.species).join() + (s.yard ? ",yard" : "");
+  const at = app.atPlace(s);
+  const places = [...(s.yard ? ["yard"] : []), ...(s.ground ? ["ground"] : [])];
+  const key = s.pets.map((p) => p.id + p.stage + p.species).join() + "," + places.join();
   if (row.dataset.ids !== key) {
     row.dataset.ids = key;
-    const toYard = document.createElement("button");
-    toYard.className = "place";
-    toYard.dataset.id = "yard";
-    toYard.setAttribute("aria-label", t("page.look_yard"));
-    toYard.append(Object.assign(document.createElement("img"), { alt: "", src: app.thing("yard") }));
-    toYard.addEventListener("click", lookYard);
+    const toPlace = (where) => {
+      const b = document.createElement("button");
+      b.className = "place";
+      b.dataset.id = where;
+      b.setAttribute("aria-label", t(`page.look_${where}`));
+      b.append(Object.assign(document.createElement("img"), { alt: "", src: app.thing(where) }));
+      b.addEventListener("click", () => lookPlace(where));
+      return b;
+    };
     row.replaceChildren(...s.pets.map((p) => {
       const b = document.createElement("button");
       b.dataset.id = p.id;
@@ -2618,29 +2622,29 @@ function renderStreet(s) {
       b.append(img);
       b.addEventListener("click", () => look(p.id));
       return b;
-    }), ...(s.yard ? [toYard] : []));
+    }), ...places.map(toPlace));
   }
   for (const p of s.pets) {
     const b = row.querySelector(`[data-id="${p.id}"]`);
-    b.classList.toggle("here", !yard && p.id === s.id);
+    b.classList.toggle("here", !at && p.id === s.id);
     b.classList.toggle("calls", p.needs); // not "needs": that is the row of meters
     b.classList.toggle("away", p.away || p.grandma);
     b.classList.toggle("phone", !!p.phone);
     b.setAttribute("aria-label", t(p.phone ? "page.look_phone" : "page.look", { name: p.name }));
   }
-  const toYard = row.querySelector('[data-id="yard"]');
-  if (toYard) {
-    toYard.classList.toggle("here", yard);
-    toYard.classList.toggle("there", s.yard.there.length > 0);
+  for (const where of places) {
+    const b = row.querySelector(`[data-id="${where}"]`);
+    b.classList.toggle("here", at === where);
+    b.classList.toggle("there", s[where].there.length > 0);
   }
 }
 
 async function look(id) {
   if (!current) return;
-  const before = current.pets.map((p) => p.id), wasYard = app.atYard(current);
+  const before = current.pets.map((p) => p.id), from = app.atPlace(current) ?? current.id;
   try {
     const state = await app.look(id);
-    panTo(before, state.id, wasYard);
+    panTo(before, state.id, from);
     render(state);
     feel("tap");
   } catch (err) {
@@ -2648,16 +2652,27 @@ async function look(id) {
   }
 }
 
-async function lookYard() {
+async function lookPlace(where) {
   if (!current) return;
-  const before = current.pets.map((p) => p.id);
+  const before = current.pets.map((p) => p.id), from = app.atPlace(current) ?? current.id;
   try {
-    const state = await app.lookYard();
-    panTo(before, null);
+    const state = await app.lookPlace(where);
+    panTo(before, where, from);
     render(state);
     feel("tap");
   } catch (err) {
     fail(err);
+  }
+}
+
+// The training sheet opens: the pet goes over to the training ground, and comes home when it closes
+async function goToGround(going) {
+  if (!current || current.stage === "egg") return;
+  try {
+    const r = await action("train", going ? "go" : "leave");
+    if (r.accepted) render(r.state);
+  } catch {
+    // then it goes over with the first exercise, and home after a while by itself
   }
 }
 
@@ -2915,6 +2930,7 @@ let openTraining;
     tell.textContent = "";
     show("menu");
     openSheet("train-mode");
+    goToGround(true);
   };
   $("train-close").addEventListener("click", () => openSheet(null));
   $("train-back").addEventListener("click", () => show("menu"));

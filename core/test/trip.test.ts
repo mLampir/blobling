@@ -150,7 +150,7 @@ test("the tide at the coast comes and goes with the clock, and low tide brings m
 
 test("each area shows what is still to discover there once", () => {
   const found = () => trip.discoveries(pet, "meadow").filter((f) => f.found).map((f) => f.id);
-  assert.deepEqual(trip.discoveries(pet, "meadow").map((f) => f.id), ["egg_beak", "flag", "windmill", "daisy", "leaf", "bobble"]);
+  assert.deepEqual(trip.discoveries(pet, "meadow").map((f) => f.id), ["egg_beak", "flag", "windmill", "daisy", "leaf", "bobble", "cones"]);
   assert.deepEqual(found(), []);
   home.addItem(pet, "windmill");
   home.addItem(pet, "seed_berry"); // seeds come again and again, they don't count

@@ -28,7 +28,8 @@ a day and also tells you the time and the weather.
   three adult forms, depending on how you cared for it. It learns tricks, trains,
   goes on trips, scuffles with whoever gets in its way there and brings things
   home, among them food that gives it an edge on the next trip or in training,
-  and the diary keeps every trip. Seven areas open up, each one past a guardian: five
+  and the diary keeps every trip. It trains on a running track down the street,
+  where equipment found on trips makes the exercises count more. Seven areas open up, each one past a guardian: five
   one after the other, then the path forks to the coast, where the tide comes and goes
   with the clock, and to the old castle ruins. Each guardian keeps a rare egg that
   something else hatches from.
@@ -372,6 +373,7 @@ export LED_MATRIX_BDF_DIR=<path-to>/rpi-rgb-led-matrix/fonts
 npm run preview -- --spoiler-free   # → pet_preview.png
 npm run preview -- play --gif       # → pet_play.gif
 npm run preview -- --yard           # the yard's sizes and levels, and a pet going over → pet_yard.png, pet_yard.gif
+npm run preview -- --ground         # the training ground, empty and with pets training → pet_ground.png
 npm run sounds                      # the sound files, from the recipes in tools/sfx.ts → app/pet/sounds/
 npm run balance                     # owners of different kinds play pets for three weeks → the values checked (names forms)
 npm run collection                  # a whole home played for months → when each line's egg and forms come (names forms)
@@ -507,9 +509,9 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 |---|---|
 | `setup.sh` | Sets up the Pi completely (`--app`: update the app only) |
 | `CONTRIBUTING.md` | How to contribute, and the license (with the app store permission) a contribution comes under |
-| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications, `yard.ts` is the home's shared yard, `keepsake.ts` the keepsakes of the lines, `trail.ts` the trails to the secret forms, `magpie.ts` the troublemaker who steals decorations |
+| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications, `yard.ts` is the home's shared yard, `ground.ts` the training ground, `keepsake.ts` the keepsakes of the lines, `trail.ts` the trails to the secret forms, `magpie.ts` the troublemaker who steals decorations |
 | `pi/src/main.ts` | Entry point on the Pi: panel driver, display loop, web server |
-| `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) and its camera: which pet it shows, panning along the street and over to the yard |
+| `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) and its camera: which pet it shows, panning along the street and over to the yard or the training ground |
 | `pi/src/web.ts`, `pi/src/network.ts` | Web interface and API, and the check that a request comes from the home network |
 | `pi/src/config.ts`, `pi/src/storage.ts` | `config.ini` and the paths; the pet's save file and the language files |
 | `pi/src/settings.ts` | Language and location as the settings page sets them (`settings.json`), over `config.ini` |
