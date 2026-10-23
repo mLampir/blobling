@@ -3,10 +3,12 @@
  *
  * Every stage lasts a fixed time, less what warmth takes off it (petting the egg, and the ember
  * stone of home.ts); after that the evolution is "due". It is triggered by hand in the app ("Hatch" / "Evolve"), so that you are watching and get to see the animation. If nobody
- * does that for a day, the pet evolves by itself (but only while awake and not at bedtime).
+ * does that for a day, an egg or a baby evolves by itself (but only while awake and not at
+ * bedtime). A child waits: it grows up when the player picks its adult form.
  *
- * Which adult form it becomes is decided by the care diary of the child stage (decideSpecies), and
- * for the cloud and the stone line by the world the moment it grows up (rain, snow, night, full moon).
+ * Which adult forms it may become (choices) goes by the care diary of the child stage, by what the
+ * home has had before, and for some lines by the world the moment it grows up (rain, night, full
+ * moon).
  *
  * There are several lines of pets. The egg decides which line a pet belongs to: the usual egg is
  * a slime, and a rare egg from a trip (home.EGGS) is something else. Until a pet has grown up,
@@ -23,7 +25,7 @@ export const NEXT_STAGE: Partial<Record<Stage, Stage>> = { egg: "baby", baby: "c
 // How long a stage lasts (seconds)
 export const STAGE_SECONDS: Partial<Record<Stage, number>> = { egg: 3600, baby: 3 * 86400, child: 7 * 86400 };
 export const EGG_WARMTH = 15 * 60; // petting warms the egg: it hatches this much sooner
-export const AUTO_EVOLVE_AFTER = 24 * 3600; // due and nobody taps → it evolves by itself
+export const AUTO_EVOLVE_AFTER = 24 * 3600; // an egg or a baby that is due and nobody taps: it evolves by itself (a child waits to be asked)
 
 // Line: its adult forms; the last one is the secret special form (docs/pets.md)
 export const LINES: Record<string, readonly string[]> = {
@@ -82,7 +84,8 @@ export const FORMS = Object.entries(LINES).flatMap(([line, adults]) => [
   ...STAGES.slice(0, -1).map((stage) => `${stage}:${line}`), ...adults.map((adult) => `adult:${adult}`)]);
 
 // Rules for the adult form (order = priority)
-export const PURRLOOP_LOVE_PER_DAY = 8; // counted pettings per day → purrloop
+export const PURRLOOP_LOVE_PER_DAY = 8; // counted pettings in a day: on PURRLOOP_DAYS days of the child stage → purrloop
+export const PURRLOOP_DAYS = 7;
 export const GEMPEROR_CARE = 0.85; // well cared for this part of the time → gemperor, otherwise angloop
 export const FLARELET_PLAYS_PER_DAY = 2.5; // the ember line: played with this often → flarelet, otherwise lanternling
 export const ROAMTAIL_TRIPS_PER_DAY = 1; // the fox line: a trip a day makes a wanderer → roamtail, otherwise filchfox
@@ -90,7 +93,7 @@ export const ROAMTAIL_TRIPS_PER_DAY = 1; // the fox line: a trip a day makes a w
 export const NEEDLENUB_LOVE_PER_DAY = 5; // the leaf line: a cactus that gets cuddled → needlenub, otherwise twiggle
 export const DRAKWING_BATTLES_PER_DAY = 2; // the duck line: scuffles a day, won or not → drakwing, otherwise quill
 export const STEAMO_BATHS_PER_DAY = 2; // the hippo line: bathed this often → steamo, otherwise lillypot
-export const RAPIERRE_TRICKS_PER_DAY = 2; // the beak line: tricks practiced → rapierre, otherwise parcelbeak
+export const RAPIERRE_TRICKS = 10; // the beak line: tricks practiced or shown as a child → rapierre, otherwise parcelbeak
 export const FAVORITE_FRUITS = 4; // the caterpillar line: this many of one fruit, more than of any other → sunflutter (sunflower), otherwise mothmuff
 export const BARRELBARD_BOND = 4; // the dog line: bond hearts when it grows up → barrelbard, otherwise digby
 export const JEWELWING_BATHS = 14; // the dragonfly line: baths as a child → jewelwing, otherwise rotorfly
@@ -106,19 +109,19 @@ export const BUBBLEHELM_RAIN_TRIPS = 3; // the duck line: trips with rain on the
 export const HIPPULA_TUCKED = 6; // the hippo line: evenings tucked in by hand → hippula
 export const ACEWING_GUARDIANS = 2; // the beak line: guardians it got past → acewing
 // The caterpillar line: cherries the fruit it ate most (at least FAVORITE_FRUITS) → jesterwing
-// The dog line: it knows all four tricks when it grows up → pawdini
+// The dog line: as a child it showed the dance (its own trick) at the trick festival, and it worked → pawdini
 // The dragonfly line: it grows up while the sun shines after rain (SUN_AFTER_RAIN) → prismfly
 export const SUN_AFTER_RAIN = 3 * 3600; // seconds since the rain stopped that still count
 // The beaver line: the house is built to its last step when it grows up → archibeaver
 // The crab line: it grows up after dark while a decoration that glows stands outside → lightclaw,
 // otherwise teacrab
-export const CASTLECRAB_COAST_TRIPS = 3; // the crab line: trips to the coast → castlecrab
+// The crab line: it grows up while the sandcastle from the coast stands outside → castlecrab
 // The axolotl line: its health never below WEAK_HEALTH as a child → medilotl, otherwise mossolotl;
 // it beat Gloompeep as a child → axodrake
 // The mouse line: its satiety never below HUNGRY_SATIETY as a child → cogsqueak, otherwise
 // sirthimble; it wears one of Grandma's knitted hats (grandma.HATS) when it grows up → woolwhisk
 export const HUNGRY_SATIETY = 25;
-export const SNORBEAR_HONEYCOMBS = 4; // the bear line: honeycombs eaten as a child → snorbear, otherwise hivebear
+export const SNORBEAR_HONEYCOMBS = 3; // the bear line: honeycombs eaten as a child → snorbear, otherwise hivebear
 export const URSASTRA_BOND = 5; // the bear line: bond hearts when it grows up (all of them) → ursastra
 // The penguin line: it has learned the spin (its pirouette) when it grows up → glidepin, otherwise tuxwaddle
 export const AURORAPIN_BEFORE_SUNRISE = 60; // the penguin line: it grows up this many minutes before sunrise or less → aurorapin
@@ -127,7 +130,7 @@ export const AURORAPIN_BEFORE_SUNRISE = 60; // the penguin line: it grows up thi
 // The owl line: it grows up after dark under a clear sky → stargazer, otherwise owlbert
 export const NINJOWL_CLEAN_BATTLES = 3; // the owl line: scuffles as a child without being knocked over once → ninjowl
 export const HIDEWELL_GAMES = 7; // the chameleon line: games of hide and seek as a child → hidewell, otherwise palettino
-// The chameleon line: it has a friend when it grows up → mirrorleon
+// The chameleon line: it has a friend from the wild when it grows up (a guest from the garden doesn't count) → mirrorleon
 export const CLOCKBEETLE_MINUTES = 5; // the scarab line: it grows up within this many minutes after a full hour → clockbeetle, otherwise solroll
 export const PHARABUG_HEAT = 27; // the scarab line: °C or more when it grows up → pharabug
 // The kite line: it has learned the dance when it grows up → lionkite, otherwise origrane; a
@@ -137,7 +140,7 @@ export const ABYSSINK_SMARTS = 60; // the octopus line: its smarts (battle.SKILL
 // The gargoyle line: it rains when it grows up → fountaingle, otherwise gargard; it grows up in the
 // noon hour (BELLFRY_HOUR) → bellfry
 export const BELLFRY_HOUR = 12;
-export const CARDWING_TRICKS_PER_DAY = 3; // the magpie line: tricks practiced → cardwing, otherwise glintrick
+export const CARDWING_TRICKS = 15; // the magpie line: tricks practiced or shown as a child → cardwing, otherwise glintrick
 // the magpie line: a first place at the trick festival as a child → illusionna
 export const MISSING_AFTER = 30; // days with pets before a line whose egg never came gets the quiet safety net (Pet.longMissing)
 export const HINT_AFTER = 1440; // minutes in the diary before the child's lure shows where it is heading
@@ -361,6 +364,24 @@ export function recordMinute(state: PetState, good: boolean): void {
   }
 }
 
+/** A counted petting in a child's diary, and the days of its child stage with PURRLOOP_LOVE_PER_DAY of them. */
+export function recordLove(state: PetState): void {
+  if (state.stage !== "child") {
+    return;
+  }
+  const diary = state.diary;
+  const day = Math.floor((diary.minutes ?? 0) / 1440);
+  if (diary.love_day !== day) {
+    diary.love_day = day;
+    diary.love_today = 0;
+  }
+  diary.love = (diary.love ?? 0) + 1;
+  diary.love_today += 1;
+  if (diary.love_today === PURRLOOP_LOVE_PER_DAY) {
+    record(state, "love_days");
+  }
+}
+
 export function record(state: PetState, kind: string, amount = 1): void {
   if (state.stage === "child") {
     state.diary[kind] = (state.diary[kind] ?? 0) + amount;
@@ -404,6 +425,8 @@ export interface World {
   dance?: boolean;
   /** whether it has a friend (a wild pet or a guest from the garden), */
   friend?: boolean;
+  /** whether one of its friends is from the wild (not a guest from the garden), */
+  wildFriend?: boolean;
   /** how many tricks it knows, */
   tricks?: number;
   /** its smarts (battle.SKILLS), */
@@ -412,6 +435,8 @@ export interface World {
   strongest?: string;
   /** a decoration that glows stands outside (home.GLOWING_DECO), */
   glowOutside?: boolean;
+  /** the sandcastle from the coast stands outside, */
+  sandcastle?: boolean;
   /** whether it wears one of Grandma's knitted hats (grandma.HATS), */
   grandmaHat?: boolean;
   /** and whether its house is built to the last step (home.HOUSE_STEPS). */
@@ -432,153 +457,209 @@ export function childDays(state: PetState): number {
   return Math.max(1.0, (STAGE_SECONDS.child! - state.egg_warmth) / 86400);
 }
 
-/**
- * The adult form the care diary and, for the cloud and the stone line, the world lead to.
- *
- * A rule "so often per day" is a total for the whole child stage (`stageDays`): a day away is made
- * up on the others, and while the evolution waits for a tap the goal doesn't grow any more. Until
- * then the rule asks for the share of the days so far, so that the hint shows whether the child is
- * on its way.
- */
-export function decideSpecies(diary: Record<string, number>, line = "blob", world: World = {},
-    stageDays = STAGE_SECONDS.child! / 86400): string {
-  const minutes = diary.minutes ?? 0;
-  const days = Math.min(Math.max(1.0, minutes / 1440), stageDays);
-  const enough = (kind: string, perDay: number) => (diary[kind] ?? 0) >= perDay * days;
-  const done = (kind: string, total: number) => (diary[kind] ?? 0) >= total;
-  const fruits = ["berry", "sunflower", "cherry", "herb"].map((kind) => [kind, diary[`food_fruit_${kind}`] ?? 0] as const);
-  const most = (kind: string) => { // the fruit it ate most, and enough of it
-    const eaten = fruits.find(([k]) => k === kind)![1];
-    return eaten >= FAVORITE_FRUITS && fruits.every(([k, n]) => k === kind || n < eaten);
-  };
-  const special = ({
-    ember: done("food_glowberry", SALAMBER_GLOWBERRIES),
-    stone: Boolean(world.fullMoon && world.dark),
-    fox: done("trips_forest", FOXFIRE_FOREST_TRIPS),
-    cloud: Boolean(world.snowing),
-    leaf: done("plant_fruits", SAKURIN_PLANT_FRUITS),
-    duck: done("rain_trips", BUBBLEHELM_RAIN_TRIPS),
-    hippo: done("tucked", HIPPULA_TUCKED),
-    beak: done("guardians", ACEWING_GUARDIANS),
-    caterpillar: most("cherry"),
-    dog: Boolean(world.allTricks),
-    dragonfly: Boolean(world.afterRain && !world.raining && !world.dark),
-    beaver: Boolean(world.houseBuilt),
-    crab: done("trips_coast", CASTLECRAB_COAST_TRIPS),
-    axolotl: done("won_gloompeep", 1),
-    mouse: Boolean(world.grandmaHat),
-    bear: (world.bond ?? 0) >= URSASTRA_BOND,
-    penguin: beforeSunrise(world),
-    bat: Boolean(world.fullMoon && world.dark),
-    owl: done("clean_battles", NINJOWL_CLEAN_BATTLES),
-    chameleon: Boolean(world.friend),
-    scarab: (world.temp ?? -Infinity) >= PHARABUG_HEAT,
-    kite: Boolean(world.storm),
-    octopus: (world.smarts ?? 0) >= ABYSSINK_SMARTS,
-    gargoyle: world.minute !== undefined && Math.floor(world.minute / 60) === BELLFRY_HOUR,
-    magpie: done("festival_wins", 1),
-  } as Record<string, boolean>)[line];
-  if (special) {
-    return LINES[line][2];
-  }
-  if (line === "ember") {
-    return enough("plays", FLARELET_PLAYS_PER_DAY) ? "flarelet" : "lanternling";
-  }
-  if (line === "stone") {
-    return world.dark ? "glimmerock" : "bouldergrin"; // its crystals light up at night
-  }
-  if (line === "fox") {
-    return enough("trips", ROAMTAIL_TRIPS_PER_DAY) ? "roamtail" : "filchfox";
-  }
-  if (line === "cloud") {
-    return world.raining ? "rumblefluff" : "prismist";
-  }
-  if (line === "leaf") {
-    return enough("love", NEEDLENUB_LOVE_PER_DAY) ? "needlenub" : "twiggle";
-  }
-  if (line === "duck") {
-    return enough("battles", DRAKWING_BATTLES_PER_DAY) ? "drakwing" : "quill";
-  }
-  if (line === "hippo") {
-    return enough("baths", STEAMO_BATHS_PER_DAY) ? "steamo" : "lillypot";
-  }
-  if (line === "beak") {
-    return enough("tricks", RAPIERRE_TRICKS_PER_DAY) ? "rapierre" : "parcelbeak";
-  }
-  if (line === "caterpillar") {
-    return most("sunflower") ? "sunflutter" : "mothmuff";
-  }
-  if (line === "dog") {
-    return (world.bond ?? 0) >= BARRELBARD_BOND ? "barrelbard" : "digby";
-  }
-  if (line === "dragonfly") {
-    return done("baths", JEWELWING_BATHS) ? "jewelwing" : "rotorfly";
-  }
-  if (line === "beaver") {
-    return world.strongest === "strength" ? "timberjack" : "dambert";
-  }
-  if (line === "crab") {
-    return world.dark && world.glowOutside ? "lightclaw" : "teacrab";
-  }
-  if (line === "axolotl") {
-    return minutes > 0 && !diary.weak_minutes ? "medilotl" : "mossolotl";
-  }
-  if (line === "mouse") {
-    return minutes > 0 && !diary.hungry_minutes ? "cogsqueak" : "sirthimble";
-  }
-  if (line === "bear") {
-    return done("food_honeycomb", SNORBEAR_HONEYCOMBS) ? "snorbear" : "hivebear";
-  }
-  if (line === "penguin") {
-    return world.spin ? "glidepin" : "tuxwaddle";
-  }
-  if (line === "bat") {
-    return world.strongest === "speed" ? "batbeat" : "umbrabat";
-  }
-  if (line === "owl") {
-    return world.dark && world.clear ? "stargazer" : "owlbert";
-  }
-  if (line === "chameleon") {
-    return done("games", HIDEWELL_GAMES) ? "hidewell" : "palettino";
-  }
-  if (line === "scarab") {
-    return world.minute !== undefined && world.minute % 60 < CLOCKBEETLE_MINUTES ? "clockbeetle" : "solroll";
-  }
-  if (line === "kite") {
-    return world.dance ? "lionkite" : "origrane";
-  }
-  if (line === "octopus") {
-    return (world.tricks ?? 0) >= OCTAVIO_TRICKS ? "octavio" : "inkasso";
-  }
-  if (line === "gargoyle") {
-    return world.raining ? "fountaingle" : "gargard";
-  }
-  if (line === "magpie") {
-    return enough("tricks", CARDWING_TRICKS_PER_DAY) ? "cardwing" : "glintrick";
-  }
-  const care = minutes ? (diary.good_minutes ?? 0) / minutes : 1.0;
-  if (enough("love", PURRLOOP_LOVE_PER_DAY)) {
-    return "purrloop";
-  }
-  return care >= GEMPEROR_CARE ? "gemperor" : "angloop";
+/** What a rule for an adult form looks at: the child's diary, the moment it grows up, and the days its child stage lasts. */
+interface Check {
+  diary: Record<string, number>;
+  world: World;
+  days: number;
 }
 
 /**
- * The adult form a child is heading for right now (null in its first day and at other stages).
- * `world`: the weather and the time of day right now (the cloud and the stone line).
+ * A rule for an adult form: whether it holds, the picture of its hint in the choice (a thing of
+ * app/src/icons.ts, or "sheet:tag"), and for a count what the child has and needs.
+ */
+export interface Rule {
+  icon: string;
+  ok: (check: Check) => boolean;
+  count?: (check: Check) => readonly [number, number];
+}
+
+/** A count over the whole child stage, also what is done after it is due. */
+function total(kind: string, icon: string, need: (check: Check) => number): Rule {
+  const has = (c: Check) => c.diary[kind] ?? 0;
+  return { icon, ok: (c) => has(c) >= need(c), count: (c) => [Math.min(has(c), need(c)), need(c)] };
+}
+/** "So often per day": a total for the days the child stage lasts. */
+const perDay = (n: number) => (c: Check) => Math.ceil(n * c.days - 1e-9);
+const times = (n: number) => () => n;
+/** Something about the moment it grows up, or what it has come to by then. */
+const moment = (icon: string, ok: (world: World) => boolean): Rule => ({ icon, ok: (c) => ok(c.world) });
+/** A value of the moment it grows up against a goal. */
+function reaches(icon: string, value: (world: World) => number, need: number): Rule {
+  return { icon, ok: (c) => value(c.world) >= need, count: (c) => [Math.min(value(c.world), need), need] };
+}
+/** The fruit it ate most, and enough of it (FAVORITE_FRUITS). */
+function favorite(kind: string, icon: string): Rule {
+  const eaten = (c: Check, k: string) => c.diary[`food_fruit_${k}`] ?? 0;
+  return {
+    icon,
+    ok: (c) => eaten(c, kind) >= FAVORITE_FRUITS && PLANT_KINDS.every((k) => k === kind || eaten(c, k) < eaten(c, kind)),
+    count: (c) => [Math.min(eaten(c, kind), FAVORITE_FRUITS), FAVORITE_FRUITS],
+  };
+}
+/** Never below a mark the whole child stage (the diary counts the minutes it was). */
+const never = (kind: string, icon: string): Rule => ({ icon, ok: (c) => (c.diary.minutes ?? 0) > 0 && !c.diary[kind] });
+const PLANT_KINDS = ["berry", "sunflower", "cherry", "herb"];
+
+/** Well cared for this part of the time (gemperor). */
+const CARED: Rule = {
+  icon: "meal",
+  ok: (c) => care(c.diary) >= GEMPEROR_CARE,
+  count: (c) => [Math.min(Math.round(care(c.diary) * 100), GEMPEROR_CARE * 100), GEMPEROR_CARE * 100],
+};
+function care(diary: Record<string, number>): number {
+  return diary.minutes ? (diary.good_minutes ?? 0) / diary.minutes : 1.0;
+}
+
+// The second form of each line and what it takes. It can be had any time once the home has had
+// it; the line's other usual form needs nothing.
+export const SECOND: Record<string, readonly [string, Rule]> = {
+  blob: ["gemperor", CARED],
+  ember: ["flarelet", total("plays", "ball", perDay(FLARELET_PLAYS_PER_DAY))],
+  stone: ["glimmerock", moment("hint_moon", (w) => !!w.dark)], // its crystals light up at night
+  fox: ["roamtail", total("trips", "backpack", perDay(ROAMTAIL_TRIPS_PER_DAY))],
+  cloud: ["rumblefluff", moment("items:cloud", (w) => !!w.raining)],
+  leaf: ["needlenub", total("love", "hint_heart", perDay(NEEDLENUB_LOVE_PER_DAY))],
+  duck: ["drakwing", total("battles", "hint_sword", perDay(DRAKWING_BATTLES_PER_DAY))],
+  hippo: ["steamo", total("baths", "sponge", perDay(STEAMO_BATHS_PER_DAY))],
+  beak: ["rapierre", total("tricks", "baton", times(RAPIERRE_TRICKS))],
+  caterpillar: ["sunflutter", favorite("sunflower", "fruit_sunflower")],
+  dog: ["barrelbard", reaches("hint_heart", (w) => w.bond ?? 0, BARRELBARD_BOND)],
+  dragonfly: ["jewelwing", total("baths", "sponge", times(JEWELWING_BATHS))],
+  beaver: ["timberjack", moment("strength", (w) => w.strongest === "strength")],
+  crab: ["lightclaw", moment("trip:lantern_lit", (w) => !!(w.dark && w.glowOutside))],
+  axolotl: ["medilotl", never("weak_minutes", "medicine")],
+  mouse: ["cogsqueak", never("hungry_minutes", "meal")],
+  bear: ["snorbear", total("food_honeycomb", "honeycomb", times(SNORBEAR_HONEYCOMBS))],
+  penguin: ["glidepin", moment("baton", (w) => !!w.spin)],
+  bat: ["batbeat", moment("speed", (w) => w.strongest === "speed")],
+  owl: ["stargazer", moment("trip:star_shard_lit", (w) => !!(w.dark && w.clear))],
+  chameleon: ["hidewell", total("games", "hide", times(HIDEWELL_GAMES))],
+  scarab: ["clockbeetle", moment("trip:hourglass", (w) => w.minute !== undefined && w.minute % 60 < CLOCKBEETLE_MINUTES)],
+  kite: ["lionkite", moment("baton", (w) => !!w.dance)],
+  octopus: ["octavio", reaches("baton", (w) => w.tricks ?? 0, OCTAVIO_TRICKS)],
+  gargoyle: ["fountaingle", moment("items:cloud", (w) => !!w.raining)],
+  magpie: ["cardwing", total("tricks", "baton", times(CARDWING_TRICKS))],
+};
+
+// The secret form of each line (the last of LINES): a feat or a rare moment, every time anew.
+// It has no picture in the choice; only stories found here and there point the way.
+const done = (kind: string, need: number) => total(kind, "", times(need));
+export const SECRET: Record<string, Rule> = {
+  blob: done("love_days", PURRLOOP_DAYS),
+  ember: done("food_glowberry", SALAMBER_GLOWBERRIES),
+  stone: moment("", (w) => !!(w.fullMoon && w.dark)),
+  fox: done("trips_forest", FOXFIRE_FOREST_TRIPS),
+  cloud: moment("", (w) => !!w.snowing),
+  leaf: done("plant_fruits", SAKURIN_PLANT_FRUITS),
+  duck: done("rain_trips", BUBBLEHELM_RAIN_TRIPS),
+  hippo: done("tucked", HIPPULA_TUCKED),
+  beak: done("guardians", ACEWING_GUARDIANS),
+  caterpillar: favorite("cherry", ""),
+  dog: done("festival_dance", 1),
+  dragonfly: moment("", (w) => !!(w.afterRain && !w.raining && !w.dark)),
+  beaver: moment("", (w) => !!w.houseBuilt),
+  crab: moment("", (w) => !!w.sandcastle),
+  axolotl: done("won_gloompeep", 1),
+  mouse: moment("", (w) => !!w.grandmaHat),
+  bear: moment("", (w) => (w.bond ?? 0) >= URSASTRA_BOND),
+  penguin: moment("", beforeSunrise),
+  bat: moment("", (w) => !!(w.fullMoon && w.dark)),
+  owl: done("clean_battles", NINJOWL_CLEAN_BATTLES),
+  chameleon: moment("", (w) => !!w.wildFriend),
+  scarab: moment("", (w) => (w.temp ?? -Infinity) >= PHARABUG_HEAT),
+  kite: moment("", (w) => !!w.storm),
+  octopus: moment("", (w) => (w.smarts ?? 0) >= ABYSSINK_SMARTS),
+  gargoyle: moment("", (w) => w.minute !== undefined && Math.floor(w.minute / 60) === BELLFRY_HOUR),
+  magpie: done("festival_wins", 1),
+};
+
+/** The line's usual form that needs nothing. */
+export function baseForm(line: string): string {
+  return LINES[line].find((form) => form !== SECOND[line][0] && form !== LINES[line][2])!;
+}
+
+/**
+ * The adult form the care diary and the world lead to by themselves: the secret form if its rule
+ * holds, else the second if its rule does, else the base. What a player picks (choices) goes
+ * before this; it is what an older app gets that doesn't let the player choose.
+ *
+ * A rule "so often per day" is a total for the days the child stage lasts (`stageDays`); what the
+ * child does after that, while the player waits with growing up, counts too.
+ */
+export function decideSpecies(diary: Record<string, number>, line = "blob", world: World = {},
+    stageDays = STAGE_SECONDS.child! / 86400): string {
+  const check = { diary, world, days: stageDays };
+  if (SECRET[line].ok(check)) {
+    return LINES[line][2];
+  }
+  return SECOND[line][1].ok(check) ? SECOND[line][0] : baseForm(line);
+}
+
+/** One adult form in the choice when a child grows up (choices). */
+export interface Choice {
+  /** The form; null while it is still a "?" (nothing is given away). */
+  form: string | null;
+  kind: "base" | "second" | "secret";
+  /** It can be picked now. */
+  ready: boolean;
+  /** The hint: its picture, and for a count what the child has and needs. */
+  hint: { icon: string; has?: number; needs?: number } | null;
+}
+
+/**
+ * The three adult forms to choose from when a child grows up. `had`: the forms the home has had
+ * (the album, "stage:species").
+ *
+ * - The base form can always be picked.
+ * - The second form can be picked once its rule holds, or any time once the home has had it. Until
+ *   then it is a "?"; once the home has had an adult of the line, the "?" shows the rule's picture.
+ * - The secret form can be picked only while its rule holds, every time. Until the home has had it,
+ *   it is a "?" without a hint as long as it can't be picked.
+ */
+export function choices(state: PetState, world: World, had: readonly string[]): Choice[] {
+  const line = lineOf(state.species);
+  const check = { diary: state.diary, world, days: childDays(state) };
+  const ever = (form: string) => had.includes(`adult:${form}`);
+  const [second, rule] = SECOND[line];
+  const secondReady = rule.ok(check) || ever(second);
+  const secret = LINES[line][2];
+  const secretReady = SECRET[line].ok(check);
+  const hint = (r: Rule) => {
+    const count = r.count?.(check);
+    return { icon: r.icon, ...count && { has: count[0], needs: count[1] } };
+  };
+  const lineHad = LINES[line].some(ever);
+  return [
+    { form: baseForm(line), kind: "base", ready: true, hint: null },
+    {
+      form: secondReady ? second : null, kind: "second", ready: secondReady,
+      hint: !secondReady && lineHad ? hint(rule) : null,
+    },
+    { form: secretReady || ever(secret) ? secret : null, kind: "secret", ready: secretReady, hint: null },
+  ];
+}
+
+/**
+ * The adult form a child's lure shows it heading for right now (null in its first day and at
+ * other stages): the second form once its rule holds, else the base. Never the secret one.
+ * `world`: the weather and the time of day right now.
  */
 export function hint(state: PetState, world: World = {}): string | null {
   if (state.stage !== "child" || (state.diary.minutes ?? 0) < HINT_AFTER) {
     return null;
   }
-  return decideSpecies(state.diary, lineOf(state.species), world, childDays(state));
+  const line = lineOf(state.species);
+  const [second, rule] = SECOND[line];
+  return rule.ok({ diary: state.diary, world, days: childDays(state) }) ? second : baseForm(line);
 }
 
 /**
  * Next stage. Returns the old form as "stage:species" (for the animation). `world`: the weather
- * and the time of day right now (the cloud and the stone line).
+ * and the time of day right now; `form`: the adult form picked (choices), else the one
+ * decideSpecies leads to.
  */
-export function evolve(state: PetState, now: number, world: World = {}): string {
+export function evolve(state: PetState, now: number, world: World = {}, form: string | null = null): string {
   const old = `${state.stage}:${state.species}`;
   const next = NEXT_STAGE[state.stage];
   if (next === undefined) {
@@ -591,7 +672,7 @@ export function evolve(state: PetState, now: number, world: World = {}): string 
     state.diary = newDiary();
   }
   if (next === "adult") {
-    state.species = decideSpecies(state.diary, lineOf(state.species), world, childDays(state));
+    state.species = form ?? decideSpecies(state.diary, lineOf(state.species), world, childDays(state));
   }
   state.stage = next;
   state.stage_since = now;

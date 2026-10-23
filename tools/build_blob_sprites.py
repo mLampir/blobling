@@ -7856,6 +7856,11 @@ ITEMS = {
     "skill_speed": ["....YY", "...YY.", "..YY..", ".YYYYY", "...YY.", "..YY..", ".Y...."],
     "skill_smarts": [".hhh.", "hYYYh", "hYYYO", "hYYYO", ".YOO.", ".SSS.", ".TTT."],
     # the app's: the fishing rod, its line hanging down to a red-and-white float
+    # the hints in the choice of an adult form: a heart (petting, the bond), the moon (the night),
+    # a sword (scuffles)
+    "hint_heart": [".RR.RR.", "RWRRRRQ", "RRRRRRQ", ".RRRRQ.", "..RRQ..", "...Q..."],
+    "hint_moon": ["..YYY.", ".YYO..", "YYO...", "YYO...", "YYO...", ".YYO..", "..YYY."],
+    "hint_sword": ["......S", ".....SH", "....SH.", ".n.SH..", "..nT...", ".nTn...", "n..n..."],
     "rod": ["........mMv.", ".......mM.v.", "......mM..v.", ".....mM...v.", "....mM....v.", "..SSM.....R.",
             "..STm....RRr", ".mM......hhH", "mM........h."],
 }
@@ -8064,6 +8069,17 @@ TRIP_TAGS = {
     # Shooting stars (core/src/stars.ts): a shard of the star in its little crater, pale by day and
     # glowing at night (a decoration), and the owl that comes to sit on the roof and blinks
     "star_shard": [(STAR_SHARD, 1000)],
+    # what brings a moment for growing up (core/src/home.ts MOMENT_DECO): a paper lantern with the
+    # full moon in it, from the shooting stars; a thunderstorm in a bottle, from the coast; and a
+    # stone with the sun in it, from the ruins
+    "moonlantern": [(["...s...", "..sSs..", ".SSSSS.", ".mjjjm.", "mjjqqjm", "mjqqqqm", "mjqqqqm", "mjjqqjm",
+                      ".mjjjm.", ".SSSSS.", "..s.s.."], 1000)],
+    "stormbottle": [(["...tt..", "...WW..", "..W..W.", ".WNNNNW", ".WNNyNW", ".WNyyNW", ".WNNyNW", ".WNyNNW",
+                      ".WNNNNW", "..WWWW."], 900),
+                    (["...tt..", "...WW..", "..W..W.", ".WNNNNW", ".WNNNNW", ".WNNNNW", ".WNNNNW", ".WNNNNW",
+                      ".WNNNNW", "..WWWW."], 1300)],
+    "sunstone": [(["y...y...y", ".y.ooo.y.", "..oeeeo..", "yoeEeeeoy", "..oeeEo..", ".y.ooo.y.", "y.sSSSs.y",
+                   ".sSSSSSs."], 1000)],
     "star_shard_lit": [(swap(swap(STAR_SHARD, "n", "y"), "N", "Y"), 1200),
                        (dots(swap(swap(STAR_SHARD, "n", "y"), "N", "Y"), {(3, 0): "f", (4, 2): "f"}), 400)],
     "owl": [(OWL, 2600), (OWL_BLINK, 200)],

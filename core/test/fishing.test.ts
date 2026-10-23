@@ -139,7 +139,8 @@ test("the crab and the axolotl lines' adult forms", () => {
   assert.equal(decide("crab"), "teacrab");
   assert.equal(decide("crab", {}, { dark: true }), "teacrab");
   assert.equal(decide("crab", {}, { dark: true, glowOutside: true }), "lightclaw");
-  assert.equal(decide("crab", { trips_coast: 3 }), "castlecrab");
+  assert.equal(decide("crab", { trips_coast: 3 }), "teacrab"); // a child hardly gets that far
+  assert.equal(decide("crab", {}, { sandcastle: true }), "castlecrab");
   assert.equal(decide("axolotl", { weak_minutes: 1 }), "mossolotl");
   assert.equal(decide("axolotl"), "medilotl");
   assert.equal(decide("axolotl", { weak_minutes: 5, won_gloompeep: 1 }), "axodrake");
@@ -147,4 +148,8 @@ test("the crab and the axolotl lines' adult forms", () => {
   pet.items.lantern = 1;
   home.toggleDeco(pet, "lantern");
   assert.equal(model.worldAt(start, null, null, null, pet).glowOutside, true);
+  // and the sandcastle from the coast outside
+  pet.items.sandcastle = 1;
+  home.toggleDeco(pet, "sandcastle");
+  assert.equal(model.worldAt(start, null, null, null, pet).sandcastle, true);
 });

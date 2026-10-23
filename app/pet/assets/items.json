@@ -251,9 +251,39 @@
    "duration": 1000
   },
   {
-   "filename": "items rod 25",
+   "filename": "items hint_heart 25",
    "frame": {
     "x": 299,
+    "y": 0,
+    "w": 7,
+    "h": 6
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items hint_moon 26",
+   "frame": {
+    "x": 306,
+    "y": 0,
+    "w": 6,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items hint_sword 27",
+   "frame": {
+    "x": 312,
+    "y": 0,
+    "w": 7,
+    "h": 7
+   },
+   "duration": 1000
+  },
+  {
+   "filename": "items rod 28",
+   "frame": {
+    "x": 319,
     "y": 0,
     "w": 12,
     "h": 9
@@ -261,49 +291,19 @@
    "duration": 1000
   },
   {
-   "filename": "items egg 26",
+   "filename": "items egg 29",
    "frame": {
-    "x": 311,
+    "x": 331,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items egg_wobble 27",
-   "frame": {
-    "x": 323,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items egg_wobble 28",
-   "frame": {
-    "x": 335,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items egg_wobble 29",
-   "frame": {
-    "x": 347,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items egg_wobble 30",
    "frame": {
-    "x": 359,
+    "x": 343,
     "y": 0,
     "w": 12,
     "h": 14
@@ -311,9 +311,39 @@
    "duration": 150
   },
   {
-   "filename": "items egg_crack 31",
+   "filename": "items egg_wobble 31",
    "frame": {
-    "x": 371,
+    "x": 355,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_wobble 32",
+   "frame": {
+    "x": 367,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_wobble 33",
+   "frame": {
+    "x": 379,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items egg_crack 34",
+   "frame": {
+    "x": 391,
     "y": 0,
     "w": 12,
     "h": 14
@@ -321,9 +351,9 @@
    "duration": 1000
   },
   {
-   "filename": "items egg_open 32",
+   "filename": "items egg_open 35",
    "frame": {
-    "x": 383,
+    "x": 403,
     "y": 0,
     "w": 12,
     "h": 15
@@ -331,49 +361,19 @@
    "duration": 1000
   },
   {
-   "filename": "items ember_egg 33",
+   "filename": "items ember_egg 36",
    "frame": {
-    "x": 395,
+    "x": 415,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items ember_egg_wobble 34",
-   "frame": {
-    "x": 407,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items ember_egg_wobble 35",
-   "frame": {
-    "x": 419,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items ember_egg_wobble 36",
-   "frame": {
-    "x": 431,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items ember_egg_wobble 37",
    "frame": {
-    "x": 443,
+    "x": 427,
     "y": 0,
     "w": 12,
     "h": 14
@@ -381,9 +381,39 @@
    "duration": 150
   },
   {
-   "filename": "items ember_egg_crack 38",
+   "filename": "items ember_egg_wobble 38",
    "frame": {
-    "x": 455,
+    "x": 439,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_wobble 39",
+   "frame": {
+    "x": 451,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_wobble 40",
+   "frame": {
+    "x": 463,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items ember_egg_crack 41",
+   "frame": {
+    "x": 475,
     "y": 0,
     "w": 12,
     "h": 14
@@ -391,9 +421,9 @@
    "duration": 1000
   },
   {
-   "filename": "items ember_egg_open 39",
+   "filename": "items ember_egg_open 42",
    "frame": {
-    "x": 467,
+    "x": 487,
     "y": 0,
     "w": 12,
     "h": 15
@@ -401,49 +431,19 @@
    "duration": 1000
   },
   {
-   "filename": "items stone_egg 40",
+   "filename": "items stone_egg 43",
    "frame": {
-    "x": 479,
+    "x": 499,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items stone_egg_wobble 41",
-   "frame": {
-    "x": 491,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items stone_egg_wobble 42",
-   "frame": {
-    "x": 503,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items stone_egg_wobble 43",
-   "frame": {
-    "x": 515,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items stone_egg_wobble 44",
    "frame": {
-    "x": 527,
+    "x": 511,
     "y": 0,
     "w": 12,
     "h": 14
@@ -451,9 +451,39 @@
    "duration": 150
   },
   {
-   "filename": "items stone_egg_crack 45",
+   "filename": "items stone_egg_wobble 45",
    "frame": {
-    "x": 539,
+    "x": 523,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_wobble 46",
+   "frame": {
+    "x": 535,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_wobble 47",
+   "frame": {
+    "x": 547,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items stone_egg_crack 48",
+   "frame": {
+    "x": 559,
     "y": 0,
     "w": 12,
     "h": 14
@@ -461,9 +491,9 @@
    "duration": 1000
   },
   {
-   "filename": "items stone_egg_open 46",
+   "filename": "items stone_egg_open 49",
    "frame": {
-    "x": 551,
+    "x": 571,
     "y": 0,
     "w": 12,
     "h": 15
@@ -471,49 +501,19 @@
    "duration": 1000
   },
   {
-   "filename": "items fox_egg 47",
+   "filename": "items fox_egg 50",
    "frame": {
-    "x": 563,
+    "x": 583,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items fox_egg_wobble 48",
-   "frame": {
-    "x": 575,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items fox_egg_wobble 49",
-   "frame": {
-    "x": 587,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items fox_egg_wobble 50",
-   "frame": {
-    "x": 599,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items fox_egg_wobble 51",
    "frame": {
-    "x": 611,
+    "x": 595,
     "y": 0,
     "w": 12,
     "h": 14
@@ -521,9 +521,39 @@
    "duration": 150
   },
   {
-   "filename": "items fox_egg_crack 52",
+   "filename": "items fox_egg_wobble 52",
    "frame": {
-    "x": 623,
+    "x": 607,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_wobble 53",
+   "frame": {
+    "x": 619,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_wobble 54",
+   "frame": {
+    "x": 631,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items fox_egg_crack 55",
+   "frame": {
+    "x": 643,
     "y": 0,
     "w": 12,
     "h": 14
@@ -531,9 +561,9 @@
    "duration": 1000
   },
   {
-   "filename": "items fox_egg_open 53",
+   "filename": "items fox_egg_open 56",
    "frame": {
-    "x": 635,
+    "x": 655,
     "y": 0,
     "w": 12,
     "h": 15
@@ -541,49 +571,19 @@
    "duration": 1000
   },
   {
-   "filename": "items cloud_egg 54",
+   "filename": "items cloud_egg 57",
    "frame": {
-    "x": 647,
+    "x": 667,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items cloud_egg_wobble 55",
-   "frame": {
-    "x": 659,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items cloud_egg_wobble 56",
-   "frame": {
-    "x": 671,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items cloud_egg_wobble 57",
-   "frame": {
-    "x": 683,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items cloud_egg_wobble 58",
    "frame": {
-    "x": 695,
+    "x": 679,
     "y": 0,
     "w": 12,
     "h": 14
@@ -591,9 +591,39 @@
    "duration": 150
   },
   {
-   "filename": "items cloud_egg_crack 59",
+   "filename": "items cloud_egg_wobble 59",
    "frame": {
-    "x": 707,
+    "x": 691,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_wobble 60",
+   "frame": {
+    "x": 703,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_wobble 61",
+   "frame": {
+    "x": 715,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items cloud_egg_crack 62",
+   "frame": {
+    "x": 727,
     "y": 0,
     "w": 12,
     "h": 14
@@ -601,9 +631,9 @@
    "duration": 1000
   },
   {
-   "filename": "items cloud_egg_open 60",
+   "filename": "items cloud_egg_open 63",
    "frame": {
-    "x": 719,
+    "x": 739,
     "y": 0,
     "w": 12,
     "h": 15
@@ -611,49 +641,19 @@
    "duration": 1000
   },
   {
-   "filename": "items leaf_egg 61",
+   "filename": "items leaf_egg 64",
    "frame": {
-    "x": 731,
+    "x": 751,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items leaf_egg_wobble 62",
-   "frame": {
-    "x": 743,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items leaf_egg_wobble 63",
-   "frame": {
-    "x": 755,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items leaf_egg_wobble 64",
-   "frame": {
-    "x": 767,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items leaf_egg_wobble 65",
    "frame": {
-    "x": 779,
+    "x": 763,
     "y": 0,
     "w": 12,
     "h": 14
@@ -661,9 +661,39 @@
    "duration": 150
   },
   {
-   "filename": "items leaf_egg_crack 66",
+   "filename": "items leaf_egg_wobble 66",
    "frame": {
-    "x": 791,
+    "x": 775,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_wobble 67",
+   "frame": {
+    "x": 787,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_wobble 68",
+   "frame": {
+    "x": 799,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items leaf_egg_crack 69",
+   "frame": {
+    "x": 811,
     "y": 0,
     "w": 12,
     "h": 14
@@ -671,9 +701,9 @@
    "duration": 1000
   },
   {
-   "filename": "items leaf_egg_open 67",
+   "filename": "items leaf_egg_open 70",
    "frame": {
-    "x": 803,
+    "x": 823,
     "y": 0,
     "w": 12,
     "h": 15
@@ -681,49 +711,19 @@
    "duration": 1000
   },
   {
-   "filename": "items duck_egg 68",
+   "filename": "items duck_egg 71",
    "frame": {
-    "x": 815,
+    "x": 835,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items duck_egg_wobble 69",
-   "frame": {
-    "x": 827,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items duck_egg_wobble 70",
-   "frame": {
-    "x": 839,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items duck_egg_wobble 71",
-   "frame": {
-    "x": 851,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items duck_egg_wobble 72",
    "frame": {
-    "x": 863,
+    "x": 847,
     "y": 0,
     "w": 12,
     "h": 14
@@ -731,9 +731,39 @@
    "duration": 150
   },
   {
-   "filename": "items duck_egg_crack 73",
+   "filename": "items duck_egg_wobble 73",
    "frame": {
-    "x": 875,
+    "x": 859,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_wobble 74",
+   "frame": {
+    "x": 871,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_wobble 75",
+   "frame": {
+    "x": 883,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items duck_egg_crack 76",
+   "frame": {
+    "x": 895,
     "y": 0,
     "w": 12,
     "h": 14
@@ -741,9 +771,9 @@
    "duration": 1000
   },
   {
-   "filename": "items duck_egg_open 74",
+   "filename": "items duck_egg_open 77",
    "frame": {
-    "x": 887,
+    "x": 907,
     "y": 0,
     "w": 12,
     "h": 15
@@ -751,49 +781,19 @@
    "duration": 1000
   },
   {
-   "filename": "items hippo_egg 75",
+   "filename": "items hippo_egg 78",
    "frame": {
-    "x": 899,
+    "x": 919,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items hippo_egg_wobble 76",
-   "frame": {
-    "x": 911,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items hippo_egg_wobble 77",
-   "frame": {
-    "x": 923,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items hippo_egg_wobble 78",
-   "frame": {
-    "x": 935,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items hippo_egg_wobble 79",
    "frame": {
-    "x": 947,
+    "x": 931,
     "y": 0,
     "w": 12,
     "h": 14
@@ -801,9 +801,39 @@
    "duration": 150
   },
   {
-   "filename": "items hippo_egg_crack 80",
+   "filename": "items hippo_egg_wobble 80",
    "frame": {
-    "x": 959,
+    "x": 943,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_wobble 81",
+   "frame": {
+    "x": 955,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_wobble 82",
+   "frame": {
+    "x": 967,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items hippo_egg_crack 83",
+   "frame": {
+    "x": 979,
     "y": 0,
     "w": 12,
     "h": 14
@@ -811,9 +841,9 @@
    "duration": 1000
   },
   {
-   "filename": "items hippo_egg_open 81",
+   "filename": "items hippo_egg_open 84",
    "frame": {
-    "x": 971,
+    "x": 991,
     "y": 0,
     "w": 12,
     "h": 15
@@ -821,49 +851,19 @@
    "duration": 1000
   },
   {
-   "filename": "items beak_egg 82",
+   "filename": "items beak_egg 85",
    "frame": {
-    "x": 983,
+    "x": 1003,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items beak_egg_wobble 83",
-   "frame": {
-    "x": 995,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beak_egg_wobble 84",
-   "frame": {
-    "x": 1007,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beak_egg_wobble 85",
-   "frame": {
-    "x": 1019,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items beak_egg_wobble 86",
    "frame": {
-    "x": 1031,
+    "x": 1015,
     "y": 0,
     "w": 12,
     "h": 14
@@ -871,9 +871,39 @@
    "duration": 150
   },
   {
-   "filename": "items beak_egg_crack 87",
+   "filename": "items beak_egg_wobble 87",
    "frame": {
-    "x": 1043,
+    "x": 1027,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_wobble 88",
+   "frame": {
+    "x": 1039,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_wobble 89",
+   "frame": {
+    "x": 1051,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beak_egg_crack 90",
+   "frame": {
+    "x": 1063,
     "y": 0,
     "w": 12,
     "h": 14
@@ -881,9 +911,9 @@
    "duration": 1000
   },
   {
-   "filename": "items beak_egg_open 88",
+   "filename": "items beak_egg_open 91",
    "frame": {
-    "x": 1055,
+    "x": 1075,
     "y": 0,
     "w": 12,
     "h": 15
@@ -891,49 +921,19 @@
    "duration": 1000
   },
   {
-   "filename": "items caterpillar_egg 89",
+   "filename": "items caterpillar_egg 92",
    "frame": {
-    "x": 1067,
+    "x": 1087,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items caterpillar_egg_wobble 90",
-   "frame": {
-    "x": 1079,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items caterpillar_egg_wobble 91",
-   "frame": {
-    "x": 1091,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items caterpillar_egg_wobble 92",
-   "frame": {
-    "x": 1103,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items caterpillar_egg_wobble 93",
    "frame": {
-    "x": 1115,
+    "x": 1099,
     "y": 0,
     "w": 12,
     "h": 14
@@ -941,9 +941,39 @@
    "duration": 150
   },
   {
-   "filename": "items caterpillar_egg_crack 94",
+   "filename": "items caterpillar_egg_wobble 94",
    "frame": {
-    "x": 1127,
+    "x": 1111,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_wobble 95",
+   "frame": {
+    "x": 1123,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_wobble 96",
+   "frame": {
+    "x": 1135,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items caterpillar_egg_crack 97",
+   "frame": {
+    "x": 1147,
     "y": 0,
     "w": 12,
     "h": 14
@@ -951,9 +981,9 @@
    "duration": 1000
   },
   {
-   "filename": "items caterpillar_egg_open 95",
+   "filename": "items caterpillar_egg_open 98",
    "frame": {
-    "x": 1139,
+    "x": 1159,
     "y": 0,
     "w": 12,
     "h": 15
@@ -961,49 +991,19 @@
    "duration": 1000
   },
   {
-   "filename": "items dog_egg 96",
+   "filename": "items dog_egg 99",
    "frame": {
-    "x": 1151,
+    "x": 1171,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items dog_egg_wobble 97",
-   "frame": {
-    "x": 1163,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dog_egg_wobble 98",
-   "frame": {
-    "x": 1175,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dog_egg_wobble 99",
-   "frame": {
-    "x": 1187,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items dog_egg_wobble 100",
    "frame": {
-    "x": 1199,
+    "x": 1183,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1011,9 +1011,39 @@
    "duration": 150
   },
   {
-   "filename": "items dog_egg_crack 101",
+   "filename": "items dog_egg_wobble 101",
    "frame": {
-    "x": 1211,
+    "x": 1195,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_wobble 102",
+   "frame": {
+    "x": 1207,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_wobble 103",
+   "frame": {
+    "x": 1219,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dog_egg_crack 104",
+   "frame": {
+    "x": 1231,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1021,9 +1051,9 @@
    "duration": 1000
   },
   {
-   "filename": "items dog_egg_open 102",
+   "filename": "items dog_egg_open 105",
    "frame": {
-    "x": 1223,
+    "x": 1243,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1031,49 +1061,19 @@
    "duration": 1000
   },
   {
-   "filename": "items dragonfly_egg 103",
+   "filename": "items dragonfly_egg 106",
    "frame": {
-    "x": 1235,
+    "x": 1255,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items dragonfly_egg_wobble 104",
-   "frame": {
-    "x": 1247,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dragonfly_egg_wobble 105",
-   "frame": {
-    "x": 1259,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items dragonfly_egg_wobble 106",
-   "frame": {
-    "x": 1271,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items dragonfly_egg_wobble 107",
    "frame": {
-    "x": 1283,
+    "x": 1267,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1081,9 +1081,39 @@
    "duration": 150
   },
   {
-   "filename": "items dragonfly_egg_crack 108",
+   "filename": "items dragonfly_egg_wobble 108",
    "frame": {
-    "x": 1295,
+    "x": 1279,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_wobble 109",
+   "frame": {
+    "x": 1291,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_wobble 110",
+   "frame": {
+    "x": 1303,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items dragonfly_egg_crack 111",
+   "frame": {
+    "x": 1315,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1091,9 +1121,9 @@
    "duration": 1000
   },
   {
-   "filename": "items dragonfly_egg_open 109",
+   "filename": "items dragonfly_egg_open 112",
    "frame": {
-    "x": 1307,
+    "x": 1327,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1101,49 +1131,19 @@
    "duration": 1000
   },
   {
-   "filename": "items beaver_egg 110",
+   "filename": "items beaver_egg 113",
    "frame": {
-    "x": 1319,
+    "x": 1339,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items beaver_egg_wobble 111",
-   "frame": {
-    "x": 1331,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beaver_egg_wobble 112",
-   "frame": {
-    "x": 1343,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items beaver_egg_wobble 113",
-   "frame": {
-    "x": 1355,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items beaver_egg_wobble 114",
    "frame": {
-    "x": 1367,
+    "x": 1351,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1151,9 +1151,39 @@
    "duration": 150
   },
   {
-   "filename": "items beaver_egg_crack 115",
+   "filename": "items beaver_egg_wobble 115",
    "frame": {
-    "x": 1379,
+    "x": 1363,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_wobble 116",
+   "frame": {
+    "x": 1375,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_wobble 117",
+   "frame": {
+    "x": 1387,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items beaver_egg_crack 118",
+   "frame": {
+    "x": 1399,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1161,9 +1191,9 @@
    "duration": 1000
   },
   {
-   "filename": "items beaver_egg_open 116",
+   "filename": "items beaver_egg_open 119",
    "frame": {
-    "x": 1391,
+    "x": 1411,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1171,49 +1201,19 @@
    "duration": 1000
   },
   {
-   "filename": "items crab_egg 117",
+   "filename": "items crab_egg 120",
    "frame": {
-    "x": 1403,
+    "x": 1423,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items crab_egg_wobble 118",
-   "frame": {
-    "x": 1415,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items crab_egg_wobble 119",
-   "frame": {
-    "x": 1427,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items crab_egg_wobble 120",
-   "frame": {
-    "x": 1439,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items crab_egg_wobble 121",
    "frame": {
-    "x": 1451,
+    "x": 1435,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1221,9 +1221,39 @@
    "duration": 150
   },
   {
-   "filename": "items crab_egg_crack 122",
+   "filename": "items crab_egg_wobble 122",
    "frame": {
-    "x": 1463,
+    "x": 1447,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items crab_egg_wobble 123",
+   "frame": {
+    "x": 1459,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items crab_egg_wobble 124",
+   "frame": {
+    "x": 1471,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items crab_egg_crack 125",
+   "frame": {
+    "x": 1483,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1231,9 +1261,9 @@
    "duration": 1000
   },
   {
-   "filename": "items crab_egg_open 123",
+   "filename": "items crab_egg_open 126",
    "frame": {
-    "x": 1475,
+    "x": 1495,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1241,49 +1271,19 @@
    "duration": 1000
   },
   {
-   "filename": "items axolotl_egg 124",
+   "filename": "items axolotl_egg 127",
    "frame": {
-    "x": 1487,
+    "x": 1507,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items axolotl_egg_wobble 125",
-   "frame": {
-    "x": 1499,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items axolotl_egg_wobble 126",
-   "frame": {
-    "x": 1511,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items axolotl_egg_wobble 127",
-   "frame": {
-    "x": 1523,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items axolotl_egg_wobble 128",
    "frame": {
-    "x": 1535,
+    "x": 1519,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1291,9 +1291,39 @@
    "duration": 150
   },
   {
-   "filename": "items axolotl_egg_crack 129",
+   "filename": "items axolotl_egg_wobble 129",
    "frame": {
-    "x": 1547,
+    "x": 1531,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items axolotl_egg_wobble 130",
+   "frame": {
+    "x": 1543,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items axolotl_egg_wobble 131",
+   "frame": {
+    "x": 1555,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items axolotl_egg_crack 132",
+   "frame": {
+    "x": 1567,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1301,9 +1331,9 @@
    "duration": 1000
   },
   {
-   "filename": "items axolotl_egg_open 130",
+   "filename": "items axolotl_egg_open 133",
    "frame": {
-    "x": 1559,
+    "x": 1579,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1311,49 +1341,19 @@
    "duration": 1000
   },
   {
-   "filename": "items mouse_egg 131",
+   "filename": "items mouse_egg 134",
    "frame": {
-    "x": 1571,
+    "x": 1591,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items mouse_egg_wobble 132",
-   "frame": {
-    "x": 1583,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items mouse_egg_wobble 133",
-   "frame": {
-    "x": 1595,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items mouse_egg_wobble 134",
-   "frame": {
-    "x": 1607,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items mouse_egg_wobble 135",
    "frame": {
-    "x": 1619,
+    "x": 1603,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1361,9 +1361,39 @@
    "duration": 150
   },
   {
-   "filename": "items mouse_egg_crack 136",
+   "filename": "items mouse_egg_wobble 136",
    "frame": {
-    "x": 1631,
+    "x": 1615,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items mouse_egg_wobble 137",
+   "frame": {
+    "x": 1627,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items mouse_egg_wobble 138",
+   "frame": {
+    "x": 1639,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items mouse_egg_crack 139",
+   "frame": {
+    "x": 1651,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1371,9 +1401,9 @@
    "duration": 1000
   },
   {
-   "filename": "items mouse_egg_open 137",
+   "filename": "items mouse_egg_open 140",
    "frame": {
-    "x": 1643,
+    "x": 1663,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1381,49 +1411,19 @@
    "duration": 1000
   },
   {
-   "filename": "items bear_egg 138",
+   "filename": "items bear_egg 141",
    "frame": {
-    "x": 1655,
+    "x": 1675,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items bear_egg_wobble 139",
-   "frame": {
-    "x": 1667,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items bear_egg_wobble 140",
-   "frame": {
-    "x": 1679,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items bear_egg_wobble 141",
-   "frame": {
-    "x": 1691,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items bear_egg_wobble 142",
    "frame": {
-    "x": 1703,
+    "x": 1687,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1431,9 +1431,39 @@
    "duration": 150
   },
   {
-   "filename": "items bear_egg_crack 143",
+   "filename": "items bear_egg_wobble 143",
    "frame": {
-    "x": 1715,
+    "x": 1699,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bear_egg_wobble 144",
+   "frame": {
+    "x": 1711,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bear_egg_wobble 145",
+   "frame": {
+    "x": 1723,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bear_egg_crack 146",
+   "frame": {
+    "x": 1735,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1441,9 +1471,9 @@
    "duration": 1000
   },
   {
-   "filename": "items bear_egg_open 144",
+   "filename": "items bear_egg_open 147",
    "frame": {
-    "x": 1727,
+    "x": 1747,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1451,49 +1481,19 @@
    "duration": 1000
   },
   {
-   "filename": "items penguin_egg 145",
+   "filename": "items penguin_egg 148",
    "frame": {
-    "x": 1739,
+    "x": 1759,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items penguin_egg_wobble 146",
-   "frame": {
-    "x": 1751,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items penguin_egg_wobble 147",
-   "frame": {
-    "x": 1763,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items penguin_egg_wobble 148",
-   "frame": {
-    "x": 1775,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items penguin_egg_wobble 149",
    "frame": {
-    "x": 1787,
+    "x": 1771,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1501,9 +1501,39 @@
    "duration": 150
   },
   {
-   "filename": "items penguin_egg_crack 150",
+   "filename": "items penguin_egg_wobble 150",
    "frame": {
-    "x": 1799,
+    "x": 1783,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items penguin_egg_wobble 151",
+   "frame": {
+    "x": 1795,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items penguin_egg_wobble 152",
+   "frame": {
+    "x": 1807,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items penguin_egg_crack 153",
+   "frame": {
+    "x": 1819,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1511,9 +1541,9 @@
    "duration": 1000
   },
   {
-   "filename": "items penguin_egg_open 151",
+   "filename": "items penguin_egg_open 154",
    "frame": {
-    "x": 1811,
+    "x": 1831,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1521,49 +1551,19 @@
    "duration": 1000
   },
   {
-   "filename": "items bat_egg 152",
+   "filename": "items bat_egg 155",
    "frame": {
-    "x": 1823,
+    "x": 1843,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items bat_egg_wobble 153",
-   "frame": {
-    "x": 1835,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items bat_egg_wobble 154",
-   "frame": {
-    "x": 1847,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items bat_egg_wobble 155",
-   "frame": {
-    "x": 1859,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items bat_egg_wobble 156",
    "frame": {
-    "x": 1871,
+    "x": 1855,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1571,9 +1571,39 @@
    "duration": 150
   },
   {
-   "filename": "items bat_egg_crack 157",
+   "filename": "items bat_egg_wobble 157",
    "frame": {
-    "x": 1883,
+    "x": 1867,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bat_egg_wobble 158",
+   "frame": {
+    "x": 1879,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bat_egg_wobble 159",
+   "frame": {
+    "x": 1891,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items bat_egg_crack 160",
+   "frame": {
+    "x": 1903,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1581,9 +1611,9 @@
    "duration": 1000
   },
   {
-   "filename": "items bat_egg_open 158",
+   "filename": "items bat_egg_open 161",
    "frame": {
-    "x": 1895,
+    "x": 1915,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1591,49 +1621,19 @@
    "duration": 1000
   },
   {
-   "filename": "items owl_egg 159",
+   "filename": "items owl_egg 162",
    "frame": {
-    "x": 1907,
+    "x": 1927,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items owl_egg_wobble 160",
-   "frame": {
-    "x": 1919,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items owl_egg_wobble 161",
-   "frame": {
-    "x": 1931,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items owl_egg_wobble 162",
-   "frame": {
-    "x": 1943,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items owl_egg_wobble 163",
    "frame": {
-    "x": 1955,
+    "x": 1939,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1641,9 +1641,39 @@
    "duration": 150
   },
   {
-   "filename": "items owl_egg_crack 164",
+   "filename": "items owl_egg_wobble 164",
    "frame": {
-    "x": 1967,
+    "x": 1951,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items owl_egg_wobble 165",
+   "frame": {
+    "x": 1963,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items owl_egg_wobble 166",
+   "frame": {
+    "x": 1975,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items owl_egg_crack 167",
+   "frame": {
+    "x": 1987,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1651,9 +1681,9 @@
    "duration": 1000
   },
   {
-   "filename": "items owl_egg_open 165",
+   "filename": "items owl_egg_open 168",
    "frame": {
-    "x": 1979,
+    "x": 1999,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1661,49 +1691,19 @@
    "duration": 1000
   },
   {
-   "filename": "items chameleon_egg 166",
+   "filename": "items chameleon_egg 169",
    "frame": {
-    "x": 1991,
+    "x": 2011,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items chameleon_egg_wobble 167",
-   "frame": {
-    "x": 2003,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items chameleon_egg_wobble 168",
-   "frame": {
-    "x": 2015,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items chameleon_egg_wobble 169",
-   "frame": {
-    "x": 2027,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items chameleon_egg_wobble 170",
    "frame": {
-    "x": 2039,
+    "x": 2023,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1711,9 +1711,39 @@
    "duration": 150
   },
   {
-   "filename": "items chameleon_egg_crack 171",
+   "filename": "items chameleon_egg_wobble 171",
    "frame": {
-    "x": 2051,
+    "x": 2035,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items chameleon_egg_wobble 172",
+   "frame": {
+    "x": 2047,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items chameleon_egg_wobble 173",
+   "frame": {
+    "x": 2059,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items chameleon_egg_crack 174",
+   "frame": {
+    "x": 2071,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1721,9 +1751,9 @@
    "duration": 1000
   },
   {
-   "filename": "items chameleon_egg_open 172",
+   "filename": "items chameleon_egg_open 175",
    "frame": {
-    "x": 2063,
+    "x": 2083,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1731,49 +1761,19 @@
    "duration": 1000
   },
   {
-   "filename": "items scarab_egg 173",
+   "filename": "items scarab_egg 176",
    "frame": {
-    "x": 2075,
+    "x": 2095,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items scarab_egg_wobble 174",
-   "frame": {
-    "x": 2087,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items scarab_egg_wobble 175",
-   "frame": {
-    "x": 2099,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items scarab_egg_wobble 176",
-   "frame": {
-    "x": 2111,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items scarab_egg_wobble 177",
    "frame": {
-    "x": 2123,
+    "x": 2107,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1781,9 +1781,39 @@
    "duration": 150
   },
   {
-   "filename": "items scarab_egg_crack 178",
+   "filename": "items scarab_egg_wobble 178",
    "frame": {
-    "x": 2135,
+    "x": 2119,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items scarab_egg_wobble 179",
+   "frame": {
+    "x": 2131,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items scarab_egg_wobble 180",
+   "frame": {
+    "x": 2143,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items scarab_egg_crack 181",
+   "frame": {
+    "x": 2155,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1791,9 +1821,9 @@
    "duration": 1000
   },
   {
-   "filename": "items scarab_egg_open 179",
+   "filename": "items scarab_egg_open 182",
    "frame": {
-    "x": 2147,
+    "x": 2167,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1801,49 +1831,19 @@
    "duration": 1000
   },
   {
-   "filename": "items kite_egg 180",
+   "filename": "items kite_egg 183",
    "frame": {
-    "x": 2159,
+    "x": 2179,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items kite_egg_wobble 181",
-   "frame": {
-    "x": 2171,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items kite_egg_wobble 182",
-   "frame": {
-    "x": 2183,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items kite_egg_wobble 183",
-   "frame": {
-    "x": 2195,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items kite_egg_wobble 184",
    "frame": {
-    "x": 2207,
+    "x": 2191,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1851,9 +1851,39 @@
    "duration": 150
   },
   {
-   "filename": "items kite_egg_crack 185",
+   "filename": "items kite_egg_wobble 185",
    "frame": {
-    "x": 2219,
+    "x": 2203,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items kite_egg_wobble 186",
+   "frame": {
+    "x": 2215,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items kite_egg_wobble 187",
+   "frame": {
+    "x": 2227,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items kite_egg_crack 188",
+   "frame": {
+    "x": 2239,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1861,9 +1891,9 @@
    "duration": 1000
   },
   {
-   "filename": "items kite_egg_open 186",
+   "filename": "items kite_egg_open 189",
    "frame": {
-    "x": 2231,
+    "x": 2251,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1871,49 +1901,19 @@
    "duration": 1000
   },
   {
-   "filename": "items octopus_egg 187",
+   "filename": "items octopus_egg 190",
    "frame": {
-    "x": 2243,
+    "x": 2263,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items octopus_egg_wobble 188",
-   "frame": {
-    "x": 2255,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items octopus_egg_wobble 189",
-   "frame": {
-    "x": 2267,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items octopus_egg_wobble 190",
-   "frame": {
-    "x": 2279,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items octopus_egg_wobble 191",
    "frame": {
-    "x": 2291,
+    "x": 2275,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1921,9 +1921,39 @@
    "duration": 150
   },
   {
-   "filename": "items octopus_egg_crack 192",
+   "filename": "items octopus_egg_wobble 192",
    "frame": {
-    "x": 2303,
+    "x": 2287,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items octopus_egg_wobble 193",
+   "frame": {
+    "x": 2299,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items octopus_egg_wobble 194",
+   "frame": {
+    "x": 2311,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items octopus_egg_crack 195",
+   "frame": {
+    "x": 2323,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1931,9 +1961,9 @@
    "duration": 1000
   },
   {
-   "filename": "items octopus_egg_open 193",
+   "filename": "items octopus_egg_open 196",
    "frame": {
-    "x": 2315,
+    "x": 2335,
     "y": 0,
     "w": 12,
     "h": 15
@@ -1941,49 +1971,19 @@
    "duration": 1000
   },
   {
-   "filename": "items gargoyle_egg 194",
+   "filename": "items gargoyle_egg 197",
    "frame": {
-    "x": 2327,
+    "x": 2347,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items gargoyle_egg_wobble 195",
-   "frame": {
-    "x": 2339,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items gargoyle_egg_wobble 196",
-   "frame": {
-    "x": 2351,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items gargoyle_egg_wobble 197",
-   "frame": {
-    "x": 2363,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items gargoyle_egg_wobble 198",
    "frame": {
-    "x": 2375,
+    "x": 2359,
     "y": 0,
     "w": 12,
     "h": 14
@@ -1991,9 +1991,39 @@
    "duration": 150
   },
   {
-   "filename": "items gargoyle_egg_crack 199",
+   "filename": "items gargoyle_egg_wobble 199",
    "frame": {
-    "x": 2387,
+    "x": 2371,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items gargoyle_egg_wobble 200",
+   "frame": {
+    "x": 2383,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items gargoyle_egg_wobble 201",
+   "frame": {
+    "x": 2395,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items gargoyle_egg_crack 202",
+   "frame": {
+    "x": 2407,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2001,9 +2031,9 @@
    "duration": 1000
   },
   {
-   "filename": "items gargoyle_egg_open 200",
+   "filename": "items gargoyle_egg_open 203",
    "frame": {
-    "x": 2399,
+    "x": 2419,
     "y": 0,
     "w": 12,
     "h": 15
@@ -2011,49 +2041,19 @@
    "duration": 1000
   },
   {
-   "filename": "items magpie_egg 201",
+   "filename": "items magpie_egg 204",
    "frame": {
-    "x": 2411,
+    "x": 2431,
     "y": 0,
     "w": 12,
     "h": 14
    },
    "duration": 1000
-  },
-  {
-   "filename": "items magpie_egg_wobble 202",
-   "frame": {
-    "x": 2423,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items magpie_egg_wobble 203",
-   "frame": {
-    "x": 2435,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
-  },
-  {
-   "filename": "items magpie_egg_wobble 204",
-   "frame": {
-    "x": 2447,
-    "y": 0,
-    "w": 12,
-    "h": 14
-   },
-   "duration": 150
   },
   {
    "filename": "items magpie_egg_wobble 205",
    "frame": {
-    "x": 2459,
+    "x": 2443,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2061,9 +2061,39 @@
    "duration": 150
   },
   {
-   "filename": "items magpie_egg_crack 206",
+   "filename": "items magpie_egg_wobble 206",
    "frame": {
-    "x": 2471,
+    "x": 2455,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items magpie_egg_wobble 207",
+   "frame": {
+    "x": 2467,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items magpie_egg_wobble 208",
+   "frame": {
+    "x": 2479,
+    "y": 0,
+    "w": 12,
+    "h": 14
+   },
+   "duration": 150
+  },
+  {
+   "filename": "items magpie_egg_crack 209",
+   "frame": {
+    "x": 2491,
     "y": 0,
     "w": 12,
     "h": 14
@@ -2071,9 +2101,9 @@
    "duration": 1000
   },
   {
-   "filename": "items magpie_egg_open 207",
+   "filename": "items magpie_egg_open 210",
    "frame": {
-    "x": 2483,
+    "x": 2503,
     "y": 0,
     "w": 12,
     "h": 15
@@ -2085,7 +2115,7 @@
   "app": "tools/build_blob_sprites.py",
   "image": "items.png",
   "size": {
-   "w": 2495,
+   "w": 2515,
    "h": 15
   },
   "frameTags": [
@@ -2240,633 +2270,651 @@
     "direction": "forward"
    },
    {
-    "name": "rod",
+    "name": "hint_heart",
     "from": 25,
     "to": 25,
     "direction": "forward"
    },
    {
-    "name": "egg",
+    "name": "hint_moon",
     "from": 26,
     "to": 26,
     "direction": "forward"
    },
    {
-    "name": "egg_wobble",
+    "name": "hint_sword",
     "from": 27,
-    "to": 30,
+    "to": 27,
     "direction": "forward"
    },
    {
-    "name": "egg_crack",
-    "from": 31,
-    "to": 31,
+    "name": "rod",
+    "from": 28,
+    "to": 28,
     "direction": "forward"
    },
    {
-    "name": "egg_open",
-    "from": 32,
-    "to": 32,
+    "name": "egg",
+    "from": 29,
+    "to": 29,
     "direction": "forward"
    },
    {
-    "name": "ember_egg",
-    "from": 33,
+    "name": "egg_wobble",
+    "from": 30,
     "to": 33,
     "direction": "forward"
    },
    {
-    "name": "ember_egg_wobble",
+    "name": "egg_crack",
     "from": 34,
-    "to": 37,
+    "to": 34,
     "direction": "forward"
    },
    {
-    "name": "ember_egg_crack",
-    "from": 38,
-    "to": 38,
+    "name": "egg_open",
+    "from": 35,
+    "to": 35,
     "direction": "forward"
    },
    {
-    "name": "ember_egg_open",
-    "from": 39,
-    "to": 39,
+    "name": "ember_egg",
+    "from": 36,
+    "to": 36,
     "direction": "forward"
    },
    {
-    "name": "stone_egg",
-    "from": 40,
+    "name": "ember_egg_wobble",
+    "from": 37,
     "to": 40,
     "direction": "forward"
    },
    {
-    "name": "stone_egg_wobble",
+    "name": "ember_egg_crack",
     "from": 41,
-    "to": 44,
+    "to": 41,
     "direction": "forward"
    },
    {
-    "name": "stone_egg_crack",
-    "from": 45,
-    "to": 45,
+    "name": "ember_egg_open",
+    "from": 42,
+    "to": 42,
     "direction": "forward"
    },
    {
-    "name": "stone_egg_open",
-    "from": 46,
-    "to": 46,
+    "name": "stone_egg",
+    "from": 43,
+    "to": 43,
     "direction": "forward"
    },
    {
-    "name": "fox_egg",
-    "from": 47,
+    "name": "stone_egg_wobble",
+    "from": 44,
     "to": 47,
     "direction": "forward"
    },
    {
-    "name": "fox_egg_wobble",
+    "name": "stone_egg_crack",
     "from": 48,
-    "to": 51,
+    "to": 48,
     "direction": "forward"
    },
    {
-    "name": "fox_egg_crack",
-    "from": 52,
-    "to": 52,
+    "name": "stone_egg_open",
+    "from": 49,
+    "to": 49,
     "direction": "forward"
    },
    {
-    "name": "fox_egg_open",
-    "from": 53,
-    "to": 53,
+    "name": "fox_egg",
+    "from": 50,
+    "to": 50,
     "direction": "forward"
    },
    {
-    "name": "cloud_egg",
-    "from": 54,
+    "name": "fox_egg_wobble",
+    "from": 51,
     "to": 54,
     "direction": "forward"
    },
    {
-    "name": "cloud_egg_wobble",
+    "name": "fox_egg_crack",
     "from": 55,
-    "to": 58,
+    "to": 55,
     "direction": "forward"
    },
    {
-    "name": "cloud_egg_crack",
-    "from": 59,
-    "to": 59,
+    "name": "fox_egg_open",
+    "from": 56,
+    "to": 56,
     "direction": "forward"
    },
    {
-    "name": "cloud_egg_open",
-    "from": 60,
-    "to": 60,
+    "name": "cloud_egg",
+    "from": 57,
+    "to": 57,
     "direction": "forward"
    },
    {
-    "name": "leaf_egg",
-    "from": 61,
+    "name": "cloud_egg_wobble",
+    "from": 58,
     "to": 61,
     "direction": "forward"
    },
    {
-    "name": "leaf_egg_wobble",
+    "name": "cloud_egg_crack",
     "from": 62,
-    "to": 65,
+    "to": 62,
     "direction": "forward"
    },
    {
-    "name": "leaf_egg_crack",
-    "from": 66,
-    "to": 66,
+    "name": "cloud_egg_open",
+    "from": 63,
+    "to": 63,
     "direction": "forward"
    },
    {
-    "name": "leaf_egg_open",
-    "from": 67,
-    "to": 67,
+    "name": "leaf_egg",
+    "from": 64,
+    "to": 64,
     "direction": "forward"
    },
    {
-    "name": "duck_egg",
-    "from": 68,
+    "name": "leaf_egg_wobble",
+    "from": 65,
     "to": 68,
     "direction": "forward"
    },
    {
-    "name": "duck_egg_wobble",
+    "name": "leaf_egg_crack",
     "from": 69,
-    "to": 72,
+    "to": 69,
     "direction": "forward"
    },
    {
-    "name": "duck_egg_crack",
-    "from": 73,
-    "to": 73,
+    "name": "leaf_egg_open",
+    "from": 70,
+    "to": 70,
     "direction": "forward"
    },
    {
-    "name": "duck_egg_open",
-    "from": 74,
-    "to": 74,
+    "name": "duck_egg",
+    "from": 71,
+    "to": 71,
     "direction": "forward"
    },
    {
-    "name": "hippo_egg",
-    "from": 75,
+    "name": "duck_egg_wobble",
+    "from": 72,
     "to": 75,
     "direction": "forward"
    },
    {
-    "name": "hippo_egg_wobble",
+    "name": "duck_egg_crack",
     "from": 76,
-    "to": 79,
+    "to": 76,
     "direction": "forward"
    },
    {
-    "name": "hippo_egg_crack",
-    "from": 80,
-    "to": 80,
+    "name": "duck_egg_open",
+    "from": 77,
+    "to": 77,
     "direction": "forward"
    },
    {
-    "name": "hippo_egg_open",
-    "from": 81,
-    "to": 81,
+    "name": "hippo_egg",
+    "from": 78,
+    "to": 78,
     "direction": "forward"
    },
    {
-    "name": "beak_egg",
-    "from": 82,
+    "name": "hippo_egg_wobble",
+    "from": 79,
     "to": 82,
     "direction": "forward"
    },
    {
-    "name": "beak_egg_wobble",
+    "name": "hippo_egg_crack",
     "from": 83,
-    "to": 86,
+    "to": 83,
     "direction": "forward"
    },
    {
-    "name": "beak_egg_crack",
-    "from": 87,
-    "to": 87,
+    "name": "hippo_egg_open",
+    "from": 84,
+    "to": 84,
     "direction": "forward"
    },
    {
-    "name": "beak_egg_open",
-    "from": 88,
-    "to": 88,
+    "name": "beak_egg",
+    "from": 85,
+    "to": 85,
     "direction": "forward"
    },
    {
-    "name": "caterpillar_egg",
-    "from": 89,
+    "name": "beak_egg_wobble",
+    "from": 86,
     "to": 89,
     "direction": "forward"
    },
    {
-    "name": "caterpillar_egg_wobble",
+    "name": "beak_egg_crack",
     "from": 90,
-    "to": 93,
+    "to": 90,
     "direction": "forward"
    },
    {
-    "name": "caterpillar_egg_crack",
-    "from": 94,
-    "to": 94,
+    "name": "beak_egg_open",
+    "from": 91,
+    "to": 91,
     "direction": "forward"
    },
    {
-    "name": "caterpillar_egg_open",
-    "from": 95,
-    "to": 95,
+    "name": "caterpillar_egg",
+    "from": 92,
+    "to": 92,
     "direction": "forward"
    },
    {
-    "name": "dog_egg",
-    "from": 96,
+    "name": "caterpillar_egg_wobble",
+    "from": 93,
     "to": 96,
     "direction": "forward"
    },
    {
-    "name": "dog_egg_wobble",
+    "name": "caterpillar_egg_crack",
     "from": 97,
-    "to": 100,
+    "to": 97,
     "direction": "forward"
    },
    {
-    "name": "dog_egg_crack",
-    "from": 101,
-    "to": 101,
+    "name": "caterpillar_egg_open",
+    "from": 98,
+    "to": 98,
     "direction": "forward"
    },
    {
-    "name": "dog_egg_open",
-    "from": 102,
-    "to": 102,
+    "name": "dog_egg",
+    "from": 99,
+    "to": 99,
     "direction": "forward"
    },
    {
-    "name": "dragonfly_egg",
-    "from": 103,
+    "name": "dog_egg_wobble",
+    "from": 100,
     "to": 103,
     "direction": "forward"
    },
    {
-    "name": "dragonfly_egg_wobble",
+    "name": "dog_egg_crack",
     "from": 104,
-    "to": 107,
+    "to": 104,
     "direction": "forward"
    },
    {
-    "name": "dragonfly_egg_crack",
-    "from": 108,
-    "to": 108,
+    "name": "dog_egg_open",
+    "from": 105,
+    "to": 105,
     "direction": "forward"
    },
    {
-    "name": "dragonfly_egg_open",
-    "from": 109,
-    "to": 109,
+    "name": "dragonfly_egg",
+    "from": 106,
+    "to": 106,
     "direction": "forward"
    },
    {
-    "name": "beaver_egg",
-    "from": 110,
+    "name": "dragonfly_egg_wobble",
+    "from": 107,
     "to": 110,
     "direction": "forward"
    },
    {
-    "name": "beaver_egg_wobble",
+    "name": "dragonfly_egg_crack",
     "from": 111,
-    "to": 114,
+    "to": 111,
     "direction": "forward"
    },
    {
-    "name": "beaver_egg_crack",
-    "from": 115,
-    "to": 115,
+    "name": "dragonfly_egg_open",
+    "from": 112,
+    "to": 112,
     "direction": "forward"
    },
    {
-    "name": "beaver_egg_open",
-    "from": 116,
-    "to": 116,
+    "name": "beaver_egg",
+    "from": 113,
+    "to": 113,
     "direction": "forward"
    },
    {
-    "name": "crab_egg",
-    "from": 117,
+    "name": "beaver_egg_wobble",
+    "from": 114,
     "to": 117,
     "direction": "forward"
    },
    {
-    "name": "crab_egg_wobble",
+    "name": "beaver_egg_crack",
     "from": 118,
-    "to": 121,
+    "to": 118,
     "direction": "forward"
    },
    {
-    "name": "crab_egg_crack",
-    "from": 122,
-    "to": 122,
+    "name": "beaver_egg_open",
+    "from": 119,
+    "to": 119,
     "direction": "forward"
    },
    {
-    "name": "crab_egg_open",
-    "from": 123,
-    "to": 123,
+    "name": "crab_egg",
+    "from": 120,
+    "to": 120,
     "direction": "forward"
    },
    {
-    "name": "axolotl_egg",
-    "from": 124,
+    "name": "crab_egg_wobble",
+    "from": 121,
     "to": 124,
     "direction": "forward"
    },
    {
-    "name": "axolotl_egg_wobble",
+    "name": "crab_egg_crack",
     "from": 125,
-    "to": 128,
+    "to": 125,
     "direction": "forward"
    },
    {
-    "name": "axolotl_egg_crack",
-    "from": 129,
-    "to": 129,
+    "name": "crab_egg_open",
+    "from": 126,
+    "to": 126,
     "direction": "forward"
    },
    {
-    "name": "axolotl_egg_open",
-    "from": 130,
-    "to": 130,
+    "name": "axolotl_egg",
+    "from": 127,
+    "to": 127,
     "direction": "forward"
    },
    {
-    "name": "mouse_egg",
-    "from": 131,
+    "name": "axolotl_egg_wobble",
+    "from": 128,
     "to": 131,
     "direction": "forward"
    },
    {
-    "name": "mouse_egg_wobble",
+    "name": "axolotl_egg_crack",
     "from": 132,
-    "to": 135,
+    "to": 132,
     "direction": "forward"
    },
    {
-    "name": "mouse_egg_crack",
-    "from": 136,
-    "to": 136,
+    "name": "axolotl_egg_open",
+    "from": 133,
+    "to": 133,
     "direction": "forward"
    },
    {
-    "name": "mouse_egg_open",
-    "from": 137,
-    "to": 137,
+    "name": "mouse_egg",
+    "from": 134,
+    "to": 134,
     "direction": "forward"
    },
    {
-    "name": "bear_egg",
-    "from": 138,
+    "name": "mouse_egg_wobble",
+    "from": 135,
     "to": 138,
     "direction": "forward"
    },
    {
-    "name": "bear_egg_wobble",
+    "name": "mouse_egg_crack",
     "from": 139,
-    "to": 142,
+    "to": 139,
     "direction": "forward"
    },
    {
-    "name": "bear_egg_crack",
-    "from": 143,
-    "to": 143,
+    "name": "mouse_egg_open",
+    "from": 140,
+    "to": 140,
     "direction": "forward"
    },
    {
-    "name": "bear_egg_open",
-    "from": 144,
-    "to": 144,
+    "name": "bear_egg",
+    "from": 141,
+    "to": 141,
     "direction": "forward"
    },
    {
-    "name": "penguin_egg",
-    "from": 145,
+    "name": "bear_egg_wobble",
+    "from": 142,
     "to": 145,
     "direction": "forward"
    },
    {
-    "name": "penguin_egg_wobble",
+    "name": "bear_egg_crack",
     "from": 146,
-    "to": 149,
+    "to": 146,
     "direction": "forward"
    },
    {
-    "name": "penguin_egg_crack",
-    "from": 150,
-    "to": 150,
+    "name": "bear_egg_open",
+    "from": 147,
+    "to": 147,
     "direction": "forward"
    },
    {
-    "name": "penguin_egg_open",
-    "from": 151,
-    "to": 151,
+    "name": "penguin_egg",
+    "from": 148,
+    "to": 148,
     "direction": "forward"
    },
    {
-    "name": "bat_egg",
-    "from": 152,
+    "name": "penguin_egg_wobble",
+    "from": 149,
     "to": 152,
     "direction": "forward"
    },
    {
-    "name": "bat_egg_wobble",
+    "name": "penguin_egg_crack",
     "from": 153,
-    "to": 156,
+    "to": 153,
     "direction": "forward"
    },
    {
-    "name": "bat_egg_crack",
-    "from": 157,
-    "to": 157,
+    "name": "penguin_egg_open",
+    "from": 154,
+    "to": 154,
     "direction": "forward"
    },
    {
-    "name": "bat_egg_open",
-    "from": 158,
-    "to": 158,
+    "name": "bat_egg",
+    "from": 155,
+    "to": 155,
     "direction": "forward"
    },
    {
-    "name": "owl_egg",
-    "from": 159,
+    "name": "bat_egg_wobble",
+    "from": 156,
     "to": 159,
     "direction": "forward"
    },
    {
-    "name": "owl_egg_wobble",
+    "name": "bat_egg_crack",
     "from": 160,
-    "to": 163,
+    "to": 160,
     "direction": "forward"
    },
    {
-    "name": "owl_egg_crack",
-    "from": 164,
-    "to": 164,
+    "name": "bat_egg_open",
+    "from": 161,
+    "to": 161,
     "direction": "forward"
    },
    {
-    "name": "owl_egg_open",
-    "from": 165,
-    "to": 165,
+    "name": "owl_egg",
+    "from": 162,
+    "to": 162,
     "direction": "forward"
    },
    {
-    "name": "chameleon_egg",
-    "from": 166,
+    "name": "owl_egg_wobble",
+    "from": 163,
     "to": 166,
     "direction": "forward"
    },
    {
-    "name": "chameleon_egg_wobble",
+    "name": "owl_egg_crack",
     "from": 167,
-    "to": 170,
+    "to": 167,
     "direction": "forward"
    },
    {
-    "name": "chameleon_egg_crack",
-    "from": 171,
-    "to": 171,
+    "name": "owl_egg_open",
+    "from": 168,
+    "to": 168,
     "direction": "forward"
    },
    {
-    "name": "chameleon_egg_open",
-    "from": 172,
-    "to": 172,
+    "name": "chameleon_egg",
+    "from": 169,
+    "to": 169,
     "direction": "forward"
    },
    {
-    "name": "scarab_egg",
-    "from": 173,
+    "name": "chameleon_egg_wobble",
+    "from": 170,
     "to": 173,
     "direction": "forward"
    },
    {
-    "name": "scarab_egg_wobble",
+    "name": "chameleon_egg_crack",
     "from": 174,
-    "to": 177,
+    "to": 174,
     "direction": "forward"
    },
    {
-    "name": "scarab_egg_crack",
-    "from": 178,
-    "to": 178,
+    "name": "chameleon_egg_open",
+    "from": 175,
+    "to": 175,
     "direction": "forward"
    },
    {
-    "name": "scarab_egg_open",
-    "from": 179,
-    "to": 179,
+    "name": "scarab_egg",
+    "from": 176,
+    "to": 176,
     "direction": "forward"
    },
    {
-    "name": "kite_egg",
-    "from": 180,
+    "name": "scarab_egg_wobble",
+    "from": 177,
     "to": 180,
     "direction": "forward"
    },
    {
-    "name": "kite_egg_wobble",
+    "name": "scarab_egg_crack",
     "from": 181,
-    "to": 184,
+    "to": 181,
     "direction": "forward"
    },
    {
-    "name": "kite_egg_crack",
-    "from": 185,
-    "to": 185,
+    "name": "scarab_egg_open",
+    "from": 182,
+    "to": 182,
     "direction": "forward"
    },
    {
-    "name": "kite_egg_open",
-    "from": 186,
-    "to": 186,
+    "name": "kite_egg",
+    "from": 183,
+    "to": 183,
     "direction": "forward"
    },
    {
-    "name": "octopus_egg",
-    "from": 187,
+    "name": "kite_egg_wobble",
+    "from": 184,
     "to": 187,
     "direction": "forward"
    },
    {
-    "name": "octopus_egg_wobble",
+    "name": "kite_egg_crack",
     "from": 188,
-    "to": 191,
+    "to": 188,
     "direction": "forward"
    },
    {
-    "name": "octopus_egg_crack",
-    "from": 192,
-    "to": 192,
+    "name": "kite_egg_open",
+    "from": 189,
+    "to": 189,
     "direction": "forward"
    },
    {
-    "name": "octopus_egg_open",
-    "from": 193,
-    "to": 193,
+    "name": "octopus_egg",
+    "from": 190,
+    "to": 190,
     "direction": "forward"
    },
    {
-    "name": "gargoyle_egg",
-    "from": 194,
+    "name": "octopus_egg_wobble",
+    "from": 191,
     "to": 194,
     "direction": "forward"
    },
    {
-    "name": "gargoyle_egg_wobble",
+    "name": "octopus_egg_crack",
     "from": 195,
-    "to": 198,
+    "to": 195,
     "direction": "forward"
    },
    {
-    "name": "gargoyle_egg_crack",
-    "from": 199,
-    "to": 199,
+    "name": "octopus_egg_open",
+    "from": 196,
+    "to": 196,
     "direction": "forward"
    },
    {
-    "name": "gargoyle_egg_open",
-    "from": 200,
-    "to": 200,
+    "name": "gargoyle_egg",
+    "from": 197,
+    "to": 197,
     "direction": "forward"
    },
    {
-    "name": "magpie_egg",
-    "from": 201,
+    "name": "gargoyle_egg_wobble",
+    "from": 198,
     "to": 201,
     "direction": "forward"
    },
    {
-    "name": "magpie_egg_wobble",
+    "name": "gargoyle_egg_crack",
     "from": 202,
-    "to": 205,
+    "to": 202,
+    "direction": "forward"
+   },
+   {
+    "name": "gargoyle_egg_open",
+    "from": 203,
+    "to": 203,
+    "direction": "forward"
+   },
+   {
+    "name": "magpie_egg",
+    "from": 204,
+    "to": 204,
+    "direction": "forward"
+   },
+   {
+    "name": "magpie_egg_wobble",
+    "from": 205,
+    "to": 208,
     "direction": "forward"
    },
    {
     "name": "magpie_egg_crack",
-    "from": 206,
-    "to": 206,
+    "from": 209,
+    "to": 209,
     "direction": "forward"
    },
    {
     "name": "magpie_egg_open",
-    "from": 207,
-    "to": 207,
+    "from": 210,
+    "to": 210,
     "direction": "forward"
    }
   ]

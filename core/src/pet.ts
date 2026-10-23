@@ -449,7 +449,7 @@ export class Pet {
       result = model.applyAction(s, action, now, this.bedtime(),
         { item: request.item, by, throw: request.throw, weather: this.weather(), temp: this.temperature(),
           location: this.location, value: request.value, guest: action === "game" && this.guestThere(s, now),
-          yard: this.openYard() });
+          yard: this.openYard(), had: action === "evolve" ? this.albumNow() : [] });
       this.share(s);
       this.openYard(); // what was unpacked may have been for the yard
       if (result.accepted && (action === "wear" || action === "deco")) {
@@ -818,6 +818,20 @@ export class Pet {
     }));
   }
 
+  /** The forms the home has had so far, the pets' own included (the album). */
+  private albumNow(): string[] {
+    this.collect();
+    return this.album;
+  }
+
+  /** The adult forms a child may grow into now (life.choices), with their names. */
+  private choicesOf(s: PetState, now: number) {
+    const world = model.worldAt(now, this.weather(), this.location, this.temperature(), s);
+    return life.choices(s, world, this.albumNow()).map((c) => ({
+      ...c, label: c.form ? this.t(`species.${c.form}`) : null,
+    }));
+  }
+
   /**
    * The album: one slot per form there is (life.FORMS), in a fixed order. A form one of the pets
    * has been shows its stage, species and name; one not met yet is null and gives nothing away.
@@ -1142,10 +1156,13 @@ export class Pet {
       name: s.name, species: s.species, stage: s.stage,
       species_label: t(`species.${s.species}`), stage_label: t(life.formKey(s.stage, s.species)),
       age_days: s.stage === "egg" ? 0 : Math.max(0, Math.floor((now - s.born_at) / 86400)),
-      // Next evolution: when it is due, and from when it happens by itself
+      // Next evolution: when it is due, and from when it happens by itself; a child waits to be
+      // asked instead (auto_at stays a number for older apps), and once it is due it has the adult
+      // forms to pick from (life.choices)
       evolution: due === null ? null : {
-        next: life.NEXT_STAGE[s.stage], due_at: Math.round(due),
-        due: now >= due, auto_at: Math.round(due + life.AUTO_EVOLVE_AFTER),
+        next: life.NEXT_STAGE[s.stage], due_at: Math.round(due), due: now >= due,
+        auto_at: Math.round(due + life.AUTO_EVOLVE_AFTER),
+        choices: s.stage === "child" && now >= due ? this.choicesOf(s, now) : null,
       },
       stats: Object.fromEntries(Object.entries(s.stats).map(([k, v]) => [k, Math.round(v)])),
       activity: model.activityOf(s, now),

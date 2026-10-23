@@ -55,9 +55,11 @@ export const FINDS: Record<string, readonly (readonly [string, number, sky.Preci
     ["edelweiss", 2, null], ["pinenut", 3, null], ["snowglobe", 1, null], ["snowman", 4, "snow"]],
   // mussels lie on the beach more often at low tide (LOW_TIDE_MUSSELS)
   coast: [["seed_sunflower", 3, null], ["seed_berry", 3, null], ["mussel", 3, null], ["lifering", 2, null],
-    ["sandcastle", 1, null], ["sailor", 2, null], ["bottle", 4, "rain"], ["planks_coast", 2, null]],
+    ["sandcastle", 1, null], ["sailor", 2, null], ["bottle", 4, "rain"], ["planks_coast", 2, null],
+    ["stormbottle", 1, null]],
   ruins: [["seed_cherry", 4, null], ["seed_berry", 3, null], ["bread", 3, null], ["banner", 2, null], ["arch", 1, null],
-    ["knight", 2, null], ["bell", 4, "rain"], ["planks_ruins", 2, null]],
+    ["knight", 2, null], ["bell", 4, "rain"], ["planks_ruins", 2, null],
+    ["sunstone", 1, null]],
 };
 // The tide at the coast follows the clock, as it does by the sea: high and low water about every
 // six hours (tide). At low tide more of the beach is dry, and mussels are found this much more often.

@@ -90,6 +90,7 @@
     "GET /api/pet disliked_food": "null",
     "GET /api/pet eggs": "array",
     "GET /api/pet evolution.auto_at": "number",
+    "GET /api/pet evolution.choices": "null",
     "GET /api/pet evolution.due": "boolean",
     "GET /api/pet evolution.due_at": "number",
     "GET /api/pet evolution.next": "string",

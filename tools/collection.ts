@@ -39,6 +39,7 @@ const GAP = 150; // seconds between two things the owner does on a visit
 const STEP = 15 * 60; // the weather changes at most this often while time runs on
 const ACTIVE_FROM = 35; // the owner only plays, trains or practices with this much energy
 const FEED_BELOW = 70;
+const WAIT_DAYS = 4; // a child that is due waits this long for a form the home hasn't had
 const ADULT_DAYS = 2; // an adult in a house that changes hands stays this long before a new egg takes its place
 const FULL_BAG = 8; // from this many eggs in the bag, the owner broods one of a line it has had too
 // Decorations the owner sets out, the first ones first: what draws the garden guests and lets it
@@ -238,6 +239,8 @@ class Home {
   keeper = "";
   /** Pets at Grandma's on purpose: id -> when they went. */
   readonly atGrandmas = new Map<string, number>();
+  /** Children that are due and wait for a form not had yet: id -> since when. */
+  readonly waiting = new Map<string, number>();
 
   constructor(start: number, run: Run, seed: string) {
     this.now = start;
@@ -405,6 +408,31 @@ function chooseArea(h: Home, s: PetState, rng: Random): string {
   return rng.choice(open);
 }
 
+/**
+ * A child that is due grows up into a form the home hasn't had (the secret one first), if one can
+ * be picked now. Otherwise it waits up to WAIT_DAYS for one, and then takes the second form if it
+ * can, else the base.
+ */
+function growUp(h: Home, id: string): void {
+  const s = find(h, id);
+  if (s.stage !== "child") {
+    h.act(id, "evolve");
+    return;
+  }
+  const choices = h.pet.snapshot(h.now, id).evolution?.choices ?? [];
+  const ready = choices.filter((c) => c.ready && c.form).reverse(); // the secret, the second, the base
+  const fresh = ready.find((c) => !h.pet.album.includes(`adult:${c.form}`));
+  const since = h.waiting.get(id) ?? h.now;
+  h.waiting.set(id, since);
+  const someMissing = choices.some((c) => !c.form || !h.pet.album.includes(`adult:${c.form}`));
+  if (!fresh && someMissing && h.now - since < WAIT_DAYS * 86400) {
+    return; // later
+  }
+  const pick = fresh ?? ready.find((c) => c.kind !== "secret") ?? ready[0];
+  h.act(id, "evolve", { item: pick.form });
+  h.waiting.delete(id);
+}
+
 function visitPet(h: Home, owner: Owner, id: string, plan: Visit, rng: Random, weekday: number): void {
   let s = find(h, id);
   if (s.grandma) {
@@ -427,7 +455,7 @@ function visitPet(h: Home, owner: Owner, id: string, plan: Visit, rng: Random, w
     return;
   }
   if (life.isDue(s, h.now) && !s.asleep && !s.trip) {
-    h.act(id, "evolve");
+    growUp(h, id);
   }
   if (s.trip) {
     return;
@@ -732,10 +760,9 @@ function report(owner: Owner, runs: Run[]): string {
     ["care %", fmt(100 * avg(grown.map((g) => g.diary.good_minutes / g.diary.minutes))), `${100 * life.GEMPEROR_CARE} (gemperor)`,
       share((g) => g.diary.good_minutes / g.diary.minutes >= life.GEMPEROR_CARE)],
     ...([
-      ["love", life.PURRLOOP_LOVE_PER_DAY, "purrloop"], ["love", life.NEEDLENUB_LOVE_PER_DAY, "needlenub"],
+      ["love", life.NEEDLENUB_LOVE_PER_DAY, "needlenub"],
       ["plays", life.FLARELET_PLAYS_PER_DAY, "flarelet"], ["trips", life.ROAMTAIL_TRIPS_PER_DAY, "roamtail"],
       ["battles", life.DRAKWING_BATTLES_PER_DAY, "drakwing"], ["baths", life.STEAMO_BATHS_PER_DAY, "steamo"],
-      ["tricks", life.RAPIERRE_TRICKS_PER_DAY, "rapierre"], ["tricks", life.CARDWING_TRICKS_PER_DAY, "cardwing"],
     ] as const).map(([kind, rule, form]) => [`${kind} per day`, fmt(perDay(kind), 1), `${rule} (${form})`,
       share((g) => (g.diary[kind] ?? 0) / (g.diary.minutes / 1440) >= rule)]),
     ...([
@@ -743,8 +770,10 @@ function report(owner: Owner, runs: Run[]): string {
       ["food_honeycomb", life.SNORBEAR_HONEYCOMBS, "snorbear"], ["food_glowberry", life.SALAMBER_GLOWBERRIES, "salamber*"],
       ["trips_forest", life.FOXFIRE_FOREST_TRIPS, "foxfire*"], ["plant_fruits", life.SAKURIN_PLANT_FRUITS, "sakurin*"],
       ["rain_trips", life.BUBBLEHELM_RAIN_TRIPS, "bubblehelm*"], ["tucked", life.HIPPULA_TUCKED, "hippula*"],
-      ["guardians", life.ACEWING_GUARDIANS, "acewing*"], ["trips_coast", life.CASTLECRAB_COAST_TRIPS, "castlecrab*"],
-      ["clean_battles", life.NINJOWL_CLEAN_BATTLES, "ninjowl*"], ["festival_wins", 1, "illusionna*"],
+      ["guardians", life.ACEWING_GUARDIANS, "acewing*"], ["clean_battles", life.NINJOWL_CLEAN_BATTLES, "ninjowl*"],
+      ["festival_wins", 1, "illusionna*"], ["tricks", life.RAPIERRE_TRICKS, "rapierre"],
+      ["tricks", life.CARDWING_TRICKS, "cardwing"], ["love_days", life.PURRLOOP_DAYS, "purrloop*"],
+      ["festival_dance", 1, "pawdini*"],
     ] as const).map(([kind, rule, form]) => [`${kind} as a child`, fmt(total(kind), 1), `${rule} (${form})`,
       share((g) => (g.diary[kind] ?? 0) >= rule)]),
   ]));

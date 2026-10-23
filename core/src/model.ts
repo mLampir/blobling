@@ -65,6 +65,7 @@ export const REPEAT_FACTORS = [1.0, 0.6, 0.3, 0.15]; // the same action several 
 // pet needs a break, the longer the more it has practiced within REST_WINDOW (seconds). It shows:
 // while it rests it sits and puffs (SceneView.resting).
 export const REST_WINDOW = 6 * 3600;
+export const SHOWN_COUNTS_EVERY = 10 * 60; // a trick it knows, shown, counts in a child's diary at most this often
 export const REST_SECONDS = [120, 600, 1800, 3600, 7200];
 const TRAIN_KEYS = battle.SKILLS.map((skill) => `train_${skill}`);
 export const EVENT_LIMIT = 100;
@@ -450,9 +451,11 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   brood.step(state, t, !state.asleep && !state.trip);
 
   life.recordMinute(state, !state.sick && s.satiety >= CRITICAL && s.hygiene >= CRITICAL && s.mood >= CRITICAL);
+  // A baby that is due grows up by itself after a while; a child waits until its adult form is picked
   const due = life.dueAt(state);
-  if (due !== null && t >= due + life.AUTO_EVOLVE_AFTER && !state.asleep && !state.trip && !isBedtime(t, bedtime)) {
-    evolve(state, t, "system", weather, location, temp);
+  if (due !== null && state.stage === "baby" && t >= due + life.AUTO_EVOLVE_AFTER && !state.asleep && !state.trip
+      && !isBedtime(t, bedtime)) {
+    evolve(state, t, "system");
   }
 }
 
@@ -760,9 +763,11 @@ export function worldAt(t: number, weather: sky.WeatherCode, location: Location,
   return {
     raining: sky.precipitation(weather) === "rain",
     snowing: sky.precipitation(weather) === "snow" || (state !== null && home.snowDeco(state)),
-    storm: sky.isThunder(weather), clear: weather !== null && weather <= 1, temp, dark: isDark(t, location),
+    storm: sky.isThunder(weather) || (state !== null && home.momentDeco(state, "storm")),
+    clear: weather !== null && weather <= 1, dark: isDark(t, location),
+    temp: state !== null && home.momentDeco(state, "heat") ? Math.max(temp ?? -Infinity, life.PHARABUG_HEAT) : temp,
     minute: date.getHours() * 60 + date.getMinutes(), sunrise: Math.round(sunrise), sunset: Math.round(sunset),
-    fullMoon: isFullMoon(t),
+    fullMoon: isFullMoon(t) || (state !== null && home.momentDeco(state, "moon")),
     ...(state && petWorld(state, t)),
   };
 }
@@ -778,19 +783,20 @@ function petWorld(state: PetState, t: number): life.World {
     spin: care.knows(state, "spin"),
     dance: care.knows(state, "dance"),
     friend: state.friends.length > 0,
+    wildFriend: state.friends.some((f) => !f.guest),
     tricks: care.learned(state).length,
     smarts: state.skills.smarts ?? 0,
     strongest: strongest.length === 1 && top > 0 ? strongest[0] : undefined,
     houseBuilt: state.house >= home.HOUSE_STEPS,
     glowOutside: home.placeDeco(state).outside.some((item) => home.GLOWING_DECO.includes(item)),
+    sandcastle: home.placeDeco(state).outside.includes("sandcastle"),
     grandmaHat: grandma.HATS.includes(state.hat),
   };
 }
 
-function evolve(state: PetState, now: number, by: string, weather: sky.WeatherCode = null,
-    location: Location = null, temp: number | null = null): void {
+function evolve(state: PetState, now: number, by: string, world: life.World = {}, form: string | null = null): void {
   const oldStage = state.stage;
-  const old = life.evolve(state, now, worldAt(now, weather, location, temp, state));
+  const old = life.evolve(state, now, world, form);
   care.rescaleWeight(state, oldStage);
   state.game = null;
   const hatched = old.startsWith("egg");
@@ -865,6 +871,8 @@ export interface ActionOptions {
   value?: unknown;
   /** The home's yard (yard.ts), for "fill"; null while there is none. */
   yard?: yards.Yard | null;
+  /** The forms the home has had (the album), for the adult form a child may grow into ("evolve"). */
+  had?: readonly string[];
 }
 
 export interface ActionResult {
@@ -955,6 +963,9 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
   }
 
   if (action === "evolve") {
+    // A child grows into the adult form picked (life.choices); without one, as an older app
+    // asks, into the one its diary and the world lead to
+    const world = worldAt(now, weather, options.location ?? null, options.temp ?? null, state);
     let reason: string;
     if (!life.isDue(state, now)) {
       reason = "not_ready";
@@ -962,8 +973,11 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
       reason = "asleep";
     } else if (state.trip) {
       reason = "away";
+    } else if (item !== null && (state.stage !== "child"
+        || !life.choices(state, world, options.had ?? []).some((c) => c.ready && c.form === item))) {
+      reason = "form_not_ready";
     } else {
-      evolve(state, now, by, weather, options.location ?? null, options.temp ?? null); // gets its own entry in the history
+      evolve(state, now, by, world, item); // gets its own entry in the history
       return { accepted: true, reason: null };
     }
     logEvent(state, now, action, by, { accepted: false, reason });
@@ -1494,7 +1508,7 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
       s.mood += 5 * life.bonusFactor(state, "pet");
       state.last_pet = now;
       care.addBond(state, "pet");
-      life.record(state, "love");
+      life.recordLove(state);
       count(state, "pets");
       if (state.counters.pets % HEART_EVERY === 0) {
         catchHeart(state, now);
@@ -1525,6 +1539,10 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
       state.game = null;
       setActivity(state, "trick", now, `${trick}:ok`);
       count(state, "tricks");
+      if (state.stage === "child" && now - (state.recent.trick_shown?.[0] ?? -Infinity) >= SHOWN_COUNTS_EVERY) {
+        life.record(state, "tricks"); // shown, in the care diary too (the beak and the magpie line)
+        state.recent.trick_shown = [now];
+      }
       return null;
     }
     if (s.energy < care.TRICK_ENERGY) {
@@ -1543,7 +1561,7 @@ function apply(state: PetState, action: string, now: number, bedtime: Bedtime, i
     }
     s.energy -= 5;
     care.addBond(state, "trick");
-    life.record(state, "tricks"); // practiced, in a child's care diary (the beak line)
+    life.record(state, "tricks"); // practiced, in a child's care diary (the beak and the magpie line)
     state.game = null; // this ends a mini-game in progress
     setActivity(state, "trick", now, `${trick}:${result}`);
     count(state, "tricks");
