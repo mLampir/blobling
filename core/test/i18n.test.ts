@@ -104,5 +104,5 @@ test("every form of every line has a name in every language", () => {
       }
     }
   }
-  assert.equal(new I18n(locales, "de").t(life.formKey("baby", "ember")), "Glut-Baby");
+  assert.equal(new I18n(locales, "de").t(life.formKey("baby", "ember")), "Glimmi");
 });

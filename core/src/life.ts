@@ -74,8 +74,7 @@ export const LINE_SKILL: Record<string, "strength" | "speed" | "smarts"> = {
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
- * child has a name of its own, in `children` of the language files), the baby of its line ("Ember
- * baby", in `babies`), or else the stage.
+ * child has a name of its own, in `children` of the language files), the baby of its line (in `babies`), or else the stage.
  */
 export function formKey(stage: string, species: string): string {
   if (stage === "adult") {

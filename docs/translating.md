@@ -58,8 +58,7 @@ both). No other code changes are needed. A few things to know while translating:
   (in `children` the child of each line, in `babies` its baby) and of the
   opponents on trips. Every language gives them names of its own, made the way
   *Naming a creature* below describes; a name that is a pun only in English
-  needs a new one. Babies have no names of their own: they are called after
-  their line, like the eggs ("Ember baby").
+  needs a new one.
 
 ## Naming a creature
 
@@ -87,9 +86,14 @@ dictionary. These rules hold for every language and every new creature:
 - **Funny where the creature is funny, not everywhere.** A title with a pun
   fits a few characters (*Käpt'n Quak*, *Graf Nilferatu*, *Sir Fingerhut*,
   *DJ Flatter*); most names are not jokes.
-- **Different within a line, and across lines.** Two forms of a line may share
-  a piece (*Kauzi*, *Fernauz*), but no two names in a language sound alike, and
-  none is taken from another game (German *Kiesling* is a Pokémon).
+- **Kinds that differ sound different.** Forms of one line may share a piece
+  (*Kauzi*, *Fernauz*), but names of different lines, and of opponents, must
+  not be mistaken for each other: not the same start (*Blinkero* and
+  *Blinki*), not the same idea (two thieves called *Klau…*), not one letter
+  apart. Check a new name against all names of its language, not only its
+  line.
+- **Not taken.** No name comes from another game (German *Kiesling* and
+  *Quabbel* are Pokémon).
 - **Native, not translated.** A German name is found in German, from German
   words and puns; it is not the English name translated, and not a German word
   that means something awkward (*Inkasso* is debt collecting in German).
