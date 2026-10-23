@@ -16,6 +16,7 @@ import * as fishing from "./fishing";
 import * as grandma from "./grandma";
 import * as food from "./food";
 import * as garden from "./garden";
+import * as ground from "./ground";
 import * as habits from "./habits";
 import * as home from "./home";
 import * as idle from "./idle";
@@ -78,7 +79,8 @@ export const FOODS = ["meal", ...food.EDIBLE];
 export const GAME_MOVES = ["start", ...care.SPOTS]; // start, or look behind a spot
 export const TRIP_MOVES = [...trip.AREAS, "recall"];
 export const FISH_MOVES = ["cast", "pull"]; // cast the line at the pond, or pull it in
-export const TRAIN_MOVES = [...battle.SKILLS, "tap", "answer"]; // an exercise, or the answer to one that is waiting
+// an exercise, or the answer to one that is waiting; or over to the training ground and home again (ground.ts)
+export const TRAIN_MOVES = [...battle.SKILLS, "tap", "answer", "go", "leave"];
 export const THROW_ACTIONS = ["feed", "play", "medicine", "trip", "plant"];
 export const THROW_SECONDS = 2.4; // a thrown item drops in and the pet hops over – only then does it start
 export const LOOK_IN_SECONDS = 8; // a tap on the house shows the inside this long
@@ -98,6 +100,8 @@ export const ACTIVITY_SECONDS: Record<string, number> = {
   // over to the cross, digging (a digger by nature sooner, see dig), and holding up what it found
   dig: digging.WALK_SECONDS + digging.DIG_SECONDS + digging.SHOW_SECONDS,
   train_strength: 5, train_speed: 3, train_smarts: 3,
+  // practicing a battle stat alone at the training ground (ground.ts)
+  train_solo: ground.SOLO_SECONDS,
   // the line in the water: as long as it can be until something bites and is gone again
   fish_wait: fishing.EMPTY_WAIT, fish_catch: 4, fish_empty: 2.5,
   // waiting for the signal, and showing the sequence: as long as the longest one can take
@@ -421,10 +425,11 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     }
   }
   if (yard) {
-    yards.rain(yard, state.items, t, weather); // the rain barrel, once a minute for the whole home
+    yards.rain(yard, state.items, t, weather); // the rain barrel and the sandcastle, once a minute for the whole home
   }
   if (yard && !state.asleep && !state.trip && t >= state.activity_until && !wild.visiting(state, t)
-      && !care.gameActive(state, t) && !battle.trainingActive(state, t) && !fishing.active(state, t)) {
+      && !care.gameActive(state, t) && !battle.trainingActive(state, t) && !fishing.active(state, t)
+      && !ground.there(state, t)) {
     // hungry or dirty enough, and there is something in the yard: it goes over by itself; in the
     // evening, to the campfire
     const done = yards.visit(state, yard, t) ?? yards.toFire(minutesUntilBed(t, bedtime) * 60 - t % 60, weather);
@@ -969,6 +974,22 @@ export function applyAction(state: PetState, action: string, now: number, bedtim
     }
     return { accepted: reason === null, reason };
   }
+  if (action === "train" && (item === "go" || item === "leave")) {
+    // only where it is: over at the training ground for the training, or home again; not in the history
+    const reason = item === "leave" ? null : state.stage === "egg" ? "egg" : state.trip ? "away"
+      : state.asleep ? "asleep" : null;
+    if (reason === null) {
+      if (item === "go") {
+        ground.go(state, now);
+      } else {
+        ground.leave(state);
+      }
+    }
+    return { accepted: reason === null, reason };
+  }
+  if (!["train", "plant", "wear", "deco"].includes(action)) {
+    ground.leave(state); // anything else done with it brings it home from the training ground
+  }
   idle.noticed(state);
   let thrown: number | null = null;
   if (THROW_ACTIONS.includes(action) && options.throw != null) {
@@ -1183,6 +1204,7 @@ function catchHeart(state: PetState, now: number): void {
 
 /** Training for the battle stats: an exercise, or the tap or answer one of them is waiting for. */
 function train(state: PetState, now: number, move: string, value: unknown): string | null {
+  ground.go(state, now); // the exercises are done over at the training ground
   if (move === "tap") {
     if (!battle.trainingActive(state, now, "speed")) {
       state.training = null;
@@ -1228,7 +1250,8 @@ function trained(state: PetState, now: number, skill: battle.Skill, score: numbe
   }
   const s = state.stats;
   practiced(state, `train_${skill}`, now);
-  battle.train(state, skill, score * (food.use(state, "train") ? 2 : 1));
+  battle.train(state, skill, score * (food.use(state, "train") ? 2 : 1) * ground.factor(state, skill));
+  ground.trainedTogether(state, skill);
   s.mood += 10 * life.bonusFactor(state, "play");
   s.energy -= battle.TRAIN_COST.energy;
   s.satiety -= battle.TRAIN_COST.satiety;

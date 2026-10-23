@@ -5,7 +5,7 @@ import * as life from "./life";
 import type { Random } from "./random";
 import type { PetState, Stat } from "./state";
 
-export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg" | "map" | "yard";
+export type ItemKind = "seed" | "fruit" | "food" | "deco" | "hat" | "egg" | "map" | "yard" | "ground" | "playground";
 
 // Name: kind
 export const ITEMS: Record<string, ItemKind> = {
@@ -79,6 +79,14 @@ export const ITEMS: Record<string, ItemKind> = {
   rain_barrel: "yard",
   planks_coast: "yard",
   planks_ruins: "yard",
+  // the equipment for the training ground (ground.ts): it stands there, not in the bag
+  barbell: "ground",
+  cones: "ground",
+  coach_board: "ground",
+  // the pieces of the playground (playground.ts)
+  swing: "playground",
+  sandpit: "playground",
+  seesaw: "playground",
   egg_blob: "egg",
   egg_ember: "egg",
   egg_stone: "egg",
@@ -106,7 +114,7 @@ export const ITEMS: Record<string, ItemKind> = {
   egg_gargoyle: "egg",
   egg_magpie: "egg",
 };
-export const MAX_SEEDS = 9; // per kind; decorations, hats, the treasure map and what is for the yard exist only once
+export const MAX_SEEDS = 9; // per kind; decorations, hats, the treasure map and what is for the yard, the training ground or the playground exist only once
 export const MAX_FOOD = 3; // per kind: fruits and food from trips are kept in small numbers (food.ts)
 export const MAX_EGGS = 3; // this many of each line are kept (the bag shows them as one, ×n)
 // Egg: the line that hatches from it (life.LINES). An egg is kept in state.eggs, as {line: ...} plus

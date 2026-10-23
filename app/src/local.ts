@@ -23,7 +23,7 @@ import { RequestError } from "../../core/src/model";
 import { MAX_NAME, PLACES, Pet, VERSION, readSave, type Ancestor, type Moving, type Sighting } from "../../core/src/pet";
 import { PetScene } from "../../core/src/scene";
 import { fromDict, type Egg, type PetState } from "../../core/src/state";
-import { YARD, pan, panSeconds, place } from "../../core/src/street";
+import { GROUND, PLACES as STREET_PLACES, PLAYGROUND, YARD, pan, panSeconds, place } from "../../core/src/street";
 import { checkLocation, type Location } from "../../core/src/sun";
 import { Weather } from "../../core/src/weather";
 import { readYard, type Yard } from "../../core/src/yard";
@@ -78,10 +78,10 @@ export class LocalPet {
   private rest: Album = { ancestors: [], album: [], seen: {}, mastered: [] };
   private readonly scenes = new Map<string, PetScene>();
   private sceneLocation: Location;
-  /** The pet the scene showed last (or YARD), and its last frame: where a switch pans from. */
+  /** The pet the scene showed last (or a place: STREET_PLACES), and its last frame: where a switch pans from. */
   private shown: { id: string; frame: Image } | null = null;
-  /** The page looks at the yard: the scene stays there until it goes to a pet. */
-  private yardOpen = false;
+  /** The page looks at a place (street.PLACES): the scene stays there until it goes to a pet. */
+  private opened: string | null = null;
   private panning: { from: Image; steps: number; start: number; seconds: number } | null = null;
   private readonly weather: Weather;
   private timer: ReturnType<typeof setTimeout> | undefined;
@@ -261,15 +261,15 @@ export class LocalPet {
         ...ownTarget(pet),
         look: (id: unknown) => {
           pet.select(id);
-          this.yardOpen = false;
+          this.opened = null;
         },
-        lookYard: () => {
-          this.yardOpen = true;
+        lookPlace: (where: string) => {
+          this.opened = where;
         },
       };
       const asked = body as { action?: unknown } | undefined;
       if (path === "/api/pet/action" && asked?.action !== "fill") {
-        this.yardOpen = false; // something done with a pet: the scene goes back to it
+        this.opened = null; // something done with a pet: the scene goes back to it
       }
       answer = await petRequest(target, method, new URL(path, "http://app"), async () => body ?? null);
     } catch (error) {
@@ -340,15 +340,15 @@ export class LocalPet {
       if (this.weather.configured && this.weather.needsRefresh()) {
         void this.weather.refresh();
       }
-      const yard = this.atYard() ? this.pet.yardView() : null;
-      const id = yard ? YARD : this.pet.current;
-      let [frame, next] = yard ? this.sceneFor(YARD).renderYard(yard, this.weather.current())
-        : this.sceneFor(id).render(this.pet.view(), this.weather.current());
+      const where = this.atPlace();
+      const id = where ?? this.pet.current;
+      let [frame, next] = this.frame(where);
       if (this.shown && this.shown.id !== id) {
-        // switched: the camera pans along the street from the house it showed (the yard is after the last one)
+        // switched: the camera pans along the street from the house it showed (the places are after the last one)
         const ids = this.pet.pets.map((pet) => pet.id);
-        const from = place(ids, this.shown.id);
-        const steps = from >= 0 ? place(ids, id) - from : 1;
+        const there = this.pet.places();
+        const from = place(ids, this.shown.id, there);
+        const steps = from >= 0 ? place(ids, id, there) - from : 1;
         this.panning = { from: this.shown.frame, steps, start: performance.now() / 1000, seconds: panSeconds(steps) };
       }
       this.shown = { id, frame };
@@ -372,20 +372,54 @@ export class LocalPet {
   }
 
   /**
-   * Whether the scene shows the yard: the page looks at it, or the pet the camera is on is over
-   * there; only while there is a yard.
+   * The place the scene shows (street.PLACES), or null for the camera's pet: the page looks at a
+   * place, or the pet is over there. The yard and the playground only while the home has them.
    */
-  atYard(): boolean {
-    return !!this.home && (this.yardOpen || this.home.inYard()) && this.home.yardView() !== null;
+  atPlace(): string | null {
+    if (!this.home) {
+      return null;
+    }
+    const there = this.home.places();
+    if (this.opened !== null && there.includes(this.opened)) {
+      return this.opened;
+    }
+    if (this.home.inYard() && there.includes(YARD)) {
+      return YARD;
+    }
+    if (this.home.atPlayground()) {
+      return PLAYGROUND;
+    }
+    return this.home.atGround() ? GROUND : null;
   }
 
-  /** The scene of the pet with this id (or of the yard); the ones of pets that no longer live here go. */
+  /** The picture of the camera's pet, or of the place `where`; and when the next is due. */
+  private frame(where: string | null): [Image, number] {
+    const weather = this.weather.current();
+    if (where === YARD) {
+      return this.sceneFor(YARD).renderYard(this.pet.yardView()!, weather);
+    }
+    if (where === GROUND) {
+      // the pet over there in its own scene, or the training ground with nobody on it
+      const there = this.pet.groundPet();
+      return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
+        : this.sceneFor(GROUND).renderGround(this.pet.groundView(), weather);
+    }
+    if (where === PLAYGROUND) {
+      // the two over there in the scene of one of them, or the playground with nobody on it
+      const there = this.pet.playgroundPet();
+      return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
+        : this.sceneFor(PLAYGROUND).renderPlayground(this.pet.playgroundView(), weather);
+    }
+    return this.sceneFor(this.pet.current).render(this.pet.view(), weather);
+  }
+
+  /** The scene of the pet with this id (or of a place); the ones of pets that no longer live here go. */
   private sceneFor(id: string): PetScene {
     let scene = this.scenes.get(id);
     if (!scene) {
       const ids = new Set(this.pet.pets.map((pet) => pet.id));
       for (const old of this.scenes.keys()) {
-        if (!ids.has(old) && old !== YARD) {
+        if (!ids.has(old) && !STREET_PLACES.includes(old)) {
           this.scenes.delete(old);
         }
       }

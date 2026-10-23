@@ -24,6 +24,7 @@ import * as home from "./home";
 import { Image, lerp, type Color } from "./image";
 import * as life from "./life";
 import * as magpie from "./magpie";
+import * as playground from "./playground";
 import { ACTIVITY_SECONDS, THROW_SECONDS } from "./model";
 import { Random } from "./random";
 import * as sky from "./sky";
@@ -221,6 +222,39 @@ const BARREL_X = 58; // the middle of the rain barrel, right of the basin
 const FIRE_X = 32; // the middle of the campfire
 const FIRE_GAP = 4; // from its middle to the pets sitting in front, left and right of it (they lean in over its edge)
 const HILL_SEATS = [[32], [18, 46]]; // the middles of one or two pets standing on the hill
+// The training ground (ground.ts): a running track in place of the garden, and the equipment the
+// home has where it stands (middles); the pet trains between the barbell and the board
+const TRACK: Color = [178, 78, 58];
+const TRACK_SHADE: Color = [150, 62, 46];
+const TRACK_LINE: Color = [235, 230, 220];
+const GROUND_PET = 30; // the middle of a pet over there
+const RACK_X = 10;
+const CONES_X = [36, 58];
+const BOARD_X = 54;
+const BOARD_ARROW: Color = [40, 140, 255]; // the hop being shown, drawn on the coach's board
+const BAR_REST = 4; // the bar's row that lies in the rack's cradles
+// Over at the training ground, nothing of its garden is there
+const AWAY_FROM_GARDEN: Partial<SceneView> = {
+  poops: 0, deco: [], house: 0, house_deco: [], look_in: false, visitor: null, nest: null, magpie: null, peeking: null,
+  gift: false, found: null, plant: null, trace: null, waiting: false, owl: false, fallen: null, poster: false, cross: false,
+};
+// The playground (playground.ts): the swing hangs from a tree at the left edge, the sandpit is sunk
+// into the soil in the middle, the seesaw stands on the right
+const SWING_X = 19; // the middle of the swing's seat at rest
+const SWING_TOP = 14; // the branch it hangs from
+const SWING_SEAT = GROUND - 9; // the seat's row at rest
+const SWING_WIDE = 8; // how far the seat swings out at most
+const PIT_X = 21; // the sandpit's left edge
+const CASTLE_X = 35; // the middle of the sandcastle in it
+const SEESAW_X = 44; // the middle of the seesaw
+const SEESAW_HALF = 16; // the plank's length on either side
+const SEESAW_SEAT = 13; // where the two sit on it, from the middle
+const SEESAW_TILT = 3; // how far the ends go up and down
+const ROPE: Color = [200, 180, 140];
+const PLANK: Color = [176, 124, 70];
+const PLANK_SHADE: Color = [92, 58, 32];
+const HANDLE: Color = [150, 156, 168];
+const PLAY_HOP = 0.8; // seconds it takes to hop from one piece over to the next
 
 /** Where the trough or the basin stands in the yard, at a size: [x, y, width, height] as parts of the scene (64 × 64). */
 export function yardArea(what: "trough" | "basin", size: number): [number, number, number, number] {
@@ -1272,6 +1306,41 @@ export interface SceneView {
   cross?: boolean;
   /** The friend it made last (its species): Mirrorleon dances its dance and makes its special move. */
   friend?: string | null;
+  /**
+   * It is over at the training ground (ground.ts): the scene shows the track with the equipment the
+   * home has ("barbell", "cones", "coach_board") in place of its garden.
+   */
+  ground?: readonly string[] | null;
+  /**
+   * It is on the playground with its neighbour (the visitor, playground.ts): the scene shows the
+   * playground in place of its garden, and the two take turns with its pieces.
+   */
+  playground?: PlaygroundView | null;
+}
+
+/** The training ground with nobody on it (Pet.groundView): the equipment the home has. */
+export interface GroundView {
+  equipment: readonly string[];
+}
+
+/**
+ * The two neighbours on a piece of the playground right now: which one, how far the swing is out
+ * (-1–1) or the seesaw tilted (pixels, left end down), whether the sandcastle stands, and where
+ * each of them is as [middle, lift, face].
+ */
+interface OnPiece {
+  piece: string;
+  swing: number;
+  tilt: number;
+  castle: boolean;
+  pet: [number, number, string];
+  guest: [number, number, string];
+}
+
+/** The playground (Pet.playgroundView): its pieces ("swing", "sandpit", "seesaw"), and a sandcastle left in the sandpit. */
+export interface PlaygroundView {
+  pieces: readonly string[];
+  castle: boolean;
 }
 
 /**
@@ -1632,6 +1701,7 @@ export class PetScene {
   private roundFor: string | null = null; // effects of a round in a scuffle only once
   private play: Play | null = null; // the game with the visiting friend in this frame
   private hiding: Guest | null = null; // the guest in a game of hide and seek, in this frame
+  private onPiece: OnPiece | null = null; // the two on a piece of the playground, in this frame
   private tallGrass: number[] = []; // where tall grass stands in this frame (hide and seek)
   private covers = new Map<string, number>(); // the top row of each hiding spot's cover, in this frame
   private noteAt = 0; // the beat the last note of a game went up on
@@ -1672,6 +1742,16 @@ export class PetScene {
     this.last = t;
     const seconds = now.getTime() / 1000;
     this.moon = moonPhase(seconds);
+    const training = !!view.ground && !view.trip;
+    if (training) {
+      view = { ...view, ...AWAY_FROM_GARDEN };
+      this.x = this.targetX = GROUND_PET - SPRITE / 2;
+    }
+    const playing = !training && !!view.playground && !view.trip ? view.playground : null;
+    if (playing) {
+      view = { ...view, ...AWAY_FROM_GARDEN, visitor: view.visitor }; // the neighbour came along
+    }
+    this.onPiece = playing ? this.playTurn(view, playing) : null;
 
     const img = this.skyImage(now, sky.clouds(sky.codeOf(weather))[0] >= 2).copy();
     const items = this.sheet("items");
@@ -1699,6 +1779,13 @@ export class PetScene {
       const [grass, soil] = TRAVEL[trip.area];
       this.drawGround(img, grass, soil);
       this.drawTravel(img, trip, dt, t, seconds);
+    } else if (training) {
+      this.drawGround(img);
+      this.drawTrack(img);
+      this.drawEquipment(img, view.ground!, this.barLifted(view, seconds), this.boardArrow(view, seconds));
+    } else if (playing) {
+      this.drawGround(img);
+      this.drawPlayground(img, playing, this.onPiece);
     } else if (indoors) {
       this.drawRoom(img, view, t);
     } else {
@@ -1716,6 +1803,11 @@ export class PetScene {
     this.friend = view.friend ?? null;
     this.foeFrozen = null;
     const pose = this.behave(view, weather, t, dt, seconds);
+    if (this.onPiece) { // on the playground: on the swing, the seesaw or in the sandpit
+      const [middle, lift, face] = this.onPiece.pet;
+      this.x = middle - SPRITE / 2;
+      Object.assign(pose, { body: "idle", face, jump: lift, dx: 0 });
+    }
     this.drawProps(img, view, pose, t, seconds);
     const x = Math.round(this.x + pose.dx);
     const y = GROUND - SPRITE + 1 - Math.round(pose.jump);
@@ -2074,6 +2166,8 @@ export class PetScene {
       }
     } else if (activity === "train_show") {
       this.trainShow(pose, view, now);
+    } else if (activity === "train_solo") {
+      this.trainSolo(pose, view, t, now);
     } else if (activity === "train_smarts") {
       const [right, steps] = view.activity_item.split("/");
       if (right === (steps ?? "")) {
@@ -4725,6 +4819,22 @@ export class PetScene {
     const ballX = Math.round(this.x) + SPRITE / 2 - 2;
     const onHead = GROUND - this.petTop + 1;
     const flight = 0.8 + 1.6 * power;
+    if (view.ground?.includes("barbell")) {
+      // at the training ground with the barbell: it lifts that instead, overhead if it was strong
+      // enough, and holds it up as long as the stone would have flown
+      const barX = Math.round(this.x) + SPRITE / 2 - 9;
+      if (e < 0.8) {
+        Object.assign(pose, { body: "squash", face: "happy", thrown: ["ground_bar", barX, Math.round(onHead / 2) - 4] });
+      } else if (e < 0.8 + flight) {
+        const up = power >= 0.5 ? onHead - 2 : Math.round(onHead / 2) + Math.round(Math.sin(e * 9) * 2);
+        Object.assign(pose, { body: power >= 0.5 ? "stretch" : "squash", face: "eat_open", thrown: ["ground_bar", barX, up] });
+      } else if (power >= 0.5) {
+        this.cheer(pose, t);
+      } else {
+        pose.face = "smile";
+      }
+      return;
+    }
     if (e < 0.8) { // winds up
       Object.assign(pose, { body: "squash", face: "happy", thrown: ["stone", ballX, onHead - 3] });
     } else if (e < 0.8 + flight) {
@@ -4736,6 +4846,68 @@ export class PetScene {
     } else {
       pose.face = "smile";
     }
+  }
+
+  /**
+   * Practicing a stat alone at the training ground (ground.ts): it lifts the barbell up and down,
+   * runs back and forth by the cones, or hops after the arrows on the coach's board.
+   */
+  private trainSolo(pose: Pose, view: SceneView, t: number, now: number): void {
+    const e = this.elapsed(view, now);
+    const onHead = GROUND - this.petTop + 1;
+    if (view.activity_item === "strength") {
+      const up = Math.sin(((e % 3) / 3) * Math.PI);
+      const low = Math.round(onHead / 2) - 4;
+      Object.assign(pose, {
+        body: up > 0.6 ? "stretch" : "squash", face: up > 0.6 ? "eat_open" : "happy",
+        thrown: ["ground_bar", Math.round(this.x) + SPRITE / 2 - 9, low + Math.round(up * (onHead - 2 - low))],
+      });
+    } else if (view.activity_item === "speed") {
+      this.facing = Math.cos(e * 1.5) >= 0 ? 1 : -1;
+      Object.assign(pose, {
+        dx: Math.round(Math.sin(e * 1.5) * 10), body: Math.trunc(t * 6) % 2 ? "stretch" : "idle", face: "happy",
+      });
+    } else {
+      const step = PetScene.soloArrow(e);
+      const q = e % 1;
+      const hop = q < 0.7 ? Math.sin((q / 0.7) * Math.PI) : 0;
+      Object.assign(pose, {
+        body: hop > 0.3 ? "stretch" : "idle", face: "happy", jump: hop * (step === "up" ? 6 : 2),
+        dx: step === "left" ? -Math.round(hop * 3) : step === "right" ? Math.round(hop * 3) : 0,
+      });
+    }
+  }
+
+  /** The arrow the coach's board shows `e` seconds into practicing smarts alone: a new one every second. */
+  private static soloArrow(e: number): string {
+    return battle.DIRECTIONS[(Math.floor(e) * 3 + 1) % battle.DIRECTIONS.length];
+  }
+
+  /** Is the barbell off its rack: lifted in an exercise, or while it practices strength alone? */
+  private barLifted(view: SceneView, now: number): boolean {
+    if (now >= view.activity_until) {
+      return false;
+    }
+    const e = this.elapsed(view, now);
+    return (view.activity === "train_strength" && e < 1.6 + 1.6 * Number(view.activity_item || 0))
+      || (view.activity === "train_solo" && view.activity_item === "strength");
+  }
+
+  /** The hop the coach's board shows right now, or null: the one the pet is showing, or one to practice alone. */
+  private boardArrow(view: SceneView, now: number): string | null {
+    if (now >= view.activity_until) {
+      return null;
+    }
+    const e = this.elapsed(view, now);
+    if (view.activity === "train_solo" && view.activity_item === "smarts") {
+      return PetScene.soloArrow(e);
+    }
+    if (view.activity === "train_show") {
+      const position = e / battle.SHOW_STEP;
+      const q = position - Math.floor(position);
+      return q >= 0.1 && q <= 0.8 ? view.activity_item.split(",")[Math.floor(position)] ?? null : null;
+    }
+    return null;
   }
 
   /** Hops the sequence to remember, one direction after the other, then waits for the answer. */
@@ -5237,6 +5409,11 @@ export class PetScene {
     const visit = view.visitor;
     if (!visit) {
       return null;
+    }
+    if (this.onPiece) { // the neighbour on the playground, on its part of the piece
+      const [middle, lift, face] = this.onPiece.guest;
+      return [visit.species, Math.round(middle - SPRITE / 2), Math.round(lift), face, 0,
+        { body: "idle", turn: null, rotate: 0, dx: 0, lookLeft: true }, visit.stage ?? "adult"];
     }
     if (this.hiding) {
       return this.hiding;
@@ -5968,6 +6145,191 @@ export class PetScene {
     for (let x = 3 - mod(Math.round(this.scroll), 7); x < this.width; x += 7) {
       img.point(x, GROUND, dimmed(grass, dim));
     }
+  }
+
+  /** The running track of the training ground, in place of the soil (ground.ts). */
+  private drawTrack(img: Image): void {
+    const dim = 0.45 + 0.55 * (1 - this.night);
+    img.rectangle(0, GROUND + 2, this.width - 1, this.height - 1, dimmed(TRACK, dim));
+    for (let x = 0; x < this.width; x++) {
+      if ((x + 1) % 4) {
+        img.point(x, GROUND + 5, dimmed(TRACK_LINE, dim)); // a dashed line between two lanes
+      }
+    }
+    for (let x = 1; x < this.width; x += 5) {
+      img.point(x, GROUND + 7, dimmed(TRACK_SHADE, dim));
+    }
+    img.hline(0, this.width - 1, GROUND + 9, dimmed(TRACK_LINE, dim));
+  }
+
+  /**
+   * The equipment of the training ground, where it stands: the barbell on its rack (unless it is
+   * lifted), the coach's board with the hop it shows (`arrow`), and the cones in front of it.
+   */
+  private drawEquipment(img: Image, equipment: readonly string[], lifted: boolean, arrow: string | null): void {
+    if (equipment.includes("barbell")) {
+      const rack = this.dimmedSprite("ground_rack");
+      this.stand(img, rack, RACK_X);
+      if (!lifted) {
+        const bar = this.dimmedSprite("ground_bar");
+        img.paste(bar, RACK_X - Math.floor(bar.width / 2), GROUND + 2 - rack.height - BAR_REST);
+      }
+    }
+    if (equipment.includes("coach_board")) {
+      const board = this.dimmedSprite("ground_board");
+      this.stand(img, board, BOARD_X);
+      if (arrow) {
+        const shape = ARROWS[arrow];
+        bitmap(img, BOARD_X - Math.floor(shape[0].length / 2), GROUND + 2 - board.height + 4, [BOARD_ARROW, shape]);
+      }
+    }
+    if (equipment.includes("cones")) {
+      const cone = this.dimmedSprite("ground_cone");
+      for (const x of CONES_X) {
+        this.stand(img, cone, x);
+      }
+    }
+  }
+
+  /**
+   * One frame of the training ground with nobody on it (ground.ts): the track and the equipment the
+   * home has. Returns [image, seconds until the next frame]. Any scene can draw it.
+   */
+  renderGround(ground: GroundView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    const dt = clamp(t - this.last, 0.0, 0.5);
+    this.last = t;
+    this.moon = moonPhase(now.getTime() / 1000);
+    const img = this.skyImage(now, sky.clouds(sky.codeOf(weather))[0] >= 2).copy();
+    this.drawWeather(img, weather, t, dt);
+    this.drawGround(img);
+    this.drawTrack(img);
+    this.drawEquipment(img, ground.equipment, false, null);
+    this.drawStatus(img, [], weather, now, t);
+    return [img, 1 / FPS];
+  }
+
+  /**
+   * The piece of the playground the two are on right now (playground.turn), with where each of
+   * them is; null while they are coming or going, play a game of their own, or ours is busy.
+   */
+  private playTurn(view: SceneView, place: PlaygroundView): OnPiece | null {
+    const visit = view.visitor;
+    if (!visit || visit.asleep || view.asleep || view.activity !== "idle") {
+      return null;
+    }
+    const since = visit.age - VISIT_WALK;
+    if (since < 0 || visit.left < VISIT_WALK + PLAY_HOP) {
+      return null;
+    }
+    const piece = playground.turn(place.pieces, since);
+    if (piece === null) {
+      return null;
+    }
+    const e = since % playground.TURN;
+    const turns = place.pieces.length + 1;
+    const first = Math.floor(since / (playground.TURN * turns)) % 2 === 0; // ours on the swing, or the other one
+    const on = this.onPieceAt(piece, e, first, place.castle);
+    if (e < PLAY_HOP) { // hopping over from where they were
+      const before = since >= playground.TURN ? playground.turn(place.pieces, since - e - 1) : null;
+      const from = before === null ? null : this.onPieceAt(before, playground.TURN, first, place.castle);
+      const f = e / PLAY_HOP;
+      const arc = Math.sin(Math.PI * f) * 6;
+      const hop = (to: [number, number, string], at: [number, number, string] | undefined, rest: number):
+        [number, number, string] => {
+        const [x0, lift0] = at ?? [rest, 0];
+        return [x0 + (to[0] - x0) * f, lift0 + (to[1] - lift0) * f + arc, "laugh"];
+      };
+      on.pet = hop(on.pet, from?.pet, VISIT_PET_X + SPRITE / 2);
+      on.guest = hop(on.guest, from?.guest, VISITOR_X + SPRITE / 2);
+    }
+    return on;
+  }
+
+  /** Where the two are on a piece, `e` seconds into their turn; `first`: ours has the swing. */
+  private onPieceAt(piece: string, e: number, first: boolean, castle: boolean): OnPiece {
+    const on: OnPiece = { piece, swing: 0, tilt: 2, castle, pet: [18, 0, "smile"], guest: [49, 0, "smile"] };
+    const cheer = (middle: number): [number, number, string] =>
+      [middle, Math.trunc(e) % 3 === 0 ? Math.abs(Math.sin(e * 6)) * 2 : 0, "laugh"];
+    if (piece === "swing") {
+      on.swing = Math.sin(e * 2.4) * 0.8;
+      const [sx, sy] = this.swingSeat(on.swing);
+      const riding: [number, number, string] = [sx, GROUND - sy + 1, "laugh"];
+      // the one not swinging watches from in front of the sandpit
+      [on.pet, on.guest] = first ? [riding, cheer(46)] : [[46, 0, "smile"], [sx, GROUND - sy, "laugh"]];
+    } else if (piece === "seesaw") {
+      on.tilt = SEESAW_TILT * Math.sin(e * 2.2);
+      const left = SEESAW_X - SEESAW_SEAT, right = SEESAW_X + SEESAW_SEAT;
+      on.pet = [left, GROUND - this.plankAt(left, on.tilt) + 1, "laugh"];
+      on.guest = [right, GROUND - this.plankAt(right, on.tilt), "laugh"];
+    } else if (piece === "sandpit") {
+      // both in the sand, digging; the castle rises a third of the way into their turn
+      const dig = (shift: number) => (Math.sin(e * 7 + shift) > 0.6 ? 1 : 0);
+      on.castle ||= e > playground.TURN / 3;
+      on.pet = [21, -2 + dig(0), "happy"];
+      on.guest = [55, -1 + dig(2), "happy"];
+    }
+    return on;
+  }
+
+  /** Where the swing's seat is (its middle and row) when it is `swing` (-1–1) of the way out. */
+  private swingSeat(swing: number): [number, number] {
+    return [Math.round(SWING_X + swing * SWING_WIDE), SWING_SEAT - Math.round(Math.abs(swing) * 3)];
+  }
+
+  /** The row of the seesaw's plank at x, tilted `tilt` pixels (left end down for > 0). */
+  private plankAt(x: number, tilt: number): number {
+    return GROUND - 5 + Math.round(((x - SEESAW_X) / SEESAW_HALF) * -tilt);
+  }
+
+  /** The pieces of the playground the home has, as they are right now (`on`: the two on one of them). */
+  private drawPlayground(img: Image, place: PlaygroundView, on: OnPiece | null): void {
+    const dim = 0.45 + 0.55 * (1 - this.night);
+    if (place.pieces.includes("swing")) {
+      img.paste(this.dimmedSprite("play_tree"), 0, GROUND + 1 - this.dimmedSprite("play_tree").height);
+      const swing = on?.piece === "swing" ? on.swing : 0;
+      const [sx, sy] = this.swingSeat(swing);
+      for (const side of [-6, 6]) {
+        line(img, [SWING_X + side, SWING_TOP], [sx + side, sy - 1], dimmed(ROPE, dim));
+      }
+      img.rectangle(sx - SWING_WIDE, sy, sx + SWING_WIDE, sy + 1, dimmed(PLANK, dim));
+      img.hline(sx - SWING_WIDE, sx + SWING_WIDE, sy + 2, dimmed(PLANK_SHADE, dim));
+    }
+    if (place.pieces.includes("sandpit")) {
+      img.paste(this.dimmedSprite("play_pit"), PIT_X, GROUND + 1);
+      if (place.castle || on?.castle) {
+        const castle = this.dimmedSprite("play_castle");
+        img.paste(castle, CASTLE_X - Math.floor(castle.width / 2), GROUND + 3 - castle.height);
+      }
+    }
+    if (place.pieces.includes("seesaw")) {
+      const tilt = on?.piece === "seesaw" ? on.tilt : 2; // at rest, one end down
+      this.stand(img, this.dimmedSprite("play_log"), SEESAW_X, 1);
+      for (let x = SEESAW_X - SEESAW_HALF; x <= SEESAW_X + SEESAW_HALF; x++) {
+        const y = this.plankAt(x, tilt);
+        img.point(x, y, dimmed(PLANK, dim));
+        img.point(x, y + 1, dimmed(PLANK_SHADE, dim));
+      }
+      for (const end of [SEESAW_X - SEESAW_HALF, SEESAW_X + SEESAW_HALF - 1]) { // the handles at both ends
+        const y = this.plankAt(end, tilt);
+        img.rectangle(end, y - 4, end + 1, y - 1, dimmed(HANDLE, dim));
+      }
+    }
+  }
+
+  /**
+   * One frame of the playground with nobody on it (playground.ts): its pieces, and the sandcastle
+   * if one was left. Returns [image, seconds until the next frame]. Any scene can draw it.
+   */
+  renderPlayground(place: PlaygroundView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    const dt = clamp(t - this.last, 0.0, 0.5);
+    this.last = t;
+    this.moon = moonPhase(now.getTime() / 1000);
+    const img = this.skyImage(now, sky.clouds(sky.codeOf(weather))[0] >= 2).copy();
+    this.drawWeather(img, weather, t, dt);
+    this.drawGround(img);
+    this.drawPlayground(img, place, null);
+    this.drawStatus(img, [], weather, now, t);
+    return [img, 1 / FPS];
   }
 
   /**

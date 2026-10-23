@@ -681,3 +681,66 @@ test("the rain barrel stands by the basin only once it has been found", () => {
   }
   assert.ok(changed > 40, `${changed} pixels for the barrel`);
 });
+
+test("at the training ground the track takes the place of the garden, with the equipment found", () => {
+  const [empty] = scene().renderGround({ equipment: [] }, null, DAY, 1);
+  const [full] = scene().renderGround({ equipment: ["barbell", "cones", "coach_board"] }, null, DAY, 1);
+  // the running track: red below the grass
+  const [r, g, b] = color(empty, 32, GROUND + 4);
+  assert.ok(r > g + 50 && r > b + 50, `${[r, g, b]}`);
+  assert.ok(differing(empty, full, 0, GROUND + 2) > 120, "the equipment stands there");
+  // the pet's own scene draws the same place when it is over there, without its house
+  const [home] = frames({}, 1);
+  const [there] = frames({ ground: ["barbell"] }, 1);
+  assert.deepEqual(color(there, 32, GROUND + 4), [r, g, b]);
+  assert.notDeepEqual(color(home, 32, GROUND + 4), [r, g, b]);
+});
+
+test("the barbell leaves its rack while it is lifted, and the coach's board shows the hop", () => {
+  const ground = ["barbell", "coach_board"];
+  const [resting] = frames({ ground }, 1);
+  const lifted = frames({ ground, activity: "train_strength", activity_item: "1.00" }, 20);
+  // left of the pet, where the bar rests on its rack
+  const rack = (image: Image) => Array.from({ length: 12 }, (_, x) => Array.from({ length: 14 },
+    (_, y) => color(image, x, GROUND - 16 + y).join())).flat().join(";");
+  assert.notEqual(rack(resting), rack(lifted[10]));
+  assert.equal(rack(resting), rack(frames({ ground }, 1)[0]));
+  const shown = frames({ ground, activity: "train_show", activity_item: "up,left,down" }, 10);
+  const blue = (image: Image) => {
+    let count = 0;
+    for (let x = 40; x < 64; x++) {
+      for (let y = 20; y < GROUND; y++) {
+        const [cr, cg, cb] = color(image, x, y);
+        count += cb > 200 && cr < 80 && cg > 100 && cg < 180 ? 1 : 0;
+      }
+    }
+    return count;
+  };
+  assert.equal(blue(resting), 0);
+  assert.ok(shown.some((image) => blue(image) > 3), "an arrow lights up on the board");
+});
+
+test("the playground shows the pieces found, and the two take turns on them", () => {
+  const all = ["swing", "sandpit", "seesaw"];
+  const [empty] = scene().renderPlayground({ pieces: ["seesaw"], castle: false }, null, DAY, 1);
+  const [full] = scene().renderPlayground({ pieces: all, castle: false }, null, DAY, 1);
+  const [castle] = scene().renderPlayground({ pieces: all, castle: true }, null, DAY, 1);
+  assert.ok(differing(empty, full, 0, GROUND) > 200, "the tree with the swing");
+  assert.ok(differing(full, castle) > 20, "the sandcastle");
+  // on the swing (the first turn) ours sits up on the seat; in its own game it is on the ground
+  const at = (since: number) => frames({ playground: { pieces: all, castle: false },
+    visitor: { species: "fox", stage: "child", left: 600, age: since + 3, tricks: [] } }, 15).at(-1)!;
+  const lowest = (image: Image, x0: number, x1: number) => {
+    for (let y = GROUND; y > 0; y--) {
+      for (let x = x0; x < x1; x++) {
+        const [r, g, b] = color(image, x, y);
+        if (Math.abs(r - 39) + Math.abs(g - 196) + Math.abs(b - 180) < 90) { // the blob's teal
+          return y;
+        }
+      }
+    }
+    return -1;
+  };
+  assert.ok(lowest(at(30), 0, 40) < GROUND - 6, "up on the swing");
+  assert.ok(lowest(at(200), 0, 40) >= GROUND - 2, "down on the ground for its own game");
+});

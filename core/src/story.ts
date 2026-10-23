@@ -8,6 +8,7 @@
  * words. Which variant a sentence takes is seeded from the time, so it reads the same every time.
  */
 
+import * as battle from "./battle";
 import * as idle from "./idle";
 import * as life from "./life";
 import { Random } from "./random";
@@ -133,6 +134,9 @@ function piece(event: PetEvent, t: Translate): Piece | null {
         return make("solo_ball", 1);
       }
       // what it built or drew while it played (idle.BUILDS, and the snowman in the snow)
+      if ((battle.SKILLS as readonly string[]).includes(item)) {
+        return make("solo_skill", 3, { skill: t(`skills.${item}`) }); // at the training ground (ground.ts)
+      }
       return BUILT.includes(item) ? make(`solo_${item}`, 3) : make("solo_trick", 2, { trick: t(`tricks.${item}`) });
     case "fruit":
       return make(`fruit.${item}`, 2);

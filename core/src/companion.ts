@@ -5,7 +5,8 @@
  * camera (Pet.select). Now and then two of them get together, like a friend's visit: a few times
  * a day for some minutes (outWindow), and at night they sleep side by side. Which two get
  * together is drawn from the time (pairs), so with three pets one of them is on its own now and
- * then. The pair shows in the house of either of them, whichever one is being looked at.
+ * then. The pair shows in the house of either of them, whichever one is being looked at; once
+ * the home has a playground, the first pair meets over there (playground.ts).
  *
  * When the two play, a pet that knows a trick shows it, and the other one copies it a little
  * (teach), capped like practicing alone: it never learns a trick that way. A child counts playing
@@ -107,13 +108,14 @@ export function out(pet: PetState, other: PetState, t: number, friend: boolean):
 
 /**
  * The two have played together (a time together by day that has just ended): a child counts it
- * in its diary, and each copies a trick the other one knows. Returns the tricks copied, as
- * [who copied it, from whom, trick].
+ * in its diary (`plays`: as how much of a playtime; more on the playground, playground.ts), and
+ * each copies a trick the other one knows. Returns the tricks copied, as [who copied it, from
+ * whom, trick].
  */
-export function together(a: PetState, b: PetState): [PetState, PetState, string][] {
+export function together(a: PetState, b: PetState, plays = PLAYS): [PetState, PetState, string][] {
   const copied: [PetState, PetState, string][] = [];
   for (const [learner, teacher] of [[a, b], [b, a]]) {
-    life.record(learner, "plays", PLAYS);
+    life.record(learner, "plays", plays);
     const trick = teach(teacher, learner);
     if (trick) {
       copied.push([learner, teacher, trick]);

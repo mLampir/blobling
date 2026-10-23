@@ -9165,6 +9165,140 @@ TRIP_TAGS |= {
 }
 
 
+# The training ground (core/src/ground.ts): a running track with three pieces of equipment, each
+# found once on a trip. The barbell rests on a low rack and is lifted overhead ("ground_barbell"),
+# two cones mark the sprint, and the coach's board on its easel shows the hops for smarts (the
+# arrow being shown is drawn over it by the scene).
+def ground_bar():
+    """The barbell: a black plate at each end of a steel bar."""
+    side = [".xX", "xXx", "xXx", "xXx", "xXx", "xXx", "xXx", "xXx", ".X."]
+    bar = ["." * 13] * 4 + ["s" * 13, "S" * 13] + ["." * 13] * 3
+    return [side[i] + bar[i] + side[i][::-1] for i in range(9)]
+
+
+def ground_rack():
+    """The rack the barbell rests on: two uprights with a cradle each, the bar's height above the ground."""
+    rows = []
+    for y in range(7):
+        row = ["."] * 19
+        for x in (4, 14):
+            if y == 0:
+                row[x - 1], row[x + 1] = "s", "s"
+            row[x] = "S" if y > 0 else "."
+        rows.append("".join(row))
+    rows.append("..SssS......SssS...")
+    return rows
+
+
+CONE = [
+    "...o...",
+    "...oO..",
+    "..ooO..",
+    "..wwW..",
+    ".oooOO.",
+    ".oooOO.",
+    ".wwwwW.",
+    "ooooooO",
+    "OOOOOOO",
+]
+
+
+def coach_board():
+    """The coach's board on its easel: a play drawn on it (an X, an O and a dotted arrow)."""
+    board = [
+        "TTTTTTTTTTTTTTTT",
+        "TwwwwwwwwwwwwwwT",
+        "TwBwBwwwwwwwwwwT",
+        "TwwBwwwwwwwwwwwT",
+        "TwBwBwBwwwwwwwwT",
+        "TwwwwwwwBwwwwwwT",
+        "TwwwwwwwwwBwwwwT",
+        "TwwwwwwwwwwwBwwT",
+        "TwwwwwwwwwwwwrrT",
+        "TwwwwwwwwwwwrwwT",
+        "TwwwwwwwwwwwwrrT",
+        "TwwwwwwwwwwwwwwT",
+        "TTTTTTTTTTTTTTTT",
+    ]
+    legs = []
+    for y in range(14):
+        row = ["."] * 16
+        k = round(y / 6)
+        row[max(0, 2 - k)] = "T"
+        row[min(15, 13 + k)] = "T"
+        legs.append("".join(row))
+    return board + legs
+
+
+GROUND_TAGS = {
+    "ground_bar": [(ground_bar(), 1000)],
+    "ground_rack": [(ground_rack(), 1000)],
+    "ground_cone": [(CONE, 1000)],
+    "ground_board": [(coach_board(), 1000)],
+    # held up when found
+    "barbell": [(["xx.........xx", "xXsssssssssXx", "xXSSSSSSSSSXx", "xx.........xx"], 1000)],
+    "cones": [(["..o.....o..", ".oOo...oOo.", ".wwW...wwW.", "ooooO.ooooO", "OOOOO.OOOOO"], 1000)],
+    "coach_board": [(["TTTTTTTTTT", "TwBwwwwwwT", "TwwBBBwwwT", "TwwwwwBwrT", "TwwwwwwwwT", "TTTTTTTTTT",
+                      "..T....T..", ".T......T."], 1000)],
+}
+TRIP_TAGS |= GROUND_TAGS
+
+
+# The playground (core/src/playground.ts): with two pets or more, three pieces found once on trips.
+# The swing hangs from the branch of a tree at the left edge (ropes and seat are drawn by the scene,
+# so that it can swing), the sandpit is sunk into the soil with a sandcastle left in it, and the
+# seesaw's plank tilts (drawn by the scene on its log, "play_log").
+def play_tree():
+    """The tree with the swing's branch, from the top of the scene to the ground: half of it off the left edge."""
+    width, height = 35, 55
+    rows = [["."] * width for _ in range(height)]
+
+    def ellipse(x0, y0, x1, y1, ch):
+        cx, cy, rx, ry = (x0 + x1) / 2, (y0 + y1) / 2, (x1 - x0) / 2, (y1 - y0) / 2
+        for y in range(max(0, y0), min(height, y1 + 1)):
+            for x in range(max(0, x0), min(width, x1 + 1)):
+                if ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1:
+                    rows[y][x] = ch
+
+    for y in range(8, height):  # the trunk
+        rows[y][0:3] = ["t"] * 3
+        rows[y][3] = "T"
+    for x in range(2, 31):  # the branch, a little lower towards its end
+        y = 12 + round((x - 2) / 9)
+        rows[y][x], rows[y + 1][x] = "t", "T"
+    ellipse(-8, -6, 18, 14, "G")
+    ellipse(-6, -8, 14, 10, "g")
+    ellipse(18, 4, 34, 13, "G")
+    ellipse(19, 3, 31, 10, "g")
+    for x, y in ((3, 2), (8, 5), (12, 1), (23, 6), (27, 5)):
+        rows[y][x] = "l"
+    return ["".join(row) for row in rows]
+
+
+def play_pit():
+    """The sandpit, sunk into the soil: a wooden frame with sand in it, level with the grass."""
+    sand = ["tt" + "".join("Z" if (x + y) % 5 == 0 else "z" for x in range(21)) + "tt" for y in range(6)]
+    return ["t" * 25] + sand + ["T" * 25]
+
+
+PLAY_TAGS = {
+    "play_tree": [(play_tree(), 1000)],
+    "play_pit": [(play_pit(), 1000)],
+    # the sandcastle left in the sandpit: a keep with a red flag, two towers
+    "play_castle": [(["......r....", "......rr...", "......Z....", ".....zzZ...", "....zzzzZ..", "....zzzzZ..",
+                      "z.z.zzzzZ.Z", "zzzzzzzzzzZ", "zzzZzzzzzzZ", "zzzzzzZzzzZ", "zzzzzzzzzzZ", "ZZZZZZZZZZZ"], 1000)],
+    # the seesaw's log in the middle, which the plank rests on
+    "play_log": [([".TTTTT.", "TttttTT", "TtTTtTT", "TttttTT", ".TTTTT."], 1000)],
+    # held up when found
+    "swing": [(["t.......t", "t.......t", "t.......t", "t.......t", "ttttttttt", "TTTTTTTTT"], 1000)],
+    "sandpit": [(["..Y.......", ".YyY..r...", ".yyy.rrr..", "ttttttttt.", "tzzzzZzzt.", "tzZzzzzzt.",
+                  "TTTTTTTTT."], 1000)],
+    "seesaw": [(["s...........", "ttt.........", "TTttt.......", "...TTttt....", ".....TTttt..",
+                 "......TTTtts", "....TtT..TT.", "...TtttT...."], 1000)],
+}
+TRIP_TAGS |= PLAY_TAGS
+
+
 # ---------------------------------------------------------------- Keepsakes
 
 # The keepsake of every line (core/src/keepsake.ts): a decoration, 7–11 pixels like the others,

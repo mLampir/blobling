@@ -15,8 +15,9 @@
  * the camera stays with it. Each pet has a scene of its own, which also draws the frames for a
  * phone that looks at a pet the panel doesn't show.
  *
- * After the last house comes the yard (core/src/yard.ts): the camera goes there when a phone looks
- * at it, and along with the pet it shows when that one goes over to eat or bathe, and back.
+ * After the last house come the yard (core/src/yard.ts), the playground (core/src/playground.ts)
+ * and the training ground (core/src/ground.ts): the camera goes there when a phone looks at one,
+ * and along with the pet it shows when that one goes over to eat, bathe, play or train, and back.
  */
 
 import { readFileSync } from "node:fs";
@@ -25,7 +26,7 @@ import { Image } from "../../core/src/image";
 import { RequestError, inWindow, type Bedtime } from "../../core/src/model";
 import { DEFAULT_BEDTIME, type ActionRequest, type Pet } from "../../core/src/pet";
 import type { PetScene } from "../../core/src/scene";
-import { YARD, pan, panSeconds, place } from "../../core/src/street";
+import { GROUND, PLACES, PLAYGROUND, YARD, pan, panSeconds, place } from "../../core/src/street";
 import { getLog, reason } from "./log";
 import { writeAtomic } from "./storage";
 import type { Weather } from "../../core/src/weather";
@@ -123,11 +124,11 @@ export class Display {
   private lastHere = -Infinity;
   /** The camera is on its way from the picture `from`, `steps` houses along the street. */
   private panning: { from: Image; steps: number; start: number; seconds: number; follow?: boolean } | null = null;
-  /** A phone asked to go to the yard or away from it: the phone pans by itself (frameOf). */
+  /** A phone asked to go to a place or away from it: the phone pans by itself (frameOf). */
   private asked = false;
-  /** A phone looks at the yard: the camera stays there until it goes to a pet (look). */
-  private yardOpen = false;
-  /** What the panel showed last: the camera's pet (its id), or the yard (YARD); a change to or from the yard pans. */
+  /** A phone looks at a place (PLACES): the camera stays there until it goes to a pet (look). */
+  private opened: string | null = null;
+  /** What the panel showed last: the camera's pet (its id), or a place (PLACES); a change to or from a place pans. */
   private shown: string | null = null;
   /** The next frame of a pet the panel doesn't show, for a phone that looks at it. */
   private previews = new Map<string, { frame: Image; due: number; next?: Promise<Image> }>();
@@ -207,8 +208,8 @@ export class Display {
   /** A phone switched to the pet with this id: the camera follows, unless it is pinned. */
   look(id: unknown): void {
     const pet = this.pet.find(id);
-    this.asked ||= this.yardOpen;
-    this.yardOpen = false;
+    this.asked ||= this.opened !== null;
+    this.opened = null;
     if (!this.current.pinned) {
       this.moveCamera(pet.id);
       this.lastHere = monotonic();
@@ -216,11 +217,11 @@ export class Display {
     this.showPet();
   }
 
-  /** A phone looks at the yard at the end of the street: the camera goes there, unless a pet is pinned. */
-  lookYard(): void {
+  /** A phone looks at a place after the houses (PLACES): the camera goes there, unless a pet is pinned. */
+  lookPlace(where: string): void {
     if (!this.current.pinned) {
-      this.asked ||= !this.yardOpen;
-      this.yardOpen = true;
+      this.asked ||= this.opened !== where;
+      this.opened = where;
       this.lastHere = monotonic();
     }
     this.showPet();
@@ -314,7 +315,7 @@ export class Display {
   petAction(action: string, request: ActionRequest = {}): ReturnType<Pet["action"]> {
     const id = this.pet.find(request.pet).id;
     if (action !== "fill") {
-      this.yardOpen = false; // something done with a pet: the camera goes back to it
+      this.opened = null; // something done with a pet: the camera goes back to it
     }
     const result = this.pet.action(action, request);
     if (id === this.camera) {
@@ -537,12 +538,13 @@ export class Display {
       void weather.refresh();
     }
     this.forgetGone();
-    let [frame, delay] = this.frameFor(this.camera, this.yardOpen);
-    const shown = this.atYard(this.camera, this.yardOpen) ? YARD : this.camera;
-    if (this.shown !== null && shown !== this.shown && (shown === YARD || this.shown === YARD)) {
-      // to the yard and back: the camera pans along the street as between two houses
+    let [frame, delay] = this.frameFor(this.camera, this.opened);
+    const shown = this.placeShown(this.camera, this.opened) ?? this.camera;
+    if (this.shown !== null && shown !== this.shown && (PLACES.includes(shown) || PLACES.includes(this.shown))) {
+      // to a place and back: the camera pans along the street as between two houses
       const ids = this.pet.pets.map((pet) => pet.id);
-      const steps = place(ids, shown) - place(ids, this.shown);
+      const there = this.pet.places();
+      const steps = place(ids, shown, there) - place(ids, this.shown, there);
       // the pet went over or came back by itself: a phone looking at it gets the pan as well
       this.panning = { from: this.unpanned, steps, start: monotonic(), seconds: panSeconds(steps), follow: !this.asked };
     }
@@ -562,16 +564,43 @@ export class Display {
     return [frame, delay];
   }
 
-  /** Does the camera show the yard: somebody looks at it (`open`), or the pet with this id is over there? */
-  private atYard(id: string, open: boolean): boolean {
-    return (open || this.pet.inYard(undefined, id)) && this.pet.yardView() !== null;
+  /**
+   * The place the camera shows (PLACES), or null for the house of the pet with this id: somebody
+   * looks at a place (`opened`), or the pet is over there. The yard and the playground only while
+   * the home has them.
+   */
+  private placeShown(id: string, opened: string | null): string | null {
+    const there = this.pet.places();
+    if (opened !== null && there.includes(opened)) {
+      return opened;
+    }
+    if (this.pet.inYard(undefined, id) && there.includes(YARD)) {
+      return YARD;
+    }
+    if (this.pet.atPlayground(undefined, id)) {
+      return PLAYGROUND;
+    }
+    return this.pet.atGround(undefined, id) ? GROUND : null;
   }
 
-  /** The picture of the pet with this id, or of the yard while the camera is there; and when the next is due. */
-  private frameFor(id: string, open = false): [Image, number] {
+  /** The picture of the pet with this id, or of the place the camera is at; and when the next is due. */
+  private frameFor(id: string, opened: string | null = null): [Image, number] {
     const weather = this.weather.current();
-    if (this.atYard(id, open)) {
+    const where = this.placeShown(id, opened);
+    if (where === YARD) {
       return this.sceneFor(YARD).renderYard(this.pet.yardView()!, weather);
+    }
+    if (where === GROUND) {
+      // the pet over there in its own scene, or the training ground with nobody on it
+      const there = this.pet.groundPet(undefined, id);
+      return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
+        : this.sceneFor(GROUND).renderGround(this.pet.groundView(), weather);
+    }
+    if (where === PLAYGROUND) {
+      // the two over there in the scene of one of them, or the playground with nobody on it
+      const there = this.pet.playgroundPet(undefined, id);
+      return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
+        : this.sceneFor(PLAYGROUND).renderPlayground(this.pet.playgroundView(), weather);
     }
     return this.sceneFor(id).render(this.pet.view(undefined, id), weather);
   }
@@ -580,7 +609,7 @@ export class Display {
   private forgetGone(): void {
     const ids = new Set(this.pet.pets.map((pet) => pet.id));
     for (const id of [...this.scenes.keys(), ...this.previews.keys()]) {
-      if (!ids.has(id) && id !== YARD) {
+      if (!ids.has(id) && !PLACES.includes(id)) {
         this.scenes.delete(id);
         this.previews.delete(id);
       }
@@ -611,7 +640,7 @@ export class Display {
     const wait = preview ? Math.min(seconds, Math.max(0, preview.due - monotonic())) : 0;
     const promise = new Promise<void>((resolve) => setTimeout(resolve, wait * 1000)).then(() => {
       this.pet.update();
-      const [frame, delay] = this.frameFor(pet); // over in the yard: the yard
+      const [frame, delay] = this.frameFor(pet); // over at one of the places: there
       this.previews.set(pet, { frame, due: monotonic() + delay });
       return frame;
     });

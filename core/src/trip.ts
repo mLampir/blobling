@@ -45,16 +45,18 @@ export const HOUSE_AREA = "mountain";
 // What can be found where: [find, weight, only in this weather]
 export const FINDS: Record<string, readonly (readonly [string, number, sky.Precipitation])[]> = {
   meadow: [["seed_berry", 4, null], ["seed_sunflower", 4, null], ["flag", 2, null], ["windmill", 1, null],
-    ["daisy", 2, null], ["leaf", 2, null], ["honeycomb", 3, null], ["bobble", 4, "snow"]],
+    ["daisy", 2, null], ["leaf", 2, null], ["honeycomb", 3, null], ["bobble", 4, "snow"], ["cones", 2, null]],
   forest: [["seed_cherry", 4, null], ["seed_berry", 2, null], ["glowshroom", 2, null], ["lantern", 1, null],
-    ["cap", 2, null], ["hazelnut", 3, null], ["woodpile", 1, null], ["snailshell", 4, "rain"]],
+    ["cap", 2, null], ["hazelnut", 3, null], ["woodpile", 1, null], ["snailshell", 4, "rain"],
+    ["coach_board", 2, null], ["swing", 2, null]],
   stream: [["seed_berry", 3, null], ["seed_sunflower", 3, null], ["seed_cherry", 2, null], ["cattail", 2, null],
     ["lily", 2, null], ["watercress", 3, null], ["pond", 1, null], ["boat", 4, "rain"], ["basin", 2, null],
-    ["rain_barrel", 2, "rain"]],
+    ["rain_barrel", 2, "rain"], ["sandpit", 2, null]],
   cave: [["seed_cherry", 4, null], ["seed_berry", 3, null], ["seed_herb", 1, null], ["crystal", 2, null],
-    ["batears", 2, null], ["emberstone", 2, null], ["glowberry", 3, null]],
+    ["batears", 2, null], ["emberstone", 2, null], ["glowberry", 3, null], ["seesaw", 2, null]],
   mountain: [["seed_sunflower", 4, null], ["seed_berry", 3, null], ["seed_herb", 1, null], ["cairn", 2, null],
-    ["edelweiss", 2, null], ["pinenut", 3, null], ["snowglobe", 1, null], ["snowman", 4, "snow"]],
+    ["edelweiss", 2, null], ["pinenut", 3, null], ["snowglobe", 1, null], ["snowman", 4, "snow"],
+    ["barbell", 2, null]],
   // mussels lie on the beach more often at low tide (LOW_TIDE_MUSSELS)
   coast: [["seed_sunflower", 3, null], ["seed_berry", 3, null], ["mussel", 3, null], ["lifering", 2, null],
     ["sandcastle", 1, null], ["sailor", 2, null], ["bottle", 4, "rain"], ["planks_coast", 2, null],
@@ -139,13 +141,14 @@ export function guardianWaiting(state: PetState, area: string): string | null {
 
 /**
  * What there is to discover in this area once and for all: the guardian's egg, and the hats,
- * decorations and things for the yard along the path (seeds and food come again and again).
+ * decorations and things for the yard, the training ground and the playground along the path
+ * (seeds and food come again and again).
  * `found`: it is at home, so the area won't bring it any more; a thing that moved away with a pet
  * can be found again.
  */
 export function discoveries(state: PetState, area: string): { id: string; found: boolean }[] {
   const egg = GUARDIAN_EGGS[area];
-  const once = FINDS[area].map(([item]) => item).filter((item) => ["hat", "deco", "yard"].includes(home.kindOf(item)));
+  const once = FINDS[area].map(([item]) => item).filter((item) => ["hat", "deco", "yard", "ground", "playground"].includes(home.kindOf(item)));
   return [
     ...(egg ? [{ id: egg, found: state.guardian_eggs.includes(area) }] : []),
     ...once.map((item) => ({ id: item, found: (state.items[item] ?? 0) > 0 })),
