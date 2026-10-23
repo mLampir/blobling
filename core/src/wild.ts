@@ -2,9 +2,11 @@
  * Wild pets: an adult meets one on a trip, and if its tricks impress it, the two are friends.
  *
  * The friend comes to visit at home now and then. After a few visits in a good mood it brings an
- * egg of its own family and entrusts it to the pet: it lays it in a bed of moss (the nest), and
- * the pet watches over it and gives it a part of its battle stats as its heirloom. The egg waits
- * in the nest until it is collected.
+ * egg of its own family and entrusts it to the pet: it lays it in a bed of moss (the nest). The
+ * egg carries the friend's gift, a few points in the battle stat its line is good at
+ * (life.LINE_SKILL), more with every egg the friend has brought before; and the pet watches over
+ * it and adds a small part of its own battle stats. The egg waits in the nest until it is
+ * collected.
  *
  * The friend stays a friend after that. It comes less often, and only after a rest (NEST_REST)
  * do its visits count towards the next egg again, so that an egg stays something to look forward
@@ -57,7 +59,10 @@ export const NEST_REST = 14 * 86400; // after bringing an egg, this long before 
 export const MAX_FRIENDS = 3;
 // This line looks for a friend already as a child: it copies whom it meets (life.SECRET, mirrorleon)
 export const CURIOUS = "chameleon";
-export const HEIRLOOM = 0.25; // this part of each battle stat goes into the egg
+export const HEIRLOOM = 0.25; // this part of each battle stat goes into the pet's own egg (brood.ts)
+export const FRIEND_HEIRLOOM = 0.1; // this part of each battle stat goes into a friend's egg the pet watches over
+export const FRIEND_SKILL = 5; // a friend's first egg: this many points in its line's stat; each later one this many more
+export const FRIEND_SKILL_MAX = 20; // at most, from its fourth egg on
 export const GIFT_CHANCE = 0.4; // how often a visit that counts brings something
 
 /** What the tests turn: how often a wild pet is waiting. */
@@ -178,7 +183,7 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
     state.nest = {
       line,
       from: state.name,
-      skills: heirloom(state),
+      skills: fromFriend(state, line, friend.nests ?? 0),
     };
     // the friend stays, and comes less often from now on
     Object.assign(friend, {
@@ -198,9 +203,22 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
   return happened;
 }
 
-/** What the pet that watches over an egg passes on to it: a part (HEIRLOOM) of each of its battle stats. */
-export function heirloom(state: PetState): Record<string, number> {
-  return Object.fromEntries(Object.entries(state.skills).map(([skill, value]) => [skill, Number((value * HEIRLOOM).toFixed(1))]));
+/** What the pet passes on to an egg: a part (HEIRLOOM, or another `part`) of each of its battle stats. */
+export function heirloom(state: PetState, part = HEIRLOOM): Record<string, number> {
+  return Object.fromEntries(Object.entries(state.skills).map(([skill, value]) => [skill, Number((value * part).toFixed(1))]));
+}
+
+/**
+ * What a friend's egg carries: the points the friend gives in its line's stat, which grow with
+ * the eggs it has brought before (`nests`), and the small part the pet adds (FRIEND_HEIRLOOM).
+ */
+export function fromFriend(state: PetState, line: string, nests: number): Record<string, number> {
+  const skills = heirloom(state, FRIEND_HEIRLOOM);
+  const skill = life.LINE_SKILL[line];
+  if (skill) {
+    skills[skill] = Number(((skills[skill] ?? 0) + Math.min(FRIEND_SKILL_MAX, FRIEND_SKILL * (nests + 1))).toFixed(1));
+  }
+  return skills;
 }
 
 /** What a friend brings: a small thing (home.smallThing), mostly a fruit and rarely a seed. */

@@ -250,9 +250,13 @@ line (see [Friends](#friends)). [pets.md](pets.md) has the lines, folded shut.
 
 An adult can also come by an egg itself: a friend brings one of its family
 (see [Friends](#friends)), and an adult that is close to you lays one of its
-own (see [Its own egg](#its-own-egg)). Such an egg carries an **heirloom**: a
-quarter of each battle stat of the pet that watched over it, as they were
-when the egg came. Whatever hatches from it starts with that instead of zero.
+own (see [Its own egg](#its-own-egg)). Such an egg carries an **heirloom**,
+and whatever hatches from it starts with that instead of zero. Its own egg
+gets a quarter of each battle stat of the pet, as they were when the egg came.
+A friend's egg gets something from the friend instead: points in the battle
+stat its line is good at, more the longer the two are friends (see
+[Friends](#friends)); the pet that watches over it only adds a tenth of its
+own stats.
 
 There are two ways to a new egg:
 
@@ -797,8 +801,11 @@ present then.
 
 After five visits that counted, the friend **brings an egg** of its own
 family and entrusts it to the pet: it lays it in a **bed of moss** and leaves.
-The egg is always of the friend's line. The pet watches over it, and so the
-egg carries the pet's heirloom (see [Growing up](#growing-up)). The egg waits
+The egg is always of the friend's line, and it carries the friend's gift:
+points in the battle stat its line is good at, 5 with the first egg and 5
+more with every egg after it, up to 20 from the fourth on. The pet watches
+over it and adds a tenth of its own battle stats (see
+[Growing up](#growing-up)). The egg waits
 in its bed of moss until you tap it; then it is in the bag, to be brooded
 whenever you like. While an egg is still lying there, or there are three eggs
 of the friend's line in the bag already, the next one waits.
