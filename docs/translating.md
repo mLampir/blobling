@@ -40,6 +40,10 @@ settings take the app's languages from: `app/android/app/src/main/res/xml/locale
 and `CFBundleLocalizations` in `app/ios/App/App/Info.plist` (a test checks
 both). No other code changes are needed. A few things to know while translating:
 
+- **Write it the way you would say it.** A text should read as if it had been
+  written in your language, not translated: everyday words, your language's
+  own idioms and sentence order, and a different sentence where a close copy
+  of the English would sound stiff. What matters is that it means the same.
 - **Placeholders** in curly braces, such as `{name}` or `{time}`, are filled
   in by the app. Keep them, but move them wherever your language needs them.
   `{link}` marks the spot where a link is inserted.
