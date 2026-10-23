@@ -160,7 +160,7 @@ test("an app asks for an update up to its own version: the newest release up to 
   const releases = [
     { tag_name: "v1.1.0" }, { tag_name: "v1.0.1-beta.1", prerelease: true }, { tag_name: "v1.0.0" }, { tag_name: "v0.9.0" },
   ];
-  const request = (async (url: string) => (url.includes("api.github.com")
+  const request = (async (url: string) => (url.startsWith("https://api.github.com/")
     ? { ok: true, status: 200, json: async () => releases }
     : { ok: true, status: 200, url: "https://github.com/someone/blobling/releases/tag/v1.1.0" })) as unknown as typeof fetch;
   const directory = release("v0.8.0");
