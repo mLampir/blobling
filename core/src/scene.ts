@@ -1286,6 +1286,8 @@ export interface YardView {
   basin: string | null;
   /** The campfire burns: a pet is on its way to it, sits there or is going home from it. */
   fire?: boolean;
+  /** The rain barrel has been found: it stands by the basin. */
+  barrel?: boolean;
   /** It really rains: the rain barrel runs into the basin. */
   raining?: boolean;
   pets: readonly {
@@ -5549,7 +5551,7 @@ export class PetScene {
     const size = clamp(yard.size, 0, YARD_WIDTH.length - 1);
     const trough = this.dimmedSprite(`trough_${size}_${yard.trough}`);
     const basin = yard.basin ? this.dimmedSprite(`basin_${size}_${yard.basin}`) : null;
-    if (basin) {
+    if (basin && yard.barrel) {
       this.stand(img, this.dimmedSprite("rain_barrel"), BARREL_X);
       if (yard.raining && yard.basin !== "full") {
         // the barrel runs over into the basin

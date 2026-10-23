@@ -13,8 +13,8 @@
  * An upgrade found at the coast or in the ruins, once their guardian has left its egg, makes both
  * a size bigger; the basin takes the size the yard has when it comes.
  *
- * The basin comes with a rain barrel: while it really rains, the barrel tops the basin up by a
- * portion every RAIN_EVERY minutes. And in the evening, in the last FIRE_MINUTES before bedtime, a
+ * A rain barrel, found once at the stream while it rains, stands by the basin: while it really
+ * rains, it tops the basin up by a portion every RAIN_EVERY minutes. And in the evening, in the last FIRE_MINUTES before bedtime, a
  * campfire burns in the yard when it is dry: every pet that is awake, at home and not busy goes
  * over and sits there until bedtime, a little happier for it (FIRE_MOOD).
  *
@@ -39,8 +39,9 @@ export const GOES_AT = 50; // satiety or hygiene: down to this, it goes to the y
 export const FLOOR = 50; // while there is something in it, the need doesn't drop below this
 export const MOOD_FLOOR = 40; // and with something in both, mood doesn't
 export const MIN_PETS = 2; // the yard is there from this many pets at home
-// The finds: the basin at the stream, and an upgrade each at the coast and in the ruins
+// The finds: the basin and the rain barrel at the stream, and an upgrade each at the coast and in the ruins
 export const BASIN_ITEM = "basin";
+export const BARREL_ITEM = "rain_barrel";
 export const UPGRADES: Record<string, string> = { coast: "planks_coast", ruins: "planks_ruins" };
 // A visit, in seconds: off at the edge of its garden, in at the side of the yard, a portion,
 // out again, and back home
@@ -97,6 +98,11 @@ export function sizeOf(items: Record<string, number>): number {
 /** Has the basin been found? */
 export function hasBasin(items: Record<string, number>): boolean {
   return (items[BASIN_ITEM] ?? 0) > 0;
+}
+
+/** Has the rain barrel been found? */
+export function hasBarrel(items: Record<string, number>): boolean {
+  return (items[BARREL_ITEM] ?? 0) > 0;
 }
 
 /** How many portions it holds at the size the yard has now (0: the basin isn't there yet). */
@@ -163,8 +169,9 @@ export function atFire(item: string): boolean {
 }
 
 /**
- * The rain barrel, once a minute for the whole home (the minute ending at t): while it really rains
- * (not snow), every RAIN_EVERY minutes a portion runs into the basin, up to what it holds.
+ * The rain barrel, once a minute for the whole home (the minute ending at t): once it has been
+ * found, while it really rains (not snow), every RAIN_EVERY minutes a portion runs into the basin,
+ * up to what it holds.
  */
 export function rain(yard: Yard, items: Record<string, number>, t: number, weather: sky.WeatherCode): void {
   const minute = Math.trunc(t / 60);
@@ -173,7 +180,7 @@ export function rain(yard: Yard, items: Record<string, number>, t: number, weath
   }
   yard.rain_at = t;
   const most = capacity(items, "basin");
-  if (!most || sky.precipitation(weather) !== "rain" || minute % RAIN_EVERY !== 0) {
+  if (!most || !hasBarrel(items) || sky.precipitation(weather) !== "rain" || minute % RAIN_EVERY !== 0) {
     return;
   }
   yard.basin = Math.min(most, portions(yard, "basin") + 1);

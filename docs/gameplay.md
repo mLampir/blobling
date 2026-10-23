@@ -398,8 +398,9 @@ it; a tap there pans over, a tap on a pet pans back.
   brought home, driftwood planks can be found there, and old castle planks in
   the ruins after the same. Each makes the yard one size bigger; the basin
   comes at the size the yard has when it is found.
-- **A rain barrel** stands at the basin once that is found: while it rains,
-  it adds a portion every ten minutes, up to the basin's size.
+- **A rain barrel** is found once at the stream, only while it rains. It
+  stands by the basin, and while it rains it adds a portion every ten
+  minutes, up to the basin's size.
 - **A campfire** is lit on dry evenings (no rain, no snow) when two pets or
   more are at home: about 40 minutes before bedtime, every pet that is free
   (awake, at home, not busy) goes over, as long as at least ten minutes are
@@ -682,8 +683,8 @@ cave and on the mountain. Inside the cave there is no sky and no weather.
 - **The ruins:** an old castle with ivy on its walls, battlements and a bell
   in its tower. In the evening the torches burn.
 
-Three finds are for the [yard](#the-yard): the water basin at the stream, and
-the planks at the coast and in the ruins, which only turn up once the area's
+Four finds are for the [yard](#the-yard): the water basin at the stream, the
+rain barrel there too (only while it rains), and the planks at the coast and in the ruins, which only turn up once the area's
 guardian has been got past and its egg has been brought home. The guardian
 itself only gives the egg.
 

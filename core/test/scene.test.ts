@@ -668,3 +668,16 @@ test("the campfire burns in the yard while it is lit, and the hill is there at t
   const at = (4 * ((GROUND - 10) * 64 + 32));
   assert.ok(day.data[at + 1] > day.data[at] && day.data[at + 1] > day.data[at + 2]);
 });
+
+test("the rain barrel stands by the basin only once it has been found", () => {
+  const yard = { size: 1, trough: "full", basin: "full", pets: [] };
+  const [without] = scene().renderYard(yard, null, DAY, 1);
+  const [found] = scene().renderYard({ ...yard, barrel: true }, null, DAY, 1);
+  let changed = 0;
+  for (let i = 0; i < without.data.length; i += 4) {
+    if (without.data[i] !== found.data[i] || without.data[i + 2] !== found.data[i + 2]) {
+      changed += 1;
+    }
+  }
+  assert.ok(changed > 40, `${changed} pixels for the barrel`);
+});

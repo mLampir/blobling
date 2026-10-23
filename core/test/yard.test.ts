@@ -266,7 +266,7 @@ test("the yard is saved with the home, and an older save gets one that comes ful
 test("the rain barrel tops the basin up while it really rains, once a minute for the whole home", () => {
   const now = at("2026-10-12 10:00");
   const RAIN = 63, SNOW = 73;
-  const { pets, yard } = twoPets(now, { basin: 1 });
+  const { pets, yard } = twoPets(now, { basin: 1, rain_barrel: 1 });
   yard.basin = 0;
   yard.trough = 0; // nobody goes over to eat
   model.advanceTogether(pets, now + HOUR, BEDTIME, RAIN, null, null, yard);
@@ -277,10 +277,20 @@ test("the rain barrel tops the basin up while it really rains, once a minute for
   assert.equal(yard.basin, 60 / yards.RAIN_EVERY); // snow and dry weather bring nothing
   model.advanceTogether(pets, now + 20 * HOUR, BEDTIME, RAIN, null, null, yard);
   assert.equal(yard.basin, yards.BASIN[0]); // up to what it holds
-  // without the basin there is no barrel either
-  const dry = twoPets(now);
+  // without the basin the barrel has nothing to run into, and without the barrel the rain stays out
+  const dry = twoPets(now, { rain_barrel: 1 });
   model.advanceTogether(dry.pets, now + HOUR, BEDTIME, RAIN, null, null, dry.yard);
   assert.equal(dry.yard.basin, null);
+  const open = twoPets(now, { basin: 1 });
+  open.yard.basin = 0;
+  open.yard.trough = 0;
+  model.advanceTogether(open.pets, now + HOUR, BEDTIME, RAIN, null, null, open.yard);
+  assert.equal(open.yard.basin, 0);
+});
+
+test("the rain barrel is found once at the stream, only while it rains", () => {
+  assert.ok(trip.FINDS.stream.some(([item, , only]) => item === yards.BARREL_ITEM && only === "rain"));
+  assert.equal(home.kindOf(yards.BARREL_ITEM), "yard");
 });
 
 test("in the evening the pets sit at the campfire until bedtime, a little happier, and then go to bed", () => {

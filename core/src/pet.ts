@@ -1122,6 +1122,7 @@ export class Pet {
       size: yards.sizeOf(items),
       trough: yards.level(yards.portions(yard, "trough"), yards.capacity(items, "trough")),
       basin: yards.hasBasin(items) ? yards.level(yards.portions(yard, "basin"), yards.capacity(items, "basin")) : null,
+      barrel: yards.hasBarrel(items),
       fire: this.pets.some((pet) => yards.atFire(pet.activity_item)
         && yards.phase(pet.activity, pet.activity_until, pet.activity_item, now) !== null),
       raining: sky.precipitation(this.weather()) === "rain",

@@ -76,6 +76,7 @@ export const ITEMS: Record<string, ItemKind> = {
   // for the yard (yard.ts): the water basin from the stream, and planks from the coast and the ruins
   // that make trough and basin bigger; they go there, not into the bag
   basin: "yard",
+  rain_barrel: "yard",
   planks_coast: "yard",
   planks_ruins: "yard",
   egg_blob: "egg",

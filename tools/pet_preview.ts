@@ -723,13 +723,13 @@ function yardScenes(): [string, YardView][] {
     ["eat, bath", { size: 0, trough: "half", basin: "low", pets: [pet("angloop", "adult", "eat,bath", 36, 0)] }],
     ["walks in", { size: 0, trough: "full", basin: "full", pets: [pet("blob", "child", "eat", 1.5, 0)] }],
     ["at night", { size: 2, trough: "half", basin: "full", pets: [pet("blob", "child", "bath", 12, 0)] }],
-    ["rain", { size: 1, trough: "full", basin: "low", raining: true, pets: [] }],
+    ["rain", { size: 1, trough: "full", basin: "low", barrel: true, raining: true, pets: [] }],
     // the campfire in the evening: the two smallest in front of it, the others on the hill
-    ["fire 2", { size: 2, trough: "half", basin: "full", fire: true,
+    ["fire 2", { size: 2, trough: "half", basin: "full", barrel: true, fire: true,
       pets: [pet("blob", "child", "fire:2400", 60, 0), pet("fox", "baby", "fire:2400", 60, 1)] }],
-    ["fire 3", { size: 2, trough: "half", basin: "full", fire: true,
+    ["fire 3", { size: 2, trough: "half", basin: "full", barrel: true, fire: true,
       pets: [pet("blob", "child", "fire:2400", 60, 0), pet("twiggle", "adult", "fire:2400", 60, 1), pet("fox", "baby", "fire:2400", 60, 2)] }],
-    ["fire 4 adults", { size: 2, trough: "half", basin: "full", fire: true,
+    ["fire 4 adults", { size: 2, trough: "half", basin: "full", barrel: true, fire: true,
       pets: [["angloop", 0], ["hivebear", 1], ["rumblefluff", 2], ["gemperor", 3]].map(([species, slot]) =>
         pet(species as string, "adult", "fire:2400", 60, slot as number)) }],
     ["to the fire", { size: 0, trough: "full", basin: null, fire: true,
