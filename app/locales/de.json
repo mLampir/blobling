@@ -712,14 +712,13 @@
     "next": {
       "baby": "Schlüpft in ca. {time}",
       "ready_asleep": "Bereit zur Entwicklung – sobald es aufwacht.",
-      "ready": "Bereit! Halte den Knopf gedrückt, während du vor dem Display stehst – sonst passiert es in {time} von selbst."
+      "ready": "Bereit – sonst passiert es in {time} von selbst."
     },
     "trip": {
       "out": "Zurück in ca. {time}",
       "returning": "Auf dem Heimweg – zurück in ca. {time}",
       "backpack": "im Rucksack: {items}",
-      "full_asleep": "Der Rucksack ist noch voll – auspacken, sobald es wach ist.",
-      "back": "{name} ist zurück und hat etwas mitgebracht. Pack aus, wenn du vor dem Display stehst.",
+      "full": "{name} hat den Rucksack noch auf.",
       "heading_home": "{name} macht sich auf den Heimweg",
       "brought": "Mitgebracht: {items}"
     },

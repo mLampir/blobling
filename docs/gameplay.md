@@ -662,7 +662,7 @@ how that went, a wild pet it met, and whether it ate something from the backpack
 It keeps the last 30 trips of this pet; a trip it was called straight back
 from doesn't count.
 
-Back home, it keeps the backpack on until you tap the pet (or **Unpack** on the trip card) – so you are
+Back home, it keeps the backpack on until you tap the pet – so you are
 there to see what it brought:
 
 - **Seeds** go into the bag and are dragged from there into the scene like food. One plant grows at a time
@@ -1090,7 +1090,7 @@ Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
   is doing and how many fruits are left).
 - Below it, the **needs** as five small meters. A tap on one says what helps.
   When the pet is ready to evolve, it says so here (an egg also tells when it
-  will hatch), and so do a trip that is on, a backpack to unpack, a gift and
+  will hatch), and so do a trip that is on, a gift and
   what the pet found at home.
 - At the bottom, the **tray**, in two rows. On top the things to drag onto the
   pet: the meal, the ball, the sponge, and medicine when it is sick. Let go

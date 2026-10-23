@@ -1195,11 +1195,8 @@ function render(s) {
       + (s.trip.pack.length ? ` · ${s.trip.pack.map((id) => s.item_labels[id] || t("pack.ball")).join(", ")}` : "")
       + (found ? ` · ${t("page.trip.backpack", { items: found })}` : "");
     $("recall").disabled = s.trip.end - s.now <= 300;
-  } else if (s.backpack) {
-    // back home: it only shows its finds when someone is watching
-    $("trip-info").hidden = false;
-    $("trip-info").textContent = s.asleep ? t("page.trip.full_asleep") : t("page.trip.back", { name: s.name });
   }
+  // back home, it keeps the backpack on until a tap on the pet unpacks it: the scene shows it
   // at Grandma's (nobody was there for a long time): it waits there to be fetched
   if (s.grandma) {
     $("trip-info").hidden = false;
@@ -1292,7 +1289,8 @@ let packedFor = "";
 function renderTrip(s) {
   const reason = s.stage === "egg" ? t("page.adventure.egg")
     : s.stage === "baby" ? t("pet.rejected.too_young", { name: s.name })
-    : s.trip || s.grandma || s.backpack ? $("trip-info").textContent : "";
+    : s.trip || s.grandma ? $("trip-info").textContent
+    : s.backpack ? t("page.trip.full", { name: s.name }) : "";
   $("adventure-lead").hidden = !reason;
   $("visit-grandma").hidden = !s.actions.visit_grandma;
   $("adventure-lead").textContent = reason;
