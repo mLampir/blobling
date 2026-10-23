@@ -95,3 +95,14 @@ test("unknown language falls back to English", () => {
     assert.equal(warnings.length, language ? 1 : 0, language);
   }
 });
+
+test("every form of every line has a name in every language", () => {
+  for (const [language, texts] of Object.entries({ [DEFAULT_LANGUAGE]: english, ...others })) {
+    for (const line of Object.keys(life.LINES)) {
+      for (const stage of ["baby", "child"]) {
+        assert.ok(texts[life.formKey(stage, line)], `${language}: ${stage} of the ${line} line`);
+      }
+    }
+  }
+  assert.equal(new I18n(locales, "de").t(life.formKey("baby", "ember")), "Glut-Baby");
+});

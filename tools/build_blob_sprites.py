@@ -4675,7 +4675,7 @@ SHELLBIT = [
 ]
 SHELLBIT_FACE_TOP, SHELLBIT_FACE_SHIFT = face_place(SHELLBIT, 11, 5, FACE_W)
 SHELLBIT_TAGS = body_tags(SHELLBIT, 17, 11, flat_rows=3)
-# Teacrab: crab and teapot grown into one. A round belly of a pot with a band of green dots, the
+# Earl Greyclaw: crab and teapot grown into one. A round belly of a pot with a band of green dots, the
 # big pincer is the spout with tea steaming out of it, the small one the handle, the lid a hat. It walks.
 TEACRAB_PALETTE = CRAB_PALETTE | {
     "w": (245, 240, 230), "g": (90, 160, 140),  # the band
@@ -4763,7 +4763,7 @@ LIGHTCLAW_DARK = dots(LIGHTCLAW, {(5, 2): ".", (6, 3): ".", (7, 3): ".", (8, 4):
                                   (21, 3): ".", (19, 4): ".", (3, 4): ".", (24, 4): ".", (2, 7): ".", (25, 7): "."})
 LIGHTCLAW_TAGS = species_tags([LIGHTCLAW, LIGHTCLAW_DARK], 23, 13, idle_ms=600)  # the light flashes
 LIGHTCLAW_TAGS["walk"] = walk_tags(LIGHTCLAW, 23, range(6, 12), range(18, 24), 30, ms=(200, 120))
-# Castlecrab (secret): the crab is the castle. Battlements along the top of its shell, a keep with a
+# Crabalot (secret): the crab is the castle. Battlements along the top of its shell, a keep with a
 # shell dome and a gold banner where the hermit's house was, its two pincers the gate towers with a
 # flag each, a gate with a portcullis, and a moat with foaming waves round it. At night its windows
 # light up (GLOWS in core/src/scene.ts: "y" is used for the windows only). It hops, castle and all.
@@ -6903,7 +6903,7 @@ LIONKITE_TAGS = species_tags([LIONKITE, drop_rows(LIONKITE, 12)], 12, 22)
 lionkite_face_grid = kit_face(5, mouth_row=0)
 LIONKITE_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (170, 40, 45)}
 
-# Stormkite (secret): the legendary kite, stretched like a big diamond stunt kite of dark thunderstorm
+# Tempestry (secret): the legendary kite, stretched like a big diamond stunt kite of dark thunderstorm
 # paper, its spars crossing behind it, lightning-yellow horns and whiskers; its long tail zigzags down
 # and its bows twitch as bolts of lightning, and sparks crackle round it.
 STORMKITE_PALETTE = KITE_PALETTE | {

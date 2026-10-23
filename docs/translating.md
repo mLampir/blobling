@@ -54,10 +54,45 @@ both). No other code changes are needed. A few things to know while translating:
 - Many texts are sentence fragments that the app puts next to the pet's name
   or a time in the history, for example `12:30 petted`. Have a look at the
   pet page to see where a text ends up before settling on the wording.
-- `species`, `children` and `foes` hold the names of the pet's forms (in
-  `children` the child of each line) and of the opponents
-  on trips. They are the same in English and German, but a translation is free
-  to change them.
+- `species`, `children`, `babies` and `foes` hold the names of the pet's forms
+  (in `children` the child of each line, in `babies` its baby) and of the
+  opponents on trips. Every language gives them names of its own, made the way
+  *Naming a creature* below describes; a name that is a pun only in English
+  needs a new one. Babies have no names of their own: they are called after
+  their line, like the eggs ("Ember baby").
+
+## Naming a creature
+
+A name is the name of a kind of creature, like an animal's, not the name of
+one pet (that is the one its owner gives it) and not a word from the
+dictionary. These rules hold for every language and every new creature:
+
+- **Melt the words, don't glue them.** Take two words that belong to the
+  creature and let them share a sound or drop one, until the name flows:
+  *Salamagma* (salamander + magma), *Polarguin*, *Ninjuhu* (ninja + Uhu),
+  *Draquak*. Two whole words in a row (*Teichpferd*, *Schnarchbär*,
+  *Biberhackl*) sound like a description, not a name.
+- **No real words and no first names.** *Schirmherr*, *Kugelblitz* or
+  *Sausewind* are words that already mean something else; *Fernando*,
+  *Archibald* or *Astrid* are names of people. A pun on a name is fine when
+  the name itself no longer stands in it (*Simsalabina*).
+- **Short and easy to say.** If it doesn't roll off the tongue, drop a sound
+  (*Frackuin* rather than *Frackguin*, *Pinselon* rather than *Pinseleon*).
+- **Endings that sound like a name**: -el, -erich, -elle, -ino, -o, -a, -i
+  (*Knorzel*, *Loderich*, *Laternelle*, *Loopino*, *Orkana*, *Wollki*).
+  Children often get a soft, small ending (*Fuxi*, *Kauzi*, *Kleckschen*).
+- **The idea of the creature in the name**: what it is (an anglerfish's lure,
+  a lighthouse) and what makes it special, so a player can guess why it is
+  called that.
+- **Funny where the creature is funny, not everywhere.** A title with a pun
+  fits a few characters (*Käpt'n Quak*, *Graf Nilferatu*, *Sir Fingerhut*,
+  *DJ Flatter*); most names are not jokes.
+- **Different within a line, and across lines.** Two forms of a line may share
+  a piece (*Kauzi*, *Fernauz*), but no two names in a language sound alike, and
+  none is taken from another game (German *Kiesling* is a Pokémon).
+- **Native, not translated.** A German name is found in German, from German
+  words and puns; it is not the English name translated, and not a German word
+  that means something awkward (*Inkasso* is debt collecting in German).
 
 The tests check that a translation only uses keys and placeholders that exist
 in the English file:

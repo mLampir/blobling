@@ -222,7 +222,7 @@ is the only way to a cloud egg.
 In the cave live the two adults of the bat line (below): Umbrabat, and more
 rarely Batbeat. A friend of theirs is the only way to a bat egg.
 
-At the coast lives Teacrab, the first adult of the crab line, and more rarely
+At the coast lives Earl Greyclaw, the first adult of the crab line, and more rarely
 Inkasso of the octopus line; in the ruins Sir Thimble of the mouse line, a
 knight at home in the castle, and more rarely Gargard of the gargoyle line.
 So the octopus and the gargoyle, whose eggs the two guardians behind the
@@ -1281,9 +1281,9 @@ The house is built to its last step when the child grows up. It can be picked on
 The stages last as long as the slime's. A hermit crab moves house as it
 grows, and each adult has grown together with the house it found.
 
-![Teacrab](images/pets/teacrab.png)
+![Earl Greyclaw](images/pets/teacrab.png)
 
-**Teacrab**, crab and teapot in one: round and bellied, its big pincer is the
+**Earl Greyclaw**, crab and teapot in one: round and bellied, its big pincer is the
 spout that steams, its legs carry the pot, and the lid is its hat. There is
 always a cup of tea, so its mood drops more slowly, and it is warm to the
 touch: petting it does more. For its bow it pours a cup, and in a scuffle it
@@ -1304,10 +1304,10 @@ sweeping round, and its special move is a beam that dazzles the opponent.
 | Form | Rule |
 |---|---|
 | Lightclaw | it grows up after dark while a decoration that glows stands outside (the lantern, the glow mushroom, the crystal or the ember stone) |
-| Teacrab | always |
+| Earl Greyclaw | always |
 
 From its second day on, the stripes of Shellbit's conch show where it is
-heading: porcelain and tea green for Teacrab, lamp yellow for Lightclaw.
+heading: porcelain and tea green for Earl Greyclaw, lamp yellow for Lightclaw.
 
 The values are in `core/src/life.ts`.
 
@@ -1320,9 +1320,9 @@ The values are in `core/src/life.ts`.
 <details>
 <summary>Show this form</summary>
 
-![Castlecrab](images/pets/castlecrab.png)
+![Crabalot](images/pets/castlecrab.png)
 
-**Castlecrab**, the crab that is a whole castle: broad, with battlements and a
+**Crabalot**, the crab that is a whole castle: broad, with battlements and a
 keep, its two pincers are the gate towers that open as the gate, a flag waves
 on every tower, and a moat foams round its feet. At night its windows light
 up. It hops along all of a piece, and a whole castle needs feeding: it gets
@@ -2034,9 +2034,9 @@ The values are in `core/src/life.ts`.
 <details>
 <summary>Show this form</summary>
 
-![Stormkite](images/pets/stormkite.png)
+![Tempestry](images/pets/stormkite.png)
 
-**Stormkite**, the legendary kite and the biggest of its line. It is stretched
+**Tempestry**, the legendary kite and the biggest of its line. It is stretched
 like a big diamond stunt kite of dark thunderstorm paper, its spars crossing
 behind it, with lightning-yellow horns and whiskers; its long tail zigzags
 down and its bows twitch as bolts of lightning. It flies, and at night its

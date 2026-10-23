@@ -285,7 +285,7 @@ test("the owl, chameleon, scarab and kite lines grow up by the sky, games, the c
   assert.equal(life.decideSpecies(week, "scarab", { temp: life.PHARABUG_HEAT }), "pharabug");
   assert.equal(life.decideSpecies(week, "scarab", { temp: life.PHARABUG_HEAT - 1 }), "solroll");
   assert.equal(life.decideSpecies(week, "scarab", { temp: null }), "solroll"); // no weather data
-  // the kite: the dance makes a Lionkite, a thunderstorm the Stormkite
+  // the kite: the dance makes a Lionkite, a thunderstorm the Tempestry
   assert.equal(life.decideSpecies(week, "kite"), "origrane");
   assert.equal(life.decideSpecies(week, "kite", { dance: true }), "lionkite");
   assert.equal(life.decideSpecies(week, "kite", { dance: true, storm: true }), "stormkite");

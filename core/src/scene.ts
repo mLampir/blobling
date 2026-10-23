@@ -640,18 +640,18 @@ const LURE_HINT: Record<string, readonly Color[]> = {
 const WALK_HOPS: Record<string, number> = { grumpcap: 2.5 }; // a toad
 // Forms that neither hop nor walk but get about at a height of their own (rows above the ground):
 // the fliers fly (with their "flutter" frames, if they have any), and Pawdini rolls on its ball
-// and Glidepin skates; Umbrabat floats along like an umbrella in the wind, Stormkite flies like a kite
+// and Glidepin skates; Umbrabat floats along like an umbrella in the wind, Tempestry flies like a kite
 // and Abyssink drifts like a jellyfish of the deep
 const GLIDES: Record<string, number> = { mothmuff: 4, sunflutter: 4, jesterwing: 5, rotorfly: 5, prismfly: 5, pawdini: 0, axodrake: 5,
   glidepin: 0, umbrabat: 3, lunaflap: 6, stormkite: 6, abyssink: 2 };
 const HOVERS = ["rotorfly", "umbrabat"]; // flies steadily instead of fluttering up and down
 // Forms that hop all of a piece, without squashing and stretching: Archibeaver, tower and all, like a rook
-// and Castlecrab, moat and all; Woolwhisk on her ball of wool; Gargard, plinth and all, and Bellfry, a bell of bronze
+// and Crabalot, moat and all; Woolwhisk on her ball of wool; Gargard, plinth and all, and Bellfry, a bell of bronze
 const STIFF_HOPS = ["archibeaver", "castlecrab", "woolwhisk", "gargard", "bellfry"];
 // the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
 // duck like it too, and a pond hippo is wet anyway; so is a beaver, a dragonfly grew up in a pond,
 // and a sunflower is a plant; an axolotl lives in the water, and Umbrabat is an umbrella itself;
-// Hidewell has become a twig, and Stormkite is the storm; an octopus lives in the sea, Fountaingle
+// Hidewell has become a twig, and Tempestry is the storm; an octopus lives in the sea, Fountaingle
 // loves the rain, and Bellfry has roofs of its own
 // The widths of the umbrellas in the items sheet: the pet holds the smallest that covers it
 const UMBRELLAS = [19, 23, 27, 31, 35];
@@ -671,7 +671,7 @@ const BUD: readonly (readonly [Color, Color])[] = [
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals,
 // Gemperor's crystals and core, the bulb of Angloop's lure, Prismfly's glass and wings, Archibeaver's blueprint,
 // Ursastra's stars, Aurorapin's aurora, Lunaflap's moon, Ninjowl's blades, Mirrorleon's prism and rainbow,
-// Pharabug's sun, Stormkite's lightning, Abyssink's lure, dots and bubbles, Bellfry's bronze and gold
+// Pharabug's sun, Tempestry's lightning, Abyssink's lure, dots and bubbles, Bellfry's bronze and gold
 // (it glows warm in the evening), and Illusionna's orbs, moon and stars
 const GLOWS: Record<string, readonly (readonly [Color, Color])[]> = {
   lumoth: [
@@ -890,14 +890,14 @@ const BRANCH: Bitmap = [[160, 110, 60], ["X.XXXX.X", ".XXXXXX."]]; // what Archi
 const BLUEPRINT: Bitmap = [[90, 160, 235], ["XXXXXX", "X....X", "X.XX.X", "X....X", "XXXXXX"]]; // its plan
 const COMPASS_SPARK: Bitmap = [[255, 240, 140], ["X"]];
 // The crab line's adults
-const TEA: Bitmap = [[225, 145, 55], ["X"]]; // Teacrab's tea
+const TEA: Bitmap = [[225, 145, 55], ["X"]]; // Earl Greyclaw's tea
 const TEA_DROP: Bitmap = [[250, 200, 120], ["X"]]; // the light on it, running down the stream
 const TEA_SPLASH: Bitmap = [[230, 150, 60], ["XX", "XX"]]; // its hot tea, poured at an opponent
 const TEACUP: Bitmap = [[245, 240, 230], ["X...X", "XXXXX", ".XXX."]]; // the cup it pours into
 const BEAM: Color = [255, 240, 170]; // Lightclaw's lamp
 const BEAM_REACH = 26; // how far its beam sweeps; at an opponent it reaches further
 const BEACON_GLINT: Bitmap = [[255, 245, 190], ["..X..", ".....", "X.X.X", ".....", "..X.."]];
-const DOORWAY: Bitmap = [[45, 30, 25], ["XXXX"]]; // a row of Castlecrab's gate, open, the portcullis up
+const DOORWAY: Bitmap = [[45, 30, 25], ["XXXX"]]; // a row of Crabalot's gate, open, the portcullis up
 const DRAWBRIDGE: Bitmap = [[180, 125, 70], ["XXXXXXXX", "XXXXXXXX"]]; // lowered over its moat
 const SAND: Bitmap = [[235, 200, 130], ["XX", "XX"]]; // shot from its battlements
 const SAND_GRAIN: Bitmap = [[235, 200, 130], ["X"]];
