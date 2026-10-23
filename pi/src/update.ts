@@ -7,7 +7,7 @@
  * found and has a button for it (so has the app). The button looks once more and starts the systemd unit led-matrix-update, which
  * runs install.sh --app as a unit of its own, so it keeps going while this service is restarted.
  * Nothing is taken from the request: it only ever installs the newest official release, and only
- * when it is newer than the running one (a Pi on a beta isn't offered the release before it).
+ * when it is newer than the running one (a Pi on a pre-release isn't offered the release before it).
  *
  * With [update] betas = yes in config.ini, the newest pre-release counts too. The version
  * that was found is written to UPDATE_ENV for the unit, so it installs exactly that one.
@@ -68,7 +68,7 @@ function parse(version: string): { core: number[]; pre: string[] } | null {
 
 /**
  * Is `latest` newer than `current`? Versions compare as in semver: v1.2.0-beta.1 comes before
- * v1.2.0, which comes before v1.2.1. A Pi on a beta is so never offered an older final release.
+ * v1.2.0, which comes before v1.2.1. A Pi on a pre-release is so never offered an older release.
  * A version that can't be read is newer whenever it is different.
  */
 export function newer(latest: string, current: string): boolean {

@@ -7,7 +7,7 @@
 #   ... | sudo bash -s -- --app            update: only the app, no system update
 #   ... | sudo bash -s -- --version v1.2.0 a given release instead of the newest
 #                                          (LED_MATRIX_VERSION=v1.2.0 does the same; the update
-#                                          button's unit uses it for a beta, pi/src/update.ts)
+#                                          button's unit uses it, pi/src/update.ts)
 #
 # It downloads the release package, checks its checksum, unpacks it to
 # /opt/led-matrix/releases/<version> and runs setup.sh from there. The previous
