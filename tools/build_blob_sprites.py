@@ -9244,6 +9244,61 @@ GROUND_TAGS = {
 TRIP_TAGS |= GROUND_TAGS
 
 
+# The playground (core/src/playground.ts): with two pets or more, three pieces found once on trips.
+# The swing hangs from the branch of a tree at the left edge (ropes and seat are drawn by the scene,
+# so that it can swing), the sandpit is sunk into the soil with a sandcastle left in it, and the
+# seesaw's plank tilts (drawn by the scene on its log, "play_log").
+def play_tree():
+    """The tree with the swing's branch, from the top of the scene to the ground: half of it off the left edge."""
+    width, height = 35, 55
+    rows = [["."] * width for _ in range(height)]
+
+    def ellipse(x0, y0, x1, y1, ch):
+        cx, cy, rx, ry = (x0 + x1) / 2, (y0 + y1) / 2, (x1 - x0) / 2, (y1 - y0) / 2
+        for y in range(max(0, y0), min(height, y1 + 1)):
+            for x in range(max(0, x0), min(width, x1 + 1)):
+                if ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1:
+                    rows[y][x] = ch
+
+    for y in range(8, height):  # the trunk
+        rows[y][0:3] = ["t"] * 3
+        rows[y][3] = "T"
+    for x in range(2, 31):  # the branch, a little lower towards its end
+        y = 12 + round((x - 2) / 9)
+        rows[y][x], rows[y + 1][x] = "t", "T"
+    ellipse(-8, -6, 18, 14, "G")
+    ellipse(-6, -8, 14, 10, "g")
+    ellipse(18, 4, 34, 13, "G")
+    ellipse(19, 3, 31, 10, "g")
+    for x, y in ((3, 2), (8, 5), (12, 1), (23, 6), (27, 5)):
+        rows[y][x] = "l"
+    return ["".join(row) for row in rows]
+
+
+def play_pit():
+    """The sandpit, sunk into the soil: a wooden frame with sand in it, level with the grass."""
+    sand = ["tt" + "".join("Z" if (x + y) % 5 == 0 else "z" for x in range(21)) + "tt" for y in range(6)]
+    return ["t" * 25] + sand + ["T" * 25]
+
+
+PLAY_TAGS = {
+    "play_tree": [(play_tree(), 1000)],
+    "play_pit": [(play_pit(), 1000)],
+    # the sandcastle left in the sandpit: a keep with a red flag, two towers
+    "play_castle": [(["......r....", "......rr...", "......Z....", ".....zzZ...", "....zzzzZ..", "....zzzzZ..",
+                      "z.z.zzzzZ.Z", "zzzzzzzzzzZ", "zzzZzzzzzzZ", "zzzzzzZzzzZ", "zzzzzzzzzzZ", "ZZZZZZZZZZZ"], 1000)],
+    # the seesaw's log in the middle, which the plank rests on
+    "play_log": [([".TTTTT.", "TttttTT", "TtTTtTT", "TttttTT", ".TTTTT."], 1000)],
+    # held up when found
+    "swing": [(["t.......t", "t.......t", "t.......t", "t.......t", "ttttttttt", "TTTTTTTTT"], 1000)],
+    "sandpit": [(["..Y.......", ".YyY..r...", ".yyy.rrr..", "ttttttttt.", "tzzzzZzzt.", "tzZzzzzzt.",
+                  "TTTTTTTTT."], 1000)],
+    "seesaw": [(["s...........", "ttt.........", "TTttt.......", "...TTttt....", ".....TTttt..",
+                 "......TTTtts", "....TtT..TT.", "...TtttT...."], 1000)],
+}
+TRIP_TAGS |= PLAY_TAGS
+
+
 # ---------------------------------------------------------------- Keepsakes
 
 # The keepsake of every line (core/src/keepsake.ts): a decoration, 7–11 pixels like the others,

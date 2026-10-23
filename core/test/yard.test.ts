@@ -249,9 +249,10 @@ test("the yard is saved with the home, and an older save gets one that comes ful
   pet.yard.trough = 5;
   pet.yard.basin = 3;
   pet.yard.empty_at = now - 100;
+  pet.yard.castle_at = now - 50; // the sandcastle on the playground
   pet.save();
   const loaded = disk.pet();
-  assert.deepEqual(loaded.yard, { trough: 5, basin: 3, empty_at: now - 100, rain_at: 0 });
+  assert.deepEqual(loaded.yard, { trough: 5, basin: 3, empty_at: now - 100, rain_at: 0, castle_at: now - 50 });
   assert.deepEqual(loaded.snapshot(now).yard!.basin!.portions, 3);
 
   const file = JSON.parse(disk.text!);
@@ -260,7 +261,7 @@ test("the yard is saved with the home, and an older save gets one that comes ful
   assert.deepEqual(old.yard, yards.newYard());
   disk.text = JSON.stringify(file);
   assert.deepEqual(disk.pet().snapshot(now).yard!.trough.portions, yards.TROUGH[0]);
-  assert.deepEqual(yards.readYard({ trough: "x", basin: -3 }), { trough: null, basin: 0, empty_at: 0, rain_at: 0 });
+  assert.deepEqual(yards.readYard({ trough: "x", basin: -3 }), { trough: null, basin: 0, empty_at: 0, rain_at: 0, castle_at: 0 });
 });
 
 test("the rain barrel tops the basin up while it really rains, once a minute for the whole home", () => {

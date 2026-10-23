@@ -5,8 +5,9 @@
  * on the phone with the same timing.
  *
  * After the last house come the places all of them share: the yard (yard.ts, with two pets or
- * more) and the training ground (ground.ts). The camera goes there and back the same way, as if
- * they were more houses.
+ * more), the playground (playground.ts, with two pets or more once a piece of it has been found)
+ * and the training ground (ground.ts). The camera goes there and back the same way, as if they
+ * were more houses.
  */
 
 import { Image } from "./image";
@@ -14,18 +15,21 @@ import { Image } from "./image";
 export const PAN_SECONDS = 0.8; // to the house next door
 export const PAN_PER_HOUSE = 0.25; // and this much longer for every house it passes on the way
 export const YARD = "yard"; // where the camera is when it shows the yard, in place of a pet's id
+export const PLAYGROUND = "playground"; // the playground
 export const GROUND = "ground"; // and the training ground
-export const PLACES = [YARD, GROUND]; // the places after the last house, in their order along the street
+export const PLACES = [YARD, PLAYGROUND, GROUND]; // the places after the last house, in their order along the street
 
 /**
  * Where along the street `id` is: the place of its house in `ids`, or one of the places after the
- * last one (PLACES); `yard`: whether the yard is there (with two pets or more).
+ * last one (PLACES); `there`: the places the home has (with two pets or more, the yard and maybe
+ * the playground; the training ground always).
  */
-export function place(ids: readonly string[], id: string, yard = ids.length >= 2): number {
-  if (id === YARD) {
-    return ids.length;
+export function place(ids: readonly string[], id: string,
+    there: readonly string[] = ids.length >= 2 ? [YARD, GROUND] : [GROUND]): number {
+  if (!PLACES.includes(id)) {
+    return ids.indexOf(id);
   }
-  return id === GROUND ? ids.length + (yard ? 1 : 0) : ids.indexOf(id);
+  return ids.length + there.filter((other) => PLACES.indexOf(other) < PLACES.indexOf(id)).length;
 }
 
 /** How long the camera takes for `steps` houses along the street (negative: back along it). */

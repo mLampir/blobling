@@ -130,6 +130,7 @@
     "GET /api/pet pets": "array",
     "GET /api/pet places": "number",
     "GET /api/pet plant": "null",
+    "GET /api/pet playground": "null",
     "GET /api/pet poops": "number",
     "GET /api/pet replays": "array",
     "GET /api/pet sick": "boolean",

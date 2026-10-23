@@ -27,12 +27,14 @@ import * as life from "./life";
 import * as magpie from "./magpie";
 import * as model from "./model";
 import * as notify from "./notify";
+import * as playground from "./playground";
 import { hideX, houseArea, plantArea, posterArea, starArea, thingArea, yardArea, type SceneView, type TripView,
-  type GroundView, type YardView } from "./scene";
+  type GroundView, type PlaygroundView, type YardView } from "./scene";
 import * as sky from "./sky";
 import * as stars from "./stars";
 import { fromDict, toDict, type Friend, type PetState } from "./state";
 import * as story from "./story";
+import { GROUND, PLAYGROUND, YARD } from "./street";
 import { isDark, type Location } from "./sun";
 import * as trail from "./trail";
 import * as trip from "./trip";
@@ -403,6 +405,8 @@ export class Pet {
       friend: s.friends.at(-1)?.species ?? null,
       // over at the training ground (ground.ts): the equipment the home has, in place of its garden
       ground: ground.there(s, now) ? ground.equipment(s.items) : null,
+      // with its neighbour on the playground (playground.ts), in place of its garden
+      playground: this.atPlayground(now, s.id) ? this.playgroundView() : null,
     };
   }
 
@@ -1160,6 +1164,58 @@ export class Pet {
     return { equipment: ground.equipment(this.state.items) };
   }
 
+  /** The places after the houses this home has, in their order along the street (street.PLACES). */
+  places(): string[] {
+    return [...this.openYard() ? [YARD] : [], ...this.playgroundOpen() ? [PLAYGROUND] : [], GROUND];
+  }
+
+  /** Has the home a playground (playground.ts): two pets or more, and a piece of it found? */
+  playgroundOpen(): boolean {
+    return playground.open(this.state.items, this.pets.length);
+  }
+
+  /**
+   * The two over at the playground at the time t, or null: the first pair that is together by day
+   * (companion.ts); only one pair fits, the others meet in a garden.
+   */
+  private playgroundPair(t: number): [PetState, PetState] | null {
+    if (!this.playgroundOpen()) {
+      return null;
+    }
+    const hatched = this.pets.filter((s) => s.stage !== "egg");
+    for (const [a, b] of companion.pairs(hatched.map((s) => s.id), t, false, companion.awayFrom(hatched))) {
+      const [first, second] = [this.find(a), this.find(b)];
+      if (companion.out(first, second, t, this.friendThere(first, t) || this.friendThere(second, t)) === "awake") {
+        return [first, second];
+      }
+    }
+    return null;
+  }
+
+  /** Is the pet with this id (without one: the camera's) over at the playground right now? Then the camera goes along. */
+  atPlayground(now = this.clock(), id?: unknown): boolean {
+    this.advance(now);
+    const own = this.find(id);
+    return !!this.playgroundPair(now)?.includes(own);
+  }
+
+  /**
+   * Who the playground shows: the pet with this id (without one: the camera's) if it is over
+   * there, or else the first of the pair that is; null while nobody is.
+   */
+  playgroundPet(now = this.clock(), id?: unknown): string | null {
+    this.advance(now);
+    const pair = this.playgroundPair(now);
+    const own = this.find(id);
+    return pair ? (pair.includes(own) ? own.id : pair[0].id) : null;
+  }
+
+  /** The playground, for the scene: its pieces, and whether a sandcastle stands in the sandpit. */
+  playgroundView(): PlaygroundView {
+    const pieces = playground.pieces(this.state.items);
+    return { pieces, castle: this.yard.castle_at > 0 && pieces.includes("sandpit") };
+  }
+
   /** Is the pet with this id (without one: the camera's) over in the yard right now? Then the camera goes along. */
   inYard(now = this.clock(), id?: unknown): boolean {
     const pet = this.find(id);
@@ -1185,9 +1241,13 @@ export class Pet {
     };
   }
 
-  /** A time together has just ended (at `end`): the pairs that could play, did. */
+  /**
+   * A time together has just ended (at `end`): the pairs that could play, did; the one on the
+   * playground counts more, and leaves a sandcastle if there is a sandpit (playground.ts).
+   */
   private playedTogether(end: number): void {
     const at = end - 1;
+    const over = this.playgroundPair(at);
     const hatched = this.pets.filter((s) => s.stage !== "egg");
     for (const [a, b] of companion.pairs(hatched.map((s) => s.id), at, false, companion.awayFrom(hatched))) {
       const [first, second] = [this.find(a), this.find(b)];
@@ -1195,7 +1255,14 @@ export class Pet {
           || !companion.canPlay(first, model.moodOf(first)) || !companion.canPlay(second, model.moodOf(second))) {
         continue;
       }
-      for (const [learner, teacher, trick] of companion.together(first, second)) {
+      const there = !!over && over.includes(first) && over.includes(second);
+      if (there) {
+        playground.played(first, second, this.state.items);
+        if (playground.pieces(this.state.items).includes("sandpit")) {
+          this.yard.castle_at = end;
+        }
+      }
+      for (const [learner, teacher, trick] of companion.together(first, second, there ? playground.PLAYS : companion.PLAYS)) {
         model.logEvent(learner, end, "copied", "self", { item: `${trick}:${teacher.name}` });
       }
     }
@@ -1335,6 +1402,12 @@ export class Pet {
         equipment: ground.equipment(s.items),
         there: this.pets.filter((pet) => ground.there(pet, now)).map((pet) => pet.id),
       },
+      // The playground (playground.ts), with two pets or more once a piece has been found, or
+      // null: its pieces, and the two over there right now (their ids)
+      playground: this.playgroundOpen() ? {
+        pieces: playground.pieces(s.items),
+        there: (this.playgroundPair(now) ?? []).map((pet) => pet.id),
+      } : null,
       // All the pets at home, in the order of their houses: for switching the camera between them
       // (grandma: it is at Grandma's; away: on a trip; needs: something it needs is running low)
       ...this.street(now),

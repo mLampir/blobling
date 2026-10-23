@@ -15,9 +15,9 @@
  * the camera stays with it. Each pet has a scene of its own, which also draws the frames for a
  * phone that looks at a pet the panel doesn't show.
  *
- * After the last house come the yard (core/src/yard.ts) and the training ground (core/src/ground.ts):
- * the camera goes there when a phone looks at one, and along with the pet it shows when that one
- * goes over to eat, bathe or train, and back.
+ * After the last house come the yard (core/src/yard.ts), the playground (core/src/playground.ts)
+ * and the training ground (core/src/ground.ts): the camera goes there when a phone looks at one,
+ * and along with the pet it shows when that one goes over to eat, bathe, play or train, and back.
  */
 
 import { readFileSync } from "node:fs";
@@ -26,7 +26,7 @@ import { Image } from "../../core/src/image";
 import { RequestError, inWindow, type Bedtime } from "../../core/src/model";
 import { DEFAULT_BEDTIME, type ActionRequest, type Pet } from "../../core/src/pet";
 import type { PetScene } from "../../core/src/scene";
-import { GROUND, PLACES, YARD, pan, panSeconds, place } from "../../core/src/street";
+import { GROUND, PLACES, PLAYGROUND, YARD, pan, panSeconds, place } from "../../core/src/street";
 import { getLog, reason } from "./log";
 import { writeAtomic } from "./storage";
 import type { Weather } from "../../core/src/weather";
@@ -126,7 +126,7 @@ export class Display {
   private panning: { from: Image; steps: number; start: number; seconds: number; follow?: boolean } | null = null;
   /** A phone asked to go to a place or away from it: the phone pans by itself (frameOf). */
   private asked = false;
-  /** A phone looks at a place (YARD, GROUND): the camera stays there until it goes to a pet (look). */
+  /** A phone looks at a place (PLACES): the camera stays there until it goes to a pet (look). */
   private opened: string | null = null;
   /** What the panel showed last: the camera's pet (its id), or a place (PLACES); a change to or from a place pans. */
   private shown: string | null = null;
@@ -217,7 +217,7 @@ export class Display {
     this.showPet();
   }
 
-  /** A phone looks at a place after the houses (YARD, GROUND): the camera goes there, unless a pet is pinned. */
+  /** A phone looks at a place after the houses (PLACES): the camera goes there, unless a pet is pinned. */
   lookPlace(where: string): void {
     if (!this.current.pinned) {
       this.asked ||= this.opened !== where;
@@ -543,7 +543,8 @@ export class Display {
     if (this.shown !== null && shown !== this.shown && (PLACES.includes(shown) || PLACES.includes(this.shown))) {
       // to a place and back: the camera pans along the street as between two houses
       const ids = this.pet.pets.map((pet) => pet.id);
-      const steps = place(ids, shown) - place(ids, this.shown);
+      const there = this.pet.places();
+      const steps = place(ids, shown, there) - place(ids, this.shown, there);
       // the pet went over or came back by itself: a phone looking at it gets the pan as well
       this.panning = { from: this.unpanned, steps, start: monotonic(), seconds: panSeconds(steps), follow: !this.asked };
     }
@@ -564,16 +565,20 @@ export class Display {
   }
 
   /**
-   * The place the camera shows (YARD, GROUND), or null for the house of the pet with this id:
-   * somebody looks at a place (`opened`), or the pet is over there. The yard only while there is one.
+   * The place the camera shows (PLACES), or null for the house of the pet with this id: somebody
+   * looks at a place (`opened`), or the pet is over there. The yard and the playground only while
+   * the home has them.
    */
   private placeShown(id: string, opened: string | null): string | null {
-    const yard = this.pet.yardView() !== null;
-    if (opened === GROUND || (opened === YARD && yard)) {
+    const there = this.pet.places();
+    if (opened !== null && there.includes(opened)) {
       return opened;
     }
-    if (this.pet.inYard(undefined, id) && yard) {
+    if (this.pet.inYard(undefined, id) && there.includes(YARD)) {
       return YARD;
+    }
+    if (this.pet.atPlayground(undefined, id)) {
+      return PLAYGROUND;
     }
     return this.pet.atGround(undefined, id) ? GROUND : null;
   }
@@ -590,6 +595,12 @@ export class Display {
       const there = this.pet.groundPet(undefined, id);
       return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
         : this.sceneFor(GROUND).renderGround(this.pet.groundView(), weather);
+    }
+    if (where === PLAYGROUND) {
+      // the two over there in the scene of one of them, or the playground with nobody on it
+      const there = this.pet.playgroundPet(undefined, id);
+      return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
+        : this.sceneFor(PLAYGROUND).renderPlayground(this.pet.playgroundView(), weather);
     }
     return this.sceneFor(id).render(this.pet.view(undefined, id), weather);
   }
@@ -629,7 +640,7 @@ export class Display {
     const wait = preview ? Math.min(seconds, Math.max(0, preview.due - monotonic())) : 0;
     const promise = new Promise<void>((resolve) => setTimeout(resolve, wait * 1000)).then(() => {
       this.pet.update();
-      const [frame, delay] = this.frameFor(pet); // over in the yard or at the training ground: there
+      const [frame, delay] = this.frameFor(pet); // over at one of the places: there
       this.previews.set(pet, { frame, due: monotonic() + delay });
       return frame;
     });

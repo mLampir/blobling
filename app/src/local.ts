@@ -23,7 +23,7 @@ import { RequestError } from "../../core/src/model";
 import { MAX_NAME, PLACES, Pet, VERSION, readSave, type Ancestor, type Moving, type Sighting } from "../../core/src/pet";
 import { PetScene } from "../../core/src/scene";
 import { fromDict, type Egg, type PetState } from "../../core/src/state";
-import { GROUND, PLACES as STREET_PLACES, YARD, pan, panSeconds, place } from "../../core/src/street";
+import { GROUND, PLACES as STREET_PLACES, PLAYGROUND, YARD, pan, panSeconds, place } from "../../core/src/street";
 import { checkLocation, type Location } from "../../core/src/sun";
 import { Weather } from "../../core/src/weather";
 import { readYard, type Yard } from "../../core/src/yard";
@@ -80,7 +80,7 @@ export class LocalPet {
   private sceneLocation: Location;
   /** The pet the scene showed last (or a place: STREET_PLACES), and its last frame: where a switch pans from. */
   private shown: { id: string; frame: Image } | null = null;
-  /** The page looks at a place (YARD, GROUND): the scene stays there until it goes to a pet. */
+  /** The page looks at a place (street.PLACES): the scene stays there until it goes to a pet. */
   private opened: string | null = null;
   private panning: { from: Image; steps: number; start: number; seconds: number } | null = null;
   private readonly weather: Weather;
@@ -346,8 +346,9 @@ export class LocalPet {
       if (this.shown && this.shown.id !== id) {
         // switched: the camera pans along the street from the house it showed (the places are after the last one)
         const ids = this.pet.pets.map((pet) => pet.id);
-        const from = place(ids, this.shown.id);
-        const steps = from >= 0 ? place(ids, id) - from : 1;
+        const there = this.pet.places();
+        const from = place(ids, this.shown.id, there);
+        const steps = from >= 0 ? place(ids, id, there) - from : 1;
         this.panning = { from: this.shown.frame, steps, start: performance.now() / 1000, seconds: panSeconds(steps) };
       }
       this.shown = { id, frame };
@@ -371,19 +372,22 @@ export class LocalPet {
   }
 
   /**
-   * The place the scene shows (YARD, GROUND), or null for the camera's pet: the page looks at a
-   * place, or the pet is over there. The yard only while there is one.
+   * The place the scene shows (street.PLACES), or null for the camera's pet: the page looks at a
+   * place, or the pet is over there. The yard and the playground only while the home has them.
    */
   atPlace(): string | null {
     if (!this.home) {
       return null;
     }
-    const yard = this.home.yardView() !== null;
-    if (this.opened === GROUND || (this.opened === YARD && yard)) {
+    const there = this.home.places();
+    if (this.opened !== null && there.includes(this.opened)) {
       return this.opened;
     }
-    if (this.home.inYard() && yard) {
+    if (this.home.inYard() && there.includes(YARD)) {
       return YARD;
+    }
+    if (this.home.atPlayground()) {
+      return PLAYGROUND;
     }
     return this.home.atGround() ? GROUND : null;
   }
@@ -399,6 +403,12 @@ export class LocalPet {
       const there = this.pet.groundPet();
       return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
         : this.sceneFor(GROUND).renderGround(this.pet.groundView(), weather);
+    }
+    if (where === PLAYGROUND) {
+      // the two over there in the scene of one of them, or the playground with nobody on it
+      const there = this.pet.playgroundPet();
+      return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
+        : this.sceneFor(PLAYGROUND).renderPlayground(this.pet.playgroundView(), weather);
     }
     return this.sceneFor(this.pet.current).render(this.pet.view(), weather);
   }

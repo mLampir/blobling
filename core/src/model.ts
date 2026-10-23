@@ -425,7 +425,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
     }
   }
   if (yard) {
-    yards.rain(yard, state.items, t, weather); // the rain barrel, once a minute for the whole home
+    yards.rain(yard, state.items, t, weather); // the rain barrel and the sandcastle, once a minute for the whole home
   }
   if (yard && !state.asleep && !state.trip && t >= state.activity_until && !wild.visiting(state, t)
       && !care.gameActive(state, t) && !battle.trainingActive(state, t) && !fishing.active(state, t)

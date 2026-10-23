@@ -107,7 +107,8 @@ const THINGS: Record<string, string[]> = {
   cake: ["trip:cake"],
   // the yard at the end of the street
   yard: ["trip:trough_0_full"],
-  // and the training ground
+  // the playground and the training ground
+  playground: ["trip:swing"],
   ground: ["trip:ground_cone"],
 };
 
