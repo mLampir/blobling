@@ -3217,16 +3217,20 @@ function renderUpdate() {
   // (the Pi then installs the newest release up to the app's version, see startUpdate)
   const ahead = u.available && app.aheadOfApp(u.latest);
   const upToApp = ahead && app.belowApp(u.current);
+  // a display older than this app has a release waiting (the app's own), even before the Pi's
+  // next look has found it: the button makes it look right away
+  const behind = !u.available && !u.running && app.belowApp(u.current);
   const lines = [t("page.app.update_version", { version: u.current })];
   if (u.running) lines.push(t("page.app.update_running"));
-  else if (upToApp) lines.push(t("page.app.update_available", { latest: app.version }));
+  else if (upToApp || behind) lines.push(t("page.app.update_available", { latest: app.version }));
   else if (ahead) lines.push(t("page.app.update_app_first", { latest: u.latest }));
   else if (u.available) lines.push(t("page.app.update_available", { latest: u.latest }));
   else if (u.failed) lines.push(t("page.app.update_failed"));
   $("update-text").textContent = lines.join(" ");
   $("update-text").hidden = false;
-  $("update-start").hidden = (ahead && !upToApp) || (!u.available && !(app.fit() === "display_old" && !u.running));
-  document.querySelector('[data-view="more"]').classList.toggle("news", u.available && (!ahead || upToApp));
+  $("update-start").hidden = (ahead && !upToApp)
+    || (!u.available && !behind && !(app.fit() === "display_old" && !u.running));
+  document.querySelector('[data-view="more"]').classList.toggle("news", (u.available && (!ahead || upToApp)) || behind);
 }
 
 // The Pi looks for the newest release once more before it starts, so this never waits for its next
