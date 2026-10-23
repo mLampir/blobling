@@ -177,3 +177,23 @@ test("an app asks for an update up to its own version: the newest release up to 
   assert.equal(await plain.start("not a version!"), true);
   assert.equal(readFileSync(env, "utf-8"), "LED_MATRIX_VERSION=v1.1.0\n");
 });
+
+test("a look that is old is done again in the background, one at a time", async () => {
+  let asked = 0;
+  const request = (async () => {
+    asked++;
+    return { ok: true, status: 200, url: "https://github.com/someone/blobling/releases/tag/v1.1.0" };
+  }) as unknown as typeof fetch;
+  const updates = new Updates(release("v1.0.0"), request, systemctl("inactive"));
+  updates.lookIfOlder(60_000);
+  updates.lookIfOlder(60_000); // the first one is still under way
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  assert.equal(asked, 1);
+  assert.equal(updates.state().latest, "v1.1.0");
+  updates.lookIfOlder(60_000); // just looked
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  assert.equal(asked, 1);
+  updates.lookIfOlder(0);
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  assert.equal(asked, 2);
+});

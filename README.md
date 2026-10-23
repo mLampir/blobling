@@ -264,8 +264,9 @@ sudo systemctl restart led-matrix    # after changing config.ini
 
 **Update:** when a newer release is out, the settings page says so and has
 an *Update now* button. The Pi looks for one a minute after it starts and
-then every six hours; it only asks GitHub, nothing is opened towards the
-internet. The button takes about a minute, the panel goes dark briefly, and
+then every six hours, and again while the settings page or the app's *More*
+is open (at most every ten minutes); it only asks GitHub, nothing is opened
+towards the internet. The button takes about a minute, the panel goes dark briefly, and
 the page reloads in the new version. The app connected to the display offers
 the same under *More*, with a dot on the tab while an update is waiting. The
 button looks for the newest release once more before it starts, so it never
