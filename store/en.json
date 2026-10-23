@@ -3,25 +3,33 @@
     "title": "A little pet to look after",
     "subtitle": "It lives on your phone, day and night"
   },
-  "eat": {
-    "title": "Feed it, play, keep it clean",
-    "subtitle": "All with a touch, right on the pet"
+  "street": {
+    "title": "It won't stay alone for long",
+    "subtitle": "Up to four pets live next door to each other"
   },
   "trip": {
     "title": "Off on little adventures",
-    "subtitle": "It comes home with finds and stories"
+    "subtitle": "It comes home with small treasures and stories"
+  },
+  "choose": {
+    "title": "What will it become?",
+    "subtitle": "More than 70 grown-up forms to discover"
+  },
+  "eat": {
+    "title": "It feels every touch",
+    "subtitle": "And shows right away how happy it is"
   },
   "night": {
     "title": "It sleeps when you do",
-    "subtitle": "Sun, moon and weather, just like outside"
+    "subtitle": "Day, night and weather, just like where you live"
   },
   "diary": {
     "title": "Everything it does, in its diary",
     "subtitle": "Even while you were away"
   },
   "grown": {
-    "title": "One day, it grows up",
-    "subtitle": "What it becomes is up to you"
+    "title": "From egg to grown-up",
+    "subtitle": "It grows up with you"
   },
   "feature": {
     "title": "Blobling",

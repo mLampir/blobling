@@ -712,14 +712,13 @@
     "next": {
       "baby": "Hatches in about {time}",
       "ready_asleep": "Ready to evolve – as soon as it wakes up.",
-      "ready": "Ready! Hold the button while you're standing in front of the display – otherwise it happens by itself in {time}."
+      "ready": "Ready – otherwise it happens by itself in {time}."
     },
     "trip": {
       "out": "Back in about {time}",
       "returning": "On the way home – back in about {time}",
       "backpack": "in the backpack: {items}",
-      "full_asleep": "The backpack is still full – unpack it once your pet wakes up.",
-      "back": "{name} is back and brought something home. Unpack it while you're standing in front of the display.",
+      "full": "{name} still has its backpack on.",
       "heading_home": "{name} is heading home",
       "brought": "Brought home: {items}"
     },

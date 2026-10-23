@@ -3,28 +3,36 @@
     "title": "Ein kleines Pet zum Umsorgen",
     "subtitle": "Es lebt auf deinem Handy, Tag und Nacht"
   },
-  "eat": {
-    "title": "Füttern, spielen, sauber halten",
-    "subtitle": "Alles mit dem Finger, direkt am Pet"
+  "street": {
+    "title": "Nicht lange allein",
+    "subtitle": "Bis zu vier Pets leben Tür an Tür"
   },
   "trip": {
-    "title": "Ab auf kleine Abenteuer",
-    "subtitle": "Es kommt mit Fundstücken und Geschichten heim"
+    "title": "Ab ins Abenteuer",
+    "subtitle": "Es kommt mit kleinen Schätzen und Geschichten heim"
+  },
+  "choose": {
+    "title": "Was wird aus ihm?",
+    "subtitle": "Über 70 Formen warten darauf, entdeckt zu werden"
+  },
+  "eat": {
+    "title": "Es spürt jede Berührung",
+    "subtitle": "Und zeigt dir sofort, wie sehr es sich freut"
   },
   "night": {
     "title": "Es schläft, wenn du schläfst",
-    "subtitle": "Sonne, Mond und Wetter wie draußen"
+    "subtitle": "Tag, Nacht und Wetter wie vor deinem Fenster"
   },
   "diary": {
-    "title": "Alles, was es erlebt, im Tagebuch",
-    "subtitle": "Auch, während du weg warst"
+    "title": "Sein Tagebuch erzählt alles",
+    "subtitle": "Auch, was passiert ist, während du weg warst"
   },
   "grown": {
-    "title": "Eines Tages ist es groß",
-    "subtitle": "Was aus ihm wird, liegt an dir"
+    "title": "Erst Ei, dann groß",
+    "subtitle": "Es wächst mit dir heran"
   },
   "feature": {
     "title": "Blobling",
-    "subtitle": "Vom Ei bis groß:\nein kleines Pet zum Umsorgen"
+    "subtitle": "Ein kleines Pet\nzum Großziehen"
   }
 }

@@ -36,7 +36,7 @@ import { chromium, type Browser, type Page } from "playwright";
 
 import { I18n } from "../core/src/i18n";
 import * as model from "../core/src/model";
-import { Pet, type SaveFile } from "../core/src/pet";
+import { Pet, readSave, type Saved, type SaveFile } from "../core/src/pet";
 import { APP_BACKGROUND, PetScene, SPRITE } from "../core/src/scene";
 import { readAssets } from "../pi/src/assets";
 import { encodePng } from "../pi/src/png";
@@ -123,8 +123,9 @@ class Life {
   now = START;
   readonly pet: Pet;
 
-  constructor(readonly t: I18n) {
-    this.pet = new Pet({ t: t.t, clock: () => this.now, bedtime: () => BEDTIME, save: () => {} });
+  constructor(readonly t: I18n, saved: Saved | null = null, now = START) {
+    this.now = now;
+    this.pet = new Pet({ t: t.t, saved, clock: () => this.now, bedtime: () => BEDTIME, save: () => {} });
   }
 
   /** Lets time pass. */
@@ -182,18 +183,68 @@ class Life {
   }
 }
 
+/** The date `days` after the first day of the pictures, as "2026-10-05". */
+function day(days: number): string {
+  return `2026-10-${String(5 + days).padStart(2, "0")}`;
+}
+
 /**
  * A pet that hatched three days ago and has just grown into a child. It stays a child of less than
  * a day: from then on it carries the lure that shows which form it grows into (life.hint), and
- * that is for players to find out.
+ * that is for players to find out. `later`: it hatched this many days after the first one.
  */
-function child(t: I18n): Life {
-  const life = new Life(t).hatch();
-  for (const date of ["2026-10-05", "2026-10-06", "2026-10-07"]) {
-    life.day(date);
+function child(t: I18n, later = 0): Life {
+  const life = new Life(t, null, at(`${day(later)} 08:00`)).hatch();
+  for (const days of [0, 1, 2]) {
+    life.day(day(later + days));
   }
-  return life.until("2026-10-08 07:30").do("feed", { item: "meal" }).do("clean")
-    .until("2026-10-08 09:30").do("evolve");
+  return life.until(`${day(later + 3)} 07:30`).do("feed", { item: "meal" }).do("clean")
+    .until(`${day(later + 3)} 09:30`).do("evolve");
+}
+
+/**
+ * Pets that grew up apart, at home together from their moment on, each in its house along the
+ * street; the camera is on the first. They must have come to the same time.
+ */
+function together(lives: Life[]): Life {
+  const [first, ...rest] = lives;
+  const file = first.pet.toSave();
+  file.others = rest.map((life) => ({ ...life.pet.toSave().pet, items: {}, eggs: [] }));
+  return new Life(first.t, readSave(file), first.now);
+}
+
+/**
+ * Three pets by the campfire in the yard on a dry evening: the Angloop, a child that has just grown
+ * up and a baby. The campfire burns in the last 40 minutes before bedtime (yard.ts).
+ */
+function campfire(t: I18n): Life {
+  const evening = "2026-10-15 21:40";
+  const adult = grown(t).do("unpack").until("2026-10-15 17:00").do("feed", { item: "meal" }).do("clean").do("pet")
+    .until("2026-10-15 19:00").do("play").do("pet").until(evening);
+  const kid = child(t, 7);
+  kid.pet.rename("Pip");
+  kid.until("2026-10-15 12:30").do("feed", { item: "meal" }).do("play")
+    .until("2026-10-15 17:00").do("feed", { item: "meal" }).do("clean").do("pet").until(evening);
+  const baby = new Life(t, null, at("2026-10-14 08:00")).hatch();
+  baby.pet.rename("Mo");
+  baby.day("2026-10-14");
+  baby.until("2026-10-15 07:30").do("feed", { item: "meal" }).do("pet").until("2026-10-15 12:30").do("feed", { item: "meal" })
+    .do("play").until("2026-10-15 17:00").do("feed", { item: "meal" }).do("clean").do("pet").until(evening);
+  return together([adult, kid, baby]).until("2026-10-15 22:05");
+}
+
+/**
+ * A child whose seven days are over, so the app asks what it grows into. It is the home's first
+ * child, so only the first form (Angloop) is there and the other two are a "?". Its care diary is
+ * emptied: then no other form's rule holds, and the lure shows no color (life.hint); both are for
+ * players to find out.
+ */
+function choosing(t: I18n): Life {
+  const life = child(t).until("2026-10-08 11:00").do("feed", { item: "meal" }).do("pet");
+  Object.assign(life.pet.state, { stage_since: life.now - 7 * 86400 });
+  // a single minute in it: less than the lure needs, and not a good one (an empty diary counts as cared for)
+  life.pet.state.diary = { ...Object.fromEntries(Object.keys(life.pet.state.diary).map((key) => [key, 0])), minutes: 1 };
+  return life;
 }
 
 /** The child back from its first trip to the meadow, with what it found unpacked. */
@@ -226,10 +277,27 @@ async function view(page: Page, name: string): Promise<void> {
   await page.click(`#tabbar [data-view="${name}"]`);
 }
 
+// In this order in the stores. The first three are the ones most people see (the App Store shows them
+// in the search results): looking after it, several pets together, and a trip.
 const SHOTS: Shot[] = [
   {
     id: "home",
     moment: (t) => travelled(t).until("2026-10-08 16:00").do("clean").do("pet").do("feed", { item: "fruit_cherry" }).wait(5 * MINUTE).moment(),
+  },
+  {
+    id: "street",
+    moment: (t) => campfire(t).moment(),
+    show: (page) => page.click('#street [data-id="yard"]').then(() => page.waitForTimeout(1500)),
+  },
+  {
+    id: "trip",
+    moment: (t) => child(t).until("2026-10-08 09:50").do("feed", { item: "meal" }).until("2026-10-08 10:00")
+      .do("trip", { item: "meadow" }).wait(40 * MINUTE).moment(),
+  },
+  {
+    id: "choose",
+    moment: (t) => choosing(t).moment(),
+    show: (page) => page.click("#forms button:not([disabled])"),
   },
   {
     id: "eat",
@@ -238,11 +306,6 @@ const SHOTS: Shot[] = [
   {
     id: "night",
     moment: (t) => travelled(t).until("2026-10-08 23:10").moment(),
-  },
-  {
-    id: "trip",
-    moment: (t) => child(t).until("2026-10-08 09:50").do("feed", { item: "meal" }).until("2026-10-08 10:00")
-      .do("trip", { item: "meadow" }).wait(40 * MINUTE).moment(),
   },
   {
     id: "diary",
