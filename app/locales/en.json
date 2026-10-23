@@ -464,6 +464,10 @@
     "close_game": "Close game",
     "hatch": "✨ Hatch",
     "evolve": "✨ Evolve",
+    "choose": {
+      "title": "What will {name} grow into?",
+      "later": "Later"
+    },
     "evolve_hold": "Keep holding until the button fills up",
     "evolved": "{name} {what}",
     "recall": "🏠 Call back home",

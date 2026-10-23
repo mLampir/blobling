@@ -464,6 +464,10 @@
     "close_game": "Spiel schließen",
     "hatch": "✨ Ausbrüten",
     "evolve": "✨ Entwickeln",
+    "choose": {
+      "title": "Was wird aus {name}?",
+      "later": "Später"
+    },
     "evolve_hold": "Gedrückt halten, bis der Knopf gefüllt ist",
     "evolved": "{name} {what}",
     "recall": "🏠 Nach Hause rufen",
