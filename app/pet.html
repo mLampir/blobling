@@ -241,6 +241,10 @@
   .album li.missing span { width: 48px; height: 48px; display: grid; place-items: center; font: 700 20px/1 var(--round); }
   .album li.seen { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
   .album.unknown li { grid-column: 1 / -1; }
+  .album li.trails { grid-column: 1 / -1; justify-items: stretch; padding: 10px 12px; }
+  .album li.trails ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .album li.trails li { display: block; padding: 0; background: none; border-radius: 0; font-size: 13px; text-align: left; overflow-wrap: normal; }
+  .album li.trails li.empty { color: var(--muted); border-bottom: 1px dashed var(--line); height: 1.2em; }
   .figure { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; flex: none; max-width: 55%; }
   .empty { padding: 16px; color: var(--muted); font-size: 14px; }
   .note { margin: 0 4px; color: var(--muted); font-size: 13px; }
@@ -1869,6 +1873,7 @@ function eventText(e) {
     : e.action === "nest" || e.action === "laid" || e.action === "collect" ? t(`page.events.${e.action}`)
     : e.action.startsWith("magpie_") ? t(`page.events.${e.action}`, { item: labels[e.item] || T[`items.${e.item}`] || e.item })
     : e.action === "unwrap" ? t("page.events.unwrap", { what: giftLabel(e.item) })
+    : e.action.startsWith("trail_") ? t(`page.events.${e.action}`, { text: trailText(e.item) })
     : e.action === "found" || e.action === "pickup" ? t(`page.events.${e.action}`, { thing: giftLabel(e.item) })
     : e.action === "guardian" ? t("page.events.guardian", { foe: T[`foes.${e.item}`] || e.item })
     : e.action === "unlock" ? t("page.events.unlock", { area: T[`areas.${e.item}.name`] || e.item })
@@ -1882,6 +1887,12 @@ function eventText(e) {
     : e.action === "wear" ? (e.item === "none" ? t("page.events.hat_off") : t("page.events.hat", { item: labels[e.item] || e.item }))
     : e.action === "deco" ? t("page.events.deco", { item: labels[e.item] || e.item })
     : T[`page.events.${e.item}`] || (e.action === "feed" && labels[e.item]) || T[`page.events.${e.action}`] || e.action;
+}
+
+// A trail to a secret form (core/src/trail.ts), by its key "trail:<line>:<number>"
+function trailText(key) {
+  const [, line, n] = (key || "").split(":");
+  return t(`trails.${line}.${n}`, { child: T[`children.${line}`] || line });
 }
 
 // What was in a friend's gift, or what the pet found at home: "fruit_<plant>" or "seed_<plant>"
@@ -2162,6 +2173,20 @@ async function loadGallery() {
         li.className = "keepsake";
         const img = Object.assign(document.createElement("img"), { src: app.discovery(line.keepsake.id, true), alt: "" });
         li.append(img, line.keepsake.label);
+        page.append(li);
+      }
+      // the trails to the line's secret form found so far, a missing one an empty line
+      if (line.trails) {
+        const li = document.createElement("li");
+        li.className = "trails";
+        const list = document.createElement("ol");
+        list.append(...line.trails.map((text) => {
+          const item = document.createElement("li");
+          item.textContent = text ? `📜 ${text}` : "";
+          item.classList.toggle("empty", !text);
+          return item;
+        }));
+        li.append(list);
         page.append(li);
       }
       return page;

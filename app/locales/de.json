@@ -812,7 +812,12 @@
       "magpie_stole": "eine Elster ist mit etwas davongeflogen: {item}",
       "magpie_chased": "hat eine Elster verjagt, die etwas mitnehmen wollte: {item} 💪",
       "magpie_back": "die Elster hat es zurückgebracht, mit einer Verbeugung: {item}",
-      "magpie_egg": "die Elster hat ihren Zylinder dagelassen, mit einem Ei darin 🎩🥚"
+      "magpie_egg": "die Elster hat ihren Zylinder dagelassen, mit einem Ei darin 🎩🥚",
+      "trail_friend": "ein Freund hat etwas erzählt 📜 „{text}“",
+      "trail_trip": "unterwegs einen Zettel gefunden 📜 „{text}“",
+      "trail_dig": "einen alten Zettel ausgegraben 📜 „{text}“",
+      "trail_fish": "eine Flasche mit Zettel geangelt 📜 „{text}“",
+      "trail_grandma": "Oma hat etwas erzählt 📜 „{text}“"
     },
     "statistics": {
       "meals": "Mahlzeiten",
@@ -1091,5 +1096,137 @@
     "away_hint": "Pets, die gerade auf einem Handy wohnen. Ist das Handy verloren, holst du ein Pet hier zurück; die Kopie auf dem Handy gilt dann nicht mehr.",
     "fetch_back": "Zurückholen",
     "fetch_back_confirm": "{name} ohne das Handy zurückholen? Die Kopie auf dem Handy gilt dann nicht mehr."
+  },
+  "trails": {
+    "blob": {
+      "0": "Ein {child}, das eine ganze Woche lang jeden Tag oft gestreichelt wird, lernt schnurren. Und hört nie mehr damit auf.",
+      "1": "Acht Streicheleinheiten jeden Tag, sieben Tage lang – und unser Kleines fing an zu schnurren. – M.",
+      "2": "Mein Blob damals wollte ständig gestreichelt werden. Nach einer Woche schnurrte es wie eine Katze, und so ist es auch groß geworden."
+    },
+    "ember": {
+      "0": "In den Fels geritzt: drei Leuchtbeeren für die kleine Flamme, und sie wurde selbst zum Feuer.",
+      "1": "Ein {child}, das Leuchtbeeren aus der Höhle isst, brennt innen heller. Drei sollen reichen.",
+      "2": "Ein altes Rezept, halb verkohlt: …Leuchtbeeren, drei Stück, solange es noch klein ist…"
+    },
+    "stone": {
+      "0": "Verwischte Tinte auf einem Kiesel: Warte auf den Vollmond. Ein {child}, das in seinem Licht groß wird, behält es für immer.",
+      "1": "Flaschenpost: Unser Steinkind ist in einer Vollmondnacht groß geworden, und der Mond ist in ihm geblieben.",
+      "2": "Steine hören auf den Mond, mein Schatz. Wenn er nachts rund und hell ist, verwandeln sie sich."
+    },
+    "fox": {
+      "0": "In einen Pilz geritzt: Kleine Füchse, die oft genug hierherkommen, nehmen das Licht des Waldes mit nach Hause.",
+      "1": "Ich war auch mal ein {child}. Viermal war ich im Pilzwald, und sein Leuchten ist mir in den Schwanz gefahren.",
+      "2": "Ein Fetzen Landkarte, der Pilzwald viermal eingekreist. Daneben: für den kleinen Fuchs."
+    },
+    "cloud": {
+      "0": "Ins Eis gefroren: Eine Wolke, die im fallenden Schnee groß wird, wird weich wie Wolle.",
+      "1": "Oben am Berg warten sie auf Schneeflocken, bevor ein {child} groß wird. Warum, sagt mir keiner.",
+      "2": "Einmal ist eine kleine Wolke groß geworden, während es schneite – das Flauschigste, was ich je gesehen habe. Schnee in einer Kugel tut's auch, hab ich gehört."
+    },
+    "leaf": {
+      "0": "An einen Baum gepinnt: Ein Spross, der von der eigenen Pflanze isst, erblüht. Sechs Früchte, und er ist nie wieder nur grün.",
+      "1": "Gepresste Blüten in einer alten Dose, dazu ein Zettel: von den Früchten, die es selbst von seiner Pflanze gepflückt hat.",
+      "2": "Meine Schwester war ein {child}. Sie hat Frucht um Frucht von ihrer eigenen Pflanze gepflückt und ist ganz in Blüte groß geworden."
+    },
+    "duck": {
+      "0": "Ein durchweichter Zettel am Wasser: Dreimal mit dem kleinen Entchen im Regen unterwegs. Jetzt trägt es eine Blase.",
+      "1": "Flaschenpost: Regen unterwegs ist der beste Freund eines Entleins.",
+      "2": "Ein {child}, das oft genug durch den Regen wandert, wird nie wieder nass. Das hat meine Mutter immer gesagt."
+    },
+    "hippo": {
+      "0": "Auf einem nassen Blatt: Bring es selbst ins Bett, jeden Abend. Ein {child} träumt von dem, der es tut.",
+      "1": "Flaschenpost: Sechs Abende habe ich unser kleines Nilpferd selbst zugedeckt, und es ist ganz verträumt groß geworden.",
+      "2": "Kleine Nilpferde schlafen am besten, wenn jemand sie zudeckt. Nicht wenn das Licht von selbst ausgeht – jemand."
+    },
+    "beak": {
+      "0": "Aus einem Logbuch gerissen: Auch ein {child} kommt an einem Wächter vorbei. An zweien, und es bekommt Flügel wie kein anderes.",
+      "1": "Der mutigste Vogel, den ich kenne, kam an zwei Wächtern vorbei, als er noch klein war.",
+      "2": "Opas Vogel war ein kleiner Draufgänger. Bevor er groß war, hatte er schon zwei Wächter des Weges hinter sich."
+    },
+    "caterpillar": {
+      "0": "Ein Zettel an einem Grashalm: Kicherkirschen, mehr als jede andere Frucht, und es ist lachend groß geworden.",
+      "1": "Ein {child}, das Kicherkirschen am allerliebsten mag, wird ein Narr. Wirklich!",
+      "2": "Ein Kästchen voller Kirschkerne. Auf dem Deckel: alle fürs {child}, mehr als alles andere."
+    },
+    "dog": {
+      "0": "Ein {child}, das beim Trickfest getanzt hat, wurde der größte Showhund von allen.",
+      "1": "Ein zerknülltes Festprogramm: …und der kleine Welpe tanzt! Das Publikum tobte.",
+      "2": "Einmal hat ein Welpe beim Fest getanzt, bevor er groß war. Danach hat er nie mehr aufgehört aufzutreten."
+    },
+    "dragonfly": {
+      "0": "An einem Schilfhalm: Wenn nach dem Regen die Sonne kommt, wachsen den Kleinen Regenbögen.",
+      "1": "Ein feuchter Zettel: Groß geworden, als nach dem Regen die Sonne zurückkam. Flügel wie ein Prisma!",
+      "2": "Warte auf einen Regenbogentag, sag ich immer. Ein {child}, das dann groß wird, schimmert in allen Farben."
+    },
+    "beaver": {
+      "0": "In einen Baumstumpf geschnitzt: Ein {child}, das in einem fertigen Haus groß wird, wird Baumeister.",
+      "1": "Ein durchweichter Bauplan: Hütte, Häuschen, Haus. Erst nach dem Haus ist unseres groß geworden.",
+      "2": "Ein alter Zollstock, darauf: Je größer das Haus, desto größer die Träume."
+    },
+    "crab": {
+      "0": "In den Sand geschrieben: Ein Krebs, der neben einer Sandburg groß wird, will selbst eine auf dem Rücken.",
+      "1": "Flaschenpost: Stell ihm eine Sandburg vors Haus. Du wirst sehen.",
+      "2": "Mein Cousin war ein {child}. Vor seinem Haus stand eine Sandburg, als er groß wurde – und schau ihn dir heute an!"
+    },
+    "axolotl": {
+      "0": "Neben dem Platz des Wächters eingeritzt: Das Kleine hat Gloompeep besiegt. Etwas ist in ihm erwacht.",
+      "1": "Flaschenpost: Ein {child}, das gegen Gloompeep gewinnt, wird ein Drache.",
+      "2": "Die sind nicht so weich, wie sie aussehen, diese Axolotl. Eins hat Gloompeep besiegt, als es noch klein war."
+    },
+    "mouse": {
+      "0": "In einem Mauseloch: Mit Omas Strickmütze groß geworden, und jetzt ist es ganz aus Wolle.",
+      "1": "Wenn eine kleine Maus mit einer meiner Mützen groß wird, will sie sie nie wieder abnehmen.",
+      "2": "Dieses {child} ist mit einer Mütze groß geworden, die seine Oma gestrickt hat. Kuschelig!"
+    },
+    "bear": {
+      "0": "In Rinde geritzt: Ein {child}, das seine Leute von ganzem Herzen liebt, wächst bis zu den Sternen.",
+      "1": "Jedes Herz der Bindung, alle fünf, und aus einem kleinen Bären wird ein Sternenbär. So sagen die Alten.",
+      "2": "Ein Honigglas, darin ein Zettel: fünf Herzen voll."
+    },
+    "penguin": {
+      "0": "In den Schnee gefroren: Kurz vor Sonnenaufgang wird der Himmel grün. Ein {child}, das dann groß wird, behält die Farbe.",
+      "1": "Am Steg: Früh aufstehen. Das Kleine ist im Morgengrauen groß geworden und schimmert seitdem.",
+      "2": "Der schönste Pinguin, den ich kenne, ist in den letzten Minuten vor Sonnenaufgang groß geworden."
+    },
+    "bat": {
+      "0": "Fledermausschrift an der Wand: Vollmond. Nacht. Dann.",
+      "1": "Ein {child}, das unter dem Vollmond groß wird, trägt den Mond auf den Flügeln.",
+      "2": "In Vollmondnächten kreisen die kleinen Fledermäuse um meinen Kamin. Eine ist genau dort groß geworden, ganz silbern."
+    },
+    "owl": {
+      "0": "Auf einer Feder: Drei Raufereien, kein einziges Mal am Boden. Die kleine Eule lernte, sich wie ein Schatten zu bewegen.",
+      "1": "In einen Fels geritzt: Ein {child}, das nie umgeworfen wird, wird ein lautloser Kämpfer.",
+      "2": "Eine Eule von meinem Dachboden hat als Kleine dreimal gerauft und ist nie umgefallen. Jetzt bewegt sie sich so leise, dass ich sie nie höre."
+    },
+    "chameleon": {
+      "0": "Unter einem Blatt: Das Kleine hat hier draußen einen Freund gefunden und ihn nachgemacht, bis es selbst ein Spiegel war.",
+      "1": "Ein {child}, das schon als Kleines unterwegs einen Freund findet, sieht später aus wie wir alle.",
+      "2": "Eine Spiegelscherbe, eingewickelt in einen Zettel: für den Freund von der Reise."
+    },
+    "scarab": {
+      "0": "In einen warmen Stein gemeißelt: Aus der Hitze geboren. Nur an den heißesten Tagen wird der kleine Roller zum König.",
+      "1": "Eine Papyrusrolle: Wenn die Luft glüht, wird das {child} golden.",
+      "2": "Wo ich herkomme, wartet ein {child} auf einen glühend heißen Tag, um groß zu werden. Dann trägt es die Sonne als Krone."
+    },
+    "kite": {
+      "0": "An einen Steinmann geknotet: Lass es im Gewitter groß werden. Der Blitz lässt es für immer fliegen.",
+      "1": "Eine Drachenschnur mit einem Zettel: in der Gewitternacht groß geworden.",
+      "2": "Ein {child}, das groß wird, während der Donner rollt, reitet von da an auf dem Sturm."
+    },
+    "octopus": {
+      "0": "In einer Muschel: Das klügste Kleine sank in die Tiefe und kam weise zurück.",
+      "1": "Flaschenpost: Trainiere seinen Kopf, nicht seine Arme. Ein kluges {child} wird geheimnisvoll.",
+      "2": "Der klügste Krake, den ich kenne, hat als Kind nichts als seinen Kopf trainiert."
+    },
+    "gargoyle": {
+      "0": "Unter der Glocke eingeritzt: Mittags läutet die Glocke. Was dann groß wird, läutet für immer mit.",
+      "1": "Auf einem Stein: Der kleine Wächter wurde beim Zwölf-Uhr-Schlag groß, mitten am Tag.",
+      "2": "In meinem Dorf sind die Steinfiguren mittags groß geworden, wenn die Kirchenglocke läutete."
+    },
+    "magpie": {
+      "0": "Ein Festband, erster Platz, und hinten drauf: gewonnen von einem {child}. Seitdem zaubert es richtig.",
+      "1": "Das Trickfest gewinnen, solange man noch klein ist – so wird aus einer Elster eine Zauberin.",
+      "2": "Ein vergrabener Zylinder mit einem Zettel: für den kleinen Gewinner des Fests."
+    }
   }
 }

@@ -27,6 +27,7 @@ import * as keepsake from "./keepsake";
 import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
+import * as trail from "./trail";
 import type { PetState, Replay, Travel, TravelStop, Trip, TripEvent } from "./state";
 import * as sun from "./sun";
 import * as wild from "./wild";
@@ -489,9 +490,18 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
       if (caught) {
         trip.found.push(caught);
         events.push(["find", caught]);
+        const note = trail.find(state, "fish", at); // a bottle with a note in it (trail.ts)
+        if (note) {
+          events.push([trail.action("fish"), note]);
+        }
       }
       happened(trip, { kind: "fish", item: caught, at: t });
     } else {
+      // a note by the path that points the way to a secret form (trail.ts)
+      const note = trail.find(state, trip.area, at);
+      if (note) {
+        events.push([trail.action(trip.area), note]);
+      }
       trip.last = { kind: "rest", item, at: t }; // a rest is not worth a line in the diary
     }
   }

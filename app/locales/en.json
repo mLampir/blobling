@@ -812,7 +812,12 @@
       "magpie_stole": "a magpie flew off with something: {item}",
       "magpie_chased": "chased off a magpie that wanted to take something: {item} 💪",
       "magpie_back": "the magpie brought it back, with a bow: {item}",
-      "magpie_egg": "the magpie left her top hat behind, with an egg in it 🎩🥚"
+      "magpie_egg": "the magpie left her top hat behind, with an egg in it 🎩🥚",
+      "trail_friend": "a friend told a story 📜 “{text}”",
+      "trail_trip": "found a note on the way 📜 “{text}”",
+      "trail_dig": "dug up an old note 📜 “{text}”",
+      "trail_fish": "fished out a bottle with a note 📜 “{text}”",
+      "trail_grandma": "Grandma told a story 📜 “{text}”"
     },
     "statistics": {
       "meals": "Meals",
@@ -1091,5 +1096,137 @@
     "away_hint": "Pets that live on a phone right now. If the phone is lost, you can fetch a pet back here; the copy on that phone stops counting then.",
     "fetch_back": "Fetch back",
     "fetch_back_confirm": "Fetch {name} back without the phone? The copy on the phone stops counting then."
+  },
+  "trails": {
+    "blob": {
+      "0": "A {child} that is petted many times a day, a whole week long, learns to purr. And it never stops again.",
+      "1": "Eight strokes every day, seven days in a row – and our little one began to purr. – M.",
+      "2": "My blob back then wanted to be stroked all the time. After a week of that it purred like a cat, and it grew up purring."
+    },
+    "ember": {
+      "0": "Scratched into the rock: three glow berries for the little flame, and it grew into the fire itself.",
+      "1": "A {child} that eats glow berries from the cave burns brighter inside. Three are enough, they say.",
+      "2": "An old recipe, half burnt: …glow berries, three of them, while it is still small…"
+    },
+    "stone": {
+      "0": "Smudged ink on a pebble: wait for the full moon. A {child} that grows up in its light keeps it forever.",
+      "1": "A message in a bottle: our stone child grew up on a full-moon night, and the moon stayed in it.",
+      "2": "Stones listen to the moon, my dear. When it is round and bright at night, they change."
+    },
+    "fox": {
+      "0": "Carved into a mushroom: little foxes that come here often enough take the forest's light home with them.",
+      "1": "I was a {child} once too. Four times I went to the mushroom forest, and its glow got into my tail.",
+      "2": "A scrap of a map, the mushroom forest circled four times. Next to it: for the little fox."
+    },
+    "cloud": {
+      "0": "Frozen into the ice: a cloud that grows up in falling snow turns soft as wool.",
+      "1": "Up on the mountain they wait for snowflakes before a {child} grows up. Nobody tells me why.",
+      "2": "One winter a little cloud grew up while it was snowing – the fluffiest thing I ever saw. Snow in a globe works too, I hear."
+    },
+    "leaf": {
+      "0": "Pinned to a tree: a sprout that eats from its own plant blossoms. Six fruits, and it is never just green again.",
+      "1": "Pressed blossoms in an old tin, and a note: from the fruits it picked off its plant itself.",
+      "2": "My sister was a {child}. She picked fruit after fruit off her own plant and grew up all in blossom."
+    },
+    "duck": {
+      "0": "A soaked note by the water: three trips in the rain with the little duck. Now it wears a bubble.",
+      "1": "A message in a bottle: rain on the way is a duckling's best friend.",
+      "2": "A {child} that hikes through the rain often enough never gets wet again. My mother always said so."
+    },
+    "hippo": {
+      "0": "On a wet leaf: tuck it in yourself, every evening. A {child} dreams of whoever does.",
+      "1": "A message in a bottle: six evenings I tucked our little hippo in myself, and it grew up all dreamy.",
+      "2": "Little hippos sleep best when somebody tucks them in. Not the light going out by itself – somebody."
+    },
+    "beak": {
+      "0": "Torn from a logbook: even a {child} can get past a guardian. Past two, and it gets wings like no other.",
+      "1": "The bravest bird I know got past two guardians while it was still small.",
+      "2": "Grandpa's bird was a little daredevil. Before it was grown it had got past two guardians of the path."
+    },
+    "caterpillar": {
+      "0": "A note on a blade of grass: giggle cherries, more than any other fruit, and it grew up laughing.",
+      "1": "A {child} that likes giggle cherries best of all grows up a jester. Really!",
+      "2": "A little box full of cherry stones. On the lid: all for the {child}, more than anything else."
+    },
+    "dog": {
+      "0": "A {child} that danced at the trick festival grew up to be the greatest show dog of all.",
+      "1": "A crumpled festival programme: …and the little pup dances! The crowd went wild.",
+      "2": "Once a puppy danced at the festival before it was grown. It never stopped performing after that."
+    },
+    "dragonfly": {
+      "0": "On a reed: when the sun comes out after the rain, the little ones grow rainbows.",
+      "1": "A damp note: grew up the moment the sun came back after the rain. Wings like a prism!",
+      "2": "Wait for a rainbow day, I always say. A {child} that grows up then shimmers in every color."
+    },
+    "beaver": {
+      "0": "Carved into a stump: a {child} that grows up in a finished house becomes a master builder.",
+      "1": "A waterlogged plan: hut, cabin, house. Only after the house did ours grow up.",
+      "2": "An old folding ruler, and on it: the bigger the house, the bigger the dreams."
+    },
+    "crab": {
+      "0": "Written in the sand: a crab that grows up beside a sandcastle wants one on its own back.",
+      "1": "A message in a bottle: set a sandcastle out for it. You'll see.",
+      "2": "My cousin was a {child}. A sandcastle stood in front of his house when he grew up – and look at him now!"
+    },
+    "axolotl": {
+      "0": "Scratched beside the guardian's spot: the little one beat Gloompeep. Something woke up in it.",
+      "1": "A message in a bottle: a {child} that wins against Gloompeep grows up a dragon.",
+      "2": "They aren't as soft as they look, those axolotls. One beat Gloompeep while it was still small."
+    },
+    "mouse": {
+      "0": "In a mouse hole: grew up wearing Grandma's knitted hat, and now it's wool all over.",
+      "1": "When a little mouse grows up wearing one of my hats, it never wants to take it off again.",
+      "2": "That {child} grew up in a hat its grandma had knitted. Cosy, cosy!"
+    },
+    "bear": {
+      "0": "Carved into bark: a {child} that loves its people with all its heart grows up to the stars.",
+      "1": "Every heart of the bond, all five, and a little bear becomes a star bear. So the old ones say.",
+      "2": "A honey jar, and inside a note: five hearts full."
+    },
+    "penguin": {
+      "0": "Frozen into the snow: just before sunrise the sky turns green. A {child} that grows up then keeps the color.",
+      "1": "On the pier: get up early. The little one grew up at dawn and has shimmered ever since.",
+      "2": "The most beautiful penguin I know grew up in the last minutes before the sun rose."
+    },
+    "bat": {
+      "0": "Bat writing on the wall: full moon. Night. Then.",
+      "1": "A {child} that grows up under the full moon carries the moon on its wings.",
+      "2": "On full-moon nights the little bats circle my chimney. One of them grew up right there, silver all over."
+    },
+    "owl": {
+      "0": "On a feather: three scuffles, not once on the ground. The little owl learned to move like a shadow.",
+      "1": "Scratched into a rock: a {child} that is never knocked over grows up a silent fighter.",
+      "2": "An owl from my attic scuffled three times while it was small and never fell over. Now it moves so quietly I never hear it."
+    },
+    "chameleon": {
+      "0": "Under a leaf: the little one made a friend out here and copied it until it became a mirror.",
+      "1": "A {child} that makes a friend on its travels while it is small grows up looking like all of us.",
+      "2": "A shard of mirror wrapped in a note: for the friend from the trip."
+    },
+    "scarab": {
+      "0": "Chiselled into a warm stone: born of the heat. Only on the hottest days does the little roller become a king.",
+      "1": "A papyrus scroll: when the air glows, the {child} grows golden.",
+      "2": "Where I come from, a {child} waits for a scorching day to grow up. Then it wears the sun as a crown."
+    },
+    "kite": {
+      "0": "Tied to a cairn: let it grow up in a thunderstorm. The lightning makes it fly forever.",
+      "1": "A kite string with a note: grew up on the night of the storm.",
+      "2": "A {child} that grows up while thunder rolls rides the storm from then on."
+    },
+    "octopus": {
+      "0": "In a shell: the cleverest little one sank to the deep and came back wise.",
+      "1": "A message in a bottle: train its head, not its arms. A clever {child} grows up mysterious.",
+      "2": "The wisest octopus I know trained nothing but its wits as a child."
+    },
+    "gargoyle": {
+      "0": "Scratched under the bell: at noon the bell rings. Whatever grows up then rings with it forever.",
+      "1": "On a stone: the little guardian grew up at the stroke of twelve, in the middle of the day.",
+      "2": "In my village the stone figures grew up at noon, when the church bell rang."
+    },
+    "magpie": {
+      "0": "A festival ribbon, first place, and on the back: won by a {child}. It has done real magic ever since.",
+      "1": "Winning the trick festival while still small – that's how a magpie becomes a magician.",
+      "2": "A buried top hat with a note: for the little winner of the festival."
+    }
   }
 }

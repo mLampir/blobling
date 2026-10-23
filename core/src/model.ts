@@ -27,6 +27,7 @@ import * as sky from "./sky";
 import * as stars from "./stars";
 import { STATS, newMagpie, newState, type Egg, type PetState, type Trip } from "./state";
 import { isDark, isFullMoon, sunTimes, type Location } from "./sun";
+import * as trail from "./trail";
 import * as trip from "./trip";
 import * as wild from "./wild";
 import * as yards from "./yard";
@@ -582,6 +583,10 @@ export function comeBack(state: PetState, now: number): void {
   const days = Math.max(1, Math.round((now - state.grandma) / 86400));
   if (grandma.giftsReady(state, now)) {
     state.backpack = grandma.gifts(state, now, new Random(`grandma:${now}`)); // unpacked at home
+    const told = trail.find(state, "grandma", now); // and she tells it a story
+    if (told) {
+      logEvent(state, now, trail.action("grandma"), "system", { item: told });
+    }
   }
   state.grandma_visit = false;
   for (const k of STATS) {
@@ -1116,6 +1121,10 @@ function fish(state: PetState, now: number, move: string): string | null {
     if (caught) {
       home.addItem(state, caught);
       count(state, "caught");
+      const note = trail.find(state, "fish", now); // a bottle with a note in it
+      if (note) {
+        logEvent(state, now, trail.action("fish"), "system", { item: note });
+      }
     }
     s.mood += 15 * life.bonusFactor(state, "play");
     care.addBond(state, "play");
@@ -1245,6 +1254,10 @@ function dig(state: PetState, now: number): string | null {
   const s = state.stats;
   state.game = state.training = state.fishing = null;
   const found = digging.dig(state, new Random(`dig:${now}`));
+  const note = trail.find(state, "dig", now); // an old note under the cross
+  if (note) {
+    logEvent(state, now, trail.action("dig"), "system", { item: note });
+  }
   s.mood += 15 * life.bonusFactor(state, "play");
   s.energy -= digging.COST.energy;
   s.satiety -= digging.COST.satiety;
