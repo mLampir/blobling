@@ -1026,6 +1026,8 @@
       "soon": "🎪 Trick festival on {date}",
       "today": "🎪 The trick festival is today!",
       "went": "🎪 {name} has been to today's trick festival.",
+      "title": "Trick Festival",
+      "line": "The best tricks around, all on one stage! Every pet is welcome.",
       "what": "Which tricks will it show?",
       "go": "To the festival"
     },

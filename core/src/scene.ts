@@ -245,6 +245,15 @@ const FENCE: readonly [Color, Color] = [[205, 170, 120], [150, 115, 75]];
 // on the fence: the trick festival's poster (festival.ts), and the owl when there is no house to sit on (stars.ts)
 const POSTER_X = 58;
 const OWL_FENCE_X = 56;
+/** Where the festival's poster hangs, as parts of the scene [x, y, width, height], for a tap in the app. */
+export function posterArea(): [number, number, number, number] {
+  const part = (n: number) => Number((n / 64).toFixed(3));
+  return [part(POSTER_X - 6), part(FENCE_TOP - 11), part(12), part(14)];
+}
+// While the poster hangs, the pet now and then goes and looks at it, excited, and hops on the spot
+const POSTER_LOOK = 0.3; // how often, when it decides where to go (and not again right after)
+const POSTER_GAP = 34; // from its left edge to the middle of the poster: it stands next to it, not in front
+const POSTER_STAY = 12; // seconds it stays (with the walk there)
 const PEEK_EYES = 5; // rows from the top of its face down to below its eyes
 const PEEK_EVERY = 9;
 const PEEK_DUCK = 1.6;
@@ -1570,6 +1579,7 @@ export class PetScene {
   targetX: number;
   facing = 1;
   nextDecision = 0.0;
+  posterUntil = -Infinity; // it is off to look at the festival's poster until then
   nextBlink = 0.0;
   particles: Particle[] = [];
   nextParticle = 0.0;
@@ -1953,6 +1963,8 @@ export class PetScene {
       } else if (this.wander(view, t, dt)) {
         // slimes hop instead of walking
         this.hop(pose, t);
+      } else if (view.poster && t < this.posterUntil) {
+        this.admirePoster(pose, t);
       } else if (mood === "happy" && Math.sin(t * 1.3) > 0.97) {
         Object.assign(pose, { body: "stretch", jump: 3 });
       }
@@ -5759,6 +5771,11 @@ export class PetScene {
         this.targetX = clamp(DECO_X[warm] - SNUGGLE_GAP, lo, hi);
       }
       this.nextDecision = t + this.rng.uniform(4, 12);
+      // the trick festival is coming: now and then it goes over to its poster
+      if (view.poster && hi > VISIT_PET_X && t > this.posterUntil + 3 * POSTER_STAY && this.rng.random() < POSTER_LOOK) {
+        this.targetX = clamp(POSTER_X - POSTER_GAP, lo, hi);
+        this.nextDecision = this.posterUntil = t + POSTER_STAY;
+      }
     }
     // it doesn't settle down right in front of what it left behind or found, so that it can be seen
     const trace = view.trace;
@@ -5772,6 +5789,17 @@ export class PetScene {
     const moving = this.moveTowards(this.targetX, slow ? 4 : 8, dt);
     this.x = clamp(this.x, lo, hi);
     return moving;
+  }
+
+  /** In front of the festival's poster: it looks up at it, mouth open, and hops on the spot now and then. */
+  private admirePoster(pose: Pose, t: number): void {
+    this.facing = 1;
+    const phase = (t * 0.8) % 1;
+    if (phase < 0.3) {
+      Object.assign(pose, { body: "stretch", jump: Math.round(Math.sin((phase / 0.3) * Math.PI) * 3), face: "happy" });
+    } else {
+      pose.face = "eat_open";
+    }
   }
 
   /** A step towards x at `speed` pixels per second, facing that way. Returns false if it is there already. */

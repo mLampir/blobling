@@ -486,10 +486,13 @@ evening it leaves a rare egg up on the roof, once for every pet, and is gone.
 ## The trick festival
 
 Every second Saturday is the **trick festival**, all day. Three days before,
-its poster hangs on the fence, and the *Trip* tab shows the date, also while
-the pet is away. On the day, the tab has four slots: tap tricks into them in
-the order it is to show them (it starts with its best ones), and **To the
-festival** sends it off, at any time of the day. Nobody sends it by six in the
+its poster hangs on the fence, and now and then the pet goes over to it and
+hops in front of it, excited. A tap on the poster in the app opens it: the day
+on a calendar leaf, and what there is to win. The *Trip* tab has a
+line with the date that opens the same poster, also while the pet is away. On
+the day, the poster has four slots: tap tricks into them in the order it is to
+show them (it starts with its best ones), and **To the festival** sends it
+off, at any time of the day. Nobody sends it by six in the
 evening, it goes by itself with its best tricks. The festival is the day's
 trip and takes about an hour. Babies and sick pets stay home, and a pet that
 is away on a trip or at Grandma's misses it.
@@ -1003,7 +1006,7 @@ Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
   what goes into the backpack, with the button to send it off at the bottom.
   While the pet can't go for a while (still an egg or a baby, away, back with
   a full backpack), that is what the tab says. Above it, from the poster on,
-  the date of the trick festival, and on the day the tricks to show there.
+  the date of the trick festival, which opens its poster.
 - **Diary** has one tab each for the history, the album and the values. In the
   history a trip opens with a tap into what happened on the way (where a
   scuffle or a show at the trick festival can be watched again). The album

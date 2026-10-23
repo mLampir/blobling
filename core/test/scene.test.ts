@@ -9,7 +9,8 @@ import * as life from "../src/life";
 import { ACTIVITY_SECONDS } from "../src/model";
 import { Random } from "../src/random";
 import {
-  AFTER_RAIN, APP_BACKGROUND, FPS, GROUND, PetScene, SLEEP_FPS, STATUS_HEIGHT, houseArea, skyColors, trickAnimation,
+  AFTER_RAIN, APP_BACKGROUND, FPS, GROUND, PetScene, SLEEP_FPS, STATUS_HEIGHT, houseArea, posterArea, skyColors,
+  trickAnimation,
   type SceneView,
   type Weather,
 } from "../src/scene";
@@ -89,6 +90,27 @@ test("it shivers, and the ember stone glows at night", () => {
   assert.deepEqual(color(day, 58, GROUND), [95, 95, 110]); // a gray stone
   assert.deepEqual(color(night, 58, GROUND), [165, 30, 45]);
   frames({ deco: ["emberstone"] }, 300, NIGHT); // sooner or later it snuggles up to it
+});
+
+test("while the festival's poster hangs, the pet goes over to it now and then and hops in front of it", () => {
+  const stage = scene() as unknown as { render: PetScene["render"]; x: number; posterUntil: number };
+  const view = { ...BASE, poster: true };
+  const xs: number[] = [];
+  for (let i = 0; i < 1200; i++) {
+    stage.render(view, null, new Date(DAY.getTime() + i * 100), 1 + i * 0.1);
+    if (1 + i * 0.1 < stage.posterUntil) {
+      xs.push(stage.x);
+    }
+  }
+  assert.ok(xs.length > 0);
+  assert.ok(Math.max(...xs) <= 24.5); // next to the poster, not in front of it
+  // the poster can be tapped where it hangs
+  const [x, y, w, h] = posterArea().map((v) => Math.round(v * 64));
+  const [img] = frames({ poster: true }, 1);
+  const [bare] = frames({}, 1);
+  assert.ok(x < 58 && x + w > 58 && y + h > GROUND - 9);
+  assert.ok(color(img, 58, GROUND - 14).some((c, i) => c !== color(bare, 58, GROUND - 14)[i]));
+  assert.ok(y <= GROUND - 17 && y + h >= GROUND - 7);
 });
 
 test("day and night, and the weather", () => {

@@ -1026,6 +1026,8 @@
       "soon": "🎪 Trickfest am {date}",
       "today": "🎪 Heute ist Trickfest!",
       "went": "🎪 {name} war schon auf dem Trickfest.",
+      "title": "Trickfest",
+      "line": "Die besten Tricks der Gegend auf einer Bühne! Jedes Pet darf mitmachen.",
       "what": "Welche Tricks zeigt es?",
       "go": "Zum Fest"
     },
