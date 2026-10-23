@@ -509,8 +509,13 @@ workflow is started by hand in Codemagic.
    test track, as version `1.2.0`: the stores take only digits, so the betas
    and the release of a version differ only in the build number.
 3. A bug found in the beta is fixed on main and goes out as `v1.2.0-beta.2`.
-4. When the beta is good, tag `v1.2.0` as a normal release: the Pis get the
-   update, and the store build is released by hand as usual.
+4. When the beta is good, push the tag `v1.2.0` (`git tag v1.2.0 && git push
+   origin v1.2.0`). Codemagic builds it for the stores; send it to review and
+   release it there by hand as usual.
+5. Once the store has released the app, publish the GitHub release for the
+   tag `v1.2.0` (a normal one this time). Only then do the Pis see the update,
+   so a Pi is not updated days before the app that fits it. A Pi never updates
+   by itself: it shows the update, and its owner starts it with the button.
 
 The updater only offers a release that is newer than the running one, in the
 order `v1.1.0` < `v1.2.0-beta.1` < `v1.2.0-beta.2` < `v1.2.0`, so a Pi on a
