@@ -33,13 +33,13 @@ DU SUCHST AUS, WAS AUS IHM WIRD
 In etwa zehn Tagen wird aus deinem Baby ein Kind, und dann wählst du seine erwachsene Form. Eine steht immer bereit. Die anderen wollen vorher etwas vom Kind: etwas, das es getan hat, oder den richtigen Moment, etwa eine Vollmondnacht. Eine geheime Form hinterlässt nur Spuren, denen du folgen kannst: eine Geschichte, die ein Freund erzählt, oder einen alten Zettel am Wegesrand.
 
 AUSFLÜGE, TRICKS UND TRAINING
-Bring ihm mit einem Wisch Tricks bei, trainiere Kraft, Tempo und Köpfchen und schick es los: auf die Wiese, in den Pilzwald, an den Bach, in eine Höhle, auf den Berg und dahinter an die Küste mit echten Gezeiten und zu einer alten Burgruine. Es kommt mit Samen, Hüten und Deko heim und mit den Raufereien von unterwegs, die du dir noch einmal ansehen kannst. Jedes Gebiet hat einen Wächter, an dem es vorbei muss.
+Bring ihm mit einem Wisch Tricks bei, trainiere Kraft, Tempo und Köpfchen auf seinem eigenen Übungsplatz und schick es los: auf die Wiese, in den Pilzwald, an den Bach, in eine Höhle, auf den Berg und dahinter an die Küste mit echten Gezeiten und zu einer alten Burgruine. Es kommt mit Samen, Hüten, Deko und Geräten für den Übungsplatz heim und mit den Raufereien von unterwegs, die du dir noch einmal ansehen kannst. Jedes Gebiet hat einen Wächter, an dem es vorbei muss.
 
 MEHR ALS 25 ARTEN
 Jedes Ei kann etwas Neues sein. Eier gibt es von Wächtern, von wilden Pets, die dein Pet mit seinen Tricks für sich gewinnt, von Gästen, die am Gartenzaun auftauchen, aus dem Teich, von Sternschnuppen, vom Trick-Fest jeden zweiten Samstag, von einer Schatzkarte und vom Dachboden der Oma. Das Ei eines Freundes schlägt nach dem Freund, umso mehr, je länger die beiden befreundet sind. Jede Form, die deine Pets schon hatten, füllt eine Seite im Album, und eine Linie, die du ganz großgezogen hast, hinterlässt ein Andenken.
 
 EINE STRASSE VOLLER PETS
-Bis zu vier Pets leben zu Hause, jedes in seinem eigenen Haus. Sie treffen sich, machen einander Tricks nach und teilen sich einen Hof mit Trog und Wasserbecken, zu denen sie von selbst gehen. An trockenen Abenden sitzen alle vor dem Schlafengehen ums Lagerfeuer. Weiter die Straße hinunter liegen ein Übungsplatz und ein Spielplatz. Ein Pet, das für ein neues Ei Platz macht, zieht ins Album und kann jederzeit wieder heimkommen.
+Bis zu vier Pets leben zu Hause, jedes in seinem eigenen Haus. Sie treffen sich am Spielplatz zum Schaukeln, Sandeln und Wippen, machen einander Tricks nach und teilen sich einen Hof mit Trog und Wasserbecken, zu denen sie von selbst gehen. An trockenen Abenden sitzen alle vor dem Schlafengehen ums Lagerfeuer. Ein Pet, das für ein neues Ei Platz macht, zieht ins Album und kann jederzeit wieder heimkommen.
 
 GANZ OHNE STRESS
 Dein Pet stirbt nie, und nichts ist für immer verloren. Kümmert sich anderthalb Tage niemand darum, geht es zur Oma, und dort steht die Zeit für es still, bis du es abholst. Du fährst in den Urlaub? Bring es selbst hin, vielleicht kommt es mit einer gestrickten Mütze zurück.

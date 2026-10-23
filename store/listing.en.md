@@ -59,13 +59,13 @@ YOU PICK WHAT IT BECOMES
 Over about ten days your baby grows into a child, and then you choose its adult form. One is always there. The others want something from the child first: something it did, or the right moment, like a night of full moon. A secret form leaves only trails to follow, a story a friend tells or an old note by the path.
 
 TRIPS, TRICKS AND TRAINING
-Teach it tricks with a swipe, train its strength, speed and smarts, and send it out: the meadow, the mushroom forest, the stream, a cave, the mountain, and beyond them the coast with real tides and an old castle in ruins. It comes home with seeds, hats and decorations, and with the scuffles it had on the way, which you can watch again. Each area has a guardian to get past.
+Teach it tricks with a swipe, train its strength, speed and smarts on its own training ground, and send it out: the meadow, the mushroom forest, the stream, a cave, the mountain, and beyond them the coast with real tides and an old castle in ruins. It comes home with seeds, hats, decorations and gear for the training ground, and with the scuffles it had on the way, which you can watch again. Each area has a guardian to get past.
 
 MORE THAN 25 KINDS OF PETS
 Every egg can be something new. Eggs come from guardians, from wild pets your pet wins over with its tricks, from guests that turn up at the garden fence, from the pond, from shooting stars, from the trick festival every other Saturday, from a treasure map and from Grandma's attic. A friend's egg takes after the friend, the more the longer they have been friends. Every form your pets have been fills a page of the album, and a line you have raised in full leaves a keepsake.
 
 A STREET FULL OF PETS
-Up to four pets live at home, each in a house of its own. They get together, copy each other's tricks and share a yard with a trough and a water basin they visit by themselves. On dry evenings they all sit around the campfire before bed. Further down the street are a training ground and a playground. A pet that makes room for a new egg moves into the album and can come home again whenever you like.
+Up to four pets live at home, each in a house of its own. They meet on the playground for the swing, the sandpit and the seesaw, copy each other's tricks and share a yard with a trough and a water basin they visit by themselves. On dry evenings they all sit around the campfire before bed. A pet that makes room for a new egg moves into the album and can come home again whenever you like.
 
 GENTLE BY DESIGN
 Your pet never dies, and nothing is lost for good. Forget it for a day and a half and it goes to Grandma's, where time stands still for it until you fetch it. Going on holiday? Take it there yourself, and it may come home with a knitted hat.
