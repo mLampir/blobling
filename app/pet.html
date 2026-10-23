@@ -18,6 +18,7 @@
   :root {
     --night: #0d1220; --surface: #161d30; --raised: #1f2840; --line: #2a3452;
     --text: #eef1f8; --muted: #8f9ab3; --accent: #ffb347; --accent-ink: #2a1600; --danger: #ff6b6b;
+    --poster-red: #d8323c; --poster-blue: #3c6ed2;
     --satiety: #ff9f5a; --mood: #ff7aa8; --energy: #ffd34d; --hygiene: #5fd4f0; --health: #6fdc8c;
     --round: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;
     --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
@@ -258,11 +259,14 @@
     position: relative; flex: 0 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; margin-top: 10px;
     display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
     background: var(--surface); border-radius: 24px 24px 0 0; border-top: 1px solid var(--line);
-    padding: 14px 16px 14px; touch-action: none;
+    padding: 14px 16px 14px; touch-action: pan-y;
   }
-  /* The bag scrolls in its own place, however full it gets: things are dragged out of it onto
-     the pet, which stays in sight */
-  #bag-mode { touch-action: pan-y; max-height: 42dvh; }
+  /* A sheet scrolls in its own place when it doesn't fit (the bag however full it gets, the
+     training on a small phone); only while a stone is thrown or the hops are swiped back does
+     the finger belong to the exercise */
+  #train-mode.swiping { touch-action: none; }
+  .sheet > * { flex-shrink: 0; }  /* the sheet scrolls; what is in it keeps its size */
+  #bag-mode { max-height: 42dvh; }
   #pet-mode { max-height: 42dvh; }
   .sheet h3 { margin: 0; font: 700 18px/1.2 var(--round); }
   .sheet p { margin: 0; }
@@ -328,6 +332,32 @@
   .choices button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
   .choices button.on { border-color: var(--accent); color: var(--accent); }
   #pack-things img, .steps img { width: 24px; height: 24px; image-rendering: pixelated; vertical-align: middle; }
+  /* The festival's poster, as it hangs on the fence: red at the top, a yellow star, blue at the
+     bottom; on it the day, a dot for each day still to wait, and on the day the tricks to show */
+  #festival-mode { max-height: 60dvh; touch-action: pan-y; }
+  #festival-close { color: #fff; }
+  /* its line in the trip tab carries the poster's colors */
+  #festival { border-top: 4px solid var(--poster-red); border-bottom: 4px solid var(--poster-blue); }
+  .poster {
+    display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 400px;
+    padding: 12px 12px 14px; border-radius: 8px; background: var(--raised);
+    border-top: 12px solid var(--poster-red); border-bottom: 12px solid var(--poster-blue);
+  }
+  .poster-star { width: 44px; height: 44px; fill: var(--energy); stroke: var(--accent-ink); stroke-width: 1.2; }
+  .poster-day {
+    display: flex; flex-direction: column; min-width: 64px; border: 2px solid var(--line); border-radius: 8px;
+    overflow: hidden; background: var(--surface);
+  }
+  .poster-day b { padding: 2px 8px; background: var(--poster-red); color: #fff; font-size: 13px; }
+  .poster-day span { padding: 2px 8px 4px; font: 700 26px/1.1 var(--round); }
+  .poster-title { font-size: 26px; letter-spacing: .04em; color: var(--accent); }
+  .sheet .poster-line { max-width: 30ch; font-weight: 700; text-wrap: balance; }
+  .poster-prizes { display: flex; gap: 18px; align-items: flex-end; }
+  .poster-prizes span { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .poster-prizes img { width: 40px; height: 40px; image-rendering: pixelated; }
+  .poster-prizes b { font-size: 13px; color: var(--muted); }
+  .poster-prizes .egg::after { content: "?"; position: absolute; top: 8px; font: 700 18px/1 var(--round); color: var(--energy); }
+  #festival-when { margin: 0; }
   /* the tricks for the festival: each as its move, in the slots in the order it shows them */
   #festival-slots svg, #festival-tricks svg { width: 26px; height: 26px; vertical-align: middle; }
   #festival-tricks button { display: inline-flex; align-items: center; gap: 6px; }
@@ -481,6 +511,32 @@
       <button class="link" id="train-back" hidden data-t="page.train.back"></button>
     </div>
 
+    <!-- The trick festival's poster, opened by a tap on it in the scene: when the festival is, and
+         on the day the tricks to show (core/src/festival.ts) -->
+    <div class="sheet" id="festival-mode" hidden>
+      <button class="close" id="festival-close" data-t-aria="page.close">✕</button>
+      <div class="poster">
+        <svg class="poster-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+        <h3 class="poster-title" data-t="page.festival.title"></h3>
+        <p class="poster-line" data-t="page.festival.line"></p>
+        <div class="poster-day" id="festival-day" role="img"><b id="festival-weekday"></b><span id="festival-date"></span></div>
+        <!-- what there is to win: an egg for the first place (which one, it doesn't say), a ribbon for the second and third -->
+        <div class="poster-prizes" aria-hidden="true">
+          <span class="egg"><img id="prize-egg" alt=""><b>1</b></span>
+          <span><img id="prize-blue" alt=""><b>2</b></span>
+          <span><img id="prize-red" alt=""><b>3</b></span>
+        </div>
+        <p id="festival-when" hidden></p>
+        <div class="packing" id="festival-pick">
+          <p data-t="page.festival.what"></p>
+          <div class="steps" id="festival-slots"></div>
+          <div class="choices" id="festival-tricks"></div>
+          <p class="say" id="festival-say" aria-live="polite"></p>
+          <button class="wide primary" id="festival-go" data-t="page.festival.go"></button>
+        </div>
+      </div>
+    </div>
+
     <div class="sheet" id="game" hidden>
       <button class="close" id="game-close" data-t-aria="page.close_game">✕</button>
       <h3 data-t="page.tools.game"></h3>
@@ -492,17 +548,8 @@
     <div class="page trip">
       <h2 data-t="page.nav.adventure"></h2>
       <p class="lead" id="adventure-lead" hidden></p>
-      <!-- the trick festival, from its poster on (core/src/festival.ts): on the day, the tricks to show -->
-      <div class="packing" id="festival" hidden>
-        <p class="lead" id="festival-when"></p>
-        <div class="packing" id="festival-pick">
-          <p data-t="page.festival.what"></p>
-          <div class="steps" id="festival-slots"></div>
-          <div class="choices" id="festival-tricks"></div>
-          <p class="say" id="festival-say" aria-live="polite"></p>
-          <button class="wide primary" id="festival-go" data-t="page.festival.go"></button>
-        </div>
-      </div>
+      <!-- the trick festival, from its poster on (core/src/festival.ts): a tap opens the poster -->
+      <button class="wide" id="festival" hidden></button>
       <div class="packing" id="packing">
         <p class="hearts" id="pack-hearts"></p>
         <p data-t="page.pack.where"></p>
@@ -984,6 +1031,12 @@ function onPet(x, y) {
   const [ax, ay, aw, ah] = area, m = 0.03;  // a little room around it
   return u >= ax - m && u <= ax + aw + m && v >= ay - m && v <= ay + ah + m;
 }
+// Whether a point is on the trick festival's poster, while it hangs on the fence
+function onPoster(x, y) {
+  if (!current || !current.festival || current.trip || app.atYard(current)) return false;
+  const [u, v] = inScene(x, y), [ax, ay, aw, ah] = current.festival.area;
+  return u >= ax && u <= ax + aw && v >= ay && v <= ay + ah;
+}
 // Whether a point is on the plant
 function onPlant(x, y) {
   if (!current || !current.plant || !current.plant.area || current.trip) return false;
@@ -1204,15 +1257,25 @@ let festivalFor = "";
 function renderFestival(s) {
   const f = s.festival;
   $("festival").hidden = !f;
-  if (!f) return;
-  const date = new Date(f.day * 1000).toLocaleDateString(LANG, { weekday: "long", day: "numeric", month: "long" });
+  if (!f) {
+    if (!$("festival-mode").hidden) openSheet(null); // the poster has been taken down
+    return;
+  }
+  const day = new Date(f.day * 1000);
+  const date = day.toLocaleDateString(LANG, { weekday: "long", day: "numeric", month: "long" });
   const went = f.today && f.reason === "festival_done";
-  $("festival-when").textContent = went ? t("page.festival.went", { name: s.name })
+  $("festival").textContent = went ? t("page.festival.went", { name: s.name })
     : f.today ? t("page.festival.today") : t("page.festival.soon", { date });
+  // the poster: the day on a calendar leaf
+  $("festival-day").setAttribute("aria-label", date);
+  $("festival-weekday").textContent = day.toLocaleDateString(LANG, { weekday: "short" });
+  $("festival-date").textContent = day.toLocaleDateString(LANG, { day: "numeric" });
+  $("festival-when").hidden = !went;
+  $("festival-when").textContent = went ? t("page.festival.went", { name: s.name }) : "";
   // it can be sent off any time on the day, while it isn't away (else it says why, once asked)
   $("festival-pick").hidden = !f.today || went || !!s.trip || !!s.grandma || s.stage === "egg";
   const key = JSON.stringify([s.id, f, s.tricks]);
-  if (!$("festival-pick").hidden && view === "adventure" && key !== festivalFor) {
+  if (!$("festival-pick").hidden && !$("festival-mode").hidden && key !== festivalFor) {
     festivalFor = key;
     renderShows();
   }
@@ -1250,6 +1313,16 @@ function renderShows() {
     return b;
   }));
 }
+function openFestival() {
+  festivalFor = "";
+  $("prize-egg").src = app.discovery("egg_blob", false);
+  $("prize-blue").src = app.discovery("ribbon_blue", true);
+  $("prize-red").src = app.discovery("ribbon_red", true);
+  openSheet("festival-mode");
+  renderFestival(current);
+}
+$("festival").addEventListener("click", () => { if (current && current.festival) openFestival(); });
+$("festival-close").addEventListener("click", () => openSheet(null));
 $("festival-go").addEventListener("click", async () => {
   if (!current || !current.festival) return;
   try {
@@ -1262,7 +1335,7 @@ $("festival-go").addEventListener("click", async () => {
     feel("ok");
     shows = null;
     $("festival-say").textContent = "";
-    showView("home");  // to see it set off
+    openSheet(null);  // to see it set off
   } catch (err) {
     fail(err);
   }
@@ -2196,6 +2269,13 @@ const PET_EVERY_MS = 2500;   // … sent no more often than this
       (lying ? TAKE[lying] : unpack)();
       return;
     }
+    // a tap on the trick festival's poster opens it
+    if (stroke.way < 8 && onPoster(e.clientX, e.clientY) && !(area && onPet(e.clientX, e.clientY))) {
+      stroke = null;
+      openFestival();
+      feel("tap");
+      return;
+    }
     // a tap on the plant says how it is doing
     if (stroke.way < 8 && onPlant(e.clientX, e.clientY) && !(area && onPet(e.clientX, e.clientY))) {
       stroke = null;
@@ -2697,6 +2777,8 @@ let openTraining;
   // What the sheet shows: the list of exercises, or the one that is going on
   const show = (next, hint) => {
     stage = next;
+    mode.classList.toggle("swiping", next === "strength" || next === "smarts");
+    if (next !== "menu") mode.scrollTop = 0;
     clearTimeout(goTimer);
     $("train-hint").textContent = hint || t("page.train.hint");
     $("skills").hidden = next !== "menu";
@@ -2855,9 +2937,11 @@ let openTraining;
         render(r.state);
         if (!r.accepted) return say(r.message);
         if (before && before.stage === "egg") {
-          // Wait a moment until the hatching has been seen
+          // Wait a moment until the hatching has been seen. The field offers the name of its line's
+          // child: the egg only had the default name, which would read like another pet's
           setTimeout(async () => {
-            const name = await ask(t("page.name_prompt"), { value: r.state.name, ok: t("page.dialog.save") });
+            const offer = T[`children.${r.state.species}`] || "";
+            const name = await ask(t("page.name_prompt"), { value: offer, ok: t("page.dialog.save") });
             if (name) render(await api("POST", "/api/pet/settings", { name }).catch(() => r.state));
           }, 5000);
         } else {

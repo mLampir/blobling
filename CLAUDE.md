@@ -70,9 +70,11 @@ Where to look first:
   `config.ini` holds local settings and is not in Git;
   `config.example.ini` is the template.
 - **The app explains itself.** If something in the app needs a sentence to
-  explain how it works, change how it works instead of adding the sentence:
+  explain how to use it, change how it works instead of adding the sentence:
   a tap does the obvious thing, the pet answers on the scene, and hints are
-  feedback after a try, not instructions before it.
+  feedback after a try, not instructions before it. Text that belongs to the
+  game world (a poster, a letter, a sign, what the pet tells) is welcome;
+  only instructions for using the app are avoided.
 - **Ask before rebooting the Pi.**
 
 ## The API between app and Pi

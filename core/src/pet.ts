@@ -26,7 +26,7 @@ import * as life from "./life";
 import * as magpie from "./magpie";
 import * as model from "./model";
 import * as notify from "./notify";
-import { hideX, houseArea, plantArea, starArea, thingArea, yardArea, type SceneView, type TripView,
+import { hideX, houseArea, plantArea, posterArea, starArea, thingArea, yardArea, type SceneView, type TripView,
   type YardView } from "./scene";
 import * as sky from "./sky";
 import * as stars from "./stars";
@@ -1230,7 +1230,8 @@ export class Pet {
         ...stars.lying(s) ? { star: starArea(s.house, stars.lying(s)!) } : {},
       } as Record<string, number[]>,
       // The trick festival coming up within a few days, or null: its day (local midnight), whether
-      // that is today, why it can't go right now (null: it can), and the tricks it would show by itself
+      // that is today, why it can't go right now (null: it can), the tricks it would show by itself, and
+      // where its poster hangs
       festival: this.festivalView(s, now),
       // what found food has left in it and is still waiting to be used (food.FOODS)
       boosts: [...s.boosts],
@@ -1267,6 +1268,7 @@ export class Pet {
       day: Math.round(festival.midnightOf(day)), today: festival.today(now), max_tricks: festival.MAX_TRICKS,
       reason, message: reason && reason !== "no_festival" ? this.t(`pet.rejected.${reason}`, { name: s.name }) : null,
       tricks: festival.sequence(s),
+      area: posterArea(), // where its poster hangs in the scene, for a tap that opens it
     };
   }
 
