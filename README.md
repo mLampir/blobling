@@ -434,8 +434,8 @@ to what the app stores or sends goes into both.
 
 The screenshots for the stores come from the app in the browser, put into
 frames with a headline in every size the stores take (iPhone and iPad for the
-App Store, a phone for Google Play), and the feature graphic of the Google Play
-listing (1024 × 500). It needs Chromium for Playwright once:
+App Store, a phone for Google Play), the feature graphic of the Google Play
+listing (1024 × 500) and the header of the App Store product page (5244 × 2950). It needs Chromium for Playwright once:
 
 ```bash
 npx playwright install chromium

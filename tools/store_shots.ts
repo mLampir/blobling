@@ -22,6 +22,7 @@
  *   dist/store/shots/<language>/<device>/<id>.png the pictures of the app alone
  *   dist/store/contact-<language>.png             all framed phone pictures side by side, to judge them as a set
  *   dist/store/play-feature-1024x500/<language>.png  the feature graphic of the Google Play listing
+ *   dist/store/appstore-header-5244x2950/header.png  the header of the App Store product page
  *
  * Needs Chromium for Playwright once: npx playwright install chromium
  */
@@ -569,6 +570,41 @@ async function featureGraphic(browser: Browser, language: string): Promise<void>
   console.log(`  ${file}`);
 }
 
+/**
+ * The header of the App Store product page (16:9, 5244 × 2950, shown on iOS 27 and later above the
+ * icon and the name): the pet growing up, from egg to Angloop, on the meadow under the night sky.
+ * No text, so one picture serves every language; the name stands right below it anyway. iPhones
+ * show a 21:9 band of it, so everything that matters stays in the middle of its height.
+ */
+async function headerGraphic(browser: Browser): Promise<void> {
+  const scene = new PetScene(64, 64, readAssets());
+  const PIXEL = 16; // one pixel of the sprites, in CSS pixels of the page (drawn at twice that)
+  const forms = [["egg", "blob"], ["baby", "blob"], ["child", "blob"], ["adult", "angloop"]].map(([stage, species]) => {
+    const { png, width, height } = form(scene, stage, species);
+    return `<img src="data:image/png;base64,${png}" style="width:${width * PIXEL}px;height:${height * PIXEL}px">`;
+  });
+  const page = await browser.newPage({ viewport: { width: 2622, height: 1475 }, deviceScaleFactor: 2 });
+  await page.setContent(`<!doctype html><html><head><meta charset="utf-8">
+<style>
+  body { margin: 0; width: 2622px; height: 1475px; overflow: hidden; position: relative;
+    background: radial-gradient(70% 90% at 50% 100%, #2c4290 0%, #172347 50%, #0d1220 100%); }
+  .stars i { position: absolute; background: #eef1f8; }
+  .ground { position: absolute; left: 0; right: 0; bottom: 0; height: 420px; background: #46290f; border-top: 64px solid #2e8c34; }
+  .line { position: absolute; left: 0; right: 0; bottom: 420px; display: flex; justify-content: center; align-items: flex-end; gap: 120px; }
+  .line img { image-rendering: pixelated; display: block; }
+</style></head><body>
+<div class="stars">${stars(60)}</div>
+<div class="ground"></div>
+<div class="line">${forms.join("")}</div>
+</body></html>`);
+  const dir = join(OUT, "appstore-header-5244x2950");
+  mkdirSync(dir, { recursive: true });
+  const file = join(dir, "header.png");
+  await page.screenshot({ path: file });
+  await page.close();
+  console.log(`  ${file}`);
+}
+
 // ---------- Main ----------
 
 const { values } = parseArgs({
@@ -610,6 +646,7 @@ try {
     await frame(browser, language, shots);
     await featureGraphic(browser, language);
   }
+  await headerGraphic(browser);
 } finally {
   await browser.close();
 }
