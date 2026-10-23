@@ -129,6 +129,24 @@
   .evolve.holding::before { width: 100%; transition: width 1.2s linear; }
   .evolve span { position: relative; }
 
+  /* Growing up: the adult forms to pick from (core/src/life.ts choices), a "?" for one not found out yet */
+  .forms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0 12px; }
+  .forms button {
+    display: grid; justify-items: center; align-content: start; gap: 4px; padding: 10px 4px;
+    border: 1px solid var(--line); border-radius: 14px; background: var(--raised); font-weight: 700; font-size: 14px;
+  }
+  .forms button.on { border: 2px solid var(--accent); padding: 9px 3px; }
+  .forms button:disabled { color: var(--muted); font-weight: 400; opacity: 1; }
+  #evolve-mode .actions { align-items: center; }
+  .forms .pet { width: 64px; height: 64px; image-rendering: pixelated; }
+  .forms .unknown {
+    width: 60px; height: 60px; margin: 2px; display: grid; place-items: center; font-size: 30px; color: var(--muted);
+    border: 2px dashed var(--line); border-radius: 50%;
+  }
+  .forms .hint { display: flex; gap: 4px; align-items: center; font-variant-numeric: tabular-nums; }
+  .forms .hint img { width: 24px; height: 24px; image-rendering: pixelated; }
+  #evolve-mode { text-align: center; }
+
   /* The tray: on top the things to hand the pet, lying there like things: drag one onto it (with a
      Pi, flick it up as well). Below, flat like buttons, the ones a tap opens or starts. */
   .tray { flex: none; display: grid; gap: 4px; padding: 10px 12px 10px; }
@@ -223,6 +241,10 @@
   .album li.missing span { width: 48px; height: 48px; display: grid; place-items: center; font: 700 20px/1 var(--round); }
   .album li.seen { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
   .album.unknown li { grid-column: 1 / -1; }
+  .album li.trails { grid-column: 1 / -1; justify-items: stretch; padding: 10px 12px; }
+  .album li.trails ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .album li.trails li { display: block; padding: 0; background: none; border-radius: 0; font-size: 13px; text-align: left; overflow-wrap: normal; }
+  .album li.trails li.empty { color: var(--muted); border-bottom: 1px dashed var(--line); height: 1.2em; }
   .figure { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; flex: none; max-width: 55%; }
   .empty { padding: 16px; color: var(--muted); font-size: 14px; }
   .note { margin: 0 4px; color: var(--muted); font-size: 13px; }
@@ -485,6 +507,17 @@
       <button class="close" id="trick-close" data-t-aria="page.close">✕</button>
       <h3 data-t="page.tools.tricks"></h3>
       <ul class="tricks" id="tricks"></ul>
+    </div>
+
+    <!-- Growing up: the three adult forms to pick from, or later -->
+    <div class="sheet" id="evolve-mode" hidden>
+      <button class="close" id="evolve-close" data-t-aria="page.close">✕</button>
+      <h3 id="evolve-title"></h3>
+      <div class="forms" id="forms"></div>
+      <div class="actions">
+        <button class="soft" id="evolve-later" data-t="page.choose.later"></button>
+        <button class="evolve" id="evolve-go"><span data-t="page.evolve"></span></button>
+      </div>
     </div>
 
     <div class="sheet" id="pet-mode" hidden>
@@ -1122,7 +1155,8 @@ function render(s) {
 
   // Next evolution: only the egg tells when; a baby or child just says when it is ready
   const due = !!(evo && evo.due);
-  $("next").hidden = !evo || (!due && !egg);
+  const choosing = due && s.stage === "child"; // a child waits for its form to be picked
+  $("next").hidden = !evo || (!due && !egg) || (choosing && !s.asleep);
   if (evo && !$("next").hidden) {
     $("next").textContent = !due ? t(`page.next.${evo.next}`, { time: inTime(evo.due_at - s.now) })
       : s.asleep ? t("page.next.ready_asleep")
@@ -1131,6 +1165,16 @@ function render(s) {
   $("evolve").hidden = !due;
   $("evolve").disabled = !s.actions.evolve;
   $("evolve-label").textContent = t(egg ? "page.hatch" : "page.evolve");
+  renderForms(s);
+  // Once a child is ready, it asks once; after "Later" the button is there whenever you are
+  if (choosing && s.evolution.choices && !s.asleep && !s.trip && view === "home"
+      && document.querySelectorAll(".sheet:not([hidden])").length === 0) {
+    const key = `asked:${s.id}:${evo.due_at}`;
+    if (!stored(key)) {
+      store(key, "1");
+      openSheet("evolve-mode");
+    }
+  }
 
   // Trip: when it will be back and what it has found so far
   $("trip-info").hidden = $("recall").hidden = !s.trip;
@@ -1829,6 +1873,7 @@ function eventText(e) {
     : e.action === "nest" || e.action === "laid" || e.action === "collect" ? t(`page.events.${e.action}`)
     : e.action.startsWith("magpie_") ? t(`page.events.${e.action}`, { item: labels[e.item] || T[`items.${e.item}`] || e.item })
     : e.action === "unwrap" ? t("page.events.unwrap", { what: giftLabel(e.item) })
+    : e.action.startsWith("trail_") ? t(`page.events.${e.action}`, { text: trailText(e.item) })
     : e.action === "found" || e.action === "pickup" ? t(`page.events.${e.action}`, { thing: giftLabel(e.item) })
     : e.action === "guardian" ? t("page.events.guardian", { foe: T[`foes.${e.item}`] || e.item })
     : e.action === "unlock" ? t("page.events.unlock", { area: T[`areas.${e.item}.name`] || e.item })
@@ -1842,6 +1887,12 @@ function eventText(e) {
     : e.action === "wear" ? (e.item === "none" ? t("page.events.hat_off") : t("page.events.hat", { item: labels[e.item] || e.item }))
     : e.action === "deco" ? t("page.events.deco", { item: labels[e.item] || e.item })
     : T[`page.events.${e.item}`] || (e.action === "feed" && labels[e.item]) || T[`page.events.${e.action}`] || e.action;
+}
+
+// A trail to a secret form (core/src/trail.ts), by its key "trail:<line>:<number>"
+function trailText(key) {
+  const [, line, n] = (key || "").split(":");
+  return t(`trails.${line}.${n}`, { child: T[`children.${line}`] || line });
 }
 
 // What was in a friend's gift, or what the pet found at home: "fruit_<plant>" or "seed_<plant>"
@@ -2122,6 +2173,20 @@ async function loadGallery() {
         li.className = "keepsake";
         const img = Object.assign(document.createElement("img"), { src: app.discovery(line.keepsake.id, true), alt: "" });
         li.append(img, line.keepsake.label);
+        page.append(li);
+      }
+      // the trails to the line's secret form found so far, a missing one an empty line
+      if (line.trails) {
+        const li = document.createElement("li");
+        li.className = "trails";
+        const list = document.createElement("ol");
+        list.append(...line.trails.map((text) => {
+          const item = document.createElement("li");
+          item.textContent = text ? `📜 ${text}` : "";
+          item.classList.toggle("empty", !text);
+          return item;
+        }));
+        li.append(list);
         page.append(li);
       }
       return page;
@@ -2912,9 +2977,53 @@ let openTraining;
 }
 
 // ---------- Evolving: press and hold ----------
+// The egg and the baby grow up with the button under the status; a child opens the choice of its
+// adult form instead, and grows up with the button there.
 
-{
-  const b = $("evolve");
+let chosenForm = null;
+function renderForms(s) {
+  const list = (s.evolution && s.evolution.choices) || [];
+  $("evolve-title").textContent = t("page.choose.title", { name: s.name });
+  if (!list.some((c) => c.ready && c.form === chosenForm)) chosenForm = null;
+  $("forms").replaceChildren(...list.map((c) => {
+    const b = document.createElement("button");
+    b.disabled = !c.ready;
+    b.classList.toggle("on", c.ready && c.form === chosenForm);
+    if (c.form) {
+      const img = new Image();
+      img.className = "pet";
+      img.alt = "";
+      img.src = c.ready ? app.icon("adult", c.form) : app.outline("adult", c.form);
+      b.append(img, c.label);
+    } else {
+      const unknown = document.createElement("span");
+      unknown.className = "unknown";
+      unknown.textContent = "?";
+      b.append(unknown);
+      b.setAttribute("aria-label", t("page.gallery.missing"));
+    }
+    if (c.hint) {
+      // what it takes: its picture, and for a count how far the child is
+      const hint = document.createElement("span");
+      hint.className = "hint";
+      const img = new Image();
+      img.alt = "";
+      img.src = app.thing(c.hint.icon);
+      hint.append(img, c.hint.needs ? `${c.hint.has}/${c.hint.needs}` : "");
+      b.append(hint);
+    }
+    b.addEventListener("click", () => {
+      chosenForm = c.form;
+      renderForms(current);
+    });
+    return b;
+  }));
+  $("evolve-go").disabled = !chosenForm || !s.actions.evolve;
+}
+$("evolve-close").addEventListener("click", () => openSheet(null));
+$("evolve-later").addEventListener("click", () => openSheet(null));
+
+for (const b of [$("evolve"), $("evolve-go")]) {
   let timer;
   const release = () => {
     if (!timer) return;
@@ -2925,6 +3034,7 @@ let openTraining;
   };
   b.addEventListener("pointerdown", (e) => {
     if (b.disabled || timer) return;
+    if (b.id === "evolve" && current && current.stage === "child") return openSheet("evolve-mode");
     b.setPointerCapture(e.pointerId);
     b.classList.add("holding");
     timer = setTimeout(async () => {
@@ -2933,7 +3043,8 @@ let openTraining;
       feel("evolve");
       try {
         const before = current;
-        const r = await action("evolve");
+        const r = await action("evolve", b.id === "evolve-go" ? chosenForm : undefined);
+        if (r.accepted && b.id === "evolve-go") openSheet(null);
         render(r.state);
         if (!r.accepted) return say(r.message);
         if (before && before.stage === "egg") {

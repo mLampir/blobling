@@ -373,6 +373,7 @@ npm run preview -- play --gif       # → pet_play.gif
 npm run preview -- --yard           # the yard's sizes and levels, and a pet going over → pet_yard.png, pet_yard.gif
 npm run sounds                      # the sound files, from the recipes in tools/sfx.ts → app/pet/sounds/
 npm run balance                     # owners of different kinds play pets for three weeks → the values checked (names forms)
+npm run collection                  # a whole home played for months → when each line's egg and forms come (names forms)
 ```
 
 ### The app
@@ -505,7 +506,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 |---|---|
 | `setup.sh` | Sets up the Pi completely (`--app`: update the app only) |
 | `CONTRIBUTING.md` | How to contribute, and the license (with the app store permission) a contribution comes under |
-| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications, `yard.ts` is the home's shared yard, `keepsake.ts` the keepsakes of the lines, `magpie.ts` the troublemaker who steals decorations |
+| `core/` | The pet: game logic, scene and sprites (`src/`) and their tests (`test/`). It runs anywhere and knows nothing about files or the panel; `api.ts` is the pet's JSON API, `weather.ts` asks Open-Meteo, `notify.ts` sees its next need coming for the app's notifications, `yard.ts` is the home's shared yard, `keepsake.ts` the keepsakes of the lines, `trail.ts` the trails to the secret forms, `magpie.ts` the troublemaker who steals decorations |
 | `pi/src/main.ts` | Entry point on the Pi: panel driver, display loop, web server |
 | `pi/src/display.ts` | The display loop (pet, off, brightness, night mode) and its camera: which pet it shows, panning along the street and over to the yard |
 | `pi/src/web.ts`, `pi/src/network.ts` | Web interface and API, and the check that a request comes from the home network |
@@ -525,6 +526,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `tools/deploy.mjs` | `npm run deploy`: builds the app on the PC, copies it to the Pi and runs the setup there |
 | `tools/serve.mjs` | `npm run app`: the app in the browser of the PC |
 | `tools/balance.ts` | `npm run balance`: plays pets for three weeks in fast-forward with owners of different kinds, through the core, and prints what came of it (stats, calls, stages, trips, guardians, friends); its output names the adult forms. `-- --yard`: pets left alone with the yard, what they use up a day and how long each size lasts |
+| `tools/collection.ts` | `npm run collection`: plays a whole home for months with weather and several houses, the way somebody who wants every line plays it, and prints when each line's egg came, from where, and which adult forms grew; its output names the forms |
 | `tools/store_shots.ts`, `store/` | `npm run store`: the screenshots for the stores, and their headlines per language |
 | `install.sh` | Downloads a release on the Pi and runs its `setup.sh` (attached to every release) |
 | `tools/package.mjs`, `tools/bundle.mjs` | `npm run package`: the release package; `bundle.mjs` lists the files that go to the Pi, for the package and for `npm run deploy` |

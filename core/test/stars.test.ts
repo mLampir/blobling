@@ -6,6 +6,7 @@ import { beforeEach, test } from "node:test";
 
 import * as home from "../src/home";
 import * as model from "../src/model";
+import { Random } from "../src/random";
 import * as stars from "../src/stars";
 import type { PetState } from "../src/state";
 import { sunTimes } from "../src/sun";
@@ -133,4 +134,15 @@ test("the owl comes from the second evening, and after the fifth its egg lies on
   stars.fall(pet, evening(5));
   assert.notEqual(pet.fallen!.item, stars.OWL_EGG);
   assert.equal(stars.owl(pet), false);
+});
+
+test("after the tenth evening a star leaves the moon lantern, once", () => {
+  pet.counters.owl_egg = 1;
+  pet.stars.evenings = stars.LANTERN_AFTER - 1;
+  assert.notEqual(stars.gift(pet, new Random("a")), stars.LANTERN);
+  pet.stars.evenings = stars.LANTERN_AFTER;
+  assert.equal(stars.gift(pet, new Random("a")), stars.LANTERN);
+  pet.items[stars.LANTERN] = 1;
+  assert.notEqual(stars.gift(pet, new Random("a")), stars.LANTERN);
+  assert.deepEqual(home.effects(stars.LANTERN), ["moon"]);
 });

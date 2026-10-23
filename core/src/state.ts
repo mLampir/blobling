@@ -291,6 +291,8 @@ export interface PetState {
   complete_lines: string[];
   /** How many lines the home has had (eggs in the album; set by the home): the magpie comes from LINES_FIRST on. */
   lines_had: number;
+  /** Lines whose secret form the home is looking for (set by the home): their trails can be found (trail.ts). */
+  trail_lines: string[];
   counters: Record<string, number>;
   weight: number;
   bond: number;
@@ -311,7 +313,10 @@ export interface PetState {
   travels: Travel[];
   /** Brought home but not unpacked yet. */
   backpack: string[];
-  /** Find -> count (home.ITEMS), except for eggs; shared by all pets at home (Pet keeps one store). */
+  /**
+   * Find -> count (home.ITEMS), except for eggs; shared by all pets at home (Pet keeps one store).
+   * The trails the home has found are kept here too (trail.key).
+   */
   items: Record<string, number>;
   /** The eggs that are kept, shared like the finds. */
   eggs: Egg[];
@@ -394,6 +399,7 @@ export function newState(): PetState {
     missing_lines: [],
     complete_lines: [],
     lines_had: 0,
+    trail_lines: [],
     counters: {},
     weight: care.IDEAL_WEIGHT.baby,
     bond: 20.0,

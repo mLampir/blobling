@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
+import * as home from "../src/home";
 import * as model from "../src/model";
 import { readSave } from "../src/pet";
 import type { PetState } from "../src/state";
@@ -101,6 +102,19 @@ test("a pet goes to the yard at 50, eats a portion there, and it isn't feeding",
   Object.assign(sleepy.pets[0].stats, { satiety: 40, energy: 20 });
   model.advanceTogether(sleepy.pets, now + 60, BEDTIME, null, null, null, sleepy.yard);
   assert.notEqual(sleepy.pets[0].activity, "yard");
+});
+
+test("a ripe fruit is eaten before the trough, so plants still bear all their fruits", () => {
+  const now = at("2026-10-12 10:00");
+  const { pets, yard } = twoPets(now);
+  const [a] = pets;
+  a.plant = { kind: "berry", grown: home.GROW_MINUTES, ripening: home.RIPEN_MINUTES, left: 1 };
+  a.stats.satiety = home.EAT_BELOW - 1; // hungry for the berry, not yet for the trough
+  model.advanceTogether(pets, now + 60, BEDTIME, null, null, null, yard);
+  assert.equal(a.plant, null);
+  assert.equal(a.garden.plants_done, 1); // a caterpillar may come
+  assert.equal(yard.trough, yards.TROUGH[0]);
+  assert.ok(home.EAT_BELOW > yards.GOES_AT && home.EAT_BELOW > yards.MOOD_FLOOR);
 });
 
 test("two pets in the yard at the same time are both shown there", () => {

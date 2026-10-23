@@ -25,7 +25,7 @@ are hidden. Each has a line that says roughly what kind of care leads to it.
 
 ### Form 1: Angloop
 
-*What a pet becomes when nothing else fits.*
+*The form that can always be picked.*
 
 ![Angloop](images/pets/angloop.png)
 
@@ -39,8 +39,7 @@ For its bow it casts out its lure, lets the bulb dangle and flash, and snaps; in
 <details>
 <summary>Show how to get it</summary>
 
-None of the other rules matched: the care was fine, but not outstanding, or
-not even that.
+It can always be picked.
 
 </details>
 
@@ -65,7 +64,8 @@ A king doesn't somersault: for its flip it leaps up and lands so hard that cryst
 <details>
 <summary>Show how to get it</summary>
 
-The child was well cared for at least 85 % of the time.
+The child was well cared for at least 85 % of the time. Once the home has had
+Gemperor, it can always be picked.
 
 </details>
 
@@ -89,7 +89,9 @@ Its bow is a cat's stretch, front down with a yawn, and its special move leaves 
 <details>
 <summary>Show how to get it</summary>
 
-The child was petted 56 times in its week (8 a day).
+The child was petted at least 8 times a day on 7 days (they don't have to be
+in a row, and days after its week count too). It can be picked only while
+this holds.
 
 </details>
 
@@ -98,15 +100,16 @@ The child was petted 56 times in its week (8 a day).
 <details>
 <summary>Show what the bulb on the child's lure tells you</summary>
 
-From its second day on, the bulb takes the color of the form the child is
-heading for right now. It changes as soon as the care points somewhere else.
+From its second day on, the bulb takes the color of the usual form the child
+is heading for right now: Gemperor once its rule holds, else Angloop. It
+changes as soon as the care points somewhere else, and it never shows the
+secret form.
 
 | Bulb | Heading for |
 |---|---|
 | pale yellow | nothing yet (the first day) |
 | warm gold | Angloop |
 | lilac | Gemperor |
-| pink | Purrloop |
 
 </details>
 
@@ -118,15 +121,20 @@ heading for right now. It changes as soon as the care points somewhere else.
 During the child stage the pet keeps a care diary: how many minutes it was
 well cared for, and how often it was played with and petted. A number "a day"
 is a total for the whole child stage: a day away is made up on the others, and
-with the ember stone (a shorter stage) the total is smaller. Until then the
-lure shows whether the child is on its way. When it grows up, the first rule in
-this order that matches decides the form:
+with the ember stone (a shorter stage) the total is smaller. A child that waits
+with growing up keeps counting. When its week is over, you pick the form:
 
-| Order | Form | Rule |
-|---|---|---|
-| 1 | Purrloop | petted 56 times (8 a day) |
-| 2 | Gemperor | well cared for at least 85 % of the time |
-| 3 | Angloop | everything else |
+| Form | Can be picked |
+|---|---|
+| Angloop | always |
+| Gemperor | when it was well cared for at least 85 % of the time, or always once the home has had a Gemperor |
+| Purrloop | only when it was petted at least 8 times a day on 7 days, every time anew |
+
+Every line works like this: the first form can always be picked, the second
+once its rule holds or the home has had it, and the secret one only while its
+rule holds. The "?" of the second form shows a small picture of its rule once
+the home has had an adult of the line. The trails to the secret forms say what
+their rules are about, in their own words.
 
 The values are in `core/src/life.ts`.
 
@@ -392,7 +400,7 @@ too):
 | Form | Rule |
 |---|---|
 | Flarelet | the child was played with 18 times (2.5 a day) |
-| Lanternling | everything else |
+| Lanternling | always |
 
 From its second day on, the flame on Cindlet's head shows where it is heading:
 
@@ -423,7 +431,7 @@ Its dance leaves a ring of embers round it; for its special move it rolls itself
 <details>
 <summary>Show how to get it</summary>
 
-The child ate 3 glowberries from the bag. A glowberry kept from an earlier pet counts too. This rule goes before the others of the line. While the child is on its way there, its hint color is glowing lava.
+The child ate 3 glowberries from the bag. A glowberry kept from an earlier pet counts too. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -471,7 +479,7 @@ child grows up. Its crystals want the dark to light up in.
 | Form | Rule |
 |---|---|
 | Glimmerock | the sun is down when the child grows up |
-| Bouldergrin | everything else |
+| Bouldergrin | always |
 
 So whoever wants Glimmerock taps **Evolve** after sunset, before bedtime. On a
 short summer evening it can be woken at night for it, at the cost of a grumpy
@@ -505,7 +513,7 @@ For its bow the moonstone flashes and sends glints up into the sky; its special 
 <details>
 <summary>Show how to get it</summary>
 
-It grows up at night under a full moon (a day and a half either side of it counts). This rule goes before the others of the line. While the child is on its way there, its hint color is moonlight.
+It grows up at night under a full moon (a day and a half either side of it counts). It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -553,7 +561,7 @@ called straight back from doesn't count.
 | Form | Rule |
 |---|---|
 | Roamtail | the child went on 7 trips (1 a day) |
-| Filchfox | everything else |
+| Filchfox | always |
 
 From its second day on, the white tip of Kitlet's tail shows where it is
 heading:
@@ -585,7 +593,7 @@ Its spin sends fox fires whirling round it, and three fox fires are its special 
 <details>
 <summary>Show how to get it</summary>
 
-The child went on 4 trips to the mushroom forest. This rule goes before the others of the line. While the child is on its way there, its hint color is a blue fox fire.
+The child went on 4 trips to the mushroom forest. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -633,7 +641,7 @@ child grows up. The real weather where the pet lives, as on the panel.
 | Form | Rule |
 |---|---|
 | Rumblefluff | it rains (or storms) when the child grows up |
-| Prismist | everything else |
+| Prismist | always |
 
 So whoever wants a thundercloud waits for rain before tapping **Evolve**.
 From its second day on, Nimbit's bell shows what it would become right now:
@@ -665,7 +673,7 @@ It dances round and round in a flurry of snow, and a volley of snowballs is its 
 <details>
 <summary>Show how to get it</summary>
 
-It snows when it grows up. The **snow globe**, now and then found on the mountain, makes it snow around the house while it is set out, so that this form can be reached anywhere. This rule goes before the others of the line. While the child is on its way there, its hint color is snow white.
+It snows when it grows up. The **snow globe**, now and then found on the mountain, makes it snow around the house while it is set out, so that this form can be reached anywhere. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -711,7 +719,7 @@ Only petting counts for this line: a cactus that gets cuddled.
 | Form | Rule |
 |---|---|
 | Needlenub | the child was petted 35 times (5 a day) |
-| Twiggle | everything else |
+| Twiggle | always |
 
 From its second day on, Sproutlet's leaves show where it is heading:
 
@@ -742,7 +750,7 @@ Its dance is a fan dance with drifting blossom, and its special move is cherries
 <details>
 <summary>Show how to get it</summary>
 
-The child picked 6 fruits off its own plant and ate them. This rule goes before the others of the line. While the child is on its way there, its hint color is cherry blossom pink.
+The child picked 4 fruits off its own plant and ate them. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -787,7 +795,7 @@ more trips first.
 | Form | Rule |
 |---|---|
 | Drakwing | the child had 14 scuffles (2 a day) |
-| Captain Quill | everything else |
+| Captain Quill | always |
 
 From its second day on, Paddlet's curl shows where it is heading:
 
@@ -818,7 +826,7 @@ For its flip it dives head first into the ground and pops out again in a burst o
 <details>
 <summary>Show how to get it</summary>
 
-The child went on 3 trips with rain on the way. This rule goes before the others of the line. While the child is on its way there, its hint color is brass.
+The child went on 3 trips with rain on the way. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -861,7 +869,7 @@ Only baths count for this line.
 | Form | Rule |
 |---|---|
 | Steamo | the child was bathed 14 times (twice a day) |
-| Lillypot | everything else |
+| Lillypot | always |
 
 From its second day on, the stripe on Soakling's towel shows where it is
 heading:
@@ -893,7 +901,7 @@ Its bow is a deep one with a sweep of the cape, and bats flutter up; a swarm of 
 <details>
 <summary>Show how to get it</summary>
 
-The child was tucked in by hand on 6 evenings. This rule goes before the others of the line. While the child is on its way there, its hint color is a red as dark as its cape's lining.
+The child was tucked in by hand on 6 evenings. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -937,8 +945,8 @@ already knows doesn't).
 
 | Form | Rule |
 |---|---|
-| Rapierre | the child practiced tricks 14 times (twice a day) |
-| Parcelbeak | everything else |
+| Rapierre | the child practiced or showed tricks 10 times (a trick shown counts at most once every 10 minutes) |
+| Parcelbeak | always |
 
 From its second day on, Crestling's goggles show where it is heading:
 
@@ -969,7 +977,7 @@ Its flip is a loop with a trail of smoke, and its special move is a dive so fast
 <details>
 <summary>Show how to get it</summary>
 
-As a child it got past 2 guardians for the first time. This rule goes before the others of the line. While the child is on its way there, its hint color is the white of its scarf and the leather of its cap.
+As a child it got past 2 guardians for the first time. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1010,7 +1018,7 @@ This line goes by the fruit the child ate most, from the bag or off the plant.
 | Form | Rule |
 |---|---|
 | Sunflutter | sunflower seeds were its favorite: at least 4, and more than of any other fruit |
-| Mothmuff | everything else |
+| Mothmuff | always |
 
 From its second day on, the pompoms on Munchlet's feelers show where it is
 heading: a soft moth gray for Mothmuff, sunflower yellow for Sunflutter.
@@ -1040,8 +1048,7 @@ the opponent laugh.
 <summary>Show how to get it</summary>
 
 Giggle cherries were the fruit the child ate most: at least 4, and more than
-of any other. This rule goes before the others of the line. While the child is
-on its way there, its hint color is the red and violet of a harlequin.
+of any other. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1083,7 +1090,7 @@ This line goes by how close the child is to you when it grows up.
 | Form | Rule |
 |---|---|
 | Barrelbard | it has 4 bond hearts or more when it grows up |
-| Digby | everything else |
+| Digby | always |
 
 From its second day on, Pupplet's ears and tail show where it is heading:
 sprout green for Digby, snow white for Barrelbard.
@@ -1111,8 +1118,8 @@ and fro on its ball, and balls fly in arcs as its special move.
 <details>
 <summary>Show how to get it</summary>
 
-It knows all four tricks when it grows up. This rule goes before the others of
-the line. While the child is on its way there, its hint color is circus red.
+As a child it danced at the trick festival, and the dance worked. It can be
+picked only while this holds, every time anew.
 
 </details>
 
@@ -1155,7 +1162,7 @@ Only baths count for this line.
 | Form | Rule |
 |---|---|
 | Jewelwing | the child was bathed 14 times |
-| Rotorfly | everything else |
+| Rotorfly | always |
 
 From its second day on, Nymphlet's goggles show where it is heading:
 cockpit-glass cyan for Rotorfly, jewel green for Jewelwing.
@@ -1184,8 +1191,7 @@ it, and its special move is light broken into seven rays.
 <summary>Show how to get it</summary>
 
 It grows up in the daytime, while it doesn't rain, within three hours after
-it last rained at home. This rule goes before the others of the line. While
-the child is on its way there, its hint color is a rainbow pink.
+it last rained at home. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1228,7 +1234,7 @@ This line goes by the child's battle stats when it grows up.
 | Form | Rule |
 |---|---|
 | Timberjack | strength is its highest battle stat, higher than speed and smarts |
-| Dambert | everything else |
+| Dambert | always |
 
 From its second day on, Gnawlet's pencil shows where it is heading: the color
 of fresh-cut wood for Dambert, plaid red for Timberjack.
@@ -1257,9 +1263,7 @@ special move is a tower of branches that grows up under the opponent.
 <details>
 <summary>Show how to get it</summary>
 
-The house is built to its last step when the child grows up. This rule goes
-before the others of the line. While the child is on its way there, its hint
-color is blueprint blue.
+The house is built to its last step when the child grows up. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1300,7 +1304,7 @@ sweeping round, and its special move is a beam that dazzles the opponent.
 | Form | Rule |
 |---|---|
 | Lightclaw | it grows up after dark while a decoration that glows stands outside (the lantern, the glow mushroom, the crystal or the ember stone) |
-| Teacrab | everything else |
+| Teacrab | always |
 
 From its second day on, the stripes of Shellbit's conch show where it is
 heading: porcelain and tea green for Teacrab, lamp yellow for Lightclaw.
@@ -1331,8 +1335,8 @@ rolls over the opponent while the towers fire sand.
 <details>
 <summary>Show how to get it</summary>
 
-Three trips to the coast while it is a child. This rule goes before the others
-of the line. While the child is on its way there, its hint color is sandstone.
+A sandcastle stands outside its house when it grows up. It can be picked only
+while this holds, every time anew.
 
 </details>
 
@@ -1375,7 +1379,7 @@ opponent.
 | Form | Rule |
 |---|---|
 | Medilotl | its health never dropped below 80 while it was a child |
-| Mossolotl | everything else |
+| Mossolotl | always |
 
 From its second day on, Axolittle's gills show where it is heading: moss
 green for Mossolotl, heart red for Medilotl.
@@ -1405,9 +1409,7 @@ glowing bubbles it breathes at the opponent.
 <details>
 <summary>Show how to get it</summary>
 
-It got past Gloompeep, the guardian of the cave, while it was a child. This
-rule goes before the others of the line. While the child is on its way there,
-its hint color is wing pink.
+It got past Gloompeep, the guardian of the cave, while it was a child. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1454,7 +1456,7 @@ the opponent and pops.
 | Form | Rule |
 |---|---|
 | Cogsqueak | its satiety never dropped below 25 while it was a child |
-| Sir Thimble | everything else |
+| Sir Thimble | always |
 
 From its second day on, Squeaklet's crumb of cheese shows where it is heading:
 nutshell brown for Sir Thimble, brass for Cogsqueak.
@@ -1487,9 +1489,7 @@ scuffle she wraps the opponent in loops of wool that knit up into stars.
 <details>
 <summary>Show how to get it</summary>
 
-It wears one of the hats Grandma knitted when it grows up. This rule goes
-before the others of the line. While the child is on its way there, its hint
-color is red wool.
+It wears one of the hats Grandma knitted when it grows up. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1535,8 +1535,8 @@ move is a yawn that sends the opponent to sleep.
 
 | Form | Rule |
 |---|---|
-| Snorbear | it ate 4 honeycombs while it was a child |
-| Hivebear | everything else |
+| Snorbear | it ate 3 honeycombs while it was a child |
+| Hivebear | always |
 
 From its second day on, the glaze of Cubble's honey pot shows where it is
 heading: gold for Hivebear, moss green for Snorbear.
@@ -1568,9 +1568,7 @@ stars rain down on the opponent.
 <details>
 <summary>Show how to get it</summary>
 
-It has all five bond hearts when it grows up. This rule goes before the others
-of the line. While the child is on its way there, its hint color is the blue
-of the night sky.
+It has all five bond hearts when it grows up. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1617,7 +1615,7 @@ blades, and in a scuffle it lays an ice track the opponent slips on.
 | Form | Rule |
 |---|---|
 | Glidepin | it has learned the spin when it grows up |
-| Tuxwaddle | everything else |
+| Tuxwaddle | always |
 
 From its second day on, Waddlet's earmuffs show where it is heading: deep red
 for Tuxwaddle, ice blue for Glidepin.
@@ -1649,9 +1647,7 @@ the opponent.
 <details>
 <summary>Show how to get it</summary>
 
-It grows up in the last hour before sunrise, by the sun where it lives. This
-rule goes before the others of the line. While the child is on its way there,
-its hint colors are the green and violet of the northern lights.
+It grows up in the last hour before sunrise, by the sun where it lives. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1699,7 +1695,7 @@ special move is sound waves on the beat, then the drop.
 | Form | Rule |
 |---|---|
 | Batbeat | speed is its highest battle stat when it grows up (higher than each of the others) |
-| Umbrabat | everything else |
+| Umbrabat | always |
 
 From its second day on, Flapling's wing membrane shows where it is heading:
 grey for Umbrabat, neon pink for Batbeat.
@@ -1731,9 +1727,7 @@ moths flies at the opponent.
 <details>
 <summary>Show how to get it</summary>
 
-It grows up at night under a full moon. This rule goes before the others of
-the line. While the child is on its way there, its hint color is moonlight
-silver.
+It grows up at night under a full moon. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1782,7 +1776,7 @@ and its special move is a constellation that lights up.
 | Form | Rule |
 |---|---|
 | Stargazer | it grows up after sunset under a clear sky |
-| Owlbert | everything else |
+| Owlbert | always |
 
 From its second day on, the rims of Hootlet's glasses show where it is
 heading: tortoiseshell brown for Owlbert, brass for Stargazer.
@@ -1814,9 +1808,7 @@ scuffle it throws stars made of feathers.
 <details>
 <summary>Show how to get it</summary>
 
-It got through 3 scuffles as a child without being knocked over once. This rule goes
-before the others of the line. While the child is on its way there, its hint
-colors are its red band and soot.
+It got through 3 scuffles as a child without being knocked over once. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1864,7 +1856,7 @@ special move is to turn up unseen and give the opponent a nudge.
 | Form | Rule |
 |---|---|
 | Hidewell | it played hide and seek 7 times as a child |
-| Palettino | everything else |
+| Palettino | always |
 
 From its second day on, Colorlet's tail spiral shows where it is heading:
 paint colors for Palettino, ivy green and bark for Hidewell.
@@ -1897,8 +1889,9 @@ prism breaks a beam of light into the rainbow.
 <details>
 <summary>Show how to get it</summary>
 
-It has a friend when it grows up. This rule goes before the others of the
-line. While the child is on its way there, its hint color is mirror silver.
+It has two friends from trips when it grows up; guests from the garden don't
+count. A child of this line already looks for friends on its trips. It can be
+picked only while this holds, every time anew.
 
 </details>
 
@@ -1945,7 +1938,7 @@ time: the opponent stands frozen and gray until the blow lands.
 | Form | Rule |
 |---|---|
 | Clockbeetle | it grows up within 5 minutes after a full hour |
-| Solroll | everything else |
+| Solroll | always |
 
 From its second day on, Rollet's ball shows where it is heading: sun orange
 for Solroll, the cream of a watch dial for Clockbeetle.
@@ -1977,9 +1970,7 @@ in a scuffle it sends a sandstorm.
 <details>
 <summary>Show how to get it</summary>
 
-It is 27 °C or warmer when it grows up. This rule goes before the others of
-the line. While the child is on its way there, its hint colors are lapis,
-gold and turquoise.
+It is 27 °C or warmer when it grows up. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -2027,7 +2018,7 @@ is fireworks.
 | Form | Rule |
 |---|---|
 | Lionkite | it has learned the dance when it grows up |
-| Origrane | everything else |
+| Origrane | always |
 
 From its second day on, Kitelet's bows show where it is heading: crane white
 for Origrane, festival gold and pink for Lionkite.
@@ -2059,9 +2050,7 @@ scuffle lightning runs down its string.
 <details>
 <summary>Show how to get it</summary>
 
-There is a thunderstorm when it grows up. This rule goes before the others of
-the line. While the child is on its way there, its hint colors are storm blue
-and lightning yellow.
+There is a thunderstorm when it grows up. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -2111,7 +2100,7 @@ directions.
 | Form | Rule |
 |---|---|
 | Octavio | it knows 3 tricks when it grows up |
-| Inkasso | everything else |
+| Inkasso | always |
 
 From its second day on, Inklet's ink blot and drop show where it is heading:
 paint green and lilac for Inkasso, juggling red and gold for Octavio.
@@ -2146,9 +2135,7 @@ which way to look.
 <details>
 <summary>Show how to get it</summary>
 
-Its smarts are 60 or more when it grows up. This rule goes before the others
-of the line. While the child is on its way there, its hint colors are deep-sea
-indigo and the cyan of its lights.
+Its smarts are 60 or more when it grows up. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -2199,7 +2186,7 @@ fountain.
 | Form | Rule |
 |---|---|
 | Fountaingle | it is raining when it grows up |
-| Gargard | everything else |
+| Gargard | always |
 
 From its second day on, the edges of Gargit's wings show where they are
 heading: shield iron and brick red for Gargard, verdigris and water blue for
@@ -2233,9 +2220,7 @@ strikes itself with all its might and a shock wave rolls to the opponent.
 <details>
 <summary>Show how to get it</summary>
 
-It grows up in the noon hour, between 12:00 and 12:59. This rule goes before
-the others of the line. While the child is on its way there, its hint colors
-are two shades of bronze.
+It grows up in the noon hour, between 12:00 and 12:59. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -2281,8 +2266,8 @@ like darts.
 
 | Form | Rule |
 |---|---|
-| Cardwing | the child practiced tricks 21 times (three times a day) |
-| Glintrick | everything else |
+| Cardwing | the child practiced or showed tricks 15 times (a trick shown counts at most once every 10 minutes) |
+| Glintrick | always |
 
 From its second day on, the star on Glintlet's wand shows where it is
 heading: gold for Glintrick, red and white for Cardwing.
@@ -2315,9 +2300,7 @@ dazed.
 <details>
 <summary>Show how to get it</summary>
 
-As a child it won a first place at the trick festival. This rule goes before
-the others of the line. While the child is on its way there, its hint colors
-are the cyan and pink of the orbs.
+As a child it won a first place at the trick festival. It can be picked only while this holds, every time anew.
 
 </details>
 

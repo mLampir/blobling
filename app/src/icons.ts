@@ -55,6 +55,10 @@ const THINGS: Record<string, string[]> = {
   whistle: ["items:whistle"],
   hide: ["items:hide"],
   rod: ["items:rod"],
+  // the hints in the choice of an adult form (core/src/life.ts SECOND)
+  hint_heart: ["items:hint_heart"],
+  hint_moon: ["items:hint_moon"],
+  hint_sword: ["items:hint_sword"],
   // the training: what each exercise is about
   strength: ["items:stone"],
   speed: ["items:skill_speed"],
@@ -87,7 +91,7 @@ export function thingUrl(id: string): string {
   const key = `thing|${id}`;
   let url = urls.get(key);
   if (url === undefined) {
-    const parts = (THINGS[id] ?? []).map((part) => {
+    const parts = (THINGS[id] ?? (id.includes(":") ? [id] : [])).map((part) => { // or one picture, "sheet:tag"
       const [sheet, tag] = part.split(":");
       return sceneAssets().sheets[sheet].image(tag);
     });

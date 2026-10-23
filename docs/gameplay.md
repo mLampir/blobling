@@ -162,25 +162,54 @@ can be seen in the daytime too.
 
 When a stage is over, the pet sparkles and the app offers **Hatch** or
 **Evolve**. You hold the button while standing in front of the panel and watch
-it happen. If nobody does that for a day, the pet evolves by itself, unless
-it has gone to Grandma's by then (see [At Grandma's](#at-grandmas)).
+it happen. If nobody does that for a day, an egg or a baby evolves by itself,
+unless it has gone to Grandma's by then (see [At Grandma's](#at-grandmas)).
+
+A child never grows up by itself: you pick what it grows into. Once its seven
+days are over, the app asks once with the three adult forms of its line and
+**Later**; after that the child only sparkles, and **Evolve** opens the choice
+again whenever you like. The first form can always be picked. The second can
+be picked once the child has done what it takes, or any time once the home has
+had it; until then it is a "?", and once the home has had an adult of the line,
+the "?" shows a small picture of what it takes, with a count where there is
+one. The third, secret form can be picked only while its rule holds, every
+time anew, and it never gets a picture. A child that waits keeps counting:
+what it does after its seven days counts too. Some forms need a moment, such as
+a night, the noon hour or the rain; for those, wait with **Later** until the
+moment comes. Only the forms the home raised itself count as had, not the
+ones only seen on trips.
 
 Growing up can be sped up. A later pet may bring home the **ember stone**, a
 decoration that glows from inside. While it is set out, an egg, a baby and a
 child grow 30 % faster: the baby in about two days, the child in about five.
 A grown-up has no use for it.
 
-The care diary of the child stage decides the adult form: how well the pet was
-looked after, how often it was played with, petted, bathed and taught tricks,
-how often it went on a trip and how many scuffles it had. These count for the
-whole child stage, so a day away can be made up on the others. For two lines,
-the world at the moment it grows up decides instead. Every line has a secret
-third adult form, the most impressive of the three: it takes a rare deed of
-the child (counted over the whole stage, not per day) or a rare moment when it
-grows up, and its rule goes first. Each
-form has a character of its own, with small effects on the game. From its
-second day on, the bulb on the child's lure shows by its color which form it
-is heading for.
+The care diary of the child stage decides which forms it can pick: how well
+the pet was looked after, how often it was played with, petted, bathed and
+taught tricks, how often it went on a trip and how many scuffles it had. These
+count for the whole child stage, so a day away can be made up on the others.
+For some lines the world at the moment it grows up counts instead. Every line
+has a secret third adult form, the most impressive of the three: it takes a
+rare deed of the child or a rare moment when it grows up. Each form has a
+character of its own, with small effects on the game. From its second day on,
+the bulb on the child's lure shows by its color which of the two usual forms
+it is heading for; it never gives the secret one away.
+
+Three rare moments can be brought home as decorations, so they don't depend on
+the weather alone: the **moon lantern**, which a shooting star leaves after the
+tenth evening with one, makes every night a full-moon night; the **storm in a
+bottle**, found once at the coast, brings a thunderstorm; and the **sun
+stone**, found once in the ruins, a hot day. Each works only while it is set
+out. The snow globe already brings snow.
+
+**Trails** point the way to a secret form. Once the home has had both usual
+adults of a line and is still missing its secret one, stories and notes about
+it turn up: a friend or a garden guest tells one on a visit, a note lies at a
+quiet stop of a trip to an area where the line is at home, one comes up when
+digging or fishing, or Grandma tells one when the pet comes home from her with
+her things. Each line has three, each found once, in different places. The
+history shows a trail when it is found, and the album keeps them on the
+line's page, a missing one as an empty line.
 
 The forms, their characters and the rules for getting them are in
 [pets.md](pets.md). That page keeps everything folded shut that would spoil
@@ -575,7 +604,8 @@ there to see what it brought:
 
 - **Seeds** go into the bag and are dragged from there into the scene like food. One plant grows at a time
   (a day to grow, then one fruit a day, twice as fast in real rain). The pet
-  eats a ripe fruit by itself when it needs it. After three fruits the plant
+  eats a ripe fruit by itself once the value it fills is below 60, so before
+  it would go to the yard's trough. After three fruits the plant
   wilts. Berries fill it up, sunflower seeds wake it up, giggle cherries cheer
   it up. The rare healing herb is good for its health, and its blossom cures a
   sickness without medicine.
@@ -1053,7 +1083,9 @@ keep its own pet or connect to a Pi; the README explains how.
 | Part | Where |
 |---|---|
 | Stats, decay, actions, sleep | `core/src/model.ts` |
-| Life cycle, lines and adult forms, the album's forms (`FORMS`) | `core/src/life.ts` |
+| Life cycle, lines and adult forms, the album's forms (`FORMS`), the choice when a child grows up (`choices`) | `core/src/life.ts` |
+| Trails to the secret forms: where each is found, how often | `core/src/trail.ts`, `Pet.trailLines` in `core/src/pet.ts`, texts under `trails` in `app/locales/` |
+| The decorations that bring a rare moment (moon lantern, storm in a bottle, sun stone) | `MOMENT_DECO` in `core/src/home.ts` |
 | Weight, bond, hide and seek, tricks | `core/src/care.ts` |
 | Trips, areas and where the path forks, what is found where, the tide at the coast | `core/src/trip.ts` |
 | Fishing: the bite, the tap, what comes up where | `core/src/fishing.ts` |
@@ -1085,6 +1117,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Pixel art as text → sprite sheets | `tools/build_blob_sprites.py` |
 | Preview of the scene on a PC, pictures for [pets.md](pets.md), the yard | `tools/pet_preview.ts` (`npm run preview`, `-- --yard`) |
 | Checking the values: pets played for weeks with owners of different kinds; pets left alone with the yard | `tools/balance.ts` (`npm run balance`, `-- --yard`) |
+| Checking the collection: a whole home played for months, egg by egg | `tools/collection.ts` (`npm run collection`) |
 | The phone app: the page, and where its pet lives (on the phone or on the Pi) | `app/pet.html`, `app/src/` |
 | The Pi's side: web server, display loop, save file | `pi/src/` |
 

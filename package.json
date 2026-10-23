@@ -18,6 +18,7 @@
     "deploy": "node tools/deploy.mjs",
     "package": "node tools/package.mjs",
     "app": "node tools/serve.mjs",
+    "collection": "node tools/run.mjs collection",
     "app:icons": "node tools/run.mjs app_icons",
     "store": "node tools/run.mjs store_shots",
     "app:sync": "node tools/build.mjs && cap sync",

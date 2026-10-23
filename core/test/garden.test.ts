@@ -106,10 +106,11 @@ test("the garden lines' adult forms", () => {
   assert.equal(decide("caterpillar", { food_fruit_sunflower: 4, food_fruit_berry: 3 }), "sunflutter");
   assert.equal(decide("caterpillar", { food_fruit_sunflower: 4, food_fruit_cherry: 4 }), "mothmuff");
   assert.equal(decide("caterpillar", { food_fruit_cherry: 5, food_fruit_sunflower: 4 }), "jesterwing");
-  // the dog: bond hearts, and every trick
+  // the dog: bond hearts, and the dance shown at the festival
   assert.equal(decide("dog", {}, { bond: 3 }), "digby");
   assert.equal(decide("dog", {}, { bond: 4 }), "barrelbard");
-  assert.equal(decide("dog", {}, { bond: 4, allTricks: true }), "pawdini");
+  assert.equal(decide("dog", {}, { bond: 4, allTricks: true }), "barrelbard");
+  assert.equal(decide("dog", { festival_dance: 1 }, { bond: 2 }), "pawdini");
   // the dragonfly: baths, and the sun after rain
   assert.equal(decide("dragonfly", { baths: 13 }), "rotorfly");
   assert.equal(decide("dragonfly", { baths: 14 }), "jewelwing");

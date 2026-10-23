@@ -35,6 +35,8 @@ export const SHARD = "star_shard";
 export const OWL_FROM = 2; // from this many evenings with a shooting star, the owl sits on the roof at night
 export const OWL_EGG_AFTER = 5; // after this many, its egg lies there
 export const OWL_EGG = "egg_owl";
+export const LANTERN_AFTER = 10; // from this many evenings, the moon lantern lies there (once: decorations exist only once)
+export const LANTERN = "moonlantern";
 
 /** Minutes after midnight of `hhmm`. */
 function minutes(hhmm: string): number {
@@ -117,10 +119,13 @@ export function fall(state: PetState, t: number): void {
   }
 }
 
-/** What a shooting star leaves: the owl's egg after the fifth evening, otherwise from GIFTS. */
+/** What a shooting star leaves: the owl's egg after the fifth evening, the moon lantern after the tenth, otherwise from GIFTS. */
 export function gift(state: PetState, rng: Random): string | null {
   if (state.stars.evenings >= OWL_EGG_AFTER && !state.counters.owl_egg && home.canAdd(state, OWL_EGG)) {
     return OWL_EGG;
+  }
+  if (state.stars.evenings >= LANTERN_AFTER && home.canAdd(state, LANTERN)) {
+    return LANTERN;
   }
   const kind = rng.weighted(GIFTS.map(([item]) => item), GIFTS.map(([, weight]) => weight));
   if (kind === "shard" && home.canAdd(state, SHARD)) {

@@ -33,6 +33,7 @@ import * as stars from "./stars";
 import { fromDict, toDict, type Friend, type PetState } from "./state";
 import * as story from "./story";
 import { isDark, type Location } from "./sun";
+import * as trail from "./trail";
 import * as trip from "./trip";
 import * as wild from "./wild";
 import * as yards from "./yard";
@@ -449,7 +450,7 @@ export class Pet {
       result = model.applyAction(s, action, now, this.bedtime(),
         { item: request.item, by, throw: request.throw, weather: this.weather(), temp: this.temperature(),
           location: this.location, value: request.value, guest: action === "game" && this.guestThere(s, now),
-          yard: this.openYard() });
+          yard: this.openYard(), had: action === "evolve" ? this.albumNow() : [] });
       this.share(s);
       this.openYard(); // what was unpacked may have been for the yard
       if (result.accepted && (action === "wear" || action === "deco")) {
@@ -818,6 +819,20 @@ export class Pet {
     }));
   }
 
+  /** The forms the home has had so far, the pets' own included (the album). */
+  private albumNow(): string[] {
+    this.collect();
+    return this.album;
+  }
+
+  /** The adult forms a child may grow into now (life.choices), with their names. */
+  private choicesOf(s: PetState, now: number) {
+    const world = model.worldAt(now, this.weather(), this.location, this.temperature(), s);
+    return life.choices(s, world, this.albumNow()).map((c) => ({
+      ...c, label: c.form ? this.t(`species.${c.form}`) : null,
+    }));
+  }
+
   /**
    * The album: one slot per form there is (life.FORMS), in a fixed order. A form one of the pets
    * has been shows its stage, species and name; one not met yet is null and gives nothing away.
@@ -840,7 +855,7 @@ export class Pet {
    * The page also shows the line's keepsake once the home has it.
    */
   albumLines() {
-    this.collect();
+    const looking = this.trailLines();
     return Object.keys(life.LINES).map((line) => ({
       forms: life.FORMS.filter((form) => life.lineOf(form.split(":")[1]) === line).map((form) => {
         const [stage, species] = form.split(":");
@@ -853,7 +868,26 @@ export class Pet {
       // the line's keepsake (keepsake.ts), once the home has it
       keepsake: this.state.items[keepsake.KEEPSAKES[line]]
         ? { id: keepsake.KEEPSAKES[line], label: this.t(`items.${keepsake.KEEPSAKES[line]}`) } : null,
+      trails: this.trailsOf(line, looking.includes(line)),
     }));
+  }
+
+  /**
+   * The trails of a line to its secret form (trail.ts), for its album page: the text of each one
+   * found, null for one still missing; null for the whole while there is nothing to look for yet.
+   */
+  private trailsOf(line: string, looking: boolean): (string | null)[] | null {
+    const found = trail.found(this.state.items, line);
+    if (!looking && !found.some(Boolean)) {
+      return null;
+    }
+    return found.map((has, n) => (has ? this.trailText(trail.key(line, n)) : null));
+  }
+
+  /** The text of a trail (its key, trail.key). */
+  trailText(key: string): string {
+    const [, line, n] = key.split(":");
+    return this.t(`trails.${line}.${n}`, { child: this.t(`children.${line}`) });
   }
 
   /**
@@ -873,6 +907,17 @@ export class Pet {
   completeLines(): string[] {
     this.collect();
     return Object.entries(life.LINES).filter(([, adults]) => adults.every((adult) => this.album.includes(`adult:${adult}`)))
+      .map(([line]) => line);
+  }
+
+  /**
+   * The lines whose trails can be found (trail.ts): the home has had both usual adult forms, but
+   * not the secret one.
+   */
+  trailLines(): string[] {
+    this.collect();
+    const had = (form: string) => this.album.includes(`adult:${form}`);
+    return Object.entries(life.LINES).filter(([, [a, b, secret]]) => had(a) && had(b) && !had(secret))
       .map(([line]) => line);
   }
 
@@ -1038,10 +1083,12 @@ export class Pet {
     const missing = this.longMissing(now);
     const complete = this.completeLines();
     const had = Object.keys(life.LINES).filter((line) => this.album.includes(`egg:${line}`)).length;
+    const trails = this.trailLines();
     for (const s of this.pets) {
       s.missing_lines = [...missing];
       s.complete_lines = [...complete];
       s.lines_had = had;
+      s.trail_lines = [...trails];
     }
     // all of them minute by minute together, for what they share in the yard
     model.advanceTogether(this.pets, now, this.bedtime(), this.weather(), this.temperature(), this.location,
@@ -1142,10 +1189,13 @@ export class Pet {
       name: s.name, species: s.species, stage: s.stage,
       species_label: t(`species.${s.species}`), stage_label: t(life.formKey(s.stage, s.species)),
       age_days: s.stage === "egg" ? 0 : Math.max(0, Math.floor((now - s.born_at) / 86400)),
-      // Next evolution: when it is due, and from when it happens by itself
+      // Next evolution: when it is due, and from when it happens by itself; a child waits to be
+      // asked instead (auto_at stays a number for older apps), and once it is due it has the adult
+      // forms to pick from (life.choices)
       evolution: due === null ? null : {
-        next: life.NEXT_STAGE[s.stage], due_at: Math.round(due),
-        due: now >= due, auto_at: Math.round(due + life.AUTO_EVOLVE_AFTER),
+        next: life.NEXT_STAGE[s.stage], due_at: Math.round(due), due: now >= due,
+        auto_at: Math.round(due + life.AUTO_EVOLVE_AFTER),
+        choices: s.stage === "child" && now >= due ? this.choicesOf(s, now) : null,
       },
       stats: Object.fromEntries(Object.entries(s.stats).map(([k, v]) => [k, Math.round(v)])),
       activity: model.activityOf(s, now),

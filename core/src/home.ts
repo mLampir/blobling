@@ -46,6 +46,10 @@ export const ITEMS: Record<string, ItemKind> = {
   banner: "deco",
   arch: "deco",
   bell: "deco",
+  // they bring a moment for growing up (MOMENT_DECO)
+  moonlantern: "deco",
+  stormbottle: "deco",
+  sunstone: "deco",
   daisy: "hat",
   leaf: "hat",
   cap: "hat",
@@ -126,7 +130,7 @@ export const GROW_MINUTES = 24 * 60; // from seed to plant
 export const RIPEN_MINUTES = 24 * 60; // per fruit, only ever one at a time
 export const FRUITS = 3; // after that the plant wilts
 export const RAIN_FACTOR = 2; // in real rain everything grows twice as fast
-export const EAT_BELOW = 40; // below this value the pet eats a ripe fruit by itself
+export const EAT_BELOW = 60; // below this value the pet eats a ripe fruit by itself: above the yard's GOES_AT, so it picks the fruit first
 
 // Warmth: the ember stone glows from inside. Set out, it makes whatever is still growing grow
 // faster. And when it is cold outside, the pet shivers for a while after waking up: a moment to
@@ -159,6 +163,9 @@ export const OUTDOOR_DECO = ["snowman", "pond", "sandcastle", "iceblock", "hippo
 // The snow globe: set out at home, outside or in the house, it snows around the pet, and a pet of
 // the cloud line that grows up then counts it as snow (life.decideSpecies).
 export const SNOW_DECO = ["snowglobe"];
+// Decorations that bring a moment for a child growing up (life.SECRET) while they are set out,
+// without changing the weather: the full moon, a thunderstorm, the heat of a summer afternoon
+export const MOMENT_DECO: Record<string, string> = { moonlantern: "moon", stormbottle: "storm", sunstone: "heat" };
 export const GLOWING_DECO = ["lantern", "glowshroom", "crystal", "emberstone", "star_shard", "jellylamp", "brazier",
   "moonstone", "shelllamp"]; // they light up at night
 
@@ -370,6 +377,11 @@ export function snowDeco(state: PetState): boolean {
   return state.deco.some((item) => SNOW_DECO.includes(item));
 }
 
+/** Whether a decoration that brings this moment (MOMENT_DECO) is set out. */
+export function momentDeco(state: PetState, moment: string): boolean {
+  return state.deco.some((item) => MOMENT_DECO[item] === moment);
+}
+
 /**
  * What a find does besides looking nice (for the app). A fruit and its seed name the need the fruit
  * fills, and "cure" if it also cures a sickness.
@@ -378,7 +390,8 @@ export function effects(item: string): string[] {
   const plant = item.replace(/^(fruit|seed)_/, "");
   if (plant !== item && plant in PLANTS) return [PLANTS[plant][0], ...(CURES.includes(plant) ? ["cure"] : [])];
   if (keepsake.isKeepsake(item)) return [`keep_${keepsake.EFFECTS[item][0]}`];
-  return WARM_DECO.includes(item) ? ["growth"] : SNOW_DECO.includes(item) ? ["snow"] : [];
+  return WARM_DECO.includes(item) ? ["growth"] : SNOW_DECO.includes(item) ? ["snow"]
+    : MOMENT_DECO[item] ? [MOMENT_DECO[item]] : [];
 }
 
 /** Rub it warm. */

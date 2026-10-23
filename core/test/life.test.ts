@@ -75,9 +75,9 @@ test("no evolution while asleep", () => {
 test("diary decides the adult", () => {
   const cases: [Record<string, number>, string][] = [
     [{ minutes: 10080, good_minutes: 4000 }, "angloop"],
-    [{ minutes: 10080, good_minutes: 4000, love: 60 }, "purrloop"], // petting wins even without the rest
-    [{ minutes: 10080, good_minutes: 9500, love: 60, plays: 30 }, "purrloop"],
-    [{ minutes: 10080, good_minutes: 9500, love: 50, plays: 30 }, "gemperor"],
+    [{ minutes: 10080, good_minutes: 4000, love: 60, love_days: 7 }, "purrloop"], // petted every day: wins even without the rest
+    [{ minutes: 10080, good_minutes: 9500, love: 60, love_days: 7, plays: 30 }, "purrloop"],
+    [{ minutes: 10080, good_minutes: 9500, love: 80, love_days: 6, plays: 30 }, "gemperor"], // a day short
     [{ minutes: 10080, good_minutes: 9500, plays: 10 }, "gemperor"],
     [{ minutes: 10080, good_minutes: 7000, plays: 10 }, "angloop"],
   ];
@@ -108,7 +108,9 @@ test("a rare egg grows up in its own line", () => {
   ember.stage_since = start;
   ember.diary = { ...life.newDiary(), minutes: 2880, good_minutes: 1000, plays: 2, love: 40 };
   assert.equal(life.hint(ember), "lanternling"); // the slime's rules don't count for it
-  ember.diary.plays = 6;
+  ember.diary.plays = 17;
+  assert.equal(life.hint(ember), "lanternling"); // 2.5 a day for the seven days
+  ember.diary.plays = 18;
   assert.equal(life.hint(ember), "flarelet");
   assert.equal(act(ember, "evolve", start + 7 * 86400)[0], true);
   assert.deepEqual([ember.stage, ember.species], ["adult", "flarelet"]);
@@ -142,7 +144,7 @@ test("a fox cub that travels a lot grows up a wanderer", () => {
   fox.stage_since = start;
   fox.diary = { ...life.newDiary(), minutes: 2880, good_minutes: 2880, plays: 10, love: 20, trips: 1 };
   assert.equal(life.hint(fox), "filchfox"); // well cared for, played with and petted, but hardly out
-  fox.diary.trips = 2 * life.ROAMTAIL_TRIPS_PER_DAY;
+  fox.diary.trips = 7 * life.ROAMTAIL_TRIPS_PER_DAY;
   assert.equal(life.hint(fox), "roamtail");
   assert.equal(act(fox, "evolve", start + 7 * 86400)[0], true);
   assert.deepEqual([fox.stage, fox.species], ["adult", "roamtail"]);
@@ -167,15 +169,15 @@ test("a cloud lamb that grows up in the rain becomes a thundercloud", () => {
   assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 }, "cloud", { raining: true }), "rumblefluff");
 });
 
-test("a rule per day is a total for the child stage", () => {
+test("a rule per day is a total for the child stage, and what it does while it waits counts too", () => {
   const goal = 7 * life.NEEDLENUB_LOVE_PER_DAY;
   // a day away: made up on the others
   assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080, love: goal }, "leaf"), "needlenub");
-  // waiting for the tap doesn't raise the goal any more
+  // half the stage, half the goal: not yet
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 5040, love: goal / 2 }, "leaf"), "twiggle");
+  // waiting to be asked doesn't raise the goal, and what it does meanwhile counts
+  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080, love: goal - 1 }, "leaf"), "twiggle");
   assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 10080 + 1440, love: goal }, "leaf"), "needlenub");
-  // on its way: half the stage, half the goal
-  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 5040, love: goal / 2 }, "leaf"), "needlenub");
-  assert.equal(life.decideSpecies({ ...life.newDiary(), minutes: 5040, love: goal / 2 - 1 }, "leaf"), "twiggle");
   // the ember stone shortens the stage, and the goal with it
   const leaf = model.newPet(start, "", "leaf");
   leaf.stage = "child";
@@ -267,11 +269,13 @@ test("the owl, chameleon, scarab and kite lines grow up by the sky, games, the c
   assert.equal(life.decideSpecies({ ...week, clean_battles: life.NINJOWL_CLEAN_BATTLES - 1 }, "owl"), "owlbert");
   assert.equal(life.decideSpecies({ ...week, clean_battles: life.NINJOWL_CLEAN_BATTLES }, "owl",
     { dark: true, clear: true }), "ninjowl");
-  // the chameleon: hide and seek makes a Hidewell, a friend the Mirrorleon
+  // the chameleon: hide and seek makes a Hidewell, friends from the wild the Mirrorleon
   assert.equal(life.decideSpecies(week, "chameleon"), "palettino");
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES - 1 }, "chameleon"), "palettino");
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon"), "hidewell");
-  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true }), "mirrorleon");
+  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true }), "hidewell"); // a guest from the garden
+  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true, wildFriends: life.MIRRORLEON_FRIENDS - 1 }), "hidewell");
+  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true, wildFriends: life.MIRRORLEON_FRIENDS }), "mirrorleon");
   // the scarab: just after a full hour makes a Clockbeetle, the heat the Pharabug
   assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 + 30 }), "solroll");
   assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 }), "clockbeetle");
@@ -327,10 +331,9 @@ test("the octopus and gargoyle lines grow up by tricks, smarts, the rain and the
 
 test("the magpie line grows up by its tricks and the trick festival", () => {
   const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
-  const days = Math.min(7, life.STAGE_SECONDS.child! / 86400);
   assert.equal(life.decideSpecies(week, "magpie"), "glintrick");
-  assert.equal(life.decideSpecies({ ...week, tricks: life.CARDWING_TRICKS_PER_DAY * days - 1 }, "magpie"), "glintrick");
-  assert.equal(life.decideSpecies({ ...week, tricks: life.CARDWING_TRICKS_PER_DAY * days }, "magpie"), "cardwing");
+  assert.equal(life.decideSpecies({ ...week, tricks: life.CARDWING_TRICKS - 1 }, "magpie"), "glintrick");
+  assert.equal(life.decideSpecies({ ...week, tricks: life.CARDWING_TRICKS }, "magpie"), "cardwing");
   assert.equal(life.decideSpecies({ ...week, festival_wins: 1 }, "magpie"), "illusionna");
   assert.ok(life.LINES.magpie.every((adult) => food.TASTES[adult]?.length === 2));
   // a first place counts for the child only
@@ -414,4 +417,89 @@ test("the diary and the world have what later rules may look at", () => {
   assert.ok(night.sunrise! > 5 * 60 && night.sunset! < 18 * 60);
   const day = model.worldAt(at("2026-10-18 12:00"), 71, vienna);
   assert.deepEqual([day.raining, day.snowing, day.dark, day.fullMoon, day.temp], [false, true, false, false, null]);
+});
+
+test("a grown child waits to be asked, and grows into the form picked", () => {
+  pet.species = "leaf";
+  pet.stage = "child";
+  pet.stage_since = start - 9 * 86400; // due for two days
+  pet.diary = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
+  // awake and at home all day: still a child (a baby would have grown up)
+  const now = start + 8 * 3600;
+  model.advance(pet, now, BEDTIME);
+  assert.equal(pet.stage, "child");
+  // nothing done for the second form yet: only the base can be picked
+  assert.deepEqual(act(pet, "evolve", now, { item: "needlenub" }), [false, "form_not_ready"]);
+  assert.deepEqual(act(pet, "evolve", now, { item: "sakurin" }), [false, "form_not_ready"]);
+  // once the home has had it, it can be picked whatever this child did
+  assert.equal(act(structuredClone(pet), "evolve", now, { item: "needlenub", had: ["adult:needlenub"] })[0], true);
+  pet.diary.love = 7 * life.NEEDLENUB_LOVE_PER_DAY;
+  const second = structuredClone(pet);
+  assert.equal(act(second, "evolve", now, { item: "needlenub" })[0], true);
+  assert.equal(second.species, "needlenub");
+  // and the base is always there, whatever it did
+  assert.equal(act(pet, "evolve", now, { item: "twiggle" })[0], true);
+  assert.deepEqual([pet.stage, pet.species], ["adult", "twiggle"]);
+});
+
+test("the choice gives away only what the home has found out", () => {
+  const child = model.newPet(start, "", "stone");
+  child.stage = "child";
+  child.diary = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
+  const pick = (world: life.World, had: string[] = []) =>
+    life.choices(child, world, had).map((c) => [c.form, c.ready, c.hint?.icon ?? null]);
+  // the first child of a line: the base, and a "?" for the others
+  assert.deepEqual(pick({}), [["bouldergrin", true, null], [null, false, null], [null, false, null]]);
+  // the second form shows once its rule holds (at night)
+  assert.deepEqual(pick({ dark: true }), [["bouldergrin", true, null], ["glimmerock", true, null], [null, false, null]]);
+  // once the home has had an adult of the line, the "?" shows the rule's picture
+  assert.deepEqual(pick({}, ["adult:bouldergrin"]), [["bouldergrin", true, null], [null, false, "hint_moon"], [null, false, null]]);
+  // the secret form only ever when its moment is there, and never with a hint
+  assert.deepEqual(pick({ dark: true, fullMoon: true }, ["adult:bouldergrin", "adult:glimmerock"]),
+    [["bouldergrin", true, null], ["glimmerock", true, null], ["lunarock", true, null]]);
+  assert.deepEqual(pick({}, ["adult:bouldergrin", "adult:glimmerock", "adult:lunarock"]),
+    [["bouldergrin", true, null], ["glimmerock", true, null], ["lunarock", false, null]]);
+  // a count shows how far the child is
+  const leaf = model.newPet(start, "", "leaf");
+  leaf.stage = "child";
+  leaf.diary = { ...life.newDiary(), minutes: 10080, love: 12 };
+  assert.deepEqual(life.choices(leaf, {}, ["adult:twiggle"])[1].hint, { icon: "hint_heart", has: 12, needs: 35 });
+  // its lure shows the second form once it holds, never the secret one
+  child.stage_since = start;
+  assert.equal(life.hint(child, { dark: true, fullMoon: true }), "glimmerock");
+});
+
+test("rules for the secret forms that are feats: days of petting, the dance at the festival", () => {
+  const cat = model.newPet(start, "", "blob");
+  cat.stage = "child";
+  cat.diary = life.newDiary();
+  for (let day = 0; day < 3; day++) {
+    for (let i = 0; i < life.PURRLOOP_LOVE_PER_DAY + 2; i++) {
+      life.recordLove(cat);
+    }
+    cat.diary.minutes += 1440;
+  }
+  assert.deepEqual([cat.diary.love, cat.diary.love_days], [30, 3]);
+  // a known trick, shown, counts too, but not more often than SHOWN_COUNTS_EVERY
+  const beak = model.newPet(start, "", "beak");
+  beak.stage = "child";
+  beak.tricks.bow = 99;
+  act(beak, "trick", start, { item: "bow" });
+  act(beak, "trick", start + 60, { item: "bow" });
+  act(beak, "trick", start + model.SHOWN_COUNTS_EVERY, { item: "bow" });
+  assert.equal(beak.diary.tricks, 2);
+});
+
+test("a decoration brings the moon, the storm or the heat for growing up", () => {
+  for (const [item, key] of [["moonlantern", "fullMoon"], ["stormbottle", "storm"]] as const) {
+    const p = model.newPet(start);
+    assert.equal(model.worldAt(at("2026-10-14 12:00"), null, null, null, p)[key], false);
+    p.items[item] = 1;
+    home.toggleDeco(p, item);
+    assert.equal(model.worldAt(at("2026-10-14 12:00"), null, null, null, p)[key], true);
+  }
+  const p = model.newPet(start);
+  p.items.sunstone = 1;
+  home.toggleDeco(p, "sunstone");
+  assert.ok(model.worldAt(start, null, null, 5, p).temp! >= life.PHARABUG_HEAT);
 });

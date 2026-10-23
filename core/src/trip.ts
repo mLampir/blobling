@@ -27,6 +27,7 @@ import * as keepsake from "./keepsake";
 import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
+import * as trail from "./trail";
 import type { PetState, Replay, Travel, TravelStop, Trip, TripEvent } from "./state";
 import * as sun from "./sun";
 import * as wild from "./wild";
@@ -55,9 +56,11 @@ export const FINDS: Record<string, readonly (readonly [string, number, sky.Preci
     ["edelweiss", 2, null], ["pinenut", 3, null], ["snowglobe", 1, null], ["snowman", 4, "snow"]],
   // mussels lie on the beach more often at low tide (LOW_TIDE_MUSSELS)
   coast: [["seed_sunflower", 3, null], ["seed_berry", 3, null], ["mussel", 3, null], ["lifering", 2, null],
-    ["sandcastle", 1, null], ["sailor", 2, null], ["bottle", 4, "rain"], ["planks_coast", 2, null]],
+    ["sandcastle", 1, null], ["sailor", 2, null], ["bottle", 4, "rain"], ["planks_coast", 2, null],
+    ["stormbottle", 1, null]],
   ruins: [["seed_cherry", 4, null], ["seed_berry", 3, null], ["bread", 3, null], ["banner", 2, null], ["arch", 1, null],
-    ["knight", 2, null], ["bell", 4, "rain"], ["planks_ruins", 2, null]],
+    ["knight", 2, null], ["bell", 4, "rain"], ["planks_ruins", 2, null],
+    ["sunstone", 1, null]],
 };
 // The tide at the coast follows the clock, as it does by the sea: high and low water about every
 // six hours (tide). At low tide more of the beach is dry, and mussels are found this much more often.
@@ -487,9 +490,18 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode,
       if (caught) {
         trip.found.push(caught);
         events.push(["find", caught]);
+        const note = trail.find(state, "fish", at); // a bottle with a note in it (trail.ts)
+        if (note) {
+          events.push([trail.action("fish"), note]);
+        }
       }
       happened(trip, { kind: "fish", item: caught, at: t });
     } else {
+      // a note by the path that points the way to a secret form (trail.ts)
+      const note = trail.find(state, trip.area, at);
+      if (note) {
+        events.push([trail.action(trip.area), note]);
+      }
       trip.last = { kind: "rest", item, at: t }; // a rest is not worth a line in the diary
     }
   }

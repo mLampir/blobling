@@ -175,6 +175,9 @@ export function perform(state: PetState, trip: Trip, areas: readonly string[], t
   if (place === 1) {
     life.record(state, "festival_wins"); // a first place as a child (the magpie line)
   }
+  if (rounds.some(([trick, ok]) => trick === "dance" && ok)) {
+    life.record(state, "festival_dance"); // the dance shown, and it worked, as a child (the dog line)
+  }
   return { rounds, points: total, place, prize: prize(state, place, panel, rng), jury: panel };
 }
 

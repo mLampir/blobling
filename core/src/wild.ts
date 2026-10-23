@@ -27,6 +27,7 @@ import * as keepsake from "./keepsake";
 import * as life from "./life";
 import { Random } from "./random";
 import * as sky from "./sky";
+import * as trail from "./trail";
 import type { Egg, Friend, PetState } from "./state";
 
 // Area: who lives there, as [adult form, weight, only in this weather]
@@ -56,6 +57,8 @@ export const VISIT_CHEER = 5;
 export const VISITS_FOR_NEST = 5;
 export const NEST_REST = 14 * 86400; // after bringing an egg, this long before the visits count again
 export const MAX_FRIENDS = 3;
+// This line looks for a friend already as a child: it copies whom it meets (life.SECRET, mirrorleon)
+export const CURIOUS = "chameleon";
 export const HEIRLOOM = 0.25; // this part of each battle stat goes into the pet's own egg (brood.ts)
 export const FRIEND_HEIRLOOM = 0.1; // this part of each battle stat goes into a friend's egg the pet watches over
 export const FRIEND_SKILL = 5; // a friend's first egg: this many points in its line's stat; each later one this many more
@@ -72,12 +75,13 @@ export type Shown = [string, boolean];
 export type Happened = [string, string];
 
 /**
- * Is the pet looking for a friend? Only an adult whose friends have all brought it an egg
+ * Is the pet looking for a friend? Only an adult (or a child of the CURIOUS line) whose friends have all brought it an egg
  * (or that has none yet), with room for another friend.
  */
 export function looking(state: PetState): boolean {
   const met = state.friends.filter((f) => !f.guest); // a guest from the garden doesn't take a friend's place
-  return state.stage === "adult" && met.length < MAX_FRIENDS && met.every((f) => f.nests)
+  const old = state.stage === "adult" || (state.stage === "child" && life.lineOf(state.species) === CURIOUS);
+  return old && met.length < MAX_FRIENDS && met.every((f) => f.nests)
     && !state.nest;
 }
 
@@ -188,12 +192,15 @@ export function step(state: PetState, t: number, atHome: boolean): Happened[] {
     });
     return [["nest", line]];
   }
+  // now and then it tells a story that points the way to a secret form (trail.ts)
+  const told = trail.find(state, "friend", t);
+  const happened: Happened[] = told ? [[trail.action("friend"), told]] : [];
   const gift = !state.gift && rng.random() < GIFT_CHANCE * keepsake.factor(state, "gifts") ? giftFrom(state, rng) : null;
   if (gift) {
     state.gift = gift;
-    return [["gift", friend.species]]; // what is in it stays a surprise
+    happened.push(["gift", friend.species]); // what is in it stays a surprise
   }
-  return [];
+  return happened;
 }
 
 /** What the pet passes on to an egg: a part (HEIRLOOM, or another `part`) of each of its battle stats. */
