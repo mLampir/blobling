@@ -2855,10 +2855,11 @@ let openTraining;
         render(r.state);
         if (!r.accepted) return say(r.message);
         if (before && before.stage === "egg") {
-          // Wait a moment until the hatching has been seen. The field starts empty: the egg only
-          // had the default name, which would read like another pet's
+          // Wait a moment until the hatching has been seen. The field offers the name of its line's
+          // child: the egg only had the default name, which would read like another pet's
           setTimeout(async () => {
-            const name = await ask(t("page.name_prompt"), { value: "", ok: t("page.dialog.save") });
+            const offer = T[`children.${r.state.species}`] || "";
+            const name = await ask(t("page.name_prompt"), { value: offer, ok: t("page.dialog.save") });
             if (name) render(await api("POST", "/api/pet/settings", { name }).catch(() => r.state));
           }, 5000);
         } else {
