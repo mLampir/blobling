@@ -3,7 +3,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { Updates, newer } from "../src/update";
+import { newer } from "../../core/src/version";
+import { Updates } from "../src/update";
 import { tempDir } from "./helpers";
 
 /** A folder like /opt/led-matrix after installing `version` from a release. */

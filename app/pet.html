@@ -3214,14 +3214,17 @@ function renderUpdate() {
   const u = update;
   renderFit();
   $("display").hidden = false;
+  // a display newer than this app may speak an API the app doesn't know yet: the app comes first
+  const ahead = u.available && app.aheadOfApp(u.latest);
   const lines = [t("page.app.update_version", { version: u.current })];
   if (u.running) lines.push(t("page.app.update_running"));
+  else if (ahead) lines.push(t("page.app.update_app_first", { latest: u.latest }));
   else if (u.available) lines.push(t("page.app.update_available", { latest: u.latest }));
   else if (u.failed) lines.push(t("page.app.update_failed"));
   $("update-text").textContent = lines.join(" ");
   $("update-text").hidden = false;
-  $("update-start").hidden = !u.available && !(app.fit() === "display_old" && !u.running);
-  document.querySelector('[data-view="more"]').classList.toggle("news", u.available);
+  $("update-start").hidden = ahead || (!u.available && !(app.fit() === "display_old" && !u.running));
+  document.querySelector('[data-view="more"]').classList.toggle("news", u.available && !ahead);
 }
 
 // The Pi looks for the newest release once more before it starts, so this never waits for its next look

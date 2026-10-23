@@ -520,7 +520,9 @@ in the end is exactly what was tested, nothing is built again:
 5. Once both are approved, release them and at the same time edit the GitHub
    release and untick **Set as a pre-release** (the Release workflow does not
    run again). Only then do the Pis see the update, so a Pi is not offered an
-   update before the app that fits it is out. A Pi never updates by itself: it shows the
+   update before the app that fits it is out. The app also never offers a
+   display update to a version above its own: it waits until the app is
+   updated as well. A Pi never updates by itself: it shows the
    update, and its owner starts it with the button.
 
 The updater only offers a release that is newer than the running one, so a Pi
