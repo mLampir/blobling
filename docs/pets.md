@@ -11,7 +11,7 @@ it away is folded shut on this page. Open only what you want to know.
 | | Stage | Lasts |
 |---|---|---|
 | ![Egg](images/pets/egg.png) | **Egg** – keep it warm by petting it | up to 1 hour |
-| ![Baby](images/pets/baby.png) | **Baby** – a small slime with a sprout | 3 days |
+| ![Blobling](images/pets/baby.png) | **Baby: Blobling** – a small slime with a sprout | 3 days |
 | ![Child](images/pets/child.png) | **Child: Bloblet** – the sprout has grown into a lure with a glowing bulb | 7 days |
 | ![Angloop](images/pets/angloop.png) | **Adult** – one of three forms; this one is Angloop | forever |
 
@@ -366,7 +366,7 @@ The values are in `core/src/magpie.ts`.
 | | Stage |
 |---|---|
 | ![Ember egg](images/pets/ember_egg.png) | **Ember egg** – a cooled crust with spots that glow |
-| ![Ember baby](images/pets/ember_baby.png) | **Baby** – a small ember with a spark on top |
+| ![Glowby](images/pets/ember_baby.png) | **Baby: Glowby** – a small ember with a spark on top |
 | ![Cindlet](images/pets/cindlet.png) | **Child: Cindlet** – an ember slime with glowing cracks and eyes, and a flame for a curl |
 
 The stages last as long as the slime's. What the adults keep is the flame.
@@ -443,7 +443,7 @@ The child ate 3 glowberries from the bag. A glowberry kept from an earlier pet c
 | | Stage |
 |---|---|
 | ![Stone egg](images/pets/stone_egg.png) | **Stone egg** – a river pebble with specks of quartz |
-| ![Stone baby](images/pets/stone_baby.png) | **Baby** – a small pebble with a speck of quartz on top |
+| ![Pebbo](images/pets/stone_baby.png) | **Baby: Pebbo** – a small pebble with a speck of quartz on top |
 | ![Pebblet](images/pets/pebblet.png) | **Child: Pebblet** – a river pebble on two stubby feet, with a white quartz band around its middle and a chipped corner that shows the lighter stone inside |
 
 The stages last as long as the slime's. What the adults keep is the quartz
@@ -525,7 +525,7 @@ It grows up at night under a full moon (a day and a half either side of it count
 | | Stage |
 |---|---|
 | ![Fox egg](images/pets/fox_egg.png) | **Fox egg** – a russet shell with cream speckles, like a fox's chest |
-| ![Fox baby](images/pets/fox_baby.png) | **Baby** – a small round cub with two pointed ears, one of them bent a little |
+| ![Foxkin](images/pets/fox_baby.png) | **Baby: Foxkin** – a small round cub with two pointed ears, one of them bent a little |
 | ![Kitlet](images/pets/kitlet.png) | **Child: Kitlet** – a fox cub as round as a slime, with a cream belly, little paws and a bushy tail that curls up to a white tip |
 
 The stages last as long as the slime's. What the adults keep is the tail with
@@ -605,7 +605,7 @@ The child went on 4 trips to the mushroom forest. It can be picked only while th
 | | Stage |
 |---|---|
 | ![Cloud egg](images/pets/cloud_egg.png) | **Cloud egg** – a sky-blue shell with little white clouds drifting across it |
-| ![Cloud baby](images/pets/cloud_baby.png) | **Baby** – a small sky-blue blob with a puff of cloud fleece on its head and two dark lamb's feet |
+| ![Woolby](images/pets/cloud_baby.png) | **Baby: Woolby** – a small sky-blue blob with a puff of cloud fleece on its head and two dark lamb's feet |
 | ![Nimbit](images/pets/nimbit.png) | **Child: Nimbit** – a lamb whose fleece is a white cloud, with a sky-blue face, one ear flipped up, stubby legs and a yellow bell on a pink ribbon |
 
 The stages last as long as the slime's. What the adults keep is the cloud
@@ -685,7 +685,7 @@ It snows when it grows up. The **snow globe**, now and then found on the mountai
 | | Stage |
 |---|---|
 | ![Leaf egg](images/pets/leaf_egg.png) | **Leaf egg** – a seed with an acorn cap of woven husk and small leaves for speckles |
-| ![Leaf baby](images/pets/leaf_baby.png) | **Baby** – a green slime wearing the top of its seed as a tilted cap, with a sprout on top |
+| ![Seedle](images/pets/leaf_baby.png) | **Baby: Seedle** – a green slime wearing the top of its seed as a tilted cap, with a sprout on top |
 | ![Sproutlet](images/pets/sproutlet.png) | **Child: Sproutlet** – a seedling with its seed cap pulled down to the eyes like a helmet, two leaves on top (a small one and a big one that flops to the right) and two little roots for feet |
 
 The stages last as long as the slime's. What the adults keep is the seed cap,
@@ -762,7 +762,7 @@ The child picked 4 fruits off its own plant and ate them. It can be picked only 
 | | Stage |
 |---|---|
 | ![Duck egg](images/pets/duck_egg.png) | **Duck egg** – a cream egg whose lower half floats in pond water |
-| ![Duck baby](images/pets/duck_baby.png) | **Baby** – a yellow slime with a curl of down on top, a little bill and orange webbed feet |
+| ![Quackle](images/pets/duck_baby.png) | **Baby: Quackle** – a yellow slime with a curl of down on top, a little bill and orange webbed feet |
 | ![Paddlet](images/pets/paddlet.png) | **Child: Paddlet** – a duckling that still sits in the bottom half of its eggshell and paddles it like a little boat |
 
 The stages last as long as the slime's. What the adults keep is the curl. A
@@ -838,7 +838,7 @@ The child went on 3 trips with rain on the way. It can be picked only while this
 | | Stage |
 |---|---|
 | ![Hippo egg](images/pets/hippo_egg.png) | **Hippo egg** – a lavender egg that has been in the mud, caked at the bottom with drips going up |
-| ![Hippo baby](images/pets/hippo_baby.png) | **Baby** – a round lavender baby with two little ears, a big pale muzzle and pink cheeks; wider and lower than the slime |
+| ![Chubbo](images/pets/hippo_baby.png) | **Baby: Chubbo** – a round lavender baby with two little ears, a big pale muzzle and pink cheeks; wider and lower than the slime |
 | ![Soakling](images/pets/soakling.png) | **Child: Soakling** – a young hippo on its way to the bath, a striped towel folded on its head with its little ears poking out |
 
 The stages last as long as the slime's. What the adults keep is the towel.
@@ -913,7 +913,7 @@ The child was tucked in by hand on 6 evenings. It can be picked only while this 
 | | Stage |
 |---|---|
 | ![Beak egg](images/pets/beak_egg.png) | **Beak egg** – a wild bird's egg, robin blue with brown freckles of every size |
-| ![Beak baby](images/pets/beak_baby.png) | **Baby** – a fluffy chick, grey-brown down with a lighter belly and a red crest |
+| ![Tuftie](images/pets/beak_baby.png) | **Baby: Tuftie** – a fluffy chick, grey-brown down with a lighter belly and a red crest |
 | ![Crestling](images/pets/crestling.png) | **Child: Crestling** – a round young bird whose crest has grown into three feathers, with flying goggles pushed up on it: it wants to fly long before it can |
 
 The stages last as long as the slime's. What the adults keep is the red
@@ -989,7 +989,7 @@ As a child it got past 2 guardians for the first time. It can be picked only whi
 | | Stage |
 |---|---|
 | ![Caterpillar egg](images/pets/caterpillar_egg.png) | **Caterpillar egg** – a leaf-green egg in soft rings like a caterpillar's body, with a bite out of its top |
-| ![Caterpillar baby](images/pets/caterpillar_baby.png) | **Baby** – a plump green slime in rings, two feelers with pink pompoms and little feet |
+| ![Pommle](images/pets/caterpillar_baby.png) | **Baby: Pommle** – a plump green slime in rings, two feelers with pink pompoms and little feet |
 | ![Munchlet](images/pets/munchlet.png) | **Child: Munchlet** – a fat caterpillar with a bib on, its pompom feelers grown long, and a row of stubby feet |
 
 The stages last as long as the slime's. What the adults keep is the feelers.
@@ -1060,7 +1060,7 @@ of any other. It can be picked only while this holds, every time anew.
 | | Stage |
 |---|---|
 | ![Dog egg](images/pets/dog_egg.png) | **Dog egg** – a cream egg with one big brown patch and a paw print |
-| ![Dog baby](images/pets/dog_baby.png) | **Baby** – a tan puppy slime, one ear pricked up and one hanging down its side, and a wagging tail |
+| ![Floppup](images/pets/dog_baby.png) | **Baby: Floppup** – a tan puppy slime, one ear pricked up and one hanging down its side, and a wagging tail |
 | ![Pupplet](images/pets/pupplet.png) | **Child: Pupplet** – a puppy chasing its own tail, which curls round in front of it |
 
 The stages last as long as the slime's. What the adults keep is the one
@@ -1131,7 +1131,7 @@ picked only while this holds, every time anew.
 | | Stage |
 |---|---|
 | ![Dragonfly egg](images/pets/dragonfly_egg.png) | **Dragonfly egg** – a glassy blue egg with a shimmer of green, blue and violet running across it |
-| ![Dragonfly baby](images/pets/dragonfly_baby.png) | **Baby** – a sky-blue slime with two pairs of shimmering wings spread out sideways |
+| ![Glimmet](images/pets/dragonfly_baby.png) | **Baby: Glimmet** – a sky-blue slime with two pairs of shimmering wings spread out sideways |
 | ![Nymphlet](images/pets/nymphlet.png) | **Child: Nymphlet** – a dragonfly larva with wing stubs and diving goggles made of dew |
 
 The stages last as long as the slime's. What the adults keep is the
@@ -1203,7 +1203,7 @@ it last rained at home. It can be picked only while this holds, every time anew.
 | | Stage |
 |---|---|
 | ![Beaver egg](images/pets/beaver_egg.png) | **Beaver egg** – an egg of wood, with growth rings and gnaw marks bitten into one side |
-| ![Beaver baby](images/pets/beaver_baby.png) | **Baby** – a brown slime with round ears, buck teeth, a pencil behind one ear and a flat tail |
+| ![Nibbit](images/pets/beaver_baby.png) | **Baby: Nibbit** – a brown slime with round ears, buck teeth, a pencil behind one ear and a flat tail |
 | ![Gnawlet](images/pets/gnawlet.png) | **Child: Gnawlet** – a young beaver, the pencil still behind its ear, gnawing on a twig |
 
 The stages last as long as the slime's. What the adults keep is the buck teeth
@@ -1275,7 +1275,7 @@ The house is built to its last step when the child grows up. It can be picked on
 | | Stage |
 |---|---|
 | ![Crab egg](images/pets/crab_egg.png) | **Crab egg** – a peach egg striped in diagonal bands like a seashell |
-| ![Crab baby](images/pets/crab_baby.png) | **Baby** – a red slime in a spiral shell far too big for it, two little pincers in front |
+| ![Pinchkin](images/pets/crab_baby.png) | **Baby: Pinchkin** – a red slime in a spiral shell far too big for it, two little pincers in front |
 | ![Shellbit](images/pets/shellbit.png) | **Child: Shellbit** – a hermit crab leaning out of a tall conch, one pincer bigger than the other |
 
 The stages last as long as the slime's. A hermit crab moves house as it
@@ -1348,7 +1348,7 @@ while this holds, every time anew.
 | | Stage |
 |---|---|
 | ![Axolotl egg](images/pets/axolotl_egg.png) | **Axolotl egg** – a pink, glassy egg with the little one curled up inside, two gill frills on top |
-| ![Axolotl baby](images/pets/axolotl_baby.png) | **Baby** – a pink slime with feathery gill fronds on each side of its head |
+| ![Frondle](images/pets/axolotl_baby.png) | **Baby: Frondle** – a pink slime with feathery gill fronds on each side of its head |
 | ![Axolittle](images/pets/axolittle.png) | **Child: Axolittle** – a smiling axolotl, its gill fronds standing up like a crown, a long soft tail |
 
 The stages last as long as the slime's. What the adults keep is the pink and
@@ -1423,7 +1423,7 @@ This is the line from Grandma's attic.
 | | Stage |
 |---|---|
 | ![Mouse egg](images/pets/mouse_egg.png) | **Mouse egg** – in one of Grandma's knitted egg cosies, red with a white bobble |
-| ![Mouse baby](images/pets/mouse_baby.png) | **Baby** – a small grey slime with two big round ears |
+| ![Earby](images/pets/mouse_baby.png) | **Baby: Earby** – a small grey slime with two big round ears |
 | ![Squeaklet](images/pets/squeaklet.png) | **Child: Squeaklet** – a little grey mouse with big round ears and a ringed tail, holding a crumb of cheese in both paws |
 
 The stages last as long as the slime's. What the adults keep is the big round
@@ -1503,7 +1503,7 @@ This is the line from Mosswart's egg in the mushroom forest.
 | | Stage |
 |---|---|
 | ![Bear egg](images/pets/bear_egg.png) | **Bear egg** – a caramel egg with honey dripping over its top, sitting in a cushion of moss |
-| ![Bear baby](images/pets/bear_baby.png) | **Baby** – a round brown cub with round ears and a little honey pot on its head, honey running down onto its brow |
+| ![Drippy](images/pets/bear_baby.png) | **Baby: Drippy** – a round brown cub with round ears and a little honey pot on its head, honey running down onto its brow |
 | ![Cubble](images/pets/cubble.png) | **Child: Cubble** – a bear cub with a pale muzzle and stubby paws, the honey pot worn as a hat and honey welling over its rim |
 
 The stages last as long as the slime's. What the adults keep is the honey pot
@@ -1582,7 +1582,7 @@ This is the line from Frostfluff's egg on the mountain.
 | | Stage |
 |---|---|
 | ![Penguin egg](images/pets/penguin_egg.png) | **Penguin egg** – an ice-blue egg with snow on its top and frost on its shell, in a tuft of the yeti's white fur |
-| ![Penguin baby](images/pets/penguin_baby.png) | **Baby** – a fluffy grey chick with a white face, a tuft of down on top, orange feet and red earmuffs |
+| ![Muffpin](images/pets/penguin_baby.png) | **Baby: Muffpin** – a fluffy grey chick with a white face, a tuft of down on top, orange feet and red earmuffs |
 | ![Waddlet](images/pets/waddlet.png) | **Child: Waddlet** – an upright young penguin with a slate back and a last tuft of down, a white heart-shaped face and belly, little flippers held out for balance and its earmuffs on their band |
 
 The stages last as long as the slime's. What the adults keep is the
@@ -1661,7 +1661,7 @@ This is the line from the cave, where its adults live as wild pets.
 | | Stage |
 |---|---|
 | ![Bat egg](images/pets/bat_egg.png) | **Bat egg** – a purple egg wrapped in two folded wings like a sleeping bat, hanging from the cave's ceiling by two little claws |
-| ![Bat baby](images/pets/bat_baby.png) | **Baby** – a purple slime with two huge pointed ears, a little fang and two small wings folded at its sides |
+| ![Fangle](images/pets/bat_baby.png) | **Baby: Fangle** – a purple slime with two huge pointed ears, a little fang and two small wings folded at its sides |
 | ![Flapling](images/pets/flapling.png) | **Child: Flapling** – a young bat with its huge pointed ears and real wings now, half spread, with finger bones, a scalloped edge and a thumb claw |
 
 The stages last as long as the slime's. What the adults keep is the big
@@ -1741,7 +1741,7 @@ This is the line a shooting star brings.
 | | Stage |
 |---|---|
 | ![Owl egg](images/pets/owl_egg.png) | **Owl egg** – a night-blue egg with two feather tufts and stars on it, a shooting star falling across it, lying on red roof tiles |
-| ![Owl baby](images/pets/owl_baby.png) | **Baby** – a round tawny owlet with feather tufts, a cream face disc and far too big gold glasses |
+| ![Goggly](images/pets/owl_baby.png) | **Baby: Goggly** – a round tawny owlet with feather tufts, a cream face disc and far too big gold glasses |
 | ![Hootlet](images/pets/hootlet.png) | **Child: Hootlet** – an upright young owl with long ear tufts and folded wings, its glasses even more too big: two huge round rims with a glint |
 
 The stages last as long as the slime's. What the adults keep is the glasses
@@ -1822,7 +1822,7 @@ This is a line from the trick festival.
 | | Stage |
 |---|---|
 | ![Chameleon egg](images/pets/chameleon_egg.png) | **Chameleon egg** – a speckled leaf-green egg turning yellow and orange at its bottom, a blue first-prize rosette pinned to its side |
-| ![Chameleon baby](images/pets/chameleon_baby.png) | **Baby** – a leaf-green slime with a helmet crest, its bottom turning yellow and orange, its tail rolled into a curl |
+| ![Tintle](images/pets/chameleon_baby.png) | **Baby: Tintle** – a leaf-green slime with a helmet crest, its bottom turning yellow and orange, its tail rolled into a curl |
 | ![Colorlet](images/pets/colorlet.png) | **Child: Colorlet** – a young chameleon with a taller helmet crest and turret eyes, its colors rolling over it, four gripping legs and a big tail rolled into a tight spiral |
 
 The stages last as long as the slime's. What the adults keep is the curled
@@ -1905,7 +1905,7 @@ This is the line that is dug up.
 | | Stage |
 |---|---|
 | ![Scarab egg](images/pets/scarab_egg.png) | **Scarab egg** – a scarab-green egg split by the gold seam of wing cases, half dug out of a sand heap marked with a red cross |
-| ![Scarab baby](images/pets/scarab_baby.png) | **Baby** – a domed metallic-green beetle with a gold seam, club antennae and six short legs, a sand ball in front of it |
+| ![Sandbit](images/pets/scarab_baby.png) | **Baby: Sandbit** – a domed metallic-green beetle with a gold seam, club antennae and six short legs, a sand ball in front of it |
 | ![Rollet](images/pets/rollet.png) | **Child: Rollet** – a sturdier scarab with a darker head plate, its front legs pressing on the bigger sand ball it rolls ahead |
 
 The stages last as long as the slime's. What the adults keep is the ball they
@@ -1984,7 +1984,7 @@ This is a line from the trick festival.
 | | Stage |
 |---|---|
 | ![Paper kite egg](images/pets/kite_egg.png) | **Paper kite egg** – a red festival-paper egg folded like a kite with a gold frame, a string tail with two blue bows off its point |
-| ![Paper kite baby](images/pets/kite_baby.png) | **Baby** – a little paper dragon, its head a folded sheet like an origami mask with one corner dog-eared, gold antlers and whiskers, its pleated body ending in a blue bow |
+| ![Foldy](images/pets/kite_baby.png) | **Baby: Foldy** – a little paper dragon, its head a folded sheet like an origami mask with one corner dog-eared, gold antlers and whiskers, its pleated body ending in a blue bow |
 | ![Kitelet](images/pets/kitelet.png) | **Child: Kitelet** – a long paper dragon with a bigger folded head and branching antlers, its pleated body on two little folded paper feet, a bow on its tail and a bigger one at the tip |
 
 The stages last as long as the slime's. What the adults keep is the tail with
@@ -2064,7 +2064,7 @@ This is a line from the coast.
 | | Stage |
 |---|---|
 | ![Octopus egg](images/pets/octopus_egg.png) | **Octopus egg** – a pale coral egg held by a curve of cream suckers like an arm round it, an indigo ink splash dripping down from its top, lying in the sand by a strand of seaweed |
-| ![Octopus baby](images/pets/octopus_baby.png) | **Baby** – a round coral octopus with a tall soft mantle and an ink spot on it, four little arms curling at their ink-dark tips and one arm raised, waving |
+| ![Waveby](images/pets/octopus_baby.png) | **Baby: Waveby** – a round coral octopus with a tall soft mantle and an ink spot on it, four little arms curling at their ink-dark tips and one arm raised, waving |
 | ![Inklet](images/pets/inklet.png) | **Child: Inklet** – a taller young octopus with a painter's beret cocked on its mantle, a big ink blot with a drip on it, and one arm raised high like a brush, a drop of ink on its tip |
 
 The stages last as long as the slime's. What the adults keep is the ink.
@@ -2149,7 +2149,7 @@ This is a line from the ruins.
 | | Stage |
 |---|---|
 | ![Gargoyle egg](images/pets/gargoyle_egg.png) | **Gargoyle egg** – an egg of old weathered stone, a crack zig-zagging down from its top, moss on its crown and ivy climbing up one side, on a broken flagstone |
-| ![Gargoyle baby](images/pets/gargoyle_baby.png) | **Baby** – a stone puppy sturdy like a carved block, with a broad pale muzzle, heavy floppy ears, horn nubs with a tuft of moss between them and stubby slate wings |
+| ![Mosspup](images/pets/gargoyle_baby.png) | **Baby: Mosspup** – a stone puppy sturdy like a carved block, with a broad pale muzzle, heavy floppy ears, horn nubs with a tuft of moss between them and stubby slate wings |
 | ![Gargit](images/pets/gargit.png) | **Child: Gargit** – a sturdy young gargoyle dog on four stumpy legs, a big square head, a block of a body with a crack, two little slate wings held up proudly and an arrow-tipped tail |
 
 The stages last as long as the slime's. What the adults keep is the small
@@ -2234,7 +2234,7 @@ This is the troublemaker's line.
 | | Stage |
 |---|---|
 | ![Magpie egg](images/pets/magpie_egg.png) | **Magpie egg** – a white egg with black speckles and a band of blue and green sheen, with a glint of gold, lying in the crown of a top hat |
-| ![Magpie baby](images/pets/magpie_baby.png) | **Baby** – a round magpie chick, black cap and white front, a stubby beak, wings with a blue sheen and already a red bow tie |
+| ![Piebit](images/pets/magpie_baby.png) | **Baby: Piebit** – a round magpie chick, black cap and white front, a stubby beak, wings with a blue sheen and already a red bow tie |
 | ![Glintlet](images/pets/glintlet.png) | **Child: Glintlet** – an upright little magpie with its long tail cocked up behind, a white front, a red bow tie and a little wand with a star |
 
 The stages last as long as the slime's. Every form of the line is a magician
