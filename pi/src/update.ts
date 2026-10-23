@@ -68,6 +68,9 @@ export class Updates {
   latest: string | null = null;
   private running = false;
   private failed = false;
+  /** When the last look started (ms), and the look that is under way. */
+  private looked = 0;
+  private looking: Promise<void> | null = null;
 
   /**
    * `directory`: where VERSION and REPO are (the app's folder). `beta`: whether betas are wanted
@@ -97,6 +100,7 @@ export class Updates {
     if (!this.enabled) {
       return;
     }
+    this.looked = Date.now();
     await this.checkUnit();
     try {
       const tag = this.beta() ? await this.newestBeta() : await this.newestRelease();
@@ -107,6 +111,18 @@ export class Updates {
     } catch (error) {
       log.warning(`Could not look for a new release: ${reason(error)}`);
     }
+  }
+
+  /**
+   * Looks again in the background when the last look is older than `maxAge` (ms), so somebody
+   * who opens the app or the settings page sees a release from a minute ago on the next answer,
+   * not only after the next regular look hours later. Never more than one look at a time.
+   */
+  lookIfOlder(maxAge: number): void {
+    if (!this.enabled || this.looking || Date.now() - this.looked < maxAge) {
+      return;
+    }
+    this.looking = this.check().finally(() => { this.looking = null; });
   }
 
   /** The newest release: .../releases/latest redirects to .../releases/tag/<version> (it skips pre-releases). */

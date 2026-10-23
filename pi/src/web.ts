@@ -23,6 +23,7 @@ const log = getLog("web");
 const MAX_BODY = 64 * 1024; // small JSON requests only
 const MAX_SAVE = 2 * 1024 * 1024; // a save file loaded on the settings page
 const PREVIEW_WAIT = 1; // seconds the preview waits for the next frame at most
+const LOOK_AGAIN = 10 * 60_000; // ms after a look for a new release before GET /api/state looks again
 // background of the pet app, as "#111318"
 
 // ---------- Pages ----------
@@ -176,6 +177,9 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         return html(page(request, "index.html", { languages: settings.languages() }));
 
       case "GET /api/state":
+        // the app and the settings page ask for this while they show the update: a release
+        // published since the last look shows up there within minutes (GitHub allows 60 looks an hour)
+        updates.lookIfOlder(LOOK_AGAIN);
         return json(stateJson());
 
       case "POST /api/mode":
