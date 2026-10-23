@@ -5,7 +5,7 @@ The German texts for Google Play and the App Store; limits as in
 
 ## Google Play: Kurzbeschreibung
 
-Kleine Pixel-Pets ausbrüten, großziehen und mehr als 25 Arten entdecken.
+Kleine Pixel-Pets ausbrüten, großziehen und über 25 Arten entdecken.
 
 ## App Store: Untertitel
 
@@ -13,7 +13,7 @@ Pixel-Pets zum Großziehen
 
 ## App Store: Werbetext
 
-Blobling ist ein Pixel-Pet mit eigenem Tag auf deinem Handy. Zieh es groß, schick es auf Ausflüge, finde Freunde und brüte neue Eier aus: mehr als 25 Arten warten.
+Blobling ist ein kleines Pixel-Pet, das auf deinem Handy seinen eigenen Tag lebt. Zieh es groß, schick es auf Ausflüge, finde Freunde und entdecke über 25 Arten.
 
 ## App Store: Schlüsselwörter
 
@@ -21,38 +21,38 @@ virtuelles haustier,pixel,ei,ausbrüten,großziehen,entwickeln,sammeln,abenteuer
 
 ## Beschreibung (Google Play vollständige Beschreibung und App Store Beschreibung)
 
-Blobling ist ein kleines Pixel-Pet, das auf deinem Handy lebt. Es schlüpft aus einem Ei, will ein paar Mal am Tag zu dir und wird zu dem erwachsenen Pet, das du für es aussuchst. Danach kommen neue Eier, neue Arten und bald eine ganze Straße voller Pets.
+Blobling ist ein kleines Pixel-Pet, das auf deinem Handy wohnt. Es schlüpft aus einem Ei, möchte ein paar Mal am Tag versorgt werden und wächst mit dir heran. Mit der Zeit kommen neue Eier dazu, neue Arten und irgendwann eine ganze Straße voller Pets.
 
-ALLES MIT DEM FINGER
-Zieh eine Mahlzeit oder den Ball auf dein Pet, schrubb es mit dem Schwamm, streichle es und bring es abends ins Bett. Es antwortet genau dort, wo es ist, mit einem fröhlichen Gesicht, einem sanften Vibrieren und einem Chiptune-Sound.
+ES SPÜRT JEDE BERÜHRUNG
+Zieh eine Mahlzeit oder den Ball auf dein Pet, schrubb es mit dem Schwamm sauber, streichle es und bring es abends ins Bett. Es reagiert sofort: Es strahlt, das Handy vibriert sanft, und dazu gibt es einen kleinen Chiptune-Sound.
 
-ES LEBT SEINEN EIGENEN TAG
-Der Himmel folgt deiner echten Tageszeit, mit Sonnenauf- und -untergang und dem Mond von heute Nacht. Schaltest du das Wetter ein, fallen Regen und Schnee von draußen auch in seiner Welt. An einem kalten Morgen wacht es zitternd auf, bis du es warm reibst, und an einem heißen Nachmittag will es baden. Während du weg bist, spielt es, baut kleine Dinge und übt allein, und wenn du zurückkommst, erzählt es dir von seinem Tag.
+ES LEBT IN DEINER ZEIT
+Der Himmel richtet sich nach deiner echten Tageszeit, mit Sonnenaufgang, Sonnenuntergang und dem Mond, wie er heute Nacht steht. Wenn du das Wetter einschaltest, regnet und schneit es bei ihm genauso wie bei dir draußen. An kalten Morgen wacht es bibbernd auf, bis du es warm rubbelst, und an heißen Nachmittagen will es ein Bad. Während du weg bist, spielt es, baut kleine Sachen und übt allein, und wenn du wiederkommst, erzählt es dir von seinem Tag.
 
-DU SUCHST AUS, WAS AUS IHM WIRD
-In etwa zehn Tagen wird aus deinem Baby ein Kind, und dann wählst du seine erwachsene Form. Eine steht immer bereit. Die anderen wollen vorher etwas vom Kind: etwas, das es getan hat, oder den richtigen Moment, etwa eine Vollmondnacht. Eine geheime Form hinterlässt nur Spuren, denen du folgen kannst: eine Geschichte, die ein Freund erzählt, oder einen alten Zettel am Wegesrand.
+WAS WIRD AUS IHM?
+Aus dem Baby wird ein Kind und aus dem Kind ein erwachsenes Pet. Welche Form es annimmt, hängt davon ab, was es als Kind erlebt hat, und manchmal vom richtigen Moment, etwa einer Vollmondnacht. Am Ende entscheidest du. Zu den geheimen Formen führen nur Spuren: eine Geschichte, die ein Freund erzählt, oder ein alter Zettel am Wegesrand.
 
 AUSFLÜGE, TRICKS UND TRAINING
-Bring ihm mit einem Wisch Tricks bei, trainiere Kraft, Tempo und Köpfchen auf seinem eigenen Übungsplatz und schick es los: auf die Wiese, in den Pilzwald, an den Bach, in eine Höhle, auf den Berg und dahinter an die Küste mit echten Gezeiten und zu einer alten Burgruine. Es kommt mit Samen, Hüten, Deko und Geräten für den Übungsplatz heim und mit den Raufereien von unterwegs, die du dir noch einmal ansehen kannst. Jedes Gebiet hat einen Wächter, an dem es vorbei muss.
+Bring ihm mit einem Wisch Tricks bei, trainiere Kraft, Tempo und Köpfchen auf seinem eigenen Übungsplatz und schick es los: auf die Wiese, in den Pilzwald, an den Bach, in eine Höhle, auf den Berg und weiter an die Küste mit echten Gezeiten und zu einer alten Burgruine. Heim bringt es Samen, Hüte, Deko und Geräte für den Übungsplatz, dazu die Raufereien von unterwegs, die du dir noch einmal ansehen kannst. In jedem Gebiet wartet ein Wächter, an dem es vorbeimuss.
 
-MEHR ALS 25 ARTEN
-Jedes Ei kann etwas Neues sein. Eier gibt es von Wächtern, von wilden Pets, die dein Pet mit seinen Tricks für sich gewinnt, von Gästen, die am Gartenzaun auftauchen, aus dem Teich, von Sternschnuppen, vom Trick-Fest jeden zweiten Samstag, von einer Schatzkarte und vom Dachboden der Oma. Das Ei eines Freundes schlägt nach dem Freund, umso mehr, je länger die beiden befreundet sind. Jede Form, die deine Pets schon hatten, füllt eine Seite im Album, und eine Linie, die du ganz großgezogen hast, hinterlässt ein Andenken.
+ÜBER 25 ARTEN
+Aus jedem Ei kann etwas Neues schlüpfen. Eier gibt es von Wächtern, von wilden Pets, die dein Pet mit seinen Tricks beeindruckt, von Gästen, die am Gartenzaun auftauchen, aus dem Teich, von Sternschnuppen, vom Trickfest an jedem zweiten Samstag, von einer Schatzkarte und von Omas Dachboden. Das Ei eines Freundes kommt nach dem Freund, und zwar umso mehr, je länger die beiden befreundet sind. Jede Form, die deine Pets schon hatten, kommt ins Album, und wer eine Linie ganz großgezogen hat, bekommt ein Andenken.
 
-EINE STRASSE VOLLER PETS
-Bis zu vier Pets leben zu Hause, jedes in seinem eigenen Haus. Sie treffen sich am Spielplatz zum Schaukeln, Sandeln und Wippen, machen einander Tricks nach und teilen sich einen Hof mit Trog und Wasserbecken, zu denen sie von selbst gehen. An trockenen Abenden sitzen alle vor dem Schlafengehen ums Lagerfeuer. Ein Pet, das für ein neues Ei Platz macht, zieht ins Album und kann jederzeit wieder heimkommen.
+NICHT LANGE ALLEIN
+Bis zu vier Pets wohnen Tür an Tür, jedes in seinem eigenen Haus. Sie treffen sich am Spielplatz zum Schaukeln, Sandeln und Wippen, schauen sich gegenseitig Tricks ab und teilen sich einen Hof mit Futtertrog und Wasserbecken, wo sie sich selbst bedienen. An trockenen Abenden sitzen alle noch ums Lagerfeuer, bevor sie schlafen gehen. Wenn ein Pet für ein neues Ei Platz macht, zieht es ins Album und kann jederzeit wieder heimkommen.
 
 GANZ OHNE STRESS
-Dein Pet stirbt nie, und nichts ist für immer verloren. Kümmert sich anderthalb Tage niemand darum, geht es zur Oma, und dort steht die Zeit für es still, bis du es abholst. Du fährst in den Urlaub? Bring es selbst hin, vielleicht kommt es mit einer gestrickten Mütze zurück.
+Dein Pet stirbt nie, und nichts geht für immer verloren. Schaut anderthalb Tage niemand nach ihm, zieht es zur Oma, und dort bleibt die Zeit für es stehen, bis du es abholst. Du fährst in den Urlaub? Dann bring es selbst hin, vielleicht kommt es mit einer selbstgestrickten Mütze zurück.
 
-EIN TAGEBUCH SEINES LEBENS
-In seinem Tagebuch steht alles: sein Verlauf, jeder Ausflug, was es gefunden hat, seine Werte und das Album.
+SEIN TAGEBUCH ERZÄHLT ALLES
+Was es erlebt hat, jeder Ausflug, alles, was es gefunden hat, seine Werte und das Album: Alles steht in seinem Tagebuch.
 
 AUCH AUF EINEM LED-DISPLAY (OPTIONAL)
-Deine Pets können auch auf einem kleinen LED-Panel zu Hause leben, gesteuert von einem Raspberry Pi. Die App verbindet sich im Heimnetz damit, die Pets dort leben weiter, auch wenn dein Handy aus ist, und eines kannst du auf dem Handy mitnehmen.
+Deine Pets können auch auf einem kleinen LED-Panel bei dir zu Hause wohnen, gesteuert von einem Raspberry Pi. Die App verbindet sich im Heimnetz damit. Dort leben die Pets weiter, auch wenn dein Handy aus ist, und eins kannst du jederzeit aufs Handy mitnehmen.
 
 PRIVAT
-Kein Konto, keine Werbung, kein Tracking, keine In-App-Käufe. Deine Pets leben auf deinem Handy. Das Einzige, was es je verlässt, ist ein gerundeter Standort fürs Wetter, und nur, wenn du das Wetter einschaltest.
+Kein Konto, keine Werbung, kein Tracking, keine In-App-Käufe. Deine Pets wohnen auf deinem Handy. Das Einzige, was es je verlässt, ist ein grob gerundeter Standort fürs Wetter, und auch nur, wenn du das Wetter einschaltest.
 
-Blobling ist Open Source: die App und das LED-Display samt Bauanleitung liegen auf GitHub (mLampir/blobling).
+Blobling ist Open Source: Die App und das LED-Display samt Bauanleitung findest du auf GitHub (mLampir/blobling).
 
 Auf Deutsch und Englisch.
