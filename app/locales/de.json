@@ -900,7 +900,7 @@
       "update": "Display aktualisieren",
       "update_version": "Version {version}.",
       "update_available": "Version {latest} ist da.",
-      "update_app_first": "Für das Display gibt es Version {latest}, sobald auch die App aktualisiert ist.",
+      "update_app_first": "Version {latest} ist da und braucht eine neuere App. Aktualisiere zuerst die App, dann das Display.",
       "update_running": "Wird aktualisiert … Das Display ist kurz dunkel.",
       "update_failed": "Das letzte Update hat nicht geklappt.",
       "update_done": "Das Display ist jetzt auf Version {version}.",
