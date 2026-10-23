@@ -3,13 +3,21 @@
     "title": "Ein kleines Pet zum Umsorgen",
     "subtitle": "Es lebt auf deinem Handy, Tag und Nacht"
   },
-  "eat": {
-    "title": "Füttern, spielen, sauber halten",
-    "subtitle": "Alles mit dem Finger, direkt am Pet"
+  "street": {
+    "title": "Eine ganze Straße voller Pets",
+    "subtitle": "Mit Hof und Lagerfeuer für alle"
   },
   "trip": {
     "title": "Ab auf kleine Abenteuer",
     "subtitle": "Es kommt mit kleinen Schätzen und Geschichten heim"
+  },
+  "choose": {
+    "title": "Du suchst aus, was aus ihm wird",
+    "subtitle": "Manche Formen sind noch ein Rätsel"
+  },
+  "eat": {
+    "title": "Füttern, spielen, sauber halten",
+    "subtitle": "Alles mit dem Finger, direkt am Pet"
   },
   "night": {
     "title": "Es schläft, wenn du schläfst",
@@ -21,7 +29,7 @@
   },
   "grown": {
     "title": "Eines Tages ist es groß",
-    "subtitle": "Was aus ihm wird, liegt an dir"
+    "subtitle": "Und dann kommt das nächste Ei"
   },
   "feature": {
     "title": "Blobling",

@@ -3,13 +3,21 @@
     "title": "A little pet to look after",
     "subtitle": "It lives on your phone, day and night"
   },
-  "eat": {
-    "title": "Feed it, play, keep it clean",
-    "subtitle": "All with a touch, right on the pet"
+  "street": {
+    "title": "A whole street of pets",
+    "subtitle": "They share a yard and a campfire"
   },
   "trip": {
     "title": "Off on little adventures",
     "subtitle": "It comes home with finds and stories"
+  },
+  "choose": {
+    "title": "You choose what it becomes",
+    "subtitle": "Some forms are still a mystery"
+  },
+  "eat": {
+    "title": "Feed it, play, keep it clean",
+    "subtitle": "All with a touch, right on the pet"
   },
   "night": {
     "title": "It sleeps when you do",
@@ -21,7 +29,7 @@
   },
   "grown": {
     "title": "One day, it grows up",
-    "subtitle": "What it becomes is up to you"
+    "subtitle": "And then comes the next egg"
   },
   "feature": {
     "title": "Blobling",
