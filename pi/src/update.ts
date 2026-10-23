@@ -4,10 +4,11 @@
  * A Pi that was installed from a release knows its version and where it came from (VERSION and
  * REPO, which setup.sh puts next to the app). It looks for a newer release now and then: an
  * outgoing request, nothing is opened towards the internet. The settings page shows what it
- * found and has a button for it (so has the app). The button looks once more and starts the systemd unit led-matrix-update, which
- * runs install.sh --app as a unit of its own, so it keeps going while this service is restarted.
- * Nothing is taken from the request: it only ever installs the newest official release, and only
- * when it is newer than the running one (a Pi on a pre-release isn't offered the release before it).
+ * found and has a button for it (so has the app). The button looks once more and starts the
+ * systemd unit led-matrix-update, which runs install.sh --app as a unit of its own, so it keeps
+ * going while this service is restarted. Only a version is taken from the request (the app's, see
+ * start()): it installs the newest official release up to it, and only when that is newer than
+ * the running one (a Pi on a pre-release isn't offered the release before it).
  *
  * With [update] betas = yes in config.ini, the newest pre-release counts too. The version
  * that was found is written to UPDATE_ENV for the unit, so it installs exactly that one.
@@ -119,28 +120,37 @@ export class Updates {
     return tag;
   }
 
-  /** The newest of the latest releases and pre-releases (GitHub's API, drafts left out). */
+  /** The newest of the latest releases and pre-releases. */
   private async newestBeta(): Promise<string> {
-    const response = await this.request(`https://api.github.com/repos/${this.repo}/releases?per_page=20`,
+    return (await this.releases(true)).reduce((best, tag) => (newer(tag, best) ? tag : best));
+  }
+
+  /** The tags of the latest releases (GitHub's API, drafts left out), with the pre-releases or without. */
+  private async releases(pre: boolean): Promise<string[]> {
+    const response = await this.request(`https://api.github.com/repos/${this.repo}/releases?per_page=100`,
       { headers: { Accept: "application/vnd.github+json" }, signal: AbortSignal.timeout(TIMEOUT * 1000) });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    const releases = await response.json() as { tag_name?: unknown; draft?: unknown }[];
+    const releases = await response.json() as { tag_name?: unknown; draft?: unknown; prerelease?: unknown }[];
     const tags = (Array.isArray(releases) ? releases : [])
-      .filter((r) => !r.draft && typeof r.tag_name === "string" && VERSION.test(r.tag_name))
+      .filter((r) => !r.draft && (pre || !r.prerelease) && typeof r.tag_name === "string" && VERSION.test(r.tag_name))
       .map((r) => r.tag_name as string);
     if (!tags.length) {
       throw new Error("no release yet");
     }
-    return tags.reduce((best, tag) => (newer(tag, best) ? tag : best));
+    return tags;
   }
 
   /**
    * Starts the update to the newest release; false if there is nothing to start. It looks again
    * first, so a release from a minute ago is found without waiting for the next regular look.
+   *
+   * `upTo`: the version of the app that asks. A newer release may need a newer app (its API), so
+   * the newest one up to the app's version is installed instead. Only a version is taken from the
+   * request, never what to install: it is always a release from the list, and newer than this one.
    */
-  async start(): Promise<boolean> {
+  async start(upTo?: unknown): Promise<boolean> {
     if (!this.enabled || this.running) {
       return false;
     }
@@ -148,9 +158,26 @@ export class Updates {
     if (!this.state().available) {
       return false;
     }
-    log.info(`Updating from ${this.current} to ${this.latest}`);
+    let target = this.latest!;
+    if (typeof upTo === "string" && VERSION.test(upTo) && newer(target, upTo)) {
+      if (!this.envFile) {
+        return false; // the unit could only install the newest
+      }
+      try {
+        const fitting = (await this.releases(this.beta()))
+          .filter((tag) => !newer(tag, upTo) && newer(tag, this.current!));
+        if (!fitting.length) {
+          return false;
+        }
+        target = fitting.reduce((best, tag) => (newer(tag, best) ? tag : best));
+      } catch (error) {
+        log.warning(`Could not look for a release up to ${upTo}: ${reason(error)}`);
+        return false;
+      }
+    }
+    log.info(`Updating from ${this.current} to ${target}`);
     if (this.envFile) {
-      writeAtomic(this.envFile, `LED_MATRIX_VERSION=${this.latest}\n`); // VERSION-checked, see check()
+      writeAtomic(this.envFile, `LED_MATRIX_VERSION=${target}\n`); // a VERSION-checked tag from GitHub
     }
     this.running = true;
     this.failed = false;

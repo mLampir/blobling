@@ -201,6 +201,8 @@ const app = {
   version: __APP_VERSION__,
   /** A display version this app is too old for (it may need a newer API), never in a build that has no version. */
   aheadOfApp: (version: string): boolean => __APP_VERSION__ !== "" && newer(version, __APP_VERSION__),
+  /** A display version older than this app's (so a display update up to the app's version fits). */
+  belowApp: (version: string): boolean => __APP_VERSION__ !== "" && newer(__APP_VERSION__, version),
   /** The Pi's address, if the app is connected to one. */
   connectedTo,
   /** All texts in the page's language, {key: text}. */

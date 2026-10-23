@@ -3215,23 +3215,27 @@ function renderUpdate() {
   renderFit();
   $("display").hidden = false;
   // a display newer than this app may speak an API the app doesn't know yet: the app comes first
+  // (the Pi then installs the newest release up to the app's version, see startUpdate)
   const ahead = u.available && app.aheadOfApp(u.latest);
+  const upToApp = ahead && app.belowApp(u.current);
   const lines = [t("page.app.update_version", { version: u.current })];
   if (u.running) lines.push(t("page.app.update_running"));
+  else if (upToApp) lines.push(t("page.app.update_up_to_app", { latest: u.latest, version: app.version }));
   else if (ahead) lines.push(t("page.app.update_app_first", { latest: u.latest }));
   else if (u.available) lines.push(t("page.app.update_available", { latest: u.latest }));
   else if (u.failed) lines.push(t("page.app.update_failed"));
   $("update-text").textContent = lines.join(" ");
   $("update-text").hidden = false;
-  $("update-start").hidden = ahead || (!u.available && !(app.fit() === "display_old" && !u.running));
-  document.querySelector('[data-view="more"]').classList.toggle("news", u.available && !ahead);
+  $("update-start").hidden = (ahead && !upToApp) || (!u.available && !(app.fit() === "display_old" && !u.running));
+  document.querySelector('[data-view="more"]').classList.toggle("news", u.available && (!ahead || upToApp));
 }
 
-// The Pi looks for the newest release once more before it starts, so this never waits for its next look
+// The Pi looks for the newest release once more before it starts, so this never waits for its next
+// look; it installs the newest one up to this app's version, so the app still understands it
 async function startUpdate(button) {
   button.disabled = true;
   try {
-    update = (await api("POST", "/api/update")).update;
+    update = (await api("POST", "/api/update", app.version ? { up_to: app.version } : undefined)).update;
     renderUpdate();
   } catch (err) {
     fail(err);

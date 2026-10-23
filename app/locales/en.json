@@ -901,6 +901,7 @@
       "update_version": "Version {version}.",
       "update_available": "Version {latest} is out.",
       "update_app_first": "Version {latest} is out for the display, once this app is updated too.",
+      "update_up_to_app": "Version {latest} is out. This app fits up to version {version}, so the display is updated to that for now.",
       "update_running": "Updating … the display goes dark for a moment.",
       "update_failed": "The last update didn't work.",
       "update_done": "The display is now on version {version}.",

@@ -141,7 +141,7 @@ test("with betas, the newest release or pre-release is installed, exactly that v
   const calls: string[][] = [];
   const updates = new Updates(directory, request, systemctl("inactive", calls), () => beta, env);
   await updates.check();
-  assert.deepEqual(asked, ["https://api.github.com/repos/someone/blobling/releases?per_page=20"]);
+  assert.deepEqual(asked, ["https://api.github.com/repos/someone/blobling/releases?per_page=100"]);
   assert.deepEqual(updates.state(),
     { current: "v1.0.0", latest: "v1.1.0-beta.1", available: true, running: false, failed: false, beta: true });
   assert.equal(await updates.start(), true);
@@ -154,4 +154,26 @@ test("with betas, the newest release or pre-release is installed, exactly that v
     systemctl("inactive"), () => beta);
   await onBeta.check();
   assert.equal(onBeta.state().available, false);
+});
+
+test("an app asks for an update up to its own version: the newest release up to it is installed", async () => {
+  const releases = [
+    { tag_name: "v1.1.0" }, { tag_name: "v1.0.1-beta.1", prerelease: true }, { tag_name: "v1.0.0" }, { tag_name: "v0.9.0" },
+  ];
+  const request = (async (url: string) => (url.includes("api.github.com")
+    ? { ok: true, status: 200, json: async () => releases }
+    : { ok: true, status: 200, url: "https://github.com/someone/blobling/releases/tag/v1.1.0" })) as unknown as typeof fetch;
+  const directory = release("v0.8.0");
+  const env = join(directory, "update.env");
+  const updates = new Updates(directory, request, systemctl("inactive"), () => false, env);
+  assert.equal(await updates.start("1.0.1"), true);
+  assert.equal(readFileSync(env, "utf-8"), "LED_MATRIX_VERSION=v1.0.0\n"); // not the pre-release, not v1.1.0
+
+  // already there: nothing fits
+  const there = new Updates(release("v1.0.0"), request, systemctl("inactive"), () => false, join(tempDir(), "update.env"));
+  assert.equal(await there.start("1.0.0"), false);
+  // an app as new as the release, or a request without a version: the newest
+  const plain = new Updates(release("v0.8.0"), request, systemctl("inactive"), () => false, env);
+  assert.equal(await plain.start("not a version!"), true);
+  assert.equal(readFileSync(env, "utf-8"), "LED_MATRIX_VERSION=v1.1.0\n");
 });
