@@ -3195,7 +3195,7 @@ RAPIERRE_FACE_TOP, RAPIERRE_FACE_SHIFT = face_place(RAPIERRE, 6, 10, 6)
 RAPIERRE_TAGS = species_tags([RAPIERRE, dots(RAPIERRE, {(x, y): ("S" if RAPIERRE[y][x] == "." else ".")
                                                      for y in range(9, 14) for x in range(0, 7)
                                                      if RAPIERRE[y][x] in ".S"})], 13, 13, idle_ms=90)
-# Parcelbeak: a pelican mail carrier. A postman's cap with the crest sticking through it, a huge
+# Mailican: a pelican mail carrier. A postman's cap with the crest sticking through it, a huge
 # bill with a throat pouch full of letters, a mail bag across its chest, big webbed feet. It walks.
 PARCELBEAK = [
     ".............r.r.r..............",
@@ -4006,7 +4006,7 @@ PUPPLET = [
 PUPPLET_FACE_TOP, PUPPLET_FACE_SHIFT = face_place(PUPPLET, 9, 6, FACE_W)
 PUPPLET_TAGS = body_tags(PUPPLET, 13, 13, flat_rows=3)
 DOG_ADULT_PALETTE = DOG_PALETTE | {"o": (75, 45, 25)}
-# Digby: a garden grows on its back. A bed of earth with sprouts, two flowers and a carrot behind its
+# Spudhound: a garden grows on its back. A bed of earth with sprouts, two flowers and a carrot behind its
 # head, earth on its nose (its face) and on its paws. It walks.
 DIGBY_PALETTE = DOG_ADULT_PALETTE | {
     "e": (120, 80, 45), "E": (85, 55, 30),  # earth
@@ -4437,7 +4437,7 @@ DAMBERT = [
 ]
 DAMBERT_FACE_TOP, DAMBERT_FACE_SHIFT = face_place(DAMBERT, 13, 3, 12)
 DAMBERT_TAGS = species_tags([DAMBERT, drop_rows(DAMBERT, 14)], 14, 14)
-# Timberjack: broad and bearded, the plaid of a lumberjack's shirt grown into its fur, and its flat
+# Timbeaver: broad and bearded, the plaid of a lumberjack's shirt grown into its fur, and its flat
 # tail ends in an axe blade. It walks.
 TIMBERJACK_PALETTE = BEAVER_PALETTE | {
     "r": (200, 60, 55), "R": (140, 35, 35), "x": (60, 30, 30),  # plaid
@@ -6389,7 +6389,7 @@ KITE_BABY = [
 ]
 KITE_BABY_FACE_TOP, KITE_BABY_FACE_SHIFT = face_place(KITE_BABY, 6, 6, BABY_W)
 KITE_BABY_TAGS = body_tags(KITE_BABY, 6, 10, flat_rows=3)
-# Crinklet, the child: grown into a long paper snake, its folded head bigger with branching gold
+# Pleatlet, the child: grown into a long paper snake, its folded head bigger with branching gold
 # antlers and whiskers, a pleated body arching behind it on two little folded paper feet, a bow on
 # its tail and a bigger one at the tip
 KITELET = [
@@ -6480,7 +6480,7 @@ def owl_face(gap):
 owlbert_face_grid = owl_face(9)
 OWLBERT_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (220, 200, 165)}
 
-# Stargazer: the owl has become a telescope. It sits ducked low, wings folded flat, and its neck pulls
+# Owlscope: the owl has become a telescope. It sits ducked low, wings folded flat, and its neck pulls
 # out in brass tubes, each thinner than the last, up and to the side; the head at the top looks up
 # into the sky, and the too-big glasses are the telescope's lenses, brass-rimmed. A star sparkles
 # where it is looking.

@@ -261,7 +261,7 @@ test("the bear, penguin and bat lines grow up by what they ate, where they went 
 
 test("the owl, chameleon, scarab and kite lines grow up by the sky, games, the clock and the weather", () => {
   const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
-  // the owl: a clear night sky makes a Stargazer, clean scuffles the Ninjowl
+  // the owl: a clear night sky makes an Owlscope, clean scuffles the Ninjowl
   assert.equal(life.decideSpecies(week, "owl"), "owlbert");
   assert.equal(life.decideSpecies(week, "owl", { dark: true, clear: true }), "stargazer");
   assert.equal(life.decideSpecies(week, "owl", { dark: true, clear: false }), "owlbert"); // clouds

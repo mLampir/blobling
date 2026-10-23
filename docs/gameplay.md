@@ -932,7 +932,7 @@ up to seven rounds, a ball doesn't distract it, and it takes more hits.
 | Cave | Gloompeep, two big glowing eyes in the dark | pounces | 7 hits |
 | Mountain | Bobbleti, a yeti that is a giant bobble hat | charges along the ground | 8 hits |
 | Coast | Whistlion, a sea lion on lifeguard duty, with a red cap, a whistle and a life ring | charges along the ground | 9 hits |
-| Ruins | Shellmet, an empty suit of armour; a snail lives in it and now and then looks out of the visor | curls up | 9 hits |
+| Ruins | Visnail, an empty suit of armour; a snail lives in it and now and then looks out of the visor | curls up | 9 hits |
 
 Once the pet has got past a guardian, it knows the way to the areas behind it, and
 that guardian lets it pass from then on. A draw or a lost scuffle changes

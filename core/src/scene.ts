@@ -824,7 +824,7 @@ const PAW: Bitmap = [[255, 130, 170], [".X.X.", "X...X", "..X..", ".XXX."]]; // 
 const MOTH: Bitmap = [[235, 220, 190], ["X.X", ".X."]]; // moths drawn to Lanternling's light
 const FLAME_TONGUE: Bitmap = [[255, 200, 70], [".X.", "XXX", "XXX"]]; // a tongue of Flarelet's flame
 const STEAM_CLOUD: Bitmap = [[225, 240, 250], [".XX.", "XXXX", ".XX."]]; // Steamo's sauna steam
-const ENVELOPE: Bitmap = [[250, 240, 215], ["XXXXX", "X.X.X", "XX.XX", "XXXXX"]]; // what Parcelbeak delivers
+const ENVELOPE: Bitmap = [[250, 240, 215], ["XXXXX", "X.X.X", "XX.XX", "XXXXX"]]; // what Mailican delivers
 const TOUCHE: Bitmap = [[255, 255, 230], ["..X..", "..X..", "XX.XX", "..X..", "..X.."]];
 const RAINBOW_BURST: Bitmap[] = RAINBOW.map((color) => [color, ["XX", "XX"]]); // Prismist's rainbow, thrown at an opponent
 const FIREBALL: Bitmap = [[255, 150, 40], ["..XX..", ".XXXX.", "XXXXXX", "XXXXXX", ".XXXX."]]; // what Flarelet hurls
@@ -836,7 +836,7 @@ const PETAL: Bitmap = [[255, 170, 200], ["XX"]]; // off Needlenub's flower
 const CLOD: Bitmap = [[150, 110, 70], ["XX", "X."]]; // what Thundram's hoof kicks up
 const SMOKE: Bitmap = [[175, 175, 185], [".X.", "XXX", ".X."]]; // Banditail's puff of smoke
 const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
-const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Parcelbeak's pouch
+const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Mailican's pouch
 const DIRT: Bitmap = [[60, 60, 60], ["X"]];
 const SICK_TINT: readonly [Color, number] = [[185, 195, 90], 0.28]; // sickly pale, for everything that isn't the teal slime
 const STEAM: Bitmap = [[215, 235, 245], [".X.", "XXX"]];
@@ -866,7 +866,7 @@ const POLLEN: Bitmap = [[255, 240, 130], ["X"]];
 const BELL: Bitmap = [[255, 215, 60], [".X.", "XXX", "X.X"]]; // the bells on Harlequing's cap
 const CONFETTI: Bitmap[] = ([[225, 50, 75], [130, 75, 200], [255, 215, 60], [90, 200, 120], [80, 150, 240]] as Color[])
   .map((color) => [color, ["X"]]);
-const SPROUT: Bitmap = [[110, 200, 80], ["X.X", ".X."]]; // off the bed on Digby's back
+const SPROUT: Bitmap = [[110, 200, 80], ["X.X", ".X."]]; // off the bed on Spudhound's back
 const SNOW_CHUNK: Bitmap = [[240, 245, 255], [".XXX.", "XXXXX", "XXXXX"]]; // Barrelbard's avalanche
 const STAR: Bitmap = [[255, 235, 120], [".X.", "XXX", ".X."]]; // Pawdini's stars
 const CIRCUS_BALL: Bitmap[] = ([[225, 45, 60], [70, 120, 230], [255, 215, 60]] as Color[])
@@ -884,7 +884,7 @@ const RAY_FROM = 8;
 const RAY_LENGTH = 32;
 const LIGHT_DOT: Bitmap[] = PRISM.map((color) => [color, ["XX", "XX"]]);
 const LOG: Bitmap = [[150, 100, 55], ["XXXXXX", "XXXXXX"]]; // a log of Dambert's, the stack it jumps over
-const WOOD_CHIP: Bitmap = [[225, 190, 130], ["XX"]]; // off Timberjack's axe
+const WOOD_CHIP: Bitmap = [[225, 190, 130], ["XX"]]; // off Timbeaver's axe
 const TRUNK: Bitmap = [[150, 100, 60], ["XXXXXXXXXXXX", "XXXXXXXXXXXX", "XXXXXXXXXXXX"]]; // the tree it fells
 const BRANCH: Bitmap = [[160, 110, 60], ["X.XXXX.X", ".XXXXXX."]]; // what Archibeaver builds with
 const BLUEPRINT: Bitmap = [[90, 160, 235], ["XXXXXX", "X....X", "X.XX.X", "X....X", "XXXXXX"]]; // its plan
@@ -1034,7 +1034,7 @@ const PAGE_INK: Bitmap = [[120, 90, 70], ["XX"]]; // a line written on it
 const PAGE_BIT: Bitmap = [PAGE, ["XX", "X."]]; // a torn corner
 const OWLBERT_SPINE: readonly [number, number] = [7, 24]; // its pages are left and right of its book
 const STARGAZER_HEAD: FrameBox = [9, 1, 27, 14];
-// Stargazer's constellation over the opponent: [right, up] from its middle, joined in this order
+// Owlscope's constellation over the opponent: [right, up] from its middle, joined in this order
 const CONSTELLATION: readonly (readonly [number, number])[] = [[-9, 2], [-4, 6], [1, 4], [6, 8], [9, 3], [4, 0]];
 const SHURIKEN: Bitmap[] = [[[215, 225, 240], ["X.X", ".X.", "X.X"]], [[215, 225, 240], [".X.", "XXX", ".X."]]];
 const FEATHER: Bitmap = [[70, 55, 95], ["X.", ".X"]]; // off Ninjowl's wings
@@ -1612,7 +1612,7 @@ interface Pose {
   /** Ursastra's stars have left its body (they are up in the sky as a picture). */
   starless: boolean;
   /**
-   * A part of it that moves by itself (Stargazer's head, Solroll's ball, Clockarab's cog): its box
+   * A part of it that moves by itself (Owlscope's head, Solroll's ball, Clockarab's cog): its box
    * in the frame, how far it is moved [right, up] on the panel, turned round (as `turn`) and spun.
    */
   piece: { box: FrameBox; dx: number; up: number; turn: number | null; rotate: number } | null;

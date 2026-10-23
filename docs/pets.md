@@ -180,7 +180,7 @@ Every guardian has been sitting on a rare egg:
 | Cave | Gloompeep | **ember egg** |
 | Mountain | Bobbleti | **penguin egg** |
 | Coast | Whistlion | **octopus egg** |
-| Ruins | Shellmet | **gargoyle egg** |
+| Ruins | Visnail | **gargoyle egg** |
 
 A guardian leaves its egg behind the first time a pet gets past it, so every
 pet can earn each of them once. A pet that got past a guardian before that
@@ -266,7 +266,7 @@ friend's.
 | Guest | Line | What draws it |
 |---|---|---|
 | Fluffoth | caterpillar | a plant bore all three of its fruits |
-| Digby | dog | the pet played with you (a game, or the ball) on 5 of the last 7 days |
+| Spudhound | dog | the pet played with you (a game, or the ball) on 5 of the last 7 days |
 | Rotoptera | dragonfly | the pond is set out, and it rained at home in the last week |
 | Dambert | beaver | the pond and the woodpile are both set out |
 
@@ -927,9 +927,9 @@ It never lands: it hovers, one wing a blur. A hummingbird burns through
 everything: it gets tired and hungry faster.
 Its spin is a fencer's lunge, twice, with a flash at the tip of its beak, and in a scuffle its blade flashes.
 
-![Parcelbeak](images/pets/parcelbeak.png)
+![Mailican](images/pets/parcelbeak.png)
 
-**Parcelbeak**, a pelican mail carrier with a postman's cap, the crest
+**Mailican**, a pelican mail carrier with a postman's cap, the crest
 sticking through it, a huge orange bill and a mail bag across its chest. With
 a letter for everyone, it is always in a good mood: its mood drops more
 slowly. In a scuffle, letters fly out of its bag.
@@ -946,7 +946,7 @@ already knows doesn't).
 | Form | Rule |
 |---|---|
 | Rapierre | the child practiced or showed tricks 10 times (a trick shown counts at most once every 10 minutes) |
-| Parcelbeak | always |
+| Mailican | always |
 
 From its second day on, Crestling's goggles show where it is heading:
 
@@ -954,7 +954,7 @@ From its second day on, Crestling's goggles show where it is heading:
 |---|---|
 | light blue lenses in a brown frame | nothing yet (the first day) |
 | shimmering green | Rapierre |
-| orange, with a post-blue frame | Parcelbeak |
+| orange, with a post-blue frame | Mailican |
 
 The values are in `core/src/life.ts`.
 
@@ -1066,9 +1066,9 @@ of any other. It can be picked only while this holds, every time anew.
 The stages last as long as the slime's. What the adults keep is the one
 floppy ear.
 
-![Digby](images/pets/digby.png)
+![Spudhound](images/pets/digby.png)
 
-**Digby**, a dog with a garden bed growing on its back: sprouts and a carrot
+**Spudhound**, a dog with a garden bed growing on its back: sprouts and a carrot
 top, earth on its nose and paws. Its nose is always in the soil, so it gets
 dirty sooner, and it loves a game. For its spin it chases round three times
 and lies down, and in a scuffle it digs in and comes up under the opponent.
@@ -1090,10 +1090,10 @@ This line goes by how close the child is to you when it grows up.
 | Form | Rule |
 |---|---|
 | Barrelbard | it has 4 bond hearts or more when it grows up |
-| Digby | always |
+| Spudhound | always |
 
 From its second day on, Pupplet's ears and tail show where it is heading:
-sprout green for Digby, snow white for Barrelbard.
+sprout green for Spudhound, snow white for Barrelbard.
 
 The values are in `core/src/life.ts`.
 
@@ -1216,9 +1216,9 @@ like a shell, branches poking out, and its tail is a mason's trowel. It gnaws
 all day, so it gets hungry sooner. For its flip it raises its trowel and jumps
 over a little stack of wood, and in a scuffle it builds a dam in one go.
 
-![Timberjack](images/pets/timberjack.png)
+![Timbeaver](images/pets/timberjack.png)
 
-**Timberjack**, broad and bearded, the plaid of a lumberjack's shirt grown
+**Timbeaver**, broad and bearded, the plaid of a lumberjack's shirt grown
 into its fur and its tail ending in an axe blade. A lumberjack's appetite, and
 tough as an old oak: it gets hungry sooner and sick less often. For its spin
 its axe tail swings round and wood chips fly, and its special move is a tree
@@ -1233,11 +1233,11 @@ This line goes by the child's battle stats when it grows up.
 
 | Form | Rule |
 |---|---|
-| Timberjack | strength is its highest battle stat, higher than speed and smarts |
+| Timbeaver | strength is its highest battle stat, higher than speed and smarts |
 | Dambert | always |
 
 From its second day on, Gnawlet's pencil shows where it is heading: the color
-of fresh-cut wood for Dambert, plaid red for Timberjack.
+of fresh-cut wood for Dambert, plaid red for Timbeaver.
 
 The values are in `core/src/life.ts`.
 
@@ -1758,9 +1758,9 @@ so its mood sinks more slowly, and a quiz is a game too: playing means more to
 it. For its bow it shuts its book and nods, and in a scuffle pages fly at the
 opponent.
 
-![Stargazer](images/pets/stargazer.png)
+![Owlscope](images/pets/stargazer.png)
 
-**Stargazer**, an owl that has become a telescope. It sits ducked low, wings
+**Owlscope**, an owl that has become a telescope. It sits ducked low, wings
 folded flat, and its neck pulls out in brass tubes, each thinner than the
 last; the head at the top looks up into the sky, the glasses are the lenses,
 and a star sparkles where it is looking. It sleeps the day away and watches
@@ -1775,11 +1775,11 @@ and its special move is a constellation that lights up.
 
 | Form | Rule |
 |---|---|
-| Stargazer | it grows up after sunset under a clear sky |
+| Owlscope | it grows up after sunset under a clear sky |
 | Owlbert | always |
 
 From its second day on, the rims of Hootlet's glasses show where it is
-heading: tortoiseshell brown for Owlbert, brass for Stargazer.
+heading: tortoiseshell brown for Owlbert, brass for Owlscope.
 
 The values are in `core/src/life.ts`.
 
@@ -1985,7 +1985,7 @@ This is a line from the trick festival.
 |---|---|
 | ![Paper kite egg](images/pets/kite_egg.png) | **Paper kite egg** – a red festival-paper egg folded like a kite with a gold frame, a string tail with two blue bows off its point |
 | ![Foldy](images/pets/kite_baby.png) | **Baby: Foldy** – a little paper dragon, its head a folded sheet like an origami mask with one corner dog-eared, gold antlers and whiskers, its pleated body ending in a blue bow |
-| ![Crinklet](images/pets/kitelet.png) | **Child: Crinklet** – a long paper dragon with a bigger folded head and branching antlers, its pleated body on two little folded paper feet, a bow on its tail and a bigger one at the tip |
+| ![Pleatlet](images/pets/kitelet.png) | **Child: Pleatlet** – a long paper dragon with a bigger folded head and branching antlers, its pleated body on two little folded paper feet, a bow on its tail and a bigger one at the tip |
 
 The stages last as long as the slime's. What the adults keep is the tail with
 its bows.
@@ -2020,7 +2020,7 @@ is fireworks.
 | Roarigami | it has learned the dance when it grows up |
 | Origrane | always |
 
-From its second day on, Crinklet's bows show where it is heading: crane white
+From its second day on, Pleatlet's bows show where it is heading: crane white
 for Origrane, festival gold and pink for Roarigami.
 
 The values are in `core/src/life.ts`.

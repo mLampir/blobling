@@ -121,7 +121,7 @@ test("areas open one after the other, and behind the mountain the path forks", (
   assert.equal(trip.guardianWaiting(pet, "coast"), "barkguard");
   assert.equal(trip.guardianWaiting(pet, "ruins"), null);
   assert.equal(trip.discoveries(pet, "coast")[0].id, "egg_octopus"); // Whistlion sits on the octopus egg
-  assert.equal(trip.discoveries(pet, "ruins")[0].id, "egg_gargoyle"); // and Shellmet on the gargoyle's
+  assert.equal(trip.discoveries(pet, "ruins")[0].id, "egg_gargoyle"); // and Visnail on the gargoyle's
 });
 
 test("the tide at the coast comes and goes with the clock, and low tide brings more mussels", () => {
