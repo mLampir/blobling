@@ -634,3 +634,50 @@ test("the moon in the sky is the real one", () => {
   assert.ok(full > half && half > none, `${full} ${half} ${none}`);
   assert.ok(none <= 2, String(none)); // at new moon there is hardly anything to see (a star, maybe)
 });
+
+test("at the campfire the two smallest sit in front of it and the bigger ones stand on the hill", () => {
+  const s = scene() as unknown as {
+    fireSeats(pets: readonly object[]): Map<object, { middle: number; front: boolean }>;
+  };
+  const pet = (species: string, stage: string, slot: number) => ({ species, stage, item: "fire:2400", e: 60, slot });
+  const [baby, child, adult, big] = [pet("blob", "baby", 3), pet("blob", "child", 0), pet("angloop", "adult", 1),
+    pet("hivebear", "adult", 2)];
+  const four = s.fireSeats([adult, baby, big, child]);
+  assert.deepEqual([baby, child, adult, big].map((p) => four.get(p)!.front), [true, true, false, false]);
+  // the smaller one left of the fire, the other right of it; up on the hill side by side
+  assert.ok(four.get(baby)!.middle < 32 && four.get(child)!.middle > 32);
+  assert.ok(four.get(adult)!.middle !== four.get(big)!.middle);
+  // two of them: both in front, however big they are
+  const two = s.fireSeats([adult, big]);
+  assert.deepEqual([...two.values()].map((seat) => seat.front), [true, true]);
+});
+
+test("the campfire burns in the yard while it is lit, and the hill is there at the back", () => {
+  const yard = { size: 1, trough: "full", basin: "full", pets: [] };
+  const [dark] = scene().renderYard(yard, null, NIGHT, 1);
+  const [lit] = scene().renderYard({ ...yard, fire: true }, null, NIGHT, 1);
+  let brighter = 0;
+  for (let i = 0; i < dark.data.length; i += 4) {
+    if (lit.data[i] > dark.data[i] + 80) {
+      brighter += 1;
+    }
+  }
+  assert.ok(brighter > 30, `${brighter} pixels lit up`);
+  // the hill: green high above the ground, also without a fire
+  const [day] = scene().renderYard(yard, null, DAY, 1);
+  const at = (4 * ((GROUND - 10) * 64 + 32));
+  assert.ok(day.data[at + 1] > day.data[at] && day.data[at + 1] > day.data[at + 2]);
+});
+
+test("the rain barrel stands by the basin only once it has been found", () => {
+  const yard = { size: 1, trough: "full", basin: "full", pets: [] };
+  const [without] = scene().renderYard(yard, null, DAY, 1);
+  const [found] = scene().renderYard({ ...yard, barrel: true }, null, DAY, 1);
+  let changed = 0;
+  for (let i = 0; i < without.data.length; i += 4) {
+    if (without.data[i] !== found.data[i] || without.data[i + 2] !== found.data[i + 2]) {
+      changed += 1;
+    }
+  }
+  assert.ok(changed > 40, `${changed} pixels for the barrel`);
+});

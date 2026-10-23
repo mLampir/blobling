@@ -21,6 +21,29 @@ export function iconUrl(stage: string, species: string): string {
 
 const OUTLINE = [128, 132, 150]; // a form only seen: its outline in one color
 
+/** The pet in a given form on nothing (no background of the app around it): for the street. */
+export function cutoutUrl(stage: string, species: string): string {
+  const key = `cutout|${stage}|${species}`;
+  let url = urls.get(key);
+  if (!url) {
+    scene ??= new PetScene(64, 64, sceneAssets());
+    const data = imageData(scene.icon(40, stage, species));
+    const [r, g, b] = APP_BACKGROUND;
+    for (let i = 0; i < data.data.length; i += 4) {
+      if (data.data[i] === r && data.data[i + 1] === g && data.data[i + 2] === b) {
+        data.data[i + 3] = 0;
+      }
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = data.width;
+    canvas.height = data.height;
+    canvas.getContext("2d")!.putImageData(data, 0, 0);
+    url = canvas.toDataURL();
+    urls.set(key, url);
+  }
+  return url;
+}
+
 /** The outline of the pet in a given form, in one color on nothing: a form the album has only seen. */
 export function outlineUrl(stage: string, species: string): string {
   const key = `outline|${stage}|${species}`;

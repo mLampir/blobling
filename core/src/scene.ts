@@ -216,6 +216,11 @@ const YARD_HEAP = 3; // rows a full trough heaps up over its rim
 const YARD_SIDE = [0, 12, -8, 6]; // where each house's pet stands next to the others, from the middle
 const YARD_COVER = 0.45; // a trough or basin hides at most this much of a small pet (it stands on tiptoe)
 const YARD_WALK = 2.5; // seconds from the trough over to the basin
+const YARD_HILL = 17; // rows the hill at the back stands up from the ground (yard_hill)
+const BARREL_X = 58; // the middle of the rain barrel, right of the basin
+const FIRE_X = 32; // the middle of the campfire
+const FIRE_GAP = 4; // from its middle to the pets sitting in front, left and right of it (they lean in over its edge)
+const HILL_SEATS = [[32], [18, 46]]; // the middles of one or two pets standing on the hill
 
 /** Where the trough or the basin stands in the yard, at a size: [x, y, width, height] as parts of the scene (64 × 64). */
 export function yardArea(what: "trough" | "basin", size: number): [number, number, number, number] {
@@ -1279,6 +1284,12 @@ export interface YardView {
   size: number;
   trough: string;
   basin: string | null;
+  /** The campfire burns: a pet is on its way to it, sits there or is going home from it. */
+  fire?: boolean;
+  /** The rain barrel has been found: it stands by the basin. */
+  barrel?: boolean;
+  /** It really rains: the rain barrel runs into the basin. */
+  raining?: boolean;
   pets: readonly {
     species: string; stage: string; hat?: string | null; sick?: boolean; mood?: string; heavy?: boolean;
     item: string; e: number; slot: number;
@@ -5535,15 +5546,28 @@ export class PetScene {
     const code = sky.codeOf(weather);
     this.skyLook = sky.isThunder(code) ? "storm" : sky.precipitation(code) === "rain" ? "rain" : null;
     this.drawGround(img);
+    const hill = this.dimmedSprite("yard_hill");
+    img.paste(hill, 0, GROUND + 1 - hill.height);
     const size = clamp(yard.size, 0, YARD_WIDTH.length - 1);
     const trough = this.dimmedSprite(`trough_${size}_${yard.trough}`);
     const basin = yard.basin ? this.dimmedSprite(`basin_${size}_${yard.basin}`) : null;
+    if (basin && yard.barrel) {
+      this.stand(img, this.dimmedSprite("rain_barrel"), BARREL_X);
+      if (yard.raining && yard.basin !== "full") {
+        // the barrel runs over into the basin
+        const fall = (Math.trunc(t * 8) % 3);
+        for (let k = 0; k < 3; k++) {
+          img.point(BARREL_X - 5, GROUND - 9 + k * 3 + fall, WATER_DROP[0]);
+        }
+      }
+    }
     const cover = YARD_HEIGHT[size];
-    // the bigger ones behind the smaller ones, and of the same size the one further along the street
-    const behind = (stage: string) => ["adult", "child", "baby"].indexOf(stage);
-    for (const pet of [...yard.pets].sort((a, b) => behind(a.stage) - behind(b.stage) || b.slot - a.slot)) {
-      const [x, facing, doing] = this.inYard(pet);
+    const fire = yard.pets.filter((pet) => yards.atFire(pet.item));
+    const seats = this.fireSeats(fire);
+    const draw = (pet: YardView["pets"][number]) => {
       const local = t + pet.slot * 0.37; // not all in step
+      const seat = seats.get(pet);
+      const [x, facing, doing, up] = seat ? this.atFire(pet, seat) : [...this.inYard(pet), 0] as const;
       let body = "idle";
       let face = "happy";
       let jump = 0;
@@ -5552,7 +5576,7 @@ export class PetScene {
       } else if (doing === "eat") {
         const chewing = Math.trunc(local * 3) % 2;
         [body, face] = chewing ? ["squash", "eat_closed"] : ["idle", "eat_open"];
-      } else {
+      } else if (doing === "bath") {
         body = Math.trunc(local * 4) % 2 ? "squash" : "idle"; // splashing about, as when it is cleaned
       }
       const [image, top] = this.pet(pet.stage, pet.species, body, local, face, {
@@ -5562,9 +5586,9 @@ export class PetScene {
       const height = SPRITE - top;
       // at the trough, over the heap of food in it as well
       const rim = cover + (doing === "eat" && yard.trough !== "empty" ? YARD_HEAP : 0);
-      const lift = doing === "walk" ? 0 : Math.max(0, Math.round(rim - YARD_COVER * height));
+      const lift = doing === "eat" || doing === "bath" ? Math.max(0, Math.round(rim - YARD_COVER * height)) : 0;
       const px = Math.round(x) - Math.floor((image.width - SPRITE) / 2);
-      const py = GROUND - SPRITE - room - Math.round(jump) - lift;
+      const py = GROUND - SPRITE - room - Math.round(jump) - lift - Math.round(up);
       img.paste(image, px, py);
       if (doing === "bath") {
         // drops flying up out of the basin
@@ -5575,13 +5599,69 @@ export class PetScene {
             p < 0.5 ? WATER_DROP[0] : SPRAY[0]);
         }
       }
-    }
+    };
+    // the bigger ones behind the smaller ones, and of the same size the one further along the street
+    const behind = (stage: string) => ["adult", "child", "baby"].indexOf(stage);
+    const order = (pets: YardView["pets"]) =>
+      [...pets].sort((a, b) => behind(a.stage) - behind(b.stage) || b.slot - a.slot);
+    // up on the hill, at the trough and in the basin, then trough and basin, then in front of the fire
+    order(fire.filter((pet) => !seats.get(pet)!.front)).forEach(draw);
+    order(yard.pets.filter((pet) => !yards.atFire(pet.item))).forEach(draw);
     this.stand(img, trough, YARD_X.trough);
     if (basin) {
       this.stand(img, basin, YARD_X.basin);
     }
+    order(fire.filter((pet) => seats.get(pet)!.front)).forEach(draw);
+    if (yard.fire) {
+      this.stand(img, this.sheet("trip").frame("campfire", t)[0], FIRE_X); // it glows by itself, at night too
+    }
     this.drawStatus(img, [], weather, now, t);
     return [img, 1 / FPS];
+  }
+
+  /**
+   * Where the pets at the campfire sit: the two smallest in front of it, left and right, the others
+   * up on the hill behind it; with two, both in front. For each its middle and whether it is in front.
+   */
+  private fireSeats(pets: YardView["pets"]): Map<YardView["pets"][number], { middle: number; front: boolean }> {
+    const sized = pets.map((pet) => {
+      const [image] = this.pet(pet.stage, pet.species, "idle", 0, "happy", { hat: pet.hat });
+      const [x0, y0, x1, y1] = image.bbox() ?? [0, 0, SPRITE, SPRITE];
+      return { pet, width: x1 - x0, area: (x1 - x0) * (y1 - y0) };
+    }).sort((a, b) => a.area - b.area || a.pet.slot - b.pet.slot);
+    const seats = new Map<YardView["pets"][number], { middle: number; front: boolean }>();
+    const [left, right, ...up] = sized;
+    if (left) {
+      seats.set(left.pet, { middle: FIRE_X - FIRE_GAP - left.width / 2, front: true });
+    }
+    if (right) {
+      seats.set(right.pet, { middle: FIRE_X + FIRE_GAP + right.width / 2, front: true });
+    }
+    const hill = HILL_SEATS[Math.min(up.length, HILL_SEATS.length) - 1] ?? [];
+    up.forEach(({ pet }, i) => seats.set(pet, { middle: hill[i % hill.length], front: false }));
+    return seats;
+  }
+
+  /**
+   * A pet on its way to the campfire, sitting there, or going home: its left edge, which way it
+   * looks, whether it walks or sits, and how far up it is (on the hill).
+   */
+  private atFire(pet: YardView["pets"][number], seat: { middle: number; front: boolean }):
+      readonly [number, number, "walk" | "sit", number] {
+    const x = seat.middle - SPRITE / 2;
+    const facing = seat.middle < FIRE_X ? 1 : seat.middle > FIRE_X ? -1 : 1;
+    const up = seat.front ? 0 : YARD_HILL;
+    const outside = -SPRITE; // just past the left edge, towards the street
+    const stay = yards.seconds(pet.item) - yards.OUT - yards.IN - yards.LEAVE - yards.BACK;
+    // the ones for the hill come over its top, the hill going on along the street
+    if (pet.e < yards.IN) {
+      return [outside + (x - outside) * pet.e / yards.IN, 1, "walk", up];
+    }
+    if (pet.e < yards.IN + stay) {
+      return [x, facing, "sit", up];
+    }
+    const f = clamp((pet.e - yards.IN - stay) / yards.LEAVE, 0, 1);
+    return [x + (outside - x) * f, -1, "walk", up];
   }
 
   /**

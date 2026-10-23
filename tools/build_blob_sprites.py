@@ -9043,6 +9043,111 @@ TRIP_TAGS |= {f"trough_{size}_{level}": [(trough(w, h, level), 1000)]
               for size, (w, h) in enumerate(YARD_SIZES) for level in YARD_LEVELS}
 TRIP_TAGS |= {f"basin_{size}_{level}": [(basin(w, h, level), 1000)]
               for size, (w, h) in enumerate(YARD_SIZES) for level in YARD_LEVELS}
+# The hill at the back of the yard, as wide as the scene: flat on top for two pets to stand on at
+# the campfire (scene.YARD_HILL rows high), rounded at the ends, with a light grass edge, tufts,
+# flowers and a few stones in its slope. The row above the top is for the tufts.
+TRIP_PALETTE |= {"L": (30, 92, 42)}  # the hill's slope in the shade
+YARD_HILL = 17
+YARD_HILL_ENDS = 9  # columns at each end over which it rounds down to the ground
+
+
+def hill(width=64, height=YARD_HILL):
+    import math
+    def top(x):  # rows above the ground at the column x
+        edge = min(x, width - 1 - x)
+        return height if edge >= YARD_HILL_ENDS else round(height * math.sin(edge / YARD_HILL_ENDS * math.pi / 2))
+    rows = [["."] * width for _ in range(height + 1)]
+    for x in range(width):
+        h = top(x)
+        if h <= 0:
+            continue
+        first = height + 1 - h  # the row of its grass edge
+        for y in range(first, height + 1):
+            depth = y - first
+            rows[y][x] = "l" if depth == 0 else "g" if depth == 1 else "L" if depth > 9 or (depth > 6 and (x + y) % 2) else "G"
+        if x % 5 == 2 and first > 0:
+            rows[first - 1][x] = "g"  # a tuft
+    flowers = "wypb"
+    for i, (x, d) in enumerate([(6, 5), (13, 3), (21, 7), (27, 4), (36, 8), (43, 3), (50, 6), (57, 4), (17, 10), (46, 10)]):
+        y = height + 1 - top(x) + d
+        if y <= height - 1:
+            rows[y][x] = flowers[i % len(flowers)]
+    for x, d in [(10, 8), (39, 6), (54, 9)]:
+        y = height + 1 - top(x) + d
+        if y <= height - 1:
+            rows[y][x:x + 3] = ["s", "s", "s"]
+            rows[y + 1][x + 1:x + 3] = ["S", "S"]
+    return ["".join(r) for r in rows]
+
+
+# The rain barrel next to the basin: staves with two hoops, the rain water at the top
+BARREL = [
+    ".TTTTTT.",
+    "TbbibbbT",
+    "TBbbbbBT",
+    "SsssssSS",
+    "tdtttDtT",
+    "tdtttDtT",
+    "tdtttDtT",
+    "SsssssSS",
+    "tdtttDtT",
+    "tdtttDtT",
+    "SsssssSS",
+    ".TTTTTT.",
+]
+# The campfire: crossed logs in a ring of stones and a flame about half as tall as a child, in
+# three frames; it glows by itself at night (it isn't dimmed)
+FIRE_BASE = [
+    "...TtT...TtT...",
+    "..sTttTtTttTs..",
+    "sSs.TTtTtTT.sSs",
+]
+FIRE_FLAMES = [
+    [
+        "......y........",
+        ".....yo........",
+        ".....yoo..o....",
+        "....yyoO..y....",
+        "....yeyoO.yo...",
+        "...yeeyyoOyo...",
+        "...yeeeeyyoO...",
+        "..oyeffeeyoO...",
+        "..oyefffeeyO...",
+        "..oyeffffeyO...",
+        "...oyeffeyoO...",
+    ],
+    [
+        "........y......",
+        "........oy.....",
+        "....o..ooy.....",
+        "....y..Ooyy....",
+        "...oy.Ooyeyy...",
+        "...oyOoyyeey...",
+        "...Ooyyeeeey...",
+        "...OoyeeffeyO..",
+        "...OyeefffeyO..",
+        "...OyeffffeyO..",
+        "...OoyeffeyoO..",
+    ],
+    [
+        "...............",
+        ".......y.......",
+        "......yoy......",
+        "...y..yooy.....",
+        "...yo.yoOy.y...",
+        "...yoyyeoyyo...",
+        "...yoyeeeyoO...",
+        "..OyyeffeeyoO..",
+        "..OyeefffeeyO..",
+        "..OyeffffeeyO..",
+        "...OyeffeeyO...",
+    ],
+]
+TRIP_TAGS |= {
+    "yard_hill": [(hill(), 1000)],
+    "rain_barrel": [(BARREL, 1000)],
+    "campfire": [(flames + FIRE_BASE, 160) for flames in FIRE_FLAMES],
+}
 # The finds for the yard, held up like other finds: the water basin from the stream, and the
 # planks from the coast and the ruins that make trough and basin a size bigger
 PLANKS = [

@@ -81,12 +81,21 @@
   .pill.name h1 { font-size: 20px; text-shadow: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pill.name .chev { font-size: 20px; line-height: 1; }
   .hero-buttons { flex: none; display: flex; gap: 8px; }
-  .neighbours { display: flex; gap: 6px; }
-  .pill.neighbour { position: relative; padding: 0 6px; }
-  .pill.neighbour img { width: 28px; height: 28px; image-rendering: pixelated; }
-  .pill.neighbour.away img { opacity: .45; }
-  .pill.neighbour.phone::before { content: ""; position: absolute; bottom: 3px; left: 3px; width: 6px; height: 9px; border: 1.5px solid var(--muted); border-radius: 2px; }
-  .pill.neighbour.calls::after { content: ""; position: absolute; top: 3px; right: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  /* The street under the scene: the houses and then the yard, flat, the place the scene shows framed.
+     A dot: that pet needs something, or somebody is in the yard; faded: away (a trip, Grandma's). */
+  /* (on the page's own background, which the pictures of the pets have too) */
+  .street { display: flex; align-items: center; gap: 2px; margin: 8px 12px 0; padding: 2px 6px; border-radius: 16px; border: 1px solid var(--line); }
+  .street button { position: relative; flex: 1; min-width: 0; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 11px; overflow: hidden; }
+  /* the pictures of the pets have a margin of their own: a little closer */
+  .street img { height: 34px; max-width: 44px; object-fit: contain; image-rendering: pixelated; transform: scale(1.3); }
+  .street .place { margin-left: 4px; }
+  .street .place::before { content: ""; position: absolute; left: -3px; top: 7px; bottom: 7px; width: 1px; background: var(--line); }
+  .street .place img { height: 22px; transform: none; }
+  .street .here { box-shadow: inset 0 0 0 2px var(--accent); }
+  .street .away img { opacity: .4; }
+  .street .phone::after { content: ""; position: absolute; bottom: 3px; left: 5px; width: 5px; height: 8px; border: 1.5px solid var(--muted); border-radius: 2px; }
+  .street .calls::before, .street .place.there::after { content: ""; position: absolute; top: 2px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .home.busy > .street { display: none; }  /* a panel is open: the scene and what it needs only */
   .pill.wanted:not(:disabled) { box-shadow: 0 0 0 2px var(--energy); }
   .fx { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
   .fx span { position: absolute; font-size: 22px; color: var(--mood); animation: float 1s ease-out forwards; }
@@ -461,13 +470,14 @@
       <div class="hero-top">
         <div><button class="pill name" id="name-button"><img id="name-icon" alt=""><h1 id="name">…</h1><span class="chev">›</span></button></div>
         <div class="hero-buttons">
-          <div class="neighbours" id="neighbours"></div>
           <button class="pill" id="sleep" hidden></button>
         </div>
         <p class="sub" id="sub"></p>
       </div>
       <div class="fx" id="fx"></div>
     </div>
+    <!-- The street: every house and the yard, in their order, right under the scene -->
+    <nav class="street" id="street" hidden></nav>
     <div class="needs" id="stats"></div>
     <div class="status">
       <p class="next" id="next" hidden></p>
@@ -1131,7 +1141,7 @@ function render(s) {
   $("name").textContent = s.name;
   $("name-icon").src = app.icon(s.stage, s.species);
   $("nav-name").textContent = s.name;
-  renderNeighbours(s);
+  renderStreet(s);
   document.querySelectorAll(".pet-name").forEach((e) => { e.textContent = s.name; });
   document.title = s.name;
   const egg = s.stage === "egg";
@@ -2582,41 +2592,46 @@ $("sleep").addEventListener("click", () => {
   if (current) act(current.asleep ? "wake" : "sleep");
 });
 
-// The other pets at home, next to the name: a tap switches to one of them. A dot: it needs
-// something; faded: it is away (on a trip, or at Grandma's).
-// With two pets or more, the last one is the yard after the last house; while the scene shows the
-// yard, all the pets are in the row.
-function renderNeighbours(s) {
+// The street under the scene, with two pets or more: every house in its order and then the yard.
+// A tap pans there; the place the scene shows is framed. A dot: that pet needs something, or a pet
+// is over in the yard; faded: it is away (on a trip, or at Grandma's).
+function renderStreet(s) {
+  const row = $("street");
+  row.hidden = s.pets.length < 2;
+  if (row.hidden) return;
   const yard = app.atYard(s);
-  const others = s.pets.filter((p) => yard || p.id !== s.id);
-  const row = $("neighbours");
-  const key = others.map((p) => p.id + p.stage + p.species).join() + (s.yard && !yard ? ",yard" : "");
+  const key = s.pets.map((p) => p.id + p.stage + p.species).join() + (s.yard ? ",yard" : "");
   if (row.dataset.ids !== key) {
     row.dataset.ids = key;
     const toYard = document.createElement("button");
-    toYard.className = "pill neighbour";
+    toYard.className = "place";
     toYard.dataset.id = "yard";
     toYard.setAttribute("aria-label", t("page.look_yard"));
     toYard.append(Object.assign(document.createElement("img"), { alt: "", src: app.thing("yard") }));
     toYard.addEventListener("click", lookYard);
-    row.replaceChildren(...others.map((p) => {
+    row.replaceChildren(...s.pets.map((p) => {
       const b = document.createElement("button");
-      b.className = "pill neighbour";
       b.dataset.id = p.id;
       const img = document.createElement("img");
       img.alt = "";
-      img.src = app.icon(p.stage, p.species);
+      img.src = app.cutout(p.stage, p.species);
       b.append(img);
       b.addEventListener("click", () => look(p.id));
       return b;
-    }), ...(s.yard && !yard ? [toYard] : []));
+    }), ...(s.yard ? [toYard] : []));
   }
-  for (const p of others) {
+  for (const p of s.pets) {
     const b = row.querySelector(`[data-id="${p.id}"]`);
+    b.classList.toggle("here", !yard && p.id === s.id);
     b.classList.toggle("calls", p.needs); // not "needs": that is the row of meters
     b.classList.toggle("away", p.away || p.grandma);
     b.classList.toggle("phone", !!p.phone);
     b.setAttribute("aria-label", t(p.phone ? "page.look_phone" : "page.look", { name: p.name }));
+  }
+  const toYard = row.querySelector('[data-id="yard"]');
+  if (toYard) {
+    toYard.classList.toggle("here", yard);
+    toYard.classList.toggle("there", s.yard.there.length > 0);
   }
 }
 
