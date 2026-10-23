@@ -488,7 +488,7 @@ evening it leaves a rare egg up on the roof, once for every pet, and is gone.
 Every second Saturday is the **trick festival**, all day. Three days before,
 its poster hangs on the fence, and now and then the pet goes over to it and
 hops in front of it, excited. A tap on the poster in the app opens it: the day
-on a calendar leaf and a dot for each day still to wait. The *Trip* tab has a
+on a calendar leaf, and what there is to win. The *Trip* tab has a
 line with the date that opens the same poster, also while the pet is away. On
 the day, the poster has four slots: tap tricks into them in the order it is to
 show them (it starts with its best ones), and **To the festival** sends it

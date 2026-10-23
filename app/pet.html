@@ -347,8 +347,13 @@
   }
   .poster-day b { padding: 2px 8px; background: var(--poster-red); color: #fff; font-size: 13px; }
   .poster-day span { padding: 2px 8px 4px; font: 700 26px/1.1 var(--round); }
-  .poster-dots { display: flex; gap: 6px; }
-  .poster-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--energy); }
+  .poster-title { font-size: 26px; letter-spacing: .04em; color: var(--accent); }
+  .sheet .poster-line { max-width: 30ch; font-weight: 700; text-wrap: balance; }
+  .poster-prizes { display: flex; gap: 18px; align-items: flex-end; }
+  .poster-prizes span { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .poster-prizes img { width: 40px; height: 40px; image-rendering: pixelated; }
+  .poster-prizes b { font-size: 13px; color: var(--muted); }
+  .poster-prizes .egg::after { content: "?"; position: absolute; top: 8px; font: 700 18px/1 var(--round); color: var(--energy); }
   #festival-when { margin: 0; }
   /* the tricks for the festival: each as its move, in the slots in the order it shows them */
   #festival-slots svg, #festival-tricks svg { width: 26px; height: 26px; vertical-align: middle; }
@@ -509,8 +514,15 @@
       <button class="close" id="festival-close" data-t-aria="page.close">✕</button>
       <div class="poster">
         <svg class="poster-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+        <h3 class="poster-title" data-t="page.festival.title"></h3>
+        <p class="poster-line" data-t="page.festival.line"></p>
         <div class="poster-day" id="festival-day" role="img"><b id="festival-weekday"></b><span id="festival-date"></span></div>
-        <div class="poster-dots" id="festival-dots" aria-hidden="true"></div>
+        <!-- what there is to win: an egg for the first place (which one, it doesn't say), a ribbon for the second and third -->
+        <div class="poster-prizes" aria-hidden="true">
+          <span class="egg"><img id="prize-egg" alt=""><b>1</b></span>
+          <span><img id="prize-blue" alt=""><b>2</b></span>
+          <span><img id="prize-red" alt=""><b>3</b></span>
+        </div>
         <p id="festival-when" hidden></p>
         <div class="packing" id="festival-pick">
           <p data-t="page.festival.what"></p>
@@ -1251,14 +1263,10 @@ function renderFestival(s) {
   const went = f.today && f.reason === "festival_done";
   $("festival").textContent = went ? t("page.festival.went", { name: s.name })
     : f.today ? t("page.festival.today") : t("page.festival.soon", { date });
-  // the poster: the day on a calendar leaf, and a dot for each day still to wait
+  // the poster: the day on a calendar leaf
   $("festival-day").setAttribute("aria-label", date);
   $("festival-weekday").textContent = day.toLocaleDateString(LANG, { weekday: "short" });
   $("festival-date").textContent = day.toLocaleDateString(LANG, { day: "numeric" });
-  const midnight = new Date();
-  midnight.setHours(0, 0, 0, 0);
-  const wait = Math.max(0, Math.round((day - midnight) / 86_400_000));
-  $("festival-dots").replaceChildren(...Array.from({ length: wait }, () => document.createElement("i")));
   $("festival-when").hidden = !went;
   $("festival-when").textContent = went ? t("page.festival.went", { name: s.name }) : "";
   // it can be sent off any time on the day, while it isn't away (else it says why, once asked)
@@ -1304,6 +1312,9 @@ function renderShows() {
 }
 function openFestival() {
   festivalFor = "";
+  $("prize-egg").src = app.discovery("egg_blob", false);
+  $("prize-blue").src = app.discovery("ribbon_blue", true);
+  $("prize-red").src = app.discovery("ribbon_red", true);
   openSheet("festival-mode");
   renderFestival(current);
 }
