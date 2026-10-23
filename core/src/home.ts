@@ -126,7 +126,7 @@ export const GROW_MINUTES = 24 * 60; // from seed to plant
 export const RIPEN_MINUTES = 24 * 60; // per fruit, only ever one at a time
 export const FRUITS = 3; // after that the plant wilts
 export const RAIN_FACTOR = 2; // in real rain everything grows twice as fast
-export const EAT_BELOW = 40; // below this value the pet eats a ripe fruit by itself
+export const EAT_BELOW = 60; // below this value the pet eats a ripe fruit by itself: above the yard's GOES_AT, so it picks the fruit first
 
 // Warmth: the ember stone glows from inside. Set out, it makes whatever is still growing grow
 // faster. And when it is cold outside, the pet shivers for a while after waking up: a moment to

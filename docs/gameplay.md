@@ -571,7 +571,8 @@ there to see what it brought:
 
 - **Seeds** go into the bag and are dragged from there into the scene like food. One plant grows at a time
   (a day to grow, then one fruit a day, twice as fast in real rain). The pet
-  eats a ripe fruit by itself when it needs it. After three fruits the plant
+  eats a ripe fruit by itself once the value it fills is below 60, so before
+  it would go to the yard's trough. After three fruits the plant
   wilts. Berries fill it up, sunflower seeds wake it up, giggle cherries cheer
   it up. The rare healing herb is good for its health, and its blossom cures a
   sickness without medicine.
