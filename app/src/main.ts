@@ -20,7 +20,7 @@ import { eased, panSeconds } from "../../core/src/street";
 import type { Location } from "../../core/src/sun";
 import { locales, soundFiles } from "./assets";
 import { haptic } from "./haptics";
-import { discoveryUrl, iconUrl, outlineUrl, thingUrl } from "./icons";
+import { cutoutUrl, discoveryUrl, iconUrl, outlineUrl, thingUrl } from "./icons";
 import { LocalPet } from "./local";
 import { locate, native } from "./native";
 import { reminders } from "./notify";
@@ -375,6 +375,8 @@ const app = {
 
   /** A picture of the pet in a form, as a URL for an <img>. */
   icon: iconUrl,
+  /** The same on nothing, without the app's background around it. */
+  cutout: cutoutUrl,
   /** The outline of the pet in a form, in one color: a form the album has only seen. */
   outline: outlineUrl,
 

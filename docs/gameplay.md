@@ -299,10 +299,13 @@ favorite can stay while new eggs are raised for the album.
   makes friends, grows up and calls you, whichever one you look at. One that
   nobody does anything with for a day and a half goes to Grandma's, like a
   single pet (see [At Grandma's](#at-grandmas)).
-- **Switching only moves the camera.** Small pictures of the other pets sit
-  at the top, next to the name; a tap on one looks at it, and the picture pans along
-  the street to its house. Nobody moves: each pet keeps its own house, plant
-  and decorations. A small dot on a picture says that pet needs something.
+- **Switching only moves the camera.** A strip under the scene shows the
+  street: every pet at home, in the order of their houses, then the yard. A
+  frame marks the one the camera is on; a tap on another looks at it, and the
+  picture pans along the street to its house. Nobody moves: each pet keeps its
+  own house, plant and decorations. A small dot on a pet says it needs
+  something, a faded one is away (on a trip, at Grandma's), and a dot on the
+  yard says somebody is there.
 - **One store for all.** The finds, the food and the eggs belong to the whole
   home. A hat or a decoration exists once: put it on one pet, and it comes off
   the other. A pet that moves to another home takes its hat and the
@@ -342,8 +345,8 @@ display's settings page a pet can be pinned, so the panel always shows that
 one. A switch pans along the street there too.
 
 **The phone and the display** each have a home of their own, with their own
-places. Connecting the app to a display moves no pet; the pictures at the top
-show the pets of both, the phone's with a small phone sign. Away from home,
+places. Connecting the app to a display moves no pet; the street strip
+shows the pets of both, the phone's with a small phone sign. Away from home,
 with the display out of reach, the app shows only the phone's own pets.
 
 - **Take along on this phone** (under *More*, for a pet of the display) moves
@@ -367,8 +370,8 @@ with the display out of reach, the app shows only the phone's own pets.
 ### The yard
 
 With two pets or more at home, the street ends in a yard, right of the last
-house. It belongs to the home, like the store, and the pictures at the top get
-one more for it; a tap there pans over, a tap on a pet pans back.
+house. It belongs to the home, like the store, and the street strip ends with
+it; a tap there pans over, a tap on a pet pans back.
 
 - **A trough** comes with the yard, full. **A water basin** is found once at
   the stream and comes full as well. Both hold portions, not time.
@@ -395,6 +398,16 @@ one more for it; a tap there pans over, a tap on a pet pans back.
   brought home, driftwood planks can be found there, and old castle planks in
   the ruins after the same. Each makes the yard one size bigger; the basin
   comes at the size the yard has when it is found.
+- **A rain barrel** stands at the basin once that is found: while it rains,
+  it adds a portion every ten minutes, up to the basin's size.
+- **A campfire** is lit on dry evenings (no rain, no snow) when two pets or
+  more are at home: about 40 minutes before bedtime, every pet that is free
+  (awake, at home, not busy) goes over, as long as at least ten minutes are
+  left at the fire. There they are a little happier (+10 mood an hour) and stay
+  until bedtime; whoever falls asleep goes home. Nobody is left out: the two
+  smallest sit in front of the trough and the basin, left and right of the
+  fire, and the others on the hill behind, which is always there. During the
+  day the pets stand behind the trough as usual.
 
 It all follows the simulation, minute by minute for all pets together, so who
 gets the last portion is the same whether anybody is looking or not.
@@ -1012,8 +1025,8 @@ Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
 
 - **The pet** fills the screen: the scene, with the sky going on above it, the
   pet's name, form, age and mood at the top, and the **Sleep** / **Wake up**
-  button next to them; with several pets at home, the pictures of the others
-  too, to switch to them. The name is a button: it opens the pet's own things
+  button next to them; with several pets at home, the street strip under
+  the scene switches between them and the yard. The name is a button: it opens the pet's own things
   (rename it, start over with a usual egg, move a pet to the album, and with a
   display, take it along or bring it there). Stroke the pet itself to pet it (an egg
   or a shivering pet is rubbed warm); the rest of the scene doesn't count,

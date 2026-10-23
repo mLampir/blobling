@@ -52,7 +52,8 @@ a day and also tells you the time and the weather.
   and the neighbours get together to play, copy a trick from each other and
   sleep side by side at night. At the end of the street their shared yard
   has a trough and, once found, a water basin: the pets go over by themselves
-  when they are hungry or dirty, and a tap fills them up.
+  when they are hungry or dirty, and a tap fills them up. On dry evenings they
+  sit together at a campfire there before bed.
 - **It is forgiving.** The pet never dies. Neglect makes it hungry, sad or
   sick, and that can always be fixed. Away for longer, it stays at Grandma's
   until you fetch it, and if you take it there yourself before a busy week,
