@@ -183,7 +183,7 @@ test("visits lead to a nest with an egg", () => {
   pet.friends[0].visits = wild.VISITS_FOR_NEST - 1;
   runUntil(pet.updated_at + wild.VISIT_SECONDS + 120);
   assert.deepEqual([pet.friends[0].species, pet.friends[0].visits, pet.friends[0].nests], ["sneezle", 0, 1]);
-  assert.deepEqual(pet.nest, { line: "blob", from: "Puff", skills: { strength: 20.0, speed: 10.3, smarts: 0.0 } });
+  assert.deepEqual(pet.nest, { line: "blob", from: "Puff", skills: { strength: 8.0, speed: 4.1, smarts: 5.0 } });
   assert.deepEqual([pet.events.at(-1)!.action, pet.events.at(-1)!.item], ["nest", "blob"]);
   assert.equal(wild.looking(pet), false); // not while the egg is still in the nest
   const now = pet.updated_at;
@@ -217,6 +217,22 @@ test("after the nest the friend stays, comes less often, and after a rest there 
   friend.until = later;
   assert.deepEqual(wild.step(pet, later, true), [["nest", pet.nest!.line]]);
   assert.deepEqual([friend.visits, friend.nests, friend.rest_until], [0, 2, later + wild.NEST_REST]);
+});
+
+test("a friend's egg gets more from it the longer they are friends", () => {
+  pet.skills = { strength: 50.0, speed: 0.0, smarts: 20.0 };
+  // the pet adds a small part of its stats, the friend points in its line's stat
+  assert.deepEqual(wild.fromFriend(pet, "bear", 0), { strength: 10.0, speed: 0.0, smarts: 2.0 });
+  assert.deepEqual(wild.fromFriend(pet, "owl", 0), { strength: 5.0, speed: 0.0, smarts: 7.0 });
+  // each egg it has brought before adds more, up to FRIEND_SKILL_MAX
+  const points = [0, 1, 2, 3, 4, 9].map((nests) => wild.fromFriend(pet, "fox", nests).speed);
+  assert.deepEqual(points, [5.0, 10.0, 15.0, 20.0, 20.0, 20.0]);
+  // the pet's own egg keeps the larger part, and nothing from a friend
+  assert.deepEqual(wild.heirloom(pet), { strength: 12.5, speed: 0.0, smarts: 5.0 });
+});
+
+test("every line has a stat it is good at", () => {
+  assert.deepEqual(Object.keys(life.LINE_SKILL).sort(), Object.keys(life.LINES).sort());
 });
 
 test("a nest waits while there is no room for the egg", () => {

@@ -62,6 +62,14 @@ export const LINES: Record<string, readonly string[]> = {
   // the troublemaker's: the magpie leaves her egg once she has been chased off often enough (magpie.ts)
   magpie: ["glintrick", "cardwing", "illusionna"],
 };
+// Line: the battle stat it is good at, which a friend of the line adds to the egg it brings (wild.fromFriend)
+export const LINE_SKILL: Record<string, "strength" | "speed" | "smarts"> = {
+  blob: "smarts", ember: "speed", stone: "strength", fox: "speed", cloud: "speed", leaf: "smarts",
+  duck: "speed", hippo: "strength", beak: "speed", caterpillar: "smarts", dog: "strength",
+  dragonfly: "speed", beaver: "strength", crab: "strength", axolotl: "smarts", mouse: "smarts",
+  bear: "strength", penguin: "speed", bat: "speed", owl: "smarts", chameleon: "smarts",
+  scarab: "strength", kite: "speed", octopus: "smarts", gargoyle: "strength", magpie: "smarts",
+};
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
  * child has a name of its own, in `children` of the language files), or else the stage.

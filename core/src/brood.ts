@@ -7,7 +7,7 @@
  * need not follow each other. A day it spent at Grandma's or out on a trip all the time has no
  * such minutes, and doesn't count. After DAYS of them, the next morning it wakes up at home, an
  * egg of its own line lies in the nest (state.nest, the bed of moss a friend's egg lies in too;
- * wild.ts), with a part of its battle stats as its heirloom, the same part a friend's egg gets.
+ * wild.ts), with a part of its battle stats as its heirloom (wild.HEIRLOOM, more than a friend's egg gets from it).
  * While the nest is taken or there is no room for another egg of its line, it waits for a later
  * morning.
  *

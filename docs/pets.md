@@ -228,6 +228,23 @@ The values are in `core/src/wild.ts`.
 
 </details>
 
+<details>
+<summary>Show what a friend gives its egg</summary>
+
+A friend's egg gets points in the battle stat the friend's line is good at
+(5 with its first egg, 5 more with each later one, at most 20). Guests from the
+garden count as friends here too.
+
+| Stat | Lines |
+|---|---|
+| Strength | stone, hippo, dog, beaver, crab, bear, scarab, gargoyle |
+| Speed | ember, fox, cloud, duck, beak, dragonfly, penguin, bat, kite |
+| Smarts | blob (the slime), leaf, caterpillar, axolotl, mouse, owl, chameleon, octopus, magpie |
+
+The lines are in `LINE_SKILL` in `core/src/life.ts`.
+
+</details>
+
 ## Guests in the garden
 
 Four lines live nowhere on a trip: their pets come to the garden when
