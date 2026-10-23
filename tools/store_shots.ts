@@ -22,6 +22,7 @@
  *   dist/store/shots/<language>/<device>/<id>.png the pictures of the app alone
  *   dist/store/contact-<language>.png             all framed phone pictures side by side, to judge them as a set
  *   dist/store/play-feature-1024x500/<language>.png  the feature graphic of the Google Play listing
+ *   dist/store/appstore-header-5244x2950/header.png  the header of the App Store product page
  *
  * Needs Chromium for Playwright once: npx playwright install chromium
  */
@@ -68,10 +69,9 @@ interface Device {
   radius: number;
 }
 
-/** The devices the app is photographed on: a large iPhone, and an iPad for the iPad pictures. */
+/** The device the app is photographed on: a large iPhone. */
 const DEVICES: Record<string, Device> = {
   phone: { width: 430, height: 932, scale: 3, safeTop: 54, safeBottom: 34, radius: 55 },
-  tablet: { width: 1032, height: 1376, scale: 2, safeTop: 24, safeBottom: 20, radius: 18 },
 };
 
 interface Size {
@@ -81,13 +81,12 @@ interface Size {
 }
 
 /**
- * The sizes the stores take. App Store: the 6.9" iPhone and the 13" iPad (the app runs on iPads,
- * so their pictures are required); the stores scale them down for the smaller devices. Google
- * Play: a phone picture in 9:16, at least 1080 pixels wide.
+ * The sizes the stores take. App Store: the iPhone size App Store Connect asks for (6.3", 1206 ×
+ * 2622); the app is offered for iPhone only, so no iPad pictures are needed (on an iPad it runs in
+ * iPhone mode). The stores scale them for the other devices. Google Play: a phone picture in 9:16, at least 1080 pixels wide.
  */
 const SIZES: Record<string, Size> = {
-  "appstore-iphone-1320x2868": { width: 1320, height: 2868, device: "phone" },
-  "appstore-ipad-2064x2752": { width: 2064, height: 2752, device: "tablet" },
+  "appstore-iphone-1206x2622": { width: 1206, height: 2622, device: "phone" },
   "play-phone-1080x1920": { width: 1080, height: 1920, device: "phone" },
 };
 
@@ -424,16 +423,15 @@ function stars(count: number): string {
 /**
  * One framed picture: the headline at the top, the device below it, whole and never cut off, on
  * the night sky of the app. Every measure is a share of the width (cqw), so the same design fits
- * the narrow iPhone, the wider Play size and the iPad.
+ * the narrow iPhone and the wider Play size.
  */
 function frameHtml(size: Size, copy: Copy, shot: string): string {
   const device = DEVICES[size.device];
-  const phone = size.device === "phone";
   // How wide the device may be: as wide as fits under the headline, at most this share of the width
-  const room = size.height / size.width - (phone ? 0.56 : 0.3); // height left for the device, in widths
+  const room = size.height / size.width - 0.56; // height left for the device, in widths
   const aspect = device.height / device.width;
-  const bezel = phone ? 2.2 : 1.6; // in cqw
-  const width = Math.min(phone ? 84 : 86, (room * 100 - 2 * bezel) / aspect);
+  const bezel = 2.2; // in cqw
+  const width = Math.min(84, (room * 100 - 2 * bezel) / aspect);
   const radius = (device.radius / device.width) * width;
   return `<!doctype html><html><head><meta charset="utf-8">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=block">
@@ -442,18 +440,18 @@ function frameHtml(size: Size, copy: Copy, shot: string): string {
   body { container-type: inline-size; position: relative; color: #eef1f8; font-family: "Nunito", system-ui, sans-serif;
     background: radial-gradient(120% 70% at 50% 100%, #24356b 0%, #141c35 55%, #0d1220 100%); }
   .stars i { position: absolute; background: #eef1f8; }
-  .head { position: absolute; left: 7cqw; right: 7cqw; top: ${phone ? 11 : 5}cqw; text-align: center; }
-  h1 { margin: 0; font-weight: 800; font-size: ${phone ? 8.6 : 5.6}cqw; line-height: 1.1; letter-spacing: -0.01em; text-wrap: balance; }
-  p { margin: ${phone ? 2.4 : 1.4}cqw 0 0; font-weight: 600; font-size: ${phone ? 4.4 : 2.7}cqw; line-height: 1.3; color: #ffb347; text-wrap: balance; }
-  .device { position: absolute; left: 50%; bottom: ${phone ? 6 : 4}cqw; transform: translateX(-50%); width: ${width}cqw;
+  .head { position: absolute; left: 7cqw; right: 7cqw; top: 11cqw; text-align: center; }
+  h1 { margin: 0; font-weight: 800; font-size: 8.6cqw; line-height: 1.1; letter-spacing: -0.01em; text-wrap: balance; }
+  p { margin: 2.4cqw 0 0; font-weight: 600; font-size: 4.4cqw; line-height: 1.3; color: #ffb347; text-wrap: balance; }
+  .device { position: absolute; left: 50%; bottom: 6cqw; transform: translateX(-50%); width: ${width}cqw;
     padding: ${bezel}cqw; border-radius: ${radius + bezel}cqw; background: #05070c;
     box-shadow: 0 0 0 0.3cqw #3a4466, 0 3cqw 8cqw rgba(0, 0, 0, .55), 0 0 12cqw rgba(95, 140, 255, .18); }
   .device img { display: block; width: 100%; border-radius: ${radius}cqw; }
-  ${phone ? `.device::after { content: ""; position: absolute; top: calc(${bezel}cqw + ${(11 / device.width) * width}cqw); left: 50%;
+  .device::after { content: ""; position: absolute; top: calc(${bezel}cqw + ${(11 / device.width) * width}cqw); left: 50%;
     transform: translateX(-50%); width: ${(125 / device.width) * width}cqw; height: ${(37 / device.width) * width}cqw;
-    border-radius: 99px; background: #000; }` : ""}
+    border-radius: 99px; background: #000; }
 </style></head><body>
-<div class="stars">${stars(phone ? 40 : 60)}</div>
+<div class="stars">${stars(40)}</div>
 <div class="head"><h1>${escape(copy.title)}</h1>${copy.subtitle ? `<p>${escape(copy.subtitle)}</p>` : ""}</div>
 <div class="device"><img src="data:image/png;base64,${shot}"></div>
 </body></html>`;
@@ -569,6 +567,43 @@ async function featureGraphic(browser: Browser, language: string): Promise<void>
   console.log(`  ${file}`);
 }
 
+/**
+ * The header of the App Store product page (16:9, 5244 × 2950, shown on iOS 27 and later above the
+ * icon and the name): the pet growing up, from egg to Angloop, on the meadow under the night sky.
+ * No text, so one picture serves every language; the name stands right below it anyway. An iPhone
+ * shows only about the middle half of its width and the upper half of its height (the rest lies
+ * under the buttons and the page below), so the pets stand close together in the middle, with
+ * their feet just above half its height.
+ */
+async function headerGraphic(browser: Browser): Promise<void> {
+  const scene = new PetScene(64, 64, readAssets());
+  const PIXEL = 10; // one pixel of the sprites, in CSS pixels of the page (drawn at twice that)
+  const forms = [["egg", "blob"], ["baby", "blob"], ["child", "blob"], ["adult", "angloop"]].map(([stage, species]) => {
+    const { png, width, height } = form(scene, stage, species);
+    return `<img src="data:image/png;base64,${png}" style="width:${width * PIXEL}px;height:${height * PIXEL}px">`;
+  });
+  const page = await browser.newPage({ viewport: { width: 2622, height: 1475 }, deviceScaleFactor: 2 });
+  await page.setContent(`<!doctype html><html><head><meta charset="utf-8">
+<style>
+  body { margin: 0; width: 2622px; height: 1475px; overflow: hidden; position: relative;
+    background: radial-gradient(70% 90% at 50% 100%, #2c4290 0%, #172347 50%, #0d1220 100%); }
+  .stars i { position: absolute; background: #eef1f8; }
+  .ground { position: absolute; left: 0; right: 0; bottom: 0; height: 700px; background: #46290f; border-top: 40px solid #2e8c34; }
+  .line { position: absolute; left: 0; right: 0; bottom: 700px; display: flex; justify-content: center; align-items: flex-end; gap: 70px; }
+  .line img { image-rendering: pixelated; display: block; }
+</style></head><body>
+<div class="stars">${stars(60)}</div>
+<div class="ground"></div>
+<div class="line">${forms.join("")}</div>
+</body></html>`);
+  const dir = join(OUT, "appstore-header-5244x2950");
+  mkdirSync(dir, { recursive: true });
+  const file = join(dir, "header.png");
+  await page.screenshot({ path: file });
+  await page.close();
+  console.log(`  ${file}`);
+}
+
 // ---------- Main ----------
 
 const { values } = parseArgs({
@@ -610,6 +645,7 @@ try {
     await frame(browser, language, shots);
     await featureGraphic(browser, language);
   }
+  await headerGraphic(browser);
 } finally {
   await browser.close();
 }
