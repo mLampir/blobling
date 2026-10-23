@@ -65,7 +65,7 @@ test("where the face sits", () => {
     const steps = [0, 0.25, 0.35, 0.6].map((t) => faceAnchor(sheet.frame("walk", t)[0], sheet.faceTop, sheet.faceCenter)[0]);
     assert.ok(Math.max(...steps) - Math.min(...steps) <= 1, `${name}: ${steps}`);
   }
-  // the eyes of Filchfox sit in the holes of its mask (rows 11 and 12 of the grid, 6 rows below the canvas top)
+  // the eyes of Banditail sit in the holes of its mask (rows 11 and 12 of the grid, 6 rows below the canvas top)
   assert.deepEqual(anchors("filchfox_body")[0], [13.5, 17]);
   // the faces of the cloud adults sit on their heads, not in the middle of fleece, horns and rainbow
   assert.deepEqual(anchors("rumblefluff_body")[0], [16, 17]);

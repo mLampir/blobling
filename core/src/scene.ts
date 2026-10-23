@@ -646,12 +646,12 @@ const GLIDES: Record<string, number> = { mothmuff: 4, sunflutter: 4, jesterwing:
   glidepin: 0, umbrabat: 3, lunaflap: 6, stormkite: 6, abyssink: 2 };
 const HOVERS = ["rotorfly", "umbrabat"]; // flies steadily instead of fluttering up and down
 // Forms that hop all of a piece, without squashing and stretching: Archibeaver, tower and all, like a rook
-// and Crabalot, moat and all; Woolwhisk on her ball of wool; Gargard, plinth and all, and Bellfry, a bell of bronze
+// and Crabalot, moat and all; Queen Purl on her ball of wool; Gargard, plinth and all, and Bellfry, a bell of bronze
 const STIFF_HOPS = ["archibeaver", "castlecrab", "woolwhisk", "gargard", "bellfry"];
 // the rain can't get at its flame anyway; a toad likes the rain; a cloud is rain; a plant and a
 // duck like it too, and a pond hippo is wet anyway; so is a beaver, a dragonfly grew up in a pond,
 // and a sunflower is a plant; an axolotl lives in the water, and Umbrabat is an umbrella itself;
-// Hidewell has become a twig, and Tempestry is the storm; an octopus lives in the sea, Fountaingle
+// Hidewig has become a twig, and Tempestry is the storm; an octopus lives in the sea, Fountaingle
 // loves the rain, and Bellfry has roofs of its own
 // The widths of the umbrellas in the items sheet: the pet holds the smallest that covers it
 const UMBRELLAS = [19, 23, 27, 31, 35];
@@ -669,7 +669,7 @@ const BUD: readonly (readonly [Color, Color])[] = [
 ];
 // Species that glow at night ([day color, night color], the day colors as in the palettes of
 // tools/build_blob_sprites.py): Lumoth's hearts, antennae and dots, Glimmerock's crystals,
-// Gemperor's crystals and core, the bulb of Angloop's lure, Prismfly's glass and wings, Archibeaver's blueprint,
+// Gemperor's crystals and core, the bulb of Angloop's lure, Prismelle's glass and wings, Archibeaver's blueprint,
 // Ursastra's stars, Aurorapin's aurora, Lunaflap's moon, Ninjowl's blades, Mirrorleon's prism and rainbow,
 // Pharabug's sun, Tempestry's lightning, Abyssink's lure, dots and bubbles, Bellfry's bronze and gold
 // (it glows warm in the evening), and Illusionna's orbs, moon and stars
@@ -751,7 +751,7 @@ const MOONSTONE: Color = [248, 246, 215];
 const MOONSTONE_GLOW: Color = [255, 255, 245];
 const MOONSTONE_DARK: Color = [105, 110, 150];
 // The cloud adults follow the weather (the colors as in the palettes of tools/build_blob_sprites.py):
-// in a thunderstorm Rumblefluff's horns of lightning flash now and then; in the rain Prismist's
+// in a thunderstorm Thundram's horns of lightning flash now and then; in the rain Prismist's
 // rainbow fades, and when the sun comes out after it, its colors run along the arch for a while.
 const HORNS: readonly Color[] = [[255, 225, 60], [230, 150, 30]];
 const HORNS_FLASH: readonly Color[] = [[255, 255, 235], [255, 240, 160]];
@@ -808,15 +808,15 @@ function moonstone(img: Image, phase: number, glow: boolean): Image {
   return out;
 }
 
-// Flicker's flame shows the mood: shift the hue of the flame (red–yellow)
+// Wickle's flame shows the mood: shift the hue of the flame (red–yellow)
 const FLICKER_FLAME: Record<string, number> = { blue: 140, gold: 8 };
 const EMBER: Bitmap = [[255, 170, 60], ["X"]];
 const SPORE: Bitmap = [[235, 220, 190], ["X"]];
 const DUST: Bitmap = [[255, 230, 160], ["X"]];
 const GLINT: Bitmap = [[230, 210, 255], ["X"]];
 const PEBBLE: Bitmap = [[192, 203, 220], ["XX", "XX"]];
-const LOOT: Bitmap = [[255, 210, 80], ["XX", "XX"]]; // what Filchfox has filched
-const BOLT: Bitmap = [[255, 225, 60], ["X.", ".X", "X."]]; // Rumblefluff's lightning
+const LOOT: Bitmap = [[255, 210, 80], ["XX", "XX"]]; // what Banditail has filched
+const BOLT: Bitmap = [[255, 225, 60], ["X.", ".X", "X."]]; // Thundram's lightning
 const SHIMMER: Bitmap = [[255, 170, 210], [".X.", "X.X", ".X."]]; // the shimmer of Prismist's rainbow
 const LEAFLET: Bitmap = [[150, 225, 110], ["XX", ".X"]]; // a leaf off Twiggle's crown
 const CRYSTAL: Bitmap = [[190, 150, 255], [".X", "XX", "XX"]]; // a shard of Gemperor's crystals
@@ -828,13 +828,13 @@ const ENVELOPE: Bitmap = [[250, 240, 215], ["XXXXX", "X.X.X", "XX.XX", "XXXXX"]]
 const TOUCHE: Bitmap = [[255, 255, 230], ["..X..", "..X..", "XX.XX", "..X..", "..X.."]];
 const RAINBOW_BURST: Bitmap[] = RAINBOW.map((color) => [color, ["XX", "XX"]]); // Prismist's rainbow, thrown at an opponent
 const FIREBALL: Bitmap = [[255, 150, 40], ["..XX..", ".XXXX.", "XXXXXX", "XXXXXX", ".XXXX."]]; // what Flarelet hurls
-const BOULDER: Bitmap = [[160, 165, 180], [".XXX.", "XXXXX", "XXXXX", ".XXX."]]; // Bouldergrin's top stone
+const BOULDER: Bitmap = [[160, 165, 180], [".XXX.", "XXXXX", "XXXXX", ".XXX."]]; // Grinolith's top stone
 const FIRE: Bitmap = [[255, 110, 40], [".X.", "XXX", "XXX"]]; // puffs of Drakwing's fire
 const CANNONBALL: Bitmap = [[125, 125, 140], [".X.", "XXX", ".X."]]; // Captain Quill's cannon
 const SLASH: Bitmap = [[230, 235, 255], ["X..", ".X.", "..X"]]; // Rapierre's blade
 const PETAL: Bitmap = [[255, 170, 200], ["XX"]]; // off Needlenub's flower
-const CLOD: Bitmap = [[150, 110, 70], ["XX", "X."]]; // what Rumblefluff's hoof kicks up
-const SMOKE: Bitmap = [[175, 175, 185], [".X.", "XXX", ".X."]]; // Filchfox's puff of smoke
+const CLOD: Bitmap = [[150, 110, 70], ["XX", "X."]]; // what Thundram's hoof kicks up
+const SMOKE: Bitmap = [[175, 175, 185], [".X.", "XXX", ".X."]]; // Banditail's puff of smoke
 const LURE_GLOW: Bitmap = [[255, 230, 130], [".XX.", "XXXX", ".XX."]]; // little lights like Angloop's bulb
 const LETTER: Bitmap = [[250, 240, 215], ["XXX", "XXX"]]; // a letter out of Parcelbeak's pouch
 const DIRT: Bitmap = [[60, 60, 60], ["X"]];
@@ -848,22 +848,22 @@ const SHELL: Bitmap = [[240, 232, 205], ["X"]];
 const FIRE_WHEEL: Bitmap = [[255, 130, 40], [".XX.", "X..X", "X..X", ".XX."]]; // Salamber, rolled up into a wheel of fire
 const MOON_SICKLE: Bitmap = [[240, 240, 205], [".XX", "X..", "X..", ".XX"]]; // Lunarock's blades of moonlight
 const MOON_GLINT: Bitmap = [[220, 230, 255], ["X"]];
-const FOX_FLAME: Bitmap = [[110, 200, 255], [".X.", "XX.", "XXX", ".X."]]; // Foxfire's blue fox fire
+const FOX_FLAME: Bitmap = [[110, 200, 255], [".X.", "XX.", "XXX", ".X."]]; // Kitsunova's blue fox fire
 const SNOWFLAKE: Bitmap = [[235, 245, 255], ["X.X", ".X.", "X.X"]];
 const SNOWBALL: Bitmap = [[245, 250, 255], [".XX.", "XXXX", ".XX."]]; // Flurrbleat's volley
 const BLOSSOM: Bitmap = [[255, 190, 215], ["X.", "XX"]]; // off Sakurin's crown
 const CHERRY: Bitmap = [[225, 40, 60], ["..X..", ".X.X.", "XX.XX", "XX.XX"]]; // Sakurin's cherries, they burst
-const ANCHOR: Bitmap = [[165, 175, 195], ["..X..", ".XXX.", "..X..", "X.X.X", ".XXX."]]; // Bubblehelm's anchor
+const ANCHOR: Bitmap = [[165, 175, 195], ["..X..", ".XXX.", "..X..", "X.X.X", ".XXX."]]; // Quackuba's anchor
 const BAT: Bitmap = [[160, 85, 180], ["X...X", "XX.XX", ".XXX."]]; // Hippula's little bats
 const CONTRAIL: Bitmap = [[240, 242, 248], ["XX", "XX"]]; // Acewing's trail of smoke
 const SONIC_RING: Bitmap = [[200, 230, 255], [".XXX.", "X...X", "X...X", ".XXX."]]; // Acewing's dive breaks the sound barrier
 // The garden's adults
-const WING_DUST: Bitmap = [[205, 190, 215], ["X"]]; // off Mothmuff's wings
+const WING_DUST: Bitmap = [[205, 190, 215], ["X"]]; // off Fluffoth's wings
 const DUST_PUFF: Bitmap = [[190, 175, 205], [".X.", "XXX", ".X."]]; // its cloud of wing dust
 const LAMP: Bitmap = [[255, 235, 150], [".X.", "XXX", ".X."]]; // the light it circles
 const SUN_PETAL: Bitmap = [[255, 225, 90], ["XX"]]; // Sunflutter's petals
 const POLLEN: Bitmap = [[255, 240, 130], ["X"]];
-const BELL: Bitmap = [[255, 215, 60], [".X.", "XXX", "X.X"]]; // the bells on Jesterwing's cap
+const BELL: Bitmap = [[255, 215, 60], [".X.", "XXX", "X.X"]]; // the bells on Harlequing's cap
 const CONFETTI: Bitmap[] = ([[225, 50, 75], [130, 75, 200], [255, 215, 60], [90, 200, 120], [80, 150, 240]] as Color[])
   .map((color) => [color, ["X"]]);
 const SPROUT: Bitmap = [[110, 200, 80], ["X.X", ".X."]]; // off the bed on Digby's back
@@ -871,12 +871,12 @@ const SNOW_CHUNK: Bitmap = [[240, 245, 255], [".XXX.", "XXXXX", "XXXXX"]]; // Ba
 const STAR: Bitmap = [[255, 235, 120], [".X.", "XXX", ".X."]]; // Pawdini's stars
 const CIRCUS_BALL: Bitmap[] = ([[225, 45, 60], [70, 120, 230], [255, 215, 60]] as Color[])
   .map((color) => [color, [".XX.", "XXXX", "XXXX", ".XX."]]); // what Pawdini juggles
-const GUST: Bitmap = [[215, 232, 245], ["XXX"]]; // Rotorfly's downwash
-const JEWEL: Bitmap = [[110, 235, 170], [".X.", "X.X", ".X."]]; // the sparkle on Jewelwing's lance
-// Prismfly's light: the rainbow's six colors and a seventh, as light through a prism breaks into
+const GUST: Bitmap = [[215, 232, 245], ["XXX"]]; // Rotoptera's downwash
+const JEWEL: Bitmap = [[110, 235, 170], [".X.", "X.X", ".X."]]; // the sparkle on Jewelance's lance
+// Prismelle's light: the rainbow's six colors and a seventh, as light through a prism breaks into
 const PRISM: readonly Color[] = [...RAINBOW.slice(0, 5), [90, 100, 220], RAINBOW[5]];
 const LIGHT_SPOT: Bitmap[] = PRISM.map((color) => [color, ["X"]]);
-// How Prismfly's seven rays fan out (radians): how wide, and how far down (at an opponent on the ground);
+// How Prismelle's seven rays fan out (radians): how wide, and how far down (at an opponent on the ground);
 // how far from its middle they start, and how long they are
 const RAY_FAN = 0.7;
 const RAY_TILT = 0.45;
@@ -894,7 +894,7 @@ const TEA: Bitmap = [[225, 145, 55], ["X"]]; // Earl Greyclaw's tea
 const TEA_DROP: Bitmap = [[250, 200, 120], ["X"]]; // the light on it, running down the stream
 const TEA_SPLASH: Bitmap = [[230, 150, 60], ["XX", "XX"]]; // its hot tea, poured at an opponent
 const TEACUP: Bitmap = [[245, 240, 230], ["X...X", "XXXXX", ".XXX."]]; // the cup it pours into
-const BEAM: Color = [255, 240, 170]; // Lightclaw's lamp
+const BEAM: Color = [255, 240, 170]; // Crabeacon's lamp
 const BEAM_REACH = 26; // how far its beam sweeps; at an opponent it reaches further
 const BEACON_GLINT: Bitmap = [[255, 245, 190], ["..X..", ".....", "X.X.X", ".....", "..X.."]];
 const DOORWAY: Bitmap = [[45, 30, 25], ["XXXX"]]; // a row of Crabalot's gate, open, the portcullis up
@@ -936,7 +936,7 @@ const TOY_MOUSE: Bitmap = [[230, 190, 80], ["...XX..", ".XXXXX.", "XXXXXXX"]];
 const TOY_KEY: Bitmap = [[205, 210, 220], ["X.X", ".X."]];
 const TOY_WHEELS: Bitmap = [[200, 70, 60], [".X...X."]];
 const TOY_SPRING: Bitmap = [[190, 195, 205], ["XX.", "..X", "XX.", "..X", "XX."]];
-const GOLD_THREAD: Bitmap = [[255, 215, 90], ["X"]]; // Woolwhisk's golden thread
+const GOLD_THREAD: Bitmap = [[255, 215, 90], ["X"]]; // Queen Purl's golden thread
 const KNIT_STAR: Bitmap = [[255, 240, 150], ["..X..", "..X..", "XXXXX", "..X..", "..X.."]]; // the stars it knits
 const WOOL_STAR: Bitmap = [[255, 250, 200], [".X.", "XXX", ".X."]];
 const WOOL_TUFT: Bitmap = [[215, 80, 80], ["XX", ".X"]]; // off her ball of wool
@@ -951,7 +951,7 @@ const ACCOLADE_TIP = 28;
 const ACCOLADE_RUN = 11;
 const ACCOLADE_SHOULDER = 17;
 // The bear line's adults
-const BEE: Bitmap = [[255, 200, 40], ["XX"]]; // out of Hivebear's hive
+const BEE: Bitmap = [[255, 200, 40], ["XX"]]; // out of Beehemoth's hive
 const BEE_WING: Bitmap = [[215, 230, 255], ["X"]]; // over a bee, every other frame: it buzzes
 const HONEY: Bitmap = [[240, 165, 35], [".X", "XX"]];
 const HIVE_POT_ROWS = 5; // its honey pot, outline and all, lifted like a hat
@@ -985,7 +985,7 @@ const CURTAIN = new Map<string, Bitmap>();
 // The bat line's adults
 const RAIN_STREAK: Bitmap = [[170, 215, 255], ["XXX"]]; // pelting off Umbrabat's umbrella
 const TWIG: Bitmap = [[125, 90, 60], ["XXXXXXXXX"]]; // what it hangs from
-const NEON: readonly Color[] = [[250, 80, 200], [80, 235, 235], [175, 115, 255], [255, 235, 90]]; // Batbeat's lights
+const NEON: readonly Color[] = [[250, 80, 200], [80, 235, 235], [175, 115, 255], [255, 235, 90]]; // DJ Flapjack's lights
 const NEON_FLASH: Bitmap[] = NEON.map((color) => [color, ["X.X", ".X.", "X.X"]]);
 // Its sound waves, small to big, rolling out to the right
 const SOUND_WAVES: readonly (readonly string[])[] = [["X.", ".X", ".X", "X."],
@@ -1088,7 +1088,7 @@ const INK_BLOB: Bitmap[] = INK.map((color) => [color, [".XX.", "XXXX", "XXXX", "
 const INK_SPLAT: Bitmap[] = INK.map((color) => [color, ["X.", ".X"]]);
 const INKASSO_CIRCLE = 18; // the radius of the circle it paints round itself
 const BRUSH_TIPS: readonly (readonly [number, number])[] = [[8, 7], [16, 5], [24, 8]]; // in its frame
-// Octavio's juggling balls: red, gold and two of its own
+// Juggopus's juggling balls: red, gold and two of its own
 const JUGGLE_BALL: Bitmap[] = ([[240, 70, 75], [255, 215, 70], [90, 200, 240], [130, 220, 110]] as Color[])
   .map((color) => [color, [".XX.", "XXXX", "XXXX", ".XX."]]);
 const JUGGLE_SPARK: Bitmap[] = JUGGLE_BALL.map(([color]) => [color, ["XX", "XX"]]);
@@ -1129,7 +1129,7 @@ const ORBS: Bitmap[] = ([[110, 240, 220], [255, 140, 180], [175, 110, 235]] as C
   .map((color) => [color, [".X.", "XXX", ".X."]]);
 const ORB_GLOW: Bitmap = [[225, 255, 250], ["X"]];
 const WAND_TIPS: Record<string, readonly [number, number]> = { glintrick: [30, 3], illusionna: [29, 7] }; // in their frames
-const CARD_WINGS: readonly (readonly [number, number])[] = [[2, 13], [29, 13]]; // Cardwing's wings, in its frame
+const CARD_WINGS: readonly (readonly [number, number])[] = [[2, 13], [29, 13]]; // Shufflepie's wings, in its frame
 const MAGPIE_FEATHER: Bitmap = [[40, 42, 58], ["X.", ".X"]]; // off the magpie in a scuffle
 
 /** The upper half of a ring of the given radius (Bellfry's shock wave, rolling along the ground). */
@@ -1183,7 +1183,7 @@ function rainbowRun(img: Image, colors: readonly Color[], phase: number): Image 
   return out;
 }
 
-/** Faded to `opacity` (0–1): Hidewell melting into the scene. */
+/** Faded to `opacity` (0–1): Hidewig melting into the scene. */
 function faded(img: Image, opacity: number): Image {
   const out = img.copy();
   for (let i = 3; i < out.data.length; i += 4) {
@@ -1471,7 +1471,7 @@ function spun(img: Image, angle: number): Image {
 /**
  * Hat on the head: centered above the first row that is at least 8 pixels wide, or where `spot`
  * moves it. The picture gets HAT_ROOM rows of room above it and half of that at each side, so that
- * the hat is never cut off. `pokeThrough`: what grows above that row (the lure, Flicker's flame)
+ * the hat is never cut off. `pokeThrough`: what grows above that row (the lure, Wickle's flame)
  * stays in front of the hat.
  */
 function withHat(img: Image, hat: Image, pokeThrough = false, [dx, dy, lean, under]: HatSpot = [0, 0, 0]): Image {
@@ -1601,22 +1601,22 @@ interface Pose {
   hidden: boolean;
   /** It hides (hide and seek). */
   cover: Cover | null;
-  /** Prismfly sends out its light, broken into seven rays. */
+  /** Prismelle sends out its light, broken into seven rays. */
   rays: boolean;
-  /** Lightclaw's lamp shines: how far its beam reaches to the right (negative: to the left), and how much it slopes down. */
+  /** Crabeacon's lamp shines: how far its beam reaches to the right (negative: to the left), and how much it slopes down. */
   beam: [number, number] | null;
   /** It is fishing: where the bobber floats [x, y of the water], and whether it is under. */
   rod: [number, number, boolean] | null;
-  /** Its top `rows` rows (outline and all) lifted `up` pixels, as a hat is lifted: Hivebear's honey pot. */
+  /** Its top `rows` rows (outline and all) lifted `up` pixels, as a hat is lifted: Beehemoth's honey pot. */
   lift: [number, number] | null;
   /** Ursastra's stars have left its body (they are up in the sky as a picture). */
   starless: boolean;
   /**
-   * A part of it that moves by itself (Stargazer's head, Solroll's ball, Clockbeetle's cog): its box
+   * A part of it that moves by itself (Stargazer's head, Solroll's ball, Clockarab's cog): its box
    * in the frame, how far it is moved [right, up] on the panel, turned round (as `turn`) and spun.
    */
   piece: { box: FrameBox; dx: number; up: number; turn: number | null; rotate: number } | null;
-  /** How much of it can be seen (1 = all of it): Hidewell melting into the scene. */
+  /** How much of it can be seen (1 = all of it): Hidewig melting into the scene. */
   fade: number;
   /** How far Owlbert's pages are folded shut (0 = open). */
   fold: number;
@@ -1679,7 +1679,7 @@ export class PetScene {
   private readonly mirrors = new Map<Bitmap, Bitmap>(); // particles in Mirrorleon's colors (mirrorSprite)
   private readonly mirrored = new Map<Bitmap, Bitmap>(); // and what each of them was
   private friend: string | null = null; // the friend Mirrorleon copies (SceneView.friend)
-  // the opponent stays where it is: Clockbeetle has stopped time, Gargard's gaze has turned it to stone,
+  // the opponent stays where it is: Clockarab has stopped time, Gargard's gaze has turned it to stone,
   // or Abyssink's lights have it looking this way and that
   private foeFrozen: "time" | "stone" | "dazed" | null = null;
   private petTop = GROUND - 20; // top row of the pet on the panel (for particles)
@@ -4997,7 +4997,7 @@ export class PetScene {
         this.trick(pose, trick, q * BATTLE_ROUND, landed, t);
       }
       // the opponent's move carries it towards the pet and back to its place; while time stands still
-      // (Clockbeetle), it is stone (Gargard) or dazed (Abyssink) it stays where it is (only a look: in a
+      // (Clockarab), it is stone (Gargard) or dazed (Abyssink) it stays where it is (only a look: in a
       // round the pet wins, the opponent's move can't hurt it anyway)
       const frozen = this.foeFrozen !== null;
       const reach = Math.sin(Math.min(1.0, (frozen ? Math.min(q, 0.15) : q) / 0.7) * Math.PI);
@@ -5518,7 +5518,7 @@ export class PetScene {
     }
   }
 
-  /** Prismfly's light, broken into seven rays in the colors of the rainbow, fanning out towards where it looks. */
+  /** Prismelle's light, broken into seven rays in the colors of the rainbow, fanning out towards where it looks. */
   private drawRays(img: Image, cx: number, cy: number): void {
     PRISM.forEach((color, i) => {
       const angle = RAY_TILT + (i / (PRISM.length - 1) - 0.5) * RAY_FAN;
@@ -5528,7 +5528,7 @@ export class PetScene {
     });
   }
 
-  /** Lightclaw's beam: a cone of light out of its lamp, widening and fading with the distance. */
+  /** Crabeacon's beam: a cone of light out of its lamp, widening and fading with the distance. */
   private drawBeam(img: Image, cx: number, cy: number, reach: number, slope: number): void {
     const side = Math.sign(reach);
     const length = Math.abs(Math.round(reach));
@@ -7317,7 +7317,7 @@ export class PetScene {
       bitmap(img, Math.round(p.x), Math.round(p.y), p.sprite, Math.min(1.0, p.life * 2));
       alive.push(p);
     }
-    this.particles = alive.slice(-48); // enough for Prismfly's seven rays
+    this.particles = alive.slice(-48); // enough for Prismelle's seven rays
   }
 
   /** Little quirks of the species: sparks, spores, glowing dust. */

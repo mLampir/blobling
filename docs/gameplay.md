@@ -766,24 +766,24 @@ At roughly every third stop on a trip, somebody is in the way:
 | Area | Opponent | Favorite move |
 |---|---|---|
 | Meadow | Bumblebop, a fat bumblebee with a boxing glove | pounces |
-| Meadow | Diggle, a mole with a miner's helmet and lamp | charges along the ground |
-| Meadow | Carrotnose, a snowman stacked upside down, its carrot pointing backwards (only in snow) | curls up |
-| Mushroom forest | Prickleroll, a hedgehog that carries a toadstool on its spines | curls up |
-| Mushroom forest | Drizzleshell, a snail with a rain cloud for a shell (only in rain; tougher than the others) | charges along the ground |
+| Meadow | Molamp, a mole with a miner's helmet and lamp | charges along the ground |
+| Meadow | Carrotopsy, a snowman stacked upside down, its carrot pointing backwards (only in snow) | curls up |
+| Mushroom forest | Shroomhog, a hedgehog that carries a toadstool on its spines | curls up |
+| Mushroom forest | Drizzail, a snail with a rain cloud for a shell (only in rain; tougher than the others) | charges along the ground |
 | Stream | Ribbop, a frog whose throat is a bubblegum bubble | pounces |
-| Stream | Sidleclaw, a wind-up toy crab with a key in its back | charges along the ground |
+| Stream | Crankrab, a wind-up toy crab with a key in its back | charges along the ground |
 | Stream | Puddlin, a puddle with a paper boat for a hat (only in rain; tougher than the others) | charges along the ground |
-| Cave | Echoflit, a bat with ears like gramophone horns | pounces |
-| Cave | Glintbug, a beetle that is a geode: a plain gray stone when it curls up | curls up |
-| Mountain | Tumblesnow, a mountain hare with a lost mitten pulled over one ear: curled up, it is a snowball | curls up |
-| Mountain | Craghorn, an ibex with a big cowbell | charges along the ground |
-| Mountain | Duskwisp, a dandelion seed that glows and drifts (only around sunset; tougher than the others) | pounces |
-| Coast | Snatchgull, a gull that has snatched a carton of chips | pounces |
-| Coast | Starcurl, a starfish that walks on two arms; it rolls up into a ball | curls up |
+| Cave | Gramolit, a bat with ears like gramophone horns | pounces |
+| Cave | Geodle, a beetle that is a geode: a plain gray stone when it curls up | curls up |
+| Mountain | Rollabit, a mountain hare with a lost mitten pulled over one ear: curled up, it is a snowball | curls up |
+| Mountain | Belibex, an ibex with a big cowbell | charges along the ground |
+| Mountain | Dandeglow, a dandelion seed that glows and drifts (only around sunset; tougher than the others) | pounces |
+| Coast | Snagull, a gull that has snatched a carton of chips | pounces |
+| Coast | Strollfish, a starfish that walks on two arms; it rolls up into a ball | curls up |
 | Coast | Jellybrella, a jellyfish that is an umbrella (only in rain; tougher than the others) | curls up |
-| Ruins | Ratwatch, a rat on guard with a kettle helmet and a halberd | charges along the ground |
+| Ruins | Halberat, a rat on guard with a kettle helmet and a halberd | charges along the ground |
 | Ruins | Ivycurl, a creeping ivy whose first leaf has a face; it rolls up into a wreath | curls up |
-| Ruins | Drapeghost, a ghost made of an old velvet curtain (only around sunset; tougher than the others) | pounces |
+| Ruins | Drapparition, a ghost made of an old velvet curtain (only around sunset; tougher than the others) | pounces |
 
 Some only come out in the real weather, or in the three quarters of an hour
 before and after the real sunset. When they can come out, they are twice as
@@ -815,9 +815,9 @@ each one the opponent makes a move, and the pet answers with a trick:
   move go after every second trick that worked. It counts double. Every form
   has a move of its own for it: Angloop flashes its lure, for example.
 
-An opponent gives in after three hits (Drizzleshell, Puddlin and the ones in
+An opponent gives in after three hits (Drizzail, Puddlin and the ones in
 the cave, on the mountain, at the coast and in the ruins after four;
-Duskwisp, Jellybrella and Drapeghost after five) and leaves
+Dandeglow, Jellybrella and Drapparition after five) and leaves
 something behind, if there is anything left to find. The pet gives in when it has been knocked over three
 times. If neither happens within five rounds, they go their own ways.
 
@@ -926,18 +926,18 @@ up to seven rounds, a ball doesn't distract it, and it takes more hits.
 
 | Area | Guardian | Favorite move | Gives in after |
 |---|---|---|---|
-| Meadow | Crowcomb, a rooster whose comb is a crown | pounces | 4 hits |
-| Mushroom forest | Mosswart, an old toad whose back is a mossy boulder | curls up | 5 hits |
-| Stream | Ripplesprite, a cocky water drop with a breaking wave for a quiff, surfing on its own wave and twirling a hoop | charges along the ground | 6 hits |
+| Meadow | Crownster, a rooster whose comb is a crown | pounces | 4 hits |
+| Mushroom forest | Mossoad, an old toad whose back is a mossy boulder | curls up | 5 hits |
+| Stream | Breakerino, a cocky water drop with a breaking wave for a quiff, surfing on its own wave and twirling a hoop | charges along the ground | 6 hits |
 | Cave | Gloompeep, two big glowing eyes in the dark | pounces | 7 hits |
-| Mountain | Frostfluff, a yeti that is a giant bobble hat | charges along the ground | 8 hits |
-| Coast | Barkguard, a sea lion on lifeguard duty, with a red cap, a whistle and a life ring | charges along the ground | 9 hits |
-| Ruins | Rustknight, an empty suit of armour; a snail lives in it and now and then looks out of the visor | curls up | 9 hits |
+| Mountain | Bobbleti, a yeti that is a giant bobble hat | charges along the ground | 8 hits |
+| Coast | Whistlion, a sea lion on lifeguard duty, with a red cap, a whistle and a life ring | charges along the ground | 9 hits |
+| Ruins | Shellmet, an empty suit of armour; a snail lives in it and now and then looks out of the visor | curls up | 9 hits |
 
 Once the pet has got past a guardian, it knows the way to the areas behind it, and
 that guardian lets it pass from then on. A draw or a lost scuffle changes
 nothing: the guardian is there again on the next trip. A child with two tricks
-can get past Crowcomb with some luck; for the later ones the pet needs its
+can get past Crownster with some luck; for the later ones the pet needs its
 tricks and a good deal of training. Progress counts per pet: a new egg starts
 in the meadow again.
 
@@ -1221,8 +1221,8 @@ in [pets.md](pets.md), folded shut).
 A new creature should make you think "that one is different".
 
 1. **Two ideas, not one.** Never just "animal X": combine it with a thing or a
-   trait. Angloop is the slime and an anglerfish, Drizzleshell a snail and a
-   rain cloud, Diggle a mole and a miner.
+   trait. Angloop is the slime and an anglerfish, Drizzail a snail and a
+   rain cloud, Molamp a mole and a miner.
 2. **A creature, not an object with a face.** An animal is one way: you see
    it before the object (ears, snout, horns, wings, paws, a tail). A living
    thing that is no animal works too, as long as it is more than an object
