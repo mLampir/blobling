@@ -927,7 +927,7 @@ up to seven rounds, a ball doesn't distract it, and it takes more hits.
 | Area | Guardian | Favorite move | Gives in after |
 |---|---|---|---|
 | Meadow | Crownster, a rooster whose comb is a crown | pounces | 4 hits |
-| Mushroom forest | Mossoad, an old toad whose back is a mossy boulder | curls up | 5 hits |
+| Mushroom forest | Boulderoad, an old toad whose back is a mossy boulder | curls up | 5 hits |
 | Stream | Breakerino, a cocky water drop with a breaking wave for a quiff, surfing on its own wave and twirling a hoop | charges along the ground | 6 hits |
 | Cave | Gloompeep, two big glowing eyes in the dark | pounces | 7 hits |
 | Mountain | Bobbleti, a yeti that is a giant bobble hat | charges along the ground | 8 hits |

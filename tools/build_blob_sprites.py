@@ -5288,7 +5288,7 @@ GRANDMA_FORMS = (("sirthimble", FACES), ("cogsqueak", FACES),
 # ---------------------------------------------------------------- The adventure lines
 
 # Three lines from the trips, each with its egg, baby, child, a basic adult, a second one and a
-# secret one: the bear from Mossoad's mushroom forest, the penguin from Bobbleti's mountain (both
+# secret one: the bear from Boulderoad's mushroom forest, the penguin from Bobbleti's mountain (both
 # guardians leave its egg) and the bat that lives in the cave as a wild pet. What every form of a
 # line keeps: the honey pot (the bear), the earmuffs (the penguin) and the big pointed ears (the
 # bat). The child carries the colors the code may recolor as a hint at its adult form: the glaze of

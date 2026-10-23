@@ -175,7 +175,7 @@ Every guardian has been sitting on a rare egg:
 | Area | Guardian | Egg |
 |---|---|---|
 | Meadow | Crownster | **beak egg** |
-| Mushroom forest | Mossoad | **bear egg** |
+| Mushroom forest | Boulderoad | **bear egg** |
 | Stream | Breakerino | **duck egg** |
 | Cave | Gloompeep | **ember egg** |
 | Mountain | Bobbleti | **penguin egg** |
@@ -1495,7 +1495,7 @@ It wears one of the hats Grandma knitted when it grows up. It can be picked only
 
 ### The bear line
 
-This is the line from Mossoad's egg in the mushroom forest.
+This is the line from Boulderoad's egg in the mushroom forest.
 
 <details>
 <summary>Show the bear line</summary>
