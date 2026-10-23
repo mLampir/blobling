@@ -25,7 +25,7 @@ import { PLACES, YARD } from "./street";
  * core/test/api.test.ts compares the API with core/test/api-contract.json and says which number
  * a change needs (CLAUDE.md, "The API between app and Pi").
  */
-export const API_VERSION = 10;
+export const API_VERSION = 9;
 export const API_OLDEST = 5;
 
 /**
