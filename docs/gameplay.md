@@ -773,7 +773,7 @@ At roughly every third stop on a trip, somebody is in the way:
 | Stream | Ribbop, a frog whose throat is a bubblegum bubble | pounces |
 | Stream | Crankrab, a wind-up toy crab with a key in its back | charges along the ground |
 | Stream | Puddlin, a puddle with a paper boat for a hat (only in rain; tougher than the others) | charges along the ground |
-| Cave | Gramolit, a bat with ears like gramophone horns | pounces |
+| Cave | Gramobat, a bat with ears like gramophone horns | pounces |
 | Cave | Geodle, a beetle that is a geode: a plain gray stone when it curls up | curls up |
 | Mountain | Rollabit, a mountain hare with a lost mitten pulled over one ear: curled up, it is a snowball | curls up |
 | Mountain | Belibex, an ibex with a big cowbell | charges along the ground |

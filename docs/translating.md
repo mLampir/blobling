@@ -75,8 +75,11 @@ dictionary. These rules hold for every language and every new creature:
   *Sausewind* are words that already mean something else; *Fernando*,
   *Archibald* or *Astrid* are names of people. A pun on a name is fine when
   the name itself no longer stands in it (*Simsalabina*).
-- **Short and easy to say.** If it doesn't roll off the tongue, drop a sound
-  (*Frackuin* rather than *Frackguin*, *Pinselon* rather than *Pinseleon*).
+- **Short and easy to say.** Say it out loud before keeping it. Where two
+  words meet, no cluster of sounds may form that the language does not have
+  (*Gramophlit*: no English word has "phl"); if it does, drop a sound or
+  take another piece (*Frackuin* rather than *Frackguin*, *Pinselon* rather
+  than *Pinseleon*, *Gramobat* rather than *Gramophlit*).
 - **Endings that sound like a name**: -el, -erich, -elle, -ino, -o, -a, -i
   (*Knorzel*, *Loderich*, *Laternelle*, *Loopino*, *Orkana*, *Wollki*).
   Children often get a soft, small ending (*Fuxi*, *Kauzi*, *Kleckschen*).
