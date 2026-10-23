@@ -1,7 +1,7 @@
 # Builds the apps for the stores on Codemagic (https://codemagic.io) and uploads them, iOS to
 # TestFlight and Android to the internal test track of Google Play (README, Releases).
 #
-# Only a tag like v1.2.0 starts a build: no pushes, no pull requests, so a change from a fork never
+# Only a tag like v1.2.0 (or a beta, v1.2.0-beta.1) starts a build: no pushes, no pull requests, so a change from a fork never
 # runs with the signing keys. The keys and the store logins live in Codemagic only (the app's
 # environment groups, its code signing identities and the App Store Connect integration); this
 # file names them but holds none of them. A build only reaches testers; releasing it to everyone
@@ -43,11 +43,14 @@ definitions:
       name: Version from the tag
       script: |
         set -e
-        # v1.2.0 -> 1.2.0 for the stores; a build started by hand needs a tag as well
+        # v1.2.0 -> 1.2.0 for the stores; a build started by hand needs a tag as well. A beta
+        # (v1.2.0-beta.1) gets the version of its release: the stores take only digits, so the
+        # betas and the release of a version differ only in the build number.
         VERSION="${CM_TAG#v}"
+        VERSION="${VERSION%%-*}"
         case "$VERSION" in
           [0-9]*.[0-9]*.[0-9]*) ;;
-          *) echo "ERROR: '$CM_TAG' is not a release tag like v1.2.0"; exit 1 ;;
+          *) echo "ERROR: '$CM_TAG' is not a release tag like v1.2.0 or v1.2.0-beta.1"; exit 1 ;;
         esac
         echo "VERSION=$VERSION" >> "$CM_ENV"
 

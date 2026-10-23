@@ -498,6 +498,24 @@ Codemagic does not read anything else.
 Until the app exists in Google Play, only iOS builds on a tag; the Android
 workflow is started by hand in Codemagic.
 
+**Betas.** Before a release goes to everyone, it goes out as a beta:
+
+1. Tag `v1.2.0-beta.1` and publish the GitHub release with **Set as a
+   pre-release** ticked. The Pi updater and `install.sh` look at
+   `…/releases/latest`, which skips pre-releases, so other Pis don't see it.
+   Your own Pi gets it with
+   `curl -fsSL https://github.com/mLampir/blobling/releases/latest/download/install.sh | sudo bash -s -- --version v1.2.0-beta.1`.
+2. Codemagic builds the beta tag like any other, to TestFlight and the internal
+   test track, as version `1.2.0`: the stores take only digits, so the betas
+   and the release of a version differ only in the build number.
+3. A bug found in the beta is fixed on main and goes out as `v1.2.0-beta.2`.
+4. When the beta is good, tag `v1.2.0` as a normal release: the Pis get the
+   update, and the store build is released by hand as usual.
+
+The updater only offers a release that is newer than the running one, in the
+order `v1.1.0` < `v1.2.0-beta.1` < `v1.2.0-beta.2` < `v1.2.0`, so a Pi on a
+beta moves on to its release but is never offered the release before it.
+
 To build the package locally:
 
 ```bash

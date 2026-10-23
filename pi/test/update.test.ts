@@ -3,7 +3,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { Updates } from "../src/update";
+import { Updates, newer } from "../src/update";
 import { tempDir } from "./helpers";
 
 /** A folder like /opt/led-matrix after installing `version` from a release. */
@@ -103,4 +103,23 @@ test("a running or failed update unit is reported", async () => {
   await failed.check();
   assert.equal(failed.state().failed, true);
   assert.equal(failed.state().available, true);
+});
+
+test("only a newer release is offered: a beta comes before its release, not after the one before", async () => {
+  const cases: [string, string, boolean][] = [
+    ["v1.1.0", "v1.0.0", true], ["v1.0.0", "v1.1.0", false], ["v1.0.0", "v1.0.0", false],
+    ["v1.10.0", "v1.9.0", true], ["v2.0.0", "v1.99.99", true],
+    ["v0.2.0", "v0.2.0-beta.1", true], ["v0.1.1", "v0.2.0-beta.1", false], ["v0.2.0-beta.1", "v0.2.0", false],
+    ["v0.2.0-beta.2", "v0.2.0-beta.1", true], ["v0.2.0-beta.10", "v0.2.0-beta.9", true],
+    ["v0.2.0-rc.1", "v0.2.0-beta.3", true], ["v0.2.0-beta.1.1", "v0.2.0-beta.1", true],
+    ["v1.0.0", "dev-abc", true], ["dev-abc", "dev-abc", false],
+  ];
+  for (const [latest, current, expected] of cases) {
+    assert.equal(newer(latest, current), expected, `${latest} after ${current}`);
+  }
+  const updates = new Updates(release("v0.2.0-beta.1"), github("https://github.com/someone/blobling/releases/tag/v0.1.1"),
+    systemctl("inactive"));
+  await updates.check();
+  assert.equal(updates.state().available, false);
+  assert.equal(await updates.start(), false);
 });
