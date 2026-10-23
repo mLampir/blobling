@@ -117,6 +117,18 @@ Docs are part of the change, not a follow-up:
 npm test && npm run check    # tests and type check of core/, pi/ and app/
 ```
 
+After a change to game rules or values that decide when eggs, forms or
+stats come (care, decay, finds, friends, eggs, the rules for a form), run the
+balance checks and compare with the last run; mention what moved in the PR:
+
+```bash
+npm run balance        # pets played for three weeks by owners of different kinds
+npm run collection     # a whole home played for months: when each line's eggs and forms come
+```
+
+Both name the adult forms in their output, so their results stay out of the
+repo and the public docs.
+
 After a change to the scene or the sprites, render the preview and look at
 it (for the clock and the temperature it needs `LED_MATRIX_BDF_DIR`, the
 fonts folder of rpi-rgb-led-matrix):
