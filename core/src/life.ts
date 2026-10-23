@@ -112,7 +112,7 @@ export const SALAMBER_GLOWBERRIES = 3; // the ember line: glowberries eaten as a
 // The stone line under a full moon at night → lunarock
 export const FOXFIRE_FOREST_TRIPS = 4; // the fox line: trips to the mushroom forest → foxfire
 // The cloud line in the snow (or with the snow globe set out at home) → flurrbleat
-export const SAKURIN_PLANT_FRUITS = 6; // the leaf line: fruits it picked off its own plant → sakurin
+export const SAKURIN_PLANT_FRUITS = 4; // the leaf line: fruits it picked off its own plant → sakurin
 export const BUBBLEHELM_RAIN_TRIPS = 3; // the duck line: trips with rain on the way → bubblehelm
 export const HIPPULA_TUCKED = 6; // the hippo line: evenings tucked in by hand → hippula
 export const ACEWING_GUARDIANS = 2; // the beak line: guardians it got past → acewing
@@ -138,7 +138,8 @@ export const AURORAPIN_BEFORE_SUNRISE = 60; // the penguin line: it grows up thi
 // The owl line: it grows up after dark under a clear sky → stargazer, otherwise owlbert
 export const NINJOWL_CLEAN_BATTLES = 3; // the owl line: scuffles as a child without being knocked over once → ninjowl
 export const HIDEWELL_GAMES = 7; // the chameleon line: games of hide and seek as a child → hidewell, otherwise palettino
-// The chameleon line: it has a friend from the wild when it grows up (a guest from the garden doesn't count) → mirrorleon
+// The chameleon line: friends from the wild when it grows up (guests from the garden don't count) → mirrorleon
+export const MIRRORLEON_FRIENDS = 2;
 export const CLOCKBEETLE_MINUTES = 5; // the scarab line: it grows up within this many minutes after a full hour → clockbeetle, otherwise solroll
 export const PHARABUG_HEAT = 27; // the scarab line: °C or more when it grows up → pharabug
 // The kite line: it has learned the dance when it grows up → lionkite, otherwise origrane; a
@@ -433,8 +434,8 @@ export interface World {
   dance?: boolean;
   /** whether it has a friend (a wild pet or a guest from the garden), */
   friend?: boolean;
-  /** whether one of its friends is from the wild (not a guest from the garden), */
-  wildFriend?: boolean;
+  /** how many of its friends are from the wild (not guests from the garden), */
+  wildFriends?: number;
   /** how many tricks it knows, */
   tricks?: number;
   /** its smarts (battle.SKILLS), */
@@ -574,7 +575,7 @@ export const SECRET: Record<string, Rule> = {
   penguin: moment("", beforeSunrise),
   bat: moment("", (w) => !!(w.fullMoon && w.dark)),
   owl: done("clean_battles", NINJOWL_CLEAN_BATTLES),
-  chameleon: moment("", (w) => !!w.wildFriend),
+  chameleon: moment("", (w) => (w.wildFriends ?? 0) >= MIRRORLEON_FRIENDS),
   scarab: moment("", (w) => (w.temp ?? -Infinity) >= PHARABUG_HEAT),
   kite: moment("", (w) => !!w.storm),
   octopus: moment("", (w) => (w.smarts ?? 0) >= ABYSSINK_SMARTS),

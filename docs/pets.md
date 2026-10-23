@@ -750,7 +750,7 @@ Its dance is a fan dance with drifting blossom, and its special move is cherries
 <details>
 <summary>Show how to get it</summary>
 
-The child picked 6 fruits off its own plant and ate them. It can be picked only while this holds, every time anew.
+The child picked 4 fruits off its own plant and ate them. It can be picked only while this holds, every time anew.
 
 </details>
 
@@ -1889,7 +1889,7 @@ prism breaks a beam of light into the rainbow.
 <details>
 <summary>Show how to get it</summary>
 
-It has a friend from a trip when it grows up; a guest from the garden doesn't
+It has two friends from trips when it grows up; guests from the garden don't
 count. A child of this line already looks for friends on its trips. It can be
 picked only while this holds, every time anew.
 

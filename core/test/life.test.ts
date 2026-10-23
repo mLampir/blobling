@@ -269,12 +269,13 @@ test("the owl, chameleon, scarab and kite lines grow up by the sky, games, the c
   assert.equal(life.decideSpecies({ ...week, clean_battles: life.NINJOWL_CLEAN_BATTLES - 1 }, "owl"), "owlbert");
   assert.equal(life.decideSpecies({ ...week, clean_battles: life.NINJOWL_CLEAN_BATTLES }, "owl",
     { dark: true, clear: true }), "ninjowl");
-  // the chameleon: hide and seek makes a Hidewell, a friend the Mirrorleon
+  // the chameleon: hide and seek makes a Hidewell, friends from the wild the Mirrorleon
   assert.equal(life.decideSpecies(week, "chameleon"), "palettino");
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES - 1 }, "chameleon"), "palettino");
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon"), "hidewell");
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true }), "hidewell"); // a guest from the garden
-  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true, wildFriend: true }), "mirrorleon");
+  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true, wildFriends: life.MIRRORLEON_FRIENDS - 1 }), "hidewell");
+  assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true, wildFriends: life.MIRRORLEON_FRIENDS }), "mirrorleon");
   // the scarab: just after a full hour makes a Clockbeetle, the heat the Pharabug
   assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 + 30 }), "solroll");
   assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 }), "clockbeetle");

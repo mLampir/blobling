@@ -1124,7 +1124,7 @@
       "2": "One winter a little cloud grew up while it was snowing – the fluffiest thing I ever saw. Snow in a globe works too, I hear."
     },
     "leaf": {
-      "0": "Pinned to a tree: a sprout that eats from its own plant blossoms. Six fruits, and it is never just green again.",
+      "0": "Pinned to a tree: a sprout that eats from its own plant blossoms. Four fruits, and it is never just green again.",
       "1": "Pressed blossoms in an old tin, and a note: from the fruits it picked off its plant itself.",
       "2": "My sister was a {child}. She picked fruit after fruit off her own plant and grew up all in blossom."
     },
@@ -1199,9 +1199,9 @@
       "2": "An owl from my attic scuffled three times while it was small and never fell over. Now it moves so quietly I never hear it."
     },
     "chameleon": {
-      "0": "Under a leaf: the little one made a friend out here and copied it until it became a mirror.",
-      "1": "A {child} that makes a friend on its travels while it is small grows up looking like all of us.",
-      "2": "A shard of mirror wrapped in a note: for the friend from the trip."
+      "0": "Under a leaf: the little one made two friends out here and copied them until it became a mirror.",
+      "1": "A {child} that makes two friends on its travels while it is small grows up looking like all of us.",
+      "2": "A shard of mirror wrapped in a note: for my two friends from the trips."
     },
     "scarab": {
       "0": "Chiselled into a warm stone: born of the heat. Only on the hottest days does the little roller become a king.",

@@ -1124,7 +1124,7 @@
       "2": "Einmal ist eine kleine Wolke groß geworden, während es schneite – das Flauschigste, was ich je gesehen habe. Schnee in einer Kugel tut's auch, hab ich gehört."
     },
     "leaf": {
-      "0": "An einen Baum gepinnt: Ein Spross, der von der eigenen Pflanze isst, erblüht. Sechs Früchte, und er ist nie wieder nur grün.",
+      "0": "An einen Baum gepinnt: Ein Spross, der von der eigenen Pflanze isst, erblüht. Vier Früchte, und er ist nie wieder nur grün.",
       "1": "Gepresste Blüten in einer alten Dose, dazu ein Zettel: von den Früchten, die es selbst von seiner Pflanze gepflückt hat.",
       "2": "Meine Schwester war ein {child}. Sie hat Frucht um Frucht von ihrer eigenen Pflanze gepflückt und ist ganz in Blüte groß geworden."
     },
@@ -1199,9 +1199,9 @@
       "2": "Eine Eule von meinem Dachboden hat als Kleine dreimal gerauft und ist nie umgefallen. Jetzt bewegt sie sich so leise, dass ich sie nie höre."
     },
     "chameleon": {
-      "0": "Unter einem Blatt: Das Kleine hat hier draußen einen Freund gefunden und ihn nachgemacht, bis es selbst ein Spiegel war.",
-      "1": "Ein {child}, das schon als Kleines unterwegs einen Freund findet, sieht später aus wie wir alle.",
-      "2": "Eine Spiegelscherbe, eingewickelt in einen Zettel: für den Freund von der Reise."
+      "0": "Unter einem Blatt: Das Kleine hat hier draußen zwei Freunde gefunden und sie nachgemacht, bis es selbst ein Spiegel war.",
+      "1": "Ein {child}, das schon als Kleines unterwegs zwei Freunde findet, sieht später aus wie wir alle.",
+      "2": "Eine Spiegelscherbe, eingewickelt in einen Zettel: für meine zwei Freunde von den Reisen."
     },
     "scarab": {
       "0": "In einen warmen Stein gemeißelt: Aus der Hitze geboren. Nur an den heißesten Tagen wird der kleine Roller zum König.",

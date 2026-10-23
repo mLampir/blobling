@@ -788,7 +788,7 @@ function petWorld(state: PetState, t: number): life.World {
     spin: care.knows(state, "spin"),
     dance: care.knows(state, "dance"),
     friend: state.friends.length > 0,
-    wildFriend: state.friends.some((f) => !f.guest),
+    wildFriends: state.friends.filter((f) => !f.guest).length,
     tricks: care.learned(state).length,
     smarts: state.skills.smarts ?? 0,
     strongest: strongest.length === 1 && top > 0 ? strongest[0] : undefined,
