@@ -220,12 +220,13 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         return json(stateJson());
       }
 
-      case "POST /api/update":
-        // Takes nothing from the request: it only ever installs the newest release.
-        if (!await updates.start()) {
+      case "POST /api/update": {
+        // Takes only the app's version: the newest release up to it is installed (update.ts)
+        if (!await updates.start(fields(await readJson(request)).up_to)) {
           throw new RequestError("no_update");
         }
         return json(stateJson());
+      }
 
       case "GET /api/pet/save": {
         // The save file, to keep it somewhere else (settings page)

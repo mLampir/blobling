@@ -198,6 +198,7 @@ defaults below apply.
 | `[matrix]` | `rows`, `cols` | `64` | Size of the panel in pixels |
 | `[weather]` | `refresh_minutes` | `15` | How often the weather is fetched (at least 5) |
 | `[web]` | `port` | `80` | Port of the web interface |
+| `[update]` | `betas` | `no` | `yes`: the update button offers pre-releases too (*Betas* under *Releases*) |
 
 Files from older versions may still hold `[interface] language`,
 `[location] latitude`/`longitude` and `[matrix] brightness`. They keep
@@ -497,6 +498,39 @@ are kept in Codemagic, not in the repo. Keep `codemagic.yaml` plain ASCII,
 Codemagic does not read anything else.
 Until the app exists in Google Play, only iOS builds on a tag; the Android
 workflow is started by hand in Codemagic.
+
+**Betas.** Every release is tested as a pre-release first, and what goes out
+in the end is exactly what was tested, nothing is built again:
+
+1. Tag `v1.2.0` and publish its GitHub release with **Set as a pre-release**
+   ticked. The Release workflow attaches the Pi's package, Codemagic uploads
+   the apps to TestFlight and the internal test track.
+2. Test it. A Pi gets pre-releases with `betas = yes` under `[update]` in its
+   `/etc/led-matrix/config.ini` (then `sudo systemctl restart led-matrix`)
+   and is updated with its button as usual, from the app or the settings
+   page. Other Pis look only at `…/releases/latest`, which skips
+   pre-releases. Use the test build of the app with a Pi on betas: a
+   pre-release may change the API, and the store app would then ask for an
+   update.
+3. A bug found in it is fixed on main and goes out as the next pre-release,
+   `v1.2.1`; `1.2.0` is then never released, which is fine.
+4. When it is good, send its builds to review: in App Store Connect with
+   *Manually release this version*, in the Play Console with *Managed
+   publishing* on, so neither goes out by itself once it is approved.
+5. Once both are approved, release them and at the same time edit the GitHub
+   release and untick **Set as a pre-release** (the Release workflow does not
+   run again). Only then do the Pis see the update, so a Pi is not offered an
+   update before the app that fits it is out. The app also never updates a
+   display to a version above its own: it updates it to the newest release
+   up to the app's version, and the rest waits until the app is updated as
+   well. A Pi never updates by itself: it shows the
+   update, and its owner starts it with the button.
+
+The updater only offers a release that is newer than the running one, so a Pi
+that tested a pre-release which was never released moves on to the next one
+but is never offered the release before it. For a public beta, open the
+testing tracks of the stores too (open testing in Google Play, a public
+TestFlight link) for those who set their Pi to betas.
 
 To build the package locally:
 

@@ -17,6 +17,7 @@
 import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
 import { MAX_NAME } from "../../core/src/pet";
 import { eased, panSeconds, place } from "../../core/src/street";
+import { newer } from "../../core/src/version";
 import type { Location } from "../../core/src/sun";
 import { locales, soundFiles } from "./assets";
 import { haptic } from "./haptics";
@@ -198,6 +199,10 @@ const app = {
   native,
   /** The app's version in a build for the stores, "" otherwise. */
   version: __APP_VERSION__,
+  /** A display version this app is too old for (it may need a newer API), never in a build that has no version. */
+  aheadOfApp: (version: string): boolean => __APP_VERSION__ !== "" && newer(version, __APP_VERSION__),
+  /** A display version older than this app's (so a display update up to the app's version fits). */
+  belowApp: (version: string): boolean => __APP_VERSION__ !== "" && newer(__APP_VERSION__, version),
   /** The Pi's address, if the app is connected to one. */
   connectedTo,
   /** All texts in the page's language, {key: text}. */

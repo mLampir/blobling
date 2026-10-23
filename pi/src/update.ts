@@ -4,15 +4,23 @@
  * A Pi that was installed from a release knows its version and where it came from (VERSION and
  * REPO, which setup.sh puts next to the app). It looks for a newer release now and then: an
  * outgoing request, nothing is opened towards the internet. The settings page shows what it
- * found and has a button for it (so has the app). The button looks once more and starts the systemd unit led-matrix-update, which
- * runs install.sh --app as a unit of its own, so it keeps going while this service is restarted.
- * Nothing is taken from the request: it only ever installs the newest official release.
+ * found and has a button for it (so has the app). The button looks once more and starts the
+ * systemd unit led-matrix-update, which runs install.sh --app as a unit of its own, so it keeps
+ * going while this service is restarted. Only a version is taken from the request (the app's, see
+ * start()): it installs the newest official release up to it, and only when that is newer than
+ * the running one (a Pi on a pre-release isn't offered the release before it).
+ *
+ * With [update] betas = yes in config.ini, the newest pre-release counts too. The version
+ * that was found is written to UPDATE_ENV for the unit, so it installs exactly that one.
  *
  * A Pi set up from a checkout of the repo has neither file, and nothing here does anything.
  */
 
 import { execFile } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
+
+import { newer } from "../../core/src/version";
+import { writeAtomic } from "./storage";
 
 import { getLog, reason } from "./log";
 
@@ -33,6 +41,8 @@ export interface UpdateState {
   running: boolean;
   /** The last update failed (see journalctl -u led-matrix-update). */
   failed: boolean;
+  /** Betas are installed too. */
+  beta: boolean;
 }
 
 /** Runs systemctl with the given arguments; resolves with its output, also when it fails. */
@@ -59,9 +69,13 @@ export class Updates {
   private running = false;
   private failed = false;
 
-  /** `directory`: where VERSION and REPO are (the app's folder). */
+  /**
+   * `directory`: where VERSION and REPO are (the app's folder). `beta`: whether betas are wanted
+   * (config.ini, [update] betas). `envFile`: where the version to install is written for the update unit.
+   */
   constructor(directory: string, private readonly request: typeof fetch = fetch,
-      private readonly run: Systemctl = systemctl) {
+      private readonly run: Systemctl = systemctl, private readonly beta: () => boolean = () => false,
+      private readonly envFile: string | null = null) {
     this.current = readLine(`${directory}/VERSION`, VERSION);
     this.repo = readLine(`${directory}/REPO`, REPO);
   }
@@ -73,8 +87,8 @@ export class Updates {
 
   state(): UpdateState {
     return {
-      current: this.current, latest: this.latest, running: this.running, failed: this.failed,
-      available: this.enabled && !this.running && this.latest !== null && this.latest !== this.current,
+      current: this.current, latest: this.latest, running: this.running, failed: this.failed, beta: this.beta(),
+      available: this.enabled && !this.running && this.latest !== null && newer(this.latest, this.current!),
     };
   }
 
@@ -85,14 +99,8 @@ export class Updates {
     }
     await this.checkUnit();
     try {
-      // .../releases/latest redirects to .../releases/tag/<version>
-      const response = await this.request(`https://github.com/${this.repo}/releases/latest`,
-        { method: "HEAD", signal: AbortSignal.timeout(TIMEOUT * 1000) });
-      const tag = decodeURIComponent(response.url.split("/releases/tag/")[1] ?? "");
-      if (!response.ok || !VERSION.test(tag)) {
-        throw new Error(response.ok ? "no release yet" : `HTTP ${response.status}`);
-      }
-      if (tag !== this.latest && tag !== this.current) {
+      const tag = this.beta() ? await this.newestBeta() : await this.newestRelease();
+      if (tag !== this.latest && newer(tag, this.current!)) {
         log.info(`Release ${tag} is available (running ${this.current})`);
       }
       this.latest = tag;
@@ -101,11 +109,48 @@ export class Updates {
     }
   }
 
+  /** The newest release: .../releases/latest redirects to .../releases/tag/<version> (it skips pre-releases). */
+  private async newestRelease(): Promise<string> {
+    const response = await this.request(`https://github.com/${this.repo}/releases/latest`,
+      { method: "HEAD", signal: AbortSignal.timeout(TIMEOUT * 1000) });
+    const tag = decodeURIComponent(response.url.split("/releases/tag/")[1] ?? "");
+    if (!response.ok || !VERSION.test(tag)) {
+      throw new Error(response.ok ? "no release yet" : `HTTP ${response.status}`);
+    }
+    return tag;
+  }
+
+  /** The newest of the latest releases and pre-releases. */
+  private async newestBeta(): Promise<string> {
+    return (await this.releases(true)).reduce((best, tag) => (newer(tag, best) ? tag : best));
+  }
+
+  /** The tags of the latest releases (GitHub's API, drafts left out), with the pre-releases or without. */
+  private async releases(pre: boolean): Promise<string[]> {
+    const response = await this.request(`https://api.github.com/repos/${this.repo}/releases?per_page=100`,
+      { headers: { Accept: "application/vnd.github+json" }, signal: AbortSignal.timeout(TIMEOUT * 1000) });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const releases = await response.json() as { tag_name?: unknown; draft?: unknown; prerelease?: unknown }[];
+    const tags = (Array.isArray(releases) ? releases : [])
+      .filter((r) => !r.draft && (pre || !r.prerelease) && typeof r.tag_name === "string" && VERSION.test(r.tag_name))
+      .map((r) => r.tag_name as string);
+    if (!tags.length) {
+      throw new Error("no release yet");
+    }
+    return tags;
+  }
+
   /**
    * Starts the update to the newest release; false if there is nothing to start. It looks again
    * first, so a release from a minute ago is found without waiting for the next regular look.
+   *
+   * `upTo`: the version of the app that asks. A newer release may need a newer app (its API), so
+   * the newest one up to the app's version is installed instead. Only a version is taken from the
+   * request, never what to install: it is always a release from the list, and newer than this one.
    */
-  async start(): Promise<boolean> {
+  async start(upTo?: unknown): Promise<boolean> {
     if (!this.enabled || this.running) {
       return false;
     }
@@ -113,7 +158,27 @@ export class Updates {
     if (!this.state().available) {
       return false;
     }
-    log.info(`Updating from ${this.current} to ${this.latest}`);
+    let target = this.latest!;
+    if (typeof upTo === "string" && VERSION.test(upTo) && newer(target, upTo)) {
+      if (!this.envFile) {
+        return false; // the unit could only install the newest
+      }
+      try {
+        const fitting = (await this.releases(this.beta()))
+          .filter((tag) => !newer(tag, upTo) && newer(tag, this.current!));
+        if (!fitting.length) {
+          return false;
+        }
+        target = fitting.reduce((best, tag) => (newer(tag, best) ? tag : best));
+      } catch (error) {
+        log.warning(`Could not look for a release up to ${upTo}: ${reason(error)}`);
+        return false;
+      }
+    }
+    log.info(`Updating from ${this.current} to ${target}`);
+    if (this.envFile) {
+      writeAtomic(this.envFile, `LED_MATRIX_VERSION=${target}\n`); // a VERSION-checked tag from GitHub
+    }
     this.running = true;
     this.failed = false;
     // --no-block: the unit restarts this service, so don't wait for it

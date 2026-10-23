@@ -76,7 +76,7 @@ test("the state of the panel is read and changed", async () => {
   const id = app.pet.current;
   assert.deepEqual(await json(get("/api/state")), {
     mode: "pet", brightness: 50, night_active: false, weather_configured: false, language: "de", location: null,
-    update: { current: null, latest: null, available: false, running: false, failed: false },
+    update: { current: null, latest: null, available: false, running: false, failed: false, beta: false },
     night: { enabled: false, start: "23:00", end: "07:00", action: "dim", brightness: 5 },
     pets: [{ id, name: "Blobby", stage: "egg", species: "blob" }], camera: id, pinned: null, away: [],
   });

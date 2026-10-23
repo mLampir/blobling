@@ -42,6 +42,8 @@ export interface Config {
   gpioSlowdown: number;
   brightness: number;
   port: number;
+  /** Updates include betas (pre-releases), see update.ts */
+  updateBetas: boolean;
 }
 
 /** [latitude, longitude], or null if no location is set. */
@@ -77,6 +79,18 @@ export function parseConfig(text: string, warn: (message: string) => void = log.
 
   const get = (section: string, key: string, fallback: string): string =>
     (sections[section]?.[key] ?? fallback).trim();
+
+  const getBool = (section: string, key: string, fallback: boolean): boolean => {
+    const value = get(section, key, "").toLowerCase();
+    if (!value) {
+      return fallback;
+    }
+    if (!["yes", "no", "true", "false", "on", "off", "1", "0"].includes(value)) {
+      warn(`[${section}] ${key} = ${value} is not yes or no, using ${fallback ? "yes" : "no"}`);
+      return fallback;
+    }
+    return ["yes", "true", "on", "1"].includes(value);
+  };
 
   const getInt = (section: string, key: string, fallback: number): number => {
     const value = get(section, key, "");
@@ -116,6 +130,7 @@ export function parseConfig(text: string, warn: (message: string) => void = log.
     gpioSlowdown: getInt("matrix", "gpio_slowdown", 2),
     brightness: Math.min(100, Math.max(1, getInt("matrix", "brightness", 50))),
     port: getInt("web", "port", 80),
+    updateBetas: getBool("update", "betas", false),
   };
 }
 
