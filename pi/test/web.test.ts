@@ -80,8 +80,6 @@ test("the state of the panel is read and changed", async () => {
     night: { enabled: false, start: "23:00", end: "07:00", action: "dim", brightness: 5 },
     pets: [{ id, name: "Blobby", stage: "egg", species: "blob" }], camera: id, pinned: null, away: [],
   });
-  assert.equal((await json(post("/api/update/beta", { beta: true }))).update.beta, true);
-  assert.equal(app.settings.beta, true);
   assert.equal((await json(post("/api/mode", { mode: "off" }))).mode, "off");
   assert.equal((await json(post("/api/brightness", { value: 30 }))).brightness, 30);
   assert.equal((await json(post("/api/brightness", { value: 70.9 }))).brightness, 70);
@@ -113,7 +111,6 @@ test("an invalid request gets 400 and a text in the configured language", async 
     ["/api/brightness", { value: "30" }, "error.invalid_value"],
     ["/api/brightness", {}, "error.invalid_value"],
     ["/api/night", [1], "error.invalid_settings"],
-    ["/api/update/beta", { beta: "yes" }, "error.invalid_settings"],
     ["/api/night", { start: "25:00" }, "error.invalid_time"],
     ["/api/pet/action", { action: "fly" }, "error.unknown_action"],
     ["/api/pet/action", { action: "pet", id: 5 }, "error.invalid_id"],

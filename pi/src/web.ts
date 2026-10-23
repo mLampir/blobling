@@ -220,13 +220,6 @@ export function createApp(options: WebOptions): (request: IncomingMessage, respo
         return json(stateJson());
       }
 
-      case "POST /api/update/beta": {
-        // whether updates include betas; it looks again at once, so the answer shows what there is
-        settings.setBeta(fields(await readJson(request)).beta);
-        await updates.check();
-        return json(stateJson());
-      }
-
       case "POST /api/update":
         // Takes nothing from the request: it only ever installs the newest release.
         if (!await updates.start()) {

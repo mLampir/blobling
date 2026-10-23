@@ -9,7 +9,7 @@ const quiet = (): void => {};
 test("an empty configuration gives the defaults", () => {
   assert.deepEqual(parseConfig("", quiet), {
     language: "", latitude: null, longitude: null, weatherRefreshMinutes: 15, rows: 64, cols: 64,
-    hardwareMapping: "adafruit-hat", gpioSlowdown: 2, brightness: 50, port: 80,
+    hardwareMapping: "adafruit-hat", gpioSlowdown: 2, brightness: 50, port: 80, updateBetas: false,
   });
 });
 
@@ -28,7 +28,7 @@ test("values are read and kept within their limits", () => {
   const cfg = parseConfig([
     "[interface]", "language = DE", "[location]", "latitude = 52,52", "longitude = -13.4",
     "[weather]", "refresh_minutes = 1", "[matrix]", "brightness = 250", "gpio_slowdown = 4",
-    "hardware_mapping = adafruit-hat-pwm", "[web]", "port = 8080",
+    "hardware_mapping = adafruit-hat-pwm", "[web]", "port = 8080", "[update]", "betas = Yes",
   ].join("\n"), quiet);
   assert.equal(cfg.language, "de");
   assert.deepEqual(locationOf(cfg), [52.52, -13.4]);
@@ -37,14 +37,16 @@ test("values are read and kept within their limits", () => {
   assert.equal(cfg.gpioSlowdown, 4);
   assert.equal(cfg.hardwareMapping, "adafruit-hat-pwm");
   assert.equal(cfg.port, 8080);
+  assert.equal(cfg.updateBetas, true);
 });
 
 test("an invalid location or number is reported and left out", () => {
   const warnings: string[] = [];
-  const cfg = parseConfig("[location]\nlatitude = 91\nlongitude = east\n[web]\nport = eighty\n",
+  const cfg = parseConfig("[location]\nlatitude = 91\nlongitude = east\n[web]\nport = eighty\n[update]\nbetas = maybe\n",
     (message) => warnings.push(message));
   assert.equal(cfg.latitude, null);
   assert.equal(cfg.longitude, null);
   assert.equal(cfg.port, 80);
-  assert.equal(warnings.length, 3);
+  assert.equal(cfg.updateBetas, false);
+  assert.equal(warnings.length, 4);
 });

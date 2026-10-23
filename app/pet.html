@@ -657,10 +657,6 @@
         <button class="wide" id="connect" data-t="page.app.connect"></button>
         <p class="note" id="update-text" hidden></p>
         <button class="wide" id="update-start" data-t="page.app.update" hidden></button>
-        <div class="segments" id="update-beta" role="group" data-t-aria="page.app.update_channel" hidden>
-          <button data-beta="off" data-t="page.app.update_releases"></button>
-          <button data-beta="on" data-t="page.app.update_betas"></button>
-        </div>
         <button class="wide quiet" id="disconnect" data-t="page.app.disconnect"></button>
       </div>
       <p class="note" id="legal" hidden><a id="privacy-link" target="_blank" rel="noopener" data-t="page.app.privacy"></a> · <a id="support-link" target="_blank" rel="noopener" data-t="page.app.support"></a> · <a id="licenses-link" target="_blank" rel="noopener" data-t="page.app.licenses"></a><span id="version"></span></p>
@@ -3225,8 +3221,6 @@ function renderUpdate() {
   $("update-text").textContent = lines.join(" ");
   $("update-text").hidden = false;
   $("update-start").hidden = !u.available && !(app.fit() === "display_old" && !u.running);
-  $("update-beta").hidden = u.beta === undefined;  // an older Pi has no betas
-  document.querySelectorAll("[data-beta]").forEach((b) => b.setAttribute("aria-pressed", (b.dataset.beta === "on") === !!u.beta));
   document.querySelector('[data-view="more"]').classList.toggle("news", u.available);
 }
 
@@ -3243,15 +3237,6 @@ async function startUpdate(button) {
   }
 }
 $("update-start").addEventListener("click", () => startUpdate($("update-start")));
-// Betas too, or only releases: the Pi looks again at once, so a beta shows up right away
-document.querySelectorAll("[data-beta]").forEach((b) => b.addEventListener("click", async () => {
-  try {
-    update = (await api("POST", "/api/update/beta", { beta: b.dataset.beta === "on" })).update;
-    renderUpdate();
-  } catch (err) {
-    fail(err);
-  }
-}));
 $("mismatch-update").addEventListener("click", () => startUpdate($("mismatch-update")));
 $("mismatch-leave").addEventListener("click", () => app.disconnect());
 

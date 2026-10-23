@@ -198,6 +198,7 @@ defaults below apply.
 | `[matrix]` | `rows`, `cols` | `64` | Size of the panel in pixels |
 | `[weather]` | `refresh_minutes` | `15` | How often the weather is fetched (at least 5) |
 | `[web]` | `port` | `80` | Port of the web interface |
+| `[update]` | `betas` | `no` | `yes`: the update button offers betas too (*Betas* under *Releases*) |
 
 Files from older versions may still hold `[interface] language`,
 `[location] latitude`/`longitude` and `[matrix] brightness`. They keep
@@ -506,11 +507,12 @@ end is exactly the beta that was tested, nothing is built again:
 1. Tag `v1.2.0-beta.1` and publish its GitHub release with **Set as a
    pre-release** ticked. The Release workflow attaches the Pi's package,
    Codemagic uploads the apps to TestFlight and the internal test track.
-2. Test it. A Pi gets betas with the switch *Betas too* under *Own LED
-   display* in the app (or *Install beta versions too* on the settings page)
-   and is then updated with its button as usual. Other Pis only see final
-   releases. Use the beta app with a Pi on betas: a beta may change the API,
-   and the store app would then ask for an update.
+2. Test it. A Pi gets betas with `betas = yes` under `[update]` in its
+   `/etc/led-matrix/config.ini` (then `sudo systemctl restart led-matrix`)
+   and is updated with its button as usual, from the app or the settings
+   page. Other Pis only see final releases. Use the beta app with a Pi on
+   betas: a beta may change the API, and the store app would then ask for an
+   update.
 3. A bug found in the beta is fixed on main and goes out as `v1.2.0-beta.2`.
 4. When the beta is good, release its builds by hand: in App Store Connect
    pick the TestFlight build for version 1.2.0 and send it to review, in the
@@ -527,7 +529,7 @@ The updater only offers a release that is newer than the running one, in the
 order `v1.1.0` < `v1.2.0-beta.1` < `v1.2.0-beta.2` < `v1.2.0`, so a Pi on a
 beta moves on to its release but is never offered the release before it.
 For a public beta, open the testing tracks of the stores too (open testing in
-Google Play, a public TestFlight link) for those who switch their Pi to betas.
+Google Play, a public TestFlight link) for those who set their Pi to betas.
 
 To build the package locally:
 

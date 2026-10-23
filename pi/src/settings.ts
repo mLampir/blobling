@@ -1,6 +1,6 @@
 /**
- * The settings that are made on the web interface instead of in config.ini: the language, the
- * location, and whether updates include betas.
+ * The settings that are made on the web interface instead of in config.ini: the language and the
+ * location.
  *
  * They are kept in their own file next to the pet (settings.json in the data folder), so the
  * settings page never writes to /etc. What is saved there wins over config.ini; config.ini only
@@ -26,8 +26,6 @@ interface Saved {
   language?: string;
   /** [latitude, longitude], or null for "no location" (overrides one from config.ini) */
   location?: [number, number] | null;
-  /** updates include betas (pi/src/update.ts) */
-  beta?: boolean;
 }
 
 export class Settings {
@@ -105,19 +103,6 @@ export class Settings {
     }
   }
 
-  /** Whether updates include betas. */
-  get beta(): boolean {
-    return this.saved.beta ?? false;
-  }
-
-  setBeta(on: unknown): void {
-    if (typeof on !== "boolean") {
-      throw new RequestError("invalid_settings");
-    }
-    this.saved.beta = on;
-    this.save();
-  }
-
   /** `listener` hears about every new location (weather, sun times). */
   onLocation(listener: (location: Location) => void): void {
     this.locationListeners.push(listener);
@@ -141,9 +126,6 @@ export class Settings {
         saved.location = null;
       } else if (Array.isArray(data.location)) {
         saved.location = checkLocation(data.location[0], data.location[1]) ?? undefined;
-      }
-      if (typeof data.beta === "boolean") {
-        saved.beta = data.beta;
       }
       return saved;
     } catch (error) {

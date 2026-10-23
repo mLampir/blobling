@@ -9,7 +9,7 @@
  * Nothing is taken from the request: it only ever installs the newest official release, and only
  * when it is newer than the running one (a Pi on a beta isn't offered the release before it).
  *
- * With betas switched on (settings page or app), the newest pre-release counts too. The version
+ * With [update] betas = yes in config.ini, the newest pre-release counts too. The version
  * that was found is written to UPDATE_ENV for the unit, so it installs exactly that one.
  *
  * A Pi set up from a checkout of the repo has neither file, and nothing here does anything.
@@ -110,7 +110,7 @@ export class Updates {
 
   /**
    * `directory`: where VERSION and REPO are (the app's folder). `beta`: whether betas are wanted
-   * (Settings.beta). `envFile`: where the version to install is written for the update unit.
+   * (config.ini, [update] betas). `envFile`: where the version to install is written for the update unit.
    */
   constructor(directory: string, private readonly request: typeof fetch = fetch,
       private readonly run: Systemctl = systemctl, private readonly beta: () => boolean = () => false,

@@ -71,7 +71,7 @@ async function main(): Promise<void> {
   // Look for a new release a minute after the start and then every six hours; while an update
   // runs, watch its unit (it ends by restarting this service, or fails).
   // VERSION and REPO lie next to the app (WorkingDirectory); the update unit reads update.env
-  const updates = new Updates(".", fetch, undefined, () => settings.beta, join(DATA_DIR, "update.env"));
+  const updates = new Updates(".", fetch, undefined, () => cfg.updateBetas, join(DATA_DIR, "update.env"));
   if (updates.enabled) {
     setTimeout(() => void updates.check(), 60_000);
     setInterval(() => void updates.check(), 6 * 3600_000);

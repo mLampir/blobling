@@ -149,7 +149,6 @@
     <h2>{{ t('settings.update') }}</h2>
     <p class="hint" id="update-text"></p>
     <div class="buttons"><button id="update-start" hidden>{{ t('settings.update_button') }}</button></div>
-    <label class="switch" id="update-beta-row" hidden><input type="checkbox" id="update-beta"> {{ t('settings.update_beta') }}</label>
   </section>
 
   <section>
@@ -256,17 +255,11 @@ function renderUpdate(u) {
   else if (!u.running && !u.failed && u.latest) lines.push(t("settings.update_current"));
   $("update-text").textContent = lines.join(" ");
   $("update-start").hidden = !u.available;
-  $("update-beta-row").hidden = u.beta === undefined;
-  $("update-beta").checked = !!u.beta;
 }
 
 $("update-start").addEventListener("click", () => {
   $("update-start").disabled = true;
   api("POST", "/api/update").catch(() => {}).finally(() => ($("update-start").disabled = false));
-});
-// Betas too: the Pi looks again at once, so a beta is offered right away
-$("update-beta").addEventListener("change", () => {
-  api("POST", "/api/update/beta", { beta: $("update-beta").checked }).catch(() => {});
 });
 
 // Location: like the night mode, only refilled when it changed and nobody is typing.
