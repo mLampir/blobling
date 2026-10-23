@@ -1005,7 +1005,7 @@ setInterval(() => { if (!document.hidden && view === "home") matchSky(); }, 2000
 let panning = null, panFrame = null, previewGen = 0;
 function panTo(before, to, from = current && current.id) {
   if (app.home() === "phone" || !current || to === from) return;
-  const a = app.place(before, from), b = app.place(before, to);
+  const there = placesOf(current), a = app.place(before, from, there), b = app.place(before, to, there);
   const steps = a >= 0 && b >= 0 ? b - a : 1;
   if (!steps) return;
   const copy = document.createElement("canvas");
@@ -1609,7 +1609,7 @@ function renderBag(s) {
     bag.dataset.key = key;
     const fruits = [], foods = [], seeds = [], wear = [];
     for (const item of s.items) {
-      if (item.kind === "yard" || item.kind === "ground") continue; // it stands in the yard or on the training ground
+      if (["yard", "ground", "playground"].includes(item.kind)) continue; // it stands at one of the places along the street
       if (item.kind === "fruit" || item.kind === "food") {
         const b = bagTile(app.thing(item.id), item.label, [item.label, ...effectText(item.effects)].join(" · "));
         b.dataset.action = "feed";
@@ -2592,15 +2592,15 @@ $("sleep").addEventListener("click", () => {
   if (current) act(current.asleep ? "wake" : "sleep");
 });
 
-// The street under the scene, with two pets or more: every house in its order, then the yard and
-// the training ground. A tap pans there; the place the scene shows is framed. A dot: that pet needs
+// The street under the scene, with two pets or more: every house in its order, then the yard, the
+// playground and the training ground. A tap pans there; the place the scene shows is framed. A dot: that pet needs
 // something, or a pet is over at that place; faded: it is away (on a trip, or at Grandma's).
 function renderStreet(s) {
   const row = $("street");
   row.hidden = s.pets.length < 2;
   if (row.hidden) return;
   const at = app.atPlace(s);
-  const places = [...(s.yard ? ["yard"] : []), ...(s.ground ? ["ground"] : [])];
+  const places = placesOf(s);
   const key = s.pets.map((p) => p.id + p.stage + p.species).join() + "," + places.join();
   if (row.dataset.ids !== key) {
     row.dataset.ids = key;
@@ -2637,6 +2637,11 @@ function renderStreet(s) {
     b.classList.toggle("here", at === where);
     b.classList.toggle("there", s[where].there.length > 0);
   }
+}
+
+// The places after the houses the home has, in their order along the street
+function placesOf(s) {
+  return ["yard", "playground", "ground"].filter((where) => s[where]);
 }
 
 async function look(id) {

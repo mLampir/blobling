@@ -719,3 +719,28 @@ test("the barbell leaves its rack while it is lifted, and the coach's board show
   assert.equal(blue(resting), 0);
   assert.ok(shown.some((image) => blue(image) > 3), "an arrow lights up on the board");
 });
+
+test("the playground shows the pieces found, and the two take turns on them", () => {
+  const all = ["swing", "sandpit", "seesaw"];
+  const [empty] = scene().renderPlayground({ pieces: ["seesaw"], castle: false }, null, DAY, 1);
+  const [full] = scene().renderPlayground({ pieces: all, castle: false }, null, DAY, 1);
+  const [castle] = scene().renderPlayground({ pieces: all, castle: true }, null, DAY, 1);
+  assert.ok(differing(empty, full, 0, GROUND) > 200, "the tree with the swing");
+  assert.ok(differing(full, castle) > 20, "the sandcastle");
+  // on the swing (the first turn) ours sits up on the seat; in its own game it is on the ground
+  const at = (since: number) => frames({ playground: { pieces: all, castle: false },
+    visitor: { species: "fox", stage: "child", left: 600, age: since + 3, tricks: [] } }, 15).at(-1)!;
+  const lowest = (image: Image, x0: number, x1: number) => {
+    for (let y = GROUND; y > 0; y--) {
+      for (let x = x0; x < x1; x++) {
+        const [r, g, b] = color(image, x, y);
+        if (Math.abs(r - 39) + Math.abs(g - 196) + Math.abs(b - 180) < 90) { // the blob's teal
+          return y;
+        }
+      }
+    }
+    return -1;
+  };
+  assert.ok(lowest(at(30), 0, 40) < GROUND - 6, "up on the swing");
+  assert.ok(lowest(at(200), 0, 40) >= GROUND - 2, "down on the ground for its own game");
+});

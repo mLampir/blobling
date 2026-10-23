@@ -67,12 +67,14 @@ export interface Yard {
   empty_at: number;
   /** The last minute the rain barrel has had (0 = none yet): it runs once a minute for the whole home. */
   rain_at: number;
+  /** When the sandcastle on the playground was built (playground.ts), until the rain washes it away (0 = none). */
+  castle_at: number;
 }
 
 export type What = "trough" | "basin";
 
 export function newYard(): Yard {
-  return { trough: null, basin: null, empty_at: 0, rain_at: 0 };
+  return { trough: null, basin: null, empty_at: 0, rain_at: 0, castle_at: 0 };
 }
 
 /** The yard from a save file; older files have none. */
@@ -86,6 +88,7 @@ export function readYard(data: unknown): Yard {
     }
     yard.empty_at = Number(saved.empty_at) || 0;
     yard.rain_at = Number(saved.rain_at) || 0;
+    yard.castle_at = Number(saved.castle_at) || 0;
   }
   return yard;
 }
@@ -179,6 +182,9 @@ export function rain(yard: Yard, items: Record<string, number>, t: number, weath
     return; // another pet of the home has had this minute already
   }
   yard.rain_at = t;
+  if (sky.precipitation(weather) === "rain") {
+    yard.castle_at = 0; // the sandcastle on the playground melts away
+  }
   const most = capacity(items, "basin");
   if (!most || !hasBarrel(items) || sky.precipitation(weather) !== "rain" || minute % RAIN_EVERY !== 0) {
     return;

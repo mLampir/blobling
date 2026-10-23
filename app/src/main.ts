@@ -347,7 +347,7 @@ const app = {
   },
 
   /**
-   * Looks at a place after the last house ("yard", there with two pets or more, or "ground"),
+   * Looks at a place after the last house ("yard" and "playground", there with two pets or more, or "ground"),
    * until it switches to a pet again. Returns the state of the pet looked at, like GET /api/pet.
    */
   async lookPlace(where: string): Promise<any> {
@@ -357,9 +357,9 @@ const app = {
   },
 
   /**
-   * The place the scene shows right now ("yard", "ground"), or null for the pet's house: it was
-   * asked for, or the pet `state` (as GET /api/pet has it) is over there. The yard only while
-   * there is one.
+   * The place the scene shows right now ("yard", "playground", "ground"), or null for the pet's
+   * house: it was asked for, or the pet `state` (as GET /api/pet has it) is over there. The yard
+   * and the playground only while the home has them.
    */
   atPlace(state: any): string | null {
     if (!state) {
@@ -368,13 +368,15 @@ const app = {
     if (phone && app.home() === "phone") {
       return phone.atPlace();
     }
-    if (placeLooked === "ground" || (placeLooked === "yard" && state.yard)) {
+    if (placeLooked === "ground" || (placeLooked !== null && state[placeLooked])) {
       return placeLooked;
     }
-    if (state.yard?.there.includes(state.id)) {
-      return "yard";
+    for (const where of ["yard", "playground", "ground"]) {
+      if (state[where]?.there.includes(state.id)) {
+        return where;
+      }
     }
-    return state.ground?.there.includes(state.id) ? "ground" : null;
+    return null;
   },
 
   /** Whether the scene shows the yard right now, for a tap on the trough or the basin. */

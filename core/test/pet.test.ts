@@ -33,7 +33,7 @@ test("trip in snapshot and view", () => {
       ["ruins", false]]);
   assert.deepEqual(state.areas[1],
     { id: "forest", label: "Mushroom forest", unlocked: false, behind: "meadow", blocked_by: "Meadow", guardian: true, keeper: "mosswart",
-      finds: ["egg_bear", "glowshroom", "lantern", "cap", "woodpile", "snailshell", "coach_board"].map((id) => ({ id, found: false })), wild_left: true });
+      finds: ["egg_bear", "glowshroom", "lantern", "cap", "woodpile", "snailshell", "coach_board", "swing"].map((id) => ({ id, found: false })), wild_left: true });
   assert.equal(state.areas[0].wild_left, null); // only wild pets of no line live on the meadow
   assert.deepEqual(state.guardians, { passed: 0, all: 7 });
   // behind the mountain the path forks: both lie behind it

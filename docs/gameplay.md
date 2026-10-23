@@ -300,13 +300,13 @@ favorite can stay while new eggs are raised for the album.
   nobody does anything with for a day and a half goes to Grandma's, like a
   single pet (see [At Grandma's](#at-grandmas)).
 - **Switching only moves the camera.** A strip under the scene shows the
-  street: every pet at home, in the order of their houses, then the yard and
-  the [training ground](#the-training-ground). A
+  street: every pet at home, in the order of their houses, then the yard, the
+  [playground](#the-playground) and the [training ground](#the-training-ground). A
   frame marks the one the camera is on; a tap on another looks at it, and the
   picture pans along the street to its house. Nobody moves: each pet keeps its
   own house, plant and decorations. A small dot on a pet says it needs
   something, a faded one is away (on a trip, at Grandma's), and a dot on the
-  yard or the training ground says somebody is there.
+  yard, the playground or the training ground says somebody is there.
 - **One store for all.** The finds, the food and the eggs belong to the whole
   home. A hat or a decoration exists once: put it on one pet, and it comes off
   the other. A pet that moves to another home takes its hat and the
@@ -332,7 +332,8 @@ favorite can stay while new eggs are raised for the album.
   and the ones whose partner is away pair up with each other. A pet that
   knows a trick shows it, and the other one copies it: a quarter point, from
   the same allowance as practicing alone, so it never learns a trick that
-  way. A child counts the time together as half a playtime.
+  way. A child counts the time together as half a playtime. Once the home has
+  a [playground](#the-playground), they meet there.
 - **At night** two of them sleep side by side. Once there is a house, both
   sleep inside.
 
@@ -414,6 +415,28 @@ it; a tap there pans over, a tap on a pet pans back.
 
 It all follows the simulation, minute by minute for all pets together, so who
 gets the last portion is the same whether anybody is looking or not.
+
+### The playground
+
+With two pets or more, the street gets a playground after the yard, as soon
+as the first of its three pieces has been found on a trip: a **swing** from a
+tree branch (mushroom forest), a **sandpit** sunk into the ground (stream)
+and a **seesaw** (cave). Each piece is found once.
+
+- **The neighbours meet there.** When two get together by day, the first
+  pair goes over to the playground; only one pair fits, so with four pets
+  the other pair meets in a garden as before. If the camera is on one of
+  them, it pans along.
+- **They take turns:** a minute on each piece the home has (taking turns on
+  the swing, building in the sandpit, up and down on the seesaw), then a game
+  of their own, and round again.
+- **It is worth more than a garden:** a child counts the time there as a
+  whole playtime instead of half a one, and every piece cheers both of them up
+  a little (+4 mood each).
+- **A sandcastle** stays in the sandpit after they have played there, until
+  the rain washes it away.
+- A tap on the playground in the street strip looks at it, also while nobody
+  is there.
 
 ## Tricks
 
@@ -711,7 +734,9 @@ cave and on the mountain. Inside the cave there is no sky and no weather.
 
 Three finds are for the [training ground](#the-training-ground): the training
 cones on the meadow, the coach's board in the mushroom forest and the barbell
-on the mountain.
+on the mountain. Three more are for the [playground](#the-playground): the
+swing in the mushroom forest, the sandpit at the stream and the seesaw in the
+cave.
 
 Four finds are for the [yard](#the-yard): the water basin at the stream, the
 rain barrel there too (only while it rains), and the planks at the coast and in the ruins, which only turn up once the area's
@@ -1155,6 +1180,7 @@ keep its own pet or connect to a Pi; the README explains how.
 | Catching up, the state for the app, what is saved, pets in the album (kept frozen, and coming home again), the album (seen, had, mastered) and its safety net (`longMissing`) | `core/src/pet.ts`, `core/src/state.ts` |
 | Several pets at home: the houses, the shared store, places for a new egg | `core/src/pet.ts` (`PLACES`, `newEgg`, `bringBack`) |
 | Neighbours getting together, sleeping side by side, copying tricks | `core/src/companion.ts` |
+| The playground: its pieces, who meets there, what it brings, the sandcastle | `core/src/playground.ts`, `Pet.playgroundPair` in `core/src/pet.ts`, `renderPlayground` in `core/src/scene.ts` |
 | The yard: trough and basin, portions, sizes and upgrades, the visits and the floors; all pets stepped together | `core/src/yard.ts`, `core/src/model.ts` (`advanceTogether`), `renderYard` in `core/src/scene.ts` |
 | Moving between a phone and a display: move numbers, the sealed copy, fetching back | `core/src/pet.ts` (`release`, `adopt`, `handOver`, `takeIn`, `fetchBack`), `app/src/main.ts` |
 | The camera panning along the street (panel and app), the places after the houses (`PLACES`), and which pet the panel shows | `core/src/street.ts`, `pi/src/display.ts` |
@@ -1321,6 +1347,7 @@ next to the same things looks small and sweet, which is fine.
 | What grows | a bush or a herb below the child, a tree or a sunflower above it | the plant |
 | Decorations | 7–12 pixels: things in the garden, not furniture for the pet | the windmill, the snow globe |
 | What it trains with | made for the pet, not a doll's toy: up to the child's width, or taller than it | the barbell on its rack (19 wide), the coach's board (16 wide, 27 high), the cones (7) |
+| What it plays on | big enough to carry it: about the child's width or more | the swing's seat (17), the seesaw (33), the sandpit (25) |
 
 A hat sits on the head, never on what makes the form: the lure, a crown,
 a flame or a rotor stays visible. Where the top of a form is such a thing,

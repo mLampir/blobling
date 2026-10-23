@@ -7,6 +7,7 @@
 //   npm run preview -- --yard             the yard: every size and level, pets at it → pet_yard.png,
 //                                         and a pet going over and back → pet_yard.gif
 //   npm run preview -- --ground           the training ground, empty and with pets training → pet_ground.png
+//   npm run preview -- --playground       the playground, empty and with two neighbours on it → pet_playground.png
 //
 // For the clock, the temperature and the names in the overview, point LED_MATRIX_BDF_DIR at the
 // fonts folder of rpi-rgb-led-matrix (without it they are left out).
@@ -16,7 +17,7 @@ import { parseArgs } from "node:util";
 
 import { Image } from "../core/src/image";
 import { ACTIVITY_SECONDS } from "../core/src/model";
-import { PetScene, type SceneView, type TripView, type Weather, type YardView } from "../core/src/scene";
+import { PetScene, type PlaygroundView, type SceneView, type TripView, type Weather, type YardView } from "../core/src/scene";
 import { pan, panSeconds } from "../core/src/street";
 import { AREAS } from "../core/src/trip";
 import * as yards from "../core/src/yard";
@@ -799,6 +800,7 @@ function main(): void {
       pets: { type: "boolean", default: false }, // write the pictures for docs/pets.md
       yard: { type: "boolean", default: false }, // the yard's sizes and levels, and a pet going over
       ground: { type: "boolean", default: false }, // the training ground
+      playground: { type: "boolean", default: false }, // the playground
       "spoiler-free": { type: "boolean", default: false }, // overview with one adult form and the first area only
       scale: { type: "string", default: "4" },
       frames: { type: "string", default: "50" }, // length of the GIF (10 frames per second)
@@ -873,6 +875,42 @@ function main(): void {
     });
     writeFileSync("pet_ground.png", encodePng(sheet));
     console.log("pet_ground.png");
+    return;
+  }
+  if (values.playground) {
+    const all = ["swing", "sandpit", "seesaw"];
+    const empty: [string, PlaygroundView, Date][] = [["all", { pieces: all, castle: false }, DAY],
+      ["swing only", { pieces: ["swing"], castle: false }, DAY], ["sandcastle", { pieces: ["sandpit", "seesaw"], castle: true }, DAY],
+      ["at night", { pieces: all, castle: true }, NIGHT]];
+    // the two on it: [title, seconds since they got there, the neighbour]
+    const on: [string, number, string, string][] = [["swing", 20, "child", "fox"], ["swing, other", 260, "child", "fox"],
+      ["to the sandpit", 60.4, "child", "fox"], ["sandpit", 100, "child", "fox"], ["seesaw", 140, "adult", "hivebear"],
+      ["seesaw adult", 141, "baby", "blob"], ["own game", 200, "child", "fox"]];
+    const count = empty.length + on.length;
+    const cols = 4, rows = Math.ceil(count / cols);
+    const sheet = Image.filled(cols * (64 * s + 8), rows * (64 * s + 20), [30, 30, 36]);
+    const at = (i: number) => [(i % cols) * (64 * s + 8) + 4, Math.floor(i / cols) * (64 * s + 20)];
+    empty.forEach(([title, place, now], i) => {
+      const [x, y] = at(i);
+      sheet.paste(enlarged(new PetScene(64, 64, assets, { t: 0.0 }).renderPlayground(place, null, now, 1)[0]), x, y + 16);
+      label(sheet, x, y + 2, title);
+    });
+    on.forEach(([title, since, stage, species], i) => {
+      const scene = new PetScene(64, 64, assets, { t: 0.0 });
+      const start = DAY.getTime() / 1000;
+      let frame: Image | null = null;
+      for (let k = 0; k < 30; k++) { // ten per second, from three seconds before
+        const age = since - 3 + k * 0.1 + 3;
+        const view: SceneView = { ...BASE, playground: { pieces: all, castle: false },
+          visitor: { species, stage, left: 900 - age, age, tricks: [] } };
+        frame = scene.render(view, null, new Date((start + k * 0.1) * 1000), 1 + k * 0.1)[0];
+      }
+      const [x, y] = at(empty.length + i);
+      sheet.paste(enlarged(frame!), x, y + 16);
+      label(sheet, x, y + 2, title);
+    });
+    writeFileSync("pet_playground.png", encodePng(sheet));
+    console.log("pet_playground.png");
     return;
   }
   let out: string;
