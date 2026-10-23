@@ -13,6 +13,9 @@
         <!-- localeConfig: the app's language can be chosen in Android's settings (13 and later), like
              any app's. No "locale" in configChanges below: choosing one restarts the app, and the
              page comes back in the new language. -->
+        <!-- screenOrientation portrait: on a phone held sideways the scene and both bar rows don't fit.
+             Android 16 ignores it on tablets and foldables, where the page stands as a column in the
+             middle and works either way. Google Play warns about it; the warning is kept on purpose. -->
 
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|uiMode|navigation|density"

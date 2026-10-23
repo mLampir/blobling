@@ -24,9 +24,13 @@ android {
             applicationIdSuffix ".test"
             versionNameSuffix "-test"
         }
+        // R8 shrinks and optimizes the native part (Google Play asks for it). Capacitor's own rules
+        // keep every plugin class, which the bridge finds by reflection. The mapping file goes into
+        // the app bundle, so Play shows crash reports with the real class and method names.
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     // On Codemagic the upload key comes in through these variables (codemagic.yaml); without them,
