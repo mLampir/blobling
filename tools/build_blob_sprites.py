@@ -9165,6 +9165,85 @@ TRIP_TAGS |= {
 }
 
 
+# The training ground (core/src/ground.ts): a running track with three pieces of equipment, each
+# found once on a trip. The barbell rests on a low rack and is lifted overhead ("ground_barbell"),
+# two cones mark the sprint, and the coach's board on its easel shows the hops for smarts (the
+# arrow being shown is drawn over it by the scene).
+def ground_bar():
+    """The barbell: a black plate at each end of a steel bar."""
+    side = [".xX", "xXx", "xXx", "xXx", "xXx", "xXx", "xXx", "xXx", ".X."]
+    bar = ["." * 13] * 4 + ["s" * 13, "S" * 13] + ["." * 13] * 3
+    return [side[i] + bar[i] + side[i][::-1] for i in range(9)]
+
+
+def ground_rack():
+    """The rack the barbell rests on: two uprights with a cradle each, the bar's height above the ground."""
+    rows = []
+    for y in range(7):
+        row = ["."] * 19
+        for x in (4, 14):
+            if y == 0:
+                row[x - 1], row[x + 1] = "s", "s"
+            row[x] = "S" if y > 0 else "."
+        rows.append("".join(row))
+    rows.append("..SssS......SssS...")
+    return rows
+
+
+CONE = [
+    "...o...",
+    "...oO..",
+    "..ooO..",
+    "..wwW..",
+    ".oooOO.",
+    ".oooOO.",
+    ".wwwwW.",
+    "ooooooO",
+    "OOOOOOO",
+]
+
+
+def coach_board():
+    """The coach's board on its easel: a play drawn on it (an X, an O and a dotted arrow)."""
+    board = [
+        "TTTTTTTTTTTTTTTT",
+        "TwwwwwwwwwwwwwwT",
+        "TwBwBwwwwwwwwwwT",
+        "TwwBwwwwwwwwwwwT",
+        "TwBwBwBwwwwwwwwT",
+        "TwwwwwwwBwwwwwwT",
+        "TwwwwwwwwwBwwwwT",
+        "TwwwwwwwwwwwBwwT",
+        "TwwwwwwwwwwwwrrT",
+        "TwwwwwwwwwwwrwwT",
+        "TwwwwwwwwwwwwrrT",
+        "TwwwwwwwwwwwwwwT",
+        "TTTTTTTTTTTTTTTT",
+    ]
+    legs = []
+    for y in range(14):
+        row = ["."] * 16
+        k = round(y / 6)
+        row[max(0, 2 - k)] = "T"
+        row[min(15, 13 + k)] = "T"
+        legs.append("".join(row))
+    return board + legs
+
+
+GROUND_TAGS = {
+    "ground_bar": [(ground_bar(), 1000)],
+    "ground_rack": [(ground_rack(), 1000)],
+    "ground_cone": [(CONE, 1000)],
+    "ground_board": [(coach_board(), 1000)],
+    # held up when found
+    "barbell": [(["xx.........xx", "xXsssssssssXx", "xXSSSSSSSSSXx", "xx.........xx"], 1000)],
+    "cones": [(["..o.....o..", ".oOo...oOo.", ".wwW...wwW.", "ooooO.ooooO", "OOOOO.OOOOO"], 1000)],
+    "coach_board": [(["TTTTTTTTTT", "TwBwwwwwwT", "TwwBBBwwwT", "TwwwwwBwrT", "TwwwwwwwwT", "TTTTTTTTTT",
+                      "..T....T..", ".T......T."], 1000)],
+}
+TRIP_TAGS |= GROUND_TAGS
+
+
 # ---------------------------------------------------------------- Keepsakes
 
 # The keepsake of every line (core/src/keepsake.ts): a decoration, 7–11 pixels like the others,

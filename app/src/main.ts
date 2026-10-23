@@ -16,7 +16,7 @@
 
 import { DEFAULT_LANGUAGE, I18n, preferredLanguage } from "../../core/src/i18n";
 import { MAX_NAME } from "../../core/src/pet";
-import { eased, panSeconds } from "../../core/src/street";
+import { eased, panSeconds, place } from "../../core/src/street";
 import type { Location } from "../../core/src/sun";
 import { locales, soundFiles } from "./assets";
 import { haptic } from "./haptics";
@@ -151,8 +151,8 @@ function forPet(method: string, path: string, body: unknown, id: string | null):
 
 /** With a Pi: the pet this phone looks at, or null for the one the panel shows. */
 let camera = remote ? stored(CAMERA_KEY) : null;
-/** The page asked to look at the yard (lookYard), until it looks at a pet or does something with one. */
-let yardLooked = false;
+/** The place the page asked to look at (lookPlace), until it looks at a pet or does something with one. */
+let placeLooked: string | null = null;
 
 function setCamera(id: string | null): void {
   camera = id;
@@ -210,7 +210,7 @@ const app = {
    */
   async request(method: string, path: string, body?: unknown): Promise<any> {
     if (path === "/api/pet/action" && (body as { action?: unknown } | undefined)?.action !== "fill") {
-      yardLooked = false; // something done with a pet: the camera goes back to it
+      placeLooked = null; // something done with a pet: the camera goes back to it
     }
     if (!remote) {
       return (await local!).request(method, path, body);
@@ -338,7 +338,7 @@ const app = {
    * unless a pet is pinned there). Returns its state, like GET /api/pet.
    */
   async look(id: string): Promise<any> {
-    yardLooked = false;
+    placeLooked = null;
     if (remote) {
       // on the phone's own pet, the display goes on showing what it shows
       setCamera(id);
@@ -347,31 +347,46 @@ const app = {
   },
 
   /**
-   * Looks at the yard after the last house (there with two pets or more), until it switches to a
-   * pet again. Returns the state of the pet looked at, like GET /api/pet.
+   * Looks at a place after the last house ("yard", there with two pets or more, or "ground"),
+   * until it switches to a pet again. Returns the state of the pet looked at, like GET /api/pet.
    */
-  async lookYard(): Promise<any> {
-    yardLooked = true;
-    return app.request("POST", "/api/pet/look", { yard: true });
+  async lookPlace(where: string): Promise<any> {
+    placeLooked = where;
+    // the yard as it was asked for before the training ground, which a display of then understands too
+    return app.request("POST", "/api/pet/look", where === "yard" ? { yard: true } : { place: where });
   },
 
   /**
-   * Whether the scene shows the yard right now, for a tap on the trough or the basin: it was asked
-   * for, or the pet `state` (as GET /api/pet has it) is over there.
+   * The place the scene shows right now ("yard", "ground"), or null for the pet's house: it was
+   * asked for, or the pet `state` (as GET /api/pet has it) is over there. The yard only while
+   * there is one.
    */
-  atYard(state: any): boolean {
-    if (!state?.yard) {
-      return false;
+  atPlace(state: any): string | null {
+    if (!state) {
+      return null;
     }
     if (phone && app.home() === "phone") {
-      return phone.atYard();
+      return phone.atPlace();
     }
-    return yardLooked || state.yard.there.includes(state.id);
+    if (placeLooked === "ground" || (placeLooked === "yard" && state.yard)) {
+      return placeLooked;
+    }
+    if (state.yard?.there.includes(state.id)) {
+      return "yard";
+    }
+    return state.ground?.there.includes(state.id) ? "ground" : null;
+  },
+
+  /** Whether the scene shows the yard right now, for a tap on the trough or the basin. */
+  atYard(state: any): boolean {
+    return app.atPlace(state) === "yard";
   },
 
   /** How long the camera takes along the street, and how far it has come (core/src/street.ts). */
   panSeconds,
   eased,
+  /** Where along the street a pet's house or a place is, for the pans of the page. */
+  place,
 
   /** A picture of the pet in a form, as a URL for an <img>. */
   icon: iconUrl,

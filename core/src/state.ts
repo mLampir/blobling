@@ -341,6 +341,8 @@ export interface PetState {
   house: number;
   /** Until when somebody is looking into the house (the scene shows the inside). */
   look_in_until: number;
+  /** Until when it is over at the training ground (ground.ts); 0 = at home. */
+  ground_until: number;
   plant: Plant | null;
   events: PetEvent[];
   /** The latest scuffles, oldest first. */
@@ -349,7 +351,10 @@ export interface PetState {
   seen_at: number;
   /** When it next gets busy by itself (idle.step); 0 = not planned yet. */
   idle_next: number;
-  /** Trick -> points practiced alone since it was last practiced together (idle.SOLO_LIMIT). */
+  /**
+   * Trick or battle stat -> points practiced alone since it was last practiced together
+   * (idle.SOLO_LIMIT, ground.SOLO_LIMIT).
+   */
   solo: Record<string, number>;
   /** Rain and snow since somebody was last there, at most one of each per part of the day (idle.noteWeather). */
   weather_seen: WeatherSeen[];
@@ -426,6 +431,7 @@ export function newState(): PetState {
     deco: [],
     house: 0,
     look_in_until: 0.0,
+    ground_until: 0.0,
     plant: null,
     events: [],
     replays: [],

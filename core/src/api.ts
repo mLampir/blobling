@@ -9,6 +9,7 @@
 
 import { RequestError } from "./model";
 import type { Pet } from "./pet";
+import { PLACES, YARD } from "./street";
 
 /**
  * The version of this API. The app from the stores and the Pi are updated apart (the stores take
@@ -24,7 +25,7 @@ import type { Pet } from "./pet";
  * core/test/api.test.ts compares the API with core/test/api-contract.json and says which number
  * a change needs (CLAUDE.md, "The API between app and Pi").
  */
-export const API_VERSION = 9;
+export const API_VERSION = 10;
 export const API_OLDEST = 5;
 
 /**
@@ -38,8 +39,11 @@ export interface PetTarget {
   bringBack: (bornAt: unknown, place: unknown) => ReturnType<Pet["bringBack"]>;
   /** Somebody switched to the pet with this id: on the phone, the camera goes there. */
   look: (id: unknown) => void;
-  /** Somebody looks at the yard at the end of the street (yard.ts): the camera goes there, until it goes to a pet. */
-  lookYard: () => void;
+  /**
+   * Somebody looks at a place after the houses (street.PLACES: the yard, the training ground): the
+   * camera goes there, until it goes to a pet.
+   */
+  lookPlace: (where: string) => void;
   /** A phone takes the pet with this id along (Pet.handOver). */
   handOver: (id: unknown) => ReturnType<Pet["handOver"]>;
   /** A pet from a phone moves in (Pet.takeIn). */
@@ -52,7 +56,7 @@ export interface PetTarget {
 export function ownTarget(pet: Pet): PetTarget {
   return {
     pet, action: pet.action.bind(pet), newEgg: (egg, place) => pet.newEgg(egg, undefined, place),
-    bringBack: (bornAt, place) => pet.bringBack(bornAt, place), look: (id) => pet.select(id), lookYard: () => {},
+    bringBack: (bornAt, place) => pet.bringBack(bornAt, place), look: (id) => pet.select(id), lookPlace: () => {},
     handOver: (id) => pet.handOver(id), takeIn: (moving, place) => pet.takeIn(moving, place),
     retire: (id) => pet.retire(id),
   };
@@ -107,11 +111,16 @@ export async function petRequest(target: PetTarget, method: string, url: URL,
     }
 
     case "POST /api/pet/look": {
-      // switched to another pet (its id): the camera follows; with "yard": true, to the yard, for
-      // the pet the request is for (or the camera's)
+      // switched to another pet (its id): the camera follows; with "place" ("yard", "ground"), to
+      // that place, for the pet the request is for (or the camera's); "yard": true is how apps of
+      // API 9 and older ask for the yard
       const request = fields(await body());
-      if (request.yard === true) {
-        target.lookYard();
+      const where = request.yard === true ? YARD : request.place;
+      if (where !== undefined) {
+        if (!PLACES.includes(where as string)) {
+          throw new RequestError("unknown_place");
+        }
+        target.lookPlace(where as string);
         return pet.snapshot(undefined, request.pet);
       }
       target.look(request.pet);

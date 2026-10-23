@@ -19,6 +19,7 @@ import * as fishing from "./fishing";
 import * as food from "./food";
 import * as garden from "./garden";
 import * as grandma from "./grandma";
+import * as ground from "./ground";
 import * as habits from "./habits";
 import * as home from "./home";
 import * as keepsake from "./keepsake";
@@ -27,7 +28,7 @@ import * as magpie from "./magpie";
 import * as model from "./model";
 import * as notify from "./notify";
 import { hideX, houseArea, plantArea, posterArea, starArea, thingArea, yardArea, type SceneView, type TripView,
-  type YardView } from "./scene";
+  type GroundView, type YardView } from "./scene";
 import * as sky from "./sky";
 import * as stars from "./stars";
 import { fromDict, toDict, type Friend, type PetState } from "./state";
@@ -400,6 +401,8 @@ export class Pet {
       cross: (s.items[digging.MAP] ?? 0) > 0,
       // the friend it made last: Mirrorleon copies its dance and its special move
       friend: s.friends.at(-1)?.species ?? null,
+      // over at the training ground (ground.ts): the equipment the home has, in place of its garden
+      ground: ground.there(s, now) ? ground.equipment(s.items) : null,
     };
   }
 
@@ -1136,6 +1139,27 @@ export class Pet {
     };
   }
 
+  /** Is the pet with this id (without one: the camera's) over at the training ground right now? Then the camera goes along. */
+  atGround(now = this.clock(), id?: unknown): boolean {
+    this.advance(now);
+    return ground.there(this.find(id), now);
+  }
+
+  /**
+   * Who the training ground shows (ground.ts): the pet with this id (without one: the camera's)
+   * if it is over there, or else the first one that is; null while nobody is.
+   */
+  groundPet(now = this.clock(), id?: unknown): string | null {
+    this.advance(now);
+    const own = this.find(id);
+    return ground.there(own, now) ? own.id : this.pets.find((pet) => ground.there(pet, now))?.id ?? null;
+  }
+
+  /** The training ground with nobody on it, for the scene (PetScene.renderGround). */
+  groundView(): GroundView {
+    return { equipment: ground.equipment(this.state.items) };
+  }
+
   /** Is the pet with this id (without one: the camera's) over in the yard right now? Then the camera goes along. */
   inYard(now = this.clock(), id?: unknown): boolean {
     const pet = this.find(id);
@@ -1305,6 +1329,12 @@ export class Pet {
       // The yard at the end of the street (with two pets or more), or null: a tap on the trough or
       // the basin fills it ("fill")
       yard: this.yardInfo(now),
+      // The training ground (ground.ts), which every home has: the equipment found for it, and the
+      // pets over there right now (their ids)
+      ground: {
+        equipment: ground.equipment(s.items),
+        there: this.pets.filter((pet) => ground.there(pet, now)).map((pet) => pet.id),
+      },
       // All the pets at home, in the order of their houses: for switching the camera between them
       // (grandma: it is at Grandma's; away: on a trip; needs: something it needs is running low)
       ...this.street(now),
