@@ -11,7 +11,7 @@ it away is folded shut on this page. Open only what you want to know.
 | | Stage | Lasts |
 |---|---|---|
 | ![Egg](images/pets/egg.png) | **Egg** – keep it warm by petting it | up to 1 hour |
-| ![Baby](images/pets/baby.png) | **Baby** – a small slime with a sprout | 3 days |
+| ![Blobling](images/pets/baby.png) | **Baby: Blobling** – a small slime with a sprout | 3 days |
 | ![Child](images/pets/child.png) | **Child: Bloblet** – the sprout has grown into a lure with a glowing bulb | 7 days |
 | ![Angloop](images/pets/angloop.png) | **Adult** – one of three forms; this one is Angloop | forever |
 
@@ -155,7 +155,7 @@ visit as friends:
 | ![Lumoth](images/pets/lumoth.png) | Lumoth, a cuddly moth |
 | ![Cyclopuff](images/pets/cyclopuff.png) | Cyclopuff, a one-eyed ram calf |
 | ![Grumpcap](images/pets/grumpcap.png) | Grumpcap, a grumpy toad under a toadstool |
-| ![Flicker](images/pets/flicker.png) | Flicker, a candle of melted slime |
+| ![Wickle](images/pets/flicker.png) | Wickle, a candle of melted slime |
 
 They have no slot in the album.
 
@@ -174,13 +174,13 @@ Every guardian has been sitting on a rare egg:
 
 | Area | Guardian | Egg |
 |---|---|---|
-| Meadow | Crowcomb | **beak egg** |
-| Mushroom forest | Mosswart | **bear egg** |
-| Stream | Ripplesprite | **duck egg** |
+| Meadow | Crownster | **beak egg** |
+| Mushroom forest | Boulderoad | **bear egg** |
+| Stream | Breakerino | **duck egg** |
 | Cave | Gloompeep | **ember egg** |
-| Mountain | Frostfluff | **penguin egg** |
-| Coast | Barkguard | **octopus egg** |
-| Ruins | Rustknight | **gargoyle egg** |
+| Mountain | Bobbleti | **penguin egg** |
+| Coast | Whistlion | **octopus egg** |
+| Ruins | Visnail | **gargoyle egg** |
 
 A guardian leaves its egg behind the first time a pet gets past it, so every
 pet can earn each of them once. A pet that got past a guardian before that
@@ -205,24 +205,24 @@ Wild slimes live in the meadow, in all five adult forms. Cyclopuff is the one
 a pet meets most often, Lumoth the rarest, and Grumpcap only comes out in the
 rain.
 
-At the stream live the two adults of the stone line (below): Bouldergrin, and
+At the stream live the two adults of the stone line (below): Grinolith, and
 more rarely Glimmerock. A friend of theirs is the only way to a stone egg. The
 two adults of the hippo line bathe there too: Lillypot, and more rarely
 Steamo; they are the only way to a hippo egg.
 
-In the forest live the two adults of the fox line (below): Filchfox, and more
+In the forest live the two adults of the fox line (below): Banditail, and more
 rarely Roamtail. A friend of theirs is the only way to a fox egg. The two
 adults of the leaf line live there too: Twiggle, and more rarely Needlenub;
 they are the only way to a leaf egg.
 
-On the mountain live the two adults of the cloud line (below): Rumblefluff,
+On the mountain live the two adults of the cloud line (below): Thundram,
 which only comes out in the rain, and more rarely Prismist. A friend of theirs
 is the only way to a cloud egg.
 
 In the cave live the two adults of the bat line (below): Umbrabat, and more
-rarely Batbeat. A friend of theirs is the only way to a bat egg.
+rarely DJ Flapjack. A friend of theirs is the only way to a bat egg.
 
-At the coast lives Teacrab, the first adult of the crab line, and more rarely
+At the coast lives Earl Greyclaw, the first adult of the crab line, and more rarely
 Inkasso of the octopus line; in the ruins Sir Thimble of the mouse line, a
 knight at home in the castle, and more rarely Gargard of the gargoyle line.
 So the octopus and the gargoyle, whose eggs the two guardians behind the
@@ -265,9 +265,9 @@ friend's.
 
 | Guest | Line | What draws it |
 |---|---|---|
-| Mothmuff | caterpillar | a plant bore all three of its fruits |
-| Digby | dog | the pet played with you (a game, or the ball) on 5 of the last 7 days |
-| Rotorfly | dragonfly | the pond is set out, and it rained at home in the last week |
+| Fluffoth | caterpillar | a plant bore all three of its fruits |
+| Spudhound | dog | the pet played with you (a game, or the ball) on 5 of the last 7 days |
+| Rotoptera | dragonfly | the pond is set out, and it rained at home in the last week |
 | Dambert | beaver | the pond and the woodpile are both set out |
 
 The pond turns up at the stream, the woodpile in the mushroom forest, once
@@ -366,7 +366,7 @@ The values are in `core/src/magpie.ts`.
 | | Stage |
 |---|---|
 | ![Ember egg](images/pets/ember_egg.png) | **Ember egg** – a cooled crust with spots that glow |
-| ![Ember baby](images/pets/ember_baby.png) | **Baby** – a small ember with a spark on top |
+| ![Glowby](images/pets/ember_baby.png) | **Baby: Glowby** – a small ember with a spark on top |
 | ![Cindlet](images/pets/cindlet.png) | **Child: Cindlet** – an ember slime with glowing cracks and eyes, and a flame for a curl |
 
 The stages last as long as the slime's. What the adults keep is the flame.
@@ -443,7 +443,7 @@ The child ate 3 glowberries from the bag. A glowberry kept from an earlier pet c
 | | Stage |
 |---|---|
 | ![Stone egg](images/pets/stone_egg.png) | **Stone egg** – a river pebble with specks of quartz |
-| ![Stone baby](images/pets/stone_baby.png) | **Baby** – a small pebble with a speck of quartz on top |
+| ![Pebbo](images/pets/stone_baby.png) | **Baby: Pebbo** – a small pebble with a speck of quartz on top |
 | ![Pebblet](images/pets/pebblet.png) | **Child: Pebblet** – a river pebble on two stubby feet, with a white quartz band around its middle and a chipped corner that shows the lighter stone inside |
 
 The stages last as long as the slime's. What the adults keep is the quartz
@@ -459,9 +459,9 @@ little smile, and there is a glint of crystal in its eyes. It stays clean
 longer, and petting means more to it. It walks slow and heavy, its spin is a
 show in which its crystals flash, and at night they light up from inside.
 
-![Bouldergrin](images/pets/bouldergrin.png)
+![Grinolith](images/pets/bouldergrin.png)
 
-**Bouldergrin**, a cairn that came alive. The middle stone still wears the
+**Grinolith**, a cairn that came alive. The middle stone still wears the
 band and a wide, toothy grin; the stones at the bottom are its feet, two
 pebbles are its fists, and the little stone on top wears a cap of moss. It
 eats a lot, and its mood drops more slowly. It sways, but it never falls
@@ -479,7 +479,7 @@ child grows up. Its crystals want the dark to light up in.
 | Form | Rule |
 |---|---|
 | Glimmerock | the sun is down when the child grows up |
-| Bouldergrin | always |
+| Grinolith | always |
 
 So whoever wants Glimmerock taps **Evolve** after sunset, before bedtime. On a
 short summer evening it can be woken at night for it, at the cost of a grumpy
@@ -490,7 +490,7 @@ become right now:
 |---|---|
 | white | nothing yet (the first day) |
 | lilac, like crystal, after sunset | Glimmerock |
-| sunny yellow | Bouldergrin |
+| sunny yellow | Grinolith |
 
 The values are in `core/src/life.ts`.
 
@@ -525,7 +525,7 @@ It grows up at night under a full moon (a day and a half either side of it count
 | | Stage |
 |---|---|
 | ![Fox egg](images/pets/fox_egg.png) | **Fox egg** – a russet shell with cream speckles, like a fox's chest |
-| ![Fox baby](images/pets/fox_baby.png) | **Baby** – a small round cub with two pointed ears, one of them bent a little |
+| ![Foxkin](images/pets/fox_baby.png) | **Baby: Foxkin** – a small round cub with two pointed ears, one of them bent a little |
 | ![Kitlet](images/pets/kitlet.png) | **Child: Kitlet** – a fox cub as round as a slime, with a cream belly, little paws and a bushy tail that curls up to a white tip |
 
 The stages last as long as the slime's. What the adults keep is the tail with
@@ -541,9 +541,9 @@ roads, it hardly tires. It looks calm and friendly, under lids lowered in
 peace, with a gentle smile.
 For its spin it chases its own tail.
 
-![Filchfox](images/pets/filchfox.png)
+![Banditail](images/pets/filchfox.png)
 
-**Filchfox**, the fox that has got up to mischief. It wears a bandit mask tied
+**Banditail**, the fox that has got up to mischief. It wears a bandit mask tied
 at the back, one ear is bent, its fur is ruffled and the tip of its tail is
 ragged. It is always after something to eat and up for any game. Its look is
 cheeky: one eye narrowed, the other with a glint in it, and a sly grin with a
@@ -561,7 +561,7 @@ called straight back from doesn't count.
 | Form | Rule |
 |---|---|
 | Roamtail | the child went on 7 trips (1 a day) |
-| Filchfox | always |
+| Banditail | always |
 
 From its second day on, the white tip of Kitlet's tail shows where it is
 heading:
@@ -570,7 +570,7 @@ heading:
 |---|---|
 | white | nothing yet (the first day) |
 | turquoise, like the scarf | Roamtail |
-| dusky violet, like the mask | Filchfox |
+| dusky violet, like the mask | Banditail |
 
 The values are in `core/src/life.ts`.
 
@@ -583,9 +583,9 @@ The values are in `core/src/life.ts`.
 <details>
 <summary>Show this form</summary>
 
-![Foxfire](images/pets/foxfire.png)
+![Kitsunova](images/pets/foxfire.png)
 
-**Foxfire**, a white fox spirit with three tails, a blue fox fire burning at the tip of each, and red marks round its eyes. Calm and content, its mood drops more slowly, and it loves a game. At night its fox fires glow.
+**Kitsunova**, a white fox spirit with three tails, a blue fox fire burning at the tip of each, and red marks round its eyes. Calm and content, its mood drops more slowly, and it loves a game. At night its fox fires glow.
 Its spin sends fox fires whirling round it, and three fox fires are its special move.
 
 </details>
@@ -605,15 +605,15 @@ The child went on 4 trips to the mushroom forest. It can be picked only while th
 | | Stage |
 |---|---|
 | ![Cloud egg](images/pets/cloud_egg.png) | **Cloud egg** – a sky-blue shell with little white clouds drifting across it |
-| ![Cloud baby](images/pets/cloud_baby.png) | **Baby** – a small sky-blue blob with a puff of cloud fleece on its head and two dark lamb's feet |
+| ![Woolby](images/pets/cloud_baby.png) | **Baby: Woolby** – a small sky-blue blob with a puff of cloud fleece on its head and two dark lamb's feet |
 | ![Nimbit](images/pets/nimbit.png) | **Child: Nimbit** – a lamb whose fleece is a white cloud, with a sky-blue face, one ear flipped up, stubby legs and a yellow bell on a pink ribbon |
 
 The stages last as long as the slime's. What the adults keep is the cloud
 fleece. Both adults walk rather than hop, and a cloud needs no umbrella.
 
-![Rumblefluff](images/pets/rumblefluff.png)
+![Thundram](images/pets/rumblefluff.png)
 
-**Rumblefluff**, the thundercloud ram. Its fleece is a dark storm cloud piled
+**Thundram**, the thundercloud ram. Its fleece is a dark storm cloud piled
 high, and its horns are two golden curls of lightning that end in a bolt; the
 right one is bigger and forks. In a real thunderstorm they flash now and then.
 It looks stern, under heavy brows, and even a bad day hardly makes it grumpier
@@ -640,7 +640,7 @@ child grows up. The real weather where the pet lives, as on the panel.
 
 | Form | Rule |
 |---|---|
-| Rumblefluff | it rains (or storms) when the child grows up |
+| Thundram | it rains (or storms) when the child grows up |
 | Prismist | always |
 
 So whoever wants a thundercloud waits for rain before tapping **Evolve**.
@@ -649,7 +649,7 @@ From its second day on, Nimbit's bell shows what it would become right now:
 | Bell | Heading for |
 |---|---|
 | yellow | nothing yet (the first day) |
-| storm blue, while it rains | Rumblefluff |
+| storm blue, while it rains | Thundram |
 | rainbow pink | Prismist |
 
 The values are in `core/src/life.ts`.
@@ -685,7 +685,7 @@ It snows when it grows up. The **snow globe**, now and then found on the mountai
 | | Stage |
 |---|---|
 | ![Leaf egg](images/pets/leaf_egg.png) | **Leaf egg** – a seed with an acorn cap of woven husk and small leaves for speckles |
-| ![Leaf baby](images/pets/leaf_baby.png) | **Baby** – a green slime wearing the top of its seed as a tilted cap, with a sprout on top |
+| ![Seedkin](images/pets/leaf_baby.png) | **Baby: Seedkin** – a green slime wearing the top of its seed as a tilted cap, with a sprout on top |
 | ![Sproutlet](images/pets/sproutlet.png) | **Child: Sproutlet** – a seedling with its seed cap pulled down to the eyes like a helmet, two leaves on top (a small one and a big one that flops to the right) and two little roots for feet |
 
 The stages last as long as the slime's. What the adults keep is the seed cap,
@@ -762,7 +762,7 @@ The child picked 4 fruits off its own plant and ate them. It can be picked only 
 | | Stage |
 |---|---|
 | ![Duck egg](images/pets/duck_egg.png) | **Duck egg** – a cream egg whose lower half floats in pond water |
-| ![Duck baby](images/pets/duck_baby.png) | **Baby** – a yellow slime with a curl of down on top, a little bill and orange webbed feet |
+| ![Quackle](images/pets/duck_baby.png) | **Baby: Quackle** – a yellow slime with a curl of down on top, a little bill and orange webbed feet |
 | ![Paddlet](images/pets/paddlet.png) | **Child: Paddlet** – a duckling that still sits in the bottom half of its eggshell and paddles it like a little boat |
 
 The stages last as long as the slime's. What the adults keep is the curl. A
@@ -816,9 +816,9 @@ The values are in `core/src/life.ts`.
 <details>
 <summary>Show this form</summary>
 
-![Bubblehelm](images/pets/bubblehelm.png)
+![Quackuba](images/pets/bubblehelm.png)
 
-**Bubblehelm**, a deep-sea diver. A brass helmet with three portholes, the duck looking out of the front one, an air hose, a canvas suit, lead boots and a lantern; bubbles rise from its valve. The helmet keeps the muck out, it loves a game, and it needs no umbrella.
+**Quackuba**, a deep-sea diver. A brass helmet with three portholes, the duck looking out of the front one, an air hose, a canvas suit, lead boots and a lantern; bubbles rise from its valve. The helmet keeps the muck out, it loves a game, and it needs no umbrella.
 For its flip it dives head first into the ground and pops out again in a burst of bubbles; for its special move it swings its anchor.
 
 </details>
@@ -838,7 +838,7 @@ The child went on 3 trips with rain on the way. It can be picked only while this
 | | Stage |
 |---|---|
 | ![Hippo egg](images/pets/hippo_egg.png) | **Hippo egg** – a lavender egg that has been in the mud, caked at the bottom with drips going up |
-| ![Hippo baby](images/pets/hippo_baby.png) | **Baby** – a round lavender baby with two little ears, a big pale muzzle and pink cheeks; wider and lower than the slime |
+| ![Chubbo](images/pets/hippo_baby.png) | **Baby: Chubbo** – a round lavender baby with two little ears, a big pale muzzle and pink cheeks; wider and lower than the slime |
 | ![Soakling](images/pets/soakling.png) | **Child: Soakling** – a young hippo on its way to the bath, a striped towel folded on its head with its little ears poking out |
 
 The stages last as long as the slime's. What the adults keep is the towel.
@@ -913,7 +913,7 @@ The child was tucked in by hand on 6 evenings. It can be picked only while this 
 | | Stage |
 |---|---|
 | ![Beak egg](images/pets/beak_egg.png) | **Beak egg** – a wild bird's egg, robin blue with brown freckles of every size |
-| ![Beak baby](images/pets/beak_baby.png) | **Baby** – a fluffy chick, grey-brown down with a lighter belly and a red crest |
+| ![Tuftie](images/pets/beak_baby.png) | **Baby: Tuftie** – a fluffy chick, grey-brown down with a lighter belly and a red crest |
 | ![Crestling](images/pets/crestling.png) | **Child: Crestling** – a round young bird whose crest has grown into three feathers, with flying goggles pushed up on it: it wants to fly long before it can |
 
 The stages last as long as the slime's. What the adults keep is the red
@@ -927,9 +927,9 @@ It never lands: it hovers, one wing a blur. A hummingbird burns through
 everything: it gets tired and hungry faster.
 Its spin is a fencer's lunge, twice, with a flash at the tip of its beak, and in a scuffle its blade flashes.
 
-![Parcelbeak](images/pets/parcelbeak.png)
+![Mailican](images/pets/parcelbeak.png)
 
-**Parcelbeak**, a pelican mail carrier with a postman's cap, the crest
+**Mailican**, a pelican mail carrier with a postman's cap, the crest
 sticking through it, a huge orange bill and a mail bag across its chest. With
 a letter for everyone, it is always in a good mood: its mood drops more
 slowly. In a scuffle, letters fly out of its bag.
@@ -946,7 +946,7 @@ already knows doesn't).
 | Form | Rule |
 |---|---|
 | Rapierre | the child practiced or showed tricks 10 times (a trick shown counts at most once every 10 minutes) |
-| Parcelbeak | always |
+| Mailican | always |
 
 From its second day on, Crestling's goggles show where it is heading:
 
@@ -954,7 +954,7 @@ From its second day on, Crestling's goggles show where it is heading:
 |---|---|
 | light blue lenses in a brown frame | nothing yet (the first day) |
 | shimmering green | Rapierre |
-| orange, with a post-blue frame | Parcelbeak |
+| orange, with a post-blue frame | Mailican |
 
 The values are in `core/src/life.ts`.
 
@@ -989,14 +989,14 @@ As a child it got past 2 guardians for the first time. It can be picked only whi
 | | Stage |
 |---|---|
 | ![Caterpillar egg](images/pets/caterpillar_egg.png) | **Caterpillar egg** – a leaf-green egg in soft rings like a caterpillar's body, with a bite out of its top |
-| ![Caterpillar baby](images/pets/caterpillar_baby.png) | **Baby** – a plump green slime in rings, two feelers with pink pompoms and little feet |
+| ![Pommle](images/pets/caterpillar_baby.png) | **Baby: Pommle** – a plump green slime in rings, two feelers with pink pompoms and little feet |
 | ![Munchlet](images/pets/munchlet.png) | **Child: Munchlet** – a fat caterpillar with a bib on, its pompom feelers grown long, and a row of stubby feet |
 
 The stages last as long as the slime's. What the adults keep is the feelers.
 
-![Mothmuff](images/pets/mothmuff.png)
+![Fluffoth](images/pets/mothmuff.png)
 
-**Mothmuff**, a ball of fur with feathery feelers, its wings hanging round it
+**Fluffoth**, a ball of fur with feathery feelers, its wings hanging round it
 like a cloak. A moth naps the day away anyway: it gets tired more slowly, and
 it loves being petted. For its spin it circles as round a lamp, and in a
 scuffle it shakes out a cloud of wing dust.
@@ -1018,10 +1018,10 @@ This line goes by the fruit the child ate most, from the bag or off the plant.
 | Form | Rule |
 |---|---|
 | Sunflutter | sunflower seeds were its favorite: at least 4, and more than of any other fruit |
-| Mothmuff | always |
+| Fluffoth | always |
 
 From its second day on, the pompoms on Munchlet's feelers show where it is
-heading: a soft moth gray for Mothmuff, sunflower yellow for Sunflutter.
+heading: a soft moth gray for Fluffoth, sunflower yellow for Sunflutter.
 
 The values are in `core/src/life.ts`.
 
@@ -1034,9 +1034,9 @@ The values are in `core/src/life.ts`.
 <details>
 <summary>Show this form</summary>
 
-![Jesterwing](images/pets/jesterwing.png)
+![Harlequing](images/pets/jesterwing.png)
 
-**Jesterwing**, a harlequin butterfly. Tall diamond wings, a jester's cap with
+**Harlequing**, a harlequin butterfly. Tall diamond wings, a jester's cap with
 bells, and it floats instead of walking. Always up to some fooling and always
 wanting an audience: it gets tired and glum sooner. Its flip is a somersault
 in the air with jingling bells, and its special move is confetti that makes
@@ -1060,15 +1060,15 @@ of any other. It can be picked only while this holds, every time anew.
 | | Stage |
 |---|---|
 | ![Dog egg](images/pets/dog_egg.png) | **Dog egg** – a cream egg with one big brown patch and a paw print |
-| ![Dog baby](images/pets/dog_baby.png) | **Baby** – a tan puppy slime, one ear pricked up and one hanging down its side, and a wagging tail |
+| ![Floppup](images/pets/dog_baby.png) | **Baby: Floppup** – a tan puppy slime, one ear pricked up and one hanging down its side, and a wagging tail |
 | ![Pupplet](images/pets/pupplet.png) | **Child: Pupplet** – a puppy chasing its own tail, which curls round in front of it |
 
 The stages last as long as the slime's. What the adults keep is the one
 floppy ear.
 
-![Digby](images/pets/digby.png)
+![Spudhound](images/pets/digby.png)
 
-**Digby**, a dog with a garden bed growing on its back: sprouts and a carrot
+**Spudhound**, a dog with a garden bed growing on its back: sprouts and a carrot
 top, earth on its nose and paws. Its nose is always in the soil, so it gets
 dirty sooner, and it loves a game. For its spin it chases round three times
 and lies down, and in a scuffle it digs in and comes up under the opponent.
@@ -1090,10 +1090,10 @@ This line goes by how close the child is to you when it grows up.
 | Form | Rule |
 |---|---|
 | Barrelbard | it has 4 bond hearts or more when it grows up |
-| Digby | always |
+| Spudhound | always |
 
 From its second day on, Pupplet's ears and tail show where it is heading:
-sprout green for Digby, snow white for Barrelbard.
+sprout green for Spudhound, snow white for Barrelbard.
 
 The values are in `core/src/life.ts`.
 
@@ -1131,23 +1131,23 @@ picked only while this holds, every time anew.
 | | Stage |
 |---|---|
 | ![Dragonfly egg](images/pets/dragonfly_egg.png) | **Dragonfly egg** – a glassy blue egg with a shimmer of green, blue and violet running across it |
-| ![Dragonfly baby](images/pets/dragonfly_baby.png) | **Baby** – a sky-blue slime with two pairs of shimmering wings spread out sideways |
+| ![Flitbit](images/pets/dragonfly_baby.png) | **Baby: Flitbit** – a sky-blue slime with two pairs of shimmering wings spread out sideways |
 | ![Nymphlet](images/pets/nymphlet.png) | **Child: Nymphlet** – a dragonfly larva with wing stubs and diving goggles made of dew |
 
 The stages last as long as the slime's. What the adults keep is the
 shimmering wings.
 
-![Rotorfly](images/pets/rotorfly.png)
+![Rotoptera](images/pets/rotorfly.png)
 
-**Rotorfly**, a dragonfly that is a little helicopter: its head is a glass
+**Rotoptera**, a dragonfly that is a little helicopter: its head is a glass
 cockpit with its face behind it, its tail a tail boom with a small rotor, its
 legs are skids, and its wings turn on top as the rotor. All that hovering
 tires it sooner. For its spin it lifts off and turns on the spot, and in a
 scuffle its downwash pushes the opponent away.
 
-![Jewelwing](images/pets/jewelwing.png)
+![Jewelance](images/pets/jewelwing.png)
 
-**Jewelwing**, a knight whose body is plate armour in jewel green, its wings
+**Jewelance**, a knight whose body is plate armour in jewel green, its wings
 hanging behind it like two banners, a lance in its hand. Armour wipes clean
 and keeps sickness out. For its bow it kneels with its lance lowered, and its
 special move is a lance thrust that sparkles.
@@ -1161,11 +1161,11 @@ Only baths count for this line.
 
 | Form | Rule |
 |---|---|
-| Jewelwing | the child was bathed 14 times |
-| Rotorfly | always |
+| Jewelance | the child was bathed 14 times |
+| Rotoptera | always |
 
 From its second day on, Nymphlet's goggles show where it is heading:
-cockpit-glass cyan for Rotorfly, jewel green for Jewelwing.
+cockpit-glass cyan for Rotoptera, jewel green for Jewelance.
 
 The values are in `core/src/life.ts`.
 
@@ -1178,9 +1178,9 @@ The values are in `core/src/life.ts`.
 <details>
 <summary>Show this form</summary>
 
-![Prismfly](images/pets/prismfly.png)
+![Prismelle](images/pets/prismfly.png)
 
-**Prismfly**, a dragonfly of glass with wings of prism shards in every color,
+**Prismelle**, a dragonfly of glass with wings of prism shards in every color,
 throwing rainbow light; it glows at night. It lives half on light, so it gets
 hungry more slowly. For its dance spots of light in every color dance round
 it, and its special move is light broken into seven rays.
@@ -1203,7 +1203,7 @@ it last rained at home. It can be picked only while this holds, every time anew.
 | | Stage |
 |---|---|
 | ![Beaver egg](images/pets/beaver_egg.png) | **Beaver egg** – an egg of wood, with growth rings and gnaw marks bitten into one side |
-| ![Beaver baby](images/pets/beaver_baby.png) | **Baby** – a brown slime with round ears, buck teeth, a pencil behind one ear and a flat tail |
+| ![Chompkin](images/pets/beaver_baby.png) | **Baby: Chompkin** – a brown slime with round ears, buck teeth, a pencil behind one ear and a flat tail |
 | ![Gnawlet](images/pets/gnawlet.png) | **Child: Gnawlet** – a young beaver, the pencil still behind its ear, gnawing on a twig |
 
 The stages last as long as the slime's. What the adults keep is the buck teeth
@@ -1216,9 +1216,9 @@ like a shell, branches poking out, and its tail is a mason's trowel. It gnaws
 all day, so it gets hungry sooner. For its flip it raises its trowel and jumps
 over a little stack of wood, and in a scuffle it builds a dam in one go.
 
-![Timberjack](images/pets/timberjack.png)
+![Timbeaver](images/pets/timberjack.png)
 
-**Timberjack**, broad and bearded, the plaid of a lumberjack's shirt grown
+**Timbeaver**, broad and bearded, the plaid of a lumberjack's shirt grown
 into its fur and its tail ending in an axe blade. A lumberjack's appetite, and
 tough as an old oak: it gets hungry sooner and sick less often. For its spin
 its axe tail swings round and wood chips fly, and its special move is a tree
@@ -1233,11 +1233,11 @@ This line goes by the child's battle stats when it grows up.
 
 | Form | Rule |
 |---|---|
-| Timberjack | strength is its highest battle stat, higher than speed and smarts |
+| Timbeaver | strength is its highest battle stat, higher than speed and smarts |
 | Dambert | always |
 
 From its second day on, Gnawlet's pencil shows where it is heading: the color
-of fresh-cut wood for Dambert, plaid red for Timberjack.
+of fresh-cut wood for Dambert, plaid red for Timbeaver.
 
 The values are in `core/src/life.ts`.
 
@@ -1275,23 +1275,23 @@ The house is built to its last step when the child grows up. It can be picked on
 | | Stage |
 |---|---|
 | ![Crab egg](images/pets/crab_egg.png) | **Crab egg** – a peach egg striped in diagonal bands like a seashell |
-| ![Crab baby](images/pets/crab_baby.png) | **Baby** – a red slime in a spiral shell far too big for it, two little pincers in front |
+| ![Pinchkin](images/pets/crab_baby.png) | **Baby: Pinchkin** – a red slime in a spiral shell far too big for it, two little pincers in front |
 | ![Shellbit](images/pets/shellbit.png) | **Child: Shellbit** – a hermit crab leaning out of a tall conch, one pincer bigger than the other |
 
 The stages last as long as the slime's. A hermit crab moves house as it
 grows, and each adult has grown together with the house it found.
 
-![Teacrab](images/pets/teacrab.png)
+![Earl Greyclaw](images/pets/teacrab.png)
 
-**Teacrab**, crab and teapot in one: round and bellied, its big pincer is the
+**Earl Greyclaw**, crab and teapot in one: round and bellied, its big pincer is the
 spout that steams, its legs carry the pot, and the lid is its hat. There is
 always a cup of tea, so its mood drops more slowly, and it is warm to the
 touch: petting it does more. For its bow it pours a cup, and in a scuffle it
 pours a hot stream of tea over the opponent.
 
-![Lightclaw](images/pets/lightclaw.png)
+![Crabeacon](images/pets/lightclaw.png)
 
-**Lightclaw**, tall and narrow, its shell ringed red and white like a
+**Crabeacon**, tall and narrow, its shell ringed red and white like a
 lighthouse, and its big pincer up top is the lamp. Up all night keeping the
 light, it tires sooner. For its spin it turns like a lighthouse with its beam
 sweeping round, and its special move is a beam that dazzles the opponent.
@@ -1303,11 +1303,11 @@ sweeping round, and its special move is a beam that dazzles the opponent.
 
 | Form | Rule |
 |---|---|
-| Lightclaw | it grows up after dark while a decoration that glows stands outside (the lantern, the glow mushroom, the crystal or the ember stone) |
-| Teacrab | always |
+| Crabeacon | it grows up after dark while a decoration that glows stands outside (the lantern, the glow mushroom, the crystal or the ember stone) |
+| Earl Greyclaw | always |
 
 From its second day on, the stripes of Shellbit's conch show where it is
-heading: porcelain and tea green for Teacrab, lamp yellow for Lightclaw.
+heading: porcelain and tea green for Earl Greyclaw, lamp yellow for Crabeacon.
 
 The values are in `core/src/life.ts`.
 
@@ -1320,9 +1320,9 @@ The values are in `core/src/life.ts`.
 <details>
 <summary>Show this form</summary>
 
-![Castlecrab](images/pets/castlecrab.png)
+![Crabalot](images/pets/castlecrab.png)
 
-**Castlecrab**, the crab that is a whole castle: broad, with battlements and a
+**Crabalot**, the crab that is a whole castle: broad, with battlements and a
 keep, its two pincers are the gate towers that open as the gate, a flag waves
 on every tower, and a moat foams round its feet. At night its windows light
 up. It hops along all of a piece, and a whole castle needs feeding: it gets
@@ -1348,7 +1348,7 @@ while this holds, every time anew.
 | | Stage |
 |---|---|
 | ![Axolotl egg](images/pets/axolotl_egg.png) | **Axolotl egg** – a pink, glassy egg with the little one curled up inside, two gill frills on top |
-| ![Axolotl baby](images/pets/axolotl_baby.png) | **Baby** – a pink slime with feathery gill fronds on each side of its head |
+| ![Frondle](images/pets/axolotl_baby.png) | **Baby: Frondle** – a pink slime with feathery gill fronds on each side of its head |
 | ![Axolittle](images/pets/axolittle.png) | **Child: Axolittle** – a smiling axolotl, its gill fronds standing up like a crown, a long soft tail |
 
 The stages last as long as the slime's. What the adults keep is the pink and
@@ -1423,7 +1423,7 @@ This is the line from Grandma's attic.
 | | Stage |
 |---|---|
 | ![Mouse egg](images/pets/mouse_egg.png) | **Mouse egg** – in one of Grandma's knitted egg cosies, red with a white bobble |
-| ![Mouse baby](images/pets/mouse_baby.png) | **Baby** – a small grey slime with two big round ears |
+| ![Earby](images/pets/mouse_baby.png) | **Baby: Earby** – a small grey slime with two big round ears |
 | ![Squeaklet](images/pets/squeaklet.png) | **Child: Squeaklet** – a little grey mouse with big round ears and a ringed tail, holding a crumb of cheese in both paws |
 
 The stages last as long as the slime's. What the adults keep is the big round
@@ -1472,9 +1472,9 @@ The values are in `core/src/life.ts`.
 <details>
 <summary>Show this form</summary>
 
-![Woolwhisk](images/pets/woolwhisk.png)
+![Queen Purl](images/pets/woolwhisk.png)
 
-**Woolwhisk**, the queen of Grandma's wool basket. She sits up tall on a big
+**Queen Purl**, the queen of Grandma's wool basket. She sits up tall on a big
 ball of red wool, her fur grown into knitted wool, two crossed knitting needles
 on her head for a crown. Her tail has become a golden thread that loops round
 her in rings, and where it crosses itself it knits little stars that shine and
@@ -1495,7 +1495,7 @@ It wears one of the hats Grandma knitted when it grows up. It can be picked only
 
 ### The bear line
 
-This is the line from Mosswart's egg in the mushroom forest.
+This is the line from Boulderoad's egg in the mushroom forest.
 
 <details>
 <summary>Show the bear line</summary>
@@ -1503,15 +1503,15 @@ This is the line from Mosswart's egg in the mushroom forest.
 | | Stage |
 |---|---|
 | ![Bear egg](images/pets/bear_egg.png) | **Bear egg** – a caramel egg with honey dripping over its top, sitting in a cushion of moss |
-| ![Bear baby](images/pets/bear_baby.png) | **Baby** – a round brown cub with round ears and a little honey pot on its head, honey running down onto its brow |
+| ![Honeybub](images/pets/bear_baby.png) | **Baby: Honeybub** – a round brown cub with round ears and a little honey pot on its head, honey running down onto its brow |
 | ![Cubble](images/pets/cubble.png) | **Child: Cubble** – a bear cub with a pale muzzle and stubby paws, the honey pot worn as a hat and honey welling over its rim |
 
 The stages last as long as the slime's. What the adults keep is the honey pot
 on their head, the round ears and the muzzle.
 
-![Hivebear](images/pets/hivebear.png)
+![Beehemoth](images/pets/hivebear.png)
 
-**Hivebear**, a bear that has become a beehive. Its body is a round straw dome
+**Beehemoth**, a bear that has become a beehive. Its body is a round straw dome
 coiled in rings with an entrance on its belly, the honey pot is the tip of the
 hive, and bees fly in and out round it; only the ears, the muzzle and the
 stubby paws are still bear fur. It walks. With honey of its own it gets hungry
@@ -1536,10 +1536,10 @@ move is a yawn that sends the opponent to sleep.
 | Form | Rule |
 |---|---|
 | Snorbear | it ate 3 honeycombs while it was a child |
-| Hivebear | always |
+| Beehemoth | always |
 
 From its second day on, the glaze of Cubble's honey pot shows where it is
-heading: gold for Hivebear, moss green for Snorbear.
+heading: gold for Beehemoth, moss green for Snorbear.
 
 The values are in `core/src/life.ts`.
 
@@ -1574,7 +1574,7 @@ It has all five bond hearts when it grows up. It can be picked only while this h
 
 ### The penguin line
 
-This is the line from Frostfluff's egg on the mountain.
+This is the line from Bobbleti's egg on the mountain.
 
 <details>
 <summary>Show the penguin line</summary>
@@ -1582,8 +1582,8 @@ This is the line from Frostfluff's egg on the mountain.
 | | Stage |
 |---|---|
 | ![Penguin egg](images/pets/penguin_egg.png) | **Penguin egg** – an ice-blue egg with snow on its top and frost on its shell, in a tuft of the yeti's white fur |
-| ![Penguin baby](images/pets/penguin_baby.png) | **Baby** – a fluffy grey chick with a white face, a tuft of down on top, orange feet and red earmuffs |
-| ![Waddlet](images/pets/waddlet.png) | **Child: Waddlet** – an upright young penguin with a slate back and a last tuft of down, a white heart-shaped face and belly, little flippers held out for balance and its earmuffs on their band |
+| ![Muffpin](images/pets/penguin_baby.png) | **Baby: Muffpin** – a fluffy grey chick with a white face, a tuft of down on top, orange feet and red earmuffs |
+| ![Pengling](images/pets/waddlet.png) | **Child: Pengling** – an upright young penguin with a slate back and a last tuft of down, a white heart-shaped face and belly, little flippers held out for balance and its earmuffs on their band |
 
 The stages last as long as the slime's. What the adults keep is the
 earmuffs, the white face and the orange feet.
@@ -1617,7 +1617,7 @@ blades, and in a scuffle it lays an ice track the opponent slips on.
 | Glidepin | it has learned the spin when it grows up |
 | Tuxwaddle | always |
 
-From its second day on, Waddlet's earmuffs show where it is heading: deep red
+From its second day on, Pengling's earmuffs show where it is heading: deep red
 for Tuxwaddle, ice blue for Glidepin.
 
 The values are in `core/src/life.ts`.
@@ -1661,7 +1661,7 @@ This is the line from the cave, where its adults live as wild pets.
 | | Stage |
 |---|---|
 | ![Bat egg](images/pets/bat_egg.png) | **Bat egg** – a purple egg wrapped in two folded wings like a sleeping bat, hanging from the cave's ceiling by two little claws |
-| ![Bat baby](images/pets/bat_baby.png) | **Baby** – a purple slime with two huge pointed ears, a little fang and two small wings folded at its sides |
+| ![Fangle](images/pets/bat_baby.png) | **Baby: Fangle** – a purple slime with two huge pointed ears, a little fang and two small wings folded at its sides |
 | ![Flapling](images/pets/flapling.png) | **Child: Flapling** – a young bat with its huge pointed ears and real wings now, half spread, with finger bones, a scalloped edge and a thumb claw |
 
 The stages last as long as the slime's. What the adults keep is the big
@@ -1678,9 +1678,9 @@ off itself, it gets sick less often. It needs no umbrella of yours. For its flip
 swings round, and in a scuffle it opens its umbrella wings and rain pelts
 off.
 
-![Batbeat](images/pets/batbeat.png)
+![DJ Flapjack](images/pets/batbeat.png)
 
-**Batbeat**, a bat for the dance floor. Its big ears have become two
+**DJ Flapjack**, a bat for the dance floor. Its big ears have become two
 loudspeaker horns whose membranes throb to the beat, its wings bob up and down
 like arms over a mixing desk, and its eyes are shut with joy. Dancing all
 night, it tires faster, and anything to dance to cheers it up: playing means
@@ -1694,11 +1694,11 @@ special move is sound waves on the beat, then the drop.
 
 | Form | Rule |
 |---|---|
-| Batbeat | speed is its highest battle stat when it grows up (higher than each of the others) |
+| DJ Flapjack | speed is its highest battle stat when it grows up (higher than each of the others) |
 | Umbrabat | always |
 
 From its second day on, Flapling's wing membrane shows where it is heading:
-grey for Umbrabat, neon pink for Batbeat.
+grey for Umbrabat, neon pink for DJ Flapjack.
 
 The values are in `core/src/life.ts`.
 
@@ -1741,7 +1741,7 @@ This is the line a shooting star brings.
 | | Stage |
 |---|---|
 | ![Owl egg](images/pets/owl_egg.png) | **Owl egg** – a night-blue egg with two feather tufts and stars on it, a shooting star falling across it, lying on red roof tiles |
-| ![Owl baby](images/pets/owl_baby.png) | **Baby** – a round tawny owlet with feather tufts, a cream face disc and far too big gold glasses |
+| ![Goggly](images/pets/owl_baby.png) | **Baby: Goggly** – a round tawny owlet with feather tufts, a cream face disc and far too big gold glasses |
 | ![Hootlet](images/pets/hootlet.png) | **Child: Hootlet** – an upright young owl with long ear tufts and folded wings, its glasses even more too big: two huge round rims with a glint |
 
 The stages last as long as the slime's. What the adults keep is the glasses
@@ -1758,9 +1758,9 @@ so its mood sinks more slowly, and a quiz is a game too: playing means more to
 it. For its bow it shuts its book and nods, and in a scuffle pages fly at the
 opponent.
 
-![Stargazer](images/pets/stargazer.png)
+![Owlscope](images/pets/stargazer.png)
 
-**Stargazer**, an owl that has become a telescope. It sits ducked low, wings
+**Owlscope**, an owl that has become a telescope. It sits ducked low, wings
 folded flat, and its neck pulls out in brass tubes, each thinner than the
 last; the head at the top looks up into the sky, the glasses are the lenses,
 and a star sparkles where it is looking. It sleeps the day away and watches
@@ -1775,11 +1775,11 @@ and its special move is a constellation that lights up.
 
 | Form | Rule |
 |---|---|
-| Stargazer | it grows up after sunset under a clear sky |
+| Owlscope | it grows up after sunset under a clear sky |
 | Owlbert | always |
 
 From its second day on, the rims of Hootlet's glasses show where it is
-heading: tortoiseshell brown for Owlbert, brass for Stargazer.
+heading: tortoiseshell brown for Owlbert, brass for Owlscope.
 
 The values are in `core/src/life.ts`.
 
@@ -1822,7 +1822,7 @@ This is a line from the trick festival.
 | | Stage |
 |---|---|
 | ![Chameleon egg](images/pets/chameleon_egg.png) | **Chameleon egg** – a speckled leaf-green egg turning yellow and orange at its bottom, a blue first-prize rosette pinned to its side |
-| ![Chameleon baby](images/pets/chameleon_baby.png) | **Baby** – a leaf-green slime with a helmet crest, its bottom turning yellow and orange, its tail rolled into a curl |
+| ![Tintle](images/pets/chameleon_baby.png) | **Baby: Tintle** – a leaf-green slime with a helmet crest, its bottom turning yellow and orange, its tail rolled into a curl |
 | ![Colorlet](images/pets/colorlet.png) | **Child: Colorlet** – a young chameleon with a taller helmet crest and turret eyes, its colors rolling over it, four gripping legs and a big tail rolled into a tight spiral |
 
 The stages last as long as the slime's. What the adults keep is the curled
@@ -1838,9 +1838,9 @@ paint. With paint everywhere it gets dirty sooner, and anything can be
 painted: playing means more to it. For its spin colors run round its body, and
 in a scuffle its tongue flicks a blob of paint.
 
-![Hidewell](images/pets/hidewell.png)
+![Hidewig](images/pets/hidewell.png)
 
-**Hidewell**, a chameleon that has hidden so well it has become a twig. Its
+**Hidewig**, a chameleon that has hidden so well it has become a twig. Its
 body is a stick of bark on legs like twigs, ivy has grown all over its back,
 and it grips a branch with its feet and winds its tail once round it; only its
 big turret eye gives it away. It keeps still for hours, so it tires more
@@ -1855,11 +1855,11 @@ special move is to turn up unseen and give the opponent a nudge.
 
 | Form | Rule |
 |---|---|
-| Hidewell | it played hide and seek 7 times as a child |
+| Hidewig | it played hide and seek 7 times as a child |
 | Palettino | always |
 
 From its second day on, Colorlet's tail spiral shows where it is heading:
-paint colors for Palettino, ivy green and bark for Hidewell.
+paint colors for Palettino, ivy green and bark for Hidewig.
 
 The values are in `core/src/life.ts`.
 
@@ -1905,7 +1905,7 @@ This is the line that is dug up.
 | | Stage |
 |---|---|
 | ![Scarab egg](images/pets/scarab_egg.png) | **Scarab egg** – a scarab-green egg split by the gold seam of wing cases, half dug out of a sand heap marked with a red cross |
-| ![Scarab baby](images/pets/scarab_baby.png) | **Baby** – a domed metallic-green beetle with a gold seam, club antennae and six short legs, a sand ball in front of it |
+| ![Sandbit](images/pets/scarab_baby.png) | **Baby: Sandbit** – a domed metallic-green beetle with a gold seam, club antennae and six short legs, a sand ball in front of it |
 | ![Rollet](images/pets/rollet.png) | **Child: Rollet** – a sturdier scarab with a darker head plate, its front legs pressing on the bigger sand ball it rolls ahead |
 
 The stages last as long as the slime's. What the adults keep is the ball they
@@ -1920,9 +1920,9 @@ Always pushing, it tires faster, and its sun keeps it warm: petting cheers it
 up more. For its flip it jumps over its ball, and in a scuffle it rolls the
 sun at the opponent.
 
-![Clockbeetle](images/pets/clockbeetle.png)
+![Clockarab](images/pets/clockbeetle.png)
 
-**Clockbeetle**, a scarab that has become a pocket watch. It stands upright,
+**Clockarab**, a scarab that has become a pocket watch. It stands upright,
 its body flat and round as a dial in a gold case; its wing cases have grown
 into one lid, swung open on a hinge at its side, its horns are the clock's
 hands, and the ball is now a brass cog it keeps beside it. Wound up, it keeps
@@ -1937,11 +1937,11 @@ time: the opponent stands frozen and gray until the blow lands.
 
 | Form | Rule |
 |---|---|
-| Clockbeetle | it grows up within 5 minutes after a full hour |
+| Clockarab | it grows up within 5 minutes after a full hour |
 | Solroll | always |
 
 From its second day on, Rollet's ball shows where it is heading: sun orange
-for Solroll, the cream of a watch dial for Clockbeetle.
+for Solroll, the cream of a watch dial for Clockarab.
 
 The values are in `core/src/life.ts`.
 
@@ -1984,8 +1984,8 @@ This is a line from the trick festival.
 | | Stage |
 |---|---|
 | ![Paper kite egg](images/pets/kite_egg.png) | **Paper kite egg** – a red festival-paper egg folded like a kite with a gold frame, a string tail with two blue bows off its point |
-| ![Paper kite baby](images/pets/kite_baby.png) | **Baby** – a little paper dragon, its head a folded sheet like an origami mask with one corner dog-eared, gold antlers and whiskers, its pleated body ending in a blue bow |
-| ![Kitelet](images/pets/kitelet.png) | **Child: Kitelet** – a long paper dragon with a bigger folded head and branching antlers, its pleated body on two little folded paper feet, a bow on its tail and a bigger one at the tip |
+| ![Foldy](images/pets/kite_baby.png) | **Baby: Foldy** – a little paper dragon, its head a folded sheet like an origami mask with one corner dog-eared, gold antlers and whiskers, its pleated body ending in a blue bow |
+| ![Pleatlet](images/pets/kitelet.png) | **Child: Pleatlet** – a long paper dragon with a bigger folded head and branching antlers, its pleated body on two little folded paper feet, a bow on its tail and a bigger one at the tip |
 
 The stages last as long as the slime's. What the adults keep is the tail with
 its bows.
@@ -2000,9 +2000,9 @@ gets dirty more slowly, and a folded crane brings luck: hearts mean more to
 it. For its bow it folds itself small and unfolds again, and in a scuffle it
 sends a swarm of paper planes.
 
-![Lionkite](images/pets/lionkite.png)
+![Roarigami](images/pets/lionkite.png)
 
-**Lionkite**, a paper dragon that has become a festival lion dance. Its body is
+**Roarigami**, a paper dragon that has become a festival lion dance. Its body is
 a long band of paper and cloth flowing in waves, red and gold by turns, on
 little feet; in front a big lion head with a fringe of mane, pompoms on its
 brow and cheeks and a wide grin full of teeth. Dancing through the festival,
@@ -2017,11 +2017,11 @@ is fireworks.
 
 | Form | Rule |
 |---|---|
-| Lionkite | it has learned the dance when it grows up |
+| Roarigami | it has learned the dance when it grows up |
 | Origrane | always |
 
-From its second day on, Kitelet's bows show where it is heading: crane white
-for Origrane, festival gold and pink for Lionkite.
+From its second day on, Pleatlet's bows show where it is heading: crane white
+for Origrane, festival gold and pink for Roarigami.
 
 The values are in `core/src/life.ts`.
 
@@ -2034,9 +2034,9 @@ The values are in `core/src/life.ts`.
 <details>
 <summary>Show this form</summary>
 
-![Stormkite](images/pets/stormkite.png)
+![Tempestry](images/pets/stormkite.png)
 
-**Stormkite**, the legendary kite and the biggest of its line. It is stretched
+**Tempestry**, the legendary kite and the biggest of its line. It is stretched
 like a big diamond stunt kite of dark thunderstorm paper, its spars crossing
 behind it, with lightning-yellow horns and whiskers; its long tail zigzags
 down and its bows twitch as bolts of lightning. It flies, and at night its
@@ -2064,7 +2064,7 @@ This is a line from the coast.
 | | Stage |
 |---|---|
 | ![Octopus egg](images/pets/octopus_egg.png) | **Octopus egg** – a pale coral egg held by a curve of cream suckers like an arm round it, an indigo ink splash dripping down from its top, lying in the sand by a strand of seaweed |
-| ![Octopus baby](images/pets/octopus_baby.png) | **Baby** – a round coral octopus with a tall soft mantle and an ink spot on it, four little arms curling at their ink-dark tips and one arm raised, waving |
+| ![Waveby](images/pets/octopus_baby.png) | **Baby: Waveby** – a round coral octopus with a tall soft mantle and an ink spot on it, four little arms curling at their ink-dark tips and one arm raised, waving |
 | ![Inklet](images/pets/inklet.png) | **Child: Inklet** – a taller young octopus with a painter's beret cocked on its mantle, a big ink blot with a drip on it, and one arm raised high like a brush, a drop of ink on its tip |
 
 The stages last as long as the slime's. What the adults keep is the ink.
@@ -2080,9 +2080,9 @@ any game is something to paint: playing means more to it. For its spin it
 turns round and round and paints a circle in the air all round itself, and in
 a scuffle it flings blobs of paint at the opponent.
 
-![Octavio](images/pets/octavio.png)
+![Juggopus](images/pets/octavio.png)
 
-**Octavio**, an octopus that has become a juggler. Tall and slim, it balances
+**Juggopus**, an octopus that has become a juggler. Tall and slim, it balances
 on the tip of a single arm, its mantle stretched up high and its other arms
 winding out in every direction; its suckers have become red and yellow
 juggling balls, and some of them are always flying in an arc over its head
@@ -2099,11 +2099,11 @@ directions.
 
 | Form | Rule |
 |---|---|
-| Octavio | it knows 3 tricks when it grows up |
+| Juggopus | it knows 3 tricks when it grows up |
 | Inkasso | always |
 
 From its second day on, Inklet's ink blot and drop show where it is heading:
-paint green and lilac for Inkasso, juggling red and gold for Octavio.
+paint green and lilac for Inkasso, juggling red and gold for Juggopus.
 
 The values are in `core/src/life.ts`.
 
@@ -2149,7 +2149,7 @@ This is a line from the ruins.
 | | Stage |
 |---|---|
 | ![Gargoyle egg](images/pets/gargoyle_egg.png) | **Gargoyle egg** – an egg of old weathered stone, a crack zig-zagging down from its top, moss on its crown and ivy climbing up one side, on a broken flagstone |
-| ![Gargoyle baby](images/pets/gargoyle_baby.png) | **Baby** – a stone puppy sturdy like a carved block, with a broad pale muzzle, heavy floppy ears, horn nubs with a tuft of moss between them and stubby slate wings |
+| ![Mosspup](images/pets/gargoyle_baby.png) | **Baby: Mosspup** – a stone puppy sturdy like a carved block, with a broad pale muzzle, heavy floppy ears, horn nubs with a tuft of moss between them and stubby slate wings |
 | ![Gargit](images/pets/gargit.png) | **Child: Gargit** – a sturdy young gargoyle dog on four stumpy legs, a big square head, a block of a body with a crack, two little slate wings held up proudly and an arrow-tipped tail |
 
 The stages last as long as the slime's. What the adults keep is the small
@@ -2234,7 +2234,7 @@ This is the troublemaker's line.
 | | Stage |
 |---|---|
 | ![Magpie egg](images/pets/magpie_egg.png) | **Magpie egg** – a white egg with black speckles and a band of blue and green sheen, with a glint of gold, lying in the crown of a top hat |
-| ![Magpie baby](images/pets/magpie_baby.png) | **Baby** – a round magpie chick, black cap and white front, a stubby beak, wings with a blue sheen and already a red bow tie |
+| ![Piebit](images/pets/magpie_baby.png) | **Baby: Piebit** – a round magpie chick, black cap and white front, a stubby beak, wings with a blue sheen and already a red bow tie |
 | ![Glintlet](images/pets/glintlet.png) | **Child: Glintlet** – an upright little magpie with its long tail cocked up behind, a white front, a red bow tie and a little wand with a star |
 
 The stages last as long as the slime's. Every form of the line is a magician
@@ -2250,9 +2250,9 @@ is a show to it: games mean more to it. For its bow it lifts its top hat and
 stars and cards burst out of it, and in a scuffle a stream of stars flies from
 its wand to the opponent.
 
-![Cardwing](images/pets/cardwing.png)
+![Shufflepie](images/pets/cardwing.png)
 
-**Cardwing**, the magician of cards. Its wings and its tail have become fans
+**Shufflepie**, the magician of cards. Its wings and its tail have become fans
 of playing cards, the tail's showing their faces and the wings' their red
 backs, raised wide. Shuffling its cards all day tires it a little faster, and
 as the queen of hearts, hearts mean more to it. For its spin the cards of its
@@ -2266,11 +2266,11 @@ like darts.
 
 | Form | Rule |
 |---|---|
-| Cardwing | the child practiced or showed tricks 15 times (a trick shown counts at most once every 10 minutes) |
+| Shufflepie | the child practiced or showed tricks 15 times (a trick shown counts at most once every 10 minutes) |
 | Glintrick | always |
 
 From its second day on, the star on Glintlet's wand shows where it is
-heading: gold for Glintrick, red and white for Cardwing.
+heading: gold for Glintrick, red and white for Shufflepie.
 
 The values are in `core/src/life.ts`.
 

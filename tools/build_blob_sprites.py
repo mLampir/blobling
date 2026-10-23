@@ -10,7 +10,7 @@ frameTags):
 - blob_adult_body                  – adult (larger; colored per species in the code) for any
                                      species without pixel art of its own
 - sneezle_body / sneezle_faces     – Sneezle (faces of its own)
-- flicker_body / flicker_faces     – Flicker (faces of its own)
+- flicker_body / flicker_faces     – Wickle (faces of its own)
 - lumoth_body / lumoth_faces       – Lumoth (faces of its own)
 - angloop_body / angloop_faces     – Angloop (faces of its own)
 - gemperor_body / gemperor_faces   – Gemperor (faces of its own)
@@ -41,7 +41,7 @@ frameTags):
 - teacrab, lightclaw, castlecrab, mossolotl, medilotl, axodrake (_body / _faces) – their adults, the
   last of each three the secret one (faces of their own)
 - mouse_baby_body / mouse_baby_faces, squeaklet_body / mouse_faces – baby and child of the mouse line
-- sirthimble, cogsqueak, woolwhisk (_body / _faces) – its adults, Woolwhisk the secret one
+- sirthimble, cogsqueak, woolwhisk (_body / _faces) – its adults, Queen Purl the secret one
 - <line>_baby_body / <line>_baby_faces, <child>_body / <line>_faces – baby and child of the
   bear (cubble), penguin (waddlet) and bat (flapling) lines
 - hivebear, snorbear, ursastra, tuxwaddle, glidepin, aurorapin, umbrabat, batbeat, lunaflap
@@ -271,7 +271,7 @@ SNEEZLE_FLUTTER = behind(behind(SNEEZLE, SNEEZLE_WING_SPREAD, 0, 0), [r[::-1] fo
 SNEEZLE = behind(behind(SNEEZLE, SNEEZLE_WING, 3, 0), [r[::-1] for r in SNEEZLE_WING], 23, 0)
 SNEEZLE_FACE_TOP = 6
 
-# ---------------------------------------------------------------- Flicker, Cyclopuff, Grumpcap, Lumoth
+# ---------------------------------------------------------------- Wickle, Cyclopuff, Grumpcap, Lumoth
 
 # Drawn as the left half, mirrored, outline and light from the top left added,
 # and then touched up by hand. Poses as for the others: drop or double row
@@ -314,7 +314,7 @@ SNEEZLE_TAGS = species_tags([SNEEZLE, drop_rows(SNEEZLE, 17)], 17, 13)
 SNEEZLE_TAGS["flutter"] = [(SNEEZLE_FLUTTER, 80), (SNEEZLE, 80)]
 SNEEZLE_TAGS["walk"] = walk_tags(SNEEZLE, 17, range(4, 10), range(22, 28), 22)
 
-# Flicker: a candle of melted slime – playful, and bored as easily. The flame on the wick is what
+# Wickle: a candle of melted slime – playful, and bored as easily. The flame on the wick is what
 # the bulb of the child's lure turned into; it flickers, and its color shows the mood (blue = sad,
 # golden = happy) – the code does that recoloring, for every saturated red to yellow. So the wick
 # and the wax keep away from those hues. The flame stays narrower than 8 pixels: the head starts
@@ -910,7 +910,7 @@ STONE_PALETTE = {
     "a": (205, 180, 150),  # the warmer stones of the cairn
     "A": (160, 135, 108),
     "b": (232, 214, 188),
-    "s": (120, 200, 90),   # moss, Bouldergrin's accent
+    "s": (120, 200, 90),   # moss, Grinolith's accent
     "S": (70, 145, 60),
 }
 
@@ -1001,7 +1001,7 @@ GLIMMEROCK_TAGS = species_tags([GLIMMEROCK, GLIMMEROCK_B], 19, 15, idle_ms=900)
 GLIMMEROCK_TAGS["walk"] = walk_tags(GLIMMEROCK, 19, range(6, 14), range(18, 26), 29, ms=(260, 160))
 GLIMMEROCK_TAGS["shine"] = [(GLIMMEROCK_SHINE, 120), (GLIMMEROCK_SHINE_B, 120)]
 
-# Bouldergrin: a cairn that came alive. The middle stone wears the quartz band and a wide, toothy
+# Grinolith: a cairn that came alive. The middle stone wears the quartz band and a wide, toothy
 # grin; the stones at the bottom are its feet, two pebbles are its fists (one raised, as if it waved),
 # and the little stone on top wears a cap of moss pulled to one side. It is easy-going and hard to
 # upset. It wobbles: the top stone sways, but nothing ever falls. Slate, sandstone and moss.
@@ -1041,7 +1041,7 @@ CAIRN_FIST = [".OOO.", "ObbaO", "OaaAO", "OAAAO", ".OOO."]
 
 
 def cairn(top_dx=0, lift=0, flipped=False):
-    """Bouldergrin; the top stone shifted sideways by `top_dx` pixels, or lifted `lift` pixels and
+    """Grinolith; the top stone shifted sideways by `top_dx` pixels, or lifted `lift` pixels and
     perhaps upside down (when it tosses it)."""
     grid = overlay(["." * CANVAS] * CANVAS, CAIRN_MIDDLE, (5, 12))
     for part, at in (((CAIRN_TOP[::-1] if flipped else CAIRN_TOP), (12 + top_dx, 8 - lift)),
@@ -1084,7 +1084,7 @@ FOX_PALETTE = {
     "K": (110, 65, 35),    # its walking stick of knotty wood
     "m": (195, 140, 85),
     "M": (230, 200, 120),
-    "x": (38, 28, 44),     # Filchfox's bandit mask
+    "x": (38, 28, 44),     # Banditail's bandit mask
     "X": (78, 62, 92),
 }
 
@@ -1220,7 +1220,7 @@ ROAMTAIL_TAGS = species_tags([ROAMTAIL, ROAMTAIL_B], 21, 14, idle_ms=600)
 # It walks: a fox on the road
 ROAMTAIL_TAGS["walk"] = walk_tags(ROAMTAIL, 21, range(8, 13), range(16, 21), 24)
 
-# Filchfox: the fox that has got up to mischief. A dark bandit mask with holes for the eyes, tied
+# Banditail: the fox that has got up to mischief. A dark bandit mask with holes for the eyes, tied
 # at the back with ends that flutter, an ear bent over and a ruffled tuft, scruffy cheeks, a ruffle
 # on its flank and a ragged tip on its tail. Cheeky (FILCHFOX_EYES). Russet, cream and the mask.
 FILCHFOX_X = 3  # left edge of the body
@@ -1351,7 +1351,7 @@ NIMBIT = [
 NIMBIT_FACE_TOP = face_top(NIMBIT, 6)  # on the top row of its face, right under the fleece
 NIMBIT_TAGS = body_tags(NIMBIT, 10, 9, flat_rows=3)
 
-# Rumblefluff: Nimbit grown into a thundercloud ram. The fleece is a dark storm cloud piled high,
+# Thundram: Nimbit grown into a thundercloud ram. The fleece is a dark storm cloud piled high,
 # light where the sun still catches its top, with a lock of it hanging over its brow; the face is
 # a stern slate-blue ram's face with a pale muzzle. Its horns are two golden ram's curls that end
 # in a zigzag bolt; the right one is bigger and forks, with a spark on top. Sturdy legs with dark
@@ -1607,7 +1607,7 @@ CYCLOPUFF_FACES = {  # name (as in FACES): (eye, brow, mouth, rosy cheeks)
 assert CYCLOPUFF_FACES.keys() == FACES.keys()
 CYCLOPUFF_FACE_PALETTE = FACE_PALETTE | {"m": (60, 25, 90), "a": (245, 175, 60), "A": (200, 115, 40),
                                          "f": (250, 235, 205)}
-# Flicker: cheeky eyes (4×5) – bored, it looks out from under half-shut lids; otherwise its brows
+# Wickle: cheeky eyes (4×5) – bored, it looks out from under half-shut lids; otherwise its brows
 # go up at the outer ends. A crooked smirk, and it sticks its tongue out when it laughs or winks
 # (6×4). Face 16×9.
 FLICKER_EYES = {  # (left, right)
@@ -1946,7 +1946,7 @@ EMBER_FACE_PALETTE = {"w": (255, 255, 255), "p": (255, 225, 120), "g": (255, 255
                       "m": (255, 200, 90), "r": (255, 240, 170), "k": (255, 140, 60)}
 # Baby and child of the stone line: eyelids and mouth in slate
 STONE_FACE_PALETTE = FACE_PALETTE | {"d": (115, 128, 152), "m": (70, 82, 108)}
-# Bouldergrin: round dark eyes (4×4) and a wide, toothy grin (8×3), which is its normal look.
+# Grinolith: round dark eyes (4×4) and a wide, toothy grin (8×3), which is its normal look.
 # Face 16×8.
 BOULDERGRIN_EYES = {  # (left, right)
     "open": ([".pp.", "pgpp", "pppp", ".pp."],) * 2,
@@ -2026,7 +2026,7 @@ ROAMTAIL_FACES = {  # name (as in FACES): (eyes, mouth, rosy cheeks)
     "sleep": ("closed", "none", False),
 }
 assert ROAMTAIL_FACES.keys() == FACES.keys()
-# Filchfox: its eyes look out of the holes of the mask (4×2 each; "." shows the fur in the hole),
+# Banditail: its eyes look out of the holes of the mask (4×2 each; "." shows the fur in the hole),
 # under it a dark nose and a sly grin with a fang (6×2). Its normal look is cheeky: one eye
 # narrowed, the other with a glint. Face 15×6.
 FILCHFOX_EYES = {  # (left, right)
@@ -2066,7 +2066,7 @@ assert FILCHFOX_FACES.keys() == FACES.keys()
 # Baby and child of the cloud line: the slime's faces, with the eyelids in the shade of the face
 # and the mouth in its outline
 CLOUD_FACE_PALETTE = FACE_PALETTE | {"d": (110, 150, 215), "m": (60, 88, 150), "p": (50, 60, 110)}
-# Rumblefluff: stern – small eyes under heavy brows that slant down to its nose, nostrils on the
+# Thundram: stern – small eyes under heavy brows that slant down to its nose, nostrils on the
 # muzzle and a grumpy mouth that is a little crooked (5×2). Even happy it only smiles a little.
 # Face 9×7.
 RUMBLEFLUFF_EYES = {  # (left, right), 3×3
@@ -3195,7 +3195,7 @@ RAPIERRE_FACE_TOP, RAPIERRE_FACE_SHIFT = face_place(RAPIERRE, 6, 10, 6)
 RAPIERRE_TAGS = species_tags([RAPIERRE, dots(RAPIERRE, {(x, y): ("S" if RAPIERRE[y][x] == "." else ".")
                                                      for y in range(9, 14) for x in range(0, 7)
                                                      if RAPIERRE[y][x] in ".S"})], 13, 13, idle_ms=90)
-# Parcelbeak: a pelican mail carrier. A postman's cap with the crest sticking through it, a huge
+# Mailican: a pelican mail carrier. A postman's cap with the crest sticking through it, a huge
 # bill with a throat pouch full of letters, a mail bag across its chest, big webbed feet. It walks.
 PARCELBEAK = [
     ".............r.r.r..............",
@@ -3376,7 +3376,7 @@ LUNAROCK = [
 LUNAROCK_FACE_TOP, LUNAROCK_FACE_SHIFT = face_place(LUNAROCK, 5, 9, 15)
 LUNAROCK_TAGS = species_tags([LUNAROCK, drop_rows(LUNAROCK, 22)], 22, 16)
 
-# Foxfire (fox): a white fox spirit with three tails, a blue fox fire burning at the tip of each, and
+# Kitsunova (fox): a white fox spirit with three tails, a blue fox fire burning at the tip of each, and
 # red marks round its eyes.
 FOXFIRE_PALETTE = {
     "o": (95, 85, 140), "b": (250, 246, 240), "d": (228, 224, 240), "l": (110, 200, 255), "h": (255, 236, 214),
@@ -3420,7 +3420,7 @@ FOXFIRE_FACE_TOP, FOXFIRE_FACE_SHIFT = face_place(FOXFIRE, 14, 7, 16)
 FOXFIRE_TAGS = species_tags([FOXFIRE, drop_rows(FOXFIRE, 18)], 18, 15)
 
 # Flurrbleat (cloud): a snow cloud that has become a sheep. Curly cloud wool, a dark sheep's face with
-# curled horns like Rumblefluff's, a knitted scarf, and under it it always snows a little: its legs are
+# curled horns like Thundram's, a knitted scarf, and under it it always snows a little: its legs are
 # falling snow, as the cloud line's are rain.
 FLURRBLEAT_PALETTE = {
     "o": (40, 45, 72), "b": (246, 249, 255), "d": (88, 92, 120), "l": (255, 255, 255), "h": (222, 64, 74),
@@ -3499,7 +3499,7 @@ SAKURIN = [
 SAKURIN_FACE_TOP, SAKURIN_FACE_SHIFT = face_place(SAKURIN, 15, 8, 16)
 SAKURIN_TAGS = species_tags([SAKURIN, drop_rows(SAKURIN, 17)], 17, 15)
 
-# Bubblehelm (duck): a deep-sea diver. A brass helmet with three portholes (the duck looks out of the
+# Quackuba (duck): a deep-sea diver. A brass helmet with three portholes (the duck looks out of the
 # front one), an air hose, a canvas suit, lead boots and a lantern; bubbles rise from its valve.
 BUBBLEHELM_PALETTE = {
     "o": (75, 55, 30), "b": (215, 160, 60), "d": (110, 125, 150), "l": (255, 215, 70), "h": (95, 105, 140),
@@ -3832,7 +3832,7 @@ MUNCHLET = [
 ]
 MUNCHLET_FACE_TOP, MUNCHLET_FACE_SHIFT = face_place(MUNCHLET, 9, 11, FACE_W)
 MUNCHLET_TAGS = body_tags(MUNCHLET, 15, 19, flat_rows=3)
-# Mothmuff: a ball of fur with feathery feelers, its wings hanging round it like a cloak with an
+# Fluffoth: a ball of fur with feathery feelers, its wings hanging round it like a cloak with an
 # eye spot on each side; sleepy eyes, a fur ruff under its chin. It hops.
 MOTHMUFF_PALETTE = {
     "o": (55, 42, 52), "b": (190, 175, 185), "l": (215, 205, 212), "h": (240, 235, 238), "d": (150, 135, 148),  # fur
@@ -3913,7 +3913,7 @@ SUNFLUTTER = [
 ]
 SUNFLUTTER_FACE_TOP, SUNFLUTTER_FACE_SHIFT = face_place(SUNFLUTTER, 10, 8, 12)
 SUNFLUTTER_TAGS = species_tags([SUNFLUTTER, drop_rows(SUNFLUTTER, 13)], 13, 13)
-# Jesterwing (secret): a harlequin butterfly. Tall red wings with diamonds, a jester's cap in red and
+# Harlequing (secret): a harlequin butterfly. Tall red wings with diamonds, a jester's cap in red and
 # violet with a bell on each tip, a broad grin. Confetti falling round it would be the scene's.
 JESTERWING_PALETTE = {
     "o": (45, 25, 50), "b": (250, 232, 210), "l": (255, 245, 232), "h": (255, 255, 250), "d": (220, 190, 165),
@@ -4006,7 +4006,7 @@ PUPPLET = [
 PUPPLET_FACE_TOP, PUPPLET_FACE_SHIFT = face_place(PUPPLET, 9, 6, FACE_W)
 PUPPLET_TAGS = body_tags(PUPPLET, 13, 13, flat_rows=3)
 DOG_ADULT_PALETTE = DOG_PALETTE | {"o": (75, 45, 25)}
-# Digby: a garden grows on its back. A bed of earth with sprouts, two flowers and a carrot behind its
+# Spudhound: a garden grows on its back. A bed of earth with sprouts, two flowers and a carrot behind its
 # head, earth on its nose (its face) and on its paws. It walks.
 DIGBY_PALETTE = DOG_ADULT_PALETTE | {
     "e": (120, 80, 45), "E": (85, 55, 30),  # earth
@@ -4185,7 +4185,7 @@ NYMPHLET = [
 ]
 NYMPHLET_FACE_TOP, NYMPHLET_FACE_SHIFT = face_place(NYMPHLET, 8, 11, FACE_W)
 NYMPHLET_TAGS = body_tags(NYMPHLET, 11, 18, flat_rows=3)
-# Rotorfly: a dragonfly that is a little helicopter. Its head is a glass cockpit with the face behind
+# Rotoptera: a dragonfly that is a little helicopter. Its head is a glass cockpit with the face behind
 # the glass, its tail a tail boom with a small rotor, skids for legs, and its four wings have become
 # the rotor blades on top, which turn all the time. It hovers.
 ROTORFLY_PALETTE = DRAGONFLY_PALETTE | {
@@ -4251,7 +4251,7 @@ ROTORFLY_B = [
 ]
 ROTORFLY_FACE_TOP, ROTORFLY_FACE_SHIFT = face_place(ROTORFLY, 10, 7, 12)
 ROTORFLY_TAGS = species_tags([ROTORFLY, ROTORFLY_B], 17, 12, idle_ms=90)
-# Jewelwing: an upright knight. Its body is plate armour in jewel green, its wings hang behind it
+# Jewelance: an upright knight. Its body is plate armour in jewel green, its wings hang behind it
 # like two red banners with swallow tails, and it holds a lance with a pennant. It walks.
 JEWELWING_PALETTE = DRAGONFLY_PALETTE | {
     "m": (60, 190, 140), "M": (30, 130, 95), "n": (150, 240, 200), "N": (220, 255, 240), "x": (20, 70, 55),  # armour
@@ -4295,7 +4295,7 @@ JEWELWING = [
 JEWELWING_FACE_TOP, JEWELWING_FACE_SHIFT = face_place(JEWELWING, 7, 10, 12)
 JEWELWING_TAGS = species_tags([JEWELWING, drop_rows(JEWELWING, 18)], 18, 15)
 JEWELWING_TAGS["walk"] = walk_tags(JEWELWING, 18, range(10, 14), range(17, 21), 29, ms=(220, 130))
-# Prismfly (secret): a body of glass, wings of prism shards in pink, cyan, yellow and violet, a long
+# Prismelle (secret): a body of glass, wings of prism shards in pink, cyan, yellow and violet, a long
 # glass tail, a twinkle above its head. It hovers. The rainbow light its wings throw would be the
 # scene's.
 PRISMFLY_PALETTE = DRAGONFLY_PALETTE | {
@@ -4437,7 +4437,7 @@ DAMBERT = [
 ]
 DAMBERT_FACE_TOP, DAMBERT_FACE_SHIFT = face_place(DAMBERT, 13, 3, 12)
 DAMBERT_TAGS = species_tags([DAMBERT, drop_rows(DAMBERT, 14)], 14, 14)
-# Timberjack: broad and bearded, the plaid of a lumberjack's shirt grown into its fur, and its flat
+# Timbeaver: broad and bearded, the plaid of a lumberjack's shirt grown into its fur, and its flat
 # tail ends in an axe blade. It walks.
 TIMBERJACK_PALETTE = BEAVER_PALETTE | {
     "r": (200, 60, 55), "R": (140, 35, 35), "x": (60, 30, 30),  # plaid
@@ -4675,7 +4675,7 @@ SHELLBIT = [
 ]
 SHELLBIT_FACE_TOP, SHELLBIT_FACE_SHIFT = face_place(SHELLBIT, 11, 5, FACE_W)
 SHELLBIT_TAGS = body_tags(SHELLBIT, 17, 11, flat_rows=3)
-# Teacrab: crab and teapot grown into one. A round belly of a pot with a band of green dots, the
+# Earl Greyclaw: crab and teapot grown into one. A round belly of a pot with a band of green dots, the
 # big pincer is the spout with tea steaming out of it, the small one the handle, the lid a hat. It walks.
 TEACRAB_PALETTE = CRAB_PALETTE | {
     "w": (245, 240, 230), "g": (90, 160, 140),  # the band
@@ -4718,7 +4718,7 @@ TEACRAB_TAGS = species_tags([TEACRAB, dots(drop_rows(TEACRAB, 18), {(28, 0): "."
                                                                     (28, 2): ".", (29, 2): "S", (28, 3): "s", (29, 3): "."})],
                             18, 14)  # the steam curls
 TEACRAB_TAGS["walk"] = walk_tags(TEACRAB, 18, range(7, 13), range(17, 23), 27, ms=(200, 120))
-# Lightclaw: tall, the shell ringed red and white like a lighthouse; the big pincer reaches up out of
+# Crabeacon: tall, the shell ringed red and white like a lighthouse; the big pincer reaches up out of
 # the top and holds the lamp, whose light flashes out, and the small one waves. It walks.
 LIGHTCLAW_PALETTE = CRAB_PALETTE | {
     "w": (245, 240, 235), "W": (205, 195, 190),  # the white rings
@@ -4763,7 +4763,7 @@ LIGHTCLAW_DARK = dots(LIGHTCLAW, {(5, 2): ".", (6, 3): ".", (7, 3): ".", (8, 4):
                                   (21, 3): ".", (19, 4): ".", (3, 4): ".", (24, 4): ".", (2, 7): ".", (25, 7): "."})
 LIGHTCLAW_TAGS = species_tags([LIGHTCLAW, LIGHTCLAW_DARK], 23, 13, idle_ms=600)  # the light flashes
 LIGHTCLAW_TAGS["walk"] = walk_tags(LIGHTCLAW, 23, range(6, 12), range(18, 24), 30, ms=(200, 120))
-# Castlecrab (secret): the crab is the castle. Battlements along the top of its shell, a keep with a
+# Crabalot (secret): the crab is the castle. Battlements along the top of its shell, a keep with a
 # shell dome and a gold banner where the hermit's house was, its two pincers the gate towers with a
 # flag each, a gate with a portcullis, and a moat with foaming waves round it. At night its windows
 # light up (GLOWS in core/src/scene.ts: "y" is used for the windows only). It hops, castle and all.
@@ -5209,7 +5209,7 @@ COGSQUEAK_FACE_TOP, COGSQUEAK_FACE_SHIFT = face_place(COGSQUEAK, 8, 3, 11)
 # standing, it unwinds slowly; rolling, the key turns and the wheels go round
 COGSQUEAK_TAGS = species_tags([cogsqueak(k, 0) for k in (0, 1, 2, 1)], 11, 14, idle_ms=450)
 COGSQUEAK_TAGS["walk"] = [(cogsqueak(k, w), 110) for k, w in ((0, 0), (1, 1), (2, 2), (1, 3))]
-# Woolwhisk (secret): the queen of Grandma's wool basket. She sits up tall on a big ball of red wool,
+# Queen Purl (secret): the queen of Grandma's wool basket. She sits up tall on a big ball of red wool,
 # her fur grown into knitted wool, two crossed knitting needles on her head for a crown. Her ringed
 # tail has become a golden thread that loops round her in rings, and where it crosses itself it
 # knits little stars that shine and fade. At night the thread and the stars glow (GLOWS in
@@ -5288,7 +5288,7 @@ GRANDMA_FORMS = (("sirthimble", FACES), ("cogsqueak", FACES),
 # ---------------------------------------------------------------- The adventure lines
 
 # Three lines from the trips, each with its egg, baby, child, a basic adult, a second one and a
-# secret one: the bear from Mosswart's mushroom forest, the penguin from Frostfluff's mountain (both
+# secret one: the bear from Boulderoad's mushroom forest, the penguin from Bobbleti's mountain (both
 # guardians leave its egg) and the bat that lives in the cave as a wild pet. What every form of a
 # line keeps: the honey pot (the bear), the earmuffs (the penguin) and the big pointed ears (the
 # bat). The child carries the colors the code may recolor as a hint at its adult form: the glaze of
@@ -5437,7 +5437,7 @@ CUBBLE = [
 ]
 CUBBLE_FACE_TOP, CUBBLE_FACE_SHIFT = face_place(CUBBLE, 11, 5, FACE_W)
 CUBBLE_TAGS = body_tags(CUBBLE, 13, 13, flat_rows=3)
-# Hivebear: the bear has become a beehive. Its body is a round straw dome coiled in rings with an
+# Beehemoth: the bear has become a beehive. Its body is a round straw dome coiled in rings with an
 # entrance on its belly, the honey pot on top is the hive's tip, and bees fly in and out; the round
 # ears, the muzzle and the stubby paws are still bear fur. It walks.
 HIVEBEAR_PALETTE = BEAR_PALETTE | {
@@ -5625,7 +5625,7 @@ PENGUIN_BABY = [
 ]
 PENGUIN_BABY_FACE_TOP, PENGUIN_BABY_FACE_SHIFT = face_place(PENGUIN_BABY, 6, 3, BABY_W)
 PENGUIN_BABY_TAGS = body_tags(PENGUIN_BABY, 10, 8, flat_rows=3)
-# Waddlet, the child: grown upright, a slate back with a last tuft of down, a white heart-shaped face
+# Pengling, the child: grown upright, a slate back with a last tuft of down, a white heart-shaped face
 # and belly, little flippers held out for balance, orange feet, the earmuffs on their band
 WADDLET = [
     "............f.f.............",
@@ -5923,7 +5923,7 @@ def umbrabat(step):
 
 UMBRABAT_FACE_TOP, UMBRABAT_FACE_SHIFT = face_place(UMBRABAT, 17, 9, 11)
 UMBRABAT_TAGS = species_tags([umbrabat(0), umbrabat(1)], 19, 14, idle_ms=400)
-# Batbeat: its big ears have become two loudspeaker horns whose membranes throb to the beat; a small
+# DJ Flapjack: its big ears have become two loudspeaker horns whose membranes throb to the beat; a small
 # body, the wings bent like arms bobbing over a mixing desk, one up and one down, and its eyes shut
 # with joy. Sound rings ripple out of the horns.
 BATBEAT_PALETTE = BAT_PALETTE | {
@@ -6389,7 +6389,7 @@ KITE_BABY = [
 ]
 KITE_BABY_FACE_TOP, KITE_BABY_FACE_SHIFT = face_place(KITE_BABY, 6, 6, BABY_W)
 KITE_BABY_TAGS = body_tags(KITE_BABY, 6, 10, flat_rows=3)
-# Kitelet, the child: grown into a long paper snake, its folded head bigger with branching gold
+# Pleatlet, the child: grown into a long paper snake, its folded head bigger with branching gold
 # antlers and whiskers, a pleated body arching behind it on two little folded paper feet, a bow on
 # its tail and a bigger one at the tip
 KITELET = [
@@ -6480,7 +6480,7 @@ def owl_face(gap):
 owlbert_face_grid = owl_face(9)
 OWLBERT_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (220, 200, 165)}
 
-# Stargazer: the owl has become a telescope. It sits ducked low, wings folded flat, and its neck pulls
+# Owlscope: the owl has become a telescope. It sits ducked low, wings folded flat, and its neck pulls
 # out in brass tubes, each thinner than the last, up and to the side; the head at the top looks up
 # into the sky, and the too-big glasses are the telescope's lenses, brass-rimmed. A star sparkles
 # where it is looking.
@@ -6616,7 +6616,7 @@ PALETTINO_TAGS = species_tags([PALETTINO, drop_rows(PALETTINO, 14)], 14, 17)
 palettino_face_grid = kit_face(0, mouth_row=4, single=True)
 PALETTINO_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (60, 130, 55)}
 
-# Hidewell: the chameleon has hidden so well that it has become a twig. Its body is a stick of bark on
+# Hidewig: the chameleon has hidden so well that it has become a twig. Its body is a stick of bark on
 # legs like twigs, ivy has grown all over its back and a sprout on its head, and it grips a branch with
 # its feet and winds its tail once round it. Only its big turret eye gives it away.
 HIDEWELL_PALETTE = CHAMELEON_PALETTE | {
@@ -6733,7 +6733,7 @@ SOLROLL_TAGS = species_tags([SOLROLL, drop_rows(SOLROLL, 12)], 12, 9)
 solroll_face_grid = kit_face(5)
 SOLROLL_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (30, 110, 105)}
 
-# Clockbeetle: the scarab has become a pocket watch. It stands upright, its body flat and round as a
+# Clockarab: the scarab has become a pocket watch. It stands upright, its body flat and round as a
 # dial in a gold case; its two wing cases have grown into one lid, swung open on a hinge at the side;
 # its two horns are the clock's hands, a long and a short one; the ball is now a brass cog it keeps
 # beside it. It ticks.
@@ -6868,7 +6868,7 @@ ORIGRANE_TAGS = species_tags([ORIGRANE, drop_rows(ORIGRANE, 20)], 20, 16)
 origrane_face_grid = kit_face(4)
 ORIGRANE_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (170, 40, 45)}
 
-# Lionkite: the paper dragon has become a festival lion dance. Its body is a long band of paper and
+# Roarigami: the paper dragon has become a festival lion dance. Its body is a long band of paper and
 # cloth flowing in waves, red paper and gold cloth by turns, on little feet; in front a big lion head
 # with a fringe of mane, pompoms on its brow and cheeks, big eyes and a wide grin full of teeth; behind,
 # the tail with its bow.
@@ -6903,7 +6903,7 @@ LIONKITE_TAGS = species_tags([LIONKITE, drop_rows(LIONKITE, 12)], 12, 22)
 lionkite_face_grid = kit_face(5, mouth_row=0)
 LIONKITE_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (170, 40, 45)}
 
-# Stormkite (secret): the legendary kite, stretched like a big diamond stunt kite of dark thunderstorm
+# Tempestry (secret): the legendary kite, stretched like a big diamond stunt kite of dark thunderstorm
 # paper, its spars crossing behind it, lightning-yellow horns and whiskers; its long tail zigzags down
 # and its bows twitch as bolts of lightning, and sparks crackle round it.
 STORMKITE_PALETTE = KITE_PALETTE | {
@@ -7270,7 +7270,7 @@ INKASSO_TAGS = species_tags([INKASSO, drop_rows(INKASSO, 20)], 20, 16)
 inkasso_face_grid = eyed_face(OCTOPUS_EYES, 8, 5)
 INKASSO_FACE_PALETTE = OCTOPUS_FACE_PALETTE
 
-# Octavio: the octopus has become a juggler. Tall and slim, it balances on the tip of a single arm, its
+# Juggopus: the octopus has become a juggler. Tall and slim, it balances on the tip of a single arm, its
 # mantle stretched up high, its other arms long and winding out in every direction. Its suckers have
 # become juggling balls, red and yellow: some come loose and fly in an arc over its head, and the
 # empty spot on the arm waits for them. It watches the balls, the tip of its tongue out.
@@ -7711,7 +7711,7 @@ def magpie_card(pip):
     return ["ooooo", "owwwo", "ow" + pip + "wo", "owwwo", "owwWo", "ooooo"]
 
 
-# Cardwing: the magician of cards. The line's idea has changed its body: its wings and its tail are
+# Shufflepie: the magician of cards. The line's idea has changed its body: its wings and its tail are
 # fans of playing cards, the tail's showing their faces and the wings' their red backs, raised wide.
 CARDWING_PALETTE = MAGPIE_PALETTE
 MAGPIE_CARD_BACK = ["ooooo", "orRro", "oRrRo", "orRro", "oRrRo", "orRro", "ooooo"]

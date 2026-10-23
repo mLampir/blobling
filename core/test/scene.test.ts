@@ -305,7 +305,7 @@ test("what the game logic hands over can be drawn as it is", () => {
   }
 });
 
-test("Flicker and Lumoth hop, Cyclopuff and Sneezle walk, Grumpcap walks and hops now and then", () => {
+test("Wickle and Lumoth hop, Cyclopuff and Sneezle walk, Grumpcap walks and hops now and then", () => {
   // A guest halfway in from the right (left edge at 48): its lowest row is where its feet are. Only
   // the columns right of the pet count, and only what differs from the same frames without the guest.
   const lowest = (species: string) => {
@@ -413,7 +413,7 @@ test("the newer lines' children show where they are heading", () => {
 });
 
 test("the cloud adults follow the weather", () => {
-  // Rumblefluff's horns flash now and then in a thunderstorm, and only then
+  // Thundram's horns flash now and then in a thunderstorm, and only then
   assert.equal(skyColors("rumblefluff", "storm", 0.05)?.[0], "flash");
   assert.equal(skyColors("rumblefluff", "storm", 1.0), null);
   assert.equal(skyColors("rumblefluff", "rain", 0.05), null);

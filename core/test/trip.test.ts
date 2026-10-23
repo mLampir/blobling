@@ -120,8 +120,8 @@ test("areas open one after the other, and behind the mountain the path forks", (
   pet.guardians.push("ruins");
   assert.equal(trip.guardianWaiting(pet, "coast"), "barkguard");
   assert.equal(trip.guardianWaiting(pet, "ruins"), null);
-  assert.equal(trip.discoveries(pet, "coast")[0].id, "egg_octopus"); // Barkguard sits on the octopus egg
-  assert.equal(trip.discoveries(pet, "ruins")[0].id, "egg_gargoyle"); // and Rustknight on the gargoyle's
+  assert.equal(trip.discoveries(pet, "coast")[0].id, "egg_octopus"); // Whistlion sits on the octopus egg
+  assert.equal(trip.discoveries(pet, "ruins")[0].id, "egg_gargoyle"); // and Visnail on the gargoyle's
 });
 
 test("the tide at the coast comes and goes with the clock, and low tide brings more mussels", () => {
@@ -156,7 +156,7 @@ test("each area shows what is still to discover there once", () => {
   home.addItem(pet, "seed_berry"); // seeds come again and again, they don't count
   pet.guardian_eggs.push("meadow");
   assert.deepEqual(found(), ["egg_beak", "windmill"]);
-  assert.equal(trip.discoveries(pet, "forest")[0].id, "egg_bear"); // Mosswart sits on the bear's egg
+  assert.equal(trip.discoveries(pet, "forest")[0].id, "egg_bear"); // Boulderoad sits on the bear's egg
 });
 
 test("healing herb cures", () => {

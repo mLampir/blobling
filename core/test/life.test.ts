@@ -248,7 +248,7 @@ test("the bear, penguin and bat lines grow up by what they ate, where they went 
   assert.equal(life.decideSpecies(week, "penguin", { minute: sunrise - life.AURORAPIN_BEFORE_SUNRISE, sunrise }), "aurorapin");
   assert.equal(life.decideSpecies(week, "penguin", { minute: sunrise - life.AURORAPIN_BEFORE_SUNRISE - 1, sunrise }), "tuxwaddle");
   assert.equal(life.decideSpecies(week, "penguin", { minute: sunrise, sunrise }), "tuxwaddle"); // the sun is up
-  // the bat: speed as its highest battle stat makes a Batbeat, a full-moon night Lunaflap
+  // the bat: speed as its highest battle stat makes a DJ Flapjack, a full-moon night Lunaflap
   assert.equal(life.decideSpecies(week, "bat"), "umbrabat");
   assert.equal(life.decideSpecies(week, "bat", { strongest: "speed" }), "batbeat");
   assert.equal(life.decideSpecies(week, "bat", { strongest: "attack" }), "umbrabat");
@@ -261,7 +261,7 @@ test("the bear, penguin and bat lines grow up by what they ate, where they went 
 
 test("the owl, chameleon, scarab and kite lines grow up by the sky, games, the clock and the weather", () => {
   const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
-  // the owl: a clear night sky makes a Stargazer, clean scuffles the Ninjowl
+  // the owl: a clear night sky makes an Owlscope, clean scuffles the Ninjowl
   assert.equal(life.decideSpecies(week, "owl"), "owlbert");
   assert.equal(life.decideSpecies(week, "owl", { dark: true, clear: true }), "stargazer");
   assert.equal(life.decideSpecies(week, "owl", { dark: true, clear: false }), "owlbert"); // clouds
@@ -269,14 +269,14 @@ test("the owl, chameleon, scarab and kite lines grow up by the sky, games, the c
   assert.equal(life.decideSpecies({ ...week, clean_battles: life.NINJOWL_CLEAN_BATTLES - 1 }, "owl"), "owlbert");
   assert.equal(life.decideSpecies({ ...week, clean_battles: life.NINJOWL_CLEAN_BATTLES }, "owl",
     { dark: true, clear: true }), "ninjowl");
-  // the chameleon: hide and seek makes a Hidewell, friends from the wild the Mirrorleon
+  // the chameleon: hide and seek makes a Hidewig, friends from the wild the Mirrorleon
   assert.equal(life.decideSpecies(week, "chameleon"), "palettino");
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES - 1 }, "chameleon"), "palettino");
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon"), "hidewell");
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true }), "hidewell"); // a guest from the garden
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true, wildFriends: life.MIRRORLEON_FRIENDS - 1 }), "hidewell");
   assert.equal(life.decideSpecies({ ...week, games: life.HIDEWELL_GAMES }, "chameleon", { friend: true, wildFriends: life.MIRRORLEON_FRIENDS }), "mirrorleon");
-  // the scarab: just after a full hour makes a Clockbeetle, the heat the Pharabug
+  // the scarab: just after a full hour makes a Clockarab, the heat the Pharabug
   assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 + 30 }), "solroll");
   assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 }), "clockbeetle");
   assert.equal(life.decideSpecies(week, "scarab", { minute: 14 * 60 + life.CLOCKBEETLE_MINUTES - 1 }), "clockbeetle");
@@ -285,7 +285,7 @@ test("the owl, chameleon, scarab and kite lines grow up by the sky, games, the c
   assert.equal(life.decideSpecies(week, "scarab", { temp: life.PHARABUG_HEAT }), "pharabug");
   assert.equal(life.decideSpecies(week, "scarab", { temp: life.PHARABUG_HEAT - 1 }), "solroll");
   assert.equal(life.decideSpecies(week, "scarab", { temp: null }), "solroll"); // no weather data
-  // the kite: the dance makes a Lionkite, a thunderstorm the Stormkite
+  // the kite: the dance makes a Roarigami, a thunderstorm the Tempestry
   assert.equal(life.decideSpecies(week, "kite"), "origrane");
   assert.equal(life.decideSpecies(week, "kite", { dance: true }), "lionkite");
   assert.equal(life.decideSpecies(week, "kite", { dance: true, storm: true }), "stormkite");
@@ -309,7 +309,7 @@ test("the world says whether the sky is clear, and the pet whether it knows the 
 
 test("the octopus and gargoyle lines grow up by tricks, smarts, the rain and the noon bell", () => {
   const week = { ...life.newDiary(), minutes: 10080, good_minutes: 10080 };
-  // the octopus: tricks make an Octavio, smarts the Abyssink
+  // the octopus: tricks make a Juggopus, smarts the Abyssink
   assert.equal(life.decideSpecies(week, "octopus"), "inkasso");
   assert.equal(life.decideSpecies(week, "octopus", { tricks: life.OCTAVIO_TRICKS - 1 }), "inkasso");
   assert.equal(life.decideSpecies(week, "octopus", { tricks: life.OCTAVIO_TRICKS }), "octavio");

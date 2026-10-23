@@ -74,13 +74,16 @@ export const LINE_SKILL: Record<string, "strength" | "speed" | "smarts"> = {
 };
 /**
  * The language key for the name of a form: an adult's species, the child of its line (every line's
- * child has a name of its own, in `children` of the language files), or else the stage.
+ * child has a name of its own, in `children` of the language files), the baby of its line (in `babies`), or else the stage.
  */
 export function formKey(stage: string, species: string): string {
   if (stage === "adult") {
     return `species.${species}`;
   }
-  return stage === "child" ? `children.${species}` : `stages.${stage}`;
+  if (stage === "child") {
+    return `children.${species}`;
+  }
+  return stage === "baby" ? `babies.${species}` : `stages.${stage}`;
 }
 // The slime's first adult forms: the slime line was redrawn and they grow out of no egg any more,
 // but they still live in the wild (wild.WILD). They may come back as lines of their own.
