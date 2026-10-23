@@ -8,12 +8,12 @@
     "subtitle": "Bis zu vier Pets leben Tür an Tür"
   },
   "trip": {
-    "title": "Ab auf kleine Abenteuer",
+    "title": "Ab ins Abenteuer",
     "subtitle": "Es kommt mit kleinen Schätzen und Geschichten heim"
   },
   "choose": {
     "title": "Was wird aus ihm?",
-    "subtitle": "Über 70 erwachsene Formen zum Entdecken"
+    "subtitle": "Über 70 Formen warten darauf, entdeckt zu werden"
   },
   "eat": {
     "title": "Es spürt jede Berührung",
@@ -21,18 +21,18 @@
   },
   "night": {
     "title": "Es schläft, wenn du schläfst",
-    "subtitle": "Tag, Nacht und Wetter wie bei dir draußen"
+    "subtitle": "Tag, Nacht und Wetter wie vor deinem Fenster"
   },
   "diary": {
-    "title": "Alles, was es erlebt, im Tagebuch",
-    "subtitle": "Auch, während du weg warst"
+    "title": "Sein Tagebuch erzählt alles",
+    "subtitle": "Auch, was passiert ist, während du weg warst"
   },
   "grown": {
-    "title": "Vom Ei bis groß",
+    "title": "Erst Ei, dann groß",
     "subtitle": "Es wächst mit dir heran"
   },
   "feature": {
     "title": "Blobling",
-    "subtitle": "Vom Ei bis groß:\nein kleines Pet zum Umsorgen"
+    "subtitle": "Ein kleines Pet\nzum Großziehen"
   }
 }
