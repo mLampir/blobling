@@ -3220,7 +3220,7 @@ function renderUpdate() {
   const upToApp = ahead && app.belowApp(u.current);
   const lines = [t("page.app.update_version", { version: u.current })];
   if (u.running) lines.push(t("page.app.update_running"));
-  else if (upToApp) lines.push(t("page.app.update_up_to_app", { latest: u.latest, version: app.version }));
+  else if (upToApp) lines.push(t("page.app.update_available", { latest: app.version }));
   else if (ahead) lines.push(t("page.app.update_app_first", { latest: u.latest }));
   else if (u.available) lines.push(t("page.app.update_available", { latest: u.latest }));
   else if (u.failed) lines.push(t("page.app.update_failed"));
