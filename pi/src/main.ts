@@ -1,12 +1,13 @@
 /** Entry point: start the panel driver, the display loop and the web server. */
 
 import { createServer } from "node:http";
+import { join } from "node:path";
 
 import { Pet } from "../../core/src/pet";
 import { PetScene } from "../../core/src/scene";
 import { readAssets } from "./assets";
 import {
-  APP_BUNDLE_DIR, APP_DIR, BDF_FONT_DIR, DRIVER_FILE, LOCALE_DIR, PET_ASIDE_FILE, PET_FILE, PYTHON, SETTINGS_FILE, STATE_FILE,
+  APP_BUNDLE_DIR, APP_DIR, BDF_FONT_DIR, DATA_DIR, DRIVER_FILE, LOCALE_DIR, PET_ASIDE_FILE, PET_FILE, PYTHON, SETTINGS_FILE, STATE_FILE,
   TEMPLATE_DIR, loadConfig,
 } from "./config";
 import { Display } from "./display";
@@ -69,7 +70,8 @@ async function main(): Promise<void> {
 
   // Look for a new release a minute after the start and then every six hours; while an update
   // runs, watch its unit (it ends by restarting this service, or fails).
-  const updates = new Updates("."); // VERSION and REPO lie next to the app (WorkingDirectory)
+  // VERSION and REPO lie next to the app (WorkingDirectory); the update unit reads update.env
+  const updates = new Updates(".", fetch, undefined, () => settings.beta, join(DATA_DIR, "update.env"));
   if (updates.enabled) {
     setTimeout(() => void updates.check(), 60_000);
     setInterval(() => void updates.check(), 6 * 3600_000);

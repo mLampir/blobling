@@ -484,42 +484,50 @@ attached as well, with the repository filled in, so the Quickstart's
 `…/releases/latest/download/install.sh` always gives the newest one. Started
 by hand under *Actions*, the workflow builds all of it without a release and
 keeps it as a workflow artifact. The tag names the version, for example
-`v1.2.0`.
+`v1.2.0`. The app inside the package carries no version of its own, the Pi
+reads it from `VERSION`, so a beta's package becomes its release by changing
+that file alone (*Betas* below).
 
-The same tag builds the apps for the stores on [Codemagic](https://codemagic.io)
-(`codemagic.yaml`): it runs the tests, builds and signs the apps and uploads
-them, iOS to TestFlight and Android to the internal test track of Google Play.
-From there a build is released to everyone by hand, in App Store Connect and
-the Play Console. The tag's version becomes the app's version; the build
-number is one more than the newest one in the store. Only tags start these
-builds, never a push or a pull request, and the signing keys and store logins
-are kept in Codemagic, not in the repo. Keep `codemagic.yaml` plain ASCII,
-Codemagic does not read anything else.
+A beta tag (`v1.2.0-beta.1`) also builds the apps for the stores on
+[Codemagic](https://codemagic.io) (`codemagic.yaml`): it runs the tests, builds
+and signs the apps and uploads them, iOS to TestFlight and Android to the
+internal test track of Google Play. The app's version is the tag's without
+the beta part (`1.2.0`, the stores take only digits); the build number is one
+more than the newest one in the store. Only beta tags start these builds,
+never a push, a pull request or a final tag like `v1.2.0`, and the signing
+keys and store logins are kept in Codemagic, not in the repo. Keep
+`codemagic.yaml` plain ASCII, Codemagic does not read anything else.
 Until the app exists in Google Play, only iOS builds on a tag; the Android
 workflow is started by hand in Codemagic.
 
-**Betas.** Before a release goes to everyone, it goes out as a beta:
+**Betas.** Every release goes out as a beta first, and what is released in the
+end is exactly the beta that was tested, nothing is built again:
 
-1. Tag `v1.2.0-beta.1` and publish the GitHub release with **Set as a
-   pre-release** ticked. The Pi updater and `install.sh` look at
-   `…/releases/latest`, which skips pre-releases, so other Pis don't see it.
-   Your own Pi gets it with
-   `curl -fsSL https://github.com/mLampir/blobling/releases/latest/download/install.sh | sudo bash -s -- --version v1.2.0-beta.1`.
-2. Codemagic builds the beta tag like any other, to TestFlight and the internal
-   test track, as version `1.2.0`: the stores take only digits, so the betas
-   and the release of a version differ only in the build number.
+1. Tag `v1.2.0-beta.1` and publish its GitHub release with **Set as a
+   pre-release** ticked. The Release workflow attaches the Pi's package,
+   Codemagic uploads the apps to TestFlight and the internal test track.
+2. Test it. A Pi gets betas with the switch *Betas too* under *Own LED
+   display* in the app (or *Install beta versions too* on the settings page)
+   and is then updated with its button as usual. Other Pis only see final
+   releases. Use the beta app with a Pi on betas: a beta may change the API,
+   and the store app would then ask for an update.
 3. A bug found in the beta is fixed on main and goes out as `v1.2.0-beta.2`.
-4. When the beta is good, push the tag `v1.2.0` (`git tag v1.2.0 && git push
-   origin v1.2.0`). Codemagic builds it for the stores; send it to review and
-   release it there by hand as usual.
-5. Once the store has released the app, publish the GitHub release for the
-   tag `v1.2.0` (a normal one this time). Only then do the Pis see the update,
-   so a Pi is not updated days before the app that fits it. A Pi never updates
-   by itself: it shows the update, and its owner starts it with the button.
+4. When the beta is good, release its builds by hand: in App Store Connect
+   pick the TestFlight build for version 1.2.0 and send it to review, in the
+   Play Console promote the build from the internal track to production.
+5. Once the stores have released the app, run *Actions → Release a beta*
+   (`.github/workflows/promote.yml`) with the beta, `v1.2.0-beta.2`. It makes
+   the release `v1.2.0` from the beta's own files: the same package with only
+   its `VERSION` changed, the same `install.sh` and notes, its tag on the
+   beta's commit. Only then do the Pis see the update, so a Pi is not offered
+   an update days before the app that fits it. A Pi never updates by itself:
+   it shows the update, and its owner starts it with the button.
 
 The updater only offers a release that is newer than the running one, in the
 order `v1.1.0` < `v1.2.0-beta.1` < `v1.2.0-beta.2` < `v1.2.0`, so a Pi on a
 beta moves on to its release but is never offered the release before it.
+For a public beta, open the testing tracks of the stores too (open testing in
+Google Play, a public TestFlight link) for those who switch their Pi to betas.
 
 To build the package locally:
 
@@ -560,7 +568,8 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `tools/package.mjs`, `tools/bundle.mjs` | `npm run package`: the release package; `bundle.mjs` lists the files that go to the Pi, for the package and for `npm run deploy` |
 | `.github/dependabot.yml` | Dependency updates once a month, one grouped pull request each for npm, GitHub Actions and pip |
 | `.github/workflows/release.yml` | Builds the package and attaches it and `install.sh` to each release |
-| `codemagic.yaml` | Builds the apps for the stores on a release tag and uploads them for testing |
+| `.github/workflows/promote.yml` | Started by hand: makes the final release from a tested beta's files, without building again |
+| `codemagic.yaml` | Builds the apps for the stores on a beta tag and uploads them for testing |
 | `.github/workflows/android-test.yml` | Started by hand: a test APK of the app, to install on an Android phone (a debug build, kept for a week) |
 | `.github/workflows/test.yml` | Tests and type check on every pull request and every push to `main` |
 | `tools/` | Preview of the scene, the pixel art as text → sprite sheets (the one Python tool, it needs `pip install -r requirements.txt`), the sound recipes and their synthesizer → sound files (`sfx.ts`, `sounds.ts`); build and test scripts |

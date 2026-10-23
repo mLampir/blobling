@@ -9,11 +9,16 @@
  * Nothing is taken from the request: it only ever installs the newest official release, and only
  * when it is newer than the running one (a Pi on a beta isn't offered the release before it).
  *
+ * With betas switched on (settings page or app), the newest pre-release counts too. The version
+ * that was found is written to UPDATE_ENV for the unit, so it installs exactly that one.
+ *
  * A Pi set up from a checkout of the repo has neither file, and nothing here does anything.
  */
 
 import { execFile } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
+
+import { writeAtomic } from "./storage";
 
 import { getLog, reason } from "./log";
 
@@ -34,6 +39,8 @@ export interface UpdateState {
   running: boolean;
   /** The last update failed (see journalctl -u led-matrix-update). */
   failed: boolean;
+  /** Betas are installed too. */
+  beta: boolean;
 }
 
 /** Runs systemctl with the given arguments; resolves with its output, also when it fails. */
@@ -101,9 +108,13 @@ export class Updates {
   private running = false;
   private failed = false;
 
-  /** `directory`: where VERSION and REPO are (the app's folder). */
+  /**
+   * `directory`: where VERSION and REPO are (the app's folder). `beta`: whether betas are wanted
+   * (Settings.beta). `envFile`: where the version to install is written for the update unit.
+   */
   constructor(directory: string, private readonly request: typeof fetch = fetch,
-      private readonly run: Systemctl = systemctl) {
+      private readonly run: Systemctl = systemctl, private readonly beta: () => boolean = () => false,
+      private readonly envFile: string | null = null) {
     this.current = readLine(`${directory}/VERSION`, VERSION);
     this.repo = readLine(`${directory}/REPO`, REPO);
   }
@@ -115,7 +126,7 @@ export class Updates {
 
   state(): UpdateState {
     return {
-      current: this.current, latest: this.latest, running: this.running, failed: this.failed,
+      current: this.current, latest: this.latest, running: this.running, failed: this.failed, beta: this.beta(),
       available: this.enabled && !this.running && this.latest !== null && newer(this.latest, this.current!),
     };
   }
@@ -127,13 +138,7 @@ export class Updates {
     }
     await this.checkUnit();
     try {
-      // .../releases/latest redirects to .../releases/tag/<version>
-      const response = await this.request(`https://github.com/${this.repo}/releases/latest`,
-        { method: "HEAD", signal: AbortSignal.timeout(TIMEOUT * 1000) });
-      const tag = decodeURIComponent(response.url.split("/releases/tag/")[1] ?? "");
-      if (!response.ok || !VERSION.test(tag)) {
-        throw new Error(response.ok ? "no release yet" : `HTTP ${response.status}`);
-      }
+      const tag = this.beta() ? await this.newestBeta() : await this.newestRelease();
       if (tag !== this.latest && newer(tag, this.current!)) {
         log.info(`Release ${tag} is available (running ${this.current})`);
       }
@@ -141,6 +146,34 @@ export class Updates {
     } catch (error) {
       log.warning(`Could not look for a new release: ${reason(error)}`);
     }
+  }
+
+  /** The newest release: .../releases/latest redirects to .../releases/tag/<version> (it skips pre-releases). */
+  private async newestRelease(): Promise<string> {
+    const response = await this.request(`https://github.com/${this.repo}/releases/latest`,
+      { method: "HEAD", signal: AbortSignal.timeout(TIMEOUT * 1000) });
+    const tag = decodeURIComponent(response.url.split("/releases/tag/")[1] ?? "");
+    if (!response.ok || !VERSION.test(tag)) {
+      throw new Error(response.ok ? "no release yet" : `HTTP ${response.status}`);
+    }
+    return tag;
+  }
+
+  /** The newest of the latest releases and pre-releases (GitHub's API, drafts left out). */
+  private async newestBeta(): Promise<string> {
+    const response = await this.request(`https://api.github.com/repos/${this.repo}/releases?per_page=20`,
+      { headers: { Accept: "application/vnd.github+json" }, signal: AbortSignal.timeout(TIMEOUT * 1000) });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const releases = await response.json() as { tag_name?: unknown; draft?: unknown }[];
+    const tags = (Array.isArray(releases) ? releases : [])
+      .filter((r) => !r.draft && typeof r.tag_name === "string" && VERSION.test(r.tag_name))
+      .map((r) => r.tag_name as string);
+    if (!tags.length) {
+      throw new Error("no release yet");
+    }
+    return tags.reduce((best, tag) => (newer(tag, best) ? tag : best));
   }
 
   /**
@@ -156,6 +189,9 @@ export class Updates {
       return false;
     }
     log.info(`Updating from ${this.current} to ${this.latest}`);
+    if (this.envFile) {
+      writeAtomic(this.envFile, `LED_MATRIX_VERSION=${this.latest}\n`); // VERSION-checked, see check()
+    }
     this.running = true;
     this.failed = false;
     // --no-block: the unit restarts this service, so don't wait for it

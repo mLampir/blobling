@@ -44,6 +44,6 @@ export function parts(directory: string, panel: FrameSink | null = null, languag
   pet.setBedtimeSource(display.bedtime);
   followLocation(settings, { weather, pet, display });
   // no VERSION in the folder: like a Pi set up from a checkout, it never looks for updates
-  const updates = new Updates(directory, () => assert.fail("no request"), async () => "inactive");
+  const updates = new Updates(directory, () => assert.fail("no request"), async () => "inactive", () => settings.beta);
   return { settings, weather, pet, display, petFile, updates };
 }

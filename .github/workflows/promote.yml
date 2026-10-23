@@ -1,0 +1,69 @@
+# Releases a tested beta as its final version: v1.2.0-beta.2 becomes v1.2.0 (README, Betas).
+#
+# Nothing is built again. The release gets the beta's own package, with only its VERSION file
+# changed, its install.sh and its notes, and its tag points at the beta's commit. The package
+# carries no version of its own anywhere else (tools/package.mjs builds it without one), so the
+# Pi runs exactly what was tested. Run it by hand (Actions -> Release a beta -> Run workflow) once
+# the tested store build is out in the stores, so Pis are offered it only when the app fits.
+#
+# The release is made with the workflow's own token, so it doesn't start the Release workflow,
+# and its tag (no dash) doesn't start a store build on Codemagic.
+
+name: Release a beta
+
+on:
+  workflow_dispatch:
+    inputs:
+      beta:
+        description: The beta to release, like v1.2.0-beta.2
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      BETA: ${{ inputs.beta }}
+    steps:
+      - name: Check the beta
+        run: |
+          set -euo pipefail
+          if [[ ! "$BETA" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z.-]+$ ]]; then
+            echo "::error::'$BETA' is not a beta like v1.2.0-beta.2"; exit 1
+          fi
+          VERSION="${BETA%%-*}"
+          if gh release view "$VERSION" --repo "$REPO" > /dev/null 2>&1; then
+            echo "::error::$VERSION is released already"; exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Download its files
+        run: |
+          set -euo pipefail
+          mkdir beta
+          gh release download "$BETA" --repo "$REPO" --dir beta
+          (cd beta && sha256sum -c "blobling-$BETA.tar.gz.sha256")
+
+      - name: Repack with the new version
+        run: |
+          set -euo pipefail
+          mkdir pkg out
+          tar -xzf "beta/blobling-$BETA.tar.gz" -C pkg
+          grep -qx "$BETA" pkg/VERSION
+          echo "$VERSION" > pkg/VERSION
+          name="blobling-$VERSION.tar.gz"
+          (cd pkg && tar -czf "../out/$name" $(ls -A))
+          (cd out && sha256sum "$name" > "$name.sha256")
+          cp beta/install.sh out/install.sh
+
+      - name: Release
+        run: |
+          set -euo pipefail
+          sha="$(gh api "repos/$REPO/commits/$BETA" --jq .sha)"
+          gh release view "$BETA" --repo "$REPO" --json body --jq .body > notes.md
+          gh release create "$VERSION" out/* --repo "$REPO" --target "$sha" \
+            --title "$VERSION" --notes-file notes.md --latest

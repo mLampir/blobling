@@ -32,14 +32,16 @@ if (!existsSync("setup.sh")) {
   fail("Packaging", "start it from the repo folder");
 }
 
-function run(what, command, args) {
-  const result = spawnSync(command, args, { stdio: "inherit" });
+function run(what, command, args, env = process.env) {
+  const result = spawnSync(command, args, { stdio: "inherit", env });
   if (result.error || result.status !== 0) {
     fail(what, result.error?.message ?? `exit code ${result.status}`);
   }
 }
 
-run("Building", process.execPath, ["tools/build.mjs"]);
+// Built without a version: the Pi reads its own from the VERSION file, so a beta's package can be
+// released as the final version by changing only that file (.github/workflows/promote.yml).
+run("Building", process.execPath, ["tools/build.mjs"], { ...process.env, VERSION: "" });
 
 // Next to the app on the Pi: which release it is, where it came from and how to update it
 // (pi/src/update.ts). Without --repo, install.sh keeps its placeholder and asks for LED_MATRIX_REPO.

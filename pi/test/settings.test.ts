@@ -81,6 +81,16 @@ test("invalid values are turned down and change nothing", () => {
   assert.equal(settings.location, null);
 });
 
+test("betas are off until switched on, and stay on after a restart", () => {
+  const file = join(tempDir(), "settings.json");
+  const cfg = parseConfig("", quiet);
+  const settings = new Settings(file, cfg, locales);
+  assert.equal(settings.beta, false);
+  assert.throws(() => settings.setBeta("yes"), RequestError);
+  settings.setBeta(true);
+  assert.equal(new Settings(file, cfg, locales).beta, true);
+});
+
 test("a broken settings file is ignored", () => {
   const file = join(tempDir(), "settings.json");
   writeFileSync(file, "{ broken");

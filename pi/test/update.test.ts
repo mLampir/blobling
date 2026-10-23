@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 
@@ -50,12 +50,12 @@ test("a newer release is found and installed through the update unit", async () 
   }) as unknown as typeof fetch;
   const updates = new Updates(release("v1.0.0"), request, systemctl("inactive", calls));
   assert.deepEqual(updates.state(),
-    { current: "v1.0.0", latest: null, available: false, running: false, failed: false });
+    { current: "v1.0.0", latest: null, available: false, running: false, failed: false, beta: false });
 
   await updates.check();
   assert.deepEqual(asked, ["https://github.com/someone/blobling/releases/latest"]);
   assert.deepEqual(updates.state(),
-    { current: "v1.0.0", latest: "v1.1.0", available: true, running: false, failed: false });
+    { current: "v1.0.0", latest: "v1.1.0", available: true, running: false, failed: false, beta: false });
 
   assert.equal(await updates.start(), true);
   assert.deepEqual(calls.at(-1), ["start", "--no-block", "led-matrix-update.service"]);
@@ -122,4 +122,35 @@ test("only a newer release is offered: a beta comes before its release, not afte
   await updates.check();
   assert.equal(updates.state().available, false);
   assert.equal(await updates.start(), false);
+});
+
+test("with betas, the newest release or pre-release is installed, exactly that version", async () => {
+  const asked: string[] = [];
+  const releases = [
+    { tag_name: "v1.1.0-beta.2", draft: true }, { tag_name: "v1.1.0-beta.1" }, { tag_name: "v1.0.1" },
+    { tag_name: "not a version!" }, {},
+  ];
+  const request = (async (url: string) => {
+    asked.push(url);
+    return { ok: true, status: 200, json: async () => releases };
+  }) as unknown as typeof fetch;
+  let beta = true;
+  const directory = release("v1.0.0");
+  const env = join(directory, "update.env");
+  const calls: string[][] = [];
+  const updates = new Updates(directory, request, systemctl("inactive", calls), () => beta, env);
+  await updates.check();
+  assert.deepEqual(asked, ["https://api.github.com/repos/someone/blobling/releases?per_page=20"]);
+  assert.deepEqual(updates.state(),
+    { current: "v1.0.0", latest: "v1.1.0-beta.1", available: true, running: false, failed: false, beta: true });
+  assert.equal(await updates.start(), true);
+  assert.equal(readFileSync(env, "utf-8"), "LED_MATRIX_VERSION=v1.1.0-beta.1\n");
+  assert.deepEqual(calls.at(-1), ["start", "--no-block", "led-matrix-update.service"]);
+
+  // switched off again: only releases, so a Pi on a beta waits for its release
+  beta = false;
+  const onBeta = new Updates(release("v1.1.0-beta.1"), github("https://github.com/someone/blobling/releases/tag/v1.0.1"),
+    systemctl("inactive"), () => beta);
+  await onBeta.check();
+  assert.equal(onBeta.state().available, false);
 });
