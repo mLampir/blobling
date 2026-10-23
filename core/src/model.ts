@@ -263,6 +263,9 @@ export function fallAsleep(state: PetState, t: number): void {
   state.asleep = true;
   state.sleep_since = t;
   state.game = state.training = state.fishing = null; // falling asleep ends the game and the training
+  if (state.activity === "yard") {
+    state.activity_until = Math.min(state.activity_until, t); // dropping off at the fire, it is home in bed
+  }
   if (state.house) {
     setActivity(state, "go_in", t); // it goes into its house to sleep
   }
@@ -417,14 +420,22 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
       }
     }
   }
+  if (yard) {
+    yards.rain(yard, state.items, t, weather); // the rain barrel, once a minute for the whole home
+  }
   if (yard && !state.asleep && !state.trip && t >= state.activity_until && !wild.visiting(state, t)
       && !care.gameActive(state, t) && !battle.trainingActive(state, t) && !fishing.active(state, t)) {
-    // hungry or dirty enough, and there is something in the yard: it goes over by itself
-    const done = yards.visit(state, yard, t);
+    // hungry or dirty enough, and there is something in the yard: it goes over by itself; in the
+    // evening, to the campfire
+    const done = yards.visit(state, yard, t) ?? yards.toFire(minutesUntilBed(t, bedtime) * 60 - t % 60, weather);
     if (done) {
       setActivity(state, "yard", t, done);
       state.activity_until = t + yards.seconds(done);
     }
+  }
+  if (state.activity === "yard" && yards.atFire(state.activity_item)
+      && yards.phase(state.activity, state.activity_until, state.activity_item, t)?.where === "there") {
+    yards.warm(state, TICK / 60);
   }
   if (!state.asleep && !state.trip && t >= state.activity_until && home.wantsFruit(state)) {
     // ripe fruit: it helps itself

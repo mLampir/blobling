@@ -13,11 +13,17 @@
  * An upgrade found at the coast or in the ruins, once their guardian has left its egg, makes both
  * a size bigger; the basin takes the size the yard has when it comes.
  *
+ * The basin comes with a rain barrel: while it really rains, the barrel tops the basin up by a
+ * portion every RAIN_EVERY minutes. And in the evening, in the last FIRE_MINUTES before bedtime, a
+ * campfire burns in the yard when it is dry: every pet that is awake, at home and not busy goes
+ * over and sits there until bedtime, a little happier for it (FIRE_MOOD).
+ *
  * All of it happens in the simulation step (model.tick), with every pet of the home stepped
  * together minute by minute (model.advanceTogether), so who gets the last portion is the same
  * whether anybody is looking or not.
  */
 
+import * as sky from "./sky";
 import type { PetState } from "./state";
 
 export const SIZES = ["small", "medium", "large"] as const;
@@ -43,6 +49,14 @@ export const IN = 4;
 export const PART = 60;
 export const LEAVE = 4;
 export const BACK = 3;
+// The rain barrel: a portion into the basin every this many minutes of rain
+export const RAIN_EVERY = 10;
+// The campfire: from this many minutes before bedtime until bedtime; a pet that would get there
+// for less than FIRE_LEAST minutes stays home. While it sits there, its mood goes up by FIRE_MOOD an hour.
+export const FIRE_MINUTES = 40;
+export const FIRE_LEAST = 10;
+export const FIRE_MOOD = 10;
+export const FIRE = "fire"; // the activity_item of a visit to the fire: "fire:<seconds>"
 
 /** What is in the trough and the basin: portions (null: not filled yet, it comes full), and when one ran empty. */
 export interface Yard {
@@ -50,12 +64,14 @@ export interface Yard {
   basin: number | null;
   /** When the trough or the basin last ran empty while the other still had something (0 = never). */
   empty_at: number;
+  /** The last minute the rain barrel has had (0 = none yet): it runs once a minute for the whole home. */
+  rain_at: number;
 }
 
 export type What = "trough" | "basin";
 
 export function newYard(): Yard {
-  return { trough: null, basin: null, empty_at: 0 };
+  return { trough: null, basin: null, empty_at: 0, rain_at: 0 };
 }
 
 /** The yard from a save file; older files have none. */
@@ -68,6 +84,7 @@ export function readYard(data: unknown): Yard {
       yard[what] = typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : null;
     }
     yard.empty_at = Number(saved.empty_at) || 0;
+    yard.rain_at = Number(saved.rain_at) || 0;
   }
   return yard;
 }
@@ -132,9 +149,52 @@ export function level(count: number, most: number): "empty" | "low" | "half" | "
   return count <= 0 ? "empty" : share <= 1 / 3 ? "low" : share <= 2 / 3 ? "half" : "full";
 }
 
-/** How long a visit takes, for what it does there ("eat", "bath" or "eat,bath"). */
+/** How long a visit takes, for what it does there ("eat", "bath", "eat,bath" or "fire:<seconds>"). */
 export function seconds(item: string): number {
+  if (item.startsWith(`${FIRE}:`)) {
+    return Number(item.slice(FIRE.length + 1)) || 0;
+  }
   return OUT + IN + PART * Math.max(1, item.split(",").length) + LEAVE + BACK;
+}
+
+/** Is a visit with this activity_item one to the campfire? */
+export function atFire(item: string): boolean {
+  return item.startsWith(`${FIRE}:`);
+}
+
+/**
+ * The rain barrel, once a minute for the whole home (the minute ending at t): while it really rains
+ * (not snow), every RAIN_EVERY minutes a portion runs into the basin, up to what it holds.
+ */
+export function rain(yard: Yard, items: Record<string, number>, t: number, weather: sky.WeatherCode): void {
+  const minute = Math.trunc(t / 60);
+  if (minute <= Math.trunc(yard.rain_at / 60)) {
+    return; // another pet of the home has had this minute already
+  }
+  yard.rain_at = t;
+  const most = capacity(items, "basin");
+  if (!most || sky.precipitation(weather) !== "rain" || minute % RAIN_EVERY !== 0) {
+    return;
+  }
+  yard.basin = Math.min(most, portions(yard, "basin") + 1);
+}
+
+/**
+ * The campfire: `untilBed` is how many seconds are left until bedtime at the time t. Within the
+ * last FIRE_MINUTES before it, on a dry evening, a pet goes over and stays until bedtime: returns
+ * its activity_item ("fire:<seconds>"), or null if it doesn't go. The caller has checked that it is
+ * awake, at home and not busy.
+ */
+export function toFire(untilBed: number, weather: sky.WeatherCode): string | null {
+  if (untilBed > FIRE_MINUTES * 60 || untilBed < OUT + IN + FIRE_LEAST * 60 + LEAVE + BACK || sky.precipitation(weather)) {
+    return null;
+  }
+  return `${FIRE}:${Math.round(untilBed)}`;
+}
+
+/** It sits at the fire this minute: a little happier. */
+export function warm(state: PetState, minutes: number): void {
+  state.stats.mood += FIRE_MOOD * minutes / 60;
 }
 
 /**

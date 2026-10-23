@@ -251,7 +251,7 @@ test("the yard is saved with the home, and an older save gets one that comes ful
   pet.yard.empty_at = now - 100;
   pet.save();
   const loaded = disk.pet();
-  assert.deepEqual(loaded.yard, { trough: 5, basin: 3, empty_at: now - 100 });
+  assert.deepEqual(loaded.yard, { trough: 5, basin: 3, empty_at: now - 100, rain_at: 0 });
   assert.deepEqual(loaded.snapshot(now).yard!.basin!.portions, 3);
 
   const file = JSON.parse(disk.text!);
@@ -260,5 +260,72 @@ test("the yard is saved with the home, and an older save gets one that comes ful
   assert.deepEqual(old.yard, yards.newYard());
   disk.text = JSON.stringify(file);
   assert.deepEqual(disk.pet().snapshot(now).yard!.trough.portions, yards.TROUGH[0]);
-  assert.deepEqual(yards.readYard({ trough: "x", basin: -3 }), { trough: null, basin: 0, empty_at: 0 });
+  assert.deepEqual(yards.readYard({ trough: "x", basin: -3 }), { trough: null, basin: 0, empty_at: 0, rain_at: 0 });
+});
+
+test("the rain barrel tops the basin up while it really rains, once a minute for the whole home", () => {
+  const now = at("2026-10-12 10:00");
+  const RAIN = 63, SNOW = 73;
+  const { pets, yard } = twoPets(now, { basin: 1 });
+  yard.basin = 0;
+  yard.trough = 0; // nobody goes over to eat
+  model.advanceTogether(pets, now + HOUR, BEDTIME, RAIN, null, null, yard);
+  // an hour of rain: six portions, not twelve for two pets (and nobody bathed: they are clean)
+  assert.equal(yard.basin, 60 / yards.RAIN_EVERY);
+  model.advanceTogether(pets, now + 2 * HOUR, BEDTIME, SNOW, null, null, yard);
+  model.advanceTogether(pets, now + 3 * HOUR, BEDTIME, null, null, null, yard);
+  assert.equal(yard.basin, 60 / yards.RAIN_EVERY); // snow and dry weather bring nothing
+  model.advanceTogether(pets, now + 20 * HOUR, BEDTIME, RAIN, null, null, yard);
+  assert.equal(yard.basin, yards.BASIN[0]); // up to what it holds
+  // without the basin there is no barrel either
+  const dry = twoPets(now);
+  model.advanceTogether(dry.pets, now + HOUR, BEDTIME, RAIN, null, null, dry.yard);
+  assert.equal(dry.yard.basin, null);
+});
+
+test("in the evening the pets sit at the campfire until bedtime, a little happier, and then go to bed", () => {
+  const now = at("2026-10-12 22:00"); // bedtime is at 23:00
+  const { pets, yard } = twoPets(now, { basin: 1 });
+  for (const pet of pets) {
+    pet.stats.mood = 60;
+  }
+  model.advanceTogether(pets, at("2026-10-12 22:10"), BEDTIME, null, null, null, yard);
+  assert.deepEqual(pets.map((p) => p.activity), ["idle", "idle"]); // not yet
+  const sitting = at("2026-10-12 22:40");
+  model.advanceTogether(pets, sitting, BEDTIME, null, null, null, yard);
+  for (const pet of pets) {
+    assert.equal(pet.activity, "yard");
+    assert.ok(yards.atFire(pet.activity_item));
+    assert.ok(Math.abs(pet.activity_until - at("2026-10-12 23:00")) < 60);
+    assert.equal(yards.phase(pet.activity, pet.activity_until, pet.activity_item, sitting)?.where, "there");
+    assert.ok(pet.stats.mood > 60); // it went up by the fire, though mood drops awake
+  }
+  model.advanceTogether(pets, at("2026-10-12 23:05"), BEDTIME, null, null, null, yard);
+  assert.deepEqual(pets.map((p) => p.asleep), [true, true]);
+  // the yard's food isn't touched by it
+  assert.equal(yard.trough, yards.TROUGH[0]);
+});
+
+test("no campfire in the rain, for a pet that is busy until shortly before bedtime, or with one pet", () => {
+  const now = at("2026-10-12 22:00");
+  const wet = twoPets(now, { basin: 1 });
+  model.advanceTogether(wet.pets, at("2026-10-12 22:40"), BEDTIME, 61, null, null, wet.yard);
+  assert.deepEqual(wet.pets.map((p) => p.activity), ["idle", "idle"]);
+  // less than FIRE_LEAST minutes left: it stays home
+  assert.equal(yards.toFire((yards.FIRE_LEAST - 1) * 60, null), null);
+  assert.equal(yards.toFire((yards.FIRE_MINUTES + 1) * 60, null), null);
+  assert.ok(yards.toFire(yards.FIRE_MINUTES * 60, null));
+  // one pet alone has no yard, so no fire
+  const [alone] = twoPets(now).pets;
+  model.advanceTogether([alone], at("2026-10-12 22:40"), BEDTIME, null, null, null, null);
+  assert.equal(alone.activity, "idle");
+});
+
+test("falling asleep at the fire, it is home in bed", () => {
+  const now = at("2026-10-12 22:20");
+  const { pets, yard } = twoPets(now, { basin: 1 });
+  model.advanceTogether(pets, now + 10 * 60, BEDTIME, null, null, null, yard);
+  assert.equal(pets[0].activity, "yard");
+  model.fallAsleep(pets[0], now + 10 * 60);
+  assert.equal(yards.phase(pets[0].activity, pets[0].activity_until, pets[0].activity_item, now + 10 * 60 + 1), null);
 });

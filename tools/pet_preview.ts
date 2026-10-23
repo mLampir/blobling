@@ -723,6 +723,17 @@ function yardScenes(): [string, YardView][] {
     ["eat, bath", { size: 0, trough: "half", basin: "low", pets: [pet("angloop", "adult", "eat,bath", 36, 0)] }],
     ["walks in", { size: 0, trough: "full", basin: "full", pets: [pet("blob", "child", "eat", 1.5, 0)] }],
     ["at night", { size: 2, trough: "half", basin: "full", pets: [pet("blob", "child", "bath", 12, 0)] }],
+    ["rain", { size: 1, trough: "full", basin: "low", raining: true, pets: [] }],
+    // the campfire in the evening: the two smallest in front of it, the others on the hill
+    ["fire 2", { size: 2, trough: "half", basin: "full", fire: true,
+      pets: [pet("blob", "child", "fire:2400", 60, 0), pet("fox", "baby", "fire:2400", 60, 1)] }],
+    ["fire 3", { size: 2, trough: "half", basin: "full", fire: true,
+      pets: [pet("blob", "child", "fire:2400", 60, 0), pet("twiggle", "adult", "fire:2400", 60, 1), pet("fox", "baby", "fire:2400", 60, 2)] }],
+    ["fire 4 adults", { size: 2, trough: "half", basin: "full", fire: true,
+      pets: [["angloop", 0], ["hivebear", 1], ["rumblefluff", 2], ["gemperor", 3]].map(([species, slot]) =>
+        pet(species as string, "adult", "fire:2400", 60, slot as number)) }],
+    ["to the fire", { size: 0, trough: "full", basin: null, fire: true,
+      pets: [pet("blob", "child", "fire:2400", 2, 0), pet("angloop", "adult", "fire:2400", 3, 1), pet("fox", "baby", "fire:2400", 1, 2)] }],
   ];
 }
 
@@ -815,10 +826,11 @@ function main(): void {
     const sheet = Image.filled(cols * (64 * s + 8), rows * (64 * s + 20), [30, 30, 36]);
     shown.forEach(([title, view], i) => {
       const scene = new PetScene(64, 64, assets, { t: 0.0 });
-      const now = title === "at night" ? NIGHT : DAY;
-      let frame = scene.renderYard(view, null, now, 1)[0];
+      const now = title === "at night" || view.fire ? NIGHT : DAY;
+      const weather = view.raining ? { code: 63, temp: 12 } : null;
+      let frame = scene.renderYard(view, weather, now, 1)[0];
       for (let k = 1; k <= 5; k++) { // a little later, the way it looks after a moment
-        frame = scene.renderYard({ ...view, pets: view.pets.map((p) => ({ ...p, e: p.e + k * 0.1 })) }, null,
+        frame = scene.renderYard({ ...view, pets: view.pets.map((p) => ({ ...p, e: p.e + k * 0.1 })) }, weather,
           new Date(now.getTime() + k * 100), 1 + k * 0.1)[0];
       }
       const x = (i % cols) * (64 * s + 8), y = Math.floor(i / cols) * (64 * s + 20);

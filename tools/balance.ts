@@ -821,7 +821,7 @@ function yardCheck(seeds: number): string {
   for (const count of [2, 3, 4]) {
     for (let seed = 0; seed < seeds; seed++) {
       const { states, start } = yardPets(count, seed, sized(2));
-      const yard: yards.Yard = { trough: 1e6, basin: 1e6, empty_at: 0 };
+      const yard: yards.Yard = { ...yards.newYard(), trough: 1e6, basin: 1e6 };
       for (let t = start + 3600; t <= start + DAY; t += 3600) {
         model.advanceTogether(states, t, BEDTIME, null, null, null, yard);
       }
