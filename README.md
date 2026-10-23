@@ -514,13 +514,13 @@ in the end is exactly what was tested, nothing is built again:
    update.
 3. A bug found in it is fixed on main and goes out as the next pre-release,
    `v1.2.1`; `1.2.0` is then never released, which is fine.
-4. When it is good, release its builds by hand: in App Store Connect send the
-   TestFlight build to review, in the Play Console promote the build from the
-   internal track to production.
-5. Once the stores have released the app, edit the GitHub release and untick
-   **Set as a pre-release** (the Release workflow does not run again). Only
-   then do the Pis see the update, so a Pi is not offered an update days
-   before the app that fits it. A Pi never updates by itself: it shows the
+4. When it is good, send its builds to review: in App Store Connect with
+   *Manually release this version*, in the Play Console with *Managed
+   publishing* on, so neither goes out by itself once it is approved.
+5. Once both are approved, release them and at the same time edit the GitHub
+   release and untick **Set as a pre-release** (the Release workflow does not
+   run again). Only then do the Pis see the update, so a Pi is not offered an
+   update before the app that fits it is out. A Pi never updates by itself: it shows the
    update, and its owner starts it with the button.
 
 The updater only offers a release that is newer than the running one, so a Pi
