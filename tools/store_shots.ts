@@ -381,7 +381,7 @@ async function capture(browser: Browser, base: string, shot: Shot, language: str
   // The scuffles of the last trip count as watched: no "Watch the scuffles" button over every picture
   const lastTrip = save.pet.recent.trip?.at(-1);
   if (lastTrip !== undefined) {
-    await page.evaluate((value) => localStorage.setItem("watched", value), String(lastTrip));
+    await page.evaluate(([key, value]) => localStorage.setItem(key, value), [`watched:${save.pet.id}`, String(lastTrip)]);
   }
   await page.goto(`${base}/`);
   await page.addStyleTag({ content: `:root { --safe-area-inset-top: ${device.safeTop}px; --safe-area-inset-bottom: ${device.safeBottom}px; }` });

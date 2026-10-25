@@ -511,7 +511,8 @@
     "grandma": {
       "fetch": "🏡 Pick up from Grandma's",
       "info": "{name} is staying at Grandma's.",
-      "visit": "🏡 Take to Grandma's"
+      "visit": "🏡 Take to Grandma's",
+      "card": "Grandma writes: “Do bring {name} over for a day! When you're busy, I'm happy to look after them, and I always bake and knit something for visitors.”"
     },
     "unpack": "🎒 Unpack",
     "replay": {
@@ -1011,7 +1012,9 @@
       "favorite": "{name} beams: that is the favorite!",
       "food": "Food",
       "seeds": "Seeds",
-      "wear": "Wear · set out",
+      "hats": "Wear",
+      "deco": "Set out",
+      "eggs": "Eggs",
       "grows": "grows {fruit}",
       "inside": "in the house",
       "egg": "waiting to hatch",

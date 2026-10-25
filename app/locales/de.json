@@ -511,7 +511,8 @@
     "grandma": {
       "fetch": "🏡 Bei Oma abholen",
       "info": "{name} ist bei Oma.",
-      "visit": "🏡 Zu Oma bringen"
+      "visit": "🏡 Zu Oma bringen",
+      "card": "Oma schreibt: „Bring {name} doch mal für einen Tag vorbei! Wenn ihr keine Zeit habt, passe ich gern auf, und für Besuch backe und stricke ich immer etwas.“"
     },
     "unpack": "🎒 Auspacken",
     "replay": {
@@ -1011,7 +1012,9 @@
       "favorite": "{name} strahlt: Das ist das Lieblingsessen!",
       "food": "Essen",
       "seeds": "Samen",
-      "wear": "Anziehen · Aufstellen",
+      "hats": "Anziehen",
+      "deco": "Aufstellen",
+      "eggs": "Eier",
       "grows": "daraus wächst: {fruit}",
       "inside": "im Haus",
       "egg": "wartet aufs Ausbrüten",
