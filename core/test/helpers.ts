@@ -75,13 +75,14 @@ export class Disk {
     this.text = JSON.stringify(file);
   };
 
-  /** A pet as it is after a restart: read from what was saved. */
-  pet(): Pet {
+  /** A pet as it is after a restart: read from what was saved. `clock`: a fixed time instead of the real one. */
+  pet(clock?: () => number): Pet {
     const i18n = new I18n(readLocales());
     return new Pet({
       t: i18n.t,
       saved: this.text === null ? null : readSave(JSON.parse(this.text)),
       save: this.save,
+      clock,
     });
   }
 }
