@@ -591,7 +591,10 @@ show them (it starts with its best ones), and **To the festival** sends it
 off, at any time of the day. Nobody sends it by six in the
 evening, it goes by itself with its best tricks. The festival is the day's
 trip and takes about an hour. Babies and sick pets stay home, and a pet that
-is away on a trip or at Grandma's misses it.
+is away on a trip or at Grandma's misses it. With several pets at home, one
+goes for all of them: the first one sent, and once it is off, the poster comes
+down at every house. If nobody is sent, the one with the best chances goes by
+itself.
 
 On the stage it shows its tricks one after the other to a jury of three wild
 pets from the areas it knows (from the meadow always). A trick works as often

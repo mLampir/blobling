@@ -1206,7 +1206,7 @@ function render(s) {
   $("grandma").hidden = !s.grandma;
   // the scuffles of the last trip, until they have been watched or the next trip sets off
   const fights = s.trip ? [] : lastFights(s);
-  $("watch").hidden = !fights.length || stored("watched") === String(s.last_trip);
+  $("watch").hidden = !fights.length || stored(`watched:${s.id}`) === String(s.last_trip);
   $("watch").textContent = fights.some((r) => r.kind === "festival") ? t("page.replay.watch_show")
     : tn("page.replay.watch", fights.length);
 
@@ -2088,7 +2088,7 @@ $("replay").addEventListener("close", () => {
 });
 $("watch").addEventListener("click", () => {
   if (!current) return;
-  store("watched", String(current.last_trip));
+  store(`watched:${current.id}`, String(current.last_trip)); // each pet its own: watching one doesn't bring back another's
   $("watch").hidden = true;
   watch(lastFights(current));
 });

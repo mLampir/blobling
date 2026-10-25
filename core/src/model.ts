@@ -290,7 +290,8 @@ export function wakeUp(state: PetState, t: number, temp: number | null = null): 
  * home's yard (yard.ts), or null while there is none.
  */
 export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.WeatherCode = null,
-    temp: number | null = null, location: Location = null, yard: yards.Yard | null = null): void {
+    temp: number | null = null, location: Location = null, yard: yards.Yard | null = null,
+    pets: readonly PetState[] = [state]): void {
   if (!state.grandma && leavesForGrandma(state, t, yard)) {
     goToGrandma(state, t);
   }
@@ -342,8 +343,8 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   idle.noteWeather(state, t, sky.precipitation(weather));
   idle.melt(state, temp);
   home.noteHeat(state, temp, t);
-  if (festival.alone(state, t)) {
-    // the festival day, and nobody has sent it: it goes by itself and shows its best tricks
+  if (festival.alone(state, t, pets)) {
+    // the festival day, and nobody has sent one of them: the best of them goes by itself and shows its best tricks
     goToFestival(state, t);
     logEvent(state, t, "festival", "system");
   }
@@ -521,8 +522,10 @@ export function advanceTogether(states: readonly PetState[], now: number, bedtim
     }
     const state = states[next];
     state.updated_at += TICK;
-    tick(state, state.updated_at, bedtime, weather, temp, location, yard);
+    festival.share(states); // one of them went to the festival: the others know (one goes for the home)
+    tick(state, state.updated_at, bedtime, weather, temp, location, yard, states);
   }
+  festival.share(states);
   states.forEach((state, i) => {
     if (ends[i] === null) {
       return;
@@ -1265,7 +1268,7 @@ function trained(state: PetState, now: number, skill: battle.Skill, score: numbe
 /** Off to the trick festival (festival.ts), now: it is the trip of the day. `picked`: the tricks to show. */
 function goToFestival(state: PetState, now: number, picked: readonly string[] = []): void {
   state.recent.trip = [...(state.recent.trip ?? []).filter((t) => now - t < trip.DAY_WINDOW), now];
-  state.counters.festival_day = festival.dayOf(now);
+  state.counters.festival_day = state.counters.festival_home = festival.dayOf(now);
   state.trip = festival.plan(state, now, picked);
   state.game = state.training = state.fishing = null;
   setActivity(state, "trip_start", now, festival.AREA);

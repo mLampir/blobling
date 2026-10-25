@@ -483,6 +483,7 @@
       "at_grandmas": "{name} ist schon bei Oma.",
       "no_festival": "Heute ist kein Fest.",
       "festival_done": "{name} war heute schon auf dem Fest.",
+      "festival_taken": "Heute war schon jemand von euch auf dem Fest.",
       "no_map": "In der Tasche ist keine Schatzkarte.",
       "no_room": "Dafür ist kein Platz mehr."
     },

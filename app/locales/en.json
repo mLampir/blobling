@@ -483,6 +483,7 @@
       "at_grandmas": "{name} is at Grandma's already.",
       "no_festival": "There's no festival today.",
       "festival_done": "{name} has been to the festival already today.",
+      "festival_taken": "One of yours has already been to the festival today.",
       "no_map": "There's no treasure map in the bag.",
       "no_room": "There's no room for that any more."
     },
