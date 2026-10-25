@@ -1103,16 +1103,21 @@ Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
   as before. A tap on one of them makes it hop up towards the pet, which shows
   the way. Below, flat like buttons, the ones to tap: the **bag**, the
   **baton** (tricks), the **whistle** (training) and **Hide & seek**.
-- The **bag** has a shelf each for what the pet eats, the seeds, and what it
-  wears or sets out, with the eggs to brood. Food and seeds are dragged onto
-  the pet like the things in the tray; a tap puts a hat on or off, sets a
-  decoration out or away (it then has a ring), or broods an egg.
+- The **bag** has a shelf each for what the pet eats, the seeds, the hats, the
+  decorations and the eggs to brood. Food and seeds are dragged onto the pet
+  like the things in the tray; a tap on one makes it hop and says what it does.
+  A tap puts a hat on or off, sets a decoration out or away (it then has a
+  ring), or broods an egg.
 - The bag, the tricks, the training, the game and the pet's own things take
   the place of the tray, below the scene and the needs, so the pet is never
   covered and answers where it is. On a tall phone the scene grows into the
   sky above it.
-- **Trip** is the packing: the hearts it would set off with, where to, and
+- **Trip** is the packing: with two pets or more, which of them sets off (a
+  row of them, the one framed); the hearts it would set off with, where to, and
   what goes into the backpack, with the button to send it off at the bottom.
+  Every food to pack shows what it does on the way (any food heals a heart), and
+  held a moment it says so without being packed. Below, Grandma's postcard
+  invites the pet over, with **Take to Grandma's**.
   While the pet can't go for a while (still an egg or a baby, away, back with
   a full backpack), that is what the tab says. Above it, from the poster on,
   the date of the trick festival, which opens its poster.
