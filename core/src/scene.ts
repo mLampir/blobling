@@ -30,6 +30,7 @@ import { Random } from "./random";
 import * as sky from "./sky";
 import { faceAnchor, outline, recolor, swapColors, tint, wideRow, type Sheet } from "./sprites";
 import * as stars from "./stars";
+import type { Layers } from "./street";
 import { moonPhase, sunTimes } from "./sun";
 import { lowTide, tide } from "./trip";
 import * as yards from "./yard";
@@ -1658,6 +1659,12 @@ export class PetScene {
   x: number;
   targetX: number;
   facing = 1;
+  /**
+   * The last picture render drew, as it was before the pet came onto it, and where the pet stood
+   * in it (the left of its frame): for a pan that follows the pet (street.follow). Null after a
+   * picture without the pet (a place with nobody on it, the yard).
+   */
+  layers: Layers | null = null;
   nextDecision = 0.0;
   posterUntil = -Infinity; // it is off to look at the festival's poster until then
   nextBlink = 0.0;
@@ -1810,6 +1817,7 @@ export class PetScene {
     }
     this.drawProps(img, view, pose, t, seconds);
     const x = Math.round(this.x + pose.dx);
+    this.layers = { backdrop: img.copy(), x };
     const y = GROUND - SPRITE + 1 - Math.round(pose.jump);
     let top = SPRITE; // a hidden pet: nothing of it shows
     if (pose.egg) {
@@ -5715,6 +5723,7 @@ export class PetScene {
    * The scene's own pet has nothing to do with it; any scene can draw the yard.
    */
   renderYard(yard: YardView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    this.layers = null;
     const dt = clamp(t - this.last, 0.0, 0.5);
     this.last = t;
     this.moon = moonPhase(now.getTime() / 1000);
@@ -6196,6 +6205,7 @@ export class PetScene {
    * home has. Returns [image, seconds until the next frame]. Any scene can draw it.
    */
   renderGround(ground: GroundView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    this.layers = null;
     const dt = clamp(t - this.last, 0.0, 0.5);
     this.last = t;
     this.moon = moonPhase(now.getTime() / 1000);
@@ -6321,6 +6331,7 @@ export class PetScene {
    * if one was left. Returns [image, seconds until the next frame]. Any scene can draw it.
    */
   renderPlayground(place: PlaygroundView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    this.layers = null;
     const dt = clamp(t - this.last, 0.0, 0.5);
     this.last = t;
     this.moon = moonPhase(now.getTime() / 1000);

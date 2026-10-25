@@ -426,7 +426,7 @@ and a **seesaw** (cave). Each piece is found once.
 - **The neighbours meet there.** When two get together by day, the first
   pair goes over to the playground; only one pair fits, so with four pets
   the other pair meets in a garden as before. If the camera is on one of
-  them, it pans along.
+  them, it goes along the same way, with only the background panning.
 - **They take turns:** a minute on each piece the home has (taking turns on
   the swing, building in the sandpit, up and down on the seesaw), then a game
   of their own, and round again.
@@ -515,8 +515,9 @@ Every home has a training ground from the start, after the houses and the
 yard: a red running track instead of the garden. Training happens there.
 
 - **Over and back.** Opening the training in the app takes the pet over, and
-  the camera goes along (it pans as to the yard); closing it brings the pet
-  home. Left there, it comes home five minutes after the last exercise.
+  the camera goes along: only the background pans, and the pet moves along on
+  top of it, so it never shows twice. Closing the training brings the pet
+  home the same way. Left there, it comes home five minutes after the last exercise.
   Anything else you do with it (feeding, petting, a trip, …) brings it home
   too; dressing it up or setting out a decoration doesn't.
 - **Equipment** is found once on trips, one piece for each stat, and stands

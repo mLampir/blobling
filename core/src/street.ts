@@ -56,3 +56,33 @@ export function pan(from: Image, to: Image, progress: number, steps: number): Im
   img.blit(to, direction * (width - shift), 0);
   return img;
 }
+
+/** A picture as it was before the pet came onto it, and where the pet stood (the left of its frame). */
+export interface Layers {
+  backdrop: Image;
+  x: number;
+}
+
+/**
+ * The picture while the camera follows the pet to a place along the street or back (its own scene
+ * on both ends): only the backgrounds pan, `progress` (0–1) of the way. The pet, and what is drawn
+ * over it, comes along on top: it walks from where it stood (`from.x`) to where it stands now in
+ * `to`, so it never shows twice.
+ */
+export function follow(from: Layers, to: Image, toLayers: Layers, progress: number, steps: number): Image {
+  const img = pan(from.backdrop, toLayers.backdrop, progress, steps);
+  const width = to.width;
+  const shift = Math.round((from.x - toLayers.x) * (1 - eased(progress)));
+  const back = toLayers.backdrop.data;
+  for (let y = 0; y < to.height; y++) {
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 4;
+      const tx = x + shift;
+      if (tx < 0 || tx >= width || (to.data[i] === back[i] && to.data[i + 1] === back[i + 1] && to.data[i + 2] === back[i + 2])) {
+        continue;
+      }
+      img.data.set(to.data.subarray(i, i + 4), (y * width + tx) * 4);
+    }
+  }
+  return img;
+}
