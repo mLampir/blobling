@@ -91,7 +91,7 @@
   .street .place { margin-left: 4px; }
   .street .place::before { content: ""; position: absolute; left: -3px; top: 7px; bottom: 7px; width: 1px; background: var(--line); }
   .street .place img { height: 22px; transform: none; }
-  .street .here { box-shadow: inset 0 0 0 2px var(--accent); }
+  .street .here { outline: 2px solid var(--accent); outline-offset: -2px; }  /* an outline is drawn over the picture: a pet reaching down to the edge doesn't hide it */
   .street .away img { opacity: .4; }
   .street .phone::after { content: ""; position: absolute; bottom: 3px; left: 5px; width: 5px; height: 8px; border: 1.5px solid var(--muted); border-radius: 2px; }
   .street .calls::before, .street .place.there::after { content: ""; position: absolute; top: 2px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
