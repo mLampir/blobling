@@ -6617,12 +6617,11 @@ palettino_face_grid = kit_face(0, mouth_row=4, single=True)
 PALETTINO_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (60, 130, 55)}
 
 # Hidewig: the chameleon has hidden so well that it has become a twig. Its body is a stick of bark on
-# legs like twigs, ivy has grown all over its back and a sprout on its head, and it grips a branch with
-# its feet and winds its tail once round it. Only its big turret eye gives it away.
+# legs like twigs, ivy has grown all over its back and a sprout on its head, and its tail is rolled up
+# behind it. Only its big turret eye gives it away.
 HIDEWELL_PALETTE = CHAMELEON_PALETTE | {
     "o": (40, 28, 18), "d": (95, 65, 40), "b": (130, 92, 55), "l": (165, 125, 80), "h": (200, 165, 115),
     "g": (110, 175, 60), "G": (55, 115, 40), "e": (175, 220, 95),  # leaves
-    "w": (150, 120, 85), "n": (105, 80, 55), "N": (75, 55, 38),    # the branch
 }
 HIDEWELL = [
     "....oego........................",
@@ -6634,20 +6633,35 @@ HIDEWELL = [
     ".ohhlllllgggGgggggGgggggGgggo...",
     "ohhlllllbbGGGGGGGGGGGGGGGGGo....",
     "ohlllllbbbbbdbbbbbbbbbbbbbbo....",
-    ".olllbbbbbbdbbbbbbbbbbbbbdbdo...",
-    ".ollbbbbbdddbdddddddddddddobdo..",
-    "..obbbbbdddoodddddddddooddoobdo.",
-    "...ooobddoooddoooooooddooddoobdo",
-    "......odo.oddo......odo.odo.obdo",
-    ".oooooddooddooooooooddooddooobdo",
-    "owwwwwwwwwwwwwwwwwwwwwwwwwwwwbdo",
-    "onnNNnnnnNNnnnnnNNnnnnNNnbnnbddo",
-    "oNNNNNNNNNNNNwNNNNNNNNNNNbddddNo",
-    ".ooooooooooooooooooooooooobddoo.",
-    "..........................ooo...",
+    ".olllbbbbbbdbbbbbbbbbbbbbdbbbbo.",
+    ".ollbbbbbdddbdddddddddddddoooobo",
+    "..obbbbbdddooddddddddddddoobo.bo",
+    "...ooobddoooddoooooddoddo.oboodo",
+    "......odo.oddo....odo.odo..oddo.",
+    "......odo..odo....odo.odo...oo..",
+    ".....oddo.oddo...oddo.oddo......",
+    ".....oooo.oooo...oooo.oooo......",
 ]
 HIDEWELL_FACE_TOP, HIDEWELL_FACE_SHIFT = face_place(HIDEWELL, 6, 2, 6)
 HIDEWELL_TAGS = species_tags([HIDEWELL, drop_rows(HIDEWELL, 9)], 9, 16)
+
+
+def sway(frame, lean, top=12):
+    """A walk frame with the body leaning a pixel to one side: every row above `top`, and below it the
+    rolled-up tail too (from column 27 of the frame), so the tail doesn't come off."""
+    def shift(r):
+        return r[:27] + ("." + r[27:-1] if lean > 0 else r[28:] + ".")
+    return [("." + r[:-1] if lean > 0 else r[1:] + ".") if y < top else shift(r) for y, r in enumerate(frame)]
+
+
+# It walks like a real chameleon: a slow step, then it rocks to and fro like a twig in the wind
+# before it dares the next one (front and back legs crosswise)
+_steps = walk_tags(HIDEWELL, 9, [*range(5, 9), *range(17, 21)], [*range(10, 14), *range(21, 26)], 13, ms=(320, 160))
+_passing = _steps[1][0]
+_left = _steps[0][0][:12] + sway(_steps[0][0][12:], 1, 0)  # walk_tags leans the body, the tail goes along
+_right = _steps[2][0][:12] + sway(_steps[2][0][12:], -1, 0)
+HIDEWELL_TAGS["walk"] = [(_left, 320), (sway(_passing, -1), 200), (sway(_passing, 1), 200), (_passing, 160),
+                         (_right, 320), (sway(_passing, 1), 200), (sway(_passing, -1), 200), (_passing, 160)]
 hidewell_face_grid = kit_face(0, mouth_row=4, single=True)
 HIDEWELL_FACE_PALETTE = GARDEN_FACE_PALETTE | {"d": (95, 65, 40)}
 

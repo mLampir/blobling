@@ -321,7 +321,7 @@ test("what the game logic hands over can be drawn as it is", () => {
   }
 });
 
-test("Wickle and Lumoth hop, Cyclopuff and Sneezle walk, Grumpcap walks and hops now and then", () => {
+test("Wickle and Lumoth hop, Cyclopuff, Sneezle and Hidewig walk, Grumpcap walks and hops now and then", () => {
   // A guest halfway in from the right (left edge at 48): its lowest row is where its feet are. Only
   // the columns right of the pet count, and only what differs from the same frames without the guest.
   const lowest = (species: string) => {
@@ -350,6 +350,7 @@ test("Wickle and Lumoth hop, Cyclopuff and Sneezle walk, Grumpcap walks and hops
   assert.equal(lifted("pawdini"), 0);
   assert.equal(lifted("digby"), 0);
   assert.ok(lifted("archibeaver") > 0);
+  assert.equal(lifted("hidewell"), 0); // Hidewig walks on its twig legs
 });
 
 test("the garden's and the water's adults have a trick and a special move of their own", () => {
