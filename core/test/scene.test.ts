@@ -744,3 +744,22 @@ test("the playground shows the pieces found, and the two take turns on them", ()
   assert.ok(lowest(at(30), 0, 40) < GROUND - 6, "up on the swing");
   assert.ok(lowest(at(200), 0, 40) >= GROUND - 2, "down on the ground for its own game");
 });
+
+test("setting off: it hops out of its garden to the right and comes on into the trip from the left", () => {
+  const stage = scene();
+  const start = DAY.getTime() / 1000;
+  const view = { ...BASE, activity: "trip_start", activity_until: start + ACTIVITY_SECONDS.trip_start };
+  for (let i = 0; i < 40; i++) {
+    stage.render(view, null, new Date(DAY.getTime() + i * 100), 1 + i * 0.1);
+  }
+  assert.ok(stage.x > (64 - 32) / 2, `${stage.x}`); // on its way out to the right
+  const trip = { area: "meadow", returning: false, event: null, item: null, event_age: 0 };
+  const xs: number[] = [];
+  for (let i = 0; i < 30; i++) {
+    stage.render({ ...BASE, trip: { ...trip, event_age: i * 0.1 } }, null, new Date(DAY.getTime() + 4000 + i * 100), 5 + i * 0.1);
+    xs.push(stage.x);
+  }
+  assert.ok(xs[0] < 0, `${xs[0]}`); // from the left edge
+  assert.ok(xs.every((x, i) => i === 0 || x >= xs[i - 1]), `${xs}`); // and only ever to the right, the way it faces
+  assert.equal(stage.facing, 1);
+});

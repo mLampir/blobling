@@ -5628,6 +5628,11 @@ export class PetScene {
   private travel(pose: Pose, view: SceneView, trip: TripView, weather: Weather, t: number, dt: number): Pose {
     const meeting = PetScene.meeting(trip);
     const home = meeting ? BATTLE_X : (this.width - SPRITE) / 2;
+    if (!meeting && !trip.returning && this.x > home + 1) {
+      // on the way out it only ever comes from the left: right of the middle, it has just hopped out of its
+      // garden to the right, and comes on into the next picture from the left (not backwards from the right)
+      this.x = -SPRITE;
+    }
     this.x += clamp(home - this.x, -THROW_SPEED * dt, THROW_SPEED * dt);
     this.targetX = this.x;
     this.facing = trip.returning && !meeting ? -1 : 1;
