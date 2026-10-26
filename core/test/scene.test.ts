@@ -203,6 +203,22 @@ test("some forms do a trick in their own way", () => {
   assert.ok(toss.some((image) => differing(image, toss[0]) > 20)); // up goes the top stone
 });
 
+test("a form with its head on one side turns round as a whole where it is heading; a round one only turns its face", () => {
+  type Draw = (stage: string, species: string, body: string, t: number, face: string,
+    look: { lookLeft?: boolean; facing?: number }) => [Image, number];
+  const pet = scene() as unknown as { pet: Draw };
+  const draw = (stage: string, species: string, look: { lookLeft?: boolean; facing?: number }) =>
+    [...pet.pet(stage, species, "idle", 0, "normal", look)[0].data];
+  for (const [stage, species] of [["baby", "chameleon"], ["child", "chameleon"], ["adult", "palettino"], ["adult", "rapierre"]]) {
+    const left = pet.pet(stage, species, "idle", 0, "normal", { lookLeft: true, facing: -1 })[0];
+    assert.deepEqual(draw(stage, species, { lookLeft: false, facing: 1 }), [...left.mirrored().data], `${stage} ${species}`);
+  }
+  for (const [stage, species] of [["child", "blob"], ["adult", "angloop"], ["adult", "tuxwaddle"]]) {
+    assert.deepEqual(draw(stage, species, { lookLeft: false, facing: 1 }), draw(stage, species, { lookLeft: false }));
+    assert.deepEqual(draw(stage, species, { lookLeft: true, facing: -1 }), draw(stage, species, { lookLeft: true }));
+  }
+});
+
 test("every activity can be drawn from its start to its end", () => {
   const items: Record<string, string> = {
     throw_meal: "meal@0.90", throw_snack: "cookie@0.05", throw_play: "ball@0.50", throw_medicine: "medicine@0.50",

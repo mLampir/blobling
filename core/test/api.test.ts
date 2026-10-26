@@ -7,7 +7,7 @@ import { test } from "node:test";
 import { API_OLDEST, API_VERSION, NOT_A_PET_ROUTE, ownTarget, petRequest } from "../src/api";
 import { ACTIONS, RequestError } from "../src/model";
 import type { Pet } from "../src/pet";
-import { Disk } from "./helpers";
+import { at, Disk } from "./helpers";
 
 function ask(pet: Pet, method: string, path: string, body?: unknown): Promise<any> {
   return petRequest(ownTarget(pet), method, new URL(path, "http://pet"), async () => body ?? null);
@@ -88,7 +88,8 @@ function fields(value: unknown, path = "", into: Record<string, string> = {}): R
 
 /** What an app may rely on: the routes, the actions and the fields of what the routes answer. */
 async function contract() {
-  const pet = new Disk().pet();
+  // a fixed day, with the festival's poster up: what the answers hold must not depend on the date
+  const pet = new Disk().pet(() => at("2026-10-22 12:00"));
   const routes = [...readFileSync("core/src/api.ts", "utf-8").matchAll(/case "((?:GET|POST) \/api\/pet[^"]*)"/g)]
     .map((match) => match[1]).sort();
   const answers: Record<string, string> = {};
