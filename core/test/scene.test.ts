@@ -779,3 +779,25 @@ test("setting off: it hops out of its garden to the right and comes on into the 
   assert.ok(xs.every((x, i) => i === 0 || x >= xs[i - 1]), `${xs}`); // and only ever to the right, the way it faces
   assert.equal(stage.facing, 1);
 });
+
+test("chewing, a form whose squash keeps its width leans towards the food on either side", () => {
+  for (const facing of [1, -1]) {
+    const stage = scene();
+    stage.facing = facing;
+    const start = DAY.getTime() / 1000;
+    const view = { ...BASE, species: "chameleon", activity: "eat", activity_until: start + ACTIVITY_SECONDS.eat };
+    const edges = new Set<number>();
+    for (let i = 0; i < 12; i++) {
+      const [img] = stage.render(view, null, new Date(DAY.getTime() + i * 100), 1 + i * 0.1);
+      const back = stage.layers!.backdrop.data;
+      const columns: number[] = [];
+      for (let p = 0; p < img.data.length; p += 4) {
+        if (img.data[p] !== back[p] || img.data[p + 1] !== back[p + 1] || img.data[p + 2] !== back[p + 2]) {
+          columns.push((p / 4) % img.width);
+        }
+      }
+      edges.add(facing > 0 ? Math.max(...columns) : Math.min(...columns));
+    }
+    assert.equal(edges.size, 2, `facing ${facing}: ${[...edges]}`); // the edge towards the food moves while it chews
+  }
+});

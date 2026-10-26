@@ -1709,6 +1709,7 @@ export class PetScene {
   private rainedAt = -Infinity; // when it last rained (animation time)
   private readonly petCache = new Map<string, [Image, number]>();
   private readonly reachCache = new Map<string, readonly [number, number]>();
+  private readonly squashCache = new Map<string, boolean>(); // squashWidens
   private readonly eggCache = new Map<string, Image>();
   private readonly colorCache = new Map<string, readonly Color[]>(); // the main colors of a form (colorsOf)
   private readonly mirrors = new Map<Bitmap, Bitmap>(); // particles in Mirrorleon's colors (mirrorSprite)
@@ -4766,14 +4767,34 @@ export class PetScene {
     return "fetch";
   }
 
-  /** Chews with its mouth opening and closing, bulging towards the food. */
+  /**
+   * Chews with its mouth opening and closing, bulging towards the food. A body that squashes wider
+   * does so on the left only; one whose squash doesn't change its width leans in towards the food.
+   */
   private chew(pose: Pose, t: number): void {
     const chewing = Math.trunc(t * 3) % 2;
     pose.face = chewing ? "eat_closed" : "eat_open";
     pose.body = chewing ? "squash" : "idle";
-    if (chewing && this.facing > 0) {
+    if (chewing && !this.squashWidens(...pose.form)) {
+      pose.dx = this.facing;
+    } else if (chewing && this.facing > 0) {
       pose.dx = 1; // the squashed body is a pixel wider on the left only
     }
+  }
+
+  /** Is this form wider squashed than standing (the slime-like bodies)? */
+  private squashWidens(stage: string, species: string): boolean {
+    const key = `${stage}|${species}`;
+    let widens = this.squashCache.get(key);
+    if (widens === undefined) {
+      const width = (body: string) => {
+        const [x0, , x1] = this.pet(stage, species, body, 0, "normal")[0].bbox()!;
+        return x1 - x0;
+      };
+      widens = width("squash") > width("idle");
+      this.squashCache.set(key, widens);
+    }
+    return widens;
   }
 
   /** Slimes hop instead of walking; a form with feet of its own walks, a flier flies. */
