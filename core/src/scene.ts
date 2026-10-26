@@ -330,6 +330,21 @@ const HAT_SPOTS: Record<string, HatSpot> = {
   "adult:mirrorleon": [-8, 3, 0, true], "adult:pharabug": [5, 10, 1],
   "child:octopus": [-4, 3, 0], "adult:inkasso": [0, 6, 0, true], "adult:fountaingle": [5, 1, 0],
 };
+// Which way a form looks as it is drawn, when it has a head on one side of its body and a tail, a
+// shell or a ball on the other (-1: to the left). Going the other way, its whole body turns round,
+// drawn mirrored (its light then comes from the top right). A round form or one with its head in
+// the middle only turns its face, and what it holds in one hand (a tray, a lance, a plan) stays on its side.
+const HEADING: Record<string, number> = {
+  "baby:chameleon": -1, "baby:dog": -1, "baby:mouse": -1, "baby:beaver": -1, "baby:kite": -1, "baby:crab": -1,
+  "baby:scarab": -1,
+  "child:chameleon": -1, "child:dog": -1, "child:mouse": -1, "child:beaver": -1, "child:kite": -1, "child:crab": -1,
+  "child:scarab": -1, "child:fox": -1, "child:axolotl": -1, "child:gargoyle": -1, "child:caterpillar": 1,
+  "child:dragonfly": 1,
+  "adult:palettino": -1, "adult:hidewell": -1, "adult:mirrorleon": -1, "adult:lionkite": -1, "adult:origrane": -1,
+  "adult:roamtail": -1, "adult:filchfox": -1, "adult:drakwing": -1, "adult:rotorfly": -1, "adult:dambert": -1,
+  "adult:timberjack": -1, "adult:mossolotl": -1, "adult:axodrake": -1, "adult:cogsqueak": -1, "adult:snorbear": -1,
+  "adult:glidepin": -1, "adult:solroll": 1, "adult:rapierre": 1, "adult:fountaingle": 1,
+};
 const LIT_NEAR = ["torch"]; // things along the path that glow by themselves at night
 // The coast: sand, the sea in front, the dunes behind; at low tide the beach is wider (trip.tide)
 const BEACH: Color = [228, 202, 140];
@@ -1449,6 +1464,17 @@ function widen(img: Image, extra: number): Image {
   return out;
 }
 
+/** Which way a form looks as it is drawn (HEADING): -1 or 1, 0 for one that only turns its face. */
+function headingOf(stage: string, species: string): number {
+  return HEADING[`${stage}:${stage === "adult" ? species : life.lineOf(species)}`] ?? 0;
+}
+
+/** Whether a form facing this way is drawn mirrored, its whole body turned round (HEADING). */
+function turnsRound(stage: string, species: string, facing: number): boolean {
+  const head = headingOf(stage, species);
+  return head !== 0 && facing !== 0 && Math.sign(facing) !== head;
+}
+
 /** Turned around the vertical axis (spin): f = 1 from the front, 0 from the side, -1 mirrored. */
 function turned(img: Image, f: number): Image {
   const width = Math.max(2, Math.round(img.width * Math.abs(f)));
@@ -1641,6 +1667,8 @@ interface PetLook {
   glow?: boolean;
   /** The face is mirrored; as drawn, the pupils sit towards the right. The body stays as it is: its light comes from the top left. */
   lookLeft?: boolean;
+  /** Where it is heading (-1 left, 1 right): a form with its head on one side (HEADING) turns its whole body that way. */
+  facing?: number;
   /** The weather as it shows on a form that follows it (skyColors). */
   sky?: SkyLook;
   /** The phase of the moon, for Lunarock's moonstone (0 = new moon, 0.5 = full). */
@@ -1839,7 +1867,7 @@ export class PetScene {
         sick: view.sick, whiteOut: pose.white,
         flame: species === "flicker" ? flickerFlame(view.mood) : species === "needlenub" && (pose.bud ?? view.mood !== "happy") ? "bud" : null,
         heavy: view.weight_status === "heavy", hat: view.hat, hint: view.hint || view.species,
-        glow: this.night > 0.5, lookLeft: this.facing < 0, sky: pose.rainbow ? "after_rain" : this.skyLook,
+        glow: this.night > 0.5, lookLeft: this.facing < 0, facing: this.facing, sky: pose.rainbow ? "after_rain" : this.skyLook,
         moon: species === "lunarock" ? Math.round(this.moon * 16) / 16 : null, starless: pose.starless,
         paint: pose.paint, tint: pose.tint,
       });
@@ -1854,7 +1882,9 @@ export class PetScene {
       }
       let piece: [Image, number, number] | null = null; // the part that moves by itself, and where it goes
       if (pose.piece) {
-        const { box: [x0, y0, x1, y1], dx, up, turn, rotate } = pose.piece;
+        const { box: [bx0, y0, bx1, y1], dx, up, turn, rotate } = pose.piece;
+        // the box is in its frame as drawn; a body turned round has the part on its other side
+        const [x0, x1] = turnsRound(stage, species, this.facing) ? [SPRITE - bx1, SPRITE - bx0] : [bx0, bx1];
         let part = pet.crop(x0 + side, y0 + above, x1 + side, y1 + above);
         const rest = pet.copy();
         rest.blit(new Image(x1 - x0, y1 - y0), x0 + side, y0 + above);
@@ -2696,7 +2726,7 @@ export class PetScene {
       const a = (1 - Math.cos(q * Math.PI)) * Math.PI;
       Object.assign(pose, { turn: Math.cos(a), body: q > 0.2 && q < 0.85 ? "stretch" : "idle", face: "blink" });
       if (q > 0.15 && q < 0.9) {
-        const back = this.rng.uniform(-3, 14) * Math.cos(a) * this.facing; // the moss on its back turns with it
+        const back = this.art(pose.form, this.rng.uniform(-3, 14)) * Math.cos(a); // the moss on its back turns with it
         this.trickFx(t, "unfurl", 0.1, MOSS_BIT, 2, back, 13, [-6, 6], [-10, -4], 1.8, 8);
         this.trickFx(t, "unfurl_leaf", 0.35, LEAFLET, 1, back, 14, [-8, 8], [-9, -5], 1.6, 6);
       }
@@ -2746,12 +2776,11 @@ export class PetScene {
     } else if (animation === "wind_up") {
       // the key in its back turns, it shakes harder and harder, then it whirrs round and round on the spot
       // with sparks and little cogs flying off its wheels, and runs down
-      const f = this.facing;
       if (p < 0.45) {
         const shake = p > 0.1 ? Math.trunc(t * (10 + p * 30)) % 2 : 0;
         Object.assign(pose, { body: this.bodyOf(...pose.form, "walk"), dx: shake, face: p > 0.3 ? "normal" : "blink" });
         if (p > 0.1) { // ticks off the key
-          this.trickFx(t, "wind_up_tick", 0.15, COG_SPARK, 2, 6 * f, 19, [-6, 6], [-10, -4], 0.5);
+          this.trickFx(t, "wind_up_tick", 0.15, COG_SPARK, 2, this.art(pose.form, 6), 19, [-6, 6], [-10, -4], 0.5);
         }
       } else if (p < 0.9) {
         const q = (p - 0.45) / 0.45;
@@ -3013,7 +3042,7 @@ export class PetScene {
         paint: p > 0.05 && p < 0.92 ? p * 3 : null });
       if (p > 0.1 && p < 0.9) {
         this.trickFx(t, "mirror_dance", 0.07, LIGHT_SPOT[Math.trunc(t * 11) % LIGHT_SPOT.length], 1,
-          (MIRRORLEON_CASQUE[0] - SPRITE / 2) * this.facing + pose.dx * this.facing, SPRITE - MIRRORLEON_CASQUE[1],
+          this.art(pose.form, MIRRORLEON_CASQUE[0] - SPRITE / 2) + pose.dx * this.facing, SPRITE - MIRRORLEON_CASQUE[1],
           [-28, 28], [-22, 6], 0.7);
       }
     } else if (animation === "ball_vault") {
@@ -3022,12 +3051,14 @@ export class PetScene {
       const [a, b] = [hop(0.1), hop(0.56)];
       const f = a < 1 ? a : b;
       const over = a < 1 ? (1 - Math.cos(a * Math.PI)) / 2 : 1 - (1 - Math.cos(b * Math.PI)) / 2;
-      Object.assign(pose, { dx: Math.round(22 * over), jump: f > 0 && f < 1 ? Math.sin(f * Math.PI) * 14 : 0,
-        rotate: f > 0 && f < 1 ? (a < 1 ? -360 : 360) * f : 0, face: f > 0 && f < 1 ? "happy" : "laugh",
+      const side = this.art(pose.form, this.facing); // where its ball is: in front of it, as its body turns round
+      Object.assign(pose, { dx: Math.round(22 * over) * side, jump: f > 0 && f < 1 ? Math.sin(f * Math.PI) * 14 : 0,
+        rotate: f > 0 && f < 1 ? (a < 1 ? -360 : 360) * f * side : 0, face: f > 0 && f < 1 ? "happy" : "laugh",
         body: (a > 0 && a < 1) || (b > 0 && b < 1) ? "idle" : "squash" });
       pose.piece = { box: SOLROLL_BALL, dx: -pose.dx, up: -Math.round(pose.jump), turn: null, rotate: 0 };
       if (a === 1 && b === 0) { // it stands beyond its ball, and the sun shines
-        this.trickFx(t, "ball_vault", 0.15, SUN_SPARK, 1, 10 * this.facing + this.rng.uniform(-5, 5), 8, [-6, 6], [-14, -6], 0.6);
+        this.trickFx(t, "ball_vault", 0.15, SUN_SPARK, 1, this.art(pose.form, 10) + this.rng.uniform(-5, 5), 8, [-6, 6],
+          [-14, -6], 0.6);
       }
     } else if (animation === "cog_dance") {
       // it bobs to the beat, two beats a second, and on each its cog clicks round a step, ticking
@@ -3063,8 +3094,8 @@ export class PetScene {
       pose.piece = on ? { box: LIONKITE_HEAD, dx: Math.round(shake), up: Math.abs(Math.sin(p * 4 * Math.PI)) * 5, turn: null,
         rotate: shake * 10 } : null;
       if (on) {
-        this.trickFx(t, "lion_dance", 0.1, POMPOM[Math.trunc(t * 7) % POMPOM.length], 2, (pose.dx - 7) * this.facing, 18,
-          [-26, 26], [-36, -22], 1.0, 70);
+        this.trickFx(t, "lion_dance", 0.1, POMPOM[Math.trunc(t * 7) % POMPOM.length], 2,
+          pose.dx * this.facing + this.art(pose.form, -7), 18, [-26, 26], [-36, -22], 1.0, 70);
       }
     } else if (animation === "storm_dive") {
       // the wind tears it up high, it turns over at the top, and dives down nose first, pulling up at the last moment
@@ -3740,10 +3771,9 @@ export class PetScene {
           }
         }
         break;
-      case "axodrake": // up on its wings and round to face the opponent, its gills glow brighter and brighter, and
-        // it breathes a long glowing stream of bubbles. Its head is drawn on the left: it turns round for this
+      case "axodrake": // up on its wings, facing the opponent (turned round: HEADING), its gills glow brighter and
+        // brighter, and it breathes a long glowing stream of bubbles
         pose.body = this.bodyOf(...pose.form, "flutter");
-        pose.turn = Math.cos(clamp((q - 0.1) / 0.2, 0, 1) * Math.PI - clamp((q - 0.7) / 0.2, 0, 1) * Math.PI);
         if (q < 0.36) {
           Object.assign(pose, { jump: Math.sin(clamp(q / 0.25, 0, 1) * Math.PI / 2) * 8, face: "smile",
             white: q > 0.26 && Math.trunc(t * 12) % 2 === 0 });
@@ -3786,7 +3816,7 @@ export class PetScene {
         // open on a spring, cogs flying
         if (q < 0.2) {
           Object.assign(pose, { body: this.bodyOf(...pose.form, "walk"), dx: Math.trunc(t * 16) % 2, face: "normal" });
-          this.trickFx(t, "sp_cogsqueak_tick", 0.15, COG_SPARK, 2, 6 * this.facing, 19, [-6, 6], [-10, -4], 0.5);
+          this.trickFx(t, "sp_cogsqueak_tick", 0.15, COG_SPARK, 2, this.art(pose.form, 6), 19, [-6, 6], [-10, -4], 0.5);
         } else if (q < 0.26) {
           Object.assign(pose, { body: "stretch", face: "laugh" });
         }
@@ -3884,8 +3914,8 @@ export class PetScene {
       case "snorbear": // a great yawn, and its drowsy breath drifts over to the opponent, who nods off: Zzz
         if (q < 0.34) {
           Object.assign(pose, { body: q < 0.1 ? "idle" : "stretch", face: q < 0.1 ? "blink" : "eat_open" });
-          if (q > 0.12) { // up out of its mouth, on the left of its head
-            this.trickFx(t, "sp_snorbear_yawn", 0.12, YAWN, 1, -9 * this.facing, 16, [4, 10], [-14, -10], 0.9);
+          if (q > 0.12) { // up out of its mouth, on the left of its head as it is drawn
+            this.trickFx(t, "sp_snorbear_yawn", 0.12, YAWN, 1, this.art(pose.form, -9), 16, [4, 10], [-14, -10], 0.9);
           }
         } else if (q < 0.5) { // the breath rolls over its mound to the opponent
           Object.assign(pose, { body: "idle", face: "blink" });
@@ -4149,10 +4179,10 @@ export class PetScene {
         break;
       }
       case "palettino": { // its colors run as it takes aim, then its tongue shoots out with a blob of paint on its
-        // tip: splash! It turns round for it, its head towards the opponent
+        // tip: splash! Facing the opponent, it is turned round, its head to the right (HEADING)
         const shoot = clamp((q - 0.3) / 0.18, 0, 1);
         const back = clamp((q - 0.56) / 0.12, 0, 1);
-        Object.assign(pose, { turn: -1, paint: q < 0.3 ? q * 4 : null, face: shoot > 0 && back < 1 ? "eat_open" : q < 0.3 ? "smile" : "laugh",
+        Object.assign(pose, { paint: q < 0.3 ? q * 4 : null, face: shoot > 0 && back < 1 ? "eat_open" : q < 0.3 ? "smile" : "laugh",
           body: q > 0.2 && q < 0.3 ? "squash" : shoot > 0 && back < 1 ? "stretch" : "idle" });
         const points: [Bitmap, number, number][] = [];
         const reach = shoot * (1 - back);
@@ -4266,7 +4296,7 @@ export class PetScene {
         for (let i = 0; i < 7; i++) {
           const from = 0.12 + i * 0.035;
           const f = (q - from) / 0.24;
-          const [x0, y0] = [this.x + 18 + (i % 2) * 6, GROUND - 26 + (i % 3) * 2];
+          const [x0, y0] = [this.x + this.column(pose.form, 18 + (i % 2) * 6), GROUND - 26 + (i % 3) * 2];
           const [x1, y1] = [foeLeft(from + 0.24) + 2 + (i % 3) * 3, GROUND - 6 - (i % 4) * 3];
           if (f > 0 && f < 1) {
             points.push([PLANE[f < 0.45 ? 0 : 1], x0 + (x1 - x0) * f, y0 + (y1 - y0) * f - Math.sin(f * Math.PI) * 14
@@ -4285,7 +4315,7 @@ export class PetScene {
         for (let i = 0; i < 3; i++) {
           const from = 0.12 + i * 0.1;
           const f = (q - from) / 0.14;
-          const [x0, y0] = [this.x + 9, GROUND - 22];
+          const [x0, y0] = [this.x + this.column(pose.form, 9), GROUND - 22];
           const [x1, y1] = [foeLeft(from + 0.14) + 6 + (i - 1) * 7, i === 2 ? GROUND - 14 : GROUND - 34 + i * 6];
           if (f > -0.1 && f < 0.15) {
             rear = 1;
@@ -4548,6 +4578,19 @@ export class PetScene {
   }
 
   /**
+   * A spot of its body, `d` columns right of its middle as the form is drawn, as trickFx takes it (towards
+   * where it looks): on a form that turns round (HEADING) it goes round with it, on the others it stays on its side.
+   */
+  private art(form: readonly [string, string], d: number): number {
+    return d * (headingOf(...form) || this.facing);
+  }
+
+  /** Column `c` of the form as drawn, in its frame as it is now (a form turned round is mirrored). */
+  private column(form: readonly [string, string], c: number): number {
+    return turnsRound(...form, this.facing) ? SPRITE - 1 - c : c;
+  }
+
+  /**
    * Particles of a trick of its own: `count` of them, at most once in `every` seconds per `key`
    * (once per trick: every = TRICK_SHOW). `dx` from the pet's middle (towards where it looks),
    * `dy` up from the ground; speeds as [from, to], vx towards where it looks; `ay`: they fall.
@@ -4639,12 +4682,15 @@ export class PetScene {
 
   /** Left edge of an item lying in front of the pet (at x), `overlap` pixels in front of its body. */
   private beside(x: number, width: number, overlap: number, form: readonly [string, string], facing = this.facing): number {
-    const [left, right] = this.reach(...form);
+    const [left, right] = this.reach(...form, facing);
     return facing > 0 ? x + right - overlap : x + left - width + overlap;
   }
 
-  /** Where a form's body reaches in its sprite frame, outline and all: [left, right) columns, standing still. */
-  private reach(stage: string, species: string): readonly [number, number] {
+  /**
+   * Where a form's body reaches in its sprite frame, outline and all: [left, right) columns, standing still
+   * and facing this way (HEADING).
+   */
+  private reach(stage: string, species: string, facing = this.facing): readonly [number, number] {
     const key = `${stage}|${species}`;
     let reach = this.reachCache.get(key);
     if (!reach) {
@@ -4654,7 +4700,7 @@ export class PetScene {
       reach = [x0 - shift, x1 - shift];
       this.reachCache.set(key, reach);
     }
-    return reach;
+    return turnsRound(stage, species, facing) ? [SPRITE - reach[1], SPRITE - reach[0]] : reach;
   }
 
   /** A thrown item drops in and the pet hops over. Returns what it is doing right now. */
@@ -4681,8 +4727,8 @@ export class PetScene {
         this.throwFacing = Number(where) >= 0.5 ? 1 : -1;
       } else {
         const left = Number(where) * (this.width - width);
-        const [body0, body1] = this.reach(...pose.form);
-        const spots: [number, number][] = [[left - body1 + overlap, 1], [left + width - overlap - body0, -1]];
+        const spots: [number, number][] = [[left - this.reach(...pose.form, 1)[1] + overlap, 1],
+          [left + width - overlap - this.reach(...pose.form, -1)[0], -1]];
         const cost = (spot: [number, number]) => [Math.abs(spot[0] - clamp(spot[0], lo, hi)), Math.abs(spot[0] - this.x)];
         const [first, second] = spots.map(cost);
         [x, this.throwFacing] = second[0] < first[0] || (second[0] === first[0] && second[1] < first[1])
@@ -5460,7 +5506,7 @@ export class PetScene {
     const lift = Math.round(jump);
     let [sprite, top] = this.pet(stage, species, body, t, face,
       { glow: this.night > 0.5, lookLeft: move ? move.lookLeft : walking && heading < 0,
-        sky: this.skyLook });
+        facing: move ? (move.lookLeft ? -1 : 1) : walking ? heading : undefined, sky: this.skyLook });
     let px = x + (move?.dx ?? 0) - Math.floor((sprite.width - SPRITE) / 2);
     let py = GROUND - SPRITE - lift;
     if (move?.turn !== null && move?.turn !== undefined) {
@@ -5771,7 +5817,7 @@ export class PetScene {
         body = Math.trunc(local * 4) % 2 ? "squash" : "idle"; // splashing about, as when it is cleaned
       }
       const [image, top] = this.pet(pet.stage, pet.species, body, local, face, {
-        sick: pet.sick, heavy: pet.heavy, hat: pet.hat, glow: this.night > 0.5, lookLeft: facing < 0, sky: this.skyLook,
+        sick: pet.sick, heavy: pet.heavy, hat: pet.hat, glow: this.night > 0.5, lookLeft: facing < 0, facing, sky: this.skyLook,
       });
       const room = image.height - SPRITE - 2;
       const height = SPRITE - top;
@@ -5921,7 +5967,7 @@ export class PetScene {
     } else if (activity === "fish_empty") {
       Object.assign(pose, view.activity_item === "early"
         ? { body: "flat", face: "no", symbol: QUESTION } : { body: "squash", face: "sad" });
-    } else if (this.moveTowards(rim + FISH_REACH - this.reach(...pose.form)[1], THROW_SPEED, dt)) {
+    } else if (this.moveTowards(rim + FISH_REACH - this.reach(...pose.form, 1)[1], THROW_SPEED, dt)) {
       this.hop(pose, t, 3.5);
       pose.face = "happy";
     } else {
@@ -7455,8 +7501,9 @@ export class PetScene {
     const changing = ownArt && species in CHANGING;
     const paint = changing && look.paint !== undefined && look.paint !== null ? Math.round(look.paint * 16) % 16 / 16 : null;
     const friendColors = changing && look.tint ? this.colorsOf(look.tint) : null;
+    const turn = look.facing !== undefined && turnsRound(stage, species, look.facing);
     const key = [stage, species, bodyTag, index, faceName, sick, whiteOut, flame, heavy, hat, hint, glow,
-      lookLeft, weathered?.[0], look.moon, starless, paint, friendColors && look.tint].join("|");
+      lookLeft, turn, weathered?.[0], look.moon, starless, paint, friendColors && look.tint].join("|");
     let cached = this.petCache.get(key);
     if (!cached) {
       let img = hint ? swapColors(body, LURES[line].map((from, i) => [from, LURE_HINT[hint][i]] as const)) : body.copy();
@@ -7486,7 +7533,7 @@ export class PetScene {
       if (faceHue) {
         face = recolor(face, 100, 145, faceHue); // eyelids and mouth in the body color
       }
-      if (lookLeft) {
+      if (lookLeft !== turn) { // a body that turns round takes its face with it
         face = face.mirrored();
       }
       const [cx, anchor] = faceAnchor(body, bodies.faceTop, bodies.faceCenter, bodies.faceShift);
@@ -7507,6 +7554,9 @@ export class PetScene {
         const spot = HAT_SPOTS[`${stage}:${species}`];
         img = withHat(img, this.sheet("trip").image(stage === "baby" || spot?.[2] ? `hat_${hat}_small` : `hat_${hat}`),
           stage === "child" || species === "flicker", spot);
+      }
+      if (turn) {
+        img = img.mirrored();
       }
       if (whiteOut) {
         img = white(img);

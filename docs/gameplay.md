@@ -1308,6 +1308,10 @@ A new creature should make you think "that one is different".
   version side by side.
 - **Half and mirror.** Draw the left half, mirror it (light comes from the top
   left, so the right side gets the shadow), then break the symmetry by hand.
+  A creature with its head on one side and a tail, a shell or a ball on the
+  other is drawn looking one way; going the other way, the scene turns its
+  whole body round, mirrored (`HEADING`), and its light then comes from the
+  top right. A round one only turns its face.
 - **In the scene.** Look at the creature in `npm run preview`: with hats, in
   the rain, on a trip, as a visitor and as a wild pet coming in, and as a GIF
   for the movement.
@@ -1329,6 +1333,7 @@ For an adult form with pixel art of its own:
 | Body and face sheet | `SPECIES_SHEETS` in `core/src/scene.ts` |
 | A face that is not to sit in the middle of its row (`faceTop`, `faceCenter`, `faceShift` in `write_sheet`) | `tools/build_blob_sprites.py`, `faceAnchor` in `core/src/sprites.ts` |
 | Colors of the child's lure, walking and hopping, umbrella, where its hat sits, special move | `LURE_HINT`, `WALK_HOPS`, `NO_UMBRELLA`, `HAT_SPOTS`, `special` and `hit` in `core/src/scene.ts` |
+| Which way it looks as drawn, if its head is on one side (it turns round as a whole) | `HEADING` in `core/src/scene.ts` |
 | A trick in its own way: the same gesture and effect, another animation | `OWN_TRICKS` in `core/src/care.ts` and `trick` in `core/src/scene.ts`, frames of its own if it needs them |
 | Tests: every form in every state, how it moves, where the face sits | `core/test/scene.test.ts`, `core/test/sprites.test.ts` |
 | Text and picture, spoilers folded shut | [pets.md](pets.md), `npm run preview -- --pets` |
