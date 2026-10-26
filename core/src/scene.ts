@@ -6528,15 +6528,18 @@ export class PetScene {
       this.stand(img, sprite, plantX);
       this.covers.set("plant", GROUND + 2 - sprite.height);
     }
+    // the trick festival is coming: its poster on a stake at the fence, behind a guest peeking over it
+    const poster = () => {
+      const sprite = this.dimmedSprite("poster");
+      img.paste(sprite, POSTER_X - Math.floor(sprite.width / 2), FENCE_TOP + 2 - sprite.height);
+    };
     if (view.peeking) {
-      this.drawPeeking(img, view.peeking, t);
+      this.drawPeeking(img, view.peeking, t, view.poster ? poster : null);
     } else if (view.poster || (view.owl && !view.house && this.night > 0.5)) {
       this.drawFence(img);
-    }
-    if (view.poster) {
-      // the trick festival is coming: its poster on a stake at the fence, above what stands in front of it
-      const poster = this.dimmedSprite("poster");
-      img.paste(poster, POSTER_X - Math.floor(poster.width / 2), FENCE_TOP + 2 - poster.height);
+      if (view.poster) {
+        poster();
+      }
     }
     this.drawStarThings(img, view, t);
     this.drawDig(img, view, now);
@@ -6576,16 +6579,10 @@ export class PetScene {
   /**
    * A guest from the garden that hasn't come in yet: it peeks over the fence at the right edge of
    * the garden, only its head above it, looking over at the pet, and now and then it ducks down.
+   * The fence begins just left of it, so that it hides all of its body however wide it is;
+   * `behind` draws what is between the fence and its head (the festival's poster).
    */
-  private drawPeeking(img: Image, species: string, t: number): void {
-    this.drawFence(img, this.peekOverFence(img, species, t));
-  }
-
-  /**
-   * The guest's head over the fence (drawPeeking), before the fence is drawn over its body.
-   * Returns where the fence has to begin so that it hides all of its body, however wide it is.
-   */
-  private peekOverFence(img: Image, species: string, t: number): number {
+  private drawPeeking(img: Image, species: string, t: number, behind: (() => void) | null): void {
     const local = mod(t, PEEK_EVERY);
     const duck = local < PEEK_DUCK ? Math.sin(local / PEEK_DUCK * Math.PI) : 0; // down and up again
     const face = duck > 0.5 ? "blink" : Math.trunc(t) % 7 === 3 ? "blink" : "smile";
@@ -6600,11 +6597,12 @@ export class PetScene {
     }
     const peek = eyes / PEEK_ROWS * (1 - duck);
     const middle = FENCE_X + 5;
-    if (peek > 0) {
-      this.hideBehind(img, sprite, 0, top, [middle, FENCE_TOP + 1, peek]); // just behind the top of the fence
-    }
     const left = middle - Math.floor(sprite.width / 2) + (sprite.bbox()?.[0] ?? sprite.width);
-    return Math.min(FENCE_X, left - 1);
+    this.drawFence(img, Math.min(FENCE_X, left - 1));
+    behind?.();
+    if (peek > 0) { // only what is above the fence: the fence stays in front of the rest
+      this.hideBehind(img, sprite, 0, top, [middle, FENCE_TOP + 1, peek]);
+    }
   }
 
   /** Where a trace lies (its center). */

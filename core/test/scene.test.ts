@@ -438,6 +438,16 @@ test("the fence is as wide as the guest peeking over it, so its head never hangs
     }
     assert.ok(shown > 5, guest);
   }
+  // the trick festival's poster hangs behind its head
+  const head = frames({ peeking: "digby" }, 30)[25];
+  const withPoster = frames({ peeking: "digby", poster: true }, 30)[25];
+  for (let y = 0; y <= GROUND - 9; y++) {
+    for (let x = 0; x < head.width; x++) {
+      if (color(head, x, y).join() !== color(alone, x, y).join()) {
+        assert.deepEqual(color(withPoster, x, y), color(head, x, y), `${x},${y}`);
+      }
+    }
+  }
 });
 
 test("the newer lines' children show where they are heading", () => {
