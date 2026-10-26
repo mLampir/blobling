@@ -421,6 +421,25 @@ test("a guest from the garden peeks over the fence at the right edge, only at ho
   assert.equal(differing(frames(inside, 1, NIGHT)[0], frames({ ...inside, peeking: "digby" }, 1, NIGHT)[0]), 0);
 });
 
+test("the fence is as wide as the guest peeking over it, so its head never hangs in the air", () => {
+  const alone = frames({}, 30)[25];
+  const rail = GROUND - 2; // the fence's lower rail
+  for (const guest of ["mothmuff", "digby", "rotorfly", "dambert"]) {
+    const image = frames({ peeking: guest }, 30)[25]; // its head up, not ducking
+    let shown = 0;
+    for (let x = 0; x < image.width; x++) {
+      const at = ((GROUND - 9) * image.width + x) * 4; // the row just above the fence's top
+      if ([0, 1, 2].some((c) => image.data[at + c] !== alone.data[at + c])) {
+        shown++;
+        if (color(alone, x, rail).join() === color(alone, 63, rail).join()) { // the pet doesn't stand in front of it there
+          assert.notDeepEqual(color(image, x, rail), color(alone, x, rail), `${guest} at ${x}`);
+        }
+      }
+    }
+    assert.ok(shown > 5, guest);
+  }
+});
+
 test("the newer lines' children show where they are heading", () => {
   for (const [line, adults] of Object.entries(life.LINES).slice(-17)) {
     const looks = adults.map((hint) => frames({ species: line, hint }, 1)[0]);

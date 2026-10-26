@@ -6578,12 +6578,14 @@ export class PetScene {
    * the garden, only its head above it, looking over at the pet, and now and then it ducks down.
    */
   private drawPeeking(img: Image, species: string, t: number): void {
-    this.peekOverFence(img, species, t);
-    this.drawFence(img);
+    this.drawFence(img, this.peekOverFence(img, species, t));
   }
 
-  /** The guest's head over the fence (drawPeeking), before the fence is drawn over its body. */
-  private peekOverFence(img: Image, species: string, t: number): void {
+  /**
+   * The guest's head over the fence (drawPeeking), before the fence is drawn over its body.
+   * Returns where the fence has to begin so that it hides all of its body, however wide it is.
+   */
+  private peekOverFence(img: Image, species: string, t: number): number {
     const local = mod(t, PEEK_EVERY);
     const duck = local < PEEK_DUCK ? Math.sin(local / PEEK_DUCK * Math.PI) : 0; // down and up again
     const face = duck > 0.5 ? "blink" : Math.trunc(t) % 7 === 3 ? "blink" : "smile";
@@ -6597,9 +6599,12 @@ export class PetScene {
       eyes = faceRow + 1 + PEEK_EYES - top; // + 1: the outline
     }
     const peek = eyes / PEEK_ROWS * (1 - duck);
+    const middle = FENCE_X + 5;
     if (peek > 0) {
-      this.hideBehind(img, sprite, 0, top, [FENCE_X + 5, FENCE_TOP + 1, peek]); // just behind the top of the fence
+      this.hideBehind(img, sprite, 0, top, [middle, FENCE_TOP + 1, peek]); // just behind the top of the fence
     }
+    const left = middle - Math.floor(sprite.width / 2) + (sprite.bbox()?.[0] ?? sprite.width);
+    return Math.min(FENCE_X, left - 1);
   }
 
   /** Where a trace lies (its center). */
@@ -6622,13 +6627,13 @@ export class PetScene {
     return FOUND_X[view.house ?? 0];
   }
 
-  /** The fence at the right edge of the garden: pickets with a rail. */
-  private drawFence(img: Image): void {
+  /** The fence at the right edge of the garden, from `from` on: pickets with a rail. */
+  private drawFence(img: Image, from = FENCE_X): void {
     const dim = 0.45 + 0.55 * (1 - this.night);
     const picket = dimmed(FENCE[0], dim);
     const rail = dimmed(FENCE[1], dim);
-    for (let x = FENCE_X; x < this.width; x++) {
-      const at = (x - FENCE_X) % 3;
+    for (let x = Math.max(0, from); x < this.width; x++) {
+      const at = mod(x - FENCE_X, 3);
       if (at < 2) {
         for (let y = FENCE_TOP + (at ? 1 : 0); y <= GROUND; y++) {
           img.point(x, y, picket);
