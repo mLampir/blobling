@@ -198,7 +198,7 @@
 
   /* ---------- Tabs ---------- */
   .tabbar {
-    flex: none; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); background: var(--night);
+    flex: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); border-top: 1px solid var(--line); background: var(--night);
     /* room at the bottom: the system's swipe gesture lives there */
     padding: 6px 4px calc(10px + var(--safe-bottom));
   }
@@ -321,7 +321,7 @@
   .tricks li.hit { animation: hit .6s ease-out; }
   /* The four tricks side by side: each move draws itself, one after the other, until the first
      move is drawn over the pet; below it how far the pet has got, a star once it knows it */
-  #tricks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 400px; }
+  #tricks { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 6px; max-width: 400px; }
   #tricks li { flex-direction: column; gap: 6px; padding: 8px 6px; border: 1px solid var(--line); border-radius: 14px; background: var(--raised); text-align: center; }
   #tricks li > div { width: 100%; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
   #tricks .move { width: auto; color: var(--energy); }
@@ -622,11 +622,10 @@
   <section class="view" id="view-diary" hidden>
     <div class="page">
       <h2 data-t="page.diary"></h2>
-      <!-- with two pets or more: whose history and values these are, framed; a tap picks another -->
+      <!-- the diary is one pet's: with two pets or more, whose it is, framed; a tap picks another -->
       <nav class="street" id="diary-pets" hidden></nav>
       <nav class="segments" role="tablist">
         <button role="tab" data-tab="history" data-t="page.tabs.history"></button>
-        <button role="tab" data-tab="gallery" data-t="page.tabs.gallery" hidden></button>
         <button role="tab" data-tab="statistics" data-t="page.tabs.statistics" hidden></button>
       </nav>
       <ul class="list" data-panel="history" id="events"></ul>
@@ -634,7 +633,14 @@
         <ul class="list" id="values"></ul>
         <ul class="list" id="statistics"></ul>
       </div>
-      <div data-panel="gallery" hidden style="display: grid; gap: 14px">
+    </div>
+  </section>
+
+  <!-- the album is the whole home's: the forms met so far, the pets kept in it, and all the pets' friends -->
+  <section class="view" id="view-album" hidden>
+    <div class="page">
+      <h2 data-t="page.tabs.gallery"></h2>
+      <div style="display: grid; gap: 14px">
         <div class="label" id="album-count"></div>
         <div class="pages" id="album"></div>
         <div class="label" id="ancestors-label" data-t="page.gallery.ancestors" hidden></div>
@@ -680,6 +686,7 @@
     <button data-view="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-4.4 0-8 3.6-8 8.5 0 3.6 3 6.5 8 6.5s8-2.9 8-6.5C20 7.6 16.4 4 12 4z"/><circle cx="9.5" cy="11.5" r="1" fill="currentColor"/><circle cx="14.5" cy="11.5" r="1" fill="currentColor"/></svg><span id="nav-name"></span></button>
     <button data-view="adventure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V6a5 5 0 0 1 10 0v2"/><rect x="5" y="8" width="14" height="13" rx="3"/><path d="M9 14h6"/></svg><span data-t="page.nav.adventure"></span></button>
     <button data-view="diary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7h6"/></svg><span data-t="page.diary"></span></button>
+    <button data-view="album" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="2"/><rect x="6.5" y="8.5" width="4.5" height="4.5" rx="1"/><rect x="13" y="8.5" width="4.5" height="4.5" rx="1"/><path d="M6.5 16.5h11"/></svg><span data-t="page.tabs.gallery"></span></button>
     <button data-view="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg><span data-t="page.tabs.more"></span></button>
   </nav>
   <p class="toast" id="say" aria-live="polite"></p>
@@ -1738,7 +1745,7 @@ function pressable(b, onTap) {
 
 // The friends of all the pets at home, in the album below the pets (the album is the whole home's,
 // not the one on screen's): how far each one is from the next nest
-let albumHas = false, othersFriends = new Map(), friendsLoaded = 0;
+let albumHas = false, albumAsked = 0, othersFriends = new Map(), friendsLoaded = 0;
 function renderFriends(s) {
   // a display from before there could be several friends only tells of one
   const own = (pet) => pet.friends ?? (pet.friend ? [pet.friend] : []);
@@ -1762,7 +1769,7 @@ function renderFriends(s) {
     return li;
   }));
   $("friends").hidden = $("friends-label").hidden = !friends.length;
-  offerTab("gallery", albumHas || friends.length > 0);
+  offerAlbum(albumHas || friends.length > 0);
 }
 
 // The other pets' friends, for the album: asked for when it opens, and again after a while
@@ -1852,6 +1859,11 @@ async function refresh() {
   try {
     render(await api("GET", "/api/pet"));
     askTwins();
+    // the album's tab comes once there is something in it: asked for now and then until then
+    if (!albumHas && Date.now() - albumAsked > 60_000) {
+      albumAsked = Date.now();
+      loadGallery();
+    }
     if (view === "diary") renderEvents((await api("GET", "/api/pet/events?limit=30")).events);
     // the update: while "More" is open or it runs, otherwise now and then
     if (app.mode === "pi" && app.home() === "display" && (view === "more" || update?.running || app.fit() !== "ok"
@@ -2303,16 +2315,20 @@ function showTab(name) {
   tab = document.querySelector(`[data-tab="${name}"]`).hidden ? "history" : name;
   document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", b.dataset.tab === tab));
   document.querySelectorAll("[data-panel]").forEach((panel) => { panel.hidden = panel.dataset.panel !== tab; });
-  if (current) renderDiaryPets(current);
-  if (tab === "gallery") loadFriends();
 }
 document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
 
 // ---------- The tabs at the bottom ----------
 
+// The album's tab shows up once there is something in it; if it was the open one, the pet takes over
+function offerAlbum(has) {
+  document.querySelector('[data-view="album"]').hidden = !has;
+  if (!has && view === "album") showView("home");
+}
+
 function showView(name) {
   view = name;
-  for (const v of ["home", "adventure", "diary", "more"]) $(`view-${v}`).hidden = v !== name;
+  for (const v of ["home", "adventure", "diary", "album", "more"]) $(`view-${v}`).hidden = v !== name;
   document.querySelectorAll("[data-view]").forEach((b) => {
     if (b.dataset.view === name) b.setAttribute("aria-current", "page");
     else b.removeAttribute("aria-current");
@@ -2320,7 +2336,10 @@ function showView(name) {
   if (name === "diary") {
     refresh();
     loadTravels();
+  }
+  if (name === "album") {
     loadGallery();
+    loadFriends();
   }
   if (name === "adventure" && current) {
     packedFor = "";
@@ -2700,15 +2719,14 @@ function renderTripPets(s) {
   renderPetPicker($("trip-pets"), s, look);
 }
 function renderDiaryPets(s) {
-  // the album belongs to the whole home
   renderPetPicker($("diary-pets"), s, async (id) => {
     await look(id);
     refresh();
     loadTravels();
-  }, tab === "gallery");
+  });
 }
-function renderPetPicker(row, s, pick, hide = false) {
-  row.hidden = s.pets.length < 2 || hide;
+function renderPetPicker(row, s, pick) {
+  row.hidden = s.pets.length < 2;
   if (row.hidden) return;
   const key = s.pets.map((p) => p.id + p.stage + p.species).join();
   if (row.dataset.ids !== key) {

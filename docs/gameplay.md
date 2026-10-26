@@ -660,7 +660,7 @@ through the landscape, stopping now and then to rest or to hold up something
 it found. If it gets too tired or hungry, it turns back; you can also call it
 home. A second trip on the same day finds less.
 
-Every trip goes into the **travel diary** (*Diary* → *Trips*): where the pet
+Every trip goes into the **travel diary** (in the *Diary*'s history): where the pet
 went, on which day and for how long, what it found, whom it scuffled with and
 how that went, a wild pet it met, and whether it ate something from the backpack or turned back.
 It keeps the last 30 trips of this pet; a trip it was called straight back
@@ -1080,8 +1080,11 @@ every three days, and nothing if it went because nobody came:
 
 ## The app
 
-Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
-*More*.
+Five tabs along the bottom: the pet (named after it), *Trip*, *Diary*, *Album*
+and *More*. Outside the pet's own screen, nothing is about the pet on screen
+without showing which one it is: the trip page and the diary have the pets in a
+row at the top, the one they are about framed, and a tap picks another; the
+album belongs to the whole home.
 
 - **The pet** fills the screen: the scene, with the sky going on above it, the
   pet's name, form, age and mood at the top, and the **Sleep** / **Wake up**
@@ -1123,17 +1126,14 @@ Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
   While the pet can't go for a while (still an egg or a baby, away, back with
   a full backpack), that is what the tab says. Above it, from the poster on,
   the date of the trick festival, which opens its poster.
-- **Diary** has one tab each for the history, the album and the values. In the
-  history a trip opens with a tap into what happened on the way (where a
-  scuffle or a show at the trick festival can be watched again). The album
-  has the forms met so far, the pets kept in it, each one that can come home with a button for it, and the
-  friends of all the pets at home (with two pets or more, whose friend each one is).
-  The values are weight, bond and what the pet has done so far.
-  The album shows up once the first egg has hatched. With two pets or more, the
-  pets stand above the history and the values as on the trip page, the one they
-  are about framed; a tap picks another. The album belongs to the whole home and
-  has no such row: outside the pet's own screen, nothing is about the pet on
-  screen without showing which one it is.
+- **Diary** is one pet's, with a tab each for its history and its values. In
+  the history a trip opens with a tap into what happened on the way (where a
+  scuffle or a show at the trick festival can be watched again). The values
+  are weight, bond and what the pet has done so far.
+- **Album** has the forms met so far, the pets kept in it, each one that can
+  come home with a button for it, and the friends of all the pets at home (with
+  two pets or more, whose friend each one is). Its tab shows up once the first
+  egg has hatched.
 - **More**: sound on or off, the weather (off, a fixed place, or following the
   phone) and connecting to an LED display.
 
