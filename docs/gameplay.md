@@ -1105,10 +1105,11 @@ Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
   the way. Below, flat like buttons, the ones to tap: the **bag**, the
   **baton** (tricks), the **whistle** (training) and **Hide & seek**.
 - The **bag** has a shelf each for what the pet eats, the seeds, the hats, the
-  decorations and the eggs to brood. Food and seeds are dragged onto the pet
-  like the things in the tray; a tap on one makes it hop and says what it does.
-  A tap puts a hat on or off, sets a decoration out or away (it then has a
-  ring), or broods an egg.
+  decorations and the eggs to brood. Food, seeds, hats and decorations are
+  dragged into the scene like the things in the tray: the pet eats, plants,
+  puts the hat on or sets the decoration out. A tap on one makes it hop and
+  says what it does. A hat that is on or a decoration that is out has a ring,
+  and a tap takes it off or puts it away. A tap on an egg broods it.
 - The bag, the tricks, the training, the game and the pet's own things take
   the place of the tray, below the scene and the needs, so the pet is never
   covered and answers where it is. On a tall phone the scene grows into the

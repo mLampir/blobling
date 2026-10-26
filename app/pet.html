@@ -1661,7 +1661,15 @@ function renderBag(s) {
           item.place === "inside" && t("page.bag.inside"), ...effectText(item.effects)].filter(Boolean).join(" · "));
         b.classList.toggle("worn", item.active);
         b.append(...badge(item.effects));
-        pressable(b, () => act(item.kind === "hat" ? "wear" : "deco", item.id));
+        // dragged into the scene like food, it is put on or set out; one in use comes off with a tap
+        const name = item.kind === "hat" ? "wear" : "deco";
+        if (item.active) {
+          pressable(b, () => act(name, item.id));
+        } else {
+          b.dataset.action = name;
+          b.dataset.item = item.id;
+          draggable(b);
+        }
         (item.kind === "hat" ? hats : deco).push(b);
       }
     }
@@ -2505,8 +2513,9 @@ function draggable(b) {
     const inside = overHero(e.clientX, e.clientY);
     if (!inside && vy > -FLICK_SPEED) return ghost.remove();
     const direct = inside && area && onPet(e.clientX, e.clientY) && ["feed", "medicine"].includes(b.dataset.action);
-    // the rod isn't thrown: the pet takes it to the pond; nor the map: it goes to the cross
-    const thrown = !direct && !["fish", "dig"].includes(b.dataset.action);
+    // the rod isn't thrown: the pet takes it to the pond; nor the map: it goes to the cross; a hat
+    // goes on, and a decoration takes its spot
+    const thrown = !direct && !["fish", "dig", "wear", "deco"].includes(b.dataset.action);
     const where = Math.round(Math.max(0, Math.min(1, inScene(e.clientX, e.clientY)[0])) * 100) / 100;
     // it drops into the scene (or into the pet's mouth)
     ghost.style.transition = "transform .3s ease-out, opacity .3s";
