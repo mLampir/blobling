@@ -5,9 +5,10 @@
  * at home), and the next morning something lies in the garden, whether or not anybody watched:
  * mostly a seed, once a star shard that glows at night, and rarely an egg of a line the pet knows.
  *
- * From the second evening with a shooting star on, an owl sits on the roof at night and watches
- * with it; after the fifth, its egg lies there in the morning. Once for every pet, like a
- * guardian's egg: it waits for a later evening while there is no room for it.
+ * A star is the home's: every pet at home sees it, but it counts once and leaves one thing, in the
+ * garden of one of them. From the second evening with a shooting star on, an owl sits on the roof
+ * at night and watches; after the fifth, its egg lies there in the morning. Once for the home: it
+ * waits for a later evening while there is no room for it.
  *
  * When a star falls is decided by the day alone (seeded), so catching up gives the same evenings.
  */
@@ -83,7 +84,7 @@ function falls(day: number, weather: sky.WeatherCode, more: number): boolean {
  * now (what a star left lies there once the night is over).
  */
 export function step(state: PetState, t: number, weather: sky.WeatherCode, bedStart: string, night: boolean,
-    location: Location): boolean {
+    location: Location, pets: readonly PetState[] = [state]): boolean {
   const fallen = state.fallen;
   if (fallen && !fallen.lies) {
     if (night) {
@@ -101,34 +102,63 @@ export function step(state: PetState, t: number, weather: sky.WeatherCode, bedSt
   if (day === undefined || !falls(day, weather, keepsake.factor(state, "stars"))) {
     return false;
   }
-  fall(state, t);
+  fall(state, t, pets, candidate(day, bedStart, location));
   return true;
 }
 
-/** A shooting star falls at the time t: what it leaves waits for the morning. */
-export function fall(state: PetState, t: number): void {
+/**
+ * A shooting star falls at the time t (the one that falls at `when` for the whole home): the pet
+ * sees it, and unless the home has counted it already, it counts, and what it leaves waits in this
+ * pet's garden for the morning. `pets`: the home's pets.
+ */
+export function fall(state: PetState, t: number, pets: readonly PetState[] = [state], when = t): void {
   const stars = state.stars;
-  stars.evenings += 1;
   stars.at = t;
+  if (pets.some((pet) => (pet.stars.star ?? -1) >= when)) {
+    return; // another pet at home has seen this one
+  }
+  stars.star = when;
+  stars.evenings = Math.max(...pets.map((pet) => pet.stars.evenings)) + 1;
   if (state.fallen) {
     return; // what the last one left still lies there
   }
-  const item = gift(state, new Random(`star:${Math.trunc(t)}`));
+  const item = gift(state, new Random(`star:${Math.trunc(t)}`), pets);
   if (item) {
     state.fallen = { item, at: t };
   }
 }
 
+/** The home's stars, for the pets: how many evenings, the last one counted, and whether the owl's egg has been picked up. */
+export function share(states: readonly PetState[]): void {
+  const evenings = Math.max(...states.map((state) => state.stars.evenings));
+  const star = Math.max(...states.map((state) => state.stars.star ?? -1));
+  const owlEgg = Math.max(...states.map((state) => state.counters.owl_egg ?? 0));
+  for (const state of states) {
+    state.stars.evenings = evenings;
+    if (star >= 0) {
+      state.stars.star = star;
+    }
+    if (owlEgg) {
+      state.counters.owl_egg = owlEgg;
+    }
+  }
+}
+
+/** Does something a star left lie in one of these gardens, still to be picked up? */
+function lyingAt(pets: readonly PetState[], item: string): boolean {
+  return pets.some((pet) => pet.fallen?.item === item);
+}
+
 /** What a shooting star leaves: the owl's egg after the fifth evening, the moon lantern after the tenth, otherwise from GIFTS. */
-export function gift(state: PetState, rng: Random): string | null {
-  if (state.stars.evenings >= OWL_EGG_AFTER && !state.counters.owl_egg && home.canAdd(state, OWL_EGG)) {
+export function gift(state: PetState, rng: Random, pets: readonly PetState[] = [state]): string | null {
+  if (state.stars.evenings >= OWL_EGG_AFTER && !state.counters.owl_egg && !lyingAt(pets, OWL_EGG) && home.canAdd(state, OWL_EGG)) {
     return OWL_EGG;
   }
-  if (state.stars.evenings >= LANTERN_AFTER && home.canAdd(state, LANTERN)) {
+  if (state.stars.evenings >= LANTERN_AFTER && !lyingAt(pets, LANTERN) && home.canAdd(state, LANTERN)) {
     return LANTERN;
   }
   const kind = rng.weighted(GIFTS.map(([item]) => item), GIFTS.map(([, weight]) => weight));
-  if (kind === "shard" && home.canAdd(state, SHARD)) {
+  if (kind === "shard" && !lyingAt(pets, SHARD) && home.canAdd(state, SHARD)) {
     return SHARD;
   }
   if (kind === "egg") {
@@ -140,9 +170,9 @@ export function gift(state: PetState, rng: Random): string | null {
   return home.smallSeed(state, rng);
 }
 
-/** Is the owl sitting on the roof tonight (from the second evening, until it has left its egg)? */
-export function owl(state: PetState): boolean {
-  return state.stars.evenings >= OWL_FROM && !state.counters.owl_egg && state.fallen?.item !== OWL_EGG;
+/** Is the owl sitting on the roof tonight (from the second evening, until it has left its egg at home)? */
+export function owl(state: PetState, pets: readonly PetState[] = [state]): boolean {
+  return state.stars.evenings >= OWL_FROM && !state.counters.owl_egg && !lyingAt(pets, OWL_EGG);
 }
 
 /** What lies in the garden from a shooting star, now that it is morning (or null). */

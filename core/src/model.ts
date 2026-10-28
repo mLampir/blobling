@@ -360,7 +360,7 @@ export function tick(state: PetState, t: number, bedtime: Bedtime, weather: sky.
   for (const [action, item] of garden.step(state, t, !asleep && !state.trip)) {
     logEvent(state, t, action, "system", { item });
   }
-  if (stars.step(state, t, weather, bedtime[0], isBedtime(t, bedtime), location)) {
+  if (stars.step(state, t, weather, bedtime[0], isBedtime(t, bedtime), location, pets)) {
     // a shooting star: still up and at home, it looks up and makes a wish
     if (!asleep && !state.trip && t >= state.activity_until) {
       setActivity(state, "wish", t);
@@ -523,9 +523,11 @@ export function advanceTogether(states: readonly PetState[], now: number, bedtim
     const state = states[next];
     state.updated_at += TICK;
     festival.share(states); // one of them went to the festival: the others know (one goes for the home)
+    stars.share(states); // a shooting star is the home's
     tick(state, state.updated_at, bedtime, weather, temp, location, yard, states);
   }
   festival.share(states);
+  stars.share(states);
   states.forEach((state, i) => {
     if (ends[i] === null) {
       return;

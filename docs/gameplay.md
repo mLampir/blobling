@@ -569,7 +569,9 @@ makes a wish, with a sparkle over its head.
 
 Nobody has to watch: the morning after (once a night has passed, or sixteen
 hours), what the star left lies in the garden, glinting now and then, until
-a tap picks it up.
+a tap picks it up. A star is the home's: every pet at home sees it and wishes,
+but it leaves one thing, in the garden of one of them, and counts as one
+evening.
 
 - Mostly a **seed**.
 - Sometimes a **star shard**, a decoration that glows at night. One per home;
@@ -578,7 +580,7 @@ a tap picks it up.
 
 From the second evening with a shooting star on, an **owl** sits on the roof at
 night (without a house, on the fence) and watches with the pet. After the fifth
-evening it leaves a rare egg up on the roof, once for every pet, and is gone.
+evening it leaves a rare egg up on the roof, once for the home, and is gone.
 
 ## The trick festival
 

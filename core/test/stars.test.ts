@@ -101,7 +101,7 @@ test("the gifts: seeds most of the time, the shard while the home has none, eggs
   assert.ok([...seen].some((item) => item in home.EGGS));
   // with a shard in the bag it leaves no second one
   pet.items[stars.SHARD] = 1;
-  pet.stars.evenings = 0;
+  pet.stars = { evenings: 0, at: 0 };
   pet.counters.owl_egg = 1;
   for (let i = 0; i < 100; i++) {
     pet.fallen = null;
@@ -145,4 +145,26 @@ test("after the tenth evening a star leaves the moon lantern, once", () => {
   pet.items[stars.LANTERN] = 1;
   assert.notEqual(stars.gift(pet, new Random("a")), stars.LANTERN);
   assert.deepEqual(home.effects(stars.LANTERN), ["moon"]);
+});
+
+test("a star is the home's: with four pets it counts once and leaves one thing, and the owl's egg comes once", () => {
+  const pets = [0, 1, 2, 3].map((i) => Object.assign(grown(start), { id: `pet${i}` }));
+  const left: string[] = [];
+  let t = start;
+  while (pets[0].stars.evenings < stars.OWL_EGG_AFTER + 2 && t < start + 120 * 86400) {
+    t += 600;
+    model.advanceTogether(pets, t, BEDTIME, CLEAR);
+    for (const p of pets) {
+      Object.assign(p.stats, { satiety: 100, hygiene: 100, energy: 100, mood: 100, health: 100 });
+      if (stars.lying(p)) {
+        left.push(stars.pickUp(p));
+      }
+    }
+  }
+  const evenings = pets[0].stars.evenings;
+  assert.ok(evenings >= stars.OWL_EGG_AFTER + 2);
+  assert.ok(pets.every((p) => p.stars.evenings === evenings));
+  assert.ok(left.length <= evenings); // one thing a star at most, not one for every pet
+  assert.equal(left.filter((item) => item === stars.OWL_EGG).length, 1);
+  assert.ok(pets.every((p) => !stars.owl(p, pets)));
 });
