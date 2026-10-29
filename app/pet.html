@@ -2524,6 +2524,14 @@ function draggable(b) {
       }
     }
   });
+  // Safari doesn't narrow touch-action down the tree: a tile in the bag (pan-x, in a sheet that
+  // scrolls up and down) still lets a drag upwards scroll the sheet, and the scroll cancels the
+  // drag. So the finger is kept from the page here, unless it starts out sideways along a shelf.
+  b.addEventListener("touchmove", (e) => {
+    if (!drag) return;
+    const touch = e.touches[0];
+    if (drag.moved || Math.abs(touch.clientX - drag.x) <= Math.abs(touch.clientY - drag.y)) e.preventDefault();
+  }, { passive: false });
   const done = () => {
     $("hero").classList.remove("drop");
     b.classList.remove("lift");
