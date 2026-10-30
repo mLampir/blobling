@@ -6,6 +6,7 @@
  * time, so it is the same whether or not anybody is looking at the panel.
  */
 
+import * as battle from "./battle";
 import * as care from "./care";
 import * as ground from "./ground";
 import * as home from "./home";
@@ -95,8 +96,11 @@ export function step(state: PetState, t: number, busy: boolean,
   if (workouts.length > 0 && rng.random() < ground.SOLO_CHANCE) {
     // over to the training ground, with the equipment for a stat (ground.ts)
     const skill = rng.choice(workouts);
+    const before = battle.level(state.skills[skill]);
     ground.practiceAlone(state, skill, t);
-    return ["train_solo", skill, "solo", skill];
+    const level = battle.level(state.skills[skill]);
+    // a level it reached on its own is the bigger news in the diary
+    return level > before ? ["train_solo", skill, "level_up", `${skill}:${level}`] : ["train_solo", skill, "solo", skill];
   }
   const tricks = practicable(state);
   const pastime: Pastime = tricks.length > 0 && rng.random() < 0.5 ? "practice" : "ball";
