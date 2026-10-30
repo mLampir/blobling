@@ -432,6 +432,7 @@ const BALL_SECONDS = 6; // how long an opponent takes to run after the ball
 const SMALL_HEART: Bitmap = [[255, 70, 110], ["X.X", "XXX", ".X."]];
 const WILD_X = 33; // left edge of a wild pet the pet shows its tricks to (played back like a scuffle)
 // Training: the signal of the reaction test, and the directions of the sequence to remember
+const LEVEL_CHEER = 1.5; // seconds at the end of an exercise that took a stat up a level
 const SIGNAL: Bitmap = [[255, 240, 90], ["XXX", "XXX", "XXX", "XXX", ".X.", "...", "XXX", "XXX"]];
 const ARROWS: Record<string, readonly string[]> = {
   left: ["..X..", ".XX..", "XXXXX", ".XX..", "..X.."],
@@ -1271,6 +1272,7 @@ export interface SceneView {
    */
   hide?: { spots: readonly string[]; found: readonly string[]; peek: number; over: boolean } | null;
   tricks?: readonly string[];
+  level_up?: boolean; // the exercise going on took a stat up a level
   trip?: TripView | null;
   /** It is staying at Grandma's (nobody was there for a long time): the scene shows home without it. */
   grandma?: boolean;
@@ -2180,6 +2182,12 @@ export class PetScene {
       this.pick(pose, view, t, dt, now);
     } else if (activity === "build") {
       this.build(pose, view, t, dt, now);
+    } else if (view.level_up && isOneOf(activity, "train_strength", "train_speed", "train_smarts")
+        && view.activity_until - now <= LEVEL_CHEER) {
+      // the exercise took a stat up a level: it cheers, and a star twinkles over it
+      this.cheer(pose, t);
+      pose.symbol = WISH_SPARKLE[Math.trunc(t * 3) % 2];
+      this.burst(view, SPARK, 10, 22);
     } else if (activity === "train_strength") {
       this.trainStrength(pose, view, t, now);
     } else if (activity === "train_ready") {

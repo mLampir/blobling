@@ -286,6 +286,8 @@ const SCENES: Record<string, Scene> = {
   train_speed: [{ activity: "train_speed", activity_item: "0.90", ground: GEAR }, DAY, null],
   train_show: [{ activity: "train_show", activity_item: "left,up,down,right", ground: GEAR }, DAY, null],
   train_smarts: [{ activity: "train_smarts", activity_item: "4/4", stage: "adult", species: "lumoth", ground: GEAR }, DAY, null],
+  // an exercise took a stat up a level: it cheers at the end, with a star over it
+  train_level: [{ activity: "train_speed", activity_item: "0.90", level_up: true, ground: GEAR }, DAY, null, 2],
   train_alone: [{ activity: "train_solo", activity_item: "smarts", ground: GEAR }, DAY, null, 2],
   battle_meadow: [{
     trip: trip("meadow", {

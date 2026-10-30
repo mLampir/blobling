@@ -376,6 +376,7 @@ export class Pet {
       activity_item: s.activity_item, ready: life.isDue(s, now),
       weight_status: care.weightStatus(s), game: care.gameActive(s, now), hide: hideView(s, now),
       tricks: care.learned(s),
+      level_up: s.recent.level_up?.[0] === s.activity_until,
       trip: tripView(s, now), grandma: !!s.grandma, hat: s.hat, ...decoView(s),
       look_in: s.house > 0 && now < s.look_in_until && !s.asleep,
       backpack: s.backpack.length > 0,

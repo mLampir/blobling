@@ -17,12 +17,20 @@ import type { PetState } from "./state";
 export const SKILLS = ["strength", "speed", "smarts"] as const;
 export type Skill = (typeof SKILLS)[number];
 export const MAX_SKILL = 100.0;
-export const TRAIN_GAIN = 4.0; // points for a perfect session; several in a row are worth less
+export const TRAIN_GAIN = 4.0; // points for a perfect session; the break after it (model.REST_SECONDS) is the brake
+// Every this many points a stat goes up a level, with a star in the app and a cheer on the panel:
+// filling a whole stat takes weeks, so it comes in steps that are each about as far as a trick
+export const LEVEL_POINTS = 25;
 export const TRAIN_ENERGY = 15; // minimum energy, same as playing
 export const TRAIN_COST = { energy: 8, satiety: 3 } as const;
 
 export function newSkills(): Record<string, number> {
   return { strength: 0.0, speed: 0.0, smarts: 0.0 };
+}
+
+/** The level of a stat (0–4): a star for every LEVEL_POINTS. */
+export function level(value: number): number {
+  return Math.floor((value + 1e-6) / LEVEL_POINTS);
 }
 
 /** Add what a session was worth (score 0–1, already scaled for repeats). Returns the gain. */

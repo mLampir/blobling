@@ -6,7 +6,7 @@ import { beforeEach, test } from "node:test";
 import * as battle from "../src/battle";
 import * as model from "../src/model";
 import { fromDict, toDict, type PetState } from "../src/state";
-import { HOUR, act, at, grown, near, refused } from "./helpers";
+import { BEDTIME, HOUR, act, at, grown, near, refused } from "./helpers";
 
 let start: number;
 let pet: PetState;
@@ -30,6 +30,24 @@ test("throwing the ball builds strength", () => {
     refused(() => act(pet, "train", start + 120, { item: "strength", value: bad }), "invalid_value");
   }
   refused(() => act(pet, "train", start + 120, { item: "juggling" }), "unknown_exercise");
+});
+
+test("every 25 points a stat goes up a level: proud, in the diary, and it cheers on the panel", () => {
+  assert.deepEqual([0, 24.9, 25, 74.99, 100].map(battle.level), [0, 0, 1, 2, 4]);
+  Object.assign(pet.stats, { energy: 80, mood: 50 });
+  pet.skills.strength = 19;
+  act(pet, "train", start, { item: "strength", value: 1 }); // 23: not yet
+  assert.equal(pet.events.some((e) => e.action === "level_up"), false);
+  assert.equal(pet.stats.mood, 60);
+  act(pet, "train", start + 120, { item: "strength", value: 1 }); // 27: level 1
+  assert.deepEqual(pet.events.filter((e) => e.action === "level_up").map((e) => e.item), ["strength:1"]);
+  assert.equal(pet.stats.mood, 80); // the exercise, and proud on top
+  assert.deepEqual(pet.recent.level_up, [pet.activity_until]); // the scene cheers at the end of this exercise
+  // and on its own at the training ground, when its practice takes it over the line
+  pet.items.cones = 1;
+  pet.skills.speed = 24.5;
+  model.advance(pet, start + 12 * HOUR, BEDTIME);
+  assert.ok(pet.events.some((e) => e.action === "level_up" && e.item === "speed:1"));
 });
 
 test("reaction test is timed by the clock, not by the phone", () => {
