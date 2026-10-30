@@ -26,7 +26,7 @@ import { Image } from "../../core/src/image";
 import { RequestError, inWindow, type Bedtime } from "../../core/src/model";
 import { DEFAULT_BEDTIME, type ActionRequest, type Pet } from "../../core/src/pet";
 import type { PetScene } from "../../core/src/scene";
-import { GROUND, PLACES, PLAYGROUND, YARD, pan, panSeconds, place } from "../../core/src/street";
+import { GROUND, PLACES, PLAYGROUND, YARD, follow, pan, panSeconds, place, type Layers } from "../../core/src/street";
 import { getLog, reason } from "./log";
 import { writeAtomic } from "./storage";
 import type { Weather } from "../../core/src/weather";
@@ -123,13 +123,15 @@ export class Display {
   /** When somebody last did something with the pet the camera is on (monotonic). */
   private lastHere = -Infinity;
   /** The camera is on its way from the picture `from`, `steps` houses along the street. */
-  private panning: { from: Image; steps: number; start: number; seconds: number; follow?: boolean } | null = null;
+  private panning: { from: Image; steps: number; start: number; seconds: number; follow?: boolean; layers?: Layers | null } | null = null;
   /** A phone asked to go to a place or away from it: the phone pans by itself (frameOf). */
   private asked = false;
   /** A phone looks at a place (PLACES): the camera stays there until it goes to a pet (look). */
   private opened: string | null = null;
   /** What the panel showed last: the camera's pet (its id), or a place (PLACES); a change to or from a place pans. */
   private shown: string | null = null;
+  /** The pet whose own scene drew what the panel showed last, and its layers: a pan that follows it pans only the backgrounds (street.follow). */
+  private shownPet: { id: string | null; layers: Layers | null } = { id: null, layers: null };
   /** The next frame of a pet the panel doesn't show, for a phone that looks at it. */
   private previews = new Map<string, { frame: Image; due: number; next?: Promise<Image> }>();
   private readonly weather: Weather;
@@ -538,7 +540,8 @@ export class Display {
       void weather.refresh();
     }
     this.forgetGone();
-    let [frame, delay] = this.frameFor(this.camera, this.opened);
+    let [frame, delay, pet] = this.frameFor(this.camera, this.opened);
+    const layers = pet === null ? null : this.sceneFor(pet).layers;
     const shown = this.placeShown(this.camera, this.opened) ?? this.camera;
     if (this.shown !== null && shown !== this.shown && (PLACES.includes(shown) || PLACES.includes(this.shown))) {
       // to a place and back: the camera pans along the street as between two houses
@@ -546,8 +549,11 @@ export class Display {
       const there = this.pet.places();
       const steps = place(ids, shown, there) - place(ids, this.shown, there);
       // the pet went over or came back by itself: a phone looking at it gets the pan as well
-      this.panning = { from: this.unpanned, steps, start: monotonic(), seconds: panSeconds(steps), follow: !this.asked };
+      // following the pet over or back (its own scene on both ends): only the backgrounds pan, and the pet walks along on top
+      this.panning = { from: this.unpanned, steps, start: monotonic(), seconds: panSeconds(steps), follow: !this.asked,
+        layers: pet !== null && pet === this.shownPet.id ? this.shownPet.layers : null };
     }
+    this.shownPet = { id: pet, layers };
     this.asked = false;
     this.shown = shown;
     this.unpanned = frame;
@@ -555,7 +561,8 @@ export class Display {
     if (panning) {
       const progress = (monotonic() - panning.start) / panning.seconds;
       if (progress < 1) {
-        frame = pan(panning.from, frame, progress, panning.steps);
+        frame = panning.layers && layers ? follow(panning.layers, frame, layers, progress, panning.steps)
+          : pan(panning.from, frame, progress, panning.steps);
         delay = Math.min(delay, PAN_FRAME);
       } else {
         this.panning = null;
@@ -584,25 +591,25 @@ export class Display {
   }
 
   /** The picture of the pet with this id, or of the place the camera is at; and when the next is due. */
-  private frameFor(id: string, opened: string | null = null): [Image, number] {
+  private frameFor(id: string, opened: string | null = null): [Image, number, string | null] {
     const weather = this.weather.current();
     const where = this.placeShown(id, opened);
     if (where === YARD) {
-      return this.sceneFor(YARD).renderYard(this.pet.yardView()!, weather);
+      return [...this.sceneFor(YARD).renderYard(this.pet.yardView()!, weather), null];
     }
     if (where === GROUND) {
       // the pet over there in its own scene, or the training ground with nobody on it
       const there = this.pet.groundPet(undefined, id);
-      return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
-        : this.sceneFor(GROUND).renderGround(this.pet.groundView(), weather);
+      return there !== null ? [...this.sceneFor(there).render(this.pet.view(undefined, there), weather), there]
+        : [...this.sceneFor(GROUND).renderGround(this.pet.groundView(), weather), null];
     }
     if (where === PLAYGROUND) {
       // the two over there in the scene of one of them, or the playground with nobody on it
       const there = this.pet.playgroundPet(undefined, id);
-      return there !== null ? this.sceneFor(there).render(this.pet.view(undefined, there), weather)
-        : this.sceneFor(PLAYGROUND).renderPlayground(this.pet.playgroundView(), weather);
+      return there !== null ? [...this.sceneFor(there).render(this.pet.view(undefined, there), weather), there]
+        : [...this.sceneFor(PLAYGROUND).renderPlayground(this.pet.playgroundView(), weather), null];
     }
-    return this.sceneFor(id).render(this.pet.view(undefined, id), weather);
+    return [...this.sceneFor(id).render(this.pet.view(undefined, id), weather), id];
   }
 
   /** The scenes of pets that no longer live here go. */

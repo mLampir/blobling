@@ -91,7 +91,11 @@
   .street .place { margin-left: 4px; }
   .street .place::before { content: ""; position: absolute; left: -3px; top: 7px; bottom: 7px; width: 1px; background: var(--line); }
   .street .place img { height: 22px; transform: none; }
-  .street .here { box-shadow: inset 0 0 0 2px var(--accent); }
+  /* the frame over the picture: a pet reaching down to the edge doesn't hide it (the picture, scaled,
+     would otherwise be painted over the button's outline) */
+  .street button { isolation: isolate; }
+  .street img { position: relative; z-index: -1; }
+  .street .here { outline: 2px solid var(--accent); outline-offset: -2px; }
   .street .away img { opacity: .4; }
   .street .phone::after { content: ""; position: absolute; bottom: 3px; left: 5px; width: 5px; height: 8px; border: 1.5px solid var(--muted); border-radius: 2px; }
   .street .calls::before, .street .place.there::after { content: ""; position: absolute; top: 2px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
@@ -194,7 +198,7 @@
 
   /* ---------- Tabs ---------- */
   .tabbar {
-    flex: none; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); background: var(--night);
+    flex: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); border-top: 1px solid var(--line); background: var(--night);
     /* room at the bottom: the system's swipe gesture lives there */
     padding: 6px 4px calc(10px + var(--safe-bottom));
   }
@@ -209,6 +213,7 @@
   .page { padding: calc(18px + var(--safe-top)) 16px 24px; display: grid; gap: 14px; align-content: start; }
   .page h2 { font: 700 24px/1.15 var(--round); margin: 0; }
   .lead { margin: -8px 0 0; color: var(--muted); font-size: 14px; }
+  .postcard { margin: 16px 0 6px; padding: 12px 14px; border-radius: 12px; border: 1px dashed var(--line); color: var(--muted); font-size: 14px; font-style: italic; }
   .label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 6px 4px -6px; }
   .card {
     display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center; text-align: left; width: 100%;
@@ -316,7 +321,7 @@
   .tricks li.hit { animation: hit .6s ease-out; }
   /* The four tricks side by side: each move draws itself, one after the other, until the first
      move is drawn over the pet; below it how far the pet has got, a star once it knows it */
-  #tricks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 400px; }
+  #tricks { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 6px; max-width: 400px; }
   #tricks li { flex-direction: column; gap: 6px; padding: 8px 6px; border: 1px solid var(--line); border-radius: 14px; background: var(--raised); text-align: center; }
   #tricks li > div { width: 100%; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
   #tricks .move { width: auto; color: var(--energy); }
@@ -363,6 +368,7 @@
   .choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
   .choices button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
   .choices button.on { border-color: var(--accent); color: var(--accent); }
+  #pack-things button.full { opacity: .45; }
   #pack-things img, .steps img { width: 24px; height: 24px; image-rendering: pixelated; vertical-align: middle; }
   /* The festival's poster, as it hangs on the fence: red at the top, a yellow star, blue at the
      bottom; on it the day, a dot for each day still to wait, and on the day the tricks to show */
@@ -591,6 +597,8 @@
   <section class="view" id="view-adventure" hidden>
     <div class="page trip">
       <h2 data-t="page.nav.adventure"></h2>
+      <!-- with two pets or more: which of them is sent, framed; a tap picks another -->
+      <nav class="street" id="trip-pets" hidden></nav>
       <p class="lead" id="adventure-lead" hidden></p>
       <!-- the trick festival, from its poster on (core/src/festival.ts): a tap opens the poster -->
       <button class="wide" id="festival" hidden></button>
@@ -604,7 +612,9 @@
         <p class="say" id="pack-say" aria-live="polite"></p>
         <button class="wide primary" id="pack-go" data-t="page.pack.go"></button>
       </div>
-      <!-- or a visit to Grandma's, which she rewards after a whole day (core/src/grandma.ts) -->
+      <!-- or a visit to Grandma's, which she rewards after a whole day (core/src/grandma.ts); her
+           postcard says what a visit is good for, in her own words -->
+      <p class="postcard" id="grandma-card" hidden></p>
       <button class="wide" id="visit-grandma" data-t="page.grandma.visit" hidden></button>
     </div>
   </section>
@@ -612,9 +622,10 @@
   <section class="view" id="view-diary" hidden>
     <div class="page">
       <h2 data-t="page.diary"></h2>
+      <!-- the diary is one pet's: with two pets or more, whose it is, framed; a tap picks another -->
+      <nav class="street" id="diary-pets" hidden></nav>
       <nav class="segments" role="tablist">
         <button role="tab" data-tab="history" data-t="page.tabs.history"></button>
-        <button role="tab" data-tab="gallery" data-t="page.tabs.gallery" hidden></button>
         <button role="tab" data-tab="statistics" data-t="page.tabs.statistics" hidden></button>
       </nav>
       <ul class="list" data-panel="history" id="events"></ul>
@@ -622,7 +633,14 @@
         <ul class="list" id="values"></ul>
         <ul class="list" id="statistics"></ul>
       </div>
-      <div data-panel="gallery" hidden style="display: grid; gap: 14px">
+    </div>
+  </section>
+
+  <!-- the album is the whole home's: the forms met so far, the pets kept in it, and all the pets' friends -->
+  <section class="view" id="view-album" hidden>
+    <div class="page">
+      <h2 data-t="page.tabs.gallery"></h2>
+      <div style="display: grid; gap: 14px">
         <div class="label" id="album-count"></div>
         <div class="pages" id="album"></div>
         <div class="label" id="ancestors-label" data-t="page.gallery.ancestors" hidden></div>
@@ -668,6 +686,7 @@
     <button data-view="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-4.4 0-8 3.6-8 8.5 0 3.6 3 6.5 8 6.5s8-2.9 8-6.5C20 7.6 16.4 4 12 4z"/><circle cx="9.5" cy="11.5" r="1" fill="currentColor"/><circle cx="14.5" cy="11.5" r="1" fill="currentColor"/></svg><span id="nav-name"></span></button>
     <button data-view="adventure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V6a5 5 0 0 1 10 0v2"/><rect x="5" y="8" width="14" height="13" rx="3"/><path d="M9 14h6"/></svg><span data-t="page.nav.adventure"></span></button>
     <button data-view="diary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7h6"/></svg><span data-t="page.diary"></span></button>
+    <button data-view="album" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="2"/><rect x="6.5" y="8.5" width="4.5" height="4.5" rx="1"/><rect x="13" y="8.5" width="4.5" height="4.5" rx="1"/><path d="M6.5 16.5h11"/></svg><span data-t="page.tabs.gallery"></span></button>
     <button data-view="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg><span data-t="page.tabs.more"></span></button>
   </nav>
   <p class="toast" id="say" aria-live="polite"></p>
@@ -796,7 +815,7 @@ const SKILL_COLORS = { strength: "#ff8a5a", speed: "#ffdc3c", smarts: "#b48cff" 
 const BADGES = {
   satiety: [svg("satiety"), "var(--satiety)"], energy: [svg("energy"), "var(--energy)"],
   mood: [svg("mood"), "var(--mood)"], health: [svg("health"), "var(--health)"],
-  heart: [svg("health"), "var(--mood)"], finder: ["✦", "var(--hygiene)"], fresh: [svg("energy"), "var(--energy)"],
+  heart: [svg("health"), "var(--mood)"], heal: [svg("health"), "var(--health)"], finder: ["✦", "var(--hygiene)"], fresh: [svg("energy"), "var(--energy)"],
   trick: ["×2" + svg("trick"), "var(--energy)"], train: ["×2" + svg("train"), "var(--satiety)"],
   growth: ["↑", "var(--health)"], snow: ["❄", "var(--hygiene)"],
   // the keepsakes of the lines (core/src/keepsake.ts)
@@ -1206,7 +1225,7 @@ function render(s) {
   $("grandma").hidden = !s.grandma;
   // the scuffles of the last trip, until they have been watched or the next trip sets off
   const fights = s.trip ? [] : lastFights(s);
-  $("watch").hidden = !fights.length || stored("watched") === String(s.last_trip);
+  $("watch").hidden = !fights.length || stored(`watched:${s.id}`) === String(s.last_trip);
   $("watch").textContent = fights.some((r) => r.kind === "festival") ? t("page.replay.watch_show")
     : tn("page.replay.watch", fights.length);
 
@@ -1238,6 +1257,7 @@ function render(s) {
   renderValues(s);
   renderStatistics(s);
   renderFriends(s);
+  renderDiaryPets(s);
   renderTrip(s);
   $("new-egg-row").hidden = egg;
   // the display keeps its last pet
@@ -1293,7 +1313,9 @@ function renderTrip(s) {
     : s.trip || s.grandma ? $("trip-info").textContent
     : s.backpack ? t("page.trip.full", { name: s.name }) : "";
   $("adventure-lead").hidden = !reason;
-  $("visit-grandma").hidden = !s.actions.visit_grandma;
+  $("visit-grandma").hidden = $("grandma-card").hidden = !s.actions.visit_grandma;
+  $("grandma-card").textContent = t("page.grandma.card", { name: s.name });
+  renderTripPets(s);
   $("adventure-lead").textContent = reason;
   $("packing").hidden = !!reason;
   // built again only when something changes, so a tap in the middle of it isn't lost
@@ -1465,15 +1487,18 @@ function renderPack() {
     const b = document.createElement("button");
     b.replaceChildren(packPicture(thing.id), ` ${thing.label}`);
     if (thing.id === s.disliked_food) b.append(" ✕"); // it won't eat that on the way either
-    // what works from the backpack carries its badge, as in the bag
+    // what works from the backpack carries its badge, as in the bag; anything else to eat heals a heart
     const effects = packedEffects(thing.id);
-    if (effects.length) b.append(" ", ...badge(effects));
-    b.disabled = packed.length >= s.max_pack || packed.filter((id) => id === thing.id).length >= thing.count;
-    b.addEventListener("click", () => {
+    if (thing.id !== "ball") b.append(" ", ...badge(effects.length ? effects : ["heal"]));
+    const full = packed.length >= s.max_pack || packed.filter((id) => id === thing.id).length >= thing.count;
+    b.classList.toggle("full", full);
+    // held a moment, it says what it does on the way without packing it; packed, it says so too
+    b.dataset.info = `${thing.label}: ${packText(thing.id)}`;
+    pressable(b, () => {
+      if (full) return void ($("pack-say").textContent = b.dataset.info);
       packed.push(thing.id);
       renderPack();
-      // once packed, it says what it does on the way
-      $("pack-say").textContent = `${thing.label}: ${packText(thing.id)}`;
+      $("pack-say").textContent = b.dataset.info;
     });
     return b;
   }));
@@ -1606,7 +1631,7 @@ function renderBag(s) {
   const key = JSON.stringify([s.items.map((x) => [x.id, x.count, x.active, x.place]), s.eggs, s.favorite_food, s.disliked_food]);
   if (bag.dataset.key !== key) {
     bag.dataset.key = key;
-    const fruits = [], foods = [], seeds = [], wear = [];
+    const fruits = [], foods = [], seeds = [], hats = [], deco = [], eggTiles = [];
     for (const item of s.items) {
       if (["yard", "ground", "playground"].includes(item.kind)) continue; // it stands at one of the places along the street
       if (item.kind === "fruit" || item.kind === "food") {
@@ -1640,14 +1665,22 @@ function renderBag(s) {
         b.dataset.action = "dig";
         b.dataset.item = item.id;
         draggable(b);
-        wear.push(b);
+        deco.push(b);
       } else {
         const b = bagTile(app.discovery(item.id, true), item.label, [item.label, t(`page.kinds.${item.kind}`),
           item.place === "inside" && t("page.bag.inside"), ...effectText(item.effects)].filter(Boolean).join(" · "));
         b.classList.toggle("worn", item.active);
         b.append(...badge(item.effects));
-        pressable(b, () => act(item.kind === "hat" ? "wear" : "deco", item.id));
-        wear.push(b);
+        // dragged into the scene like food, it is put on or set out; one in use comes off with a tap
+        const name = item.kind === "hat" ? "wear" : "deco";
+        if (item.active) {
+          pressable(b, () => act(name, item.id));
+        } else {
+          b.dataset.action = name;
+          b.dataset.item = item.id;
+          draggable(b);
+        }
+        (item.kind === "hat" ? hats : deco).push(b);
       }
     }
     // the eggs of one line lie on one tile (×n); a tap broods the one a pet has passed on the most to
@@ -1667,7 +1700,7 @@ function renderBag(s) {
         b.append(n);
       }
       pressable(b, () => newEgg(egg));
-      wear.push(b);
+      eggTiles.push(b);
     }
     const eat = [...fruits, ...foods];
     eat.concat(seeds).forEach(draggable);
@@ -1681,7 +1714,8 @@ function renderBag(s) {
       div.append(label, row);
       return [div];
     };
-    bag.replaceChildren(...shelf("page.bag.food", eat), ...shelf("page.bag.seeds", seeds), ...shelf("page.bag.wear", wear));
+    bag.replaceChildren(...shelf("page.bag.food", eat), ...shelf("page.bag.seeds", seeds), ...shelf("page.bag.hats", hats),
+      ...shelf("page.bag.deco", deco), ...shelf("page.bag.eggs", eggTiles));
     $("bag-empty").hidden = bag.children.length > 0;
   }
   // what it can't have right now looks it; dragged onto it anyway, it says why
@@ -1709,16 +1743,23 @@ function pressable(b, onTap) {
   });
 }
 
-// Its friends, in the album below the pets: how far each one is from the next nest
-let albumHas = false;
+// The friends of all the pets at home, in the album below the pets (the album is the whole home's,
+// not the one on screen's): how far each one is from the next nest
+let albumHas = false, albumAsked = 0, othersFriends = new Map(), friendsLoaded = 0;
 function renderFriends(s) {
   // a display from before there could be several friends only tells of one
-  const friends = s.friends ?? (s.friend ? [s.friend] : []);
-  $("friends").replaceChildren(...friends.map((friend) => {
+  const own = (pet) => pet.friends ?? (pet.friend ? [pet.friend] : []);
+  const several = (s.pets?.length ?? 1) > 1;
+  const friends = (several ? s.pets : [s]).flatMap((p) => {
+    const pet = p.id === s.id ? s : othersFriends.get(p.id);
+    return pet ? own(pet).map((friend) => [friend, several ? p.name : null]) : [];
+  });
+  $("friends").replaceChildren(...friends.map(([friend, of]) => {
     // after a nest the visits don't count for a while: an old friend, without a count that doesn't move
-    const li = row(friend.label, friend.visiting ? t("page.gallery.friend_here")
+    const how = friend.visiting ? t("page.gallery.friend_here")
       : friend.resting ? t("page.gallery.friend_old")
-      : t("page.gallery.friend_visits", { n: friend.visits, needed: friend.needed }));
+      : t("page.gallery.friend_visits", { n: friend.visits, needed: friend.needed });
+    const li = row(friend.label, of ? `${of} · ${how}` : how); // with two pets or more: whose friend it is
     if (friend.species) {
       const img = document.createElement("img");
       img.alt = "";
@@ -1728,7 +1769,23 @@ function renderFriends(s) {
     return li;
   }));
   $("friends").hidden = $("friends-label").hidden = !friends.length;
-  offerTab("gallery", albumHas || friends.length > 0);
+  offerAlbum(albumHas || friends.length > 0);
+}
+
+// The other pets' friends, for the album: asked for when it opens, and again after a while
+async function loadFriends() {
+  const s = current;
+  if (!s || (s.pets?.length ?? 1) < 2 || Date.now() - friendsLoaded < 30_000) return;
+  friendsLoaded = Date.now();
+  try {
+    const others = await Promise.all(s.pets.filter((p) => p.id !== s.id)
+      .map((p) => api("GET", `/api/pet?pet=${encodeURIComponent(p.id)}`)));
+    othersFriends = new Map(others.map((pet) => [pet.id, pet]));
+  } catch {
+    friendsLoaded = 0; // the next time it opens
+    return;
+  }
+  if (current) renderFriends(current);
 }
 
 function renderGame(s) {
@@ -1802,6 +1859,11 @@ async function refresh() {
   try {
     render(await api("GET", "/api/pet"));
     askTwins();
+    // the album's tab comes once there is something in it: asked for now and then until then
+    if (!albumHas && Date.now() - albumAsked > 60_000) {
+      albumAsked = Date.now();
+      loadGallery();
+    }
     if (view === "diary") renderEvents((await api("GET", "/api/pet/events?limit=30")).events);
     // the update: while "More" is open or it runs, otherwise now and then
     if (app.mode === "pi" && app.home() === "display" && (view === "more" || update?.running || app.fit() !== "ok"
@@ -2088,7 +2150,7 @@ $("replay").addEventListener("close", () => {
 });
 $("watch").addEventListener("click", () => {
   if (!current) return;
-  store("watched", String(current.last_trip));
+  store(`watched:${current.id}`, String(current.last_trip)); // each pet its own: watching one doesn't bring back another's
   $("watch").hidden = true;
   watch(lastFights(current));
 });
@@ -2258,9 +2320,15 @@ document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click
 
 // ---------- The tabs at the bottom ----------
 
+// The album's tab shows up once there is something in it; if it was the open one, the pet takes over
+function offerAlbum(has) {
+  document.querySelector('[data-view="album"]').hidden = !has;
+  if (!has && view === "album") showView("home");
+}
+
 function showView(name) {
   view = name;
-  for (const v of ["home", "adventure", "diary", "more"]) $(`view-${v}`).hidden = v !== name;
+  for (const v of ["home", "adventure", "diary", "album", "more"]) $(`view-${v}`).hidden = v !== name;
   document.querySelectorAll("[data-view]").forEach((b) => {
     if (b.dataset.view === name) b.setAttribute("aria-current", "page");
     else b.removeAttribute("aria-current");
@@ -2268,7 +2336,10 @@ function showView(name) {
   if (name === "diary") {
     refresh();
     loadTravels();
+  }
+  if (name === "album") {
     loadGallery();
+    loadFriends();
   }
   if (name === "adventure" && current) {
     packedFor = "";
@@ -2453,6 +2524,14 @@ function draggable(b) {
       }
     }
   });
+  // Safari doesn't narrow touch-action down the tree: a tile in the bag (pan-x, in a sheet that
+  // scrolls up and down) still lets a drag upwards scroll the sheet, and the scroll cancels the
+  // drag. So the finger is kept from the page here, unless it starts out sideways along a shelf.
+  b.addEventListener("touchmove", (e) => {
+    if (!drag) return;
+    const touch = e.touches[0];
+    if (drag.moved || Math.abs(touch.clientX - drag.x) <= Math.abs(touch.clientY - drag.y)) e.preventDefault();
+  }, { passive: false });
   const done = () => {
     $("hero").classList.remove("drop");
     b.classList.remove("lift");
@@ -2472,7 +2551,10 @@ function draggable(b) {
     done();
     if (!moved) {
       ghost.remove();
-      if (!held) hop(b);
+      if (!held) {
+        hop(b);
+        if (b.dataset.info) say(b.dataset.info); // from the bag: it says what it does, as a long press does
+      }
       return;
     }
     if (b.dataset.rub) {
@@ -2486,8 +2568,9 @@ function draggable(b) {
     const inside = overHero(e.clientX, e.clientY);
     if (!inside && vy > -FLICK_SPEED) return ghost.remove();
     const direct = inside && area && onPet(e.clientX, e.clientY) && ["feed", "medicine"].includes(b.dataset.action);
-    // the rod isn't thrown: the pet takes it to the pond; nor the map: it goes to the cross
-    const thrown = !direct && !["fish", "dig"].includes(b.dataset.action);
+    // the rod isn't thrown: the pet takes it to the pond; nor the map: it goes to the cross; a hat
+    // goes on, and a decoration takes its spot
+    const thrown = !direct && !["fish", "dig", "wear", "deco"].includes(b.dataset.action);
     const where = Math.round(Math.max(0, Math.min(1, inScene(e.clientX, e.clientY)[0])) * 100) / 100;
     // it drops into the scene (or into the pet's mouth)
     ghost.style.transition = "transform .3s ease-out, opacity .3s";
@@ -2635,6 +2718,40 @@ function renderStreet(s) {
     const b = row.querySelector(`[data-id="${where}"]`);
     b.classList.toggle("here", at === where);
     b.classList.toggle("there", s[where].there.length > 0);
+  }
+}
+
+// On the trip page and in the diary, with two pets or more: the pets (no places), the one the
+// page is about framed (on the trip page, the one that would set off)
+function renderTripPets(s) {
+  renderPetPicker($("trip-pets"), s, look);
+}
+function renderDiaryPets(s) {
+  renderPetPicker($("diary-pets"), s, async (id) => {
+    await look(id);
+    refresh();
+    loadTravels();
+  });
+}
+function renderPetPicker(row, s, pick) {
+  row.hidden = s.pets.length < 2;
+  if (row.hidden) return;
+  const key = s.pets.map((p) => p.id + p.stage + p.species).join();
+  if (row.dataset.ids !== key) {
+    row.dataset.ids = key;
+    row.replaceChildren(...s.pets.map((p) => {
+      const b = document.createElement("button");
+      b.dataset.id = p.id;
+      b.append(Object.assign(document.createElement("img"), { alt: "", src: app.cutout(p.stage, p.species) }));
+      b.addEventListener("click", () => pick(p.id));
+      return b;
+    }));
+  }
+  for (const p of s.pets) {
+    const b = row.querySelector(`[data-id="${p.id}"]`);
+    b.classList.toggle("here", p.id === s.id);
+    b.classList.toggle("away", p.away || p.grandma);
+    b.setAttribute("aria-label", t("page.look", { name: p.name }));
   }
 }
 
@@ -3084,9 +3201,9 @@ for (const b of [$("evolve"), $("evolve-go")]) {
         if (!r.accepted) return say(r.message);
         if (before && before.stage === "egg") {
           // Wait a moment until the hatching has been seen. The field offers the name of its line's
-          // child: the egg only had the default name, which would read like another pet's
+          // baby, what it is now: the egg only had the default name, which would read like another pet's
           setTimeout(async () => {
-            const offer = T[`children.${r.state.species}`] || "";
+            const offer = T[`babies.${r.state.species}`] || T[`children.${r.state.species}`] || "";
             const name = await ask(t("page.name_prompt"), { value: offer, ok: t("page.dialog.save") });
             if (name) render(await api("POST", "/api/pet/settings", { name }).catch(() => r.state));
           }, 5000);

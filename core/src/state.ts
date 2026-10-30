@@ -188,10 +188,15 @@ export interface Brood {
   rest_until: number;
 }
 
-/** Shooting stars (stars.ts): evenings it has seen one fall, and when the last one did (0 = none yet). */
+/**
+ * Shooting stars (stars.ts): evenings the home has seen one fall, and when the last one did here
+ * (0 = none yet). `star`: the time the last one counted for the home fell, so each one counts and
+ * leaves something once, however many pets see it.
+ */
 export interface Stars {
   evenings: number;
   at: number;
+  star?: number;
 }
 
 /**

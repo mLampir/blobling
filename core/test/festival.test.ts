@@ -115,3 +115,35 @@ test("the prizes: two eggs for the first wins, then one of the jury's lines; rib
   assert.equal(festival.prize(pet, 3, jury, rng), "ribbon_red");
   assert.equal(festival.prize(pet, 0, jury, rng), festival.FOOD);
 });
+
+/** Two pets at home, kept well together up to `when`. */
+function together(pets: PetState[], when: number): void {
+  const from = Math.min(...pets.map((p) => p.updated_at));
+  for (let t = from + HOUR; t < when; t += HOUR) {
+    model.advanceTogether(pets, t, BEDTIME);
+    pets.forEach((p) => Object.assign(p.stats, { satiety: 100, energy: 100, mood: 100, hygiene: 100, health: 100 }));
+  }
+  model.advanceTogether(pets, when, BEDTIME);
+}
+
+test("one pet goes for the whole home: the one sent, and the others stay", () => {
+  const other = grown(pet.born_at);
+  together([pet, other], at(`${DAY} 10:00`));
+  assert.deepEqual(act(pet, "festival", at(`${DAY} 10:00`)), [true, null]);
+  together([pet, other], at(`${DAY} 10:01`));
+  assert.equal(festival.canGo(other, at(`${DAY} 10:01`)), "festival_taken");
+  assert.equal(festival.announced(other, at(`${DAY} 10:01`)), null); // the poster is down at its house too
+  together([pet, other], at(`${DAY} 18:30`));
+  assert.equal(other.trip, null); // and it doesn't go by itself in the evening either
+  assert.equal(other.counters.festivals ?? 0, 0);
+});
+
+test("nobody sent: only the one with the best chances goes by itself", () => {
+  const other = grown(pet.born_at);
+  pet.tricks = { bow: care.TRICKS.bow };
+  other.tricks = { ...ALL_TRICKS };
+  together([pet, other], at(`${DAY} 18:01`));
+  assert.equal(other.trip?.area, festival.AREA);
+  assert.equal(pet.trip, null);
+  assert.equal(festival.canGo(pet, at(`${DAY} 18:01`)), "festival_taken");
+});

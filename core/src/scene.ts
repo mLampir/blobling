@@ -30,6 +30,7 @@ import { Random } from "./random";
 import * as sky from "./sky";
 import { faceAnchor, outline, recolor, swapColors, tint, wideRow, type Sheet } from "./sprites";
 import * as stars from "./stars";
+import type { Layers } from "./street";
 import { moonPhase, sunTimes } from "./sun";
 import { lowTide, tide } from "./trip";
 import * as yards from "./yard";
@@ -1686,6 +1687,12 @@ export class PetScene {
   x: number;
   targetX: number;
   facing = 1;
+  /**
+   * The last picture render drew, as it was before the pet came onto it, and where the pet stood
+   * in it (the left of its frame): for a pan that follows the pet (street.follow). Null after a
+   * picture without the pet (a place with nobody on it, the yard).
+   */
+  layers: Layers | null = null;
   nextDecision = 0.0;
   posterUntil = -Infinity; // it is off to look at the festival's poster until then
   nextBlink = 0.0;
@@ -1702,6 +1709,7 @@ export class PetScene {
   private rainedAt = -Infinity; // when it last rained (animation time)
   private readonly petCache = new Map<string, [Image, number]>();
   private readonly reachCache = new Map<string, readonly [number, number]>();
+  private readonly squashCache = new Map<string, boolean>(); // squashWidens
   private readonly eggCache = new Map<string, Image>();
   private readonly colorCache = new Map<string, readonly Color[]>(); // the main colors of a form (colorsOf)
   private readonly mirrors = new Map<Bitmap, Bitmap>(); // particles in Mirrorleon's colors (mirrorSprite)
@@ -1838,6 +1846,7 @@ export class PetScene {
     }
     this.drawProps(img, view, pose, t, seconds);
     const x = Math.round(this.x + pose.dx);
+    this.layers = { backdrop: img.copy(), x };
     const y = GROUND - SPRITE + 1 - Math.round(pose.jump);
     let top = SPRITE; // a hidden pet: nothing of it shows
     if (pose.egg) {
@@ -4758,14 +4767,34 @@ export class PetScene {
     return "fetch";
   }
 
-  /** Chews with its mouth opening and closing, bulging towards the food. */
+  /**
+   * Chews with its mouth opening and closing, bulging towards the food. A body that squashes wider
+   * does so on the left only; one whose squash doesn't change its width leans in towards the food.
+   */
   private chew(pose: Pose, t: number): void {
     const chewing = Math.trunc(t * 3) % 2;
     pose.face = chewing ? "eat_closed" : "eat_open";
     pose.body = chewing ? "squash" : "idle";
-    if (chewing && this.facing > 0) {
+    if (chewing && !this.squashWidens(...pose.form)) {
+      pose.dx = this.facing;
+    } else if (chewing && this.facing > 0) {
       pose.dx = 1; // the squashed body is a pixel wider on the left only
     }
+  }
+
+  /** Is this form wider squashed than standing (the slime-like bodies)? */
+  private squashWidens(stage: string, species: string): boolean {
+    const key = `${stage}|${species}`;
+    let widens = this.squashCache.get(key);
+    if (widens === undefined) {
+      const width = (body: string) => {
+        const [x0, , x1] = this.pet(stage, species, body, 0, "normal")[0].bbox()!;
+        return x1 - x0;
+      };
+      widens = width("squash") > width("idle");
+      this.squashCache.set(key, widens);
+    }
+    return widens;
   }
 
   /** Slimes hop instead of walking; a form with feet of its own walks, a flier flies. */
@@ -5666,6 +5695,11 @@ export class PetScene {
   private travel(pose: Pose, view: SceneView, trip: TripView, weather: Weather, t: number, dt: number): Pose {
     const meeting = PetScene.meeting(trip);
     const home = meeting ? BATTLE_X : (this.width - SPRITE) / 2;
+    if (!meeting && !trip.returning && this.x > home + 1) {
+      // on the way out it only ever comes from the left: right of the middle, it has just hopped out of its
+      // garden to the right, and comes on into the next picture from the left (not backwards from the right)
+      this.x = -SPRITE;
+    }
     this.x += clamp(home - this.x, -THROW_SPEED * dt, THROW_SPEED * dt);
     this.targetX = this.x;
     this.facing = trip.returning && !meeting ? -1 : 1;
@@ -5761,6 +5795,7 @@ export class PetScene {
    * The scene's own pet has nothing to do with it; any scene can draw the yard.
    */
   renderYard(yard: YardView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    this.layers = null;
     const dt = clamp(t - this.last, 0.0, 0.5);
     this.last = t;
     this.moon = moonPhase(now.getTime() / 1000);
@@ -6242,6 +6277,7 @@ export class PetScene {
    * home has. Returns [image, seconds until the next frame]. Any scene can draw it.
    */
   renderGround(ground: GroundView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    this.layers = null;
     const dt = clamp(t - this.last, 0.0, 0.5);
     this.last = t;
     this.moon = moonPhase(now.getTime() / 1000);
@@ -6367,6 +6403,7 @@ export class PetScene {
    * if one was left. Returns [image, seconds until the next frame]. Any scene can draw it.
    */
   renderPlayground(place: PlaygroundView, weather: Weather = null, now = new Date(), t = monotonic()): [Image, number] {
+    this.layers = null;
     const dt = clamp(t - this.last, 0.0, 0.5);
     this.last = t;
     this.moon = moonPhase(now.getTime() / 1000);
@@ -6491,15 +6528,18 @@ export class PetScene {
       this.stand(img, sprite, plantX);
       this.covers.set("plant", GROUND + 2 - sprite.height);
     }
+    // the trick festival is coming: its poster on a stake at the fence, behind a guest peeking over it
+    const poster = () => {
+      const sprite = this.dimmedSprite("poster");
+      img.paste(sprite, POSTER_X - Math.floor(sprite.width / 2), FENCE_TOP + 2 - sprite.height);
+    };
     if (view.peeking) {
-      this.drawPeeking(img, view.peeking, t);
+      this.drawPeeking(img, view.peeking, t, view.poster ? poster : null);
     } else if (view.poster || (view.owl && !view.house && this.night > 0.5)) {
       this.drawFence(img);
-    }
-    if (view.poster) {
-      // the trick festival is coming: its poster on a stake at the fence, above what stands in front of it
-      const poster = this.dimmedSprite("poster");
-      img.paste(poster, POSTER_X - Math.floor(poster.width / 2), FENCE_TOP + 2 - poster.height);
+      if (view.poster) {
+        poster();
+      }
     }
     this.drawStarThings(img, view, t);
     this.drawDig(img, view, now);
@@ -6539,14 +6579,10 @@ export class PetScene {
   /**
    * A guest from the garden that hasn't come in yet: it peeks over the fence at the right edge of
    * the garden, only its head above it, looking over at the pet, and now and then it ducks down.
+   * The fence begins just left of it, so that it hides all of its body however wide it is;
+   * `behind` draws what is between the fence and its head (the festival's poster).
    */
-  private drawPeeking(img: Image, species: string, t: number): void {
-    this.peekOverFence(img, species, t);
-    this.drawFence(img);
-  }
-
-  /** The guest's head over the fence (drawPeeking), before the fence is drawn over its body. */
-  private peekOverFence(img: Image, species: string, t: number): void {
+  private drawPeeking(img: Image, species: string, t: number, behind: (() => void) | null): void {
     const local = mod(t, PEEK_EVERY);
     const duck = local < PEEK_DUCK ? Math.sin(local / PEEK_DUCK * Math.PI) : 0; // down and up again
     const face = duck > 0.5 ? "blink" : Math.trunc(t) % 7 === 3 ? "blink" : "smile";
@@ -6560,8 +6596,12 @@ export class PetScene {
       eyes = faceRow + 1 + PEEK_EYES - top; // + 1: the outline
     }
     const peek = eyes / PEEK_ROWS * (1 - duck);
-    if (peek > 0) {
-      this.hideBehind(img, sprite, 0, top, [FENCE_X + 5, FENCE_TOP + 1, peek]); // just behind the top of the fence
+    const middle = FENCE_X + 5;
+    const left = middle - Math.floor(sprite.width / 2) + (sprite.bbox()?.[0] ?? sprite.width);
+    this.drawFence(img, Math.min(FENCE_X, left - 1));
+    behind?.();
+    if (peek > 0) { // only what is above the fence: the fence stays in front of the rest
+      this.hideBehind(img, sprite, 0, top, [middle, FENCE_TOP + 1, peek]);
     }
   }
 
@@ -6585,13 +6625,13 @@ export class PetScene {
     return FOUND_X[view.house ?? 0];
   }
 
-  /** The fence at the right edge of the garden: pickets with a rail. */
-  private drawFence(img: Image): void {
+  /** The fence at the right edge of the garden, from `from` on: pickets with a rail. */
+  private drawFence(img: Image, from = FENCE_X): void {
     const dim = 0.45 + 0.55 * (1 - this.night);
     const picket = dimmed(FENCE[0], dim);
     const rail = dimmed(FENCE[1], dim);
-    for (let x = FENCE_X; x < this.width; x++) {
-      const at = (x - FENCE_X) % 3;
+    for (let x = Math.max(0, from); x < this.width; x++) {
+      const at = mod(x - FENCE_X, 3);
       if (at < 2) {
         for (let y = FENCE_TOP + (at ? 1 : 0); y <= GROUND; y++) {
           img.point(x, y, picket);

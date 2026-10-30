@@ -12,6 +12,9 @@
  * first an egg (the chameleon's, then the paper kite's, later one of a line in the jury), the
  * second and third a ribbon to set out (each once per home), everybody else something to eat.
  *
+ * One pet goes for the whole home: the first one sent, or by itself the one with the best chances
+ * (counters.festival_home, shared among them by model.advanceTogether).
+ *
  * Babies and sick pets don't go, and a pet on a trip misses it; it comes again two weeks later.
  */
 
@@ -70,23 +73,51 @@ export function went(state: PetState, t: number): boolean {
   return state.counters.festival_day === dayOf(t);
 }
 
-/** The festival coming up within POSTER_DAYS (its day number), while it hasn't been yet; null otherwise. */
+/** Has one of the pets at home been sent to the festival today (it, or another one)? */
+export function taken(state: PetState, t: number): boolean {
+  return went(state, t) || state.counters.festival_home === dayOf(t);
+}
+
+/** The latest festival day one of `states` went, now known to all of them: one goes for the whole home. */
+export function share(states: readonly PetState[]): void {
+  const day = Math.max(...states.map((state) => state.counters.festival_home ?? state.counters.festival_day ?? -1));
+  if (day >= 0) {
+    for (const state of states) {
+      state.counters.festival_home = day;
+    }
+  }
+}
+
+/** The festival coming up within POSTER_DAYS (its day number), while nobody from home has been yet; null otherwise. */
 export function announced(state: PetState, t: number): number | null {
   const day = next(t);
-  return day - dayOf(t) <= POSTER_DAYS && !(day === dayOf(t) && went(state, t)) ? day : null;
+  return day - dayOf(t) <= POSTER_DAYS && !(day === dayOf(t) && taken(state, t)) ? day : null;
 }
 
 /** Can it go to the festival now? null, or why not. */
 export function canGo(state: PetState, t: number): string | null {
-  return !today(t) ? "no_festival" : went(state, t) ? "festival_done" : state.stage === "egg" ? "egg"
+  return !today(t) ? "no_festival" : went(state, t) ? "festival_done" : taken(state, t) ? "festival_taken" : state.stage === "egg" ? "egg"
     : state.stage === "baby" ? "too_young" : state.trip ? "away" : state.grandma ? "at_grandmas" : state.asleep ? "asleep"
     : state.sick ? "sick_trip" : null;
 }
 
-/** Is it time for it to go by itself (the minute ending at t is the one at ALONE_AT)? */
-export function alone(state: PetState, t: number): boolean {
+/**
+ * Is it time for it to go by itself (the minute ending at t is the one at ALONE_AT)? Of the pets at
+ * home (`pets`, it among them), the one that can go and has the best chances goes; on a tie, the
+ * first along the street.
+ */
+export function alone(state: PetState, t: number, pets: readonly PetState[] = [state]): boolean {
   const date = new Date(t * 1000);
-  return date.getHours() * 60 + date.getMinutes() === ALONE_AT && canGo(state, t) === null;
+  if (date.getHours() * 60 + date.getMinutes() !== ALONE_AT || canGo(state, t) !== null) {
+    return false;
+  }
+  const able = pets.filter((pet) => pet === state || canGo(pet, t) === null);
+  return able.reduce((best, pet) => (expected(pet) > expected(best) ? pet : best)) === state;
+}
+
+/** The points its best tricks bring on average: what decides who goes by itself. */
+export function expected(state: PetState): number {
+  return sequence(state).reduce((sum, trick) => sum + care.trickProgress(state, trick) * points(state, trick), 0);
 }
 
 /**

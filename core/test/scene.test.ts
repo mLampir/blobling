@@ -321,7 +321,7 @@ test("what the game logic hands over can be drawn as it is", () => {
   }
 });
 
-test("Wickle and Lumoth hop, Cyclopuff and Sneezle walk, Grumpcap walks and hops now and then", () => {
+test("Wickle and Lumoth hop, Cyclopuff, Sneezle and Hidewig walk, Grumpcap walks and hops now and then", () => {
   // A guest halfway in from the right (left edge at 48): its lowest row is where its feet are. Only
   // the columns right of the pet count, and only what differs from the same frames without the guest.
   const lowest = (species: string) => {
@@ -350,6 +350,7 @@ test("Wickle and Lumoth hop, Cyclopuff and Sneezle walk, Grumpcap walks and hops
   assert.equal(lifted("pawdini"), 0);
   assert.equal(lifted("digby"), 0);
   assert.ok(lifted("archibeaver") > 0);
+  assert.equal(lifted("hidewell"), 0); // Hidewig walks on its twig legs
 });
 
 test("the garden's and the water's adults have a trick and a special move of their own", () => {
@@ -418,6 +419,35 @@ test("a guest from the garden peeks over the fence at the right edge, only at ho
   assert.equal(differing(frames({ trip }, 1)[0], frames({ trip, peeking: "digby" }, 1)[0]), 0);
   const inside = { asleep: true, house: 2 };
   assert.equal(differing(frames(inside, 1, NIGHT)[0], frames({ ...inside, peeking: "digby" }, 1, NIGHT)[0]), 0);
+});
+
+test("the fence is as wide as the guest peeking over it, so its head never hangs in the air", () => {
+  const alone = frames({}, 30)[25];
+  const rail = GROUND - 2; // the fence's lower rail
+  for (const guest of ["mothmuff", "digby", "rotorfly", "dambert"]) {
+    const image = frames({ peeking: guest }, 30)[25]; // its head up, not ducking
+    let shown = 0;
+    for (let x = 0; x < image.width; x++) {
+      const at = ((GROUND - 9) * image.width + x) * 4; // the row just above the fence's top
+      if ([0, 1, 2].some((c) => image.data[at + c] !== alone.data[at + c])) {
+        shown++;
+        if (color(alone, x, rail).join() === color(alone, 63, rail).join()) { // the pet doesn't stand in front of it there
+          assert.notDeepEqual(color(image, x, rail), color(alone, x, rail), `${guest} at ${x}`);
+        }
+      }
+    }
+    assert.ok(shown > 5, guest);
+  }
+  // the trick festival's poster hangs behind its head
+  const head = frames({ peeking: "digby" }, 30)[25];
+  const withPoster = frames({ peeking: "digby", poster: true }, 30)[25];
+  for (let y = 0; y <= GROUND - 9; y++) {
+    for (let x = 0; x < head.width; x++) {
+      if (color(head, x, y).join() !== color(alone, x, y).join()) {
+        assert.deepEqual(color(withPoster, x, y), color(head, x, y), `${x},${y}`);
+      }
+    }
+  }
 });
 
 test("the newer lines' children show where they are heading", () => {
@@ -759,4 +789,45 @@ test("the playground shows the pieces found, and the two take turns on them", ()
   };
   assert.ok(lowest(at(30), 0, 40) < GROUND - 6, "up on the swing");
   assert.ok(lowest(at(200), 0, 40) >= GROUND - 2, "down on the ground for its own game");
+});
+
+test("setting off: it hops out of its garden to the right and comes on into the trip from the left", () => {
+  const stage = scene();
+  const start = DAY.getTime() / 1000;
+  const view = { ...BASE, activity: "trip_start", activity_until: start + ACTIVITY_SECONDS.trip_start };
+  for (let i = 0; i < 40; i++) {
+    stage.render(view, null, new Date(DAY.getTime() + i * 100), 1 + i * 0.1);
+  }
+  assert.ok(stage.x > (64 - 32) / 2, `${stage.x}`); // on its way out to the right
+  const trip = { area: "meadow", returning: false, event: null, item: null, event_age: 0 };
+  const xs: number[] = [];
+  for (let i = 0; i < 30; i++) {
+    stage.render({ ...BASE, trip: { ...trip, event_age: i * 0.1 } }, null, new Date(DAY.getTime() + 4000 + i * 100), 5 + i * 0.1);
+    xs.push(stage.x);
+  }
+  assert.ok(xs[0] < 0, `${xs[0]}`); // from the left edge
+  assert.ok(xs.every((x, i) => i === 0 || x >= xs[i - 1]), `${xs}`); // and only ever to the right, the way it faces
+  assert.equal(stage.facing, 1);
+});
+
+test("chewing, a form whose squash keeps its width leans towards the food on either side", () => {
+  for (const facing of [1, -1]) {
+    const stage = scene();
+    stage.facing = facing;
+    const start = DAY.getTime() / 1000;
+    const view = { ...BASE, species: "chameleon", activity: "eat", activity_until: start + ACTIVITY_SECONDS.eat };
+    const edges = new Set<number>();
+    for (let i = 0; i < 12; i++) {
+      const [img] = stage.render(view, null, new Date(DAY.getTime() + i * 100), 1 + i * 0.1);
+      const back = stage.layers!.backdrop.data;
+      const columns: number[] = [];
+      for (let p = 0; p < img.data.length; p += 4) {
+        if (img.data[p] !== back[p] || img.data[p + 1] !== back[p + 1] || img.data[p + 2] !== back[p + 2]) {
+          columns.push((p / 4) % img.width);
+        }
+      }
+      edges.add(facing > 0 ? Math.max(...columns) : Math.min(...columns));
+    }
+    assert.equal(edges.size, 2, `facing ${facing}: ${[...edges]}`); // the edge towards the food moves while it chews
+  }
 });

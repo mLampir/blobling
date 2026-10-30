@@ -426,7 +426,7 @@ and a **seesaw** (cave). Each piece is found once.
 - **The neighbours meet there.** When two get together by day, the first
   pair goes over to the playground; only one pair fits, so with four pets
   the other pair meets in a garden as before. If the camera is on one of
-  them, it pans along.
+  them, it goes along the same way, with only the background panning.
 - **They take turns:** a minute on each piece the home has (taking turns on
   the swing, building in the sandpit, up and down on the seesaw), then a game
   of their own, and round again.
@@ -515,8 +515,9 @@ Every home has a training ground from the start, after the houses and the
 yard: a red running track instead of the garden. Training happens there.
 
 - **Over and back.** Opening the training in the app takes the pet over, and
-  the camera goes along (it pans as to the yard); closing it brings the pet
-  home. Left there, it comes home five minutes after the last exercise.
+  the camera goes along: only the background pans, and the pet moves along on
+  top of it, so it never shows twice. Closing the training brings the pet
+  home the same way. Left there, it comes home five minutes after the last exercise.
   Anything else you do with it (feeding, petting, a trip, …) brings it home
   too; dressing it up or setting out a decoration doesn't.
 - **Equipment** is found once on trips, one piece for each stat, and stands
@@ -568,7 +569,9 @@ makes a wish, with a sparkle over its head.
 
 Nobody has to watch: the morning after (once a night has passed, or sixteen
 hours), what the star left lies in the garden, glinting now and then, until
-a tap picks it up.
+a tap picks it up. A star is the home's: every pet at home sees it and wishes,
+but it leaves one thing, in the garden of one of them, and counts as one
+evening.
 
 - Mostly a **seed**.
 - Sometimes a **star shard**, a decoration that glows at night. One per home;
@@ -577,7 +580,7 @@ a tap picks it up.
 
 From the second evening with a shooting star on, an **owl** sits on the roof at
 night (without a house, on the fence) and watches with the pet. After the fifth
-evening it leaves a rare egg up on the roof, once for every pet, and is gone.
+evening it leaves a rare egg up on the roof, once for the home, and is gone.
 
 ## The trick festival
 
@@ -591,7 +594,10 @@ show them (it starts with its best ones), and **To the festival** sends it
 off, at any time of the day. Nobody sends it by six in the
 evening, it goes by itself with its best tricks. The festival is the day's
 trip and takes about an hour. Babies and sick pets stay home, and a pet that
-is away on a trip or at Grandma's misses it.
+is away on a trip or at Grandma's misses it. With several pets at home, one
+goes for all of them: the first one sent, and once it is off, the poster comes
+down at every house. If nobody is sent, the one with the best chances goes by
+itself.
 
 On the stage it shows its tricks one after the other to a jury of three wild
 pets from the areas it knows (from the meadow always). A trick works as often
@@ -656,7 +662,7 @@ through the landscape, stopping now and then to rest or to hold up something
 it found. If it gets too tired or hungry, it turns back; you can also call it
 home. A second trip on the same day finds less.
 
-Every trip goes into the **travel diary** (*Diary* → *Trips*): where the pet
+Every trip goes into the **travel diary** (in the *Diary*'s history): where the pet
 went, on which day and for how long, what it found, whom it scuffled with and
 how that went, a wild pet it met, and whether it ate something from the backpack or turned back.
 It keeps the last 30 trips of this pet; a trip it was called straight back
@@ -1076,8 +1082,11 @@ every three days, and nothing if it went because nobody came:
 
 ## The app
 
-Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
-*More*.
+Five tabs along the bottom: the pet (named after it), *Trip*, *Diary*, *Album*
+and *More*. Outside the pet's own screen, nothing is about the pet on screen
+without showing which one it is: the trip page and the diary have the pets in a
+row at the top, the one they are about framed, and a tap picks another; the
+album belongs to the whole home.
 
 - **The pet** fills the screen: the scene, with the sky going on above it, the
   pet's name, form, age and mood at the top, and the **Sleep** / **Wake up**
@@ -1100,25 +1109,33 @@ Four tabs along the bottom: the pet (named after it), *Trip*, *Diary* and
   as before. A tap on one of them makes it hop up towards the pet, which shows
   the way. Below, flat like buttons, the ones to tap: the **bag**, the
   **baton** (tricks), the **whistle** (training) and **Hide & seek**.
-- The **bag** has a shelf each for what the pet eats, the seeds, and what it
-  wears or sets out, with the eggs to brood. Food and seeds are dragged onto
-  the pet like the things in the tray; a tap puts a hat on or off, sets a
-  decoration out or away (it then has a ring), or broods an egg.
+- The **bag** has a shelf each for what the pet eats, the seeds, the hats, the
+  decorations and the eggs to brood. Food, seeds, hats and decorations are
+  dragged into the scene like the things in the tray: the pet eats, plants,
+  puts the hat on or sets the decoration out. A tap on one makes it hop and
+  says what it does. A hat that is on or a decoration that is out has a ring,
+  and a tap takes it off or puts it away. A tap on an egg broods it.
 - The bag, the tricks, the training, the game and the pet's own things take
   the place of the tray, below the scene and the needs, so the pet is never
   covered and answers where it is. On a tall phone the scene grows into the
   sky above it.
-- **Trip** is the packing: the hearts it would set off with, where to, and
+- **Trip** is the packing: with two pets or more, which of them sets off (a
+  row of them, the one framed); the hearts it would set off with, where to, and
   what goes into the backpack, with the button to send it off at the bottom.
+  Every food to pack shows what it does on the way (any food heals a heart), and
+  held a moment it says so without being packed. Below, Grandma's postcard
+  invites the pet over, with **Take to Grandma's**.
   While the pet can't go for a while (still an egg or a baby, away, back with
   a full backpack), that is what the tab says. Above it, from the poster on,
   the date of the trick festival, which opens its poster.
-- **Diary** has one tab each for the history, the album and the values. In the
-  history a trip opens with a tap into what happened on the way (where a
-  scuffle or a show at the trick festival can be watched again). The album
-  has the forms met so far, the pets kept in it, each one that can come home with a button for it, and the
-  pet's friends. The values are weight, bond and what the pet has done so far.
-  The album shows up once the first egg has hatched.
+- **Diary** is one pet's, with a tab each for its history and its values. In
+  the history a trip opens with a tap into what happened on the way (where a
+  scuffle or a show at the trick festival can be watched again). The values
+  are weight, bond and what the pet has done so far.
+- **Album** has the forms met so far, the pets kept in it, each one that can
+  come home with a button for it, and the friends of all the pets at home (with
+  two pets or more, whose friend each one is). Its tab shows up once the first
+  egg has hatched.
 - **More**: sound on or off, the weather (off, a fixed place, or following the
   phone) and connecting to an LED display.
 

@@ -109,13 +109,93 @@
     "h": 32
    },
    "duration": 500
+  },
+  {
+   "filename": "hidewell_body walk 11",
+   "frame": {
+    "x": 352,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 320
+  },
+  {
+   "filename": "hidewell_body walk 12",
+   "frame": {
+    "x": 384,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 200
+  },
+  {
+   "filename": "hidewell_body walk 13",
+   "frame": {
+    "x": 416,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 200
+  },
+  {
+   "filename": "hidewell_body walk 14",
+   "frame": {
+    "x": 448,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 160
+  },
+  {
+   "filename": "hidewell_body walk 15",
+   "frame": {
+    "x": 480,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 320
+  },
+  {
+   "filename": "hidewell_body walk 16",
+   "frame": {
+    "x": 512,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 200
+  },
+  {
+   "filename": "hidewell_body walk 17",
+   "frame": {
+    "x": 544,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 200
+  },
+  {
+   "filename": "hidewell_body walk 18",
+   "frame": {
+    "x": 576,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "duration": 160
   }
  ],
  "meta": {
   "app": "tools/build_blob_sprites.py",
   "image": "hidewell_body.png",
   "size": {
-   "w": 352,
+   "w": 608,
    "h": 32
   },
   "frameTags": [
@@ -159,6 +239,12 @@
     "name": "lookout_right",
     "from": 9,
     "to": 10,
+    "direction": "forward"
+   },
+   {
+    "name": "walk",
+    "from": 11,
+    "to": 18,
     "direction": "forward"
    }
   ],

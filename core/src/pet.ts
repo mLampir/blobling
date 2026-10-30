@@ -396,7 +396,7 @@ export class Pet {
       resting: !s.asleep && model.restLeft(s, ["trick", ...battle.SKILLS.map((k) => `train_${k}`)], now) > 0,
       // a shooting star streaking over the sky (seconds since it fell), the owl on the roof, and what a star left
       star: s.stars.at && now - s.stars.at < stars.SEEN_SECONDS && !s.trip && !s.grandma ? now - s.stars.at : null,
-      owl: stars.owl(s),
+      owl: stars.owl(s, this.pets),
       fallen: stars.lying(s),
       // the trick festival is coming (festival.ts), and a treasure map is in the bag (digging.ts)
       poster: festival.announced(s, now) !== null,

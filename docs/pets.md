@@ -1842,10 +1842,11 @@ in a scuffle its tongue flicks a blob of paint.
 
 **Hidewig**, a chameleon that has hidden so well it has become a twig. Its
 body is a stick of bark on legs like twigs, ivy has grown all over its back,
-and it grips a branch with its feet and winds its tail once round it; only its
-big turret eye gives it away. It keeps still for hours, so it tires more
-slowly, and hide and seek means more to it than anything. It likes the rain
-and needs no umbrella. For its bow it almost vanishes into the scene, and its
+and its tail is rolled up behind it; only its big turret eye gives it away. It
+walks like a real chameleon: one slow step, then it rocks to and fro like a
+twig in the wind before it dares the next. It keeps still for hours, so it
+tires more slowly, and hide and seek means more to it than anything. It likes
+the rain and needs no umbrella. For its bow it almost vanishes into the scene, and its
 special move is to turn up unseen and give the opponent a nudge.
 
 </details>
