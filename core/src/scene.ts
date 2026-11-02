@@ -332,7 +332,7 @@ const HAT_SPOTS: Record<string, HatSpot> = {
   "adult:mirrorleon": [-8, 3, 0, true], "adult:pharabug": [5, 10, 1],
   "child:octopus": [-4, 3, 0], "adult:inkasso": [0, 6, 0, true], "adult:fountaingle": [5, 1, 0],
   "adult:flicker": [0, 0, 0], // its flame pokes through: the hat sits on the wax
-  "baby:crab": [-10, 4, 0], "child:crab": [-12, 5, 0], // on the head in front of the shell, not on it
+  "baby:crab": [-6, 4, 0], "child:crab": [-9, 5, 0], // on the head, not lifted by the shell behind it
 };
 // Which way a form looks as it is drawn, when it has a head on one side of its body and a tail, a
 // shell or a ball on the other (-1: to the left). Going the other way, its whole body turns round,
