@@ -1255,9 +1255,13 @@ function trained(state: PetState, now: number, skill: battle.Skill, score: numbe
   }
   const s = state.stats;
   practiced(state, `train_${skill}`, now);
+  const before = battle.level(state.skills[skill]);
   battle.train(state, skill, score * (food.use(state, "train") ? 2 : 1) * ground.factor(state, skill));
   ground.trainedTogether(state, skill);
   s.mood += 10 * life.bonusFactor(state, "play");
+  if (battle.level(state.skills[skill]) > before) {
+    levelUp(state, now, skill);
+  }
   s.energy -= battle.TRAIN_COST.energy;
   s.satiety -= battle.TRAIN_COST.satiety;
   care.addWeight(state, care.PLAY_WEIGHT);
@@ -1265,6 +1269,16 @@ function trained(state: PetState, now: number, skill: battle.Skill, score: numbe
   count(state, "trainings");
   life.record(state, "plays");
   return null;
+}
+
+/**
+ * A stat has gone up a level: proud, like a trick it has learned, and it cheers at the end of the
+ * exercise (the scene sees it in `recent.level_up`, which holds the end of that exercise).
+ */
+function levelUp(state: PetState, now: number, skill: battle.Skill): void {
+  state.stats.mood += 10;
+  state.recent.level_up = [state.activity_until];
+  logEvent(state, now, "level_up", "system", { item: `${skill}:${battle.level(state.skills[skill])}` });
 }
 
 /** Off to the trick festival (festival.ts), now: it is the trip of the day. `picked`: the tricks to show. */

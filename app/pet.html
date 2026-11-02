@@ -334,6 +334,7 @@
   #trick-mode.drawn .move :is(path, circle) { animation: none; stroke-dashoffset: 0; }
   #tricks .learned svg { width: 16px; height: 16px; color: var(--accent); fill: var(--accent); }
   #skills li > img { width: 32px; height: 32px; image-rendering: pixelated; }
+  #skills .levels svg { width: 14px; height: 14px; margin-left: 4px; vertical-align: -1px; color: var(--accent); fill: var(--accent); }
   @keyframes hit { 0% { background: rgba(111, 220, 140, .3); } }
   .ball { width: 72px; height: 72px; image-rendering: pixelated; will-change: transform; }
   .tap { width: min(46vw, 200px); aspect-ratio: 1; border-radius: 50%; border: 3px solid var(--accent); background: var(--raised); font-size: 24px; font-weight: 700; }
@@ -1837,7 +1838,11 @@ function renderTricks(s) {
   }));
 }
 
-// Battle stats in the training sheet: a tap on one starts its exercise
+// Battle stats in the training sheet: a tap on one starts its exercise. They come in levels
+// (core/src/battle.ts LEVEL_POINTS), so there is a nearer goal than 100 to train towards.
+const LEVEL_POINTS = 25, SKILL_LEVELS = 4;
+const skillLevel = (value) => Math.min(SKILL_LEVELS, Math.floor((value + 1e-6) / LEVEL_POINTS));
+
 function renderSkills(s) {
   $("skills").replaceChildren(...s.skills.map((skill) => {
     const color = SKILL_COLORS[skill.id] || "var(--accent)";
@@ -1847,7 +1852,13 @@ function renderSkills(s) {
     const text = document.createElement("div");
     const hint = document.createElement("small");
     hint.textContent = t(`page.train.how.${skill.id}`);
-    text.append(skill.label, hint, meter(skill.value, color));
+    // a star for every level it has reached; the bar fills up to the next one
+    const level = skillLevel(skill.value);
+    const stars = document.createElement("span");
+    stars.className = "levels";
+    stars.innerHTML = svg("trick").repeat(level);
+    const next = level >= SKILL_LEVELS ? 100 : (skill.value - level * LEVEL_POINTS) / LEVEL_POINTS * 100;
+    text.append(skill.label, stars, hint, meter(next, color));
     const value = document.createElement("b");
     value.textContent = Math.floor(skill.value);
     li.append(icon, text, value);
@@ -1950,6 +1961,8 @@ function eventText(e) {
     : e.action === "unlock" ? t("page.events.unlock", { area: T[`areas.${e.item}.name`] || e.item })
     : e.action === "house" ? t(`page.events.house_${e.item}`)
     : e.action === "train" ? t("page.events.trained", { skill: T[`skills.${e.item}`] || e.item })
+    : e.action === "level_up" ? t("page.events.level_up", {
+      skill: T[`skills.${(e.item || "").split(":")[0]}`], level: (e.item || "").split(":")[1] })
     : e.action === "find" ? t("page.events.find", { item: labels[e.item] || e.item })
     : e.action === "fish" ? (["cast", "early", "nothing"].includes(e.item) ? t(`page.events.fish_${e.item}`)
       : t("page.events.fish_catch", { item: labels[e.item] || e.item }))
@@ -3039,9 +3052,12 @@ let openTraining;
   const result = ({ r, before }, skill, how = "", failed = false) => {
     const after = r.state.skills.find((x) => x.id === skill);
     const points = Math.round((after.value - before.value) * 10) / 10;
-    const gain = t(points > 0 ? "page.train.gained" : "page.train.nothing", { skill: after.label, points });
+    const level = skillLevel(after.value);
+    const up = level > skillLevel(before.value);
+    const gain = up ? t("page.train.level", { skill: after.label, level })
+      : t(points > 0 ? "page.train.gained" : "page.train.nothing", { skill: after.label, points });
     tell.textContent = failed ? how : how ? `${how} · ${gain}` : gain;
-    feel(points >= 2 ? "great" : "ok");
+    feel(up || points >= 2 ? "great" : "ok");
     show("menu");
     const row = $("skills").querySelector(`[data-skill="${skill}"]`);
     if (row && points > 0) row.classList.add("hit");

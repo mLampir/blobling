@@ -509,6 +509,12 @@ the pet needs the same growing break as between tricks (two, ten, thirty
 minutes, an hour, two hours); after it, an exercise counts in full again. A tap before the signal, or a sequence that is all wrong, brings
 nothing and costs nothing, not even a break.
 
+A stat goes up a level every 25 points, so filling one, which takes weeks, comes in steps
+about as long as learning a trick. In the training each level is a star next to the stat,
+and the bar fills up towards the next one. Reaching one makes the pet proud (a little extra
+mood): at the end of that exercise it cheers on the panel with a star twinkling over it, and
+the diary notes it, also when it got there practicing alone.
+
 ### The training ground
 
 Every home has a training ground from the start, after the houses and the
