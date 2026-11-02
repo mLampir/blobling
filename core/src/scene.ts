@@ -316,6 +316,8 @@ const HIDE_OUT = 17.5;
 const NOTE: Bitmap = [[255, 220, 120], ["..XX", "..X.", "..X.", "XXX.", "XX.."]];
 const HAT_SINK = 2; // a hat sits this many rows into the head
 const HAT_ROOM = 12; // room above a pet for its hat
+const HEAD_REACH = 5; // the top of the head: the first row with HEAD_ROW pixels this far from the middle of the face
+const HEAD_ROW = 6;
 // Where a form wears its hat when the top of its head is not where it goes (a lure, a crown, a flame,
 // a rotor): [right, down, lean] from the middle of the first row at least 8 pixels wide, and whether
 // what is above the brim (the lure, a rotor on its mast) stays in front of it. A hat worn at a slant
@@ -329,6 +331,8 @@ const HAT_SPOTS: Record<string, HatSpot> = {
   "adult:palettino": [-19, 6, 0, true], "adult:hidewell": [-12, 0, 0, true], "adult:solroll": [-11, 8, -1],
   "adult:mirrorleon": [-8, 3, 0, true], "adult:pharabug": [5, 10, 1],
   "child:octopus": [-4, 3, 0], "adult:inkasso": [0, 6, 0, true], "adult:fountaingle": [5, 1, 0],
+  "adult:flicker": [0, 0, 0], // its flame pokes through: the hat sits on the wax
+  "baby:crab": [-6, 4, 0], "child:crab": [-9, 5, 0], // on the head, not lifted by the shell behind it
 };
 // Which way a form looks as it is drawn, when it has a head on one side of its body and a tail, a
 // shell or a ball on the other (-1: to the left). Going the other way, its whole body turns round,
@@ -1496,14 +1500,27 @@ function spun(img: Image, angle: number): Image {
 }
 
 /**
- * Hat on the head: centered above the first row that is at least 8 pixels wide, or where `spot`
- * moves it. The picture gets HAT_ROOM rows of room above it and half of that at each side, so that
- * the hat is never cut off. `pokeThrough`: what grows above that row (the lure, Wickle's flame)
- * stays in front of the hat.
+ * Hat on the head. It is centered above the face (`faceX`, the face sits in the head) and sits on
+ * the first row that has HEAD_ROW pixels within HEAD_REACH of that column: a tail, a wing or a shell
+ * beside the head doesn't pull it over, and ears or a tuft on top don't lift it. Where `spot` is
+ * set, it goes there instead, measured from the middle of the first row at least 8 pixels wide.
+ * The picture gets HAT_ROOM rows of room above it and half of that at each side, so that the hat
+ * is never cut off. `pokeThrough`: what grows above that row (the lure, Wickle's flame) stays in
+ * front of the hat.
  */
-function withHat(img: Image, hat: Image, pokeThrough = false, [dx, dy, lean, under]: HatSpot = [0, 0, 0]): Image {
-  const [top, rows] = wideRow(img);
-  const cx = rows[top].length ? (rows[top][0] + rows[top].at(-1)! + 1) / 2 : img.width / 2;
+function withHat(img: Image, hat: Image, faceX: number, pokeThrough = false, spot?: HatSpot): Image {
+  const [dx, dy, lean, under] = spot ?? [0, 0, 0];
+  let top: number;
+  let cx: number;
+  if (spot) {
+    const [wide, rows] = wideRow(img);
+    top = wide;
+    cx = rows[top].length ? (rows[top][0] + rows[top].at(-1)! + 1) / 2 : img.width / 2;
+  } else {
+    cx = faceX;
+    const near = (y: number) => img.filled(y).filter((x) => Math.abs(x + 0.5 - cx) <= HEAD_REACH).length;
+    top = Math.max(0, Array.from({ length: img.height }, (_, y) => y).findIndex((y) => near(y) >= HEAD_ROW));
+  }
   const side = HAT_ROOM / 2;
   const out = new Image(img.width + 2 * side, img.height + HAT_ROOM);
   out.alphaComposite(img, side, HAT_ROOM);
@@ -7577,7 +7594,7 @@ export class PetScene {
       if (hat) {
         const spot = HAT_SPOTS[`${stage}:${species}`];
         img = withHat(img, this.sheet("trip").image(stage === "baby" || spot?.[2] ? `hat_${hat}_small` : `hat_${hat}`),
-          stage === "child" || species === "flicker", spot);
+          cx, stage === "child" || species === "flicker", spot);
       }
       if (turn) {
         img = img.mirrored();
