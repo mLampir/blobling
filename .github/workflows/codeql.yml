@@ -1,4 +1,5 @@
-# Code scanning with CodeQL, on every pull request, every push to main and once a week.
+# Code scanning with CodeQL, on every pull request, every push to main and once a week
+# (Swift only on main and weekly, see the matrix).
 #
 # This replaces GitHub's "default setup", which cannot analyse the two native app shells:
 # Swift needs a macOS runner and a real Xcode build, and Gradle can only read the Android
@@ -37,24 +38,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - language: actions
-            build-mode: none
-          - language: javascript-typescript
-            build-mode: none
-          - language: python
-            build-mode: none
-          - language: java-kotlin
-            build-mode: manual
-          - language: swift
-            build-mode: manual
+        # Swift needs a traced Xcode build of about 25 minutes on macOS, so pull requests skip
+        # it; it runs after the merge to main and every week. Its shell rarely changes.
+        language: ${{ fromJSON(github.event_name == 'pull_request'
+          && '["actions", "javascript-typescript", "python", "java-kotlin"]'
+          || '["actions", "javascript-typescript", "python", "java-kotlin", "swift"]') }}
     steps:
       - uses: actions/checkout@v7
 
       - uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
+          build-mode: ${{ (matrix.language == 'swift' || matrix.language == 'java-kotlin') && 'manual' || 'none' }}
           config-file: ./.github/codeql/codeql-config.yml
 
       # Both native shells include the Capacitor projects from node_modules, and `cap sync`
