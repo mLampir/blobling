@@ -79,10 +79,10 @@ jobs:
           category: /language:${{ matrix.language }}
           output: sarif-results
 
-      # Temporary: keeps the full result list as an artifact, to go through it once.
-      - uses: actions/upload-artifact@v7
+      # Temporary: lists every result in the log, to go through them once.
+      - name: List the results
         if: always()
-        with:
-          name: sarif-${{ matrix.language }}
-          path: sarif-results
-          retention-days: 7
+        run: |
+          for f in sarif-results/*.sarif; do
+            jq -r '.runs[].results[] | "RESULT \(.ruleId) | \(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine) | \(.message.text | gsub("\n"; " ") | .[0:200])"' "$f"
+          done
