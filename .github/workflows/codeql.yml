@@ -21,6 +21,11 @@ on:
 permissions:
   contents: read
 
+# A new push to a pull request makes the run for the old one pointless.
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
@@ -95,11 +100,26 @@ jobs:
         with:
           category: /language:${{ matrix.language }}
           output: sarif-results
+          upload: never
+
+      # Building the shells compiles the Capacitor code from node_modules as well, and for
+      # built languages CodeQL ignores paths-ignore: drop what is not ours before uploading.
+      - name: Keep only our own files
+        run: |
+          for f in sarif-results/*.sarif; do
+            jq '.runs[].results |= map(select((.locations[0].physicalLocation.artifactLocation.uri // "")
+                  | (startswith("node_modules/") or contains(":")) | not))' "$f" > "$f.tmp"
+            mv "$f.tmp" "$f"
+          done
 
       # Temporary: lists every result in the log, to go through them once.
       - name: List the results
-        if: always()
         run: |
           for f in sarif-results/*.sarif; do
             jq -r '.runs[].results[] | "RESULT \(.ruleId) | \(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine) | \(.message.text | gsub("\n"; " ") | .[0:200])"' "$f"
           done
+
+      - uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: sarif-results
+          category: /language:${{ matrix.language }}
