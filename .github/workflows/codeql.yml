@@ -3,8 +3,8 @@
 # This replaces GitHub's "default setup", which cannot analyse the two native app shells:
 # Swift needs a macOS runner and a real Xcode build, and Gradle can only read the Android
 # shell (Java) after `npm ci` and `cap sync`, because the Capacitor projects it includes live
-# in node_modules. Here both shells are prepared that way, Swift is built on macOS, and the
-# rest (Java, TypeScript, Python, the workflows) is read as source.
+# in node_modules. Here both shells are prepared that way and built (Swift on macOS), and the
+# rest (TypeScript, Python, the workflows) is read as source.
 #
 # Default setup must be switched off (Settings -> Code security -> CodeQL analysis ->
 # Switch to advanced), otherwise GitHub refuses the results of this workflow.
@@ -40,7 +40,7 @@ jobs:
           - language: python
             build-mode: none
           - language: java-kotlin
-            build-mode: none
+            build-mode: manual
           - language: swift
             build-mode: manual
     steps:
@@ -67,12 +67,18 @@ jobs:
           node tools/build.mjs
           npx cap sync ${{ matrix.language == 'swift' && 'ios' || 'android' }}
 
-      # Java is read without a build, but CodeQL asks Gradle for the dependencies.
       - if: matrix.language == 'java-kotlin'
         uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21
+
+      # A real build: read without one, CodeQL cannot resolve the Android and Capacitor
+      # classes and reports the analysis as low quality.
+      - name: Build the Android shell
+        if: matrix.language == 'java-kotlin'
+        working-directory: app/android
+        run: ./gradlew compileDebugJavaWithJavac --no-daemon
 
       # Built for the simulator, so no signing is needed.
       - name: Build the iOS shell
