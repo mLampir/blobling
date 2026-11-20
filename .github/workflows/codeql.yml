@@ -1,0 +1,118 @@
+# Code scanning with CodeQL, on every pull request, every push to main and once a week.
+#
+# This replaces GitHub's "default setup", which cannot analyse the two native app shells:
+# Swift needs a macOS runner and a real Xcode build, and Gradle can only read the Android
+# shell (Java) after `npm ci` and `cap sync`, because the Capacitor projects it includes live
+# in node_modules. Here both shells are prepared that way and built (Swift on macOS), and the
+# rest (TypeScript, Python, the workflows) is read as source.
+#
+# Default setup must be switched off (Settings -> Code security -> CodeQL analysis ->
+# Switch to advanced), otherwise GitHub refuses the results of this workflow.
+
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "27 4 * * 1"
+
+permissions:
+  contents: read
+
+# A new push to a pull request makes the run for the old one pointless.
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ${{ matrix.language == 'swift' && 'macos-latest' || 'ubuntu-latest' }}
+    permissions:
+      contents: read
+      security-events: write  # upload the results to the Security tab
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+          - language: python
+            build-mode: none
+          - language: java-kotlin
+            build-mode: manual
+          - language: swift
+            build-mode: manual
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          config-file: ./.github/codeql/codeql-config.yml
+
+      # Both native shells include the Capacitor projects from node_modules, and `cap sync`
+      # writes the files they expect (the web app, the config, the Gradle plugin list).
+      - if: matrix.language == 'swift' || matrix.language == 'java-kotlin'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22  # the Capacitor CLI needs 22
+          cache: npm
+
+      - if: matrix.language == 'swift' || matrix.language == 'java-kotlin'
+        name: Prepare the native shells
+        run: |
+          npm ci --no-audit --no-fund
+          node tools/build.mjs
+          npx cap sync ${{ matrix.language == 'swift' && 'ios' || 'android' }}
+
+      - if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # A real build: read without one, CodeQL cannot resolve the Android and Capacitor
+      # classes and reports the analysis as low quality.
+      - name: Build the Android shell
+        if: matrix.language == 'java-kotlin'
+        working-directory: app/android
+        run: ./gradlew compileDebugJavaWithJavac --no-daemon
+
+      # Built for the simulator, so no signing is needed.
+      - name: Build the iOS shell
+        if: matrix.language == 'swift'
+        run: |
+          xcodebuild build \
+            -project app/ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:${{ matrix.language }}
+          output: sarif-results
+          upload: never
+
+      # Building the shells compiles the Capacitor code from node_modules as well, and for
+      # built languages CodeQL ignores paths-ignore: drop what is not ours before uploading.
+      - name: Keep only our own files
+        run: |
+          for f in sarif-results/*.sarif; do
+            jq '.runs[].results |= map(select((.locations[0].physicalLocation.artifactLocation.uri // "")
+                  | (startswith("node_modules/") or contains(":")) | not))' "$f" > "$f.tmp"
+            mv "$f.tmp" "$f"
+          done
+
+      - uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: sarif-results
+          category: /language:${{ matrix.language }}

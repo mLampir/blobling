@@ -84,9 +84,8 @@ test("Grandma tells one when it comes home with her things", () => {
 test("a friend's visit can tell one", () => {
   pet.trail_lines = ["fox"];
   pet.friends = [{ species: "filchfox", visits: 0, next: start }];
-  let t = start;
   for (let i = 0; i < 60 && !pet.items[trail.key("fox", 1)]; i++) {
-    t = pet.friends[0].next;
+    const t = pet.friends[0].next;
     Object.assign(pet.stats, { mood: 100 });
     wild.step(pet, t, true);
     wild.step(pet, t + wild.VISIT_SECONDS, true);

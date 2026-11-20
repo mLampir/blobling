@@ -125,11 +125,9 @@ test("on a trip, the pet offers a wild pet its favorite and the ball from the ba
   withRules(wild.rules, { meetChance: 1.0 }, () => {
     act(pet, "trip", start, { item: "meadow", value: [food.TASTES.sneezle[0], "ball"] });
     const stations = pet.trip!.stations;
-    let t = start;
     // the first wild pet it meets: it gives the present only to one that likes it
     while (!pet.trip!.last || pet.trip!.last.kind !== "wild") {
-      t = stations[pet.trip!.next] + 60;
-      runUntil(t);
+      runUntil(stations[pet.trip!.next] + 60);
     }
     const last = pet.trip!.last!;
     const offered = last.rounds!.map(([thing]) => thing).filter((thing) => thing === "ball" || String(thing).startsWith("gift:"));

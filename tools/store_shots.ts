@@ -119,7 +119,7 @@ const START = at("2026-10-05 08:00");
  * looks after it now and then over the day. `extra` runs on the day of the picture, just before it.
  */
 class Life {
-  now = START;
+  now: number;
   readonly pet: Pet;
 
   constructor(readonly t: I18n, saved: Saved | null = null, now = START) {

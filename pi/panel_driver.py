@@ -109,7 +109,7 @@ def main():
                 log.error("Unknown message %r – giving up", kind)
                 return 2
     except BrokenPipeError:
-        pass
+        pass  # the app went away while we answered; clear the panel and end like on a closed pipe
     finally:
         matrix.Clear()
     return 0

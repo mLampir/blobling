@@ -54,7 +54,7 @@ test("a day counts by its average mood at home, and the days need not follow eac
   for (let i = 1; i <= 120; i++) {
     brood.step(pet, t + i * 60, true);
   }
-  t = day(t + 120 * 60, 95, 120);
+  day(t + 120 * 60, 95, 120);
   assert.deepEqual([pet.brood.days, pet.brood.ready], [2, false]);
 });
 
@@ -70,7 +70,7 @@ test("after five good days the egg lies in the nest the next morning, and then i
   assert.deepEqual(pet.nest, egg);
   assert.deepEqual([pet.brood.days, pet.brood.ready, pet.brood.rest_until], [0, false, t + brood.REST]);
   // during the rest nothing counts; after it, the days start again from nothing
-  t = day(t, 90);
+  day(t, 90);
   assert.equal(pet.brood.days, 0);
   t = day(pet.brood.rest_until, 90);
   assert.equal(pet.brood.days, 1);
