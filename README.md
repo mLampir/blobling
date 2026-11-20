@@ -575,7 +575,7 @@ npm run package -- --version v1.2.0 --repo me/fork   # also dist/install.sh for 
 | `codemagic.yaml` | Builds the apps for the stores on a release tag and uploads them for testing |
 | `.github/workflows/android-test.yml` | Started by hand: a test APK of the app, to install on an Android phone (a debug build, kept for a week) |
 | `.github/workflows/test.yml` | Tests and type check on every pull request and every push to `main` |
-| `.github/workflows/codeql.yml`, `.github/codeql/` | Code scanning with CodeQL on every pull request, every push to `main` and weekly, including both app shells (Swift built on macOS); the config says which checks are left out and why |
+| `.github/workflows/codeql.yml`, `.github/codeql/` | Code scanning with CodeQL on every pull request, every push to `main` and weekly, including both app shells (Swift built on macOS, on `main` and weekly only); the config says which checks are left out and why |
 | `tools/` | Preview of the scene, the pixel art as text → sprite sheets (the one Python tool, it needs `pip install -r requirements.txt`), the sound recipes and their synthesizer → sound files (`sfx.ts`, `sounds.ts`); build and test scripts |
 
 
