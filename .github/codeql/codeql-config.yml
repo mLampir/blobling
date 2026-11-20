@@ -1,7 +1,7 @@
 # Settings for the CodeQL workflow (.github/workflows/codeql.yml).
 name: Blobling CodeQL
 
-# The security queries plus the code quality ones, the same set the Security tab shows.
+# The security queries plus the code quality ones.
 queries:
   - uses: security-and-quality
 
@@ -10,6 +10,10 @@ query-filters:
   # which CodeQL cannot follow: it reported every one of them as unused.
   - exclude:
       id: py/unused-global-variable
+  # The app keeps the pet in the phone's system backup on purpose (docs/privacy.md, section 4):
+  # android:allowBackup="true" is a decision, not an oversight.
+  - exclude:
+      id: java/android/backup-enabled
 
 # Generated or third-party files: what the build writes, and the copy of the web app that
 # `cap sync` puts into the native shells. (Only applies to the languages read without a build.)
