@@ -5,6 +5,12 @@ name: Blobling CodeQL
 queries:
   - uses: security-and-quality
 
+query-filters:
+  # The sprite script looks most of its tables up by name (globals()[f"{name}_FACE_TOP"]),
+  # which CodeQL cannot follow: it reported every one of them as unused.
+  - exclude:
+      id: py/unused-global-variable
+
 # Generated or third-party files: what the build writes, and the copy of the web app that
 # `cap sync` puts into the native shells. (Only applies to the languages read without a build.)
 paths-ignore:
