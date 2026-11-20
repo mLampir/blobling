@@ -1,0 +1,14 @@
+# Settings for the CodeQL workflow (.github/workflows/codeql.yml).
+name: Blobling CodeQL
+
+# The security queries plus the code quality ones, the same set the Security tab shows.
+queries:
+  - uses: security-and-quality
+
+# Generated or third-party files: what the build writes, and the copy of the web app that
+# `cap sync` puts into the native shells. (Only applies to the languages read without a build.)
+paths-ignore:
+  - node_modules
+  - dist
+  - app/ios/App/App/public
+  - app/android/app/src/main/assets/public

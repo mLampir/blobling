@@ -1,0 +1,88 @@
+# Code scanning with CodeQL, on every pull request, every push to main and once a week.
+#
+# This replaces GitHub's "default setup", which cannot analyse the two native app shells:
+# Swift needs a macOS runner and a real Xcode build, and the Android shell (Java) only builds
+# after `npm ci`, because the Capacitor projects it includes live in node_modules. Here the
+# Swift shell is built on macOS after a `cap sync`, Java is read without a build, and the
+# rest (TypeScript, Python, the workflows) is read as source.
+#
+# Default setup must be switched off (Settings -> Code security -> CodeQL analysis ->
+# Switch to advanced), otherwise GitHub refuses the results of this workflow.
+
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "27 4 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ${{ matrix.language == 'swift' && 'macos-latest' || 'ubuntu-latest' }}
+    permissions:
+      contents: read
+      security-events: write  # upload the results to the Security tab
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+          - language: python
+            build-mode: none
+          - language: java-kotlin
+            build-mode: none
+          - language: swift
+            build-mode: manual
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - if: matrix.language == 'swift'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22  # the Capacitor CLI needs 22
+          cache: npm
+
+      # The iOS shell compiles the Capacitor plugins from node_modules, and `cap sync` writes
+      # the web files and the config the Xcode project expects. Built for the simulator, so
+      # no signing is needed.
+      - name: Build the iOS shell
+        if: matrix.language == 'swift'
+        run: |
+          npm ci --no-audit --no-fund
+          node tools/build.mjs
+          npx cap sync ios
+          xcodebuild build \
+            -project app/ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:${{ matrix.language }}
+          output: sarif-results
+
+      # Temporary: keeps the full result list as an artifact, to go through it once.
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: sarif-${{ matrix.language }}
+          path: sarif-results
+          retention-days: 7
