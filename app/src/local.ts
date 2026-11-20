@@ -336,7 +336,7 @@ export class LocalPet {
     if (!this.canvas || document.hidden || !this.home) {
       return;
     }
-    let delay = 1;
+    let delay: number;
     try {
       this.pet.update();
       if (this.weather.configured && this.weather.needsRefresh()) {

@@ -5582,7 +5582,8 @@ export class PetScene {
     const away = this.width + 24; // her middle, off the panel on the right
     const flap = Math.trunc(t * 8) % 2 ? "stretch" : "squash";
     const swoop = (f: number, from: number, to: number) => from + (to - from) * (1 - (1 - clamp(f, 0, 1)) ** 2);
-    let [x, lift, body, face, carrying, left] = [spot, 0, "idle", "smile", false, true];
+    let [x, lift, face, carrying, left] = [spot, 0, "smile", false, true];
+    let body: string; // every case below picks her pose
     const e = m.age;
     if (m.deed === "back") {
       if (e < MAGPIE_GRABBED) { // in from the right with it in her beak

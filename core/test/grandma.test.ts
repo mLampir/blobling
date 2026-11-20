@@ -53,7 +53,7 @@ test("after a whole day it brings Grandma's things home; fetched sooner, nothing
   act(pet, "unpack", t + 10);
   assert.equal(pet.items[hat], 1);
   // she has something new at most every few days
-  t = visit(t + HOUR, 25);
+  visit(t + HOUR, 25);
   assert.deepEqual(pet.backpack, []);
 });
 
